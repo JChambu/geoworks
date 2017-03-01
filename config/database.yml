@@ -85,6 +85,6 @@ test:
 #
 production:
   <<: *default
-  database: geoworks_production
+  database: geoworks
   username: postgres
-  password: <%= ENV['SHINE_DATABASE_PASSWORD'] %>
+  password: postgres

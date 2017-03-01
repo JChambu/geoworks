@@ -12,6 +12,7 @@ set :repo_url, "git@bitbucket.org:asergiop21/geoworks.git"
 set :deploy_to, "/opt/geoworks"
 set :scm, :git
 set :rvm_ruby_version, '2.3.0p0'
+set :migration_role, :db
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
 
