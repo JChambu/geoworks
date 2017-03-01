@@ -270,7 +270,7 @@ DEPENDENCIES
   cancancan
   capistrano (~> 3.6)
   capistrano-bundler
-  capistrano-rails (~> 1.1)
+  capistrano-rails (~> 1.2)
   capistrano-rvm
   coffee-rails (~> 4.2)
   daemons
