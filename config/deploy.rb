@@ -1,4 +1,6 @@
 # config valid only for current version of Capistrano
+require 'capistrano/rvm'
+
 lock "3.7.2"
 
 set :application, "geoworks"
@@ -10,7 +12,7 @@ set :repo_url, "git@bitbucket.org:asergiop21/geoworks.git"
 # Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, "/opt/geoworks"
 set :scm, :git
-set rvm_ruby, '2.3.0p0'
+set :rvm_ruby_version, '2.3.0p0'
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
 
