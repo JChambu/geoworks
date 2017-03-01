@@ -13,7 +13,6 @@ set :deploy_to, "/opt/geoworks"
 set :rvm_ruby_version, '2.3.0p0'
 set :migration_role, :db
 
-install_plugin Capistrano::SCM::Git
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
 
