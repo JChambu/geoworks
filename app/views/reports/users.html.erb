@@ -1,0 +1,84 @@
+<div class="page-header">
+  <h1><%= t 'views.reports.users.title' %></h1>
+</div>
+
+<%= render :partial => "/pois/search_panel" %>
+<div class="span12">
+<div class="row-fluid">
+  <div class="span6">
+	  <h2> Reporte por Pais </h2>
+	  <table class="table table-striped table-condensed">
+      <thead>
+        <tr>
+          <th><%= t("views.reports.pois.table.columns.country") %></th>
+          <th><%= t("views.reports.pois.table.columns.source") %></th>
+          <th><%= t("views.reports.pois.table.columns.user") %></th>
+          <th><%= t("views.reports.pois.table.columns.qty") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @totals.each do |country_data| %>
+          <tr>
+            <td><%= country_data[:country] %></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <% country_data[:source_data].each do |source_data| %>
+            <tr>
+              <td></td>
+              <td><%= source_data[:source] %></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <% source_data[:user_data].each do |user_data| %>
+              <% unless user_data[:total].nil? or user_data[:total].zero? %>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td><%= user_data[:user] %></td>
+                  <td><%= user_data[:total] %></td>
+                </tr>
+              <% end %>
+            <% end %>
+          <% end %>	          	      
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="span5">
+
+	  <h3> Reporte por Usuario </h3>
+    <table class="table table-striped table-condensed">
+      <thead>
+        <tr>
+          <th><%= t("views.reports.pois.table.columns.user") %></th>
+          <th><%= t("views.reports.pois.table.columns.country") %></th>
+          <th><%= t("views.reports.pois.table.columns.source") %></th>
+          <th><%= t("views.reports.pois.table.columns.qty") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @totals_2.each do |country_data| %>
+
+          <% country_data[:source_data].each do |source_data| %>
+            <% source_data[:user_data].each do |user_data| %>
+              <% unless user_data[:total].nil? or user_data[:total].zero? %>
+
+                <tr>
+                  <td><%= country_data[:user] %></td>
+                  <td><%= user_data[:county] %></td>
+                  <td><%= source_data[:source] %></td>
+                  <td><%= user_data[:total] %></td>
+                </tr>
+              <% end %>
+            <% end %>
+          <% end %>	          	      
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>

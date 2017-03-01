@@ -1,0 +1,29 @@
+<h1>Listing generate_deliveries</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Country</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @generate_deliveries.each do |generate_delivery| %>
+      <tr>
+        <td><%= generate_delivery.name %></td>
+        <td><%= generate_delivery.country_id %></td>
+        <td><%= link_to 'Show', generate_delivery %></td>
+        <td><%= link_to 'Edit', edit_generate_delivery_path(generate_delivery) %></td>
+        <td><%= link_to 'Destroy', generate_delivery, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Generate delivery', new_generate_delivery_path %>

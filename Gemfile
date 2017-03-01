@@ -6,28 +6,43 @@ git_source(:github) do |repo_name|
 end
 
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.0.1'
-# Use postgresql as the database for Active Record
-gem 'pg', '~> 0.18'
-# Use Puma as the app server
-gem 'puma', '~> 3.0'
-# Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
-# Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
-# Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.2'
-# See https://github.com/rails/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
 
+gem 'rails', '~> 5.0.1'
+gem 'pg', '~> 0.18'
+gem 'puma', '~> 3.0'
+gem 'sass-rails', '~> 5.0'
+gem 'uglifier', '>= 1.3.0'
+gem 'coffee-rails', '~> 4.2'
+gem 'pg_search'
+# See https://github.com/rails/execjs#readme for more supported runtimes
+gem 'therubyracer', platforms: :ruby
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
 gem 'webpack-rails'
 gem 'foreman'
 gem 'devise'
+gem 'apartment'
+gem 'cancancan'
+gem 'pry'
+gem 'rgeo'
+gem 'rgeo-activerecord'
+gem 'activerecord-postgis-adapter'
+gem 'will_paginate-bootstrap' 
+gem 'simple_form'
+gem 'rgeo'
+gem 'rgeo-activerecord'
+gem 'paper_trail'
+gem 'validates_email_format_of'
+gem 'twitter-bootstrap-rails'
+gem 'ransack', github:"activerecord-hackery/ransack", branch:"master"
+gem 'twitter-bootstrap-rails'
+gem 'less-rails-bootstrap'
+gem 'spreadsheet'
+gem 'delayed_job_active_record'
+gem 'daemons'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password

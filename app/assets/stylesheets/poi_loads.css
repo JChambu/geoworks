@@ -1,0 +1,11 @@
+.delivered-status {
+  color: green;
+}
+
+.validated-status {
+  color: #FF9900;
+}
+
+.not_validated-status {
+  color: red;
+}

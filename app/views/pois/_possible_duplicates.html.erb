@@ -1,0 +1,12 @@
+<% unless @pois.nil? or @pois.empty? %>
+	<div class="row-fluid">
+		<div class="span12 alert alert-info">
+			<span><h3><%= t("views.poi.form.possible_duplicates.title") %></h3></span>
+			<ul>
+				<% @pois.each do |poi| %>
+					<li><%= link_to poi.name, edit_poi_path(poi) %> (<%= poi.complete_name %>)</li>
+				<% end %>
+			</ul>
+	  </div>
+	</div>
+<% end %>

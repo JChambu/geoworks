@@ -1,0 +1,24 @@
+<%- model_class = Poi -%>
+
+<% if flash[:alert] %>
+<div>
+  <%= flash[:alert] %>
+</div>
+<% end %>
+
+<div class="page-header row-fluid">
+  <div class="span2">
+    <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %> [# <%= @pois.count%> ]</h1>
+    
+  </div>
+  <div class="span1" style="text-align: right;">
+    <%= link_to "Nuevo"  , new_poi_path, class: 'form-inline btn btn-info' %>
+  </div>
+</div>
+<a data-toggle="collapse" href="#filter" id="button">+ Filtros</a>
+<div id="filter" class="collapse">
+  
+<%= render :partial => "search_panel" %>
+</div>
+
+<%= render :partial => "table" %>

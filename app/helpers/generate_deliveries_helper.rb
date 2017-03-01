@@ -1,0 +1,2 @@
+module GenerateDeliveriesHelper
+end

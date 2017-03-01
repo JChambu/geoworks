@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>City id,:</strong>
+  <%= @poi_address.city_id %>
+</p>
+
+<p>
+  <strong>Street,:</strong>
+  <%= @poi_address.street %>
+</p>
+
+<p>
+  <strong>Number,:</strong>
+  <%= @poi_address.number %>
+</p>
+
+<p>
+  <strong>Neighborhood,:</strong>
+  <%= @poi_address.neighborhood %>
+</p>
+
+<p>
+  <strong>Block,:</strong>
+  <%= @poi_address.block %>
+</p>
+
+<p>
+  <strong>House:</strong>
+  <%= @poi_address.house %>
+</p>
+
+<%= link_to 'Edit', edit_poi_address_path(@poi_address) %> |
+<%= link_to 'Back', poi_addresses_path %>

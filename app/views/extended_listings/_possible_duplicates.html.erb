@@ -1,0 +1,12 @@
+<% unless @extended.nil? or @extended.empty? %>
+	<div class="row-fluid">
+		<div class="span12 alert alert-info">
+			<span><h3><%= t("views.poi.form.possible_duplicates.title") %></h3></span>
+			<ul>
+				<% @extended.each do |poi| %>
+					<li><%= link_to poi.name, edit_extended_listing_path(poi) %> (<%= poi.street%>)</li>
+				<% end %>
+			</ul>
+	  </div>
+	</div>
+<% end %>

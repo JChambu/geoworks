@@ -1,0 +1,11 @@
+<%= simple_form_for @user, :html => { :class => 'form-horizontal' } do |f| %>  
+  <%= f.input :name %>
+  <%= f.input :email %>
+  <%= f.input :role, :required => true, :collection => roles_for_select, :prompt => t('simple_form.select_item_prompt') %>
+  <%= f.input :password %>
+  <div class="form-actions">
+    <%= f.button :submit, :class => 'btn-primary' %>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                users_path, :class => 'btn' %>
+  </div>
+<% end %>

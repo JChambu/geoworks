@@ -1,0 +1,37 @@
+
+<%- model_class = PoiAddressLoad -%>
+<h1>Listing poi_address_loads</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Directory name</th>
+      <th>Success Count</th>
+      <th>Fail</th>
+      <th>Status</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @poi_address_loads.each do |poi_address_load| %>
+      <tr>
+        <td><%= poi_address_load.name %></td>
+        <td><%= poi_address_load.directory_name %></td>
+        <td><%= poi_address_load.success_count %></td>
+        <td><%= poi_address_load.fail_count %></td>
+        <td><%= poi_address_load_status_label(poi_address_load) %></td>
+        <td><%= link_to 'Show', poi_address_load %></td>
+        <td><%= link_to 'Edit', edit_poi_address_load_path(poi_address_load) %></td>
+        <td><%= link_to 'Destroy', poi_address_load, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Poi address load', new_poi_address_load_path %>

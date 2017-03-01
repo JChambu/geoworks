@@ -1,0 +1,37 @@
+<h1>Listing extended_listing_loads</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+      <th>Success count</th>
+      <th>Fail count</th>
+      <th>Already loaded count</th>
+      <th>Directory name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @extended_listing_loads.each do |extended_listing_load| %>
+      <tr>
+        <td><%= extended_listing_load.name %></td>
+        <td><%= extended_listing_load.status %></td>
+        <td><%= extended_listing_load.success_count %></td>
+        <td><%= extended_listing_load.fail_count %></td>
+        <td><%= extended_listing_load.already_loaded_count %></td>
+        <td><%= extended_listing_load.directory_name %></td>
+        <td><%= link_to 'Show', extended_listing_load %></td>
+        <td><%= link_to 'Edit', edit_extended_listing_load_path(extended_listing_load) %></td>
+        <td><%= link_to 'Destroy', extended_listing_load, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Extended listing load', new_extended_listing_load_path %>

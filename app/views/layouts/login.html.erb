@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%= render :partial => 'common/head' %>
+  </head>
+  <body>
+      <div class="container-fluid">
+        <%= image_tag 'gw_banner' %>
+      </div>
+    <div class="container-fluid">
+      <div class="row-fluid">    
+        <div class="span-12">
+          <%= flash_messages %>
+          <%= yield %>
+        </div>
+      </div>      
+    </div>
+    <%= render :partial => 'common/footer' %>
+  </body>
+</html>

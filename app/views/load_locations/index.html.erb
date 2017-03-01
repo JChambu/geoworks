@@ -1,0 +1,20 @@
+
+   <h1>Cargar localidades</h1>
+<table class="table">
+  <tr>
+    <th>name</th>
+    <th>created</th>
+  </tr>
+
+  <% @load_locations.each do |l| %>
+    <tr>
+      <td><%= l.name %></td>
+     <td><%= l.created_at %> </td>
+    </tr>
+  <% end %>
+
+
+</table>
+
+
+<%= link_to "nuevo", new_load_location_path %>

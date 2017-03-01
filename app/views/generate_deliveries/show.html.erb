@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @generate_delivery.name %>
+</p>
+
+<p>
+  <strong>Country:</strong>
+  <%= @generate_delivery.country_id %>
+</p>
+
+<%= link_to 'Edit', edit_generate_delivery_path(@generate_delivery) %> |
+<%= link_to 'Back', generate_deliveries_path %>

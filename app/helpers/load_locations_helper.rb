@@ -1,0 +1,2 @@
+module LoadLocationsHelper
+end

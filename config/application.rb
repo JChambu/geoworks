@@ -10,16 +10,23 @@ require "action_mailer/railtie"
 require "action_view/railtie"
 require "action_cable/engine"
 require "sprockets/railtie"
+require 'apartment/elevators/subdomain' 
 # require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module Shine
+module Geoworks
   class Application < Rails::Application
+    config.middleware.use 'Apartment::Elevators::Subdomain'
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
+    config.time_zone = 'Buenos Aires'
+    config.i18n.default_locale = :es
+    WillPaginate.per_page = 20
+    config.autoload_paths += %W(#{config.root}/lib)
+    PaperTrail.serializer = JSON
   end
 end

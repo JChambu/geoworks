@@ -1,0 +1,473 @@
+pt:
+  buttons:
+    search: Pesquisar 
+    validated: Pesquisar Validados esta semana
+    delivered: Pesquisar Entregados esta semana
+  views:
+    reports:
+      pois:
+        title: Relatório de Pois
+        table:
+          columns:
+            poi_type: Tipo de Poi
+            total: Total
+            country: País
+            user: Usuario
+            qty: Quantidade
+      users:
+        title: Relatório por Usuarios
+      poi_verification: verificação de pois
+    poi_load:
+      form:
+        pois_upload_explanation_title: Lembrar
+        pois_upload_explanation: |
+          <ul><li>É necessário carregar um arquivo com a mesma estrutura deste <a href=%{link}>arquivo de exemplo</a></li>
+          <li>Deve ser un arquivo de tipo .xls (não .xlsx)</li>
+          <li>Deve respeitar a ordem das colunas e seu nome.</li></ul>
+      index:
+        delete_confirm: "Tenha em mente que se você excluir a carga serão excluídos os Pois associados a mesma. Mesmo assim, você deseja continuar?"
+        explanation_title: Atenção!
+        explanation: |
+          <li>Se for excluida uma carga com POIs guardados estes são apagados do sistema permanentemente.</li>
+          <li>Se a carga tiver erros você pode baixar um arquivo com o detalhe destes.</li>
+          <li>As cargas têm três estados:
+            <ol><li>Pendente: para indicar que está sendo processado o arquivo Excel e os pontos ainda não estão no sistema.</li>
+            <li>Completa: para indicar que terminou com o processo de carregamento.</li>
+            <li>Incompleto: Se houve algum erro desconhecido e não foi possível terminar o carregamento dos pontos.</li></ol>
+          <li>Independentemente do estado, você pode ver a quantidade de Pois carregados no sistema e se houver, a quantidade de Pois que não entraram por conter erros. Também são ignorados aqueles Pois cujo identificador (primeira coluna do Excel) se encontra previamente salvo no banco de dados.</li>
+          <li>Se o valor da primeira coluna do Excel (ID) está vazio será tomado como o fim do ficheiro e o carregamento sera interrompido.</li></ul>
+    poi_address: Poi addresses
+    poi:
+      duplicated:
+        title: Possíveis Repetidos
+      index:
+        pois_count: "Total: %{count}"
+        messages:
+          to_many_poist_for_download: "Você não pode baixar mais de %{count} Pois. Mude o seu filtro de pesquisa e tente novamente"
+          download_error: "Ocorreu um erro ao tentar baixar o arquivo" 
+          deliver_error: "Ocorreu um erro durante a tentativa de marcar os Pois como entregues"
+          deliver_success: "Foram marcados como \"Entregues\": %{count} pois"
+          deliver_warning: "Serão marcados como entregues todos os Pois que tenhão caido dentro do filtro escolhido. Esta operação não pode ser desfeita. Você quer continuar?"
+          control_date_range_doesnt_exist: "Deve especificar um intervalo de datas para realizar esta ação"
+        buttons:
+          deliver: Marcar como Entregues
+          download: Baixar .xls
+      form:
+        possible_duplicates:
+          title: Possíveis Repetidos
+        fieldsets:
+          poi: Poi
+          contact: Contato
+          location: Localização
+          other: Observação
+          map_legend: Leyenda Mapa
+          map_actions: Selecção de localização
+          poi_action: Ação
+        buttons:
+          add_location: Adicionar localização
+          suggest_location: Sugerir localização
+        map:
+          add_location_hint: Selecione uma localização no mapa, clicando em .<br> deve aparecer um marker verde indicando a posição escolhida.
+          suggest_location_hint: Selecione o marker que aparece na localização desejada.<br>Este deve mudar de azul para verde.
+          legend:
+            selected: "Localização seleccionada"
+            suggested: "Localização sugerida"
+            initial: "Localização inicial"
+  true_value: "Sim­"
+  false_value: "Não"
+  flash_message:
+    authorized_access: Você não está autorizado a visualizar esta página.
+    controller:
+      resource_create_success: "Recurso \"%{resource}\" gerado corretamente"
+      create_success: Gerado corretamente
+      resource_update_success: "Recurso \"%{resource}\" atualizado corretamente"
+      update_success: Atualizado corretamente
+      resource_destroy_success: "Recurso \"%{resource}\" eliminado corretamente"
+      destroy_success: Eliminado corretamente
+      resource_create_fail: "Houve um problema ao tentar gerar o recurso \"%{resource}\""
+      create_fail: Houve um problema ao gerar
+      resource_update_fail: "Houve um problema durante a atualização do recurso \"%{resource}\""
+      update_fail: Houve um problema durante a atualização
+      resource_destroy_fail: "Houve um problema ao tentar eliminar o recurso \"%{resource}\""
+      destroy_fail: Houve um problema ao tentar eliminar
+  roles:
+    admin: Administrador
+    user: Usuario
+  poi_load_statuses:
+    complete: Completa
+    pending: Pendente
+    uncomplete: Incompleto
+  pager:
+    next: Seguinte
+    previous: Anterior
+  menu:
+    users: Usuarios
+    logout: Sair
+    admin:
+      title: Administração
+      app_configuration: Configuração geral
+      chains: Rede de Lojas
+      food_types: Tipo de Comida
+      poi_types: Tipo de Poi
+      poi_sub_types: Subtipo de Poi
+      street_types: Tipo de Rua
+      poi_sources: Fonte de dados
+      load_locations: Carregar Localidades
+    reports:
+      title: Relatórios
+      pois: Pois
+      users: Usuarios
+      poi_verification: Verificação de pois
+    pois:
+      new: Novo Poi 
+      title: Pois
+      check: check
+      list: Listado
+      upload: Carga de Poi
+      duplicated: Repetidos
+    poi_addresses: 
+      title: Poi addresses
+      new: Novo poi Address
+  # remove these aliases after 'activemodel' and 'activerecord' namespaces are removed from Rails repository
+  date:
+    abbr_day_names:
+    - Dom
+    - Seg
+    - Ter
+    - Qua
+    - Qui
+    - Sex
+    - Sáb
+    abbr_month_names:
+    -
+    - Jan
+    - Fev
+    - Mar
+    - Abr
+    - Mai
+    - Jun
+    - Jul
+    - Ago
+    - Set
+    - Out
+    - Nov
+    - Dez
+    day_names:
+    - Domingo
+    - Segunda-feira
+    - Terça-feira
+    - Quarta-feira
+    - Quinta-feira
+    - Sexta-feira
+    - Sábado
+    formats:
+      default: "%d/%m/%Y"
+      long: "%d de %B de %Y"
+      short: "%d de %B"
+    month_names:
+    -
+    - Janeiro
+    - Fevereiro
+    - Março
+    - Abril
+    - Maio
+    - Junho
+    - Julho
+    - Agosto
+    - Setembro
+    - Outubro
+    - Novembro
+    - Dezembro
+    order:
+    - :day
+    - :month
+    - :year
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: aproximadamente 1 hora
+        other: aproximadamente %{count} horas
+      about_x_months:
+        one: aproximadamente 1 mês
+        other: aproximadamente %{count} meses
+      about_x_years:
+        one: aproximadamente 1 ano
+        other: aproximadamente %{count} anos
+      almost_x_years:
+        one: quase 1 ano
+        other: quase %{count} anos
+      half_a_minute: meio minuto
+      less_than_x_minutes:
+        one: menos de um minuto
+        other: menos de %{count} minutos
+      less_than_x_seconds:
+        one: menos de 1 segundo
+        other: menos de %{count} segundos
+      over_x_years:
+        one: mais de 1 ano
+        other: mais de %{count} anos
+      x_days:
+        one: 1 dia
+        other: "%{count} dias"
+      x_minutes:
+        one: 1 minuto
+        other: "%{count} minutos"
+      x_months:
+        one: 1 mês
+        other: "%{count} meses"
+      x_seconds:
+        one: 1 segundo
+        other: "%{count} segundos"
+    prompts:
+      day: Dia
+      hour: Hora
+      minute: Minuto
+      month: Mês
+      second: Segundo
+      year: Ano
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      accepted: tem de ser aceite
+      blank: não pode estar em branco
+      confirmation: não coincide com a confirmação
+      empty: não pode estar vazio
+      equal_to: tem de ser igual a %{count}
+      even: tem de ser par
+      exclusion: é reservado
+      greater_than: tem de ser maior que %{count}
+      greater_than_or_equal_to: tem de ser maior ou igual a %{count}
+      inclusion: não está incluído na lista
+      invalid: é inválido
+      less_than: tem de ser menor que %{count}
+      less_than_or_equal_to: tem de ser menor ou igual a %{count}
+      not_a_number: não é um número
+      not_an_integer: tem de ser um inteiro
+      odd: tem de ser ímpar
+      taken: não está disponível
+      too_long: é demasiado grande (o máximo é de %{count} caracteres)
+      too_short: é demasiado pequeno (o mínimo é de %{count} caracteres)
+      wrong_length: comprimento errado (deve ter %{count} caracteres)
+    template:
+      body: 'Por favor, verifique os seguintes campos:'
+      header:
+        one: 'Não foi possível guardar %{model}: 1 erro'
+        other: 'Não foi possível guardar %{model}: %{count} erros'
+  helpers:
+    select:
+      prompt: Por favor seleccione
+    submit:
+      create: Criar %{model}
+      submit: Gravar %{model}
+      update: Actualizar %{model}
+  number:
+    currency:
+      format:
+        delimiter: " "
+        format: "%n %u"
+        precision: 2
+        separator: ","
+        significant: false
+        strip_insignificant_zeros: false
+        unit: "€"
+    format:
+      delimiter: "."
+      precision: 3
+      separator: ","
+      significant: false
+      strip_insignificant_zeros: false
+    human:
+      decimal_units:
+        format: "%n %u"
+        units:
+          billion:
+            one: mil milhões
+            other: mil milhões
+          million:
+            one: milhão
+            other: milhões
+          quadrillion:
+            one: mil biliões
+            other: mil biliões
+          thousand: mil
+          trillion:
+            one: bilião
+            other: biliões
+          unit: ''
+      format:
+        delimiter: ''
+        precision: 1
+        significant: true
+        strip_insignificant_zeros: true
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one: Byte
+            other: Bytes
+          gb: GB
+          kb: KB
+          mb: MB
+          tb: TB
+    percentage:
+      format:
+        delimiter: ''
+    precision:
+      format:
+        delimiter: ''
+  support:
+    array:
+      last_word_connector: ", e"
+      two_words_connector: " e "
+      words_connector: ", "
+  time:
+    am: am
+    formats:
+      default: "%A, %d de %B de %Y, %H:%Mh"
+      long: "%A, %d de %B de %Y, %H:%Mh"
+      short: "%d/%m, %H:%M hs"
+    pm: pm
+
+  activerecord:
+    models:
+      app_configuration:
+        one: "Configuração geral"
+        other: "Configurações"
+      user:
+        one: "Usuario"
+        other: "Usuarios"
+      chain:
+        one: "Rede"
+        other: "Redes"
+      food_type:
+        one: "Tipo de Comida"
+        other: "Tipos de Comida"        
+      poi_type:
+        one: "Tipo de Poi"
+        other: "Tipos de Poi"
+      poi_sub_type:
+        one: "Subtipo de Poi"
+        other: "Subtipos de Poi"        
+      poi:
+        one: "Poi"
+        other: "Pois"
+      poi_load:
+        one: "Carga de Pois"
+        other: "Cargas"
+      poi_source:
+        one: "Fonte de dados"
+        other: "Fontes de dados"        
+      street_type:
+        one: "Tipo de Rua"
+        other: "Tipos de Ruas"         
+    attributes:
+      country:
+        name: País
+      province:
+        name: Estado
+      department:
+        name: Cidade
+      city:
+        name: Municipio
+      app_configuration:
+        id: "ID"
+        gisworking_initial_identifier: "Identificador Inicial Gisworking"
+      user:
+        id: "ID"
+        name: "Nome"
+        email: "E-mail"
+        role: "Rol"
+        password: "Senha"
+        remember_me: "Guardar conta"
+      chain:
+        id: "ID"
+        name: "Nome"
+        identifier: "Identificador"
+        poi_type_id: "Tipo de Poi"
+        objetive: "Objetivo" 
+      street_type:
+        id: "ID"
+        name: "Nome"
+      poi_status:
+        not_validated: Não validado
+        validated: Validado
+        delivered: Entregue
+        revised: Revisado
+        pending: Pendente
+        verificated: Verificado
+        Restricted: Restringido
+      poi_type:
+        id: "ID"
+        name: "Nome"
+      poi_sub_type:
+        id: "ID"
+        name: "Nome"
+        poi_type_id: "Tipo de Poi"
+      poi:
+        id: "ID"
+        name: "Nome"
+        short_name: "Nome Curto"
+        website: "Sitio Web"
+        email: "E-mail"
+        second_email: "Otro E-mail"
+        note: "Observação"
+        cel_number: "Celular"
+        phone: "Telefone"
+        second_phone: "Outro Telefone"
+        fax: "Fax"
+        house_number: "Número"
+        contact: "Contato"
+        priority: "Prioridade"
+        location: "Localização"
+        country_name: "País"
+        city_id: "Cidade"
+        chain_id: "Rede de Loja"
+        food_type_id: "Tipo de Comida"
+        poi_source_id: "Fonte de dados"
+        poi_type_id: "Tipo de Poi"
+        poi_sub_type_id: "Subtipo de Poi"
+        poi_type_name: "Tipo de Poi"
+        street_name: "Rua"
+        user_name: "Usuario"
+        city_name: "Cidade"
+        poi_source_name: "Fonte"
+        poi_status_name: "Estado"
+        street_type_id: "Tipo de Rua"
+        user_id: "Usuario"
+        poi_status_id: "Estado"
+        control_date: Data de Controle
+        control_date_from: Desde a Data de Controle
+        control_date_to: Até a Data de Controle
+        active: "Ativo"
+        verification: "Verificado"
+        deleted: "Eliminar"
+        identifier: "Identificador"
+        old_identifier: "POI_PVid"
+        duplicated_identifier: "Identif. Repetido"
+        poi_load_id: "ID Grupo de Carga"
+        p_action_id: "Poi Accion"
+      poi_address:
+        city_id: Cidade
+        street: Nome de Rua
+        number: Número da Casa
+        neighborhood: Bairro
+        block: Quadra
+        house: Casa
+        source: Fonte
+      poi_load:
+        id: "ID"
+        name: "Nome"
+        load_date: "Data de Carga"
+        status: "Estado"
+        success_count: Salvados
+        fail_count: Não Salvados
+        already_loaded_count: Salvados Previamente
+        xls_file_path: Arquivo Fonte
+        error_file_path: Erros
+      poi_source:
+        id: "ID"
+        name: "Nome"
+      food_type:
+        id: "ID"
+        name: "Nome"
+        poi_type_id: "Tipo de Poi"

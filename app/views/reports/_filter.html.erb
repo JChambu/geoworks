@@ -1,0 +1,12 @@
+<div>
+  Pais:  
+  <%= select_tag :country_id, options_from_collection_for_select(Country.all, "id", "name", params[:country_id]), include_blank: true %>
+  Categorias:
+  <%= select_tag :poi_type_id, options_from_collection_for_select(PoiType.all, "id", "name", params[:poi_type_id]), include_blank: true %>
+  Usuarios:
+  <%= select_tag :user_id, options_from_collection_for_select(User.all, "id", "name", params[:user_id]), include_blank: true %>
+  Cadenas
+  <%= select_tag :chain_id, options_from_collection_for_select(Chain.order(:name), "id", "name", params[:chain_id]), include_blank: true %>
+  POI Action
+  <%= select_tag :p_action_id, options_from_collection_for_select(PAction.order(:name), "id", "name", params[:p_action_id]), include_blank: true %>
+</div>

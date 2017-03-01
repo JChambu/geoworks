@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @poi_address_load.name %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @poi_address_load.status %>
+</p>
+
+<p>
+  <strong>Directory name:</strong>
+  <%= @poi_address_load.directory_name %>
+</p>
+
+<%= link_to 'Edit', edit_poi_address_load_path(@poi_address_load) %> |
+<%= link_to 'Back', poi_address_loads_path %>

@@ -1,0 +1,36 @@
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin-bottom: 0 !important;
+  padding: 3px !important;
+}
+
+#content {
+  padding-top: 56px;
+  padding-bottom: 50px;
+}
+
+#content h1, h2, h3, h4, h5, h6 {
+  margin: 5px 0;
+  line-height: 20px;
+}
+
+#content .true-status {
+  color: green;
+}
+
+#content .false-status {
+  color: red;
+}
+
+.login-name {
+  font-weight: bold;
+}
+
+#header .chzn-container {
+  top: 5px;
+}
+

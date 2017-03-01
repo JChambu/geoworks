@@ -1,0 +1,66 @@
+<%- model_class = Poi -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human.titleize %></h1>
+</div>
+
+<dl>
+  <dt><strong><%= model_class.human_attribute_name(:identifier) %>:</strong></dt>
+  <dd><%= @poi.identifier %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:old_identifier) %>:</strong></dt>
+  <dd><%= @poi.old_identifier %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:duplicated_identifier) %>:</strong></dt>
+  <dd><%= @poi.duplicated_identifier %></dd>  
+  <dt><strong><%= model_class.human_attribute_name(:name) %>:</strong></dt>
+  <dd><%= @poi.name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:short_name) %>:</strong></dt>
+  <dd><%= @poi.short_name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:website) %>:</strong></dt>
+  <dd><%= @poi.website %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:email) %>:</strong></dt>
+  <dd><%= @poi.email %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:second_email) %>:</strong></dt>
+  <dd><%= @poi.second_email %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:note) %>:</strong></dt>
+  <dd><%= @poi.note %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:cel_number) %>:</strong></dt>
+  <dd><%= @poi.cel_number %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:phone) %>:</strong></dt>
+  <dd><%= @poi.phone %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:second_phone) %>:</strong></dt>
+  <dd><%= @poi.second_phone %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:fax) %>:</strong></dt>
+  <dd><%= @poi.fax %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:house_number) %>:</strong></dt>
+  <dd><%= @poi.house_number %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:contact) %>:</strong></dt>
+  <dd><%= @poi.contact %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:priority) %>:</strong></dt>
+  <dd><%= @poi.priority %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:location) %>:</strong></dt>
+  <dd><%= @poi.location %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:city_id) %>:</strong></dt>
+  <dd><%= @poi.city_complete_name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:chain_id) %>:</strong></dt>
+  <dd><%= @poi.chain_name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:food_type_id) %>:</strong></dt>
+  <dd><%= @poi.food_type_name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:poi_source_id) %>:</strong></dt>
+  <dd><%= @poi.poi_source_name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:poi_type_id) %>:</strong></dt>
+  <dd><%= @poi.poi_type_name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:poi_sub_type_id) %>:</strong></dt>
+  <dd><%= @poi.poi_sub_type_name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:street_name) %>:</strong></dt>
+  <dd><%= @poi.street_name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:street_type_id) %>:</strong></dt>
+  <dd><%= @poi.street_type_name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:user_id) %>:</strong></dt>
+  <dd><%= @poi.some_identifier %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:poi_status_id) %>:</strong></dt>
+  <dd><%= @poi.poi_status_human_name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:active) %>:</strong></dt>
+  <dd><%= @poi.human_active %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:deleted) %>:</strong></dt>
+  <dd><%= @poi.human_deleted %></dd>
+</dl>
+

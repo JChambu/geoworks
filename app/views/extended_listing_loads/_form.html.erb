@@ -1,0 +1,13 @@
+<%= simple_form_for @extended_listing_load, :html => {:class => 'form-horizontal', :multipart => true } do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :name %>
+    <%= f.file_field(:file) %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>
+

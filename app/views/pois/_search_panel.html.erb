@@ -1,0 +1,59 @@
+<%= form_for @search, :url => @search_url, :html => {:method => :get, :class => "form-inline"} do |f| %>
+<div class="row-fluid">
+  <div class="span2">    
+    <div class="row-fluid">
+      <div class="span12">
+        <%= control_group(f.select(:poi_source_id_eq, poi_sources_for_select, :include_blank => true), Poi.human_attribute_name(:poi_source_id)) %>
+        <%= control_group(f.select(:poi_status_id_eq, poi_statuses_for_select, :selected => @poi_status_id, :include_blank => true), Poi.human_attribute_name(:poi_status_id)) %>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span12">
+        <%= control_group(f.text_field(:control_date_gteq, :value => @from_date), Poi.human_attribute_name(:control_date_from)) %>
+        <%= control_group(f.text_field(:control_date_lteq, :value => @to_date), Poi.human_attribute_name(:control_date_to)) %>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span12">
+        <%= control_group(f.check_box(:active_eq), Poi.human_attribute_name(:active)) %>
+      </div>
+    </div> 
+  </div>
+  <div class="span2">
+    <%= control_group(f.text_field(:name_cont), Poi.human_attribute_name(:name)) %>
+    <%= control_group(f.select(:poi_type_id_eq, poi_types_for_select, :include_blank => true), Poi.human_attribute_name(:poi_type_id)) %>
+    <%= control_group(f.select(:poi_sub_type_id_eq, poi_type_sub_types_for_select(@poi_type_id), :include_blank => true), Poi.human_attribute_name(:poi_sub_type_id)) %>
+    <%= control_group(f.select(:food_type_id_eq, poi_type_food_types_for_select(@poi_type_id), :include_blank => true), Poi.human_attribute_name(:food_type_id)) %>
+    <%= control_group(f.select(:chain_id_eq, poi_type_chains_for_select, :include_blank => true), Poi.human_attribute_name(:chain_id)) %>
+  </div>
+  <div class="span2">    
+    <%= control_group(f.text_field(:user_name_cont), Poi.human_attribute_name(:user_id)) %>
+    <%= control_group(f.text_field(:identifier_eq), Poi.human_attribute_name(:identifier)) %>
+    <%= control_group(f.text_field(:old_identifier_eq), Poi.human_attribute_name(:old_identifier)) %>
+    <%= control_group(f.text_field(:duplicated_identifier_eq), Poi.human_attribute_name(:duplicated_identifier)) %>
+  </div>
+  <div class="span2">
+    <%= control_group(f.text_field(:website_cont), Poi.human_attribute_name(:website)) %>
+    <%= control_group(f.text_field(:email_cont), Poi.human_attribute_name(:email)) %>
+    <%= control_group(f.text_field(:cel_number_cont), Poi.human_attribute_name(:cel_number)) %>
+    <%= control_group(f.text_field(:phone_cont), Poi.human_attribute_name(:phone)) %>
+  </div>
+  <div class="span2">    
+    <%= control_group(f.select(:street_type_id_eq, street_types_for_select, :include_blank => true), Poi.human_attribute_name(:street_type_id)) %>
+    <%= control_group(f.text_field(:street_name_cont), Poi.human_attribute_name(:street_name)) %>
+    <%= control_group(f.text_field(:priority_eq), Poi.human_attribute_name(:priority)) %>
+    <%= control_group(f.select(:p_action_id_eq, p_actions_for_select, :include_blank => true), Poi.human_attribute_name(:p_action_id)) %>
+  </div>
+  <div class="span2">    
+    <%= control_group(f.select(:country_id_eq, countries_for_select, :include_blank => true), Country.human_attribute_name(:name)) %>
+    <%= control_group(f.select(:province_id_eq, provinces_for_select(@country_id), :include_blank => true), Province.human_attribute_name(:name)) %>
+    <%= control_group(f.select(:department_id_eq, departments_for_select(@province_id), :include_blank => true), Department.human_attribute_name(:name)) %>
+    <%= control_group(f.select(:city_id_eq, department_cities_for_select(@department_id), :include_blank => true), City.human_attribute_name(:name)) %> 
+  </div>
+</div>
+<div class="form-actions">
+  <%= f.submit(t("buttons.search"), :class => 'btn') %>
+<% end %>
+<%= link_to(t("buttons.validated"), @validated_url, :class => 'btn') if @validated_url %>
+<%= link_to(t("buttons.delivered"), @delivered_url, :class => 'btn') if @delivered_url %>
+</div>
