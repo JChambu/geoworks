@@ -8,6 +8,22 @@
 # server "db.example.com", user: "deploy", roles: %w{db}
 
 
+  set :stage, :staging
+  set :rails_env, 'staging'
+
+  server 'navarra.xoomcode.com', user: 'webapps', roles: %w{ web app}, my_property: :my_value
+# role-based syntax
+# ==================
+
+# Defines a role with one or multiple servers. The primary server in each
+# group is considered to be the first unless any hosts have the primary
+# property set. Specify the username and a domain or IP for the server.
+# Don't use `:all`, it's a meta role.
+
+  role :app, %w{webapps@navarra.xoomcode.com}
+  role :web, %w{webapps@navarra.xoomcode.com}
+  role :db,  %w{webapps@navarra.xoomcode.com}
+
 
 # role-based syntax
 # ==================
