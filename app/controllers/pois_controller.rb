@@ -35,8 +35,6 @@ class PoisController < ApplicationController
     @validated_url = pois_path({:q => search_params.merge({:poi_status_id_eq => PoiStatus.validated.id})})
     @delivered_url = pois_path({:q => search_params.merge({:poi_status_id_eq => PoiStatus.delivered.id})})
 
-    
-
     @search = Poi.search(params[:q])
     @search.sorts = 'last_update'
     @pois = @search.result.paginate(:page => params[:page])
