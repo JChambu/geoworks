@@ -153,6 +153,9 @@ GEM
     paper_trail (6.0.2)
       activerecord (>= 4.0, < 5.2)
       request_store (~> 1.1)
+    passenger (5.1.2)
+      rack
+      rake (>= 0.8.1)
     pg (0.19.0)
     pg_search (2.0.1)
       activerecord (>= 4.2)
@@ -283,6 +286,7 @@ DEPENDENCIES
   less-rails-bootstrap
   listen (~> 3.0.5)
   paper_trail
+  passenger
   pg (~> 0.18)
   pg_search
   pry
