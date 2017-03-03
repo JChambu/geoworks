@@ -58,7 +58,7 @@ module PoisHelper
 
   def maps
 
-    @map = Customer.find_by(subdomain: request.subdomain )
+    @map = Customer.find_by(subdomain: request.subdomains.first )
 
     return raw  "<div id='map' class='span12'></div>" if @map.nil?
 
