@@ -295,7 +295,7 @@ DEPENDENCIES
   ransack!
   rgeo
   rgeo-activerecord
-  sass-rails (~> 5.0)
+  sass-rails (~> 5.0.6)
   simple_form
   spreadsheet
   therubyracer
@@ -308,4 +308,4 @@ DEPENDENCIES
   will_paginate-bootstrap
 
 BUNDLED WITH
-   1.13.6
+   1.14.5

@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_flash_manager
-   # @flash_manager = Geoworks::FlashManager.new(controller_path, flash)
+    @flash_manager = Geoworks::FlashManager.new(controller_path, flash)
   end
 
   def flashman

@@ -26,7 +26,9 @@ module Geoworks
     config.time_zone = 'Buenos Aires'
     config.i18n.default_locale = :es
     WillPaginate.per_page = 20
+    config.enable_dependency_loading = true
     config.autoload_paths += %W(#{config.root}/lib)
     PaperTrail.serializer = JSON
+    #config.active_job.queue_adapter = :delayed_job
   end
 end

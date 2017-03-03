@@ -1,4 +1,4 @@
-module Navarra
+module Geoworks
   module Exceptions
     class FlashManagerError < Exception; end
 

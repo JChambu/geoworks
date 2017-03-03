@@ -107,6 +107,7 @@ es:
     previous: Anterior
   menu:
     users: Usuarios
+    customers: Clientes
     logout: Salir
     admin:
       title: Administración

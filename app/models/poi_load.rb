@@ -8,8 +8,8 @@ class PoiLoad < ActiveRecord::Base
   validate :file_exist?
   validate :is_file_type_valid?
 
-  before_create :restart_delayed_job
-  before_destroy :restart_delayed_job
+  #before_create :restart_delayed_job
+  #before_destroy :restart_delayed_job
   before_destroy :remove_xls_file
   before_destroy :remove_error_file
   after_destroy :remove_unused_lookup_data
@@ -101,7 +101,7 @@ class PoiLoad < ActiveRecord::Base
   end
 
   def delay_load_pois_form_xls
-    PoiLoad.delay.load_pois_form_xls(self.id)
+    PoiLoad.load_pois_form_xls(self.id)
   end
 
   def restart_delayed_job
