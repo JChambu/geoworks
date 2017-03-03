@@ -1,5 +1,6 @@
 <%= content_for :head do %>
 
+
   <script type="text/javascript">
 
 Navarra.pois.supplier_map ='<%= supplier_map_name(); %>' ; 
@@ -17,6 +18,8 @@ Navarra.pois.config.lon = <%= @poi.the_geom.x %>
 <% end  %>
 
 <%= simple_form_for @poi, :html => { :class => 'form-inline', :id => 'poi-form' } do |f| %>
+ <%= request.subdomain %>
+  
   <%= f.hidden_field :longitude %>
   <%= f.hidden_field :latitude %>
   <div class="row-fluid">
