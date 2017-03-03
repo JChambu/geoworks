@@ -19,7 +19,9 @@ Navarra.pois.config.lon = <%= @poi.the_geom.x %>
 
 <%= simple_form_for @poi, :html => { :class => 'form-inline', :id => 'poi-form' } do |f| %>
  <%= request.subdomain %>
-  
+  <%= Apartment::Tenant.current %>
+
+
   <%= f.hidden_field :longitude %>
   <%= f.hidden_field :latitude %>
   <div class="row-fluid">
