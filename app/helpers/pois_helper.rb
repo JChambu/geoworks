@@ -72,7 +72,7 @@ module PoisHelper
 
   def supplier_map_name
 
-    @map = Customer.find_by(subdomain: request.subdomain )
+    @map = Customer.find_by(subdomain: request.subdomains.first )
     if @map.nil?
       return 'osm'
     else
