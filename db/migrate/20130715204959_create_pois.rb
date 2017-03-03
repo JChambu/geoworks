@@ -30,7 +30,7 @@ class CreatePois < ActiveRecord::Migration[5.0]
       t.integer :duplicated_identifier
       t.integer :identifier
       t.date :control_date
-      t.point :the_geom, :geographic => false, :srid => 4326, :has_z => false
+      t.st_point :the_geom, :geographic => false, :srid => 4326, :has_z => false
 
       t.timestamps
     end

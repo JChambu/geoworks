@@ -259,19 +259,19 @@ ActiveRecord::Schema.define(version: 20170228223801) do
     t.integer  "street_type_id"
     t.integer  "user_id"
     t.integer  "poi_status_id"
-    t.boolean  "active",                default: true
-    t.boolean  "deleted",               default: false
+    t.boolean  "active",                                                      default: true
+    t.boolean  "deleted",                                                     default: false
     t.integer  "duplicated_identifier"
     t.integer  "identifier"
     t.date     "control_date"
-    t.point    "the_geom"
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
+    t.geometry "the_geom",              limit: {:srid=>4326, :type=>"point"}
+    t.datetime "created_at",                                                                  null: false
+    t.datetime "updated_at",                                                                  null: false
     t.integer  "poi_load_id"
     t.integer  "old_identifier"
     t.string   "identifier_hash"
     t.integer  "p_action_id"
-    t.boolean  "verification",          default: false
+    t.boolean  "verification",                                                default: false
     t.string   "internal_observation"
     t.integer  "restaurant_type_id"
     t.date     "last_update"
