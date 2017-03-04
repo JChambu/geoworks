@@ -3,7 +3,7 @@ class Customer < ApplicationRecord
   validates :name, :subdomain, presence: true
   validates :subdomain, uniqueness: true 
   
-  after_create :create_tenant, 
+  after_create :create_tenant 
 
   MAPS = %w[here osm] 
 

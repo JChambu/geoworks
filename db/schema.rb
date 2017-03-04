@@ -264,7 +264,7 @@ ActiveRecord::Schema.define(version: 20170228223801) do
     t.integer  "duplicated_identifier"
     t.integer  "identifier"
     t.date     "control_date"
-    t.geometry "the_geom",              limit: {:srid=>4326, :type=>"point"}
+    t.point "the_geom"
     t.datetime "created_at",                                                                  null: false
     t.datetime "updated_at",                                                                  null: false
     t.integer  "poi_load_id"

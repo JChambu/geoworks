@@ -61,8 +61,10 @@ module PoisHelper
     @map = Customer.find_by(subdomain: request.subdomains.first )
     return raw  "<div id='map' class='span12'></div>" if @map.nil?
     if @map.supplier_map == 'here'
-      str =  "<div id='geocoding-map' class='span12'>"
-      str <<  "</div>"
+      str =  "<div id='geocoding-map' class='span12'></div>"
+      raw str
+    else
+      str =  "<div id='map' class='span12'></div>"
       raw str
     end
   end
@@ -71,7 +73,7 @@ module PoisHelper
 
     @map = Customer.find_by(subdomain: request.subdomains.first )
     if @map.nil?
-      return 'here'
+      return 'osm'
     else
       return  @map.supplier_map.to_s
     end
