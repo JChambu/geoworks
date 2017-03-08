@@ -49,10 +49,6 @@ Navarra.geocoding = function(){
 
   },
 
-
-
-
-
   bindMapTypesComboChange = function() {
     map.set("baseMapType", nokia.maps.map.Display.NORMAL_COMMUNITY);
     $("#map-type").change(function() {
@@ -216,7 +212,8 @@ Navarra.geocoding = function(){
   },
 
   doGeocode = function(opt){
-      
+  
+    console.log('geohere');
     var options = {searchTerm: opt.searchTerm}
     if(opt["location"] != null) {
       options["location"] = opt["location"];

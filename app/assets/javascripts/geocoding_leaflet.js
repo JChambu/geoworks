@@ -1,8 +1,26 @@
 Navarra.namespace("geocoding_ol");
 Navarra.geocoding_ol = function (){
+  
+  var geocodeServiceUrl = "http://nominatim.openstreetmap.org/search";
+  var map;
   var init= function() {
 
-   var map  = new ol.Map({
+    iconStyle = new ol.style.Style({
+      image : new ol.style.Icon(({
+        anchor : [ 0.5, 46 ],
+        anchorXUnits : 'fraction',
+        anchorYUnits : 'pixels',
+        opacity : 0.75,
+        src : '/images/marker-1.png'
+      }))
+    });
+
+          var arg =  ol.proj.transform([-68.8167, -32.8833], 'EPSG:3857', 'EPSG:4326');
+            var projection = new ol.proj.Projection({
+              code: 'EPSG:4326',
+              units: 'm'
+            });
+    map  = new ol.Map({
       target: 'map',
       layers: [
         new ol.layer.Group({
@@ -30,17 +48,63 @@ Navarra.geocoding_ol = function (){
           ]
         })
       ],
+
       view: new ol.View({
-        center: ol.proj.fromLonLat([-68.8167, -32.8833]),
-        zoom: 4
+        projection: 'EPSG:4326',
+        center: [-68.8167, -32.8833],
+        zoom: 10
       })
     });
-  
+
     map.addControl(new ol.control.LayerSwitcher({tipLabel: 'Leyenda'}));
     map.addControl(new ol.control.ZoomSlider()); 
 
+    map.on('singleclick', function(evt) {
+      self.iconGeometry = new ol.geom.Point(evt.coordinate);
+      var iconFeature = new ol.Feature({
+        geometry: self.iconGeometry
+      });
+
+      iconFeature.setStyle(iconStyle);
+
+      var vectorSource = new ol.source.Vector({
+        features: [iconFeature]
+      });
+      self.dinamicPinLayer = new ol.layer.Vector({
+        source: vectorSource
+      });
+      map.addLayer(self.dinamicPinLayer); 
+    });
   };
+
+  var doGeocode = function(opt){
+
+    address = opt.county + " " +  opt.location +" " +  opt.searchTerm 
+    //address = "Ciudad Autónoma de Buenos Aires Villa Devoto pareja 4230";
+    $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + address, function(data){
+      var items = [];
+      $.each(data, function(key, val) {
+
+        iconGeometry = new ol.geom.Point([val.lon, val.lat]);
+        var iconFeature = new ol.Feature({
+          geometry: iconGeometry
+        });
+
+        iconFeature.setStyle(iconStyle);
+
+        var vectorSource = new ol.source.Vector({
+          features: [iconFeature]
+        });
+        dinamicPinLayer = new ol.layer.Vector({
+          source: vectorSource
+        });
+        map.addLayer(dinamicPinLayer); 
+      });
+
+    });
+  }
   return {
-    init: init
+    init: init,
+    doGeocode: doGeocode
   }
 }();

@@ -60,8 +60,7 @@ module Geoworks
 			end
 
 			def find_possible_duplicates attributes
-				q = self.scoped
-
+				q = self.where(nil)
 				if attributes[:name].present?
 					dictionary_terms = Term.by_names(attributes[:name].downcase.split).pluck(:name)
 					terms = attributes[:name].downcase.split - dictionary_terms
@@ -78,7 +77,8 @@ module Geoworks
 					q = q.where('pois.street_name ilike ?', "%#{attributes[:street_name]}%") if attributes[:street_name].present?
 					q = q.where(:website => attributes[:website]) if attributes[:website].present?
 					q = q.where(:city_id => attributes[:city_id]) if attributes[:city_id].present?
-					pois = q.all.sort! do |a,b|
+          
+					pois = q.all.sort  do |a,b|
 						(b.name.downcase.split & attributes[:name].downcase.split ).count <=> (a.name.downcase.split & attributes[:name].downcase.split ).count
 					end
 					return pois.first(5)

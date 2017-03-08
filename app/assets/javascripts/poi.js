@@ -22,12 +22,8 @@ Navarra.pois.action_index = function() {
         console.log(old);
         return old=='+ Filtros' ? 'Ocultar Filtros' : '+ Filtros';
       });
-
     });
-
-
   } 
-
   return {
     init: init
   }
@@ -193,18 +189,26 @@ Navarra.pois.action_edit = function() {
         var location = $("#poi_city_id option:selected").text();
         var locationArr = location.split(", ");
 
-        if(locationArr[1] != undefined) {
-          options["location"] = locationArr[1];
+        if(locationArr[0] != undefined) {
+          options["location"] = locationArr[0];
         }
 
-        if(locationArr[2] != undefined) {
+        if(locationArr[1] != undefined) {
           options["county"] = locationArr[2];
         }
 
         if(locationArr[3] != undefined) {
           options["country"] = locationArr[3];
         }
-        Navarra.geocoding.doGeocode(options);
+
+    if (Navarra.pois.supplier_map == 'here')
+        {
+
+          Navarra.geocoding.doGeocode(options);
+        }else{
+        
+          Navarra.geocoding_ol.doGeocode(options);
+        }
       });
     },
 
