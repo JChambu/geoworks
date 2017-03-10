@@ -1,4 +1,15 @@
 <%- model_class = Poi -%>
+
+
+<div>
+  <ul class="nav nav-tabs">
+    <li><%= link_to "Pois", pois_path %></li>
+    <li class="active"><%= link_to "Check", pois_check_path %></li>
+  </ul>
+</div>
+
+
+
 <%= form_tag delete_multiple_pois_path, method: :delete do %>
   <table class="table table-striped table-condensed">
     <thead>

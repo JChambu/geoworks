@@ -121,7 +121,7 @@ es:
       poi_sources: Fuentes de Poi
       load_locations: Cargar Localidades
       generate_deliveries: Generar Entregas
-      extended_listings: Listado
+      extended_listings: ExLs 
       categories: categorias
     reports:
       title: Reportes
@@ -136,7 +136,7 @@ es:
       upload: Cargas Poi
       duplicated: Duplicados
     poi_addresses: 
-      title: Poi addresses
+      title: Pampa
       new: Nuevo poi Address
       loads: Cargar Poi Address
       georeferenced: Poi Georeferenciados
