@@ -197,8 +197,7 @@ class Poi < ActiveRecord::Base
   end
 
   def geometry_setted?
-
-    p the_geom
+    
     if self.the_geom.nil?
       self.errors.add(:base, :empty_geometry)
       return false

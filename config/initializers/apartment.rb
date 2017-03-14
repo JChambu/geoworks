@@ -69,8 +69,9 @@ Apartment.configure do |config|
   # Any schemas added here will be available along with your selected Tenant.
   #
   # config.persistent_schemas = %w{ hstore }
-  config.persistent_schemas = %w{postgis }
-
+   config.persistent_schemas = %w{  postgis }
+  #config.persistent_schemas = %w{ shared_extensions }
+  config.default_schema = "public"
   # <== PostgreSQL only options
   #
 
