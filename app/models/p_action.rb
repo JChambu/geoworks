@@ -10,5 +10,5 @@ class PAction < ActiveRecord::Base
 
 def name_action name
         PAction.find_by(name: name)
-
+end
 end
