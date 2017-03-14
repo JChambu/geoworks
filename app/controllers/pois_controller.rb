@@ -32,8 +32,8 @@ class PoisController < ApplicationController
       :control_date_lteq => Time.now.strftime("%d %b %Y")
     }
 
-    @validated_url = pois_path({:q => search_params.merge({:poi_status_id_eq => PoiStatus.name_status(PoiStatus.validated.id)})})
-    @delivered_url = pois_path({:q => search_params.merge({:poi_status_id_eq => PoiStatus.name_status(PoiStatus.delivered.id)})})
+    @validated_url = pois_path({:q => search_params.merge({:poi_status_id_eq => PoiStatus.name_status('validated').id})})
+    @delivered_url = pois_path({:q => search_params.merge({:poi_status_id_eq => PoiStatus.name_status('delivered').id})})
 
     @search = Poi.search(params[:q])
     @search.sorts = 'last_update'
