@@ -157,9 +157,9 @@ class Poi < ActiveRecord::Base
 
   def was_validated?
 
-    if ( self.p_action_id != 5  && self.p_action_id != PAction.check.id )
-      (self.poi_status_id == PoiStatus.validated.id or
-       self.poi_status_id == PoiStatus.delivered.id) 
+    if ( self.p_action_id != 5  && self.p_action_id != PAction.name_action('check').id )
+      (self.poi_status_id == PoiStatus.name_status('validated').id or
+       self.poi_status_id == PoiStatus.name_status('delivered').id) 
     end
   end
 

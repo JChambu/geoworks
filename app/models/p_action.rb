@@ -8,7 +8,7 @@ class PAction < ActiveRecord::Base
     PAction.human_attribute_name self.name
   end
 
-def name_action name
+  def self.name_action name
         PAction.find_by(name: name)
 end
 end
