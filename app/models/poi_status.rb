@@ -4,16 +4,12 @@ class PoiStatus < ActiveRecord::Base
 
   before_destroy :has_related_pois?
 
-   PoiStatus.all.each do |status|
-    self.class.class_eval do
-      method_name = "#{status.name.gsub(" ", "_").underscore}"
-      define_method method_name do
-        PoiStatus.find_by(name: status.name)
-      end
-    end
-  end
 
-  def self.sorted_by_name
+  def self.name_status name 
+        PoiStatus.find_by(name: name)
+end
+
+def self.sorted_by_name
     self.order(:name)
   end
 
