@@ -220,7 +220,7 @@ class Poi < ActiveRecord::Base
   end
 
     def factory
-          RGeo::Geographic.spherical_factory(:srid => 4326)
+          RGeo::Geographic.spherical_factory(:srid => 4326, :geo_type => 'point')
     end
 
 
