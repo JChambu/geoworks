@@ -37,11 +37,10 @@
             <% nav_item('menu.reports.pois', reports_pois_path) +
               nav_item('menu.reports.users', reports_users_path) + 
               nav_item('menu.reports.poi_verification', reports_poi_verification_path) + 
-              nav_item('menu.reports.poi_verification_maps', reports_poi_verification_maps_path)  
             %>
         <% end %>
 
-        <%= nav_dropdown_item 'Verificacion Puntos' do %>
+        <%= nav_dropdown_item 'Procesos' do %>
           <% nav_item('menu.poi_addresses.title', poi_addresses_path ) +
             nav_item('menu.poi_addresses.loads', poi_address_loads_path ) +
             nav_item('menu.poi_addresses.georeferenced', poi_addresses_georeferenced_path ) + 
