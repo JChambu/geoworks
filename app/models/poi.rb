@@ -5,7 +5,8 @@ class Poi < ActiveRecord::Base
   extend Geoworks::Poi::Finders  
 
   has_paper_trail
- # set_rgeo_factory_for_column(:the_geom, RGeo::Geographic.spherical_factory(:srid => 4326))
+#  set_rgeo_factory_for_column(:the_geom, RGeo::Geographic.spherical_factory(:srid => 4326))
+  require 'rgeo/active_record/spatial_factory_store'
 
   belongs_to :poi_type
   belongs_to :poi_load
@@ -227,9 +228,12 @@ class Poi < ActiveRecord::Base
   def build_geom
     if self.latitude and self.longitude and
       !self.latitude.to_s.empty? and !self.longitude.to_s.empty?
-     # self.the_geom = "POINT(#{self.longitude} #{self.latitude})"
-      self.the_geom = factory.point(self.longitude, self.latitude)
-    
+      #self.the_geom = "POINT(#{self.longitude} #{self.latitude})"
+      #self.the_geom = factory.point(self.longitude, self.latitude)
+      self.the_geom = factory.parse_wkt("point(#{self.longitude} #{self.latitude})")
+   
+
+
     end
   end
 

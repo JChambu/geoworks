@@ -6,13 +6,13 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </a>
-      <a class="brand" href="<%= root_path %>"><%= image_tag('geoworks.jpg',  height: '20', width: '40')%> Bienvenido
-        <%= link_to current_user.some_identifier, edit_user_path(current_user), class: "login-name"  %>
-      </a>
-      <div class="container-fluid nav-collapse">
+      <a class="brand" href="<%= root_path %>"><%= image_tag('geoworks_2.png',  height: '30%', width: '30%')%> Bienvenido</a>
+
+        <ul class="nav pull-left">
+        <li><%= link_to t('menu.logout'), destroy_user_session_path, method: :delete %></li>
+        <li><%= link_to current_user.some_identifier, edit_user_path(current_user), class: "login-name"%></li>
+  </ul>
         <ul class="nav pull-right">
-
-
           <%= nav_dropdown_item 'Servicios' do %>
             <% nav_item('menu.pois.title', pois_path)  + 
               nav_item('menu.admin.extended_listings', extended_listings_path ) +   
@@ -57,14 +57,9 @@
         <% end %>
         <% if can?(:index, AppConfiguration) %>
         <% end %>
-
-
         <li class="divider-vertical"></li>
-
         <li class="divider-vertical"></li>
-        <li><%= link_to t('menu.logout'), destroy_user_session_path, method: :delete %></li>
         </ul>
-      </div>
     </div>
   </div>
 </div>
