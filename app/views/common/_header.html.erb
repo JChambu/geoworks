@@ -6,61 +6,63 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </a>
-      <a class="brand" href="<%= root_path %>"><%= image_tag('gw.png',  height: '20', width: '40')%></a>
-      <div class="brand">
-        <%= link_to_unless_current image_tag('argentina.png',  height: '32', width: '32'), locale: "es"  %>
-        <%= link_to_unless_current image_tag('brasil.png',  height: '32', width: '32'), locale: "pt" %>
-      </div>
+      <a class="brand" href="<%= root_path %>"><%= image_tag('geoworks.jpg',  height: '20', width: '40')%> Bienvenido
+        <%= link_to current_user.some_identifier, edit_user_path(current_user), class: "login-name"  %>
+      </a>
       <div class="container-fluid nav-collapse">
         <ul class="nav pull-right">
 
-        <%= nav_item('menu.pois.title', pois_path) %>
 
-        <% if can? :visualize, :poi_addresses %>
-          <%= nav_dropdown_item 'menu.poi_addresses.title' do %>
-            <% nav_item('menu.poi_addresses.title', poi_addresses_path ) +
-              nav_item('menu.poi_addresses.loads', poi_address_loads_path ) +
-              nav_item('menu.poi_addresses.georeferenced', poi_addresses_georeferenced_path ) %>
-          <% end  %>
-
-        <% end  %>
-
-          <%= nav_dropdown_item 'menu.admin.extended_listings' do %>
-            <%nav_item('menu.admin.extended_listings', extended_listings_path ) + 
-            nav_item('menu.admin.extended_listings_duplicated', duplicated_extended_listings_path ) + 
-            nav_item('menu.admin.extended_listings_georeferenced', georeferenced_extended_listings_path ) + 
-            nav_item('menu.admin.extended_listing_loads', extended_listing_loads_path ) %> 
+          <%= nav_dropdown_item 'Servicios' do %>
+            <% nav_item('menu.pois.title', pois_path)  + 
+              nav_item('menu.admin.extended_listings', extended_listings_path ) +   
+              nav_item('menu.admin.extended_listing_loads', extended_listing_loads_path ) %> 
           <% end %>
-        <%= nav_item('menu.pois.duplicated', duplicated_pois_path) %>
-        <%= nav_dropdown_item 'menu.reports.title' do %>
-          <% nav_item('menu.reports.pois', reports_pois_path) +
-            nav_item('menu.reports.users', reports_users_path) + 
-            nav_item('menu.reports.poi_verification', reports_poi_verification_path) + 
-            nav_item('menu.reports.poi_verification_maps', reports_poi_verification_maps_path)  
-          %>
-        <% end if can?(:visualize, :pois_report) %>
+
+
+          <%= nav_dropdown_item 'Ajustes' do %>
+            <% nav_item('menu.admin.restaurant_types', restaurant_types_path) +
+              nav_item('menu.admin.street_types', street_types_path) +
+              nav_item('menu.admin.poi_types', poi_types_path) +
+              nav_item('menu.admin.chains', chains_path) +
+              nav_item('menu.admin.food_types', food_types_path) +
+              nav_item('menu.admin.poi_sub_types', poi_sub_types_path) +
+              nav_item('menu.admin.load_locations', load_locations_path) +
+              nav_item('menu.pois.upload', poi_loads_path) +
+              nav_item('menu.admin.categories', categories_path) +
+              nav_item('menu.admin.generate_deliveries', generate_deliveries_path) %>
+          <% end %>
+
+          <%= nav_dropdown_item 'menu.reports.title' do %>
+            <% nav_item('menu.reports.pois', reports_pois_path) +
+              nav_item('menu.reports.users', reports_users_path) + 
+              nav_item('menu.reports.poi_verification', reports_poi_verification_path) + 
+              nav_item('menu.reports.poi_verification_maps', reports_poi_verification_maps_path)  
+            %>
+        <% end %>
+
+        <%= nav_dropdown_item 'Verificacion Puntos' do %>
+          <% nav_item('menu.poi_addresses.title', poi_addresses_path ) +
+            nav_item('menu.poi_addresses.loads', poi_address_loads_path ) +
+            nav_item('menu.poi_addresses.georeferenced', poi_addresses_georeferenced_path ) + 
+            nav_item('menu.pois.duplicated', duplicated_pois_path)  %>
+        <% end %>
+
+        <%= nav_dropdown_item 'menu.admin.title' do %>
+          <% nav_item('menu.users', users_path) +
+            nav_item('menu.customers', customers_path) %>
+        <% end %>
+
+        <%  if can?(:visualize, :pois_report) %>
+        <% end %>
         <% if can?(:index, AppConfiguration) %>
-          <%= nav_dropdown_item 'menu.admin.title' do %>
-            <% 
-                nav_item('menu.admin.restaurant_types', restaurant_types_path) +
-                nav_item('menu.admin.street_types', street_types_path) +
-                nav_item('menu.admin.poi_types', poi_types_path) +
-                nav_item('menu.admin.chains', chains_path) +
-                nav_item('menu.admin.food_types', food_types_path) +
-                nav_item('menu.admin.poi_sub_types', poi_sub_types_path) +
-                nav_item('menu.admin.load_locations', load_locations_path) +
-                nav_item('menu.pois.upload', poi_loads_path) +
-                nav_item('menu.admin.categories', categories_path) +
-                nav_item('menu.users', users_path) +
-                nav_item('menu.customers', customers_path) +
-                nav_item('menu.admin.generate_deliveries', generate_deliveries_path) %>
-            <% end %>
-          <% else %>
-          <% end %>          
-          <li class="divider-vertical"></li>
-          <li><%= link_to current_user.some_identifier, edit_user_path(current_user), class: "login-name"  %></li>
-          <li class="divider-vertical"></li>
-          <li><%= link_to t('menu.logout'), destroy_user_session_path, method: :delete %></li>
+        <% end %>
+
+
+        <li class="divider-vertical"></li>
+
+        <li class="divider-vertical"></li>
+        <li><%= link_to t('menu.logout'), destroy_user_session_path, method: :delete %></li>
         </ul>
       </div>
     </div>

@@ -16,7 +16,7 @@ es:
             qty: Cantidad
       users:
         title: Reporte de Usuarios
-      poi_verification: Verificacion de pois
+      poi_verification: Verificacion de poi
     poi_load:
       form:
         pois_upload_explanation_title: Recordar
@@ -47,7 +47,7 @@ es:
           to_many_poist_for_download: "No puede descargar más de %{count} Pois. Cambie su filtro de búsqueda e intente otra vez"
           download_error: "Ocurrio un error al intentar descargar el archivo" 
           deliver_error: "Ocurrio un error al intentar marcar los Pois como entregados"
-          deliver_success: "Se marcaron como \"Entregado\": %{count} pois"
+          deliver_success: "Se marcaron como \"Entregado\": %{count} poi"
           deliver_warning: "Se marcarán como enviados todos Pois que caigan dentro del filtro elegido. Esta operación no puede deshacerse. Desea continuar?"
           control_date_range_doesnt_exist: "Debe especificar un rango de fechas para poder realizar esta acción"
         buttons:
@@ -121,16 +121,16 @@ es:
       poi_sources: Fuentes de Poi
       load_locations: Cargar Localidades
       generate_deliveries: Generar Entregas
-      extended_listings: ExLs 
+      extended_listings: LED 
       categories: categorias
     reports:
       title: Reportes
-      pois: Pois
+      pois: Poi
       users: Usuarios
-      poi_verification: Verificacion de pois
+      poi_verification: Verificacion de poi
     pois:
       new: Nuevo Poi
-      title: Pois
+      title: Poi
       check: Check
       list: Listado
       upload: Cargas Poi
@@ -244,7 +244,7 @@ es:
       poi:
         undefined_control_date: Debe seleccionar una fecha de control.
         nonexistent: No existe Poi con el identificador dado.
-        invalid_poi_action: "El poi Action para los pois nuevos, debe ser: new o check "
+        invalid_poi_action: "El poi Action para los poi nuevos, debe ser: new o check "
         same_original_and_duplicated: El identificador del duplicado no puede ser igual al del Poi.
         empty_geometry: Debe seleccionar una ubicación en el mapa.
         restaurant_type_error: El tipo de Restaurant es solo para México

@@ -8,6 +8,9 @@
   <% if can? :manage, User %>
     <%= f.input :role, :required => true, :collection => roles_for_select, :prompt => t('simple_form.select_item_prompt') %>
   <% end %>
+  
+        <%= link_to_unless_current image_tag('argentina.png',  height: '32', width: '32'), locale: "es"  %>
+        <%= link_to_unless_current image_tag('brasil.png',  height: '32', width: '32'), locale: "pt" %>
   <%= f.input :password %>
   <div class="form-actions">
     <%= f.button :submit, :class => 'btn-primary' %>

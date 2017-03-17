@@ -26,7 +26,7 @@ module Geoworks
 			end
 
 			def validated
-				self.where(:poi_status_id => PoiStatus.validated.id)
+				self.where(:poi_status_id => PoiStatus.name_status("validated").id)
 			end
   
       def month_back

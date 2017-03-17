@@ -101,7 +101,7 @@ class Poi < ActiveRecord::Base
 
   def  action_type
 
-    if (poi_source_id == PoiSource.gisworking.id && (p_action_id != PAction.Add.id && p_action_id != PAction.check.id ))
+    if (poi_source_id == PoiSource.gisworking.id && (p_action_id != PAction.name_action("Add").id && p_action_id != PAction.name_action("check").id ))
       self.errors.add(:base, :invalid_poi_action)
     end
   end
