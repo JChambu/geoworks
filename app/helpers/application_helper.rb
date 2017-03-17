@@ -20,6 +20,10 @@ module ApplicationHelper
 		content_tag :li, link_to(t(label), path)
 	end
 
+	def nav_divider 
+    "<li class='divider'></li>".html_safe
+    
+  end
 	def nav_dropdown_item label
 		return nav_item(label, "#") unless block_given?
 		content_tag(:li, class: 'dropdown') do
