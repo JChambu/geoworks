@@ -28,10 +28,18 @@ module ApplicationHelper
 		return nav_item(label, "#") unless block_given?
 		content_tag(:li, class: 'dropdown') do
 			link_to(t(label), "#", class: 'dropdown-toggle', data: {toggle: 'dropdown'}) +
+
 			content_tag(:ul, yield, class: 'dropdown-menu')
 		end
 	end
 
+	def nav_subdropdown_item label
+		return nav_item(label, "#") unless block_given?
+		content_tag(:li, class: 'dropdown-submenu') do
+			link_to(t(label), "#", class: 'dropdown-toggle', data: {toggle: 'dropdown'}) +
+			content_tag(:ul, yield, class: 'dropdown-menu')
+	end
+	end
 	def pager collection
 		will_paginate collection,
 			:previous_label => t("pager.previous"),
