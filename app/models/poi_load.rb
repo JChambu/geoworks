@@ -204,7 +204,7 @@ begin
     load_poi_priority(poi_data, row)    
     load_poi_last_update(poi_data, row)    
 
-    poi_data[:poi_status_id] = PoiStatus.not_validated.id
+    poi_data[:poi_status_id] = PoiStatus.name_status("not_validated").id
     poi_data[:poi_source_id] = PoiSource.navteq.id
     poi_data[:active] = true
     poi_data[:deleted] = false
