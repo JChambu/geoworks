@@ -228,9 +228,9 @@ class Poi < ActiveRecord::Base
   def build_geom
     if self.latitude and self.longitude and
       !self.latitude.to_s.empty? and !self.longitude.to_s.empty?
-      #self.the_geom = "POINT(#{self.longitude} #{self.latitude})"
+      self.the_geom = "POINT(#{self.longitude} #{self.latitude})"
       #self.the_geom = factory.point(self.longitude, self.latitude)
-      self.the_geom = factory.parse_wkt("point(#{self.longitude} #{self.latitude})")
+      #self.the_geom = factory.parse_wkt("point(#{self.longitude} #{self.latitude})")
    
 
 
