@@ -79,13 +79,17 @@ Navarra.geocoding_ol = function (){
 
   var doGeocode = function(opt){
 
+    //removeAllMarkers();
     address = opt.county + " " +  opt.location +" " +  opt.searchTerm 
     //address = "Ciudad Autónoma de Buenos Aires Villa Devoto pareja 4230";
+
     $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + address, function(data){
       var items = [];
       $.each(data, function(key, val) {
 
         iconGeometry = new ol.geom.Point([val.lon, val.lat]);
+        
+
         var iconFeature = new ol.Feature({
           geometry: iconGeometry
         });
@@ -98,11 +102,18 @@ Navarra.geocoding_ol = function (){
         dinamicPinLayer = new ol.layer.Vector({
           source: vectorSource
         });
-        map.addLayer(dinamicPinLayer); 
+        map.addLayer(dinamicPinLayer);
+        map.getView().setCenter([val.lon, val.lat]);
       });
 
     });
   }
+
+ var  removeAllMarkers =  function()  
+  {
+      map.getLayers().item(1).getSource().clear();
+  }
+ 
   return {
     init: init,
     doGeocode: doGeocode
