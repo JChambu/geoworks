@@ -1,9 +1,13 @@
 Navarra.namespace("geocoding_ol");
 Navarra.geocoding_ol = function (){
-  
+
   var geocodeServiceUrl = "http://nominatim.openstreetmap.org/search";
   var map;
+  var vectorSource; 
+  var pointLayer;   
   var init= function() {
+
+    vectorSource = new ol.source.Vector();
 
     iconStyle = new ol.style.Style({
       image : new ol.style.Icon(({
@@ -15,11 +19,11 @@ Navarra.geocoding_ol = function (){
       }))
     });
 
-          var arg =  ol.proj.transform([-68.8167, -32.8833], 'EPSG:3857', 'EPSG:4326');
-            var projection = new ol.proj.Projection({
-              code: 'EPSG:4326',
-              units: 'm'
-            });
+    var arg =  ol.proj.transform([-68.8167, -32.8833], 'EPSG:3857', 'EPSG:4326');
+    var projection = new ol.proj.Projection({
+      code: 'EPSG:4326',
+      units: 'm'
+    });
     map  = new ol.Map({
       target: 'map',
       layers: [
@@ -60,72 +64,62 @@ Navarra.geocoding_ol = function (){
     map.addControl(new ol.control.ZoomSlider()); 
 
     map.on('singleclick', function(evt) {
-      self.iconGeometry = new ol.geom.Point(evt.coordinate);
-      var iconFeature = new ol.Feature({
-        geometry: self.iconGeometry
-      });
 
-      iconFeature.setStyle(iconStyle);
+      addMarker(evt.coordinate);
 
-      var vectorSource = new ol.source.Vector({
-        features: [iconFeature]
-      });
-      self.dinamicPinLayer = new ol.layer.Vector({
-        source: vectorSource
-      });
-      map.addLayer(self.dinamicPinLayer); 
-        var extent = dinamicPinLayer.getSource().getExtent();
-        map.getView().fit(extent, map.getSize());
-        map.getView().setZoom(18);
     });
   };
 
+
+  var addMarker = function(coord){
+
+    map.removeLayer(pointLayer);
+
+    iconGeometry = new ol.geom.Point(coord);
+    var iconFeature = new ol.Feature({
+      geometry: iconGeometry
+    });
+
+    iconFeature.setStyle(iconStyle);
+
+    var vectorSource = new ol.source.Vector({
+      features: [iconFeature]
+    });
+
+    pointLayer = new ol.layer.Vector({
+      source: vectorSource
+    });
+
+    map.addLayer(pointLayer);
+    var extent = pointLayer.getSource().getExtent();
+    map.getView().fit(extent, map.getSize());
+    map.getView().setZoom(18);
+
+  };
+
   var doGeocode = function(opt){
-
-
     //removeAllMarkers();
     address = opt.county + " " +  opt.location +" " +  opt.searchTerm 
-    //address = "Ciudad Autónoma de Buenos Aires Villa Devoto pareja 4230";
-
     $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + address, function(data){
       var items = [];
       $.each(data, function(key, val) {
 
-    Navarra.geocoding.latitude = val.lat;
-    Navarra.geocoding.longitude = val.lon;
-       
-        iconGeometry = new ol.geom.Point([val.lon, val.lat]);
-        
+        Navarra.geocoding.latitude = val.lat;
+        Navarra.geocoding.longitude = val.lon;
+        coord = [val.lon, val.lat]
 
-        var iconFeature = new ol.Feature({
-          geometry: iconGeometry
-        });
+        addMarker(coord);
 
-        iconFeature.setStyle(iconStyle);
-
-        var vectorSource = new ol.source.Vector({
-          features: [iconFeature]
-        });
-        
-       var  dinamicPinLayer = new ol.layer.Vector({
-          source: vectorSource
-        });
- featuresOverlay.getFeatures().clear();      
-
-        map.addLayer(dinamicPinLayer);
-        var extent = dinamicPinLayer.getSource().getExtent();
-        map.getView().fit(extent, map.getSize());
-        map.getView().setZoom(18);
       });
 
     });
   }
 
- var  removeAllMarkers =  function()  
+  var  removeAllMarkers =  function()  
   {
-      map.getLayers().item(1).getSource().clear();
+    map.getLayers().item(0).getSource().clear();
   }
- 
+
   return {
     init: init,
     doGeocode: doGeocode
