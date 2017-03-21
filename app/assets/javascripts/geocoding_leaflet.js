@@ -74,10 +74,14 @@ Navarra.geocoding_ol = function (){
         source: vectorSource
       });
       map.addLayer(self.dinamicPinLayer); 
+        var extent = dinamicPinLayer.getSource().getExtent();
+        map.getView().fit(extent, map.getSize());
+        map.getView().setZoom(18);
     });
   };
 
   var doGeocode = function(opt){
+
 
     //removeAllMarkers();
     address = opt.county + " " +  opt.location +" " +  opt.searchTerm 
@@ -87,6 +91,9 @@ Navarra.geocoding_ol = function (){
       var items = [];
       $.each(data, function(key, val) {
 
+    Navarra.geocoding.latitude = val.lat;
+    Navarra.geocoding.longitude = val.lon;
+       
         iconGeometry = new ol.geom.Point([val.lon, val.lat]);
         
 
@@ -99,11 +106,16 @@ Navarra.geocoding_ol = function (){
         var vectorSource = new ol.source.Vector({
           features: [iconFeature]
         });
-        dinamicPinLayer = new ol.layer.Vector({
+        
+       var  dinamicPinLayer = new ol.layer.Vector({
           source: vectorSource
         });
+ featuresOverlay.getFeatures().clear();      
+
         map.addLayer(dinamicPinLayer);
-        map.getView().setCenter([val.lon, val.lat]);
+        var extent = dinamicPinLayer.getSource().getExtent();
+        map.getView().fit(extent, map.getSize());
+        map.getView().setZoom(18);
       });
 
     });

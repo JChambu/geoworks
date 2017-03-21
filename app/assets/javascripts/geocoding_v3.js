@@ -45,8 +45,6 @@ Navarra.geocoding = function(){
     searchManager = platform.getPlacesService();
     var routingService = platform.getRoutingService();
 
-
-
   },
 
   bindMapTypesComboChange = function() {
