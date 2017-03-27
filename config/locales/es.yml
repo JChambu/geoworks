@@ -106,7 +106,8 @@ es:
     next: Siguiente
     previous: Anterior
   menu:
-    users: Usuarios
+    users: 
+      edit: Editar
     customers: Clientes
     logout: Salir
     admin:

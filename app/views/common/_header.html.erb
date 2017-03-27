@@ -6,14 +6,11 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </a>
-      <ul class="nav pull-left">
+      <ul class="nav">
         <div class="pull-left">
           <%= image_tag('geoworks_h.png',  height: '40%', width: '40%')%>
-          <%= link_to current_user.some_identifier, edit_user_path(current_user), class: "login-name"%>
-          <%= link_to t('menu.logout'), destroy_user_session_path, method: :delete %>
+
         </div>
-
-
 
         <%= nav_dropdown_item 'Servicios' do %>
           <% nav_item('menu.pois.title', pois_path)  + 
@@ -34,36 +31,44 @@
         <% end %>
 
 
-    <li class="dropdown" >
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administracion<span class="caret"></span></a>
-      <ul class="dropdown-menu" role="menu" >
-          <%= nav_item('menu.users', users_path) +
-            nav_item('menu.customers', customers_path) +
-            nav_item('menu.admin.generate_deliveries', generate_deliveries_path)+
-            nav_divider
-          %>
-        <li class="dropdown-submenu">
-          <a tabindex="-1" href="#">Ajustes</a>
-          <ul class="dropdown-menu">
-          <%=  nav_item('menu.admin.restaurant_types', restaurant_types_path) +
-            nav_item('menu.admin.street_types', street_types_path) +
-            nav_item('menu.admin.poi_types', poi_types_path) +
-            nav_item('menu.admin.chains', chains_path) +
-            nav_item('menu.admin.food_types', food_types_path) +
-            nav_item('menu.admin.poi_sub_types', poi_sub_types_path) +
-            nav_item('menu.admin.load_locations', load_locations_path) +
-            nav_item('menu.pois.upload', poi_loads_path) +
-            nav_item('menu.admin.categories', categories_path) 
-          %>
+        <li class="dropdown" >
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administracion<span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu" >
+            <%= nav_item('menu.users', users_path) +
+              nav_item('menu.customers', customers_path) +
+              nav_item('menu.admin.generate_deliveries', generate_deliveries_path)+
+              nav_divider
+            %>
+          <li class="dropdown-submenu">
+            <a tabindex="-1" href="#">Ajustes</a>
+            <ul class="dropdown-menu">
+              <%=  nav_item('menu.admin.restaurant_types', restaurant_types_path) +
+                nav_item('menu.admin.street_types', street_types_path) +
+                nav_item('menu.admin.poi_types', poi_types_path) +
+                nav_item('menu.admin.chains', chains_path) +
+                nav_item('menu.admin.food_types', food_types_path) +
+                nav_item('menu.admin.poi_sub_types', poi_sub_types_path) +
+                nav_item('menu.admin.load_locations', load_locations_path) +
+                nav_item('menu.pois.upload', poi_loads_path) +
+                nav_item('menu.admin.categories', categories_path) 
+              %>
+          </ul>
+          </li>
           </ul>
         </li>
       </ul>
-    </li>
-
-    <%  if can?(:visualize, :pois_report) %>
-    <% end %>
-    <% if can?(:index, AppConfiguration) %>
-    <% end %>
+      <ul class="nav pull-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= current_user.some_identifier %><span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><%= link_to  t('menu.users.edit'), edit_user_path(current_user), class: "login-name"%></li>
+            <li><%= link_to t('menu.logout'), destroy_user_session_path, method: :delete %></li>
+          </ul>
+        </li>
+        <%  if can?(:visualize, :pois_report) %>
+        <% end %>
+        <% if can?(:index, AppConfiguration) %>
+        <% end %>
       </ul>
     </div>
   </div>
