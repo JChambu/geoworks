@@ -1,9 +1,8 @@
 <%= simple_form_for @user, :html => { :class => 'form-horizontal' } do |f| %>  
-  <%= f.input :namesss %>
+  <%= f.input :name %>
   <%= f.input :email %>
   <%= f.input :role, :required => true, :collection => roles_for_select, :prompt => t('simple_form.select_item_prompt') %>
 
-  <%= f.input :locale,   :collection => roles_for_select%>
   
   <%= f.input :password %>
   <div class="form-actions">

@@ -12,21 +12,18 @@ class Ability
       can :manage, :all
     end
    
+    if user.is? "Moderator"
+      can :manage, :all
+    end
+    
+    
     if user.is? "User"
       #Poi
       can :manage, Poi
       can :visualize, :duplicated
       can :visualize, :possible_duplicates
       can :search, :pois
-      can :index, :cities
-      can :index, :provinces
-      can :index, :departments
-      can :index, :department_cities
       #Poi sub types
-      can :visualize, :poi_type_sub_types
-      can :visualize, :poi_type_chains
-      can :visualize, :poi_type_food_types
-      #User 
       can :edit, User do |u|
         u.id == user.id
       end
@@ -35,6 +32,11 @@ class Ability
       end
       #Administation
     end
+
+    
+
+
+
 
     # Define abilities for the passed in user here. For example:
     #

@@ -1,6 +1,6 @@
 module UsersHelper
   def roles_for_select
-    User::ROLES.map { |role| [t("roles.#{role.downcase}"), role] }
+    User::ROLES.sort_by  { |role| [t("roles.#{role.downcase}"), role] }
   end
 
   def users_for_select

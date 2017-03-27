@@ -20,7 +20,7 @@ class User < ApplicationRecord
   validate :is_role_valid?
   before_destroy :has_related_pois?
 
-  ROLES = %w[User Admin Moderator  Guest]
+  ROLES = %w[User Admin Moderator]
 
   def self.user_role
     index = ROLES.find_index "User"

@@ -86,7 +86,7 @@ class PoiAddressesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def poi_address_params
-      params.require(:poi_address).permit(:city_id, :street, :number, :neighborhood, :block, :house, :user_id, :source, :latitude, :longitude, :p_action_id).merge(user_id: current_user.id)
+      params.require(:poi_address).permit(:city_id, :street, :number, :neighborhood, :block, :house, :user_id, :source, :latitude, :longitude, :p_action_id, :city_name, :department_name, :province_name, :country_name).merge(user_id: current_user.id)
 
     end
 end

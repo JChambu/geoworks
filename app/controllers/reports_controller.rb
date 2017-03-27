@@ -1,6 +1,6 @@
 class ReportsController < ApplicationController
   before_action :prepare_search_values, only: [:pois, :users]
-  
+ 
   def pois
     authorize! :visualize, :pois_report
     @search_url = reports_pois_path
@@ -47,7 +47,7 @@ class ReportsController < ApplicationController
         :active_eq => true,
         :control_date_gteq => Time.now.monday.strftime("%d %b %Y"),
         :control_date_lteq => Time.now.strftime("%d %b %Y"),
-        :poi_status_id_eq => PoiStatus.delivered.id
+        :poi_status_id_eq => PoiStatus.name_status("delivered").id
       }
       @poi_status_id = params[:q][:poi_status_id_eq]
     end
