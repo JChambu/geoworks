@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170228223801) do
+ActiveRecord::Schema.define(version: 20170329141559) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -154,6 +154,31 @@ ActiveRecord::Schema.define(version: 20170228223801) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "parkings", force: :cascade do |t|
+    t.string   "name"
+    t.string   "street"
+    t.string   "brand"
+    t.string   "operator"
+    t.integer  "facility_type_id"
+    t.integer  "levels"
+    t.integer  "city_id"
+    t.geometry "the_geom",                  limit: {:srid=>4326, :type=>"point"}
+    t.geometry "the_geom_entrance",         limit: {:srid=>4326, :type=>"point"}
+    t.geometry "the_geom_exit",             limit: {:srid=>4326, :type=>"point"}
+    t.string   "phone"
+    t.string   "website"
+    t.string   "detailed_pricing_model"
+    t.decimal  "price",                                                           precision: 10, scale: 2
+    t.string   "currency"
+    t.string   "available_payment_methods"
+    t.string   "regular_openning_hours"
+    t.string   "exceptions_opening"
+    t.string   "flag"
+    t.geometry "the_geom_area",             limit: {:srid=>0, :type=>"polygon"}
+    t.datetime "created_at",                                                                               null: false
+    t.datetime "updated_at",                                                                               null: false
+  end
+
   create_table "pg_search_documents", force: :cascade do |t|
     t.text     "content"
     t.string   "searchable_type"
@@ -266,7 +291,7 @@ ActiveRecord::Schema.define(version: 20170228223801) do
     t.integer  "duplicated_identifier"
     t.integer  "identifier"
     t.date     "control_date"
-    t.point "the_geom"
+    t.geometry "the_geom",              limit: {:srid=>4326, :type=>"point"}
     t.datetime "created_at",                                                                  null: false
     t.datetime "updated_at",                                                                  null: false
     t.integer  "poi_load_id"

@@ -13,6 +13,9 @@ class PoisController < ApplicationController
     @pois = @checkover.paginate(:page => params[:page]) 
   end
 
+  
+
+
   def around
     #render json: Poi.round(params[:name])
     render json: Poi.pois_around(params[:latitude], params[:longitude], params[:poi_type_id])

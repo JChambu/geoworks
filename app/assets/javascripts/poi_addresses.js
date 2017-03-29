@@ -14,78 +14,115 @@ Navarra.poi_addresses.action_new = function(){
 
 
   cities = function() { $("#poi_address_city_id").ajaxChosen({
-      type: 'GET',
-      url: '/locations/cities',
-      dataType: 'json'
+    type: 'GET',
+    url: '/locations/cities',
+    dataType: 'json'
 
-    }, function (data) {
-      var results = [];
+  }, function (data) {
+    var results = [];
 
-      $.each(data, function (i, val) {
-        results.push({value: val.value, text: val.text});
+    $.each(data, function (i, val) {
+      results.push({value: val.value, text: val.text});
+    });
+    return results;
+  });
+  },
+
+
+    loadLatLonFields = function() {
+      $(".btn-primary").click(function(e) {
+        $("#poi_address_latitude").attr("value", Navarra.geocoding.latitude);
+        $("#poi_address_longitude").attr("value", Navarra.geocoding.longitude);
       });
-      return results;
-    });
+    },
+
+
+    bindSuggestButtonClick = function() {
+      $("#suggest-locations-btn").click(function(e) {
+        e.preventDefault();
+
+        if($("#poi_address_street").val() == '') {
+          alert("Debe ingresar una Calle para poder sugerir ubicaciones.");
+          return;
+        }
+
+        if( $("#poi_address_number").val() == '') {
+          alert("Debe ingresar Número para poder sugerir ubicaciones.");
+          return;
+        }
+
+        var searchTerm = $("#poi_address_street").val() + " " + $("#poi_address_number").val();
+
+
+        var options = {"searchTerm": searchTerm};
+
+        if($("#poi_city_id").val() == '') {
+          alert("Debe seleccionar una ciudad para poder sugerir ubicaciones.");
+          return;
+        }
+
+        var city_name =   $("#poi_address_city_name").val(); 
+        var department_name =   $("#poi_address_department_name").val();
+        var province_name =   $("#poi_address_province_name").val();
+        var country_name =   $("#poi_address_country_name").val()
+
+        // var location = $("#poi_address_city_id option:selected").text();
+        //var locationArr = location.split(", ");
+
+        if (city_name != "")  {
+          options["location"] = city_name;
+        }
+
+        if(department_name != "") {
+          options["department"] = department_name;
+        }
+
+        if (country_name != ""){
+          options["country"] = province_name;
+        }
+
+        Navarra.geocoding.doGeocode(options);
+      });
+    },
+
+
+
+  onMapClick = function(evt) {
+    if(!isMapClickEnabled) {
+      return;
+    }
+
+    //map.removeObjects(map.getObjects());
+    var coord = map.screenToGeo(evt.currentPointer.viewportX, evt.currentPointer.viewportY);
+    addSelectedMarker(coord.lat, coord.lng);
   },
 
-
-  loadLatLonFields = function() {
-    $(".btn-primary").click(function(e) {
-      $("#poi_address_latitude").attr("value", Navarra.geocoding.latitude);
-      $("#poi_address_longitude").attr("value", Navarra.geocoding.longitude);
-    });
-  },
-
-
-  bindSuggestButtonClick = function() {
-    $("#suggest-locations-btn").click(function(e) {
-      e.preventDefault();
- 
-      if($("#poi_address_street").val() == '') {
-        alert("Debe ingresar una Calle para poder sugerir ubicaciones.");
+    addSelectedMarker = function(lat, lon) {
+      if(!lat || !lon) {
         return;
       }
 
-      if( $("#poi_address_number").val() == '') {
-        alert("Debe ingresar Número para poder sugerir ubicaciones.");
-        return;
-      }
+      Navarra.geocoding.latitude = lat;
+      Navarra.geocoding.longitude = lon;
 
-      var searchTerm = $("#poi_address_street").val() + " " + $("#poi_address_number").val();
+      text = "S";
+      markup = markupTemplate.replace('${text}', text).replace('${FILL}', 'green');
+      icon = new H.map.Icon(markup);
+
+      circle = new H.map.Circle({lat: lat, lng: lon}, 400);
+
+      pois_around(lat, lon);
+      map.setCenter({lat:lat,lng:lon});
+      map.setZoom('19',true);
+      var marker_sug = new H.map.Marker({lat: lat, lng: lon}, { icon: icon} )
+      map.addObject(marker_sug);
+      map.addObject(circle);
+      addOriginalMarker();
+      //map.zoomTo(map.getBoundingBox(), false);
+    },
 
 
-      var options = {"searchTerm": searchTerm};
-
-      if($("#poi_city_id").val() == '') {
-        alert("Debe seleccionar una ciudad para poder sugerir ubicaciones.");
-        return;
-      }
-
-      var city_name =   $("#poi_address_city_name").val(); 
-      var department_name =   $("#poi_address_department_name").val();
-      var province_name =   $("#poi_address_province_name").val();
-      var country_name =   $("#poi_address_country_name").val()
-
-     // var location = $("#poi_address_city_id option:selected").text();
-      //var locationArr = location.split(", ");
-
-      if (city_name != "")  {
-        options["location"] = city_name;
-      }
-
-      if(department_name != "") {
-        options["department"] = department_name;
-      }
-
-      if (country_name != ""){
-        options["country"] = province_name;
-      }
-
-      Navarra.geocoding.doGeocode(options);
-    });
-  },
-
-   init = function() {
+    init = function() {
       cities();
       bindSuggestButtonClick();
       loadLatLonFields();
@@ -95,8 +132,8 @@ Navarra.poi_addresses.action_new = function(){
         Navarra.poi_addresses.config.originalLat,
         Navarra.poi_addresses.config.originalLon,
         Navarra.poi_addresses.config.otherpois
-        );
-  }
+      );
+    }
   return {
     init: init,
   }
@@ -121,6 +158,7 @@ Navarra.poi_addresses.action_georeferenced = function(){
     geocoder = platform.getGeocodingService();
     mapContainer = document.getElementById("geocoding-map");
     var defaultLayers = platform.createDefaultLayers();
+    
     map = new H.Map(mapContainer, defaultLayers.normal.map, {
       zoom: 4,
       center: new H.geo.Point(-32.934929,-68.774414)
@@ -151,7 +189,43 @@ Navarra.poi_addresses.action_georeferenced = function(){
       }
     });
     //    addinfo(map, defaultLayers, ui);
+
+
+    var strip = new H.geo.Strip();
+
+    strip.pushPoint({lat:53.3477, lng:-6.2597});
+    strip.pushPoint({lat:51.5008, lng:-0.1224});
+    strip.pushPoint({lat:48.8567, lng:2.3508});
+    strip.pushPoint({lat:52.5166, lng:13.3833});
+
+    map.addObject(new H.map.Polyline(
+      strip, { style: { lineWidth: 10 }}
+    ));
+
+
+
   };
+
+
+
+     draw_line = function(){
+
+      map.addEventListener('dragstart', function(ev) {
+        var target = ev.target;
+        if (target instanceof H.map.Marker) {
+          behavior.disable();
+        }
+      }, false);
+
+      map.addEventListener('dragend', function(ev) {
+        var target = ev.target;
+        if (target instanceof mapsjs.map.Marker) {
+          behavior.enable();
+        }
+      }, false);
+
+
+    }
 
   /*addinfo = function(map, defaultLayers, ui){
 
@@ -167,7 +241,7 @@ Navarra.poi_addresses.action_georeferenced = function(){
   },*/
   return{
     init:init
-      // addinfo:addinfo
+    // addinfo:addinfo
   }
 }();
 Navarra.poi_addresses.action_edit = function(){

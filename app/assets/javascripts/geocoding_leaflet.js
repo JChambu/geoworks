@@ -13,30 +13,28 @@ Navarra.geocoding_ol = function (){
 
     var regexParse = new RegExp('([a-z][^.]+).*');
     var domain = document.domain;
-     subdomain = regexParse.exec(domain);
+    subdomain = regexParse.exec(domain);
+
+    var layer_pois = 'geoworks_'+ subdomain[1] + ':pois';
+
+
+    var appId = 'ZTVBhWvg8dw4GhrG9fcL';
+    var appCode = 'jOEPEj4JkZvbAiv7GP0E2A';
+    var hereLayers = [
+      {
+        base: 'base',
+        type: 'maptile',
+        scheme: 'normal.day',
+        app_id: appId,
+        app_code: appCode
+      }]
+
+    var urlTpl = 'https://{1-4}.{base}.maps.cit.api.here.com' +
+      '/{type}/2.1/maptile/newest/{scheme}/{z}/{x}/{y}/256/png' +
+      '?app_id={app_id}&app_code={app_code}&useCIT=true&useHTTPS=true';
+
+    vectorSource = new ol.source.Vector();
     
-  var layer_pois = 'geoworks_'+ subdomain[1] + ':pois';
-   
-
-var appId = 'ZTVBhWvg8dw4GhrG9fcL';
-          var appCode = 'jOEPEj4JkZvbAiv7GP0E2A';
-          var hereLayers = [
-                    {
-                                base: 'base',
-                                type: 'maptile',
-                                scheme: 'normal.day',
-                                app_id: appId,
-                                app_code: appCode
-                              }]
-
-      var urlTpl = 'https://{1-4}.{base}.maps.cit.api.here.com' +
-              '/{type}/2.1/maptile/newest/{scheme}/{z}/{x}/{y}/256/png' +
-              '?app_id={app_id}&app_code={app_code}&useCIT=true&useHTTPS=true';
-    
-            
-            
-            vectorSource = new ol.source.Vector();
-
     iconStyle = new ol.style.Style({
       image : new ol.style.Icon(({
         anchor : [ 0.5, 46 ],
@@ -71,9 +69,9 @@ var appId = 'ZTVBhWvg8dw4GhrG9fcL';
               visible: 'false',
               source: new ol.source.XYZ({
                 url: createUrl(urlTpl, hereLayers[0]),
-                      attributions: 'Map Tiles &copy; ' + new Date().getFullYear() + ' ' +
-                        '<a href="http://developer.here.com">HERE</a>'
-                    })
+                attributions: 'Map Tiles &copy; ' + new Date().getFullYear() + ' ' +
+                '<a href="http://developer.here.com">HERE</a>'
+              })
             })
           ]
         }),
@@ -109,24 +107,23 @@ var appId = 'ZTVBhWvg8dw4GhrG9fcL';
       addMarker(evt.coordinate);
 
     });
-  
-  function createUrl(tpl, layerDesc) {
-            return tpl
-              .replace('{base}', layerDesc.base)
-              .replace('{type}', layerDesc.type)
-              .replace('{scheme}', layerDesc.scheme)
-              .replace('{app_id}', layerDesc.app_id)
-              .replace('{app_code}', layerDesc.app_code);
-          }
-  
+
+    function createUrl(tpl, layerDesc) {
+      return tpl
+        .replace('{base}', layerDesc.base)
+        .replace('{type}', layerDesc.type)
+        .replace('{scheme}', layerDesc.scheme)
+        .replace('{app_id}', layerDesc.app_id)
+        .replace('{app_code}', layerDesc.app_code);
+    }
   };
 
 
   var addMarker = function(coord){
 
     map.removeLayer(pointLayer);
-        Navarra.geocoding.latitude = coord[1];
-        Navarra.geocoding.longitude = coord[0];
+    Navarra.geocoding.latitude = coord[1];
+    Navarra.geocoding.longitude = coord[0];
     iconGeometry = new ol.geom.Point(coord);
     var iconFeature = new ol.Feature({
       geometry: iconGeometry
@@ -156,7 +153,7 @@ var appId = 'ZTVBhWvg8dw4GhrG9fcL';
       var items = [];
       $.each(data, function(key, val) {
 
-        
+
         coord = [val.lon, val.lat]
 
         addMarker(coord);

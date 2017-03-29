@@ -9,7 +9,6 @@
 <div class="page-header row-fluid">
   <div class="span2">
     <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %> [# <%= @pois.count%>]</h1>
-
   </div>
   <div class="span1" style="text-align: right;">
     <%= link_to "Nuevo"  , new_poi_path, class: 'form-inline btn btn-info' %>
@@ -23,6 +22,7 @@
   <ul class="nav nav-tabs">
     <li class="active"><%= link_to "Pois", pois_path %></li>
     <li><%= link_to "Check", pois_check_path %></li>
+    <li><%= link_to "Parkings", parkings_path %></li>
   </ul>
 </div>
 <div>

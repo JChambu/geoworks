@@ -1,0 +1,120 @@
+<%= simple_form_for(parking) do |f| %>
+  <% if parking.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(parking.errors.count, "error") %> prohibited this parking from being saved:</h2>
+
+      <ul>
+      <% parking.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :street %>
+    <%= f.text_field :street %>
+  </div>
+
+  <div class="field">
+    <%= f.label :brand %>
+    <%= f.text_field :brand %>
+  </div>
+
+  <div class="field">
+    <%= f.label :operator %>
+    <%= f.text_field :operator %>
+  </div>
+
+  <div class="field">
+    <%= f.label :facility_type_id %>
+    <%= f.text_field :facility_type_id %>
+  </div>
+
+  <div class="field">
+    <%= f.label :levels %>
+    <%= f.text_field :levels %>
+  </div>
+
+  <div class="field">
+    <%= f.label :city_id %>
+    <%= f.text_field :city_id %>
+  </div>
+
+<div id="geocoding-map"></div>
+  <div class="field">
+    <%= f.label :the_geom %>
+    <%= f.text_field :the_geom %>
+  </div>
+
+  <div class="field">
+    <%= f.label :the_geom_entrance %>
+    <%= f.text_field :the_geom_entrance %>
+  </div>
+
+  <div class="field">
+    <%= f.label :the_geom_exit %>
+    <%= f.text_field :the_geom_exit %>
+  </div>
+
+  <div class="field">
+    <%= f.label :phone %>
+    <%= f.text_field :phone %>
+  </div>
+
+  <div class="field">
+    <%= f.label :website %>
+    <%= f.text_field :website %>
+  </div>
+
+  <div class="field">
+    <%= f.label :detailed_pricing_model %>
+    <%= f.text_field :detailed_pricing_model %>
+  </div>
+
+  <div class="field">
+    <%= f.label :price %>
+    <%= f.text_field :price %>
+  </div>
+
+  <div class="field">
+    <%= f.label :currency %>
+    <%= f.text_field :currency %>
+  </div>
+
+  <div class="field">
+    <%= f.label :available_payment_methods %>
+    <%= f.text_field :available_payment_methods %>
+  </div>
+
+  <div class="field">
+    <%= f.label :regular_openning_hours %>
+    <%= f.text_field :regular_openning_hours %>
+  </div>
+
+  <div class="field">
+    <%= f.label :exceptions_opening %>
+    <%= f.text_field :exceptions_opening %>
+  </div>
+
+  <div class="field">
+    <%= f.label :flag %>
+    <%= f.text_field :flag %>
+  </div>
+
+  <div class="field">
+    <%= f.label :the_geom_area %>
+    <%= f.text_field :the_geom_area %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

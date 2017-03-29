@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :parkings
   get 'locations/cities' => 'locations#cities'
   get 'pois/possible_duplicates' => 'pois#possible_duplicates'
   get 'extended_listings/possible_duplicates' => 'extended_listings#possible_duplicates'
