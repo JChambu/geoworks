@@ -4,14 +4,13 @@
       <h2><%= pluralize(parking.errors.count, "error") %> prohibited this parking from being saved:</h2>
 
       <ul>
-      <% parking.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
+        <% parking.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
       </ul>
     </div>
   <% end %>
 
-  
 
   <div class="field">
     <%= f.label :name %>
@@ -47,8 +46,40 @@
     <%= f.label :city_id %>
     <%= f.text_field :city_id %>
   </div>
+  <div class="span3">
+      </div>
+  <div id="geocoding-map">
+    <table>
+      <tr>
+        <th></th>
+        <th>lat</th>
+        <th>lon</th>
+        <th></th>
+      </tr>
+      <tr>
+        <td>Ubicacion</td>
+        <td><%= f.input :longitude, label: false %></td>
+        <td><%= f.input :latitude, label: false %>
+        <td><%= link_to "+", "#", :class => 'btn geom', :id => 'add-marker-geom' %></td>
+        <td><%= link_to "+", "#", :class => 'btn geom', :id => 'add-polygon' %></td>
+      </tr>
+      <tr>
+        <td>Entrada</td>
+        <td><%= f.input :longitude_entry, label: false %></td>
+        <td><%= f.input :latitude_entry, label: false %>
+        <td><%= link_to "+", "#", :class => 'btn geom', :id => 'add-marker-entry' %></td>
+      </td>
+      </tr>
+      <tr>
+        <td>Salida</td>
+        <td><%= f.input :longitude_exit, label: false %></td>
+        <td><%= f.input :latitude_exit, label: false %>
+        <td><%= link_to "+", "#", :class => 'btn geom', :id => 'add-marker-exit' %></td>
+      </td>
+      </tr>
+    </table>    
 
-<div id="geocoding-map"></div>
+  </div>
   <div class="field">
     <%= f.label :the_geom %>
     <%= f.text_field :the_geom %>
@@ -115,6 +146,6 @@
   </div>
 
   <div class="actions">
-    <%= f.submit %>
+    <%= f.button :submit, :class => 'btn-primary', data: {disable_with: "Enviando"}%>
   </div>
 <% end %>

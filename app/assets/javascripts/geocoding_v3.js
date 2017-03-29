@@ -55,6 +55,8 @@ Navarra.geocoding = function(){
   }
 
   onMapClick = function(evt) {
+
+    console.log(evt);
     if(!isMapClickEnabled) {
       return;
     }
@@ -66,7 +68,6 @@ Navarra.geocoding = function(){
   },
 
   enableMapClick = function(enabled) {
-  console.log(enabled);
     isMapClickEnabled = enabled;
   },
 
