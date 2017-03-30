@@ -1,43 +1,22 @@
 <%= simple_form_for(parking) do |f| %>
   <%= f.error_notification %>
 
+  <div class="row-fluid">
+    <div class="span7">
+      <%= f.input :name %>
+      <%= f.input :brand %>
+      <%= f.input :operator %>
+      <%= f.input :facility_type_id, :collection => poi_types_for_select  %>
+      <%= f.input :levels %>
+      <%= f.input :city_id,  collection: city_for_chosen(@parking.city_id),  input_html: {class: "span8"} %>
+      <%= f.input :street, input_html: {class: 'street'} %>
+      <%= f.input :number %>
+      <%= f.input :polygon,  as: :hidden%>
+        <%= link_to t("views.poi.form.buttons.suggest_location"), "#", :class => 'btn', :id => 'suggest-locations'%>
 
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= f.label :brand %>
-    <%= f.text_field :brand %>
-  </div>
-
-  <div class="field">
-    <%= f.label :operator %>
-    <%= f.text_field :operator %>
-  </div>
-
-  <div class="field">
-    <%= f.label :facility_type_id %>
-    <%= f.text_field :facility_type_id %>
-  </div>
-
-  <div class="field">
-    <%= f.label :levels %>
-    <%= f.text_field :levels %>
-  </div>
-
-    <%= f.input :city_id,  collection: city_for_chosen(@parking.city_id),  input_html: {class: "span8"} %>
-    <%= f.input :street, input_html: {class: 'street'} %>
-    <%= f.input :number %>
-  
-        <div class="span3">
-          <%= link_to t("views.poi.form.buttons.suggest_location"), "#", :class => 'btn', :id => 'suggest-locations' %>
-        </div>
-    </div>
   <div class="span3">
-      </div>
-  <div id="geocoding-map">
+  </div>
+
     <table>
       <tr>
         <th></th>
@@ -57,60 +36,34 @@
         <td><%= f.input :longitude_entry, label: false %></td>
         <td><%= f.input :latitude_entry, label: false %>
         <td><%= link_to "+", "#", :class => 'btn geom', :id => 'add-marker-entry' %></td>
-      </td>
+        </td>
       </tr>
       <tr>
         <td>Salida</td>
         <td><%= f.input :longitude_exit, label: false %></td>
         <td><%= f.input :latitude_exit, label: false %>
         <td><%= link_to "+", "#", :class => 'btn geom', :id => 'add-marker-exit' %></td>
-      </td>
+        </td>
       </tr>
     </table>    
-<%= f.input :polygon %>
 
-  </div>
+  <div id="geocoding-map">
 
-    <%= f.input :phone %>
-    <%= f.input :website %>
-
-
-  <div class="field">
-    <%= f.label :detailed_pricing_model %>
-    <%= f.text_field :detailed_pricing_model %>
-  </div>
-
-  <div class="field">
-    <%= f.label :price %>
-    <%= f.text_field :price %>
-  </div>
-
-  <div class="field">
-    <%= f.label :currency %>
-    <%= f.text_field :currency %>
-  </div>
-
-  <div class="field">
-    <%= f.label :available_payment_methods %>
-    <%= f.text_field :available_payment_methods %>
-  </div>
-
-  <div class="field">
-    <%= f.label :regular_openning_hours %>
-    <%= f.text_field :regular_openning_hours %>
-  </div>
-
-  <div class="field">
-    <%= f.label :exceptions_opening %>
-    <%= f.text_field :exceptions_opening %>
-  </div>
-
-  <div class="field">
-    <%= f.label :flag %>
-    <%= f.text_field :flag %>
-  </div>
+    </div>
+   
+  <%= f.input :phone %>
+  <%= f.input :website %>
+    <%= f.input  :detailed_pricing_model %>
+    <%= f.input :price %>
+    <%= f.input :currency %>
+    <%= f.input :available_payment_methods %>
+    <%= f.input :regular_openning_hours %>
+    <%= f.input :exceptions_opening %>
+    <%= f.input :flag %>
 
   <div class="actions">
     <%= f.button :submit, :class => 'btn-primary', data: {disable_with: "Enviando"}%>
+  </div>
+    </div>
   </div>
 <% end %>
