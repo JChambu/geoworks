@@ -1,7 +1,8 @@
 Navarra.namespace("parkings");
 Navarra.namespace("parkings.action_new");
 Navarra.namespace("parkings.action_edit");
-var map, nameEnableGeom;
+var map, nameEnableGeom, polystrip, polygon, polygon_area;
+
 Navarra.parkings.action_new = function(){
   var init = function(){
 
@@ -41,10 +42,9 @@ Navarra.parkings.action_new = function(){
     map.addObject(new H.map.Polyline(
       strip, { style: { lineWidth: 10 }}
     ));
-
+   polygon = null, paintReady = true;
+   polystrip = new H.geo.Strip();
     bindAddMarkerGeomClick();
-    map.addEventListener('tap', onMapClick_parking);
-    //    loadLatLonFieldsParking();
 
   },
 
@@ -53,17 +53,29 @@ Navarra.parkings.action_new = function(){
         evt.preventDefault();
         $(this).toggleClass("btn-success");
         nameEnableGeom = this.id;
+        draw_polygon_and_point();
       });
     }
 
 
+  draw_polygon_and_point = function(){
+
+    if (nameEnableGeom == 'clear'){
+      polygon_area = [];
+      map.addEventListener("pointerdown", push_point_array);
+      map.addEventListener("pointermove", point_move);
+      map.addEventListener("dbltap", event_stop);
+    }
+    else{
+      map.addEventListener('tap', onMapClick_parking);
+    }
+  }
+
+
   onMapClick_parking = function(evt) {
 
-    if (nameEnableGeom == 'add-polygon'){
-    }else{
-      coord = map.screenToGeo(evt.currentPointer.viewportX, evt.currentPointer.viewportY);
-      addMarker(coord.lat, coord.lng)
-    }
+    coord = map.screenToGeo(evt.currentPointer.viewportX, evt.currentPointer.viewportY);
+    addMarker(coord.lat, coord.lng)
   }
 
   addMarker = function(lat, lng){
@@ -122,6 +134,105 @@ Navarra.parkings.action_new = function(){
           break;
       }
     }
+
+  push_point_array = function(e){
+    if(paintReady)
+    {
+      //push a point into array
+      polystrip.pushPoint(map.screenToGeo(e.currentPointer.viewportX, e.currentPointer.viewportY));
+      coord =  map.screenToGeo(e.currentPointer.viewportX, e.currentPointer.viewportY);
+      //create a polygon if points array has one point inside.
+     coordinate = (coord.lat + " " +  coord.lng)
+      
+      polygon_area.push(coordinate); 
+     
+      if(polystrip.getPointCount() == 3) {
+        pushPolygon();
+      }
+      else if(polystrip.getPointCount() == 2){
+        pushPolyline();
+      }
+    }
+  };
+
+  point_move = function(e){
+
+    paintReady = true;
+    if(paintReady)
+    {
+      // update polygon shape by pointermove event
+      if (polystrip.getPointCount() > 2) updatePolygon(map.screenToGeo(e.currentPointer.viewportX, e.currentPointer.viewportY));
+    }
+  };
+
+
+  event_stop = function(e){
+
+    console.log("dbl");
+    if(paintReady)
+    {
+      //stop event propagation
+      e.originalEvent.stopImmediatePropagation();
+
+      //set path and fillColor of polygon to finish the digitizer
+      polygon.setStrip(polystrip);
+    
+      console.log(polygon_area[0]);
+
+
+      polygon_area.push(polygon_area[0]);
+
+      $("#parking_polygon").attr("value", polygon_area);
+      //set paintReady flag to false to prevent painting polygon
+      paintReady = false;
+      polystrip = new H.geo.Strip();
+    }
+  };
+
+  /*var cns = document.getElementById("clear");
+  cns.onclick = function()
+  {
+    if(polygon)
+      map.removeObject(polygon);
+    paintReady = true;
+  };*/
+
+  //update the shape of polygon by pointermove event
+  updatePolygon = function(point) {
+    
+    polygon.setStrip(new H.geo.Strip(polystrip.getLatLngAltArray().concat(point.lat, point.lng, undefined)));
+
+
+
+  };
+
+  //push polygon to map
+  pushPolygon = function(){
+    map.removeObject(polyline);
+    polygon = new H.map.Polygon(
+      polystrip, {
+        style: {
+          strokeColor: "#f00",
+          lineWidth: 1
+        }
+      }
+    );
+    
+    map.addObject(polygon);
+  };
+
+  //push polyline to map
+  pushPolyline = function(){
+    polyline = new H.map.Polyline(
+      polystrip, {
+        style: {
+          strokeColor: "#f00",
+          lineWidth: 1
+        }
+      }
+    );
+    map.addObject(polyline);
+  };
 
 
   return {

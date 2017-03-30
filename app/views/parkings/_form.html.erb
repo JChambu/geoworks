@@ -61,7 +61,7 @@
         <td><%= f.input :longitude, label: false %></td>
         <td><%= f.input :latitude, label: false %>
         <td><%= link_to "+", "#", :class => 'btn geom', :id => 'add-marker-geom' %></td>
-        <td><%= link_to "+", "#", :class => 'btn geom', :id => 'add-polygon' %></td>
+        <td><%= link_to "+", "#", :class => 'btn geom', :id => 'clear' %></td>
       </tr>
       <tr>
         <td>Entrada</td>
@@ -78,6 +78,7 @@
       </td>
       </tr>
     </table>    
+<%= f.input :polygon %>
 
   </div>
   <div class="field">
