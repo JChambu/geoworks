@@ -1,5 +1,10 @@
 class Parking < ApplicationRecord
 
+
+  
+  belongs_to :city
+  
+  
   before_validation :build_geom
   before_save :build_geom
   before_save :build_geom_polygon

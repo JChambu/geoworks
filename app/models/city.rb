@@ -6,6 +6,7 @@ class City < ActiveRecord::Base
   has_many :poi_addresses
   has_many :poi_address_load
   has_many :extended_listing
+  has_many :parkings
 
   before_destroy :has_related_pois?
 

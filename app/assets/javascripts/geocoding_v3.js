@@ -212,7 +212,6 @@ Navarra.geocoding = function(){
 
   doGeocode = function(opt){
   
-    console.log('geohere');
     var options = {searchTerm: opt.searchTerm}
     if(opt["location"] != null) {
       options["location"] = opt["location"];

@@ -1,25 +1,10 @@
 <%= simple_form_for(parking) do |f| %>
-  <% if parking.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(parking.errors.count, "error") %> prohibited this parking from being saved:</h2>
-
-      <ul>
-        <% parking.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= f.error_notification %>
 
 
   <div class="field">
     <%= f.label :name %>
     <%= f.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= f.label :street %>
-    <%= f.text_field :street %>
   </div>
 
   <div class="field">
@@ -42,10 +27,14 @@
     <%= f.text_field :levels %>
   </div>
 
-  <div class="field">
-    <%= f.label :city_id %>
-    <%= f.text_field :city_id %>
-  </div>
+    <%= f.input :city_id,  collection: city_for_chosen(@parking.city_id),  input_html: {class: "span8"} %>
+    <%= f.input :street, input_html: {class: 'street'} %>
+    <%= f.input :number %>
+  
+        <div class="span3">
+          <%= link_to t("views.poi.form.buttons.suggest_location"), "#", :class => 'btn', :id => 'suggest-locations' %>
+        </div>
+    </div>
   <div class="span3">
       </div>
   <div id="geocoding-map">
@@ -81,30 +70,10 @@
 <%= f.input :polygon %>
 
   </div>
-  <div class="field">
-    <%= f.label :the_geom %>
-    <%= f.text_field :the_geom %>
-  </div>
 
-  <div class="field">
-    <%= f.label :the_geom_entrance %>
-    <%= f.text_field :the_geom_entrance %>
-  </div>
+    <%= f.input :phone %>
+    <%= f.input :website %>
 
-  <div class="field">
-    <%= f.label :the_geom_exit %>
-    <%= f.text_field :the_geom_exit %>
-  </div>
-
-  <div class="field">
-    <%= f.label :phone %>
-    <%= f.text_field :phone %>
-  </div>
-
-  <div class="field">
-    <%= f.label :website %>
-    <%= f.text_field :website %>
-  </div>
 
   <div class="field">
     <%= f.label :detailed_pricing_model %>
@@ -139,11 +108,6 @@
   <div class="field">
     <%= f.label :flag %>
     <%= f.text_field :flag %>
-  </div>
-
-  <div class="field">
-    <%= f.label :the_geom_area %>
-    <%= f.text_field :the_geom_area %>
   </div>
 
   <div class="actions">
