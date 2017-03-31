@@ -7,10 +7,10 @@
       <%= f.input :brand %>
       <%= f.input :operator %>
       <%= f.input :facility_type_id, :collection => poi_types_for_select  %>
-      <%= f.input :levels %>
+      <%= f.input :levels, as: :string %>
       <%= f.input :city_id,  collection: city_for_chosen(@parking.city_id),  input_html: {class: "span8"} %>
       <%= f.input :street, input_html: {class: 'street'} %>
-      <%= f.input :number %>
+      <%= f.input :number, as: :string %>
       <%= f.input :polygon,  as: :hidden%>
         <%= link_to t("views.poi.form.buttons.suggest_location"), "#", :class => 'btn', :id => 'suggest-locations'%>
 
@@ -28,38 +28,36 @@
         <td>Ubicacion</td>
         <td><%= f.input :longitude, label: false %></td>
         <td><%= f.input :latitude, label: false %>
-        <td><%= link_to "+", "#", :class => 'btn geom', :id => 'add-marker-geom' %></td>
-        <td><%= link_to "+", "#", :class => 'btn geom', :id => 'clear' %></td>
+        <td><%= link_to "Agregar Ubicacion", "#", :class => 'btn geom', :id => 'add-marker-geom' %></td>
+        <td><%= link_to "Crear Poligono", "#", :class => 'btn geom', :id => 'clear' %></td>
       </tr>
       <tr>
         <td>Entrada</td>
         <td><%= f.input :longitude_entry, label: false %></td>
         <td><%= f.input :latitude_entry, label: false %>
-        <td><%= link_to "+", "#", :class => 'btn geom', :id => 'add-marker-entry' %></td>
+        <td><%= link_to "Uibacion Entrada", "#", :class => 'btn geom', :id => 'add-marker-entry' %></td>
         </td>
       </tr>
       <tr>
         <td>Salida</td>
         <td><%= f.input :longitude_exit, label: false %></td>
         <td><%= f.input :latitude_exit, label: false %>
-        <td><%= link_to "+", "#", :class => 'btn geom', :id => 'add-marker-exit' %></td>
+        <td><%= link_to "Ubicacion Salida", "#", :class => 'btn geom', :id => 'add-marker-exit' %></td>
         </td>
       </tr>
     </table>    
 
-  <div id="geocoding-map">
-
-    </div>
+  <div id="geocoding-map"></div>
    
   <%= f.input :phone %>
   <%= f.input :website %>
-    <%= f.input  :detailed_pricing_model %>
-    <%= f.input :price %>
-    <%= f.input :currency %>
-    <%= f.input :available_payment_methods %>
-    <%= f.input :regular_openning_hours %>
+    <%= f.select  :detailed_pricing_model,  ['Maquina', 'Humano'] %>
+    <%= f.input :price, as: :string %>
+    <%= f.select :currency, ['Pesos Argentino', 'Dolar', 'Pesos Chileno', 'Euro']  %>
+    <%= f.input :available_payment_methods  %>
+    <%= f.select :regular_openning_hours, [4,8,12,16,24] %>
     <%= f.input :exceptions_opening %>
-    <%= f.input :flag %>
+    <%= f.input :flag  %>
 
   <div class="actions">
     <%= f.button :submit, :class => 'btn-primary', data: {disable_with: "Enviando"}%>
