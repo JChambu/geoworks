@@ -58,7 +58,8 @@
     <%= f.input :available_payment_methods  %>
     <%= f.select :regular_openning_hours, [4,8,12,16,24] %>
     <%= f.input :exceptions_opening %>
-    <%= f.input :flag  %>
+    <%= f.label :flag  %>
+    <%= f.check_box :flag  %>
     <%= f.select :restrinctions, ['Permit only','Residents only', 'Customers only' 'Valet only', 'Event only', 'Motorcycles only', 'Handicapped only'] %>
     <%= f.label :max_drive_height  %>
     <%= f.check_box :max_drive_height  %>
