@@ -2,7 +2,8 @@
   <%= f.error_notification %>
 
   <div class="row-fluid">
-    <div class="span7">
+    <div class="span12">
+    <div class="span7 ">
       <%= f.input :name %>
       <%= f.input :brand %>
       <%= f.input :operator %>
@@ -12,8 +13,8 @@
       <%= f.input :street, input_html: {class: 'street'} %>
       <%= f.input :number, as: :string %>
       <%= f.input :polygon,  as: :hidden%>
-        <%= link_to t("views.poi.form.buttons.suggest_location"), "#", :class => 'btn', :id => 'suggest-locations'%>
-
+      <%= link_to t("views.poi.form.buttons.suggest_location"), "#", :class => 'btn', :id => 'suggest-locations'%>
+    </div>
   <div class="span3">
   </div>
 
@@ -58,10 +59,71 @@
     <%= f.select :regular_openning_hours, [4,8,12,16,24] %>
     <%= f.input :exceptions_opening %>
     <%= f.input :flag  %>
+    <%= f.select :restrinctions, ['Permit only','Residents only', 'Customers only' 'Valet only', 'Event only', 'Motorcycles only', 'Handicapped only'] %>
+    <%= f.label :max_drive_height  %>
+    <%= f.check_box :max_drive_height  %>
+    <%= f.label :max_drive_width %>
+    <%= f.check_box :max_drive_width %>
+    <%= f.label :elevators %>
+    <%= f.check_box :elevators %>
+    <%= f.label :escalators %>
+    <%= f.check_box :escalators %>
+    <%= f.label :handicapped_accessible %>
+    <%= f.check_box :handicapped_accessible %>
+    <%= f.label :handicapped_parking_spaces %>
+    <%= f.check_box :handicapped_parking_spaces %>
+    <%= f.label :women_parking_spaces %>
+    <%= f.check_box :women_parking_spaces %>
+    <%= f.label :sanitation_facilities %>
+    <%= f.check_box :sanitation_facilities %>
+    <%= f.label :restroom_available %>
+    <%= f.check_box :restroom_available %>
+    <%= f.label :secure_parking %>
+    <%= f.check_box :secure_parking %>
+    <%= f.label :security_manned %>
+    <%= f.check_box :security_manned %>
+    <%= f.label :electric_vehicle_charging_points %>
+    <%= f.check_box :electric_vehicle_charging_points %>
+    <%= f.label :connector_type %>
+    <%= f.check_box :connector_type %>
+    <%= f.label :number_of_connectors %>
+    <%= f.check_box :number_of_connectors %>
+    <%= f.label :charge_point_operator %>
+    <%= f.check_box :charge_point_operator %>
+    <%= f.label :payment_methods %>
+    <%= f.check_box :payment_methods %>
+    <%= f.label :light %>
+    <%= f.check_box :light %>
+    <%= f.label :motorcycle_parking_spaces %>
+    <%= f.check_box :motorcycle_parking_spaces %>
+    <%= f.label :family_friendly %>
+    <%= f.check_box :family_friendly %>
+    <%= f.label :carwash %>
+    <%= f.check_box :carwash %>
+
+    <%= f.label :parking_disc %>
+    <%= f.check_box :parking_disc %>
+    <%= f.label :parking_ticket %>
+    <%= f.check_box :parking_ticket %>
+    <%= f.label :gate %>
+    <%= f.check_box :gate %>
+    <%= f.label :monitored %>
+    <%= f.check_box :monitored %>
+    <%= f.label :none %>
+    <%= f.check_box :none %>
+
+    <%= f.input :total_space %>
+    <%= f.input :space_available %>
+    <%= f.input :available %>
+    <%= f.input :trend %>
+    <%= f.input :total_disabled_space %>
+    <%= f.input :available_disabled_space %>
+
+
 
   <div class="actions">
     <%= f.button :submit, :class => 'btn-primary', data: {disable_with: "Enviando"}%>
   </div>
-    </div>
+  </div>
   </div>
 <% end %>
