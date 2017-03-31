@@ -1,7 +1,7 @@
 Navarra.namespace("parkings");
 Navarra.namespace("parkings.action_new");
 Navarra.namespace("parkings.action_edit");
-var map, nameEnableGeom, polystrip, polygon  , polygon_area, geocoder, polygon_original;
+var map, nameEnableGeom, polystrip, polygon  , polygon_area, geocoder;
 
 Navarra.parkings.config = {
   "lat": null,
@@ -9,8 +9,7 @@ Navarra.parkings.config = {
   "lat_exit": null,
   "lng": null,
   "lng_entry": null,
-  "lng_exit": null,
-  "polygon" : null 
+  "lng_exit": null
 };
 Navarra.parkings.action_edit = function(){
   
@@ -23,61 +22,33 @@ Navarra.parkings.action_edit = function(){
         addMarkerEdit(Navarra.parkings.config.lat, Navarra.parkings.config.lng, text, color);
    }
 
-   if (Navarra.parkings.config.lat_exit){
-        text = "S";
-        color = 'red';
-        addMarkerEdit(Navarra.parkings.config.lat_entry, Navarra.parkings.config.lng_entry, text, color);
-   }
    if (Navarra.parkings.config.lat_entry){
         text = "S";
         color = 'green';
-        addMarkerEdit(Navarra.parkings.config.lat_exit, Navarra.parkings.config.lng_exit, text, color);
+        addMarkerEdit(Navarra.parkings.config.lat, Navarra.parkings.config.lng, text, color);
    }
-    
- /*   if (Navarra.parkings.config.polygon){
 
+   if (Navarra.parkings.config.lat_exit){
+        text = "S";
+        color = 'red';
+        addMarkerEdit(Navarra.parkings.config.lat, Navarra.parkings.config.lng, text, color);
+   }
 
-        addPolygon(Navarra.parkings.config.polygon);
-  
-  }*/
   }
 
   addMarkerEdit = function(lat, lng, text, color){
+  
+
     markup = markupTemplate.replace('${text}', text).replace('${FILL}', color);
     icon = new H.map.Icon(markup);
     map.setCenter({lat:lat,lng:lng});
     map.setZoom('19',true);
     var marker_sug = new H.map.Marker({lat: lat, lng: lng}, { icon: icon} )
     map.addObject(marker_sug);
+
+
 }
- 
-  addPolygon = function(polygon_edit){
-
-    polystrip = new H.geo.Strip();
-  
-    /*  polystrip.pushPoint({lat:-33.084005881208455, lng:-68.47693665274394});
-      polystrip.pushPoint({lat:-33.083938460817805, lng:-68.47714854725612});
-      polystrip.pushPoint({lat:-33.08407105420363, lng:-68.47723706015361});
-      polystrip.pushPoint({lat:-33.08428679894652, lng:-68.4770546699406});
-      polystrip.pushPoint({lat:-33.08428679894652, lng:-68.4770546699406});*/
-
-/*      polystrip.pushPoint({lat:-33.08382609338519, lng:-68.47756965407146},{lat:-33.08401037589934, lng:-68.4776125694157},{lat:-33.08408903295243, lng:-68.47735507735027},{lat:-33.08383957748468, lng:-68.47726120003475},{lat:-33.08374518874481, lng:-68.47734971293224},{lat:-33.08374518874481, lng:-68.47734971293224});
-
-*/
-/*     polystrip.pushPoint(polygon_edit);*/
-
-    polygon = new H.map.Polygon(
-      polystrip, {
-        style: {
-          strokeColor: "#f00",
-          lineWidth: 1
-        }
-      }
-    );
-    map.addObject(polygon);
-  };
-
-return {
+  return {
     init: init,
   }
 }();
@@ -260,7 +231,6 @@ Navarra.parkings.action_new = function(){
   draw_polygon_and_point = function(){
     if (nameEnableGeom == 'clear'){
       polygon_area = [];
-      polygon_original = [];
       paintReady = true;
 
       if (polygon ){
@@ -362,10 +332,8 @@ Navarra.parkings.action_new = function(){
       polystrip.pushPoint(map.screenToGeo(e.currentPointer.viewportX, e.currentPointer.viewportY));
       coord =  map.screenToGeo(e.currentPointer.viewportX, e.currentPointer.viewportY);
       //create a polygon if points array has one point inside.
-     
-      polygon_original.push("{lat:" + coord.lat + ", lng: " + coord.lng + "}" );
-      
       coordinate = (coord.lat + " " +  coord.lng)
+
       polygon_area.push(coordinate); 
 
       if(polystrip.getPointCount() == 3) {
@@ -387,19 +355,20 @@ Navarra.parkings.action_new = function(){
     }
   };
 
+
   event_stop = function(e){
 
     if(paintReady)
     {
       //stop event propagation
       e.originalEvent.stopImmediatePropagation();
+
       //set path and fillColor of polygon to finish the digitizer
       polygon.setStrip(polystrip);
-      console.log(polygon_original);
+
       polygon_area.push(polygon_area[0]);
 
       $("#parking_polygon").attr("value", polygon_area);
-      $("#parking_the_geom_area_original").attr("value", polygon_original);
       //set paintReady flag to false to prevent painting polygon
       paintReady = false;
       polystrip = new H.geo.Strip();
@@ -416,7 +385,11 @@ Navarra.parkings.action_new = function(){
 
   //update the shape of polygon by pointermove event
   updatePolygon = function(point) {
+
     polygon.setStrip(new H.geo.Strip(polystrip.getLatLngAltArray().concat(point.lat, point.lng, undefined)));
+
+
+
   };
 
   //push polygon to map
@@ -430,8 +403,6 @@ Navarra.parkings.action_new = function(){
         }
       }
     );
-
-    console.log(polygon);
     map.addObject(polygon);
   };
 
@@ -447,6 +418,8 @@ Navarra.parkings.action_new = function(){
     );
     map.addObject(polyline);
   };
+
+
   return {
     init: init,
   }

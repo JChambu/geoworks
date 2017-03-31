@@ -1,3 +1,27 @@
+<%= content_for :head do %>
+
+
+  <script type="text/javascript">
+<% if @parking.the_geom %>
+
+  Navarra.parkings.config.lat = <%= @parking.the_geom.y %>
+  Navarra.parkings.config.lng = <%= @parking.the_geom.x %>
+
+
+  Navarra.parkings.config.lat_entry = <%= @parking.the_geom_entrance.y %>
+  Navarra.parkings.config.lng_entry = <%= @parking.the_geom_entrance.x %>
+
+  Navarra.parkings.config.lat_exit = <%= @parking.the_geom_exit.y %>
+  Navarra.parkings.config.lng_exit = <%= @parking.the_geom_exit.x %>
+
+  Navarra.parkings.config.polygon = <%= @parking.the_geom_area_original %>
+<% end %>
+<% if @parking.the_geom_area_original %>
+  Navarra.parkings.config.polygon = '<%= @parking.the_geom_area_original %>'
+<% end %>
+
+  </script>
+<% end  %>
 <%= simple_form_for @parking, input_html: {class: 'form-inline'} do |f| %>
   <%= f.error_notification %>
 
@@ -52,6 +76,7 @@
       <fieldset class="form-group">
         <legend><%= t('views.parkings.fieldset.referencies') %></legend>
       <%= f.input :polygon,  as: :hidden%>
+      <%= f.input :the_geom_area_original,  as: :hidden%>
       <div class="span3">
       </div>
       <table>
