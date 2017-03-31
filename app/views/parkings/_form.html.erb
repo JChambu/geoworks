@@ -3,23 +3,36 @@
 
   <div class="row-fluid">
     <div class="span12">
-      <div class="span4">
-        <%= f.input :name, class: "span4" %>
-      </div>
-      <div class="span4">
-        <%= f.input :brand, class: "span4" %>
-      </div>
-      <div class="span4">
-        <%= f.input :operator %>
-      </div>
-      <div class="span12">
-        <div class="span4">
-          <%= f.input :facility_type_id, :collection => poi_types_for_select  %>
+      <fieldset class="form-group">
+        <legend><%= t('views.parkings.fieldset.name_parking') %></legend>
+        <div class="span12">
+          <div class="span4">
+            <%= f.input :name, class: "span4" %>
+          </div>
+          <div class="span4">
+            <%= f.input :brand, class: "span4" %>
+          </div>
+          <div class="span4">
+            <%= f.input :operator %>
+          </div>
         </div>
-        <div class="span4">
-          <%= f.input :levels, as: :string %>
-        </div>
-      </div>  
+
+      </fieldset>
+
+      <fieldset class="form-group">
+        <legend><%= t('views.parkings.fieldset.facility_type') %></legend>
+        <div class="span12">
+          <div class="span4">
+            <%= f.input :facility_type_id, :collection => poi_types_for_select  %>
+          </div>
+          <div class="span4">
+            <%= f.input :levels, as: :string %>
+          </div>
+        </div>  
+      </fieldset>
+
+      <fieldset class="form-group">
+        <legend><%= t('views.parkings.fieldset.detailed_address') %></legend>
       <div class="span12">
         <div class="span3">
           <%= f.input :city_id,  collection: city_for_chosen(@parking.city_id),  input_html: {class: "span8"} %>
@@ -34,7 +47,10 @@
           <%= link_to t("views.poi.form.buttons.suggest_location"), "#", :class => 'btn', :id => 'suggest-locations'%>
         </div>
       </div>
+      </fieldset>
 
+      <fieldset class="form-group">
+        <legend><%= t('views.parkings.fieldset.referencies') %></legend>
       <%= f.input :polygon,  as: :hidden%>
       <div class="span3">
       </div>
@@ -69,6 +85,7 @@
       </table>    
       <div id="geocoding-map"></div>
 
+      </fieldset>
       <div class="span12">
         <div class="span3">
           <%= f.input :phone %>
@@ -77,8 +94,11 @@
           <%= f.input :website %>
         </div>
       </div>
+      <fieldset class="form-group">
+        <legend><%= t('views.parkings.fieldset.price_information') %></legend>
       <div class="span12">
         <div class="span3">
+          <%= f.label  :detailed_pricing_model %>
           <%= f.select  :detailed_pricing_model,  ['Maquina', 'Humano'] %>
         </div>
         <div class="span3">
@@ -89,6 +109,9 @@
           <%= f.select :currency, ['Pesos Argentino', 'Dolar', 'Pesos Chileno', 'Euro']  %>
         </div>
       </div>
+      </fieldset>
+      <fieldset class="form-group">
+        <legend><%= t('views.parkings.fieldset.payment_methods') %></legend>
       <div class="span12">
         <div class="span3">
           <%= f.label :available_payment_method%>
@@ -96,6 +119,9 @@
         </div>
       </div>
 
+      </fieldset>
+      <fieldset class="form-group">
+        <legend><%= t('views.parkings.fieldset.opening_hours') %></legend>
       <div class="span12">
         <div class="span3">
           <%= f.label :regular_openning_hours %>
@@ -105,10 +131,13 @@
           <%= f.input :exceptions_opening %>
         </div>
         <div class="span3">
-          <%= f.label "24/7"  %>
+          <%= f.label :flag  %>
           <%= f.check_box :flag  %>
         </div>
       </div>
+      </fieldset>
+      <fieldset class="form-group">
+        <legend><%= t('views.parkings.fieldset.restrictions') %></legend>
       <div class="span12">
         <div class="span3">
           <%= f.label :restrinctions%>
@@ -116,6 +145,9 @@
         </div>
       </div>
 
+      </fieldset>
+      <fieldset class="form-group">
+        <legend><%= t('views.parkings.fieldset.facility_details') %></legend>
       <div class="span12">
         <div class="span3">
           <%= f.label :max_drive_height  %>
@@ -165,29 +197,8 @@
           <%= f.label :security_manned %>
           <%= f.check_box :security_manned %>
         </div>
-        <div class="span3">
-          <%= f.label :electric_vehicle_charging_points %>
-          <%= f.check_box :electric_vehicle_charging_points %>
         </div>
-      </div>
-      <div class="span12">
-        <div class="span3">
-          <%= f.label :connector_type %>
-          <%= f.check_box :connector_type %>
-        </div>
-        <div class="span3">
-          <%= f.label :number_of_connectors %>
-          <%= f.check_box :number_of_connectors %>
-        </div>
-        <div class="span3">
-          <%= f.label :charge_point_operator %>
-          <%= f.check_box :charge_point_operator %>
-        </div>
-        <div class="span3">
-          <%= f.label :payment_methods %>
-          <%= f.check_box :payment_methods %>
-        </div>
-      </div>
+
       <div class="span12">
         <div class="span3">
           <%= f.label :light %>
@@ -206,12 +217,33 @@
           <%= f.check_box :carwash %>
         </div>
       </div> 
-    </div> 
 
-    <div  class="panel panel-default" >
-      <div class="panel-heading">
-        Facility
-      </div> 
+      <fieldset class="form-group">
+        <legend><%= t('views.parkings.fieldset.facility_detail_drive_electrics') %></legend>
+        <div class="span3">
+          <%= f.label :electric_vehicle_charging_points %>
+          <%= f.check_box :electric_vehicle_charging_points %>
+        </div>
+        <div class="span2">
+          <%= f.label :connector_type %>
+          <%= f.check_box :connector_type %>
+        </div>
+        <div class="span2">
+          <%= f.label :number_of_connectors %>
+          <%= f.check_box :number_of_connectors %>
+        </div>
+        <div class="span2">
+          <%= f.label :charge_point_operator %>
+          <%= f.check_box :charge_point_operator %>
+        </div>
+        <div class="span2">
+          <%= f.label :payment_methods %>
+          <%= f.check_box :payment_methods %>
+        </div>
+      </fieldset>
+      </fieldset>
+      <fieldset class="form-group">
+        <legend><%= t('views.parkings.fieldset.administration') %></legend>
       <div class="span12">
         <div class="span2">
           <%= f.label :parking_disc %>
@@ -234,32 +266,37 @@
           <%= f.check_box :none %>
         </div> 
       </div>
-    </div>
 
-    <div class="span12">
-      <div class="span2">
-        <%= f.input :total_space %>
+      </fieldset>
+      <fieldset class="form-group">
+        <legend><%= t('views.parkings.fieldset.facility_availability') %></legend>
+      <div class="span12">
+        <div class="span4">
+          <%= f.input :total_space %>
+        </div> 
+        <div class="span4">
+          <%= f.input :space_available %>
+        </div> 
+        <div class="span4">
+          <%= f.input :available %>
+        </div> 
+        </div> 
+      <div class="span12">
+        <div class="span4">
+          <%= f.input :trend %>
+        </div> 
+        <div class="span4">
+          <%= f.input :total_disabled_space %>
+        </div> 
+        <div class="span4">
+          <%= f.input :available_disabled_space %>
+        </div> 
       </div> 
-      <div class="span2">
-        <%= f.input :space_available %>
-      </div> 
-      <div class="span2">
-        <%= f.input :available %>
-      </div> 
-      <div class="span2">
-        <%= f.input :trend %>
-      </div> 
-      <div class="span3">
-        <%= f.input :total_disabled_space %>
-      </div> 
-      <div class="span3">
-        <%= f.input :available_disabled_space %>
-      </div> 
+      </fieldset>
 
-    </div> 
-
-    <div class="actions">
-      <%= f.button :submit, :class => 'btn-primary', data: {disable_with: "Enviando"}%>
+      <div class="actions">
+        <%= f.button :submit, :class => 'btn-primary', data: {disable_with: "Enviando"}%>
+      </div>
     </div>
   </div>
 <% end %>

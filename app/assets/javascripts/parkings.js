@@ -3,6 +3,17 @@ Navarra.namespace("parkings.action_new");
 Navarra.namespace("parkings.action_edit");
 var map, nameEnableGeom, polystrip, polygon  , polygon_area, geocoder;
 
+Navarra.parkings.action_edit = function(){
+  
+  var init = function(){
+      Navarra.parkings.action_new.init(); 
+  }
+  return {
+    init: init,
+  }
+}();
+
+
 Navarra.parkings.action_new = function(){
   var init = function(){
 

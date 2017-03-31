@@ -38,6 +38,21 @@ es:
           <li>Si el valor de la primer columna del Excel (Identificador) es vacío se tomará como final de archivo y se interrumpirá la carga.</li></ul>
     poi_address: Poi addresses
     extented_listings: Listado
+    parkings:
+      fieldset:
+        name_parking: Nombre Estacionamiento
+        facility_type: Tipo de Estacionamiento
+        detailed_address: Dirección
+        price_information: Información precio
+        payment_methods: Métodos de Pago
+        opening_hours: Horario
+        restrictions: Restrinciones
+        facility_details: Caracteristicas
+        facility_detail_drive_electrics: Caracteristicas Vehiculos Electricos
+        administration: Administracion
+        facility_availability: Disponibilidad
+        referencies: Referencias
+        
     poi:
       duplicated:
         title: Posibles Duplicados
@@ -64,6 +79,7 @@ es:
           map_legend: Leyenda Mapa
           map_actions: Selección de ubicación
           poi_action: Acción
+
         buttons:
           add_location: Agregar ubicación
           suggest_location: Sugerir ubicaciones
@@ -517,6 +533,55 @@ es:
         poi_load_id: "ID Grupo de Carga"
         p_action_id: "Poi Accion"
         last_update: "Ultima Modificación"
+      parking:
+        name: Nombre
+        brand: Marca
+        operator: Operador
+        facility_type_id: Tipo de Estacionamiento
+        levels: Pisos
+        city_id: Ciudad
+        street: Calle
+        number: Numero
+        phone: Telefono
+        website: Web
+        price: Precio
+        currency: Moneda
+        available_payment_method: Metodo de Pago
+        regular_openning_hours: Horario Regular
+        exceptions_opening: Excepciones
+        flag: Bandera 24 / 7
+        restrinctions: Restrinciones
+        max_drive_height: Largo Vehiculo
+        max_drive_width: Ancho Vehiculo
+        elevators: Ascensores
+        escalators: Escaleras
+        handicapped_accessible: Acceso Discapacitados
+        handicapped_parking_spaces: Estacionamiento para Discapacitados
+        women_parking_spaces: Estacionamiento para Mujeres
+        sanitation_facilities: Baños
+        restroom_available: Duchas
+        secure_parking: Seguro
+        security_manned: Seguridad
+        electric_vehicle_charging_points: Puntos de Cargas Vehiculos Electricos
+        connector_type: Tipo de Conector
+        number_of_connectors: Numero de Conectores
+        charge_point_operator: Operador de Carga
+        payment_methods: Metodos de Pago
+        light: Ligero
+        motorcycle_parking_spaces: Estacionamiento para Motocicletas
+        family_friendly: 
+        carwash: Lavado de Autos
+        parking_disc:
+        parking_ticket: Estacionamiento Ticket
+        gate: Portón 
+        monitored: Monitoreado
+        none: Nada
+        total_space: Total de Espacios
+        space_available: Espacios disponibles
+        available: Disponibles
+        trend: Tendencia
+        total_disabled_space: Total Espacio para Discapacitados
+        available_disabled_space: Disponible Espacio para Discapacitados
       poi_address:
         city_id: Ciudad
         street: Nombre de Calle
