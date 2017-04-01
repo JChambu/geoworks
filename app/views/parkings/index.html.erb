@@ -2,7 +2,7 @@
 
 <h1>Parkings</h1>
 
-<table>
+<table class="table">
   <thead>
     <tr>
       <th>Name</th>
@@ -12,19 +12,8 @@
       <th>Facility type</th>
       <th>Levels</th>
       <th>City</th>
-      <th>The geom</th>
-      <th>The geom entrance</th>
-      <th>The geom exit</th>
       <th>Phone</th>
       <th>Website</th>
-      <th>Detailed pricing model</th>
-      <th>Price</th>
-      <th>Currency</th>
-      <th>Available payment methods</th>
-      <th>Regular openning hours</th>
-      <th>Exceptions opening</th>
-      <th>Flag</th>
-      <th>The geom area</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -39,19 +28,8 @@
         <td><%= parking.facility_type_id %></td>
         <td><%= parking.levels %></td>
         <td><%= parking.city_id %></td>
-        <td><%= parking.the_geom %></td>
-        <td><%= parking.the_geom_entrance %></td>
-        <td><%= parking.the_geom_exit %></td>
         <td><%= parking.phone %></td>
         <td><%= parking.website %></td>
-        <td><%= parking.detailed_pricing_model %></td>
-        <td><%= parking.price %></td>
-        <td><%= parking.currency %></td>
-        <td><%= parking.available_payment_methods %></td>
-        <td><%= parking.regular_openning_hours %></td>
-        <td><%= parking.exceptions_opening %></td>
-        <td><%= parking.flag %></td>
-        <td><%= parking.the_geom_area %></td>
         <td><%= link_to 'Show', parking %></td>
         <td><%= link_to 'Edit', edit_parking_path(parking) %></td>
         <td><%= link_to 'Destroy', parking, method: :delete, data: { confirm: 'Are you sure?' } %></td>

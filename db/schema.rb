@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170331211118) do
+ActiveRecord::Schema.define(version: 20170401132722) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -211,6 +211,9 @@ ActiveRecord::Schema.define(version: 20170331211118) do
     t.string   "available_disabled_space"
     t.boolean  "flag",                                                                                              default: false
     t.string   "the_geom_area_original"
+    t.integer  "user_id"
+    t.integer  "p_action_id"
+    t.integer  "poi_status_id"
   end
 
   create_table "pg_search_documents", force: :cascade do |t|
