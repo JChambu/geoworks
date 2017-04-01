@@ -10,7 +10,7 @@ Navarra.parkings.config = {
   "lng": null,
   "lng_entry": null,
   "lng_exit": null,
-  "polygon" : null 
+  "polygon" : [] 
 };
 Navarra.parkings.action_edit = function(){
   
@@ -34,12 +34,11 @@ Navarra.parkings.action_edit = function(){
         addMarkerEdit(Navarra.parkings.config.lat_exit, Navarra.parkings.config.lng_exit, text, color);
    }
     
- /*   if (Navarra.parkings.config.polygon){
-
+   if (Navarra.parkings.config.polygon){
 
         addPolygon(Navarra.parkings.config.polygon);
   
-  }*/
+  }
   }
 
   addMarkerEdit = function(lat, lng, text, color){
@@ -54,19 +53,10 @@ Navarra.parkings.action_edit = function(){
   addPolygon = function(polygon_edit){
 
     polystrip = new H.geo.Strip();
-  
-    /*  polystrip.pushPoint({lat:-33.084005881208455, lng:-68.47693665274394});
-      polystrip.pushPoint({lat:-33.083938460817805, lng:-68.47714854725612});
-      polystrip.pushPoint({lat:-33.08407105420363, lng:-68.47723706015361});
-      polystrip.pushPoint({lat:-33.08428679894652, lng:-68.4770546699406});
-      polystrip.pushPoint({lat:-33.08428679894652, lng:-68.4770546699406});*/
-
-/*      polystrip.pushPoint({lat:-33.08382609338519, lng:-68.47756965407146},{lat:-33.08401037589934, lng:-68.4776125694157},{lat:-33.08408903295243, lng:-68.47735507735027},{lat:-33.08383957748468, lng:-68.47726120003475},{lat:-33.08374518874481, lng:-68.47734971293224},{lat:-33.08374518874481, lng:-68.47734971293224});
-
-*/
-/*     polystrip.pushPoint(polygon_edit);*/
-
-    polygon = new H.map.Polygon(
+      polygon_edit.forEach(function(point){
+          polystrip.pushPoint(point);
+      });
+        polygon = new H.map.Polygon(
       polystrip, {
         style: {
           strokeColor: "#f00",
@@ -78,8 +68,8 @@ Navarra.parkings.action_edit = function(){
   };
 
 return {
-    init: init,
-  }
+  init: init
+}
 }();
 
 
@@ -448,7 +438,7 @@ Navarra.parkings.action_new = function(){
     map.addObject(polyline);
   };
   return {
-    init: init,
+    init: init
   }
 }();
 
