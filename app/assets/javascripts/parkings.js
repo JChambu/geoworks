@@ -138,7 +138,7 @@ Navarra.parkings.action_new = function(){
     polygon = null, paintReady = true;
     polystrip = new H.geo.Strip();
     paintReady = true;
-    cities();
+    cities_parkings();
     bindButtonClick();
     bindAddMarkerGeomClick();
     bindInputFocusOutParking();
@@ -153,7 +153,7 @@ Navarra.parkings.action_new = function(){
   };
 
 
-    cities = function() { $("#parking_city_id").ajaxChosen({
+    cities_parkings = function() { $("#parking_city_id").ajaxChosen({
       type: 'GET',
       url: '/locations/cities',
       dataType: 'json'
