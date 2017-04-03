@@ -387,7 +387,7 @@ Navarra.parkings.action_new = function(){
      
       polygon_original.push("{lat:" + coord.lat + ", lng: " + coord.lng + "}" );
      
-      coordinate = (coord.lat + " " +  coord.lng)
+      coordinate = (coord.lng + " " +  coord.lat)
       polygon_area.push(coordinate); 
 
 
