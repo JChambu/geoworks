@@ -29,7 +29,7 @@ class ParkingsController < ApplicationController
 
     respond_to do |format|
       if @parking.save
-        format.html { redirect_to @parking, notice: 'Parking was successfully created.' }
+        format.html { redirect_to new_parking_url, notice: 'Parking was successfully created.' }
         format.json { render :show, status: :created, location: @parking }
       else
         format.html { render :new }

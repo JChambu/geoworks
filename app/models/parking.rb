@@ -2,6 +2,7 @@ class Parking < ApplicationRecord
 
 
   
+  belongs_to :user
   belongs_to :city
   
   
@@ -9,8 +10,15 @@ class Parking < ApplicationRecord
   before_save :build_geom
   before_save :build_geom_polygon
 
+  delegate :name, :to => :user, :prefix => true, :allow_nil => true
+  
   attr_accessor :latitude, :longitude, :latitude_entry, :longitude_entry, :latitude_exit, :longitude_exit, :polygon
 
+  
+  validates :name, presence: true
+  
+  
+  
   def build_geom
     if self.latitude and self.longitude and
         !self.latitude.to_s.empty? and !self.longitude.to_s.empty?
