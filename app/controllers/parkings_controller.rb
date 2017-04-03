@@ -4,7 +4,11 @@ class ParkingsController < ApplicationController
   # GET /parkings
   # GET /parkings.json
   def index
-    @parkings = Parking.all
+    if current_user.role == 'Admin'
+      @parkings = Parking.all
+    else
+      @parkings = Parking.where(user_id: current_user.id)
+    end
   end
 
   # GET /parkings/1
@@ -62,14 +66,22 @@ class ParkingsController < ApplicationController
     end
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_parking
-      @parking = Parking.find(params[:id])
-    end
+  def possible_duplicates
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def parking_params
-      params.require(:parking).permit(:name, :street, :brand, :operator, :facility_type_id, :levels, :city_id, :the_geom, :the_geom_entrance, :the_geom_exit, :phone, :website, :detailed_pricing_model, :price, :currency, :available_payment_methods, :regular_openning_hours, :exceptions_opening, :flag, :the_geom_area, :latitude, :longitude, :latitude_entry, :longitude_entry, :latitude_exit, :longitude_exit, :polygon, :number, :max_drive_height,:max_drive_width, :elevators,:escalators, :handicapped_accessible, :handicapped_parking_spaces, :women_parking_spaces, :sanitation_facilities, :restroom_available, :secure_parking, :security_manned, :electric_vehicle_charging_points, :connector_type, :number_of_connectors, :charge_point_operator, :payment_methods, :light, :motorcycle_parking_spaces, :family_friendly,:carwash, :parking_disc,  :parking_ticket, :gate, :monitored, :none, :total_space, :space_available, :available, :trend, :total_disabled_space, :available_disabled_space, :the_geom_area_original, :p_action_id, :poi_status_id).merge(user_id: current_user.id) 
+    @parkings = Parking.find_possible_duplicates(params[:parking])
+    respond_to do |format|
+      format.js
     end
+  end
+  private
+  # Use callbacks to share common setup or constraints between actions.
+  def set_parking
+    p params[:id]
+    @parking = Parking.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def parking_params
+    params.require(:parking).permit(:name, :street, :brand, :operator, :facility_type_id, :levels, :city_id, :the_geom, :the_geom_entrance, :the_geom_exit, :phone, :website, :detailed_pricing_model, :price, :currency, :available_payment_methods, :regular_openning_hours, :exceptions_opening, :flag, :the_geom_area, :latitude, :longitude, :latitude_entry, :longitude_entry, :latitude_exit, :longitude_exit, :polygon, :number, :max_drive_height,:max_drive_width, :elevators,:escalators, :handicapped_accessible, :handicapped_parking_spaces, :women_parking_spaces, :sanitation_facilities, :restroom_available, :secure_parking, :security_manned, :electric_vehicle_charging_points, :connector_type, :number_of_connectors, :charge_point_operator, :payment_methods, :light, :motorcycle_parking_spaces, :family_friendly,:carwash, :parking_disc,  :parking_ticket, :gate, :monitored, :none, :total_space, :space_available, :available, :trend, :total_disabled_space, :available_disabled_space, :the_geom_area_original, :p_action_id, :poi_status_id).merge(user_id: current_user.id) 
+  end
 end

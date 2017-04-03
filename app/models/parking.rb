@@ -34,4 +34,27 @@ class Parking < ApplicationRecord
       self.the_geom_area = "POLYGON((#{self.polygon}))"
     end
   end
+
+
+  def self.find_possible_duplicates attributes
+    q = self.where(nil)
+				if attributes[:name].present?
+					dictionary_terms = Term.by_names(attributes[:name].downcase.split).pluck(:name)
+					terms = attributes[:name].downcase.split - dictionary_terms
+					regex_str = String.new
+					regex_str += "(\ |^)" + terms.join("(\ |$)|(\ |^)") + "(\ |$)|" unless terms.empty?
+					regex_str += "^#{attributes[:name]}$"
+					q = q.where("parkings.name ~* '#{regex_str}'")
+          
+					pois = q.all.sort  do |a,b|
+						(b.name.downcase.split & attributes[:name].downcase.split ).count <=> (a.name.downcase.split & attributes[:name].downcase.split ).count
+					end
+					return pois.first(5)
+				end
+				return nil
+			end
+
+
+
+
 end

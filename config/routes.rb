@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
 
-  resources :parkings
+
   get 'locations/cities' => 'locations#cities'
   get 'pois/possible_duplicates' => 'pois#possible_duplicates'
+  get 'parkings/possible_duplicates' => 'parkings#possible_duplicates'
   get 'extended_listings/possible_duplicates' => 'extended_listings#possible_duplicates'
   get 'pois/around' => 'pois#around'
   get 'pois/total_poi_validates' => 'pois#total_poi_validates'
@@ -25,6 +26,7 @@ Rails.application.routes.draw do
     end
 end
 
+  resources :parkings
   resources :extended_listing_loads
   resources :categories
   resources :customers

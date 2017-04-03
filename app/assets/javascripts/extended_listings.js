@@ -27,7 +27,6 @@ Navarra.extended_listings.action_new = function(){
   var bindInputFocusOutEl = function() {
     $("input").focusout(function(e) {
       f = $(this).closest("form").serialize();
-      console.log(f);
       $.getScript('/extended_listings/possible_duplicates.js?' + f);
     });    
   };
