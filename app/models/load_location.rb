@@ -18,7 +18,6 @@ require 'fileutils'
   ]
   
   
-  
   def save_xls_file
     directory = Geoworks::Xls.save(self.file, "location/loaded_xls", "location.xls")
     self.directory_name = directory.split("/").last

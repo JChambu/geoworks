@@ -14,7 +14,11 @@ class Parking < ApplicationRecord
   before_save :build_geom_line
 
   delegate :name, :to => :user, :prefix => true, :allow_nil => true
-  
+  delegate :complete_name, :to => :city, :prefix => true, :allow_nil => true
+  delegate :name, :to => :country, :prefix => true, :allow_nil => true
+  delegate :name, :to => :province, :prefix => true, :allow_nil => true
+  delegate :name, :to => :department, :prefix => true, :allow_nil => true
+  delegate :name, :to => :city, :prefix => true, :allow_nil => true
   attr_accessor :latitude, :longitude, :latitude_entry, :longitude_entry, :latitude_exit, :longitude_exit, :polygon, :line
 
   

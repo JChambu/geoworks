@@ -3,6 +3,7 @@ class Department < ActiveRecord::Base
   has_one :country, :through => :province
   has_many :cities
   has_many :pois, :through => :cities
+  has_many :parkings, :through => :cities
   has_many :poi_adresses, :through => :cities
   has_many :extended_listings, :through => :cities
 

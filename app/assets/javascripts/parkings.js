@@ -1,6 +1,7 @@
 Navarra.namespace("parkings");
 Navarra.namespace("parkings.action_new");
 Navarra.namespace("parkings.action_edit");
+Navarra.namespace("parkings.action_index");
 var map, nameEnableGeom, polystrip, polygon  , polygon_area, geocoder, polygon_original;
 
 Navarra.parkings.config = {
@@ -12,6 +13,16 @@ Navarra.parkings.config = {
   "lng_exit": null,
   "polygon" : [] 
 };
+
+Navarra.parkings.action_index = function() {
+  var init = function() {
+    Navarra.poi_search_panel.init();
+  } 
+
+  return {
+    init: init
+  }
+}();
 Navarra.parkings.action_edit = function(){
   
   var init = function(){
@@ -50,9 +61,6 @@ Navarra.parkings.action_edit = function(){
     map.addObject(marker_sug);
 }
  
-  
-
-
 
 addPolygon = function(polygon_edit){
 

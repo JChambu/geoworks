@@ -3,6 +3,7 @@ class Province < ActiveRecord::Base
   has_many :departments
   has_many :cities, :through => :departments
   has_many :pois, :through => :cities
+  has_many :parkings, :through => :cities
   has_many :poi_addresses, :through => :cities
   has_many :extended_listings, :through => :cities
   

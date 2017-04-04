@@ -125,7 +125,6 @@ class ExtendedListingsController < ApplicationController
       @to_date = params[:q][:control_date_lteq]
       return
     end
-  
     params[:q] = {:poi_status_id_eq => 4} 
   end
 
