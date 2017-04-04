@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170401132722) do
+ActiveRecord::Schema.define(version: 20170404134053) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -168,52 +168,53 @@ ActiveRecord::Schema.define(version: 20170401132722) do
     t.string   "phone"
     t.string   "website"
     t.string   "detailed_pricing_model"
-    t.decimal  "price",                                                                    precision: 10, scale: 2
+    t.decimal  "price",                                                                     precision: 10, scale: 2
     t.string   "currency"
     t.string   "available_payment_methods"
     t.string   "regular_openning_hours"
     t.string   "exceptions_opening"
     t.geometry "the_geom_area",                    limit: {:srid=>4326, :type=>"polygon"}
-    t.datetime "created_at",                                                                                                        null: false
-    t.datetime "updated_at",                                                                                                        null: false
+    t.datetime "created_at",                                                                                                         null: false
+    t.datetime "updated_at",                                                                                                         null: false
     t.integer  "number"
     t.string   "restrinctions"
     t.string   "max_drive_height"
     t.string   "max_drive_width"
-    t.boolean  "elevators",                                                                                         default: false
-    t.boolean  "escalators",                                                                                        default: false
-    t.boolean  "handicapped_accessible",                                                                            default: false
-    t.boolean  "handicapped_parking_spaces",                                                                        default: false
-    t.boolean  "women_parking_spaces",                                                                              default: false
-    t.boolean  "sanitation_facilities",                                                                             default: false
-    t.boolean  "restroom_available",                                                                                default: false
-    t.boolean  "secure_parking",                                                                                    default: false
-    t.boolean  "security_manned",                                                                                   default: false
-    t.boolean  "electric_vehicle_charging_points",                                                                  default: false
-    t.boolean  "connector_type",                                                                                    default: false
-    t.boolean  "number_of_connectors",                                                                              default: false
-    t.boolean  "charge_point_operator",                                                                             default: false
-    t.boolean  "payment_methods",                                                                                   default: false
-    t.boolean  "light",                                                                                             default: false
-    t.boolean  "motorcycle_parking_spaces",                                                                         default: false
-    t.boolean  "family_friendly",                                                                                   default: false
-    t.boolean  "carwash",                                                                                           default: false
-    t.boolean  "parking_disc",                                                                                      default: false
-    t.boolean  "parking_ticket",                                                                                    default: false
-    t.boolean  "gate",                                                                                              default: false
-    t.boolean  "monitored",                                                                                         default: false
-    t.boolean  "none",                                                                                              default: false
+    t.boolean  "elevators",                                                                                          default: false
+    t.boolean  "escalators",                                                                                         default: false
+    t.boolean  "handicapped_accessible",                                                                             default: false
+    t.boolean  "handicapped_parking_spaces",                                                                         default: false
+    t.boolean  "women_parking_spaces",                                                                               default: false
+    t.boolean  "sanitation_facilities",                                                                              default: false
+    t.boolean  "restroom_available",                                                                                 default: false
+    t.boolean  "secure_parking",                                                                                     default: false
+    t.boolean  "security_manned",                                                                                    default: false
+    t.boolean  "electric_vehicle_charging_points",                                                                   default: false
+    t.boolean  "connector_type",                                                                                     default: false
+    t.boolean  "number_of_connectors",                                                                               default: false
+    t.boolean  "charge_point_operator",                                                                              default: false
+    t.boolean  "payment_methods",                                                                                    default: false
+    t.boolean  "light",                                                                                              default: false
+    t.boolean  "motorcycle_parking_spaces",                                                                          default: false
+    t.boolean  "family_friendly",                                                                                    default: false
+    t.boolean  "carwash",                                                                                            default: false
+    t.boolean  "parking_disc",                                                                                       default: false
+    t.boolean  "parking_ticket",                                                                                     default: false
+    t.boolean  "gate",                                                                                               default: false
+    t.boolean  "monitored",                                                                                          default: false
+    t.boolean  "none",                                                                                               default: false
     t.string   "total_space"
     t.string   "space_available"
     t.string   "available"
     t.string   "trend"
     t.string   "total_disabled_space"
     t.string   "available_disabled_space"
-    t.boolean  "flag",                                                                                              default: false
+    t.boolean  "flag",                                                                                               default: false
     t.string   "the_geom_area_original"
     t.integer  "user_id"
     t.integer  "p_action_id"
     t.integer  "poi_status_id"
+    t.geometry "the_geom_segment",                 limit: {:srid=>0, :type=>"line_string"}
   end
 
   create_table "pg_search_documents", force: :cascade do |t|

@@ -2,6 +2,9 @@
 
 <h1>Parkings [# <%= @parkings.count  %>]</h1>
 
+<% if current_user.role == 'Admin' %>
+  <%= render "search" %>
+<% end %>
 <table class="table">
   <thead>
     <tr>
@@ -32,9 +35,11 @@
         <td><%= parking.phone %></td>
         <td><%= parking.website %></td>
         <td><%= parking.user_name %></td>
-        <td><%= link_to 'Show', parking %></td>
         <td><%= link_to 'Edit', edit_parking_path(parking) %></td>
-        <td><%= link_to 'Destroy', parking, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      
+          <% if current_user.role == 'Admin' %>
+            <td><%= link_to 'Destroy', parking, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          <% end %>
       </tr>
     <% end %>
   </tbody>

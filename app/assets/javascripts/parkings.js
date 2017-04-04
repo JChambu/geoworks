@@ -467,9 +467,9 @@ Navarra.parkings.action_new = function(){
       }
     );
        
-    //   polygon_area.push(polygon_area[0]);
-      
-      //$("#parking_the_geom_area_original").attr("value", polygon_original);
+       polygon_area.push(polygon_area[0]);
+      $("#parking_line").attr("value", polygon_area);
+      $("#parking_the_geom_area_original").attr("value", polygon_original);
     map.addObject(polyline);
   };
   return {

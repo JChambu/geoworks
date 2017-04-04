@@ -23,6 +23,7 @@ class Ability
       can :visualize, :duplicated
       can :visualize, :possible_duplicates
       can :search, :pois
+      can :manage, Parking
       #Poi sub types
       can :edit, User do |u|
         u.id == user.id

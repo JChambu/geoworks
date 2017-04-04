@@ -26,7 +26,11 @@ Rails.application.routes.draw do
     end
 end
 
-  resources :parkings
+  resources :parkings do
+    collection do
+      get :search
+    end
+  end
   resources :extended_listing_loads
   resources :categories
   resources :customers
