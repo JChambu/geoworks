@@ -52,6 +52,10 @@ es:
         administration: Administracion
         facility_availability: Disponibilidad
         referencies: Referencias
+        payment: Pagos
+        parking_configuration: Tipo de Estacionamientos
+        parking_capacity: Capacidad de Estacionamientos
+        side_street: Lado de Calle
         
     poi:
       duplicated:
@@ -582,6 +586,7 @@ es:
         trend: Tendencia
         total_disabled_space: Total Espacio para Discapacitados
         available_disabled_space: Disponible Espacio para Discapacitados
+
       poi_address:
         city_id: Ciudad
         street: Nombre de Calle

@@ -24,32 +24,32 @@ Navarra.parkings.action_index = function() {
   }
 }();
 Navarra.parkings.action_edit = function(){
-  
+
   var init = function(){
-      Navarra.parkings.action_new.init();
+    Navarra.parkings.action_new.init();
 
-   if (Navarra.parkings.config.lat){
-        text = "S";
-        color = 'blue';
-        addMarkerEdit(Navarra.parkings.config.lat, Navarra.parkings.config.lng, text, color);
-   }
+    if (Navarra.parkings.config.lat){
+      text = "S";
+      color = 'blue';
+      addMarkerEdit(Navarra.parkings.config.lat, Navarra.parkings.config.lng, text, color);
+    }
 
-   if (Navarra.parkings.config.lat_exit){
-        text = "S";
-        color = 'red';
-        addMarkerEdit(Navarra.parkings.config.lat_entry, Navarra.parkings.config.lng_entry, text, color);
-   }
-   if (Navarra.parkings.config.lat_entry){
-        text = "S";
-        color = 'green';
-        addMarkerEdit(Navarra.parkings.config.lat_exit, Navarra.parkings.config.lng_exit, text, color);
-   }
-    
-   if (Navarra.parkings.config.polygon){
+    if (Navarra.parkings.config.lat_exit){
+      text = "S";
+      color = 'red';
+      addMarkerEdit(Navarra.parkings.config.lat_entry, Navarra.parkings.config.lng_entry, text, color);
+    }
+    if (Navarra.parkings.config.lat_entry){
+      text = "S";
+      color = 'green';
+      addMarkerEdit(Navarra.parkings.config.lat_exit, Navarra.parkings.config.lng_exit, text, color);
+    }
 
-        addPolygon(Navarra.parkings.config.polygon);
-  
-  }
+    if (Navarra.parkings.config.polygon){
+
+      addPolygon(Navarra.parkings.config.polygon);
+
+    }
   }
 
   addMarkerEdit = function(lat, lng, text, color){
@@ -59,47 +59,47 @@ Navarra.parkings.action_edit = function(){
     map.setZoom('19',true);
     var marker_sug = new H.map.Marker({lat: lat, lng: lng}, { icon: icon} )
     map.addObject(marker_sug);
-}
- 
+  }
 
-addPolygon = function(polygon_edit){
 
-  
+  addPolygon = function(polygon_edit){
+
+
     polystrip = new H.geo.Strip();
-      polygon_edit.forEach(function(point){
-          polystrip.pushPoint(point);
-      });
-   
+    polygon_edit.forEach(function(point){
+      polystrip.pushPoint(point);
+    });
 
-  console.log(polystrip.getPointCount());
 
-  if (polystrip.getPointCount() == 2 ){
-  
-    polyline = new H.map.Polyline(
-      polystrip, {
-        style: {
-          strokeColor: "#f00",
-          lineWidth: 1
+    console.log(polystrip.getPointCount());
+
+    if (polystrip.getPointCount() == 2 ){
+
+      polyline = new H.map.Polyline(
+        polystrip, {
+          style: {
+            strokeColor: "#f00",
+            lineWidth: 1
+          }
         }
-      }
-    );
-    map.addObject(polyline);
-  }else{
-      
-        polygon = new H.map.Polygon(
-      polystrip, {
-        style: {
-          strokeColor: "#f00",
-          lineWidth: 1
+      );
+      map.addObject(polyline);
+    }else{
+
+      polygon = new H.map.Polygon(
+        polystrip, {
+          style: {
+            strokeColor: "#f00",
+            lineWidth: 1
+          }
         }
-      }
-    );
-    map.addObject(polygon);
-  };
-}
-return {
-  init: init
-}
+      );
+      map.addObject(polygon);
+    };
+  }
+  return {
+    init: init
+  }
 }();
 
 
@@ -150,10 +150,47 @@ Navarra.parkings.action_new = function(){
     bindButtonClick();
     bindAddMarkerGeomClick();
     bindInputFocusOutParking();
+    enabled_divs();
+    disabled_divs();
   },
 
+    enabled_divs = function(){
 
-   bindInputFocusOutParking = function() {
+      $("#parking_restrinctions").change(function(){
+        disabled_divs();
+        options = $(this).val();
+        switch (options)
+        {
+          case 'Time based restrinctions':
+            $('#time_based').show();
+            break;
+          case 'Permit only':
+            $('#permit_only').show();
+            break;
+          case 'Parking disc':
+            $('#parking_disc').show();
+            break;
+          case 'Other restrinctions':
+            $('#other').show();
+            break;
+        }
+
+      });
+
+    },
+    disabled_divs = function(){
+
+      $('#time_based').hide();
+      $('#permit_only').hide();
+      $('#parking_disc').hide();
+      $('#other').hide();
+
+    }
+
+
+
+
+  bindInputFocusOutParking = function() {
     $("input").focusout(function(e) {
       f = $(this).closest("form").serialize();
       $.getScript('/parkings/possible_duplicates.js?' + f);
@@ -161,20 +198,20 @@ Navarra.parkings.action_new = function(){
   };
 
 
-    cities_parkings = function() { $("#parking_city_id").ajaxChosen({
-      type: 'GET',
-      url: '/locations/cities',
-      dataType: 'json'
+  cities_parkings = function() { $("#parking_city_id").ajaxChosen({
+    type: 'GET',
+    url: '/locations/cities',
+    dataType: 'json'
 
-    }, function (data) {
-      var results = [];
+  }, function (data) {
+    var results = [];
 
-      $.each(data, function (i, val) {
-        results.push({value: val.value, text: val.text});
-      });
-      return results;
+    $.each(data, function (i, val) {
+      results.push({value: val.value, text: val.text});
     });
-    },
+    return results;
+  });
+  },
 
     bindButtonClick = function() {
       $("#suggest-locations").click(function(e) {
@@ -392,9 +429,9 @@ Navarra.parkings.action_new = function(){
       polystrip.pushPoint(map.screenToGeo(e.currentPointer.viewportX, e.currentPointer.viewportY));
       coord =  map.screenToGeo(e.currentPointer.viewportX, e.currentPointer.viewportY);
       //create a polygon if points array has one point inside.
-     
+
       polygon_original.push("{lat:" + coord.lat + ", lng: " + coord.lng + "}" );
-     
+
       coordinate = (coord.lng + " " +  coord.lat)
       polygon_area.push(coordinate); 
 
@@ -427,7 +464,7 @@ Navarra.parkings.action_new = function(){
       //set path and fillColor of polygon to finish the digitizer
       polygon.setStrip(polystrip);
       polygon_area.push(polygon_area[0]);
-      
+
       $("#parking_polygon").attr("value", polygon_area);
       $("#parking_the_geom_area_original").attr("value", polygon_original);
       //set paintReady flag to false to prevent painting polygon
@@ -474,10 +511,10 @@ Navarra.parkings.action_new = function(){
         }
       }
     );
-       
-       polygon_area.push(polygon_area[0]);
-      $("#parking_line").attr("value", polygon_area);
-      $("#parking_the_geom_area_original").attr("value", polygon_original);
+
+    polygon_area.push(polygon_area[0]);
+    $("#parking_line").attr("value", polygon_area);
+    $("#parking_the_geom_area_original").attr("value", polygon_original);
     map.addObject(polyline);
   };
   return {
