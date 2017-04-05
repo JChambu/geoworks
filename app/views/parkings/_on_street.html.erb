@@ -103,7 +103,7 @@ Navarra.parkings.config.lng_exit = <%= @parking.the_geom_exit.x %>
         <legend><%= t('views.parkings.fieldset.restrictions') %></legend>
         <div class="span12">
           <%= f.label :restrinctions%>
-          <%= f.select :restrinctions, ['No parking allowed', 'Time based restrinctions','Permit only', 'Parking disc', 'Other restrinctions' ] %>
+          <%= f.select :restrinctions, ['', 'No parking allowed', 'Time based restrinctions','Permit only', 'Parking disc', 'Other restrinctions' ] %>
         </div>
 
         <div id='time_based' name='time_based' class="span12">
