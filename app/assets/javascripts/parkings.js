@@ -161,7 +161,7 @@ Navarra.parkings.action_new = function(){
         options = $(this).val();
         switch (options)
         {
-          case 'Time based restrinctions':
+          case 'Time based restrictions':
             $('#time_based').show();
             break;
           case 'Permit only':
@@ -170,7 +170,7 @@ Navarra.parkings.action_new = function(){
           case 'Parking disc':
             $('#parking_disc').show();
             break;
-          case 'Other restrinctions':
+          case 'Other restrictions':
             $('#other').show();
             break;
         }

@@ -56,8 +56,8 @@ Navarra.parkings.config.lng_exit = <%= @parking.the_geom_exit.x %>
 
       <fieldset class="form-group">
         <legend><%= t('views.parkings.fieldset.referencies') %></legend>
-        <%= f.input :line%>
-        <%= f.input :polygon%>
+        <%= f.input :line, as: :hidden%>
+        <%= f.input :polygon, as: :hidden%>
         <%= f.input :the_geom_area_original,  as: :hidden%>
         <div class="span3">
         </div>
@@ -96,14 +96,14 @@ Navarra.parkings.config.lng_exit = <%= @parking.the_geom_exit.x %>
 
       <fieldset class="form-group">
         <legend><%= t('views.parkings.fieldset.side_street') %></legend>
-          <%= f.select :side_street, ['Left', 'Right','Unknown'] %>
+          <%= f.select :side_street, ['Izquierda', 'Derecha','Desconocido'] %>
         
       </fieldset>
         <fieldset class="form-group">
         <legend><%= t('views.parkings.fieldset.restrictions') %></legend>
         <div class="span12">
           <%= f.label :restrinctions%>
-          <%= f.select :restrinctions, ['', 'No parking allowed', 'Time based restrinctions','Permit only', 'Parking disc', 'Other restrinctions' ] %>
+          <%= f.select :restrinctions, ['', 'No parking allowed', 'Time based restrictions','Permit only', 'Parking disc', 'Other restrictions' ] %>
         </div>
 
         <div id='time_based' name='time_based' class="span12">
@@ -211,14 +211,14 @@ Navarra.parkings.config.lng_exit = <%= @parking.the_geom_exit.x %>
       <fieldset class="form-group">
         <legend><%= t('views.parkings.fieldset.payment') %></legend>
         <div>
-          <%= f.select :payment, ['Paid/free', 'Pricing model', 'Parking zones', 'Payment methods', 'Payment meter/pay box', 'Any other pricing information' ]  %>
+          <%= f.select :payment, ['', 'Paid/free', 'Pricing model', 'Parking zones', 'Payment methods', 'Payment meter/pay box', 'Any other pricing information' ]  %>
         </div>
       </fieldset>
 
       <fieldset class="form-group">
         <legend><%= t('views.parkings.fieldset.parking_configuration') %></legend>
 
-        <%= f.select :parking_configuration, ['Parallel', 'Straight-In', 'Angled', 'Back-In Angled', 'Back-in straight']  %>
+        <%= f.select :parking_configuration, ['', 'Parallel', 'Straight-In', 'Angled', 'Back-In Angled', 'Back-in straight']  %>
 
       </fieldset>
 

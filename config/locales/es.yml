@@ -586,6 +586,8 @@ es:
         trend: Tendencia
         total_disabled_space: Total Espacio para Discapacitados
         available_disabled_space: Disponible Espacio para Discapacitados
+        machine_readable: Maquina 
+        maximum_duration: Maxima Duracion
 
       poi_address:
         city_id: Ciudad
