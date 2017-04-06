@@ -1,51 +1,63 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Parkings [# <%= @parkings.count  %>]</h1>
-
+<div class="span12">
+  <div class="span3">
+    <h1>Parkings [# <%= @parkings.count  %>]</h1>
+  </div>
+  <div class="span3">
+    <%= link_to 'New Parking', new_parking_path,  class: 'form-inline btn btn-info'  %>
+  </div>
+</div>  
+<div class="span12">
 <% if current_user.role == 'Admin' %>
-  <%= render "search" %>
-<% end %>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Street</th>
-      <th>Brand</th>
-      <th>Operator</th>
-      <th>Facility type</th>
-      <th>Levels</th>
-      <th>City</th>
-      <th>Phone</th>
-      <th>Website</th>
-      <th>Usuarios</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @parkings.each do |parking| %>
+    <%= render "search" %>
+  <% end %>
+</div>
+  <table class="table">
+    <thead>
       <tr>
-        <td><%= parking.name %></td>
-        <td><%= parking.street %></td>
-        <td><%= parking.brand %></td>
-        <td><%= parking.operator %></td>
-        <td><%= parking.facility_type_id %></td>
-        <td><%= parking.levels %></td>
-        <td><%= parking.city_id %></td>
-        <td><%= parking.phone %></td>
-        <td><%= parking.website %></td>
-        <td><%= parking.user_name %></td>
-        <td><%= link_to 'Edit', edit_parking_path(parking) %></td>
-      
+        <th>Id</th>
+        <th>Name</th>
+        <th>Street</th>
+        <th>Brand</th>
+        <th>Operator</th>
+        <th>Facility type</th>
+        <th>Levels</th>
+        <th>City</th>
+        <th>Phone</th>
+        <th>Website</th>
+        <th>Usuarios</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @parkings.each do |parking| %>
+        <tr>
+          <td><%= parking.id %></td>
+          <td><%= parking.name %></td>
+          <td><%= parking.street %></td>
+          <td><%= parking.brand %></td>
+          <td><%= parking.operator %></td>
+          <td><%= parking.facility_type_id %></td>
+          <td><%= parking.levels %></td>
+          <td><%= parking.city_id %></td>
+          <td><%= parking.phone %></td>
+          <td><%= parking.website %></td>
+          <td><%= parking.user_name %></td>
+          <td><%= link_to 'Edit', edit_parking_path(parking) %></td>
+
           <% if current_user.role == 'Admin' %>
             <td><%= link_to 'Destroy', parking, method: :delete, data: { confirm: 'Are you sure?' } %></td>
           <% end %>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<br>
+  <br>
+  <div class="pager pagination">
+    <%= will_paginate @parkings %>
+  </div>
 
-<%= pager @parkings %>
-<%= link_to 'New Parking', new_parking_path %>
+
