@@ -37,12 +37,12 @@ Navarra.parkings.action_edit = function(){
     if (Navarra.parkings.config.lat_exit){
       text = "S";
       color = 'red';
-      addMarkerEdit(Navarra.parkings.config.lat_entry, Navarra.parkings.config.lng_entry, text, color);
+      addMarkerEdit(Navarra.parkings.config.lat_exit, Navarra.parkings.config.lng_exit, text, color);
     }
     if (Navarra.parkings.config.lat_entry){
       text = "S";
       color = 'green';
-      addMarkerEdit(Navarra.parkings.config.lat_exit, Navarra.parkings.config.lng_exit, text, color);
+      addMarkerEdit(Navarra.parkings.config.lat_entry, Navarra.parkings.config.lng_entry, text, color);
     }
 
     if (Navarra.parkings.config.polygon){
