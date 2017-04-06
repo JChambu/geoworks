@@ -187,9 +187,6 @@ Navarra.parkings.action_new = function(){
 
     }
 
-
-
-
   bindInputFocusOutParking = function() {
     $("input").focusout(function(e) {
       f = $(this).closest("form").serialize();

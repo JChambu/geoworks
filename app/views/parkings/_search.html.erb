@@ -10,6 +10,10 @@
     <div class="span2">
     <%= control_group(f.select(:province_id_eq, provinces_for_select(@country_id), :include_blank => true), Province.human_attribute_name(:name)) %>
     </div>
+
+    <div class="span2">
+    <%= control_group(f.select(:parking_type_eq, ['','off_street', 'on_street']), 'Tipo de Estacionamiento') %>
+    </div>
   </div>
     <div class="form-actions">
       <%= f.submit(t("buttons.search"), :class => 'btn') %>
