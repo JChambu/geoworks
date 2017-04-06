@@ -64,14 +64,12 @@ Navarra.parkings.action_edit = function(){
 
   addPolygon = function(polygon_edit){
 
-
     polystrip = new H.geo.Strip();
     polygon_edit.forEach(function(point){
       polystrip.pushPoint(point);
     });
 
 
-    console.log(polystrip.getPointCount());
 
     if (polystrip.getPointCount() == 2 ){
 
@@ -212,7 +210,6 @@ Navarra.parkings.action_new = function(){
 
     bindButtonClick = function() {
       $("#suggest-locations").click(function(e) {
-        console.log("click");
         e.preventDefault();
 
         if($("#parking_street").val() == '') {
@@ -316,7 +313,6 @@ Navarra.parkings.action_new = function(){
       $(this).toggleClass("btn-success");
       nameEnableGeom = this.id;
 
-      console.log(nameEnableGeom);
       draw_polygon_and_point();
     });
   }
@@ -347,7 +343,6 @@ Navarra.parkings.action_new = function(){
 
     if (lat){
       searchMarker = new H.map.DomMarker({lat:lat, lng:lng});
-      console.log(lat, lng);
 
       map.removeObject(searchMarker);
     }
