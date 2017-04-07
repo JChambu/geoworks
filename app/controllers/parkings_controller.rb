@@ -1,6 +1,5 @@
 class ParkingsController < ApplicationController
   before_action :set_parking, only: [:show, :edit, :update, :destroy]
-  
   before_action :prepare_search_values, only: [:index ]
   load_and_authorize_resource
   # GET /parkings
@@ -11,7 +10,6 @@ class ParkingsController < ApplicationController
     if current_user.role != 'Admin'
       params[:q] = {:user_id_eq => current_user.id}
     end
-
     @search = Parking.search(params[:q])
     @search.sorts = 'id'
     @parkings = @search.result.paginate(page: params[:page])
@@ -49,6 +47,7 @@ class ParkingsController < ApplicationController
   # POST /parkings
   # POST /parkings.json
   def create
+    @parking[:user_id] =  current_user.id
     @parking = Parking.new(parking_params)
 
     respond_to do |format|
@@ -97,6 +96,14 @@ class ParkingsController < ApplicationController
 
   
   def prepare_search_values
+
+    if params.has_key? :q
+      @country_id = params[:q][:country_id_eq]
+      @province_id = params[:q][:province_id_eq]
+      @user_id = params[:q][:user_id_eq]
+      @parking_type = params[:q][:parking_type_eq]
+      return
+    end
     params[:q] = {:poi_status_id_not_eq => 4}
   end
   
@@ -108,6 +115,6 @@ class ParkingsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def parking_params
-    params.require(:parking).permit(:name, :street, :brand, :operator, :facility_type_id, :levels, :city_id, :the_geom, :the_geom_entrance, :the_geom_exit, :phone, :website, :detailed_pricing_model, :price, :currency, :available_payment_methods, :regular_openning_hours, :exceptions_opening, :flag, :the_geom_area, :latitude, :longitude, :latitude_entry, :longitude_entry, :latitude_exit, :longitude_exit, :polygon, :number, :max_drive_height,:max_drive_width, :elevators,:escalators, :handicapped_accessible, :handicapped_parking_spaces, :women_parking_spaces, :sanitation_facilities, :restroom_available, :secure_parking, :security_manned, :electric_vehicle_charging_points, :connector_type, :number_of_connectors, :charge_point_operator, :payment_methods, :light, :motorcycle_parking_spaces, :family_friendly,:carwash, :parking_disc,  :parking_ticket, :gate, :monitored, :none, :total_space, :space_available, :available, :trend, :total_disabled_space, :available_disabled_space, :the_geom_area_original, :p_action_id, :poi_status_id, :line, :restrinctions, :machine_readable, :maximum_duration, :tow_away_zone, :street_sweeping, :street_mall_time_market, :pedestrian_zone_time, :snow_route, :clearway, :residential, :handicapped, :diplomatic, :media_press, :other, :loading_unloading_zone, :drop_pick_up_zona, :disabled_handicap_only, :private_parking, :commercial_vehicles_only, :side_street, :parking_capacity, :payment, :max_duration_parking_disc, :parking_configuration).merge(user_id: current_user.id) 
+    params.require(:parking).permit(:name, :street, :brand, :operator, :facility_type_id, :levels, :city_id, :the_geom, :the_geom_entrance, :the_geom_exit, :phone, :website, :detailed_pricing_model, :price, :currency, :available_payment_methods, :regular_openning_hours, :exceptions_opening, :flag, :the_geom_area, :latitude, :longitude, :latitude_entry, :longitude_entry, :latitude_exit, :longitude_exit, :polygon, :number, :max_drive_height,:max_drive_width, :elevators,:escalators, :handicapped_accessible, :handicapped_parking_spaces, :women_parking_spaces, :sanitation_facilities, :restroom_available, :secure_parking, :security_manned, :electric_vehicle_charging_points, :connector_type, :number_of_connectors, :charge_point_operator, :payment_methods, :light, :motorcycle_parking_spaces, :family_friendly,:carwash, :parking_disc,  :parking_ticket, :gate, :monitored, :none, :total_space, :space_available, :available, :trend, :total_disabled_space, :available_disabled_space, :the_geom_area_original, :p_action_id, :poi_status_id, :line, :restrinctions, :machine_readable, :maximum_duration, :tow_away_zone, :street_sweeping, :street_mall_time_market, :pedestrian_zone_time, :snow_route, :clearway, :residential, :handicapped, :diplomatic, :media_press, :other, :loading_unloading_zone, :drop_pick_up_zona, :disabled_handicap_only, :private_parking, :commercial_vehicles_only, :side_street, :parking_capacity, :payment, :max_duration_parking_disc, :parking_configuration) 
   end
 end
