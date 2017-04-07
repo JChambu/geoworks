@@ -125,7 +125,7 @@ Navarra.parkings.action_new = function(){
     mapContainer = document.getElementById("geocoding-map");
     var defaultLayers = platform.createDefaultLayers();
 
-    map = new H.Map(mapContainer, defaultLayers.normal.map, {
+    map = new H.Map(mapContainer, defaultLayers.satellite.map, {
       zoom: 4,
       center: new H.geo.Point(-32.934929,-68.774414)
     });
