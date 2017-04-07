@@ -26,6 +26,7 @@
         <th>City</th>
         <th>Phone</th>
         <th>Website</th>
+        <th>Status</th>
         <th>Usuarios</th>
         <th colspan="3"></th>
       </tr>
@@ -45,6 +46,7 @@
           <td><%= parking.phone %></td>
           <td><%= parking.website %></td>
           <td><%= parking.user_name %></td>
+          <td><%= parking.poi_status.name %></td>
           <td><%= link_to 'Edit', edit_parking_path(parking) %></td>
 
           <% if current_user.role == 'Admin' %>

@@ -1,14 +1,13 @@
 class ParkingsController < ApplicationController
   before_action :set_parking, only: [:show, :edit, :update, :destroy]
-
+  
+  before_action :prepare_search_values, only: [:index ]
   load_and_authorize_resource
   # GET /parkings
   # GET /parkings.json
   def index
 
     @search_ext = parkings_path 
-   #params[:q] = {poi_status_id_not_eq: PoiStatus.name_status('Verificado').id}
-
     if current_user.role != 'Admin'
       params[:q] = {:user_id_eq => current_user.id}
     end
@@ -95,6 +94,13 @@ class ParkingsController < ApplicationController
     end
   end
   private
+
+  
+  def prepare_search_values
+    params[:q] = {:poi_status_id_not_eq => 4}
+  end
+  
+  
   # Use callbacks to share common setup or constraints between actions.
   def set_parking
     @parking = Parking.find(params[:id])

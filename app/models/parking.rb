@@ -4,6 +4,7 @@ class Parking < ApplicationRecord
   
   belongs_to :user
   belongs_to :city
+  belongs_to :poi_status
   has_one :department, :through => :city
   has_one :province, :through => :department
   has_one :country, :through => :province
@@ -21,6 +22,7 @@ class Parking < ApplicationRecord
   delegate :name, :to => :province, :prefix => true, :allow_nil => true
   delegate :name, :to => :department, :prefix => true, :allow_nil => true
   delegate :name, :to => :city, :prefix => true, :allow_nil => true
+  delegate :human_name, :to => :poi_status, :prefix => true, :allow_nil => true
   attr_accessor :latitude, :longitude, :latitude_entry, :longitude_entry, :latitude_exit, :longitude_exit, :polygon, :line
 
   

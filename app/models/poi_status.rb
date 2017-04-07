@@ -1,5 +1,6 @@
 class PoiStatus < ActiveRecord::Base
   has_many :pois
+  has_many :parkings
   has_many :extended_listings
 
   before_destroy :has_related_pois?
