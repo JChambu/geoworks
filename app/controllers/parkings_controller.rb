@@ -13,7 +13,6 @@ class ParkingsController < ApplicationController
       params[:q] = {:user_id_eq => current_user.id}
     end
 
-    pry
     @search = Parking.search(params[:q])
     @search.sorts = 'id'
     @parkings = @search.result.paginate(page: params[:page])
