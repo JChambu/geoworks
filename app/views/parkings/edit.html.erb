@@ -1,7 +1,8 @@
 <h1>Editing Parking</h1>
 
+
 <% if @parking.parking_type == 'off_street' %>
   <%= render 'off_street', parking: @parking %>
-<% else %>
+<%else  %> 
   <%= render 'on_street', parking: @parking %>
 <% end %>

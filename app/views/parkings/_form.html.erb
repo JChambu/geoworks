@@ -13,8 +13,8 @@ Navarra.parkings.config.lat_exit = <%= @parking.the_geom_exit.y %>
 Navarra.parkings.config.lng_exit = <%= @parking.the_geom_exit.x %>
 
 <%end %>
-  <% if @parking.the_geom_area %>
-  Navarra.parkings.config.polygon.push(<%= @parking.the_geom_area %>)
+  <% if @parking.the_geom_area_original %>
+  Navarra.parkings.config.polygon.push(<%= @parking.the_geom_area_original %>)
 <% end %>
 
   </script>

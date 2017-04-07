@@ -64,6 +64,13 @@ Navarra.parkings.action_edit = function(){
 
   addPolygon = function(polygon_edit){
 
+    console.log(polygon_edit);
+
+
+    polygon_edit.forEach(function(point){
+    console.log(point);
+    });
+
     polystrip = new H.geo.Strip();
     polygon_edit.forEach(function(point){
       polystrip.pushPoint(point);

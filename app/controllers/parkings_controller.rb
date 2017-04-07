@@ -5,15 +5,15 @@ class ParkingsController < ApplicationController
   # GET /parkings
   # GET /parkings.json
   def index
- 
-   @search_ext = parkings_path 
-    
+
+    @search_ext = parkings_path 
+
     if current_user.role != 'Admin'
       params[:q] = {:user_id_eq => current_user.id}
     end
 
-      @search = Parking.search(params[:q]) 
-      @parkings = @search.result.paginate(page: params[:page])
+    @search = Parking.search(params[:q]) 
+    @parkings = @search.result.paginate(page: params[:page])
   end
 
   # GET /parkings/1
@@ -28,6 +28,9 @@ class ParkingsController < ApplicationController
 
   # GET /parkings/1/edit
   def edit
+  
+    @p = @parking.the_geom_area
+    @num_points = (@p.boundary.num_points - 1)
 
   end
 
