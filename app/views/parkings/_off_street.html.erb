@@ -17,7 +17,7 @@ Navarra.parkings.config.lng_exit = <%= @parking.the_geom_exit.x %>
   <% if @parking.the_geom_area %>
 <% (0..@num_points).each {|n| 
   %>
-  Navarra.parkings.config.polygon.push({ lng: <%= @p.boundary.point_n(n).y %> , lat: <%= @p.boundary.point_n(n).x %>})
+  Navarra.parkings.config.polygon.push({ lat: <%= @p.boundary.point_n(n).y%> , lng: <%= @p.boundary.point_n(n).x %>})
 
 <% } %>
 <% end %>
