@@ -102,6 +102,7 @@ class ParkingsController < ApplicationController
       @province_id = params[:q][:province_id_eq]
       @user_id = params[:q][:user_id_eq]
       @parking_type = params[:q][:parking_type_eq]
+      @poi_status_id = params[:q][:poi_status_id_not_eq] = 4  
       return
     end
     params[:q] = {:poi_status_id_not_eq => 4}
