@@ -4,11 +4,13 @@
 
   Navarra.parkings.config.lat = <%= @parking.the_geom.y %>
 Navarra.parkings.config.lng = <%= @parking.the_geom.x %>
+<%end  %>
 
-
+<% if @parking.the_geom_entrance %>
 Navarra.parkings.config.lat_entry = <%= @parking.the_geom_entrance.y %>
 Navarra.parkings.config.lng_entry = <%= @parking.the_geom_entrance.x %>
-
+<%end  %>
+<% if @parking.the_geom_exit %>
 Navarra.parkings.config.lat_exit = <%= @parking.the_geom_exit.y %>
 Navarra.parkings.config.lng_exit = <%= @parking.the_geom_exit.x %>
 
