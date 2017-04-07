@@ -325,15 +325,16 @@ Navarra.parkings.action_new = function(){
 
   draw_polygon_and_point = function(){
     if (nameEnableGeom == 'clear'){
-      
+     
+      console.log(nameEnableGeom);
       polygon_area = [];
       polygon_original = [];
       paintReady = true;
 
-      if (polygon ){
+      if (polygon){
         paintReady = true;
         map.removeObject(polygon);
-
+        polystrip = new H.geo.Strip();
 
       }
       map.addEventListener("pointerdown", push_point_array);
@@ -423,18 +424,19 @@ Navarra.parkings.action_new = function(){
     }
 
   push_point_array = function(e){
+    
     if(paintReady)
     {
-  
       //push a point into array
       polystrip.pushPoint(map.screenToGeo(e.currentPointer.viewportX, e.currentPointer.viewportY));
       coord =  map.screenToGeo(e.currentPointer.viewportX, e.currentPointer.viewportY);
       //create a polygon if points array has one point inside.
 
       polygon_original.push("{lat:" + coord.lat + ", lng: " + coord.lng + "}" );
-
       coordinate = (coord.lng + " " +  coord.lat)
       polygon_area.push(coordinate); 
+
+      console.log(polygon_area);
 
 
       if(polystrip.getPointCount() == 3) {
@@ -464,10 +466,7 @@ Navarra.parkings.action_new = function(){
       e.originalEvent.stopImmediatePropagation();
       //set path and fillColor of polygon to finish the digitizer
       polygon.setStrip(polystrip);
-      console.log(polygon_area[0]);
-      
       polygon_area.push(polygon_area[0]);
-
       $("#parking_polygon").attr("value", polygon_area);
       $("#parking_the_geom_area_original").attr("value", polygon_original);
       //set paintReady flag to false to prevent painting polygon
@@ -500,7 +499,6 @@ Navarra.parkings.action_new = function(){
         }
       }
     );
-
     map.addObject(polygon);
   };
 
@@ -515,7 +513,6 @@ Navarra.parkings.action_new = function(){
       }
     );
 
-    polygon_area.push(polygon_area[0]);
     $("#parking_line").attr("value", polygon_area);
     $("#parking_the_geom_area_original").attr("value", polygon_original);
     map.addObject(polyline);
