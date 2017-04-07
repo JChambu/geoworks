@@ -7,11 +7,13 @@ class ParkingsController < ApplicationController
   def index
 
     @search_ext = parkings_path 
-    params[:q] = {poi_status_id_not_eq: PoiStatus.name_status('Verificado').id}
+   #params[:q] = {poi_status_id_not_eq: PoiStatus.name_status('Verificado').id}
 
     if current_user.role != 'Admin'
       params[:q] = {:user_id_eq => current_user.id}
     end
+
+    pry
     @search = Parking.search(params[:q])
     @search.sorts = 'id'
     @parkings = @search.result.paginate(page: params[:page])
