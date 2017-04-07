@@ -28,10 +28,21 @@ class ParkingsController < ApplicationController
 
   # GET /parkings/1/edit
   def edit
-  
     @p = @parking.the_geom_area
+    if !@p.nil?
     @num_points = (@p.boundary.num_points - 1)
+    end
 
+    @segment = @parking.the_geom_segment
+    if !@segment.nil?
+      @num_point_segment = (@segment.num_points - 1 )
+
+ (0..@num_point_segment).each {|n|
+ p @segment.point_n(n).y 
+ p @segment.point_n(n).x 
+ }
+    end
+  
   end
 
   # POST /parkings

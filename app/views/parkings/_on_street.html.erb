@@ -13,10 +13,10 @@ Navarra.parkings.config.lat_exit = <%= @parking.the_geom_exit.y %>
 Navarra.parkings.config.lng_exit = <%= @parking.the_geom_exit.x %>
 
 <%end %>
-  <% if @parking.the_geom_area %>
-<% (0..@num_points).each {|n| 
+  <% if !@parking.the_geom_segment.nil? %>
+<% (0..@num_point_segment).each {|n| 
   %>
-  Navarra.parkings.config.polygon.push({ lng: <%= @p.boundary.point_n(n).y %> , lat: <%= @p.boundary.point_n(n).x %>})
+  Navarra.parkings.config.polygon.push({ lat: <%= @segment.point_n(n).y %> , lng: <%= @segment.point_n(n).x %>})
 <% } %>
 <% end %>
 
@@ -230,6 +230,11 @@ Navarra.parkings.config.lng_exit = <%= @parking.the_geom_exit.x %>
         <%= f.input :parking_capacity, label: false %>
       </fieldset>
 
+    <fieldset class="form-group">
+      <legend><%= t('views.parkings.fieldset.poi_statuses') %></legend>
+
+        <%= f.input :poi_status_id, :collection => poi_statuses_for_select %>
+    </fieldset>
 
 
       <div class="actions">

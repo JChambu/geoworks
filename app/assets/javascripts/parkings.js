@@ -63,19 +63,11 @@ Navarra.parkings.action_edit = function(){
 
 
   addPolygon = function(polygon_edit){
-
-    console.log(polygon_edit);
-
-
-    polygon_edit.forEach(function(point){
-    console.log(point);
-    });
-
     polystrip = new H.geo.Strip();
     polygon_edit.forEach(function(point){
       polystrip.pushPoint(point);
+      console.log(point);
     });
-
 
 
     if (polystrip.getPointCount() == 2 ){
@@ -130,13 +122,20 @@ Navarra.parkings.action_new = function(){
       center: new H.geo.Point(-32.934929,-68.774414)
     });
 
-
     var mapEvents = new mapsjs.mapevents.MapEvents(map);
     var behavior = new mapsjs.mapevents.Behavior(mapEvents);
     var ui = new mapsjs.ui.UI(map, {
       zoom: true,
-      panorama: true
+      panorama: true, 
+      mapsettings: {
+        entries: [
+          {'name': 'Normal', 'mapType': defaultLayers['normal']},
+          {'name': 'Satellite', 'mapType': defaultLayers['satellite']},
+          {'name': 'Terrain', 'mapType': defaultLayers['terrain']}
+          ]
+          }
     });
+
 
     /*var strip = new H.geo.Strip();
     strip.pushPoint({lat:53.3477, lng:-6.2597});
@@ -326,18 +325,20 @@ Navarra.parkings.action_new = function(){
 
   draw_polygon_and_point = function(){
     if (nameEnableGeom == 'clear'){
+      
       polygon_area = [];
       polygon_original = [];
       paintReady = true;
 
       if (polygon ){
-        map.removeObject(polygon);
         paintReady = true;
+        map.removeObject(polygon);
+
 
       }
       map.addEventListener("pointerdown", push_point_array);
       map.addEventListener("pointermove", point_move);
-      map.addEventListener("dbltap", event_stop);
+      map.addEventListener("contextmenu", event_stop);
     }
     else{
       paintReady = false;
@@ -424,6 +425,7 @@ Navarra.parkings.action_new = function(){
   push_point_array = function(e){
     if(paintReady)
     {
+  
       //push a point into array
       polystrip.pushPoint(map.screenToGeo(e.currentPointer.viewportX, e.currentPointer.viewportY));
       coord =  map.screenToGeo(e.currentPointer.viewportX, e.currentPointer.viewportY);
@@ -462,6 +464,8 @@ Navarra.parkings.action_new = function(){
       e.originalEvent.stopImmediatePropagation();
       //set path and fillColor of polygon to finish the digitizer
       polygon.setStrip(polystrip);
+      console.log(polygon_area[0]);
+      
       polygon_area.push(polygon_area[0]);
 
       $("#parking_polygon").attr("value", polygon_area);

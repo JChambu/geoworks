@@ -322,6 +322,12 @@ Navarra.parkings.config.lng_exit = <%= @parking.the_geom_exit.x %>
       </div> 
     </fieldset>
 
+    <fieldset class="form-group">
+      <legend><%= t('views.parkings.fieldset.poi_statuses') %></legend>
+
+        <%= f.input :poi_status_id, :collection => poi_statuses_for_select %>
+    </fieldset>
+
     <div class="actions">
       <%= f.button :submit, :class => 'btn-primary', data: {disable_with: "Enviando"}%>
     </div>
