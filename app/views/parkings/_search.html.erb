@@ -14,6 +14,10 @@
     <div class="span2">
     <%= control_group(f.select(:parking_type_eq, ['','off_street', 'on_street']), 'Tipo de Estacionamiento') %>
     </div>
+
+    <div class="span2">
+        <%= control_group(f.select(:poi_status_id_eq, poi_statuses_for_select, :selected => @poi_status_id, :include_blank => true), Poi.human_attribute_name(:poi_status_id)) %>
+    </div>
   </div>
     <div class="form-actions">
       <%= f.submit(t("buttons.search"), :class => 'btn') %>
