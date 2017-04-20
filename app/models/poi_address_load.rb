@@ -66,7 +66,7 @@ class PoiAddressLoad < ActiveRecord::Base
   end
 
   def save_xls_file
-    directory = Navarra::Xls.save(self.file, "poi_addresses/loaded_xls", "poi_address.xls")
+    directory = Geoworks::Xls.save(self.file, "poi_addresses/loaded_xls", "poi_address.xls")
     self.directory_name = directory.split("/").last
   end
 
@@ -87,7 +87,7 @@ class PoiAddressLoad < ActiveRecord::Base
     contador = 0
 
     begin      
-      Navarra::Xls.read(poi_address_load.source_path) do |sheet, row|
+      Geoworks::Xls.read(poi_address_load.source_path) do |sheet, row|
         @r = row
         @s = sheet
         next if row.idx == 0 #The first row match with the column names
@@ -140,6 +140,7 @@ class PoiAddressLoad < ActiveRecord::Base
     #address = validate_address(poi_data, row)
     # load_address_number(poi_data, row)
     address = load_address(poi_data, row) 
+    address_original = load_address_original(poi_data, row) 
     number  = load_number(poi_data, row) 
     city = load_city(poi_data, row)
     #  country = load_country(poi_data, row)
@@ -151,9 +152,31 @@ class PoiAddressLoad < ActiveRecord::Base
   end  
 
 
-  def self.load_address(poi_data, row)
-    address_row = PoiAddressLoad.get_xls_column_value(:address, row)
+  def self.load_address_original(poi_data, row)
+    address_row = PoiAddressLoad.get_xls_column_value(:address, row).strip.capitalize
+    poi_data[:address_complete] = address_row
+  end
+    
+  def self.street_expresion address
 
+      address_row = address.gsub(/\s(of[\.|\+|\*].*)/, '')
+      address_row = address.gsub(/\s(int[\.|\+|\*].*)/, '')
+      address_row = address.gsub(/\s(cdra[\.|\+|\*].*)/, 'cuadra ')
+      address_row = address.gsub(/\s(sub[\.|\+|\*].*)/, '')
+      return address_row
+    end
+  
+  
+  
+  def self.load_address(poi_data, row)
+    address_row = PoiAddressLoad.get_xls_column_value(:address, row).strip.capitalize
+  
+    if address_row.nil?
+      poi_data[:note] = "Sin nombre de calle"
+      return
+    end
+      address_row = PoiAddressLoad.street_expresion(address_row) 
+    
     exp_address = /(.*)\s+\d/ 
     address = exp_address.match(address_row)
 
@@ -167,12 +190,14 @@ class PoiAddressLoad < ActiveRecord::Base
   end
 
   def self.load_number(poi_data, row)
-    number_row = PoiAddressLoad.get_xls_column_value(:address, row)
-    exp_number = /.*\s(\d.+)$/
+    number_row = PoiAddressLoad.get_xls_column_value(:address, row).strip
+    number_row = PoiAddressLoad.street_expresion(number_row)
+    exp_number = /.*\s(\d+)/
     number = exp_number.match(number_row)
 
     if number.nil?
       poi_data[:number] = nil
+      poi_data[:note] = "Sin numero de calle"
     else  
       poi_data[:number] = number[1]
       return number[1]
@@ -209,6 +234,7 @@ class PoiAddressLoad < ActiveRecord::Base
     address = [address, number].join(' ')
     address_complete = [address, [@city_name, @department_name, @province_name, @country_name].join(' ')].join(',')
     geocode = Geocoder.coordinates(address_complete)
+   
     p geocode
     if !geocode.nil?
       geom = "POINT(#{geocode[1]} #{geocode[0]})"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170405172200) do
+ActiveRecord::Schema.define(version: 20170420052648) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -283,6 +283,7 @@ ActiveRecord::Schema.define(version: 20170405172200) do
     t.string   "province_name"
     t.string   "country_name"
     t.integer  "p_action_id"
+    t.string   "note"
   end
 
   create_table "poi_loads", force: :cascade do |t|
