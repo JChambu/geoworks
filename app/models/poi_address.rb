@@ -41,6 +41,8 @@ class PoiAddress < ActiveRecord::Base
     if self.latitude and self.longitude and
       !self.latitude.to_s.empty? and !self.longitude.to_s.empty?
       self.the_geom = "POINT(#{self.longitude} #{self.latitude})"
+
+
     end
   end
 

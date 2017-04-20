@@ -15,8 +15,8 @@
 <%= simple_form_for(@poi_address) do |f| %>
   <%= f.error_notification %>
 
-  <%= f.hidden_field :longitude %>
-  <%= f.hidden_field :latitude %>
+  <%= f.input :longitude %>
+  <%= f.input :latitude %>
   <div class="form-inputs">
 
     <%= f.input :city_name %>
@@ -33,15 +33,19 @@
   </div>
   <div class="row-fluid">
     <div class="span3">
-      <%= link_to t("views.poi.form.buttons.add_location"), "#", :class => 'btn', :id => 'add-marker-new' %>
+      <%= link_to t("views.poi.form.buttons.add_location"), "#", :class => 'btn', :id => 'add-marker-new-pa' %>
     </div>
-    <div class="row-fluid">
-      <div id="geocoding-map" class="span12">
-        <%= select_tag "map-type", options_for_select(nokia_map_types_for_select) %>
-      </div>
-    </div>
-
+    
     <div class="form-actions">
       <%= f.button :submit, class: "btn btn-primary" %>
     </div>
+    </div>
+    
+    
+    <div class="row-fluid">
+      <div id="geocoding-map" class="span12">
+      </div>
+    </div>
+
+
   <% end %>
