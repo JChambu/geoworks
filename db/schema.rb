@@ -162,9 +162,9 @@ ActiveRecord::Schema.define(version: 20170420052648) do
     t.integer  "facility_type_id"
     t.integer  "levels"
     t.integer  "city_id"
-    t.geometry "the_geom",                         limit: {:srid=>4326, :type=>"point"}
-    t.geometry "the_geom_entrance",                limit: {:srid=>4326, :type=>"point"}
-    t.geometry "the_geom_exit",                    limit: {:srid=>4326, :type=>"point"}
+    t.point "the_geom",                         :srid=>4326
+    t.point "the_geom_entrance",                :srid=>4326
+    t.point "the_geom_exit",                    :srid=>4326
     t.string   "phone"
     t.string   "website"
     t.string   "detailed_pricing_model"
@@ -173,7 +173,7 @@ ActiveRecord::Schema.define(version: 20170420052648) do
     t.string   "available_payment_methods"
     t.string   "regular_openning_hours"
     t.string   "exceptions_opening"
-    t.geometry "the_geom_area",                    limit: {:srid=>4326, :type=>"polygon"}
+    t.polygon "the_geom_area",                    :srid=>4326
     t.datetime "created_at",                                                                                                            null: false
     t.datetime "updated_at",                                                                                                            null: false
     t.integer  "number"
@@ -214,7 +214,7 @@ ActiveRecord::Schema.define(version: 20170420052648) do
     t.integer  "user_id"
     t.integer  "p_action_id"
     t.integer  "poi_status_id"
-    t.geometry "the_geom_segment",                 limit: {:srid=>4326, :type=>"line_string"}
+    t.line     "the_geom_segment", :srid=>4326
     t.string   "payment"
     t.string   "parking_configuration"
     t.string   "parking_capacity"
@@ -354,7 +354,7 @@ ActiveRecord::Schema.define(version: 20170420052648) do
     t.integer  "duplicated_identifier"
     t.integer  "identifier"
     t.date     "control_date"
-    t.geometry "the_geom",              limit: {:srid=>4326, :type=>"point"}
+    t.point "the_geom"
     t.datetime "created_at",                                                                  null: false
     t.datetime "updated_at",                                                                  null: false
     t.integer  "poi_load_id"
