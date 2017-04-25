@@ -155,7 +155,7 @@ class PoiAddressLoad < ActiveRecord::Base
     #  country = load_country(poi_data, row)
     #  source= load_source(poi_data, row)
     #  rol_number= load_rol_number(poi_data, row)
-    geom = build_geom(poi_data, address, number ) 
+#    geom = build_geom(poi_data, address, number ) 
    
     PoiAddress.new(poi_data)
 
@@ -243,13 +243,13 @@ class PoiAddressLoad < ActiveRecord::Base
 
   def self.load_recid(poi_data, row)
     recid = PoiAddressLoad.get_xls_column_value(:recid, row)
-    poi_data[:recid] = recid
+     poi_data[:recid] = recid
     
   end
 
   def self.load_name(poi_data, row)
     name = PoiAddressLoad.get_xls_column_value(:name, row)
-    poi_data[:recid] = name
+     poi_data[:name] = name
   end
 
 
@@ -257,8 +257,6 @@ class PoiAddressLoad < ActiveRecord::Base
     address = [address, number].join(' ')
     address_complete = [address, [@city_name, @department_name, @province_name, @country_name].join(' ')].join(',')
     geocode = Geocoder.coordinates(address_complete)
-   
-    p geocode
     if !geocode.nil?
       geom = "POINT(#{geocode[1]} #{geocode[0]})"
       poi_data[:the_geom] = geom
