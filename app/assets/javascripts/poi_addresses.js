@@ -45,15 +45,16 @@ Navarra.poi_addresses.action_edit = function(){
     bindSuggestButtonClickPa();
     loadLatLonFieldsPa()
     bindAddMarkerButtonClickPa();
-     markupTemplate = Navarra.geoinit.markupTemplate();
+    markupTemplate = Navarra.geoinit.markupTemplate();
 
-    Navarra.geocoding.init(
+      Navarra.geocoding_ol.init();
+   /* Navarra.geocoding.init(
       Navarra.poi_addresses.config.lat,
       Navarra.poi_addresses.config.lon,
       Navarra.poi_addresses.config.originalLat,
       Navarra.poi_addresses.config.originalLon,
       Navarra.poi_addresses.config.otherpois
-    );
+    );*/
   }
 
   loadLatLonFieldsPa = function() {

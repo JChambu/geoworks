@@ -7,8 +7,6 @@ Navarra.geocoding_ol = function (){
   var pointLayer;  
   var subdomain;
 
-
-
   var init= function() {
 
     var regexParse = new RegExp('([a-z][^.]+).*');
@@ -16,7 +14,6 @@ Navarra.geocoding_ol = function (){
     subdomain = regexParse.exec(domain);
 
     var layer_pois = 'geoworks_'+ subdomain[1] + ':pois';
-
 
     var appId = 'ZTVBhWvg8dw4GhrG9fcL';
     var appCode = 'jOEPEj4JkZvbAiv7GP0E2A';
@@ -118,7 +115,6 @@ Navarra.geocoding_ol = function (){
     }
   };
 
-
   var addMarker = function(coord){
 
     map.removeLayer(pointLayer);
@@ -153,9 +149,7 @@ Navarra.geocoding_ol = function (){
       var items = [];
       $.each(data, function(key, val) {
 
-
         coord = [val.lon, val.lat]
-
         addMarker(coord);
 
       });

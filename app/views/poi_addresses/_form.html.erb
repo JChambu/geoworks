@@ -15,10 +15,9 @@
 <%= simple_form_for(@poi_address) do |f| %>
   <%= f.error_notification %>
 
-  <%= f.input :longitude %>
-  <%= f.input :latitude %>
   <div class="form-inputs">
 
+    <%= f.input :name %>
     <%= f.input :city_name %>
     <%= f.input :department_name %>
     <%= f.input :province_name %>
@@ -35,14 +34,10 @@
     <div class="span3">
       <%= link_to t("views.poi.form.buttons.add_location"), "#", :class => 'btn', :id => 'add-marker-new-pa' %>
     </div>
-    
     <div>
     <%= f.input :phone %>
     <%= f.input :web %>
     </div>
-    
-    
-    
     
     <div class="form-actions">
       <%= f.button :submit, class: "btn btn-primary" %>
@@ -51,7 +46,7 @@
     
     
     <div class="row-fluid">
-      <div id="geocoding-map" class="span12">
+      <div id="map" class="span12">
       </div>
     </div>
 
