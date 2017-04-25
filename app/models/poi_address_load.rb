@@ -26,7 +26,9 @@ class PoiAddressLoad < ActiveRecord::Base
     :province_name,
     :country_name,
     :source,
-    :rol_number
+    :rol_number,
+    :name_company,
+    :phone_company
   ]
 
   def initialize(*args)
@@ -148,6 +150,8 @@ class PoiAddressLoad < ActiveRecord::Base
     # load_address_number(poi_data, row)
     rec_id = load_recid(poi_data, row)
     name = load_name(poi_data, row)
+    name_company = load_name_company(poi_data, row)
+    phone_company = load_phone_company(poi_data, row)
     address = load_address(poi_data, row) 
     address_original = load_address_original(poi_data, row) 
     number  = load_number(poi_data, row) 
@@ -252,6 +256,14 @@ class PoiAddressLoad < ActiveRecord::Base
      poi_data[:name] = name
   end
 
+  def self.load_name_company(poi_data, row)
+    name_company = PoiAddressLoad.get_xls_column_value(:name_company, row)
+     poi_data[:name_company] = name_company
+  end
+  def self.load_phone_company(poi_data, row)
+    phone_company = PoiAddressLoad.get_xls_column_value(:phone_company, row)
+     poi_data[:phone_company] = phone_company
+  end
 
   def self.build_geom(poi_data, address, number)
     address = [address, number].join(' ')
