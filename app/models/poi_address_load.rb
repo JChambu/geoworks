@@ -155,7 +155,7 @@ class PoiAddressLoad < ActiveRecord::Base
     #  country = load_country(poi_data, row)
     #  source= load_source(poi_data, row)
     #  rol_number= load_rol_number(poi_data, row)
-#    geom = build_geom(poi_data, address, number ) 
+    geom = build_geom(poi_data, address, number ) 
    
     PoiAddress.new(poi_data)
 
