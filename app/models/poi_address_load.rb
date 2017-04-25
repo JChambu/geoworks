@@ -17,6 +17,8 @@ class PoiAddressLoad < ActiveRecord::Base
   COLORS = {"Red" =>"Rojo", "blue" =>  "Azul", "#00FF00"=>"Verde" }
 
   XLS_COLUMNS=[
+    :recid,
+    :name,
     :address,
     :number,
     :city_name,
@@ -92,6 +94,11 @@ class PoiAddressLoad < ActiveRecord::Base
         @s = sheet
         next if row.idx == 0 #The first row match with the column names
         poi = PoiAddressLoad.build_poi_address(row)
+
+
+        @poi = poi
+        
+        
         # poi.color = poi_address_load.color
         #city = City.joins(department: [ province: [:country] ]).select('countries.name, cities.name as city_name').find(poi.city_id) 
 
@@ -139,6 +146,8 @@ class PoiAddressLoad < ActiveRecord::Base
     poi_data = {}
     #address = validate_address(poi_data, row)
     # load_address_number(poi_data, row)
+    rec_id = load_recid(poi_data, row)
+    name = load_name(poi_data, row)
     address = load_address(poi_data, row) 
     address_original = load_address_original(poi_data, row) 
     number  = load_number(poi_data, row) 
@@ -147,9 +156,11 @@ class PoiAddressLoad < ActiveRecord::Base
     #  source= load_source(poi_data, row)
     #  rol_number= load_rol_number(poi_data, row)
     geom = build_geom(poi_data, address, number ) 
+   
     PoiAddress.new(poi_data)
 
   end  
+
 
 
   def self.load_address_original(poi_data, row)
@@ -229,6 +240,18 @@ class PoiAddressLoad < ActiveRecord::Base
     rol_number = PoiAddressLoad.get_xls_column_value(:rol_number, row)
     poi_data[:rol_number] = rol_number
   end
+
+  def self.load_recid(poi_data, row)
+    recid = PoiAddressLoad.get_xls_column_value(:recid, row)
+    poi_data[:recid] = recid
+    
+  end
+
+  def self.load_name(poi_data, row)
+    name = PoiAddressLoad.get_xls_column_value(:name, row)
+    poi_data[:recid] = name
+  end
+
 
   def self.build_geom(poi_data, address, number)
     address = [address, number].join(' ')

@@ -158,7 +158,7 @@ class PoisController < ApplicationController
 
     params[:poi][:user_id] =  current_user.id if params[:poi][:user_id].nil?
     params[:poi][:control_date] = Date.current if params[:poi][:control_date].empty?
-    params[:poi][:poi_status_id] = 2 if params[:poi][:poi_status_id].to_i == PoiStatus.not_validated.id 
+    params[:poi][:poi_status_id] = 2 if params[:poi][:poi_status_id].to_i == PoiStatus.name_status("not_validated").id 
     params[:poi][:poi_status_id] = 2 if params[:poi][:p_action_id].to_i == PAction.name_action("check").id
 
     @poi[:active] = true

@@ -165,7 +165,6 @@ Navarra.pois.action_edit = function() {
       $("#suggest-locations-btn").click(function(e) {
         e.preventDefault();
 
-
         if($("#poi_street_name").val() == '') {
           alert("Debe ingresar una Calle para poder sugerir ubicaciones.");
           return;
@@ -175,7 +174,6 @@ Navarra.pois.action_edit = function() {
           alert("Debe ingresar Número para poder sugerir ubicaciones.");
           return;
         }
-
 
         var searchTerm = $("#poi_street_name").val() + " " + $("#poi_house_number").val();
 

@@ -8,9 +8,9 @@ class CreateParkings < ActiveRecord::Migration[5.0]
       t.integer :facility_type_id
       t.integer :levels
       t.integer :city_id
-      t.st_point :the_geom, :geographic => false, :srid => 4326, :has_z => false
-      t.st_point :the_geom_entrance, :geographic => false, :srid => 4326, :has_z => false
-      t.st_point :the_geom_exit, :geographic => false, :srid => 4326, :has_z => false
+ #     t.st_point :the_geom, :geographic => false, :srid => 4326, :has_z => false
+ #     t.st_point :the_geom_entrance, :geographic => false, :srid => 4326, :has_z => false
+ #     t.st_point :the_geom_exit, :geographic => false, :srid => 4326, :has_z => false
       t.string :phone
       t.string :website
       t.string :detailed_pricing_model
@@ -20,7 +20,8 @@ class CreateParkings < ActiveRecord::Migration[5.0]
       t.string :regular_openning_hours
       t.string :exceptions_opening
       t.string :flag
-      t.st_polygon :the_geom_area
+#      t.st_polygon :the_geom_area, :geographic => false, :srid => 4326, :has_z => false
+
 
       t.timestamps
     end

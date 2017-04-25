@@ -1,6 +1,6 @@
 Geocoder.configure(
   # Geocoding options
-   timeout: 5,                 # geocoding service timeout (secs)
+   timeout: 10,                 # geocoding service timeout (secs)
    #lookup: :bing,            # name of geocoding service (symbol)
   # lookup: :here,            # name of geocoding service (symbol)
   # language: :en,              # ISO-639 language code
@@ -43,8 +43,8 @@ Geocoder.configure(
 =end
 #google
    lookup: :google,
-   api_key: "AIzaSyA0U3-pdBemLlkXGrFK0rVWZhVCL506kAE"
-   #api_key: "AIzaSyCRcOWYZrmE-uw1k45zaOxM6Ew_--ntfbA"
+   #api_key: "AIzaSyA0U3-pdBemLlkXGrFK0rVWZhVCL506kAE"
+   api_key: "AIzaSyCRcOWYZrmE-uw1k45zaOxM6Ew_--ntfbA"
 
 
 )

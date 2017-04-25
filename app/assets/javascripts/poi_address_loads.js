@@ -43,4 +43,3 @@ Navarra.poi_address_loads.action_new = function() {
   }
 }();
 
-

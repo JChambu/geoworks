@@ -43,7 +43,7 @@ class Poi < ActiveRecord::Base
   validates  :house_number, :presence => true  , :if => :was_validated?
 
   validates :identifier, :presence => true, :uniqueness => true, :unless => :poi_without_source?,  on: :update #comentar la la validacion de identifier
-  validates :old_identifier, :presence => true, :if => :is_navteq_poi?
+ # validates :old_identifier, :presence => true, :if => :is_navteq_poi?
   validates :p_action_id, :presence => true, on: :update, if: :action_type
   validates :email, :second_email,
     :email_format => {:message => I18n.t("activerecord.errors.messages.invalid_email"),
@@ -101,7 +101,6 @@ class Poi < ActiveRecord::Base
   end 
 
   def  action_type
-
     if (poi_source_id == PoiSource.gisworking.id && (p_action_id != PAction.name_action("Add").id && p_action_id != PAction.name_action("check").id ))
       self.errors.add(:base, :invalid_poi_action)
     end
