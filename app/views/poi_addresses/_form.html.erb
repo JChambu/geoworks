@@ -32,7 +32,7 @@ Navarra.poi_addresses.config.originalLon = <%= @poi_address.the_geom.x %>
       <%= f.input :web %>
     </div>
     <div class="span3">
-      <%= f.input :birthdate %>
+      <%= f.input :birthdate, as: :date, html5: true %>
     </div>
   </div>
   <div class="span12">
