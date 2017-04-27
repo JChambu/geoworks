@@ -126,10 +126,31 @@ Navarra.common.form = function() {
     });
 
     $(combo).html(result);
+  },
+
+  searchAddress = function(location){
+       
+      var options = {};  
+      var locationArr = location.split(", ");
+
+        if(locationArr[0] != undefined) {
+          options["location"] = locationArr[0];
+        }
+
+        if(locationArr[1] != undefined) {
+          options["county"] = locationArr[2];
+        }
+
+        if(locationArr[3] != undefined) {
+          options["country"] = locationArr[3];
+        }
+    return options;
   };
 
+  
   return {
     chosen: chosen,
-    loadComboOptions: loadComboOptions
+    loadComboOptions: loadComboOptions,
+    searchAddress: searchAddress
   }
 }();

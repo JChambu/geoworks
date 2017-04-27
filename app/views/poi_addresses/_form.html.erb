@@ -2,7 +2,7 @@
   <script type="text/javascript">
 <% if @poi_address.the_geom %>
 
-Navarra.poi_addresses.config.lat = <%= @poi_address.the_geom.y %>
+  Navarra.poi_addresses.config.lat = <%= @poi_address.the_geom.y %>
 Navarra.poi_addresses.config.lon = <%= @poi_address.the_geom.x %>
 Navarra.poi_addresses.config.originalLat = <%= @poi_address.the_geom.y %>
 Navarra.poi_addresses.config.originalLon = <%= @poi_address.the_geom.x %>
@@ -23,7 +23,7 @@ Navarra.poi_addresses.config.originalLon = <%= @poi_address.the_geom.x %>
     <div class="span3">
       <%= f.input :phone_company %>
     </div>
-    </div>
+  </div>
   <div class="form-inputs span12">
     <div class="span3">
       <%= f.input :phone %>
@@ -48,7 +48,7 @@ Navarra.poi_addresses.config.originalLon = <%= @poi_address.the_geom.x %>
     <div class="span3">
       <%= f.input :country_name, as: :string %>
     </div>
-    </div>
+  </div>
   <div class="span12">
     <div class="span3">
       <%= f.input :street %>

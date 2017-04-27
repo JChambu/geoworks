@@ -1,4 +1,9 @@
 Navarra.namespace("geocoding_ol");
+Navarra.geocoding_ol.config= {
+  "latitud": null,
+  "longitud": null
+}
+
 Navarra.geocoding_ol = function (){
 
   var geocodeServiceUrl = "http://nominatim.openstreetmap.org/search";
@@ -6,17 +11,24 @@ Navarra.geocoding_ol = function (){
   var vectorSource; 
   var pointLayer;  
   var subdomain;
+  var  appId = 'ZTVBhWvg8dw4GhrG9fcL';
+  var  appCode = 'jOEPEj4JkZvbAiv7GP0E2A';
 
-  var init= function() {
-
+ load_subdomain = function(){
     var regexParse = new RegExp('([a-z][^.]+).*');
     var domain = document.domain;
     subdomain = regexParse.exec(domain);
+  
+  }
+
+
+  var init= function() {
+
+    load_subdomain();
 
     var layer_pois = 'geoworks_'+ subdomain[1] + ':pois';
 
-    var appId = 'ZTVBhWvg8dw4GhrG9fcL';
-    var appCode = 'jOEPEj4JkZvbAiv7GP0E2A';
+
     var hereLayers = [
       {
         base: 'base',
@@ -31,7 +43,6 @@ Navarra.geocoding_ol = function (){
       '?app_id={app_id}&app_code={app_code}&useCIT=true&useHTTPS=true';
 
     vectorSource = new ol.source.Vector();
-    
     iconStyle = new ol.style.Style({
       image : new ol.style.Icon(({
         anchor : [ 0.5, 46 ],
@@ -54,13 +65,6 @@ Navarra.geocoding_ol = function (){
           'title': 'Base Maps',
           layers: [
             new ol.layer.Tile({
-              title: 'OSM',
-              type: 'base',
-              visible: 'true',
-              source: new ol.source.OSM()
-            }),
-
-            new ol.layer.Tile({
               title: 'Here',
               type: 'base',
               visible: 'false',
@@ -69,6 +73,12 @@ Navarra.geocoding_ol = function (){
                 attributions: 'Map Tiles &copy; ' + new Date().getFullYear() + ' ' +
                 '<a href="http://developer.here.com">HERE</a>'
               })
+            }), 
+            new ol.layer.Tile({
+              title: 'OSM',
+              type: 'base',
+              visible: 'true',
+              source: new ol.source.OSM()
             })
           ]
         }),
@@ -99,9 +109,7 @@ Navarra.geocoding_ol = function (){
     map.addControl(new ol.control.ZoomSlider()); 
 
     map.on('singleclick', function(evt) {
-
-
-      addMarker(evt.coordinate);
+    addMarker(evt.coordinate);
 
     });
 
@@ -118,8 +126,8 @@ Navarra.geocoding_ol = function (){
   var addMarker = function(coord){
 
     map.removeLayer(pointLayer);
-    Navarra.geocoding.latitude = coord[1];
-    Navarra.geocoding.longitude = coord[0];
+    Navarra.geocoding_ol.latitude = coord[1];
+    Navarra.geocoding_ol.longitude = coord[0];
     iconGeometry = new ol.geom.Point(coord);
     var iconFeature = new ol.Feature({
       geometry: iconGeometry
@@ -139,26 +147,38 @@ Navarra.geocoding_ol = function (){
     var extent = pointLayer.getSource().getExtent();
     map.getView().fit(extent, map.getSize());
     map.getView().setZoom(18);
-
   };
 
   var doGeocode = function(opt){
     //removeAllMarkers();
-    address = opt.county + " " +  opt.location +" " +  opt.searchTerm 
-    $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + address, function(data){
+    
+    address = opt.county + " " +  opt.location +" " +  opt.searchTerm
+    
+   /*Geocoder Here*/ 
+   /* $.getJSON('https://geocoder.cit.api.here.com/6.2/geocode.json?searchtext=' + address + '&app_id=' + appId + '&app_code='+ appCode +'&gen=8' , function(data){
+     
       var items = [];
       $.each(data, function(key, val) {
-
-        coord = [val.lon, val.lat]
+       latitude = val.View[0].Result[0].Location.DisplayPosition.Latitude;
+       longitude = val.View[0].Result[0].Location.DisplayPosition.Longitude;
+        coord= [longitude, latitude];
         addMarker(coord);
-
       });
-
+    });*/
+console.log(address);
+    $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + address, function(data){
+      console.log(data);
+      var items = [];
+      $.each(data, function(key, val) {
+        coord = [val.lon, val.lat]
+        console.log(coord);
+        
+        addMarker(coord);
+      });
     });
   }
 
-  var  removeAllMarkers =  function()  
-  {
+  var  removeAllMarkers =  function(){
     map.getLayers().item(0).getSource().clear();
   }
 

@@ -39,7 +39,6 @@ Navarra.extended_listings.action_new = function(){
 
     }, function (data) {
       var results = [];
-
       $.each(data, function (i, val) {
         results.push({value: val.value, text: val.text});
       });
@@ -47,6 +46,34 @@ Navarra.extended_listings.action_new = function(){
     });
   },
 
+    bindSearchAddress = function(){
+      $("#suggest-locations-btn-el").click(function(e) {
+        e.preventDefault();
+
+        if($("#extended_listing_street").val() == '') {
+          alert("Debe ingresar una Calle para poder sugerir ubicaciones.");
+          return;
+        }
+
+        if($("#extended_listing_number").val() == '') {
+          alert("Debe ingresar Número para poder sugerir ubicaciones.");
+          return;
+        }
+
+        var searchTerm = $("#extended_listing_street").val() + " " + $("#extended_listing_number").val();
+
+        if($("#extended_listing_city_id").val() == '') {
+          alert("Debe seleccionar una ciudad para poder sugerir ubicaciones.");
+          return;
+        }
+        location_city = $("#extended_listing_city_id option:selected").text();
+        options = Navarra.common.form.searchAddress(location_city );
+        options["searchTerm"] = searchTerm;
+          Navarra.geocoding_ol.doGeocode(options);
+      })
+      },
+    
+    
     expresion = function(){
       var exp_street = /(.+)\s\d/;
       var exp_number = /\s(\d+$|\d)/;
@@ -65,24 +92,32 @@ Navarra.extended_listings.action_new = function(){
         }else{
           $("#extended_listing_address").val(street[1]); 
         }
-
-
         if (number == null)
         {
-
           $("#extended_listing_number").val();
         }else{
 
           $("#extended_listing_number").val(number[1]);
         }
       });
+     
+      
+      term= [];
+      term["county"] = "Argentina";
+      term["location"] = "Mendoza";
+      term["searchTerm"] = "san martin, avellaneda 480";
+
+
+      Navarra.geocoding_ol.doGeocode(term);
+
 
     }
 
   init = function(){
-    Navarra.geocoding_leaflet.init();
+    Navarra.geocoding_ol.init();
     initCitiesChosen();
-    expresion();
+    bindSearchAddress();
+    //expresion();
     bindInputFocusOutEl();
   } 
   return {

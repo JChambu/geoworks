@@ -2,23 +2,49 @@
   <%= f.error_notification %>
 
   <div class="row-fluid">
-    <div id="possible_duplicates" class="span12">
+    <div id="possible_duplicates" class="span12"></div>
+
+    <div class="form-inputs span12">
+      <div class="span3">
+        <%= f.input :name %>
+      </div>
+      <div class="span3" >
+        <%= f.input :category_id, collection: categories_for_select%>
+      </div>
+      <div class="span3">
+        <%= f.input :phone %>
+      </div>
+      <div class="span3">
+        <%= f.input :source%>
+      </div>
+    </div>
+    <div class="span12"> 
+      <div class="span6">
+        <%= f.input :city_id,  collection: city_for_chosen(@extended_listing.city_id),  input_html: {class: "span8"} %>
+      </div>
+      <div class="span3">
+        <%= f.input :street, input_html: {class: 'street'} %>
+      </div>
+      <div class="span3">
+        <%= f.input :number %>
+      </div>
     </div>
 
-  <div class="form-inputs">
+  
+    <div class="span12"> 
+      <div class="span6">
+          <%= link_to t("views.poi.form.buttons.suggest_location"), "#", :class => 'btn', :id => 'suggest-locations-btn-el' %>
+      </div>
+      <div class="span6">
+        
+      </div>
     
-    <%= f.input :city_id,  collection: city_for_chosen(@extended_listing.city_id),  input_html: {class: "span8"} %>
-    <%= f.input :category_id, collection: categories_for_select%>
-    <%= f.input :name %>
-    <%= f.input :street, input_html: {class: 'street'} %>
-    <%= f.input :phone %>
-    <%= f.input :address, readonly: true %>
-    <%= f.input :number, readonly: true %>
-    <%= f.input :source%>
-
+    </div>
+  
   </div>
-<div id='map'>
-</div>
+  
+  
+  <div id='map'></div>
   <div class="form-actions">
     <%= f.button :submit %>
   </div>
