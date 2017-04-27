@@ -159,7 +159,7 @@ es:
       upload: Cargas Poi
       duplicated: Duplicados
     poi_addresses: 
-      title: Pampa
+      title: Poi Address
       new: Nuevo poi Address
       loads: Cargar Poi Address
       georeferenced: Poi Georeferenciados

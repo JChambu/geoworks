@@ -13,9 +13,11 @@
 
         <%= nav_dropdown_item 'Servicios' do %>
           <% nav_item('menu.pois.title', pois_path)  + 
-          nav_item('Parkings', parkings_path)  + 
+            nav_item('Parkings', parkings_path)  + 
             nav_item('menu.admin.extended_listings', extended_listings_path ) +   
-            nav_item('menu.admin.extended_listing_loads', extended_listing_loads_path ) %> 
+            nav_item('menu.poi_addresses.title', poi_addresses_path ) 
+
+          %> 
         <% end %>
 
 
@@ -29,9 +31,9 @@
 
         <%  if can?(:visualize, :Procesos) %>
           <%= nav_dropdown_item 'Procesos' do %>
-            <% nav_item('menu.poi_addresses.title', poi_addresses_path ) +
-              nav_item('menu.poi_addresses.loads', poi_address_loads_path ) +
-              nav_item('menu.poi_addresses.georeferenced', poi_addresses_georeferenced_path ) +
+            <%nav_item('menu.poi_addresses.loads', poi_address_loads_path ) +
+            nav_item('menu.admin.extended_listing_loads', extended_listing_loads_path )+ 
+            nav_item('menu.poi_addresses.georeferenced', poi_addresses_georeferenced_path ) +
               nav_item('menu.pois.duplicated', duplicated_pois_path)  %>
           <% end %>
         <% end %>
