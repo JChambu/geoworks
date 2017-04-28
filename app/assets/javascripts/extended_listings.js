@@ -2,6 +2,7 @@ Navarra.namespace("extended_listings.action_index");
 Navarra.namespace("extended_listings.action_new");
 Navarra.namespace("extended_listings.action_edit");
 
+
 Navarra.extended_listings.action_index = function() {
   var init = function() {
     Navarra.poi_search_panel.init();
@@ -28,9 +29,6 @@ Navarra.extended_listings.action_new = function(){
         $("#extended_listing_longitude").attr("value", Navarra.geocoding_ol.longitude_ol);
       });
     },
-
-
-
   bindAddMarkerButtonClickEl = function() {
       $("#add-marker-btn-el").click(function(e) {
 

@@ -1,3 +1,14 @@
+<%= content_for :head do %>
+  <script type="text/javascript">
+
+<% if @extended_listing.the_geom %>
+
+Navarra.geocoding_ol.latitude_ol = <%= @extended_listing.the_geom.y %>
+Navarra.geocoding_ol.longitude_ol = <%= @extended_listing.the_geom.x %>
+<% end %>
+
+  </script>
+<% end  %>
 <%= simple_form_for(@extended_listing) do |f| %>
   <%= f.error_notification %>
 

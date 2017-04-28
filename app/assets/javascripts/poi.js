@@ -131,7 +131,6 @@ Navarra.pois.action_edit = function() {
       });
     },
 
-
     bindAddMarkerButtonClick = function() {
       $("#add-marker-btn").click(function(e) {
 
@@ -140,8 +139,6 @@ Navarra.pois.action_edit = function() {
         Navarra.geocoding.enableMapClick($(this).hasClass("btn-success"));
       });
     },
-
-
 
     enable_restaurant_types = function(){
       $("#poi_city_id_chzn").on('click', function(){
