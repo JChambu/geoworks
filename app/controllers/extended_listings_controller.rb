@@ -137,6 +137,6 @@ class ExtendedListingsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def extended_listing_params
-    params.require(:extended_listing).permit(:name, :street, :the_geom, :city_id,  :category_id, :phone, :source, :address, :number, :address, :number, :poi_status_id, :category_original_id).merge(user_id: current_user.id )
+    params.require(:extended_listing).permit(:name, :street, :the_geom, :city_id,  :category_id, :phone, :source, :address, :number, :address, :number, :poi_status_id, :category_original_id, :latitude, :longitude).merge(user_id: current_user.id )
   end
 end

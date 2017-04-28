@@ -223,7 +223,6 @@ class Poi < ActiveRecord::Base
           RGeo::Geographic.spherical_factory(:srid => 4326, :geo_type => 'point')
     end
 
-
   def build_geom
     
     if self.latitude and self.longitude and

@@ -27,8 +27,12 @@
       </div>
       <div class="span3">
         <%= f.input :number %>
+        <%= f.input :latitude %>
+        <%= f.input :longitude %>
       </div>
     </div>
+        
+
 
   
     <div class="span12"> 
@@ -36,7 +40,7 @@
           <%= link_to t("views.poi.form.buttons.suggest_location"), "#", :class => 'btn', :id => 'suggest-locations-btn-el' %>
       </div>
       <div class="span6">
-        
+            <%= link_to t("views.poi.form.buttons.add_location"), "#", :class => 'btn', :id => 'add-marker-btn-el' %>
       </div>
     
     </div>
@@ -46,6 +50,6 @@
   
   <div id='map'></div>
   <div class="form-actions">
-    <%= f.button :submit %>
+    <%= f.button :submit, class: 'btn-primary' %>
   </div>
 <% end %>
