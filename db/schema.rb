@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170426121854) do
+ActiveRecord::Schema.define(version: 20170502023002) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -112,17 +112,19 @@ ActiveRecord::Schema.define(version: 20170426121854) do
     t.integer  "city_id"
     t.integer  "user_id"
     t.integer  "category_id"
-    t.point    "the_geom"
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",                                                             null: false
+    t.datetime "updated_at",                                                             null: false
     t.string   "phone"
     t.string   "source"
     t.string   "address"
     t.string   "number"
     t.string   "hash_value"
-    t.serial   "identifier",                       null: false
-    t.integer  "poi_status_id",        default: 2
+    t.serial   "identifier",                                                             null: false
+    t.integer  "poi_status_id",                                              default: 2
     t.integer  "category_original_id"
+    t.geometry "the_geom",             limit: {:srid=>4326, :type=>"point"}
+    t.integer  "poi_type_id"
+    t.integer  "poi_sub_type_id"
   end
 
   create_table "food_types", force: :cascade do |t|

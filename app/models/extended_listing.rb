@@ -9,6 +9,8 @@ class ExtendedListing < ActiveRecord::Base
   belongs_to :category
   belongs_to :user
   belongs_to :poi_status
+  belongs_to :poi_type
+  belongs_to :poi_sub_type
 
   delegate :complete_name, :to => :city, :prefix => true, :allow_nil => true
   delegate :name, :to => :country, :prefix => true, :allow_nil => true
@@ -16,12 +18,14 @@ class ExtendedListing < ActiveRecord::Base
   delegate :name, :to => :department, :prefix => true, :allow_nil => true
   delegate :name, :to => :city, :prefix => true, :allow_nil => true
   delegate :human_name, :to => :poi_status, :prefix => true, :allow_nil => true
+  delegate :name, :to => :poi_type, :prefix => true, :allow_nil => true
+  delegate :name, :to => :poi_sub_type, :prefix => true, :allow_nil => true
   delegate :name, :to => :poi_status, :prefix => true, :allow_nil => true
   before_save :build_geom
 
   before_save :formated_strings
-  validates :city_id, :name, :street, :category_id,  presence: true
-  scope :duplicated, -> { where(hash_value: (ExtendedListing.select(:hash_value).group(:hash_value).having("count(hash_value) > 1"))).order(:name, :street)}
+  validates :city_id, :name, :street,   presence: true
+ # scope :duplicated, -> { where(hash_value: (ExtendedListing.select(:hash_value).group(:hash_value).having("count(hash_value) > 1"))).order(:name, :street)}
 
     attr_accessor :longitude, :latitude
 

@@ -63,7 +63,7 @@ class ExtendedListingsController < ApplicationController
   def new
     @extended_listing = ExtendedListing.new
     @extended_listing.city_id = params[:city_id] if !params[:city_id].nil?
-    @extended_listing.category_id = params[:category_id] if !params[:category_id].nil?
+    #@extended_listing.category_id = params[:category_id] if !params[:category_id].nil?
   end
 
   # GET /extended_listings/1/edit
@@ -75,8 +75,8 @@ class ExtendedListingsController < ApplicationController
   def create
 
     @extended_listing = ExtendedListing.new(extended_listing_params)
-    category =  Category.where(id: extended_listing_params[:category_id]).select(:category_original).first
-    @extended_listing[:category_original_id] = category.category_original.to_i
+    #category =  Category.where(id: extended_listing_params[:category_id]).select(:category_original).first
+    #@extended_listing[:category_original_id] = category.category_original.to_i
    
     respond_to do |format|
       if @extended_listing.save
@@ -93,8 +93,8 @@ class ExtendedListingsController < ApplicationController
   # PATCH/PUT /extended_listings/1.json
   def update
     
-    category =  Category.where(id: extended_listing_params[:category_id]).select(:category_original).first
-    @extended_listing[:category_original_id] = category.category_original.to_i
+    #category =  Category.where(id: extended_listing_params[:category_id]).select(:category_original).first
+    #@extended_listing[:category_original_id] = category.category_original.to_i
     
     respond_to do |format|
       if @extended_listing.update(extended_listing_params)
@@ -137,6 +137,6 @@ class ExtendedListingsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def extended_listing_params
-    params.require(:extended_listing).permit(:name, :street, :the_geom, :city_id,  :category_id, :phone, :source, :address, :number, :address, :number, :poi_status_id, :category_original_id, :latitude, :longitude).merge(user_id: current_user.id )
+    params.require(:extended_listing).permit(:name, :street, :the_geom, :city_id,  :category_id, :phone, :source, :address, :number, :address, :number, :poi_status_id, :category_original_id, :latitude, :longitude, :poi_type_id, :poi_sub_type_id).merge(user_id: current_user.id )
   end
 end

@@ -13,9 +13,6 @@ module PoiTypesHelper
     Chain.sorted_by_name.map { |chain| [ (label_chain chain) , chain.id] }
   end
 
-  
-
-
   def poi_type_food_types_for_select poi_type_id
     poi_type = PoiType.find_by_id poi_type_id
     return [] unless poi_type

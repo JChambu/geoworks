@@ -3,6 +3,7 @@ class PoiType < ActiveRecord::Base
   has_many :food_types
   has_many :poi_sub_types
   has_many :pois
+  has_many :extended_listings
 
   validates :name, :presence => true
 

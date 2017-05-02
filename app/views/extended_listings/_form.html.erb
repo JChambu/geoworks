@@ -20,7 +20,8 @@ Navarra.geocoding_ol.longitude_ol = <%= @extended_listing.the_geom.x %>
         <%= f.input :name %>
       </div>
       <div class="span3" >
-        <%= f.input :category_id, collection: categories_for_select%>
+        <%= f.input :poi_type_id, :collection => poi_types_for_select %>
+        <%= f.input :poi_sub_type_id, :collection => poi_type_sub_types_for_select(@extended_listing.poi_type_id) %>
       </div>
       <div class="span3">
         <%= f.input :phone %>

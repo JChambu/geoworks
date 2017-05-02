@@ -1,6 +1,7 @@
 class PoiSubType < ActiveRecord::Base
   belongs_to :poi_type
   has_many :pois
+  has_many :extended_listings
 
   validates :name, :presence => true
   validates :poi_type_id, :presence => true

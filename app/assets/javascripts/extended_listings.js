@@ -23,7 +23,25 @@ Navarra.extended_listings.action_edit = function(){
 
 Navarra.extended_listings.action_new = function(){
    
-    loadLatLonFieldsEl = function() {
+    loadPoiSubTypesComboEl = function(result) {
+      Navarra.common.form.loadComboOptions("#extended_listing_poi_sub_type_id", result, "name");
+    },
+
+    bindPoiTypesComboChangeEl = function() {
+      $("#extended_listing_poi_type_id").change(function() {
+        if($(this).val() == '') {
+          
+          Navarra.common.form.loadComboOptions("#extended_listing_poi_sub_type_id", [], "name");
+          return;
+        }
+
+        var poiTypeUrl = "/poi_types/" + $(this).val();
+        var subTpesUrl = poiTypeUrl + "/sub_types";
+        Navarra.common.request.getAjax(subTpesUrl, loadPoiSubTypesComboEl);
+      })
+    },
+    
+  loadLatLonFieldsEl = function() {
       $(".btn-primary").click(function(e) {
         $("#extended_listing_latitude").attr("value", Navarra.geocoding_ol.latitude_ol);
         $("#extended_listing_longitude").attr("value", Navarra.geocoding_ol.longitude_ol);
@@ -117,12 +135,15 @@ Navarra.extended_listings.action_new = function(){
 
  init = function(){
     Navarra.geocoding_ol.init();
+    Navarra.poi_search_panel.init();
     initCitiesChosen();
    bindAddMarkerButtonClickEl();
    bindSearchAddress();
     //expresion();
     bindInputFocusOutEl();
    loadLatLonFieldsEl();
+ bindPoiTypesComboChangeEl();
+   loadPoiSubTypesComboEl();
   } 
   return {
     init: init
