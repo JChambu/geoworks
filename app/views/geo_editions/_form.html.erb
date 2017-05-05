@@ -1,0 +1,27 @@
+<%= form_for(geo_edition) do |f| %>
+  <% if geo_edition.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(geo_edition.errors.count, "error") %> prohibited this geo_edition from being saved:</h2>
+
+      <ul>
+      <% geo_edition.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+
+
+    <div id="map"></div>
+
+
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

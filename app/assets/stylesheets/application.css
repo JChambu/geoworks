@@ -11,5 +11,7 @@
  *= require_self
  *= require jquery-ui
  *= require ol3/ol3-layerswitcher
+ *= require ol3/controlbar
+
  *= require_tree .
  */

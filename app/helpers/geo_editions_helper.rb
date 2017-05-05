@@ -1,0 +1,2 @@
+module GeoEditionsHelper
+end

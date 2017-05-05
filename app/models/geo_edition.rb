@@ -1,0 +1,2 @@
+class GeoEdition < ApplicationRecord
+end

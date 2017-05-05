@@ -16,15 +16,18 @@ class PoiType < ActiveRecord::Base
   def can_destroy?
   	result = []
   	result << has_related_resource?(Poi)
+  	result << has_related_resource?(ExtendedListing)
   	result << has_related_resource?(PoiSubType)
   	result << has_related_resource?(FoodType)
   	result << has_related_resource?(Chain)
+    @result = result
   	!result.include? false
   end
 
   def has_related_resource? resource_class
     return true if resource_class.where(:poi_type_id => self.id).count.zero?
-    self.errors.add(:base, "related_#{resource_class.model_downcase.pluralize}".to_sym)
-    false
+
+    self.errors.add(:base, :invalid, message: "related_#{resource_class.model_name.plural}")
+    return false
   end
 end

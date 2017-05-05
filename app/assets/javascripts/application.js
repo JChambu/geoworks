@@ -19,4 +19,7 @@
 //= require ajax_chosen
 //= require bootstrap
 //= require ol3/ol3-layerswitcher
+//= require ol3/controlbar
+//= require ol3/buttoncontrol
+//= require ol3/togglecontrol
 //= require_tree .

@@ -163,6 +163,8 @@ es:
       new: Nuevo poi Address
       loads: Cargar Poi Address
       georeferenced: Poi Georeferenciados
+    geo_editions:
+      title: Geo Edicion
   date:
     abbr_day_names:
     - dom

@@ -72,6 +72,9 @@ class PoiTypesController < ApplicationController
   # DELETE /poi_types/1
   # DELETE /poi_types/1.json
   def destroy
+    @a = @poi_type.destroy
+   pry 
+    
     if @poi_type.destroy
       flashman.destroy_success
     else

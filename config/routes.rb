@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
 
+  resources :geo_editions
   get 'locations/cities' => 'locations#cities'
   get 'pois/possible_duplicates' => 'pois#possible_duplicates'
   get 'parkings/possible_duplicates' => 'parkings#possible_duplicates'

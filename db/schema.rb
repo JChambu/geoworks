@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170502040156) do
+ActiveRecord::Schema.define(version: 20170505122458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,7 +122,7 @@ ActiveRecord::Schema.define(version: 20170502040156) do
     t.serial   "identifier",                                                             null: false
     t.integer  "poi_status_id",                                              default: 2
     t.integer  "category_original_id"
-    t.geometry "the_geom",             limit: {:srid=>4326, :type=>"point"}
+    t.point "the_geom",             limit: {:srid=>4326}
     t.integer  "poi_type_id"
     t.integer  "poi_sub_type_id"
   end
@@ -140,6 +140,26 @@ ActiveRecord::Schema.define(version: 20170502040156) do
     t.integer  "country_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "geo_editions", force: :cascade do |t|
+    t.string   "name"
+    t.string   "street"
+    t.string   "number"
+    t.string   "address"
+    t.string   "company"
+    t.integer  "city"
+    t.integer  "recid"
+    t.string   "number_door_start_original"
+    t.string   "number_door_start"
+    t.string   "number_door_end_original"
+    t.string   "number_door_end"
+    t.string   "code"
+    t.point "the_geom",                   limit: {:srid=>4326}
+    t.line "the_geom_segment",           limit: {:srid=>4326}
+    t.line "the_geom_segment_original",  limit: {:srid=>4326}
+    t.datetime "created_at",                                                             null: false
+    t.datetime "updated_at",                                                             null: false
   end
 
   create_table "load_locations", force: :cascade do |t|
@@ -164,9 +184,9 @@ ActiveRecord::Schema.define(version: 20170502040156) do
     t.integer  "facility_type_id"
     t.integer  "levels"
     t.integer  "city_id"
-    t.geometry "the_geom",                         limit: {:srid=>4326, :type=>"point"}
-    t.geometry "the_geom_entrance",                limit: {:srid=>4326, :type=>"point"}
-    t.geometry "the_geom_exit",                    limit: {:srid=>4326, :type=>"point"}
+    t.point "the_geom",                         limit: {:srid=>4326}
+    t.point "the_geom_entrance",                limit: {:srid=>4326}
+    t.point "the_geom_exit",                    limit: {:srid=>4326}
     t.string   "phone"
     t.string   "website"
     t.string   "detailed_pricing_model"
@@ -175,7 +195,7 @@ ActiveRecord::Schema.define(version: 20170502040156) do
     t.string   "available_payment_methods"
     t.string   "regular_openning_hours"
     t.string   "exceptions_opening"
-    t.geometry "the_geom_area",                    limit: {:srid=>4326, :type=>"polygon"}
+    t.polygon "the_geom_area",                    limit: {:srid=>4326}
     t.datetime "created_at",                                                                                                            null: false
     t.datetime "updated_at",                                                                                                            null: false
     t.integer  "number"
@@ -285,7 +305,7 @@ ActiveRecord::Schema.define(version: 20170502040156) do
     t.string   "country_name"
     t.integer  "p_action_id"
     t.string   "note"
-    t.geometry "the_geom",         limit: {:srid=>4326, :type=>"point"}
+    t.point "the_geom",         limit: {:srid=>4326}
     t.string   "phone"
     t.string   "web"
     t.string   "name"
@@ -364,7 +384,7 @@ ActiveRecord::Schema.define(version: 20170502040156) do
     t.integer  "duplicated_identifier"
     t.integer  "identifier"
     t.date     "control_date"
-    t.geometry "the_geom",              limit: {:srid=>4326, :type=>"point"}
+    t.point "the_geom",              limit: {:srid=>4326}
     t.datetime "created_at",                                                                  null: false
     t.datetime "updated_at",                                                                  null: false
     t.integer  "poi_load_id"

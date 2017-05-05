@@ -436,6 +436,9 @@ Navarra.parkings.action_new = function(){
       coordinate = (coord.lng + " " +  coord.lat)
       polygon_area.push(coordinate); 
 
+    console.log(coordinate);
+
+
       console.log(polygon_area);
 
 

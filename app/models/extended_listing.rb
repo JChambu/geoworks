@@ -25,11 +25,9 @@ class ExtendedListing < ActiveRecord::Base
 
   before_save :formated_strings
   validates :city_id, :name, :street,   presence: true
- # scope :duplicated, -> { where(hash_value: (ExtendedListing.select(:hash_value).group(:hash_value).having("count(hash_value) > 1"))).order(:name, :street)}
+  # scope :duplicated, -> { where(hash_value: (ExtendedListing.select(:hash_value).group(:hash_value).having("count(hash_value) > 1"))).order(:name, :street)}
 
-    attr_accessor :longitude, :latitude
-
-
+  attr_accessor :longitude, :latitude
 
   def formated_strings
     self.name = self.name.strip.titleize
@@ -41,43 +39,43 @@ class ExtendedListing < ActiveRecord::Base
   def build_geom 
 
     if self.latitude and self.longitude and
-      !self.latitude.to_s.empty? and !self.longitude.to_s.empty?
+        !self.latitude.to_s.empty? and !self.longitude.to_s.empty?
       self.the_geom = "POINT(#{self.longitude} #{self.latitude})"
     end
 
-   # @extended = ExtendedListing.where("delivery  = 15  and city_id is not null and poi_status_id = 2 ")
-   # @extended.each do |e|
-   # city = City.find(e.city_id) 
-   # department = city.department
-   # province = department.province
-   # country = province.country
-   # @address = [[e.address_new, e.number_new], city.name, department.name, province.name, country.name].join(', ')
+    # @extended = ExtendedListing.where("delivery  = 15  and city_id is not null and poi_status_id = 2 ")
+    # @extended.each do |e|
+    # city = City.find(e.city_id) 
+    # department = city.department
+    # province = department.province
+    # country = province.country
+    # @address = [[e.address_new, e.number_new], city.name, department.name, province.name, country.name].join(', ')
 
-   # geocode = Geocoder.coordinates(@address)
-   # geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
-   # e.update_attribute(:the_geom, geom )
+    # geocode = Geocoder.coordinates(@address)
+    # geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
+    # e.update_attribute(:the_geom, geom )
 
   end
 
   def self.find_possible_duplicates attributes
     q = self.scoped
-				if attributes[:name].present?
+    if attributes[:name].present?
 
-					dictionary_terms = Term.by_names(attributes[:name].downcase.split).pluck(:name)
-					terms = attributes[:name].downcase.split - dictionary_terms
-					regex_str = String.new
-					regex_str += "(\ |^)" + terms.join("(\ |$)|(\ |^)") + "(\ |$)|" unless terms.empty?
-					regex_str += "^#{attributes[:name]}$"
-					q = q.where("extended_listings.name ~* '#{regex_str}'")
-					#q = q.where(:category_id => attributes[:category_id] )
-					q = q.where(:city_id => attributes[:city_id]) if attributes[:city_id].present?
-					pois = q.all.sort! do |a,b|
-						(b.name.downcase.split & attributes[:name].downcase.split ).count <=> (a.name.downcase.split & attributes[:name].downcase.split ).count
-					end
-					return pois.first(5)
-				end
-				return nil
-			end
+      dictionary_terms = Term.by_names(attributes[:name].downcase.split).pluck(:name)
+      terms = attributes[:name].downcase.split - dictionary_terms
+      regex_str = String.new
+      regex_str += "(\ |^)" + terms.join("(\ |$)|(\ |^)") + "(\ |$)|" unless terms.empty?
+      regex_str += "^#{attributes[:name]}$"
+      q = q.where("extended_listings.name ~* '#{regex_str}'")
+      #q = q.where(:category_id => attributes[:category_id] )
+      q = q.where(:city_id => attributes[:city_id]) if attributes[:city_id].present?
+      pois = q.all.sort! do |a,b|
+        (b.name.downcase.split & attributes[:name].downcase.split ).count <=> (a.name.downcase.split & attributes[:name].downcase.split ).count
+      end
+      return pois.first(5)
+    end
+    return nil
+  end
 
 =begin
   pg_search_scope :duplicated,

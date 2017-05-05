@@ -19,7 +19,6 @@
         <th><%= model_class.human_attribute_name(:name) %></th>
         <th><%= model_class.human_attribute_name(:street) %></th>
         <th><%= model_class.human_attribute_name(:city) %></th>
-        <th><%= model_class.human_attribute_name(:category) %></th>
         <th><%= model_class.human_attribute_name(:user) %></th>
         <th><%= model_class.human_attribute_name(:status) %></th>
         <th></th>
@@ -34,7 +33,6 @@
           <td><%= extended_listing.name %></td>
           <td><%= extended_listing.street %></td>
           <td><%= extended_listing.city.complete_name %></td>
-          <td><%= extended_listing.category.name %></td>
           <td><%= extended_listing.user.name %></td>
           <td><%= extended_listing.created_at %></td>
           <td><%= poi_status_label extended_listing %></td>

@@ -1,5 +1,5 @@
 Navarra.namespace("geocoding_ol");
-var isEnabled = false, map;
+var map;
 Navarra.geocoding_ol = function (){
 
   var geocodeServiceUrl = "http://nominatim.openstreetmap.org/search";
@@ -10,30 +10,27 @@ Navarra.geocoding_ol = function (){
   var  appCode = 'jOEPEj4JkZvbAiv7GP0E2A';
   var latitude_ol;
   var longitude_ol;
-
-  load_subdomain = function(){
-    var regexParse = new RegExp('([a-z][^.]+).*');
-    var domain = document.domain;
-    subdomain = regexParse.exec(domain);
-  }
+  var nested;
+  var mainbar;
+  var vector;
 
   var init= function() {
 
     load_subdomain();
     var layer_pois = 'geoworks_'+ subdomain[1] + ':pois';
     var hereLayers = [{
-        base: 'base',
-        type: 'maptile',
-        scheme: 'normal.day',
-        app_id: appId,
-        app_code: appCode
-      }]
+      base: 'base',
+      type: 'maptile',
+      scheme: 'normal.day',
+      app_id: appId,
+      app_code: appCode
+    }]
 
     var urlTpl = 'https://{1-4}.{base}.maps.cit.api.here.com' +
       '/{type}/2.1/maptile/newest/{scheme}/{z}/{x}/{y}/256/png' +
       '?app_id={app_id}&app_code={app_code}&useCIT=true&useHTTPS=true';
 
-    vectorSource = new ol.source.Vector();
+    vector = new ol.layer.Vector({ source: new ol.source.Vector()});
     iconStyle = new ol.style.Style({
       image : new ol.style.Icon(({
         anchor : [ 0.5, 46 ],
@@ -88,8 +85,7 @@ Navarra.geocoding_ol = function (){
             })
           ]
         })
-        //, vector
-      ],
+      , vector],
 
       view: new ol.View({
         projection: 'EPSG:4326',
@@ -100,18 +96,15 @@ Navarra.geocoding_ol = function (){
 
     map.addControl(new ol.control.LayerSwitcher({tipLabel: 'Leyenda'}));
     map.addControl(new ol.control.ZoomSlider());
-    map.addControl(new ol.control.Bar({toggleOne: true,
-      group: false}
-    ));
+    var mainbar = new ol.control.Bar();
+    map.addControl(mainbar);
+    /* Nested toobar with one control activated at once */
+    nested = new ol.control.Bar({ toggleOne: true, group:true });
+    mainbar.addControl (nested);
+    selectCtrl();
+    pedit();
+    ledit();
 
-    function createUrl(tpl, layerDesc) {
-      return tpl
-        .replace('{base}', layerDesc.base)
-        .replace('{type}', layerDesc.type)
-        .replace('{scheme}', layerDesc.scheme)
-        .replace('{app_id}', layerDesc.app_id)
-        .replace('{app_code}', layerDesc.app_code);
-    }
     if (!Navarra.geocoding_ol.longitude_ol){
       return;
     }else{
@@ -119,20 +112,94 @@ Navarra.geocoding_ol = function (){
     }
   };
 
-  enableMap = function(isEnabled){ 
-    if (!isEnabled){
+    selectCtrl =function() { 
+       select_c =  new ol.control.Toggle(
+      {html: '<i class="fa fa-hand-pointer-o"></i>',
+        className: "select",
+        title: "Select",
+        interaction: new ol.interaction.Select(),
+        active:true,
+      });
+
+    nested.addControl(select_c);}
+
+    var pedit = function(e) {
+      map.removeLayer(pointLayer);
+//      Navarra.geocoding_ol.latitude_ol = coord[1];
+  //    Navarra.geocoding_ol.longitude_ol = coord[0];
+      
+      drawPoint = new ol.control.Toggle(
+      {html: '<i class="fa fa-map-marker" ></i>',
+        className: "edit",
+        title: 'Point',
+        onToggle: function(evt){
+            enableMap(evt);
+        }
+      });
+    nested.addControl(drawPoint);
+
+    } 
+
+
+    var ledit = function(e) {
+//      map.removeLayer(pointLayer);
+  //    Navarra.geocoding_ol.latitude_ol = coord[1];
+    //  Navarra.geocoding_ol.longitude_ol = coord[0];
+      
+      drawLine = new ol.control.Toggle(
+      {
+        html: '<i class="fa fa-share-alt" ></i>',
+        className: "edit",
+        title: 'LineString',
+   /*     interaction: new ol.interaction.Draw
+        ({type: 'lineString',
+          source: vector.getSource(),
+        }),*/
+
+        onToggle: function(evt){
+            drawLineStringPolygon(evt);
+        }
+      });
+    nested.addControl(drawLine);
+    } 
+
+  var createUrl =  function(tpl, layerDesc) {
+      return tpl
+        .replace('{base}', layerDesc.base)
+        .replace('{type}', layerDesc.type)
+        .replace('{scheme}', layerDesc.scheme)
+        .replace('{app_id}', layerDesc.app_id)
+        .replace('{app_code}', layerDesc.app_code);
+    };
+
+  var load_subdomain = function(){
+    var regexParse = new RegExp('([a-z][^.]+).*');
+    var domain = document.domain;
+    subdomain = regexParse.exec(domain);
+  }
+
+  var enableMap = function(isEnabled){ 
+
+    console.log(isEnabled)
+    if (isEnabled == false){
+      console.log("a");
+      event.preventDefault();
       return;
     }
+    
     map.on('singleclick', function(evt) {
+      
+      console.log(evt.coordinate);
+      
       addMarker_ol(evt.coordinate);
     });
   },
 
     addMarker_ol = function(coord){
+            map.removeLayer(pointLayer);
+            Navarra.geocoding_ol.latitude_ol = coord[1];
+            Navarra.geocoding_ol.longitude_ol = coord[0];
 
-      map.removeLayer(pointLayer);
-      Navarra.geocoding_ol.latitude_ol = coord[1];
-      Navarra.geocoding_ol.longitude_ol = coord[0];
 
       iconGeometry = new ol.geom.Point(coord);
       var iconFeature = new ol.Feature({
@@ -156,11 +223,23 @@ Navarra.geocoding_ol = function (){
     };
 
 
-  var drawLineStringPolygon = function(){
-    var source = new ol.source.Vector();
-    var styleFunction = function(feature) {
-      var geometry = feature.getGeometry();
-      var styles = [
+  drawLineStringPolygon = function(isEnabled){
+
+    if (isEnabled === false){
+      return false;
+    }
+    source = new ol.source.Vector();
+    styleFunction = function(feature) {
+      geometry = feature.getGeometry();
+         coordinates = geometry.getCoordinates();
+        var coordsAdd = [];
+        for (var i=0;i<coordinates.length;i++){ 
+          latitud = coordinates[i][0];
+          longitud = coordinates[i][1];
+           coordsAdd.push(longitud, latitud );
+        }
+      geomType = geometry.getType();
+      styles = [
         //linestring
         new ol.style.Style({
           stroke: new ol.style.Stroke({
@@ -170,35 +249,45 @@ Navarra.geocoding_ol = function (){
         })
       ];
 
-      geometry.forEachSegment(function(start, end) {
-        var dx = end[0] - start[0];
-        var dy = end[1] - start[1];
-        var rotation = Math.atan2(dy, dx);
-        // arrows
-        styles.push(new ol.style.Style({
-          geometry: new ol.geom.Point(end),
-          image: new ol.style.Icon({
-            src: 'https://openlayers.org/en/v4.1.0/examples/data/arrow.png',
-            anchor: [0.75, 0.5],
-            rotateWithView: true,
-            rotation: -rotation
-          })
-        }));
-      });
-      return styles;
+      if (geomType === 'Polygon'){
+        var linerings = geometry.getLinearRings();
+        var coordinates = linerings[0].getCoordinates();
+        for (var i=1;i<linerings.length;i++){ 
+          var coordsToAdd = linerings[i].getCoordinates();
+          for (var f=0;f<coordsToAdd.length;f++){
+            coordinates.push(coordsToAdd[f]);   
+          }
+        }
+        //      return new ol.geom.MultiPoint(coordinates);
+      }else{
+        /*geometry.forEachSegment(function(start, end) {
+          var dx = end[0] - start[0];
+          var dy = end[1] - start[1];
+          var rotation = Math.atan2(dy, dx);
+          // arrows
+          styles.push(new ol.style.Style({
+            geometry: new ol.geom.Point(end),
+          }));
+        });
+*/
+        return styles;
+      }
     };
-
-    var vector = new ol.layer.Vector({
+    vector = new ol.layer.Vector({
       source: source,
       style: styleFunction
     });
+
+
     map.addInteraction(new ol.interaction.Draw({
       source: source,
       type: /** @type {ol.geom.GeometryType} */ ('LineString'),
-      maxPoints: 2
+      maxPoints:2 
     }));
+
+    map.addLayer(vector);
   }
-  
+
   var doGeocode = function(opt){
     //removeAllMarkers();
     address = opt.county + " " +  opt.location +" " +  opt.searchTerm

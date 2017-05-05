@@ -47,14 +47,6 @@ Navarra.extended_listings.action_new = function(){
         $("#extended_listing_longitude").attr("value", Navarra.geocoding_ol.longitude_ol);
       });
     },
-  bindAddMarkerButtonClickEl = function() {
-      $("#add-marker-btn-el").click(function(e) {
-
-        e.preventDefault();
-        $(this).toggleClass("btn-success");
-        Navarra.geocoding_ol.enableMap($(this).hasClass("btn-success"));
-      });
-    },
 
   bindInputFocusOutEl = function() {
     $("input").focusout(function(e) {
@@ -137,7 +129,6 @@ Navarra.extended_listings.action_new = function(){
     Navarra.geocoding_ol.init();
     Navarra.poi_search_panel.init();
     initCitiesChosen();
-   bindAddMarkerButtonClickEl();
    bindSearchAddress();
     //expresion();
     bindInputFocusOutEl();
