@@ -17,7 +17,7 @@ Navarra.geocoding_ol = function (){
   var init= function() {
 
     load_subdomain();
-    var layer_pois = 'geoworks_'+ subdomain[1] + ':pois';
+    var layer_pois = 'geoworks_'+ subdomain[1] + ':view_geo_editions';
     var hereLayers = [{
       base: 'base',
       type: 'maptile',
@@ -73,10 +73,10 @@ Navarra.geocoding_ol = function (){
         }),
 
         new ol.layer.Group({
-          title: 'pois',
+          title: 'geo_editions',
           layers: [
             new ol.layer.Tile({
-              title: 'pois',
+              title: 'geo_editions',
               type: 'overlays',
               source: new ol.source.TileWMS({
                 url: 'http://localhost:8080/geoserver/wms',
