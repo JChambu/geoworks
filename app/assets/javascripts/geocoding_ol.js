@@ -18,6 +18,7 @@ Navarra.geocoding_ol = function (){
 
     load_subdomain();
     var layer_pois = 'geoworks_'+ subdomain[1] + ':view_geo_editions';
+    console.log(layer_pois);
     var hereLayers = [{
       base: 'base',
       type: 'maptile',

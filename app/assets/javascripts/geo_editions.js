@@ -5,7 +5,7 @@ Navarra.namespace("geo_editions.action_edit");
 
 Navarra.geo_editions.action_new = function(){
  init = function(){
-   console.log("a");
+   console.log("abc");
     Navarra.geocoding_ol.init();
     Navarra.poi_search_panel.init();
    // initCitiesChosen();
