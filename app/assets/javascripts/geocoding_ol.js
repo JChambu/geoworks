@@ -80,8 +80,8 @@ Navarra.geocoding_ol = function (){
               title: 'geo_editions',
               type: 'overlays',
               source: new ol.source.TileWMS({
-                url: 'geoworks.gisworking.com:8080/geoserver/wms',
-                params: {LAYERS: layer_pois, VERSION: '1.1.0'}
+                url: 'http://geoworks.gisworking.com:8080/geoserver/wms',
+                params: {LAYERS: layer_geo_editions, VERSION: '1.1.0'}
               })
             })
           ]
