@@ -3,6 +3,18 @@ Navarra.namespace("geo_editions.action_new");
 Navarra.namespace("geo_editions.action_edit");
 
 
+Navarra.geo_editions.action_edit = function(){
+
+ init = function(){
+  
+    Navarra.geocoding_ol.init();
+    Navarra.poi_search_panel.init();
+  } 
+  return {
+    init: init
+  }
+}();
+  
 Navarra.geo_editions.action_new = function(){
  init = function(){
    console.log("abc");

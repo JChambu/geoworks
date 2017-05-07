@@ -61,7 +61,7 @@ Navarra.parkings.config.lng_exit = <%= @parking.the_geom_exit.x %>
 
       <fieldset class="form-group">
         <legend><%= t('views.parkings.fieldset.referencies') %></legend>
-        <%= f.input :line, as: :hidden%>
+        <%= f.input :line%>
         <%= f.input :polygon, as: :hidden%>
         <%= f.input :the_geom_area_original,  as: :hidden%>
         <div class="span3">

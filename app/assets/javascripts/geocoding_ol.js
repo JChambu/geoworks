@@ -13,6 +13,7 @@ Navarra.geocoding_ol = function (){
   var nested;
   var mainbar;
   var vector;
+  var line_ol;
 
   var init= function() {
 
@@ -81,7 +82,7 @@ Navarra.geocoding_ol = function (){
               title: 'geo_editions',
               type: 'overlays',
               source: new ol.source.TileWMS({
-                url: 'http://geoworks.gisworking.com:8080/geoserver/wms',
+                url: 'http://localhost:8080/geoserver/wms',
                 params: {LAYERS: layer_geo_editions, VERSION: '1.1.0'}
               })
             })
@@ -233,13 +234,19 @@ Navarra.geocoding_ol = function (){
     source = new ol.source.Vector();
     styleFunction = function(feature) {
       geometry = feature.getGeometry();
-         coordinates = geometry.getCoordinates();
+            coordinates = geometry.getCoordinates();
         var coordsAdd = [];
         for (var i=0;i<coordinates.length;i++){ 
           latitud = coordinates[i][0];
           longitud = coordinates[i][1];
-           coordsAdd.push(longitud, latitud );
+            cordLatLon = longitud + " " + latitud
+           coordsAdd.push(cordLatLon );
         }
+
+        $('#geo_edition_line').attr("value", coordsAdd);
+
+
+      console.log(coordsAdd);
       geomType = geometry.getType();
       styles = [
         //linestring
@@ -321,6 +328,8 @@ Navarra.geocoding_ol = function (){
     doGeocode: doGeocode,
     enableMap: enableMap,
     latitude_ol: latitude_ol,
-    longitude_ol: longitude_ol
+    longitude_ol: longitude_ol,
+    line_ol: line_ol
+
   }
 }();
