@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
 
-  resources :geo_editions
+
   get 'locations/cities' => 'locations#cities'
   get 'pois/possible_duplicates' => 'pois#possible_duplicates'
   get 'parkings/possible_duplicates' => 'parkings#possible_duplicates'
@@ -20,6 +20,7 @@ Rails.application.routes.draw do
    resources :customers
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
+  resources :geo_editions
   resources :extended_listings  do
     collection do
       get :duplicated
