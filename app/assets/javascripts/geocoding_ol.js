@@ -1,113 +1,138 @@
 Navarra.namespace("geocoding_ol");
-var map;
+
 Navarra.geocoding_ol = function (){
-
-  var geocodeServiceUrl = "http://nominatim.openstreetmap.org/search";
-  var vectorSource; 
-  var pointLayer;  
-  var subdomain;
-  var  appId = 'ZTVBhWvg8dw4GhrG9fcL';
-  var  appCode = 'jOEPEj4JkZvbAiv7GP0E2A';
-  var latitude_ol;
-  var longitude_ol;
-  var nested;
-  var mainbar;
-  var vector;
-  var line_ol;
-
+  var map,  featureOverlay, selectCtrl, mainbar, editbar, vector ;
   var init= function() {
 
-    load_subdomain();
-    var layer_pois = 'geoworks_'+ subdomain[1] + ':view_pois';
-    var layer_geo_editions = 'geoworks_'+ subdomain[1] + ':view_geo_editions';
-    console.log(layer_pois);
-    var hereLayers = [{
-      base: 'base',
-      type: 'maptile',
-      scheme: 'normal.day',
-      app_id: appId,
-      app_code: appCode
-    }]
+    var layer_geoserver = 'geoworks_lvh:view_geo_editions';
+    var vectorSource = new ol.source.Vector({
+      url: 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson',
+      format: new ol.format.GeoJSON()
+    });
 
-    var urlTpl = 'https://{1-4}.{base}.maps.cit.api.here.com' +
-      '/{type}/2.1/maptile/newest/{scheme}/{z}/{x}/{y}/256/png' +
-      '?app_id={app_id}&app_code={app_code}&useCIT=true&useHTTPS=true';
+    var vectorLayer = new ol.layer.Vector({
+      title:'Geo Edicion',
+      type: 'overlays',
+      source: vectorSource
+    })
+    var osmLayer = new ol.layer.Tile({
+      title: 'OSM',
+      type: 'base',
+      visible: 'true',
+      source: new ol.source.OSM()
+    });
 
     vector = new ol.layer.Vector({ source: new ol.source.Vector()});
-    iconStyle = new ol.style.Style({
-      image : new ol.style.Icon(({
-        anchor : [ 0.5, 46 ],
-        anchorXUnits : 'fraction',
-        anchorYUnits : 'pixels',
-        opacity : 0.75,
-        src : '/images/marker-1.png'
-      }))
-    });
 
-    var arg =  ol.proj.transform([-68.8167, -32.8833], 'EPSG:3857', 'EPSG:4326');
-    var projection = new ol.proj.Projection({
-      code: 'EPSG:4326',
-      units: 'm'
-    });
+    var view =  new ol.View({
+      projection: 'EPSG:4326',
+      center: [-68.8167, -32.8833],
+      zoom: 10
+    })
 
     map  = new ol.Map({
       target: 'map',
-      layers: [ 
+      layers: [
         new ol.layer.Group({
-          'title': 'Base Maps',
+          id:'osm',
+          title: 'Mapa Base',
           layers: [
-            new ol.layer.Tile({
-              title: 'Here',
-              type: 'base',
-              visible: 'false',
-              source: new ol.source.XYZ({
-                url: createUrl(urlTpl, hereLayers[0]),
-                attributions: 'Map Tiles &copy; ' + new Date().getFullYear() + ' ' +
-                '<a href="http://developer.here.com">HERE</a>'
-              })
-            }), 
-            new ol.layer.Tile({
-              title: 'OSM',
-              type: 'base',
-              visible: 'true',
-              source: new ol.source.OSM()
-            })
+            osmLayer
           ]
         }),
-
         new ol.layer.Group({
-          title: 'geo_editions',
-          layers: [
-            new ol.layer.Tile({
-              title: 'geo_editions',
-              type: 'overlays',
-              source: new ol.source.TileWMS({
-                url: 'http://geoworks.gisworking.com:8080/geoserver/wms',
-                params: {LAYERS: layer_geo_editions, VERSION: '1.1.0'}
-              })
-            })
+          id: 'Layers',
+          title: 'Capas',
+          layers:[
+            vectorLayer
           ]
-        })
-      , vector],
-
-      view: new ol.View({
-        projection: 'EPSG:4326',
-        center: [-68.8167, -32.8833],
-        zoom: 10
-      })
+        }),
+        vector
+      ],
+      //osmLayer, vectorLayer],
+      view: view
     });
-
     map.addControl(new ol.control.LayerSwitcher({tipLabel: 'Leyenda'}));
     map.addControl(new ol.control.ZoomSlider());
-    var mainbar = new ol.control.Bar();
-    map.addControl(mainbar);
-    /* Nested toobar with one control activated at once */
-    nested = new ol.control.Bar({ toggleOne: true, group:true });
-    mainbar.addControl (nested);
-    selectCtrl();
-    pedit();
-    ledit();
 
+    featureOverlay = new ol.layer.Vector({
+      source: new ol.source.Vector(), 
+      map: map,
+      style: 
+      new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: 'red',
+          width: 2
+        }) })
+    });
+
+    var highlight;
+    var displayFeatureInfo = function(pixel) {
+      var feature = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+        return feature;
+      });
+      var info = document.getElementById('info');
+      if (feature) {
+        info.innerHTML = feature.get('id') + ': ' + feature.get('street');
+      } else {
+        info.innerHTML = '&nbsp;';
+      }
+      if (feature !== highlight) {
+        if (highlight) {
+          featureOverlay.getSource().removeFeature(highlight);
+        }
+        if (feature) {
+          featureOverlay.getSource().addFeature(feature);
+        }
+        highlight = feature;
+      }
+    };
+
+    /* onMouseMove = function(browserEvent){
+      var coordinate = browserEvent.coordinate;
+      var pixel = map.getPixelFromCoordinate(coordinate);
+      var el = document.getElementById('info');
+      el.innerHTML = '';
+      map.forEachFeatureAtPixel(pixel, function(feature) {
+        featureOverlay.addFeature(feature);
+        el.innerHTML += feature.get('street') + feature.get('id') + '<br>';
+      });
+
+    }
+    map.on('pointermove', onMouseMove);*/
+
+    map.on('pointermove', function(evt) {
+      if (evt.dragging) {
+        return;
+      }
+      var pixel = map.getEventPixel(evt.originalEvent);
+      displayFeatureInfo(pixel);
+    });
+
+    map.on('click', function(evt) {
+      if (evt.dragging) {
+        return;
+      }
+      var pixel = map.getEventPixel(evt.originalEvent);
+      feature = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+        return feature;
+      });
+      if (feature) {
+        $("#geo_edition_name").attr("value", feature.get('street'));
+      } });
+
+    //Main Control Bar
+    mainbar = new ol.control.Bar();
+    map.addControl(mainbar);
+    edit_ol();
+    bar_ol();
+
+    /* Nested toobar with one control activated at once */
+    //  nested = new ol.control.Bar({ toggleOne: true, group:false });
+    //  mainbar.addControl (nested);
+    //    selectCtrl();
+    //    pedit();
+    //    ledit();
     if (!Navarra.geocoding_ol.longitude_ol){
       return;
     }else{
@@ -115,65 +140,68 @@ Navarra.geocoding_ol = function (){
     }
   };
 
-    selectCtrl =function() { 
-       select_c =  new ol.control.Toggle(
+  //Edit control bar 
+
+  var edit_ol = function(){ 
+    editbar = new ol.control.Bar(
+      {toggleOne: true,// one control active at the same time
+        group:false// group controls together
+      });
+    mainbar.addControl(editbar);
+  }
+
+  // Add selection tool:
+  //  1- a toggle control with a select interaction
+  //  2- an option bar to delete / get information on the selected feature
+
+  var bar_ol = function(){
+
+    selectCtrl =  new ol.control.Toggle(
       {html: '<i class="fa fa-hand-pointer-o"></i>',
-        className: "select",
         title: "Select",
         interaction: new ol.interaction.Select(),
-        active:true,
+        active:true
       });
+    editbar.addControl(selectCtrl);
+    // Add editing tools
 
-    nested.addControl(select_c);}
+    pedit =     new ol.control.Toggle({
+      html: '<i class="fa fa-map-marker" ></i>',
+      title: 'Pointoos',
+      interaction: new ol.interaction.Draw
+      ({type: 'Point',
+        source: vector.getSource(),
+      })
+    });
 
-    var pedit = function(e) {
-      map.removeLayer(pointLayer);
-//      Navarra.geocoding_ol.latitude_ol = coord[1];
-  //    Navarra.geocoding_ol.longitude_ol = coord[0];
-      
-      drawPoint = new ol.control.Toggle(
-      {html: '<i class="fa fa-map-marker" ></i>',
-        className: "edit",
-        title: 'Point',
-        onToggle: function(evt){
-            enableMap(evt);
+    editbar.addControl(pedit);
+
+    ledit =   new ol.control.Toggle({
+      html: '<i class="fa fa-share-alt" ></i>',
+      title: 'LineString',
+      interaction: new ol.interaction.Draw
+      ({type: 'LineString',
+        source: vector.getSource(),
+        maxPoints:2 
+      }),
+      onToggle: function(){
+       coordAdd = [];
+        map.on('singleclick', function(evt){
+          coord = evt.coordinate[0] + " " + evt.coordinate[1];
+          coordAdd.push(coord);
+          console.log(coordAdd.length);
+      if (coordAdd.length == 2  ){
+     console.log(coordAdd);
+      $('#geo_edition_line').attr("value", coordAdd);
+        coordAdd = [];
         }
-      });
-    nested.addControl(drawPoint);
 
-    } 
+        });
 
-
-    var ledit = function(e) {
-//      map.removeLayer(pointLayer);
-  //    Navarra.geocoding_ol.latitude_ol = coord[1];
-    //  Navarra.geocoding_ol.longitude_ol = coord[0];
-      
-      drawLine = new ol.control.Toggle(
-      {
-        html: '<i class="fa fa-share-alt" ></i>',
-        className: "edit",
-        title: 'LineString',
-   /*     interaction: new ol.interaction.Draw
-        ({type: 'lineString',
-          source: vector.getSource(),
-        }),*/
-
-        onToggle: function(evt){
-            drawLineStringPolygon(evt);
-        }
-      });
-    nested.addControl(drawLine);
-    } 
-
-  var createUrl =  function(tpl, layerDesc) {
-      return tpl
-        .replace('{base}', layerDesc.base)
-        .replace('{type}', layerDesc.type)
-        .replace('{scheme}', layerDesc.scheme)
-        .replace('{app_id}', layerDesc.app_id)
-        .replace('{app_code}', layerDesc.app_code);
-    };
+      }
+    })
+    editbar.addControl(ledit);
+  }
 
   var load_subdomain = function(){
     var regexParse = new RegExp('([a-z][^.]+).*');
@@ -181,27 +209,27 @@ Navarra.geocoding_ol = function (){
     subdomain = regexParse.exec(domain);
   }
 
-  var enableMap = function(isEnabled){ 
+  /*  var enableMap = function(isEnabled){ 
 
-    console.log(isEnabled)
+  //console.log(isEnabled)
     if (isEnabled == false){
-      console.log("a");
+  //console.log("a");
       event.preventDefault();
       return;
     }
-    
+
     map.on('singleclick', function(evt) {
-      
-      console.log(evt.coordinate);
-      
+
+  //console.log(evt.coordinate);
+
       addMarker_ol(evt.coordinate);
     });
-  },
-
+  },*/
+  /*
     addMarker_ol = function(coord){
-            map.removeLayer(pointLayer);
-            Navarra.geocoding_ol.latitude_ol = coord[1];
-            Navarra.geocoding_ol.longitude_ol = coord[0];
+      map.removeLayer(pointLayer);
+      Navarra.geocoding_ol.latitude_ol = coord[1];
+      Navarra.geocoding_ol.longitude_ol = coord[0];
 
 
       iconGeometry = new ol.geom.Point(coord);
@@ -223,33 +251,33 @@ Navarra.geocoding_ol = function (){
       var extent = pointLayer.getSource().getExtent();
       map.getView().fit(extent, map.getSize());
       map.getView().setZoom(18);
-    };
+    };*/
 
 
-  drawLineStringPolygon = function(isEnabled){
+  /*drawLineStringPolygon = function(){
 
-    if (isEnabled === false){
+  /*  if (isEnabled === false){
       return false;
-    }
-    source = new ol.source.Vector();
+    }*/
+  /*  source = new ol.source.Vector();
     styleFunction = function(feature) {
       geometry = feature.getGeometry();
-            coordinates = geometry.getCoordinates();
-        var coordsAdd = [];
-        for (var i=0;i<coordinates.length;i++){ 
-          latitud = coordinates[i][0];
-          longitud = coordinates[i][1];
-            cordLatLon = longitud + " " + latitud
-           coordsAdd.push(cordLatLon );
-        }
+      coordinates = geometry.getCoordinates();
+      var coordsAdd = [];
+      for (var i=0;i<coordinates.length;i++){ 
+        latitud = coordinates[i][0];
+        longitud = coordinates[i][1];
+        cordLatLon = longitud + " " + latitud
+        coordsAdd.push(cordLatLon );
+      }
 
-        $('#geo_edition_line').attr("value", coordsAdd);
+      $('#geo_edition_line').attr("value", coordsAdd);
 
 
-      console.log(coordsAdd);
+  //console.log(coordsAdd);
       geomType = geometry.getType();
       styles = [
-        //linestring
+  //linestring
         new ol.style.Style({
           stroke: new ol.style.Stroke({
             color: '#ffcc33',
@@ -267,19 +295,19 @@ Navarra.geocoding_ol = function (){
             coordinates.push(coordsToAdd[f]);   
           }
         }
-        //      return new ol.geom.MultiPoint(coordinates);
+  //      return new ol.geom.MultiPoint(coordinates);
       }else{
-        /*geometry.forEachSegment(function(start, end) {
+  /*geometry.forEachSegment(function(start, end) {
           var dx = end[0] - start[0];
           var dy = end[1] - start[1];
           var rotation = Math.atan2(dy, dx);
-          // arrows
+  // arrows
           styles.push(new ol.style.Style({
             geometry: new ol.geom.Point(end),
           }));
         });
-*/
-        return styles;
+        */
+  /*    return styles;
       }
     };
     vector = new ol.layer.Vector({
@@ -287,21 +315,21 @@ Navarra.geocoding_ol = function (){
       style: styleFunction
     });
 
-
-    map.addInteraction(new ol.interaction.Draw({
+*/
+  /*  map.addInteraction(new ol.interaction.Draw({
       source: source,
-      type: /** @type {ol.geom.GeometryType} */ ('LineString'),
-      maxPoints:2 
+      type: /** @type {ol.geom.GeometryType} */ //('LineString'),
+  /*  maxPoints:2 
     }));
 
     map.addLayer(vector);
-  }
+  }*/
 
-  var doGeocode = function(opt){
-    //removeAllMarkers();
+  /* var doGeocode = function(opt){
+  //removeAllMarkers();
     address = opt.county + " " +  opt.location +" " +  opt.searchTerm
-    /*Geocoder Here*/ 
-    /* $.getJSON('https://geocoder.cit.api.here.com/6.2/geocode.json?searchtext=' + address + '&app_id=' + appId + '&app_code='+ appCode +'&gen=8' , function(data){
+  /*Geocoder Here*/ 
+  /* $.getJSON('https://geocoder.cit.api.here.com/6.2/geocode.json?searchtext=' + address + '&app_id=' + appId + '&app_code='+ appCode +'&gen=8' , function(data){
       var items = [];
       $.each(data, function(key, val) {
        latitude = val.View[0].Result[0].Location.DisplayPosition.Latitude;
@@ -310,7 +338,7 @@ Navarra.geocoding_ol = function (){
         addMarker_ol(coord);
       });
     });*/
-    $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + address, function(data){
+  /* $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + address, function(data){
       var items = [];
       $.each(data, function(key, val) {
         coord = [val.lon, val.lat]
@@ -321,15 +349,15 @@ Navarra.geocoding_ol = function (){
 
   var  removeAllMarkers =  function(){
     map.getLayers().item(0).getSource().clear();
-  }
+  }*/
 
   return {
-    init: init,
-    doGeocode: doGeocode,
-    enableMap: enableMap,
-    latitude_ol: latitude_ol,
-    longitude_ol: longitude_ol,
-    line_ol: line_ol
+    init: init
+    //    doGeocode: doGeocode,
+    //    enableMap: enableMap,
+    //    latitude_ol: latitude_ol,
+    //    longitude_ol: longitude_ol,
+    //    line_ol: line_ol
 
   }
 }();
