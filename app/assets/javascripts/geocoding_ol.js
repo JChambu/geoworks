@@ -6,7 +6,7 @@ Navarra.geocoding_ol = function (){
 
     var layer_geoserver = 'geoworks_lvh:view_geo_editions';
     var vectorSource = new ol.source.Vector({
-      url: 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson',
+      url: 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson',
       format: new ol.format.GeoJSON()
     });
 
