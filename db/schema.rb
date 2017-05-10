@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170505122458) do
+ActiveRecord::Schema.define(version: 20170510131228) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,7 +122,7 @@ ActiveRecord::Schema.define(version: 20170505122458) do
     t.serial   "identifier",                                                             null: false
     t.integer  "poi_status_id",                                              default: 2
     t.integer  "category_original_id"
-    t.point     "the_geom",             :srid=>4326
+    t.geometry "the_geom",             limit: {:srid=>4326, :type=>"point"}
     t.integer  "poi_type_id"
     t.integer  "poi_sub_type_id"
   end
@@ -155,11 +155,12 @@ ActiveRecord::Schema.define(version: 20170505122458) do
     t.string   "number_door_end_original"
     t.string   "number_door_end"
     t.string   "code"
-    t.point "the_geom",                   :srid=>4326
-    t.line "the_geom_segment",           :srid=>4326
-    t.line "the_geom_segment_original",  :srid=>4326
-    t.datetime "created_at",                                                             null: false
-    t.datetime "updated_at",                                                             null: false
+    t.geometry "the_geom",                   limit: {:srid=>4326, :type=>"point"}
+    t.datetime "created_at",                                                                   null: false
+    t.datetime "updated_at",                                                                   null: false
+    t.geometry "the_geom_segment_original",  limit: {:srid=>4326, :type=>"multi_line_string"}
+    t.geometry "the_geom_segment",           limit: {:srid=>4326, :type=>"line_string"}
+    t.integer  "poi_status_id"
   end
 
   create_table "load_locations", force: :cascade do |t|
@@ -184,9 +185,9 @@ ActiveRecord::Schema.define(version: 20170505122458) do
     t.integer  "facility_type_id"
     t.integer  "levels"
     t.integer  "city_id"
-    t.point "the_geom",                         :srid=>4326
-    t.point "the_geom_entrance",               :srid=>4326
-    t.point "the_geom_exit",                    :srid=>4326
+    t.geometry "the_geom",                         limit: {:srid=>4326, :type=>"point"}
+    t.geometry "the_geom_entrance",                limit: {:srid=>4326, :type=>"point"}
+    t.geometry "the_geom_exit",                    limit: {:srid=>4326, :type=>"point"}
     t.string   "phone"
     t.string   "website"
     t.string   "detailed_pricing_model"
@@ -195,7 +196,7 @@ ActiveRecord::Schema.define(version: 20170505122458) do
     t.string   "available_payment_methods"
     t.string   "regular_openning_hours"
     t.string   "exceptions_opening"
-    t.polygon "the_geom_area",                    :srid=>4326
+    t.geometry "the_geom_area",                    limit: {:srid=>4326, :type=>"polygon"}
     t.datetime "created_at",                                                                                                            null: false
     t.datetime "updated_at",                                                                                                            null: false
     t.integer  "number"
@@ -236,7 +237,7 @@ ActiveRecord::Schema.define(version: 20170505122458) do
     t.integer  "user_id"
     t.integer  "p_action_id"
     t.integer  "poi_status_id"
-    t.line "the_geom_segment",                 :srid=>4326
+    t.geometry "the_geom_segment",                 limit: {:srid=>4326, :type=>"line_string"}
     t.string   "payment"
     t.string   "parking_configuration"
     t.string   "parking_capacity"
@@ -305,7 +306,7 @@ ActiveRecord::Schema.define(version: 20170505122458) do
     t.string   "country_name"
     t.integer  "p_action_id"
     t.string   "note"
-    t.point "the_geom",         :srid=>4326
+    t.geometry "the_geom",         limit: {:srid=>4326, :type=>"point"}
     t.string   "phone"
     t.string   "web"
     t.string   "name"
@@ -384,7 +385,7 @@ ActiveRecord::Schema.define(version: 20170505122458) do
     t.integer  "duplicated_identifier"
     t.integer  "identifier"
     t.date     "control_date"
-    t.point "the_geom",              :srid=>4326
+    t.geometry "the_geom",              limit: {:srid=>4326, :type=>"point"}
     t.datetime "created_at",                                                                  null: false
     t.datetime "updated_at",                                                                  null: false
     t.integer  "poi_load_id"
@@ -420,6 +421,41 @@ ActiveRecord::Schema.define(version: 20170505122458) do
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "tramo", primary_key: "gid", force: :cascade do |t|
+    t.string   "source",     limit: 255
+    t.string   "empresa",    limit: 255
+    t.decimal  "geodiv1id"
+    t.string   "departamen", limit: 255
+    t.decimal  "geodiv2id"
+    t.string   "localidad",  limit: 255
+    t.decimal  "geomanid"
+    t.string   "nombre_man", limit: 255
+    t.decimal  "coordenada"
+    t.decimal  "coordena_1"
+    t.decimal  "calleid"
+    t.string   "nombre_cal", limit: 255
+    t.decimal  "puerta_ini"
+    t.decimal  "puerta_fin"
+    t.string   "paridad",    limit: 255
+    t.string   "coordena_2", limit: 255
+    t.string   "coordena_3", limit: 255
+    t.string   "coordena_4", limit: 255
+    t.string   "coordena_5", limit: 255
+    t.string   "id_zona",    limit: 255
+    t.string   "zona_nombr", limit: 255
+    t.string   "cod_manzan", limit: 255
+    t.decimal  "new_coorx1"
+    t.decimal  "new_coory1"
+    t.decimal  "new_coorx2"
+    t.decimal  "new_coory2"
+    t.decimal  "pta_medio"
+    t.string   "obs",        limit: 255
+    t.decimal  "id_tramo"
+    t.decimal  "orden"
+    t.geometry "geom",       limit: {:srid=>4326, :type=>"multi_line_string"}
+    t.index ["geom"], name: "tramo_geom_idx", using: :gist
   end
 
   create_table "users", force: :cascade do |t|

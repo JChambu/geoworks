@@ -17,9 +17,12 @@ Rails.application.routes.draw do
 
   get 'poi_types/:id/chains' => 'poi_types#chains'
   get 'poi_types/:id/food_types' => 'poi_types#food_types'
-   resources :customers
+
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
+   resources :customers
+  
+  get "geo_editions/geoeditions_edit" 
   resources :geo_editions
   resources :extended_listings  do
     collection do

@@ -1,12 +1,27 @@
 Navarra.namespace("geocoding_ol");
 
+Navarra.geocoding_ol.config = {
+  'line':[]
+}
+
+
 Navarra.geocoding_ol = function (){
-  var map,  featureOverlay, selectCtrl, mainbar, editbar, vector ;
+  var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle;
   var init= function() {
 
+    iconStyle = new ol.style.Style({
+      image : new ol.style.Icon(({
+        anchor : [ 0.5, 46 ],
+        anchorXUnits : 'fraction',
+        anchorYUnits : 'pixels',
+        opacity : 0.75,
+        src : '/images/marker-1.png'
+      }))
+    });
     var layer_geoserver = 'geoworks_lvh:view_geo_editions';
     var vectorSource = new ol.source.Vector({
-      url: 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson',
+      //url: 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson',
+      url: 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson',
       format: new ol.format.GeoJSON()
     });
 
@@ -102,6 +117,7 @@ Navarra.geocoding_ol = function (){
     map.on('pointermove', onMouseMove);*/
 
     map.on('pointermove', function(evt) {
+      
       if (evt.dragging) {
         return;
       }
@@ -110,6 +126,7 @@ Navarra.geocoding_ol = function (){
     });
 
     map.on('click', function(evt) {
+
       if (evt.dragging) {
         return;
       }
@@ -117,27 +134,56 @@ Navarra.geocoding_ol = function (){
       feature = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
         return feature;
       });
+
+
       if (feature) {
-        $("#geo_edition_name").attr("value", feature.get('street'));
-      } });
+
+        $("#geo_edition_id").attr("value", feature.get('id'));
+        $("#geo_edition_name").attr("value", feature.get('name'));
+        $("#geo_edition_street").attr("value", feature.get('street'));
+        $("#geo_edition_number_door_start_original").attr("value", feature.get('number_door_start_original'));
+        $("#geo_edition_number_door_end_original").attr("value", feature.get('number_door_end_original'));
+        $("#geo_edition_code").attr("value", feature.get('code'));
+      } 
+    });
 
     //Main Control Bar
-    mainbar = new ol.control.Bar();
-    map.addControl(mainbar);
-    edit_ol();
-    bar_ol();
-
     /* Nested toobar with one control activated at once */
     //  nested = new ol.control.Bar({ toggleOne: true, group:false });
     //  mainbar.addControl (nested);
     //    selectCtrl();
     //    pedit();
     //    ledit();
+
+      if (Navarra.geo_editions.config.line)
+    {
+      str = Navarra.geo_editions.config.line[0];
+      coorde = str.split(',');
+        lat = coorde[0];
+      
+        console.log(lat);
+        coordi = [coorde[1],coorde[0]];
+      console.log(coordi);
+        addMarker_ol(coordi) ;
+    }
+//enableMap();
+
+/*
     if (!Navarra.geocoding_ol.longitude_ol){
       return;
     }else{
       addMarker_ol([Navarra.geocoding_ol.longitude_ol, Navarra.geocoding_ol.latitude_ol]); 
     }
+  
+*/
+  
+    mainbar = new ol.control.Bar();
+    map.addControl(mainbar);
+    edit_ol();
+    bar_ol();
+  
+  
+  
   };
 
   //Edit control bar 
@@ -209,25 +255,22 @@ Navarra.geocoding_ol = function (){
     subdomain = regexParse.exec(domain);
   }
 
-  /*  var enableMap = function(isEnabled){ 
+    var enableMap = function(){ 
+
 
   //console.log(isEnabled)
-    if (isEnabled == false){
-  //console.log("a");
-      event.preventDefault();
-      return;
-    }
 
     map.on('singleclick', function(evt) {
 
-  //console.log(evt.coordinate);
+
+  console.log(evt.coordinate);
 
       addMarker_ol(evt.coordinate);
     });
-  },*/
-  /*
+  },
+  
     addMarker_ol = function(coord){
-      map.removeLayer(pointLayer);
+  //    map.removeLayer(pointLayer);
       Navarra.geocoding_ol.latitude_ol = coord[1];
       Navarra.geocoding_ol.longitude_ol = coord[0];
 
@@ -236,7 +279,6 @@ Navarra.geocoding_ol = function (){
       var iconFeature = new ol.Feature({
         geometry: iconGeometry
       });
-
       iconFeature.setStyle(iconStyle);
 
       var vectorSource = new ol.source.Vector({
@@ -251,7 +293,7 @@ Navarra.geocoding_ol = function (){
       var extent = pointLayer.getSource().getExtent();
       map.getView().fit(extent, map.getSize());
       map.getView().setZoom(18);
-    };*/
+    };
 
 
   /*drawLineStringPolygon = function(){

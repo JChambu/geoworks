@@ -45,6 +45,8 @@ Navarra.parkings.action_edit = function(){
       addMarkerEdit(Navarra.parkings.config.lat_entry, Navarra.parkings.config.lng_entry, text, color);
     }
 
+console.log(Navarra.parkings.config.polygon);
+
     if (Navarra.parkings.config.polygon){
 
       addPolygon(Navarra.parkings.config.polygon);

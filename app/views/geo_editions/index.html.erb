@@ -2,10 +2,11 @@
 
 <h1>Geo Editions</h1>
 
-<table>
+<table class="table">
   <thead>
     <tr>
       <th>Name</th>
+      <th>Street</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -14,14 +15,12 @@
     <% @geo_editions.each do |geo_edition| %>
       <tr>
         <td><%= geo_edition.name %></td>
-        <td><%= link_to 'Show', geo_edition %></td>
+        <td><%= geo_edition.street %></td>
         <td><%= link_to 'Edit', edit_geo_edition_path(geo_edition) %></td>
-        <td><%= link_to 'Destroy', geo_edition, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
 <br>
-
-<%= link_to 'New Geo Edition', new_geo_edition_path %>
+<%= pager(@geo_editions) %>
