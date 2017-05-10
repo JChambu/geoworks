@@ -20,8 +20,9 @@ Navarra.geocoding_ol = function (){
     });
     var layer_geoserver = 'geoworks_lvh:view_geo_editions';
     var vectorSource = new ol.source.Vector({
-      //url: 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson',
-      url: 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson',
+     // url: 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson',
+      url: 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/wms?service=WMS&version=1.1.0&request=GetMap&layers=geoworks_supercanal:view_geo_editions&styles=&bbox=-68.94052863,-68.831688,-32.864848,-32.766603&width=768&height=767&srs=EPSG:4326&format=application/openlayers'
+  //    url: 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson',
       format: new ol.format.GeoJSON()
     });
 
