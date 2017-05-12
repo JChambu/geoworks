@@ -18,14 +18,27 @@ Navarra.geocoding_ol = function (){
         src : '/images/marker-1.png'
       }))
     });
-    //var layer_geoserver = 'geoworks_lvh:view_geo_editions';
-    var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
-   // var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
+  
+//*******************Layers localhost**********************//
+//    var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
 //    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
-    var layer_geoserver_geomainid = 'geoworks_lvh:geomanid';
-    var layer_geoserver_cobertura = 'geoworks_lvh:cobertura';
+//    var layer_geoserver_geomainid = 'geoworks_lvh:geomanid';
+//    var layer_geoserver_cobertura = 'geoworks_lvh:cobertura';
  //   var layer_geoserver_cobertura = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:cobertura&maxFeatures=50&outputFormat=application%2Fjson'
-    var layer_geoserver_new = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
+//    var layer_geoserver_new = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
+//    var url = 'http://localhost:8080/geoserver/wms'
+
+//*******************Layers Geoworks**********************//
+    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
+//    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
+    var layer_geoserver_geomainid = 'geoworks_supercanal:geomanid';
+    var layer_geoserver_cobertura = 'geoworks_supercanal:cobertura';
+ //   var layer_geoserver_cobertura = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:cobertura&maxFeatures=50&outputFormat=application%2Fjson'
+    var layer_geoserver_new = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
+    var url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
+
+
+
 
     var vectorSource = new ol.source.Vector();
 
@@ -35,13 +48,13 @@ Navarra.geocoding_ol = function (){
     });
 
     var vectorSource_geoserver_geomainid = new ol.source.TileWMS({
-      url:'http://localhost:8080/geoserver/wms',
+      url: url,
       params: { LAYERS: layer_geoserver_geomainid, VERSION: '1.1.0'} 
     });
 
     var vectorSource_geoserver_cobertura = new ol.source.TileWMS({
       //url: layer_geoserver_cobertura,
-      url:'http://localhost:8080/geoserver/wms',
+      url: url,
       params: { LAYERS: layer_geoserver_cobertura, VERSION: '1.1.0'} 
       //format: new ol.format.GeoJSON()
     });
@@ -66,7 +79,7 @@ Navarra.geocoding_ol = function (){
     var vectorLayerCobertura = new ol.layer.Tile({
       title:'Cobertura',
       type: 'overlays',
-      opacity: 0.2,
+      opacity: 0.4,
       source: vectorSource_geoserver_cobertura
     })
     
