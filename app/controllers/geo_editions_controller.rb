@@ -56,6 +56,7 @@ class GeoEditionsController < ApplicationController
   # PATCH/PUT /geo_editions/1.json
   def update
 
+    @geo_edition = GeoEdition.find(params[:geo_edition][:id])
     
     respond_to do |format|
       if @geo_edition.update(geo_edition_params)

@@ -18,19 +18,62 @@ Navarra.geocoding_ol = function (){
         src : '/images/marker-1.png'
       }))
     });
-    var layer_geoserver = 'geoworks_lvh:view_geo_editions';
-    var vectorSource = new ol.source.Vector({
-     // url: 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson',
-    //  url: 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/wms?service=WMS&version=1.1.0&request=GetMap&layers=geoworks_supercanal:view_geo_editions&styles=&bbox=-68.94052863,-68.831688,-32.864848,-32.766603&width=768&height=767&srs=EPSG:4326&format=application/openlayers',
-    url: 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson',
-     // url: 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson',
+    //var layer_geoserver = 'geoworks_lvh:view_geo_editions';
+    var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
+   // var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
+//    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
+    var layer_geoserver_geomainid = 'geoworks_lvh:geomanid';
+    var layer_geoserver_cobertura = 'geoworks_lvh:cobertura';
+ //   var layer_geoserver_cobertura = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:cobertura&maxFeatures=50&outputFormat=application%2Fjson'
+    var layer_geoserver_new = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
+
+    var vectorSource = new ol.source.Vector();
+
+    var vectorSource_geoserver_tramos = new ol.source.Vector({
+      url: layer_geoserver_tramos,
+      format: new ol.format.GeoJSON()
+    });
+
+    var vectorSource_geoserver_geomainid = new ol.source.TileWMS({
+      url:'http://localhost:8080/geoserver/wms',
+      params: { LAYERS: layer_geoserver_geomainid, VERSION: '1.1.0'} 
+    });
+
+    var vectorSource_geoserver_cobertura = new ol.source.TileWMS({
+      //url: layer_geoserver_cobertura,
+      url:'http://localhost:8080/geoserver/wms',
+      params: { LAYERS: layer_geoserver_cobertura, VERSION: '1.1.0'} 
+      //format: new ol.format.GeoJSON()
+    });
+
+    var vectorSource_geoserver_new = new ol.source.Vector({
+      url: layer_geoserver_new,
       format: new ol.format.GeoJSON()
     });
 
     var vectorLayer = new ol.layer.Vector({
       title:'Geo Edicion',
       type: 'overlays',
-      source: vectorSource
+      source: vectorSource_geoserver_tramos
+    })
+
+    var vectorLayerGeomainid = new ol.layer.Tile({
+      title:'GeomainID',
+      type: 'overlays',
+      source: vectorSource_geoserver_geomainid
+    })
+
+    var vectorLayerCobertura = new ol.layer.Tile({
+      title:'Cobertura',
+      type: 'overlays',
+      opacity: 0.2,
+      source: vectorSource_geoserver_cobertura
+    })
+    
+    var vectorLayerNew = new ol.layer.Vector({
+      title:'Segmentos nuevos',
+      type: 'overlays',
+      source: vectorSource_geoserver_new
     })
     var osmLayer = new ol.layer.Tile({
       title: 'OSM',
@@ -61,9 +104,10 @@ Navarra.geocoding_ol = function (){
           id: 'Layers',
           title: 'Capas',
           layers:[
-            vectorLayer
+            vectorLayerCobertura, vectorLayerGeomainid, vectorLayer, vectorLayerNew
           ]
         }),
+            
         vector
       ],
       //osmLayer, vectorLayer],
