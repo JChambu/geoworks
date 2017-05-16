@@ -20,25 +20,28 @@ Navarra.geocoding_ol = function (){
     });
   
 //*******************Layers localhost**********************//
-//    var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
-//    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
-//    var layer_geoserver_geomainid = 'geoworks_lvh:geomanid';
-//    var layer_geoserver_cobertura = 'geoworks_lvh:cobertura';
- //   var layer_geoserver_cobertura = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:cobertura&maxFeatures=50&outputFormat=application%2Fjson'
-//    var layer_geoserver_new = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
-//    var url = 'http://localhost:8080/geoserver/wms'
+    var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
+    //var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
+    var layer_geoserver_geomainid = 'geoworks_lvh:geomanid';
+    var layer_geoserver_manzana = 'geoworks_lvh:manzanas';
+    var layer_geoserver_cobertura = 'geoworks_lvh:cobertura';
+    var layer_geoserver_new = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
+    var layer_geoserver_gw_status_desfasaje = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_desfasaje&maxFeatures=50&outputFormat=application%2Fjson'
+//var layer_geoserver_gw_status_desfasaje = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_desfasaje&maxFeatures=50&outputFormat=application%2Fjson'
+  var layer_geoserver_gw_status_sin_info = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_sin_info&maxFeatures=50&outputFormat=application%2Fjson'
+var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_posible_barrio&maxFeatures=50&outputFormat=application%2Fjson'
+    layer_geoserver_gw_status_ok = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_ok&maxFeatures=50&outputFormat=application%2Fjson'
+    
+    var url = 'http://localhost:8080/geoserver/wms'
 
 //*******************Layers Geoworks**********************//
-    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
+/*    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
 //    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
     var layer_geoserver_geomainid = 'geoworks_supercanal:geomanid';
     var layer_geoserver_cobertura = 'geoworks_supercanal:cobertura';
- //   var layer_geoserver_cobertura = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:cobertura&maxFeatures=50&outputFormat=application%2Fjson'
     var layer_geoserver_new = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
     var url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
-
-
-
+*/
 
     var vectorSource = new ol.source.Vector();
 
@@ -47,16 +50,38 @@ Navarra.geocoding_ol = function (){
       format: new ol.format.GeoJSON()
     });
 
+    var vectorSource_geoserver_tramos_desfasaje = new ol.source.Vector({
+      url: layer_geoserver_gw_status_desfasaje,
+      format: new ol.format.GeoJSON()
+    });
+    
+    var vectorSource_geoserver_tramos_sin_info = new ol.source.Vector({
+      url: layer_geoserver_gw_status_sin_info,
+      format: new ol.format.GeoJSON()
+    });
+    
+    var vectorSource_geoserver_tramos_posible = new ol.source.Vector({
+      url: layer_geoserver_gw_status_posible,
+      format: new ol.format.GeoJSON()
+    });
+    
+    var vectorSource_geoserver_tramos_ok = new ol.source.Vector({
+      url: layer_geoserver_gw_status_ok,
+      format: new ol.format.GeoJSON()
+    });
+    
     var vectorSource_geoserver_geomainid = new ol.source.TileWMS({
       url: url,
       params: { LAYERS: layer_geoserver_geomainid, VERSION: '1.1.0'} 
     });
 
+    var vectorSource_geoserver_manzana = new ol.source.TileWMS({
+      url: url,
+      params: { LAYERS: layer_geoserver_manzana, VERSION: '1.1.0'} 
+    });
     var vectorSource_geoserver_cobertura = new ol.source.TileWMS({
-      //url: layer_geoserver_cobertura,
       url: url,
       params: { LAYERS: layer_geoserver_cobertura, VERSION: '1.1.0'} 
-      //format: new ol.format.GeoJSON()
     });
 
     var vectorSource_geoserver_new = new ol.source.Vector({
@@ -64,30 +89,109 @@ Navarra.geocoding_ol = function (){
       format: new ol.format.GeoJSON()
     });
 
+
+
+
+        var style_segment = new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: 'red',
+          width: 2
+        }) });
+   
+       style_sin_info = new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: 'green',
+          width: 2
+        }) });
+
+       style_ok =  new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: 'blue',
+          width: 2
+        }) });
+
+      style_desfasaje = new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: 'yellow',
+          width: 2
+        }) });
+
+       style_posible =  new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: 'brown',
+          width: 2
+        }) });
+
+    
+
+
     var vectorLayer = new ol.layer.Vector({
-      title:'Geo Edicion',
+      title:'Supercanal - Rojo',
       type: 'overlays',
-      source: vectorSource_geoserver_tramos
-    })
+      source: vectorSource_geoserver_tramos,
+      style: style_segment,
+      visible: 'false'
+    });
 
     var vectorLayerGeomainid = new ol.layer.Tile({
       title:'GeomainID',
       type: 'overlays',
       source: vectorSource_geoserver_geomainid
-    })
+    });
+    
+    var vectorLayerSinInfo = new ol.layer.Vector({
+      title:'Gw status_Sin_Info - Verde',
+      type: 'overlays',
+      source:vectorSource_geoserver_tramos_sin_info,
+      style: style_sin_info
+    });
+   
+    var vectorLayerPosible = new ol.layer.Vector({
+      title:'Gw status_Posible_Barrio - Azul',
+      type: 'overlays',
+      source:vectorSource_geoserver_tramos_posible,
+      style: style_posible
+    });
+
+    var vectorLayerOk = new ol.layer.Vector({
+      title:'Gw status_Ok',
+      type: 'overlays',
+      source: vectorSource_geoserver_tramos_ok,
+      style: style_ok
+    });
+    
+    var vectorLayerDesfasaje = new ol.layer.Vector({
+      title:'Gw status_desfasaje',
+      type: 'overlays',
+      source:vectorSource_geoserver_tramos_desfasaje,
+      style: style_desfasaje
+    });
+    
+    
+    var vectorLayerManzana = new ol.layer.Tile({
+      title:'Centroi Manzana',
+      type: 'overlays',
+      source: vectorSource_geoserver_manzana
+    });
 
     var vectorLayerCobertura = new ol.layer.Tile({
       title:'Cobertura',
       type: 'overlays',
       opacity: 0.4,
+      visible: 'false',
       source: vectorSource_geoserver_cobertura
-    })
+    });
     
     var vectorLayerNew = new ol.layer.Vector({
       title:'Segmentos nuevos',
       type: 'overlays',
       source: vectorSource_geoserver_new
-    })
+    });
+
+
+    
+    
+    
     var osmLayer = new ol.layer.Tile({
       title: 'OSM',
       type: 'base',
@@ -101,7 +205,7 @@ Navarra.geocoding_ol = function (){
       projection: 'EPSG:4326',
       center: [-68.8167, -32.8833],
       zoom: 10
-    })
+    });
 
     map  = new ol.Map({
       target: 'map',
@@ -117,8 +221,7 @@ Navarra.geocoding_ol = function (){
           id: 'Layers',
           title: 'Capas',
           layers:[
-            vectorLayerCobertura, vectorLayerGeomainid, vectorLayer, vectorLayerNew
-          ]
+          vectorLayerCobertura, vectorLayerGeomainid, vectorLayerManzana, vectorLayer, vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk ]
         }),
             
         vector
@@ -135,8 +238,8 @@ Navarra.geocoding_ol = function (){
       style: 
       new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: 'red',
-          width: 2
+          color: 'green',
+          width: 3
         }) })
     });
 
