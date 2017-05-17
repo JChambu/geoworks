@@ -1,7 +1,7 @@
 <%= content_for :head do %>
   <script type="text/javascript">
-  <% if @geo_edition.the_geom_segment_original %>
-<% (0..@num_point_segment).each {|n| 
+<% if @geo_edition.the_geom_segment_original %>
+  <% (0..@num_point_segment).each {|n| 
   %>
   Navarra.geo_editions.config.line.push(<%= @segment.point_n(n).y %>  + ', ' +   <%= @segment.point_n(n).x %>)
 <% } %>
@@ -15,56 +15,65 @@
       <h2><%= pluralize(geo_edition.errors.count, "error") %> prohibited this geo_edition from being saved:</h2>
 
       <ul>
-      <% geo_edition.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
+        <% geo_edition.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
       </ul>
     </div>
   <% end %>
-<div class="span12">
- 
-  <div class="field span2">
-    <%= f.label :id %>
-    <%= f.text_field :id %>
-  </div>
-  <div class="field span2">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </div>
-</div>
+  <div class="span12">
 
-<div class="span12">
-  <div class="field span3">
-    <%= f.label :street %>
-    <%= f.text_field :street %>
-  </div>
-  
-  <div class="field span2">
-    <%= f.label :number_door_start_original %>
-    <%= f.text_field :number_door_start_original %>
-  </div>
-  
-  <div class="field span2">
-    <%= f.label :number_door_end_original %>
-    <%= f.text_field :number_door_end_original %>
-  </div>
+    <div class="span6">
+      
+          <div id="info" class="span12"></div>
+          <div id="data" class="span12"></div>
+          <div id="obs" class="span12"></div>
 
-  <div class="field span2">
-    <%= f.label :code %>
-    <%= f.text_field :code %>
+    </div>
+
+    <div class="span6">
+
+      <div class="span12">
+        <div class="field span4">
+          <%= f.label :id %>
+          <%= f.text_field :id %>
+        </div>
+        <div class="field span4">
+          <%= f.label :name %>
+          <%= f.text_field :name %>
+        </div>
+        <div class="field span3">
+          <%= f.label :code %>
+          <%= f.text_field :code %>
+        </div>
+      </div>
+
+      <div class="span12">
+        <div class="field span4">
+          <%= f.label :street %>
+          <%= f.text_field :street %>
+        </div>
+        <div class="field span4">
+          <%= f.label :number_door_start_original %>
+          <%= f.text_field :number_door_start_original %>
+        </div>
+        <div class="field span4">
+          <%= f.label :number_door_end_original %>
+          <%= f.text_field :number_door_end_original %>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-  
   <div>
-  <%= f.text_field :line  %>
-</div>
+    <%= f.text_field :line  %>
+  </div>
+  
+  <div id="map"></div>
+  
 
-    <div id="map"></div>
-
-
-<div id="info"></div>
 
   <div class="actions">
     <%= f.submit %>
   </div>
+
 <% end %>

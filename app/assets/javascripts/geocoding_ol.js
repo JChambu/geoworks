@@ -20,35 +20,45 @@ Navarra.geocoding_ol = function (){
     });
   
 //*******************Layers localhost**********************//
-    var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
+/*    var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
     //var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
     var layer_geoserver_geomainid = 'geoworks_lvh:geomanid';
     var layer_geoserver_manzana = 'geoworks_lvh:manzanas';
     var layer_geoserver_cobertura = 'geoworks_lvh:cobertura';
     var layer_geoserver_new = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
     var layer_geoserver_gw_status_desfasaje = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_desfasaje&maxFeatures=50&outputFormat=application%2Fjson'
-//var layer_geoserver_gw_status_desfasaje = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_desfasaje&maxFeatures=50&outputFormat=application%2Fjson'
+var layer_geoserver_gw_status_desfasaje = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_desfasaje&maxFeatures=50&outputFormat=application%2Fjson'
   var layer_geoserver_gw_status_sin_info = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_sin_info&maxFeatures=50&outputFormat=application%2Fjson'
 var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_posible_barrio&maxFeatures=50&outputFormat=application%2Fjson'
-    layer_geoserver_gw_status_ok = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_ok&maxFeatures=50&outputFormat=application%2Fjson'
+    var layer_geoserver_gw_status_ok = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_ok&maxFeatures=50&outputFormat=application%2Fjson'
     
     var url = 'http://localhost:8080/geoserver/wms'
-
+*/
 //*******************Layers Geoworks**********************//
-/*    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
+//    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
 //    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
+    var layer_geoserver_manzana = 'geoworks_supercanal:manzanas';
     var layer_geoserver_geomainid = 'geoworks_supercanal:geomanid';
     var layer_geoserver_cobertura = 'geoworks_supercanal:cobertura';
     var layer_geoserver_new = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
     var url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
-*/
+var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_sin_info&maxFeatures=10000&outputFormat=application%2Fjson'
 
+    var layer_geoserver_gw_status_desfasaje = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_desfasaje&maxFeatures=10050&outputFormat=application%2Fjson'
+
+    var layer_geoserver_gw_status_posible = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_posible_barrio&maxFeatures=10050&outputFormat=application%2Fjson' 
+    var layer_geoserver_gw_status_ok = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_ok&maxFeatures=10050&outputFormat=application%2Fjson'
+
+
+      var url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
+    
+    
+    
     var vectorSource = new ol.source.Vector();
-
-    var vectorSource_geoserver_tramos = new ol.source.Vector({
+/*    var vectorSource_geoserver_tramos = new ol.source.Vector({
       url: layer_geoserver_tramos,
       format: new ol.format.GeoJSON()
-    });
+    });*/
 
     var vectorSource_geoserver_tramos_desfasaje = new ol.source.Vector({
       url: layer_geoserver_gw_status_desfasaje,
@@ -90,8 +100,6 @@ var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geowork
     });
 
 
-
-
         var style_segment = new ol.style.Style({
         stroke: new ol.style.Stroke({
           color: 'red',
@@ -124,14 +132,14 @@ var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geowork
 
     
 
-
+/*
     var vectorLayer = new ol.layer.Vector({
       title:'Supercanal - Rojo',
       type: 'overlays',
       source: vectorSource_geoserver_tramos,
       style: style_segment,
       visible: 'false'
-    });
+    });*/
 
     var vectorLayerGeomainid = new ol.layer.Tile({
       title:'GeomainID',
@@ -221,7 +229,7 @@ var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geowork
           id: 'Layers',
           title: 'Capas',
           layers:[
-          vectorLayerCobertura, vectorLayerGeomainid, vectorLayerManzana, vectorLayer, vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk ]
+          vectorLayerCobertura, vectorLayerGeomainid, vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk ]
         }),
             
         vector
@@ -249,10 +257,16 @@ var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geowork
         return feature;
       });
       var info = document.getElementById('info');
+      var data = document.getElementById('data');
+      var obs = document.getElementById('obs');
       if (feature) {
         info.innerHTML = feature.get('id') + ': ' + feature.get('street');
+        data.innerHTML = feature.get('id') + ': ' + feature.get('street');
+        obs.innerHTML = feature.get('id') + ': ' + feature.get('street');
       } else {
         info.innerHTML = '&nbsp;';
+        data.innerHTML = '&nbsp;';
+        obs.innerHTML = '&nbsp;';
       }
       if (feature !== highlight) {
         if (highlight) {
