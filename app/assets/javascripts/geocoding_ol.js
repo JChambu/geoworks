@@ -266,6 +266,9 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
 
     var highlight;
     var displayFeatureInfo = function(pixel, coordinate) {
+
+        content.innerHTML = '&nbsp;';
+        container.style.display = 'none';
       var feature = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
         return feature;
       });
@@ -282,9 +285,6 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
   
       
       } else {
-        info.innerHTML = '&nbsp;';
-        data.innerHTML = '&nbsp;';
-        obs.innerHTML = '&nbsp;';
         content.innerHTML = '&nbsp;';
         container.style.display = 'none';
 
@@ -314,15 +314,17 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
     map.on('pointermove', onMouseMove);*/
 
     map.on('pointermove', function(evt) {
- var coordinate = evt.coordinate;
-
+      
+      var coordinate = evt.coordinate;
+        content.innerHTML = '&nbsp;';
+        container.style.display = 'none';
       if (evt.dragging) {
         return;
       }
+
       var pixel = map.getEventPixel(evt.originalEvent);
       displayFeatureInfo(pixel , coordinate);
     });
-
 
     map.on('click', function(evt) {
       if (evt.dragging) {
@@ -358,9 +360,7 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
       coorde = str.split(',');
         lat = coorde[0];
       
-        console.log(lat);
         coordi = [coorde[1],coorde[0]];
-      console.log(coordi);
         addMarker_ol(coordi) ;
     }
 //enableMap();
@@ -381,8 +381,6 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
   
   };
 
-  //Edit control bar 
-
   var edit_ol = function(){ 
     editbar = new ol.control.Bar(
       {toggleOne: true,// one control active at the same time
@@ -390,10 +388,6 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
       });
     mainbar.addControl(editbar);
   }
-
-  // Add selection tool:
-  //  1- a toggle control with a select interaction
-  //  2- an option bar to delete / get information on the selected feature
 
   var bar_ol = function(){
 
@@ -430,15 +424,11 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
         map.on('singleclick', function(evt){
           coord = evt.coordinate[0] + " " + evt.coordinate[1];
           coordAdd.push(coord);
-          console.log(coordAdd.length);
       if (coordAdd.length == 2  ){
-     console.log(coordAdd);
       $('#geo_edition_line').attr("value", coordAdd);
         coordAdd = [];
         }
-
         });
-
       }
     })
     editbar.addControl(ledit);
@@ -452,13 +442,7 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
 
     var enableMap = function(){ 
 
-
-  //console.log(isEnabled)
-
     map.on('singleclick', function(evt) {
-
-
-  console.log(evt.coordinate);
 
       addMarker_ol(evt.coordinate);
     });
@@ -511,7 +495,6 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
       $('#geo_edition_line').attr("value", coordsAdd);
 
 
-  //console.log(coordsAdd);
       geomType = geometry.getType();
       styles = [
   //linestring
