@@ -13,7 +13,6 @@
   <% if geo_edition.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(geo_edition.errors.count, "error") %> prohibited this geo_edition from being saved:</h2>
-
       <ul>
         <% geo_edition.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -24,15 +23,6 @@
   <div class="span12">
 
     <div class="span6">
-      
-          <div id="info" class="span12"></div>
-          <div id="data" class="span12"></div>
-          <div id="obs" class="span12"></div>
-
-    </div>
-
-    <div class="span6">
-
       <div class="span12">
         <div class="field span4">
           <%= f.label :id %>
@@ -40,40 +30,60 @@
         </div>
         <div class="field span4">
           <%= f.label :name %>
-          <%= f.text_field :name %>
+          <%= f.text_field :name, disabled: true %>
         </div>
         <div class="field span3">
           <%= f.label :code %>
-          <%= f.text_field :code %>
+          <%= f.text_field :code, disabled: true %>
         </div>
       </div>
-
       <div class="span12">
         <div class="field span4">
           <%= f.label :street %>
-          <%= f.text_field :street %>
+          <%= f.text_field :street, disabled: true %>
         </div>
         <div class="field span4">
           <%= f.label :number_door_start_original %>
-          <%= f.text_field :number_door_start_original %>
+          <%= f.text_field :number_door_start_original, disabled: true %>
         </div>
         <div class="field span4">
           <%= f.label :number_door_end_original %>
-          <%= f.text_field :number_door_end_original %>
+          <%= f.text_field :number_door_end_original, disabled: true %>
         </div>
       </div>
+
+      <div class="span12 actions">
+          <%= f.submit %>
+      </div>
+
     </div>
+ 
+    <div class="span5">
+    
+      <div class="span12">
+        <div class="field span4">
+          <%= f.label :gw_pta_ini %>
+          <%= f.text_field :gw_pta_ini%>
+        </div>
+        <div class="field span4">
+          <%= f.label :gw_pta_fin %>
+          <%= f.text_field :gw_pta_fin %>
+        </div>
+      
+        <%= control_group(f.select(:poi_status_id, poi_statuses_for_select, :selected => @poi_status_id, :include_blank => true), Poi.human_attribute_name(:poi_status_id)) %>
+      
+      </div>
+
   </div>
   <div>
-    <%= f.text_field :line  %>
+    <%= f.hidden_field :line  %>
   </div>
-  
-  <div id="map"></div>
-  
 
+  <div id="map">
 
-  <div class="actions">
-    <%= f.submit %>
+      <div id="popup" class="ol-popup ">
+             <div id="popup-content"></div>
+                        </div>
   </div>
 
 <% end %>

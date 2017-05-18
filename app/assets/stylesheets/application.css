@@ -12,6 +12,6 @@
  *= require jquery-ui
  *= require ol3/ol3-layerswitcher
  *= require ol3/controlbar
-
+ *= require ol3/ol3-popup
  *= require_tree .
  */

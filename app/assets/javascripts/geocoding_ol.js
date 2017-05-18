@@ -20,24 +20,24 @@ Navarra.geocoding_ol = function (){
     });
   
 //*******************Layers localhost**********************//
-/*    var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
+    var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
     //var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
     var layer_geoserver_geomainid = 'geoworks_lvh:geomanid';
     var layer_geoserver_manzana = 'geoworks_lvh:manzanas';
     var layer_geoserver_cobertura = 'geoworks_lvh:cobertura';
     var layer_geoserver_new = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
-    var layer_geoserver_gw_status_desfasaje = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_desfasaje&maxFeatures=50&outputFormat=application%2Fjson'
-var layer_geoserver_gw_status_desfasaje = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_desfasaje&maxFeatures=50&outputFormat=application%2Fjson'
-  var layer_geoserver_gw_status_sin_info = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_sin_info&maxFeatures=50&outputFormat=application%2Fjson'
-var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_posible_barrio&maxFeatures=50&outputFormat=application%2Fjson'
-    var layer_geoserver_gw_status_ok = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_ok&maxFeatures=50&outputFormat=application%2Fjson'
+//    var layer_geoserver_gw_status_desfasaje = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_desfasaje&maxFeatures=50&outputFormat=application%2Fjson'
+var layer_geoserver_gw_status_desfasaje = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_desfasaje&maxFeatures=10050&outputFormat=application%2Fjson'
+  var layer_geoserver_gw_status_sin_info = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_sin_info&maxFeatures=10050&outputFormat=application%2Fjson'
+var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_posible_barrio&maxFeatures=10050&outputFormat=application%2Fjson'
+    var layer_geoserver_gw_status_ok = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_ok&maxFeatures=10050&outputFormat=application%2Fjson'
     
     var url = 'http://localhost:8080/geoserver/wms'
-*/
+
 //*******************Layers Geoworks**********************//
 //    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
 //    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
-    var layer_geoserver_manzana = 'geoworks_supercanal:manzanas';
+/*    var layer_geoserver_manzana = 'geoworks_supercanal:manzanas';
     var layer_geoserver_geomainid = 'geoworks_supercanal:geomanid';
     var layer_geoserver_cobertura = 'geoworks_supercanal:cobertura';
     var layer_geoserver_new = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
@@ -48,9 +48,8 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
 
     var layer_geoserver_gw_status_posible = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_posible_barrio&maxFeatures=10050&outputFormat=application%2Fjson' 
     var layer_geoserver_gw_status_ok = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_ok&maxFeatures=10050&outputFormat=application%2Fjson'
-
-
-      var url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
+    var url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
+    */
     
     
     
@@ -108,29 +107,41 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
    
        style_sin_info = new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: 'green',
+          color: '#819FF7',
           width: 2
         }) });
 
        style_ok =  new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: 'blue',
+          color: '#82FA58',
           width: 2
         }) });
 
       style_desfasaje = new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: 'yellow',
+          color: '#FACC2E',
           width: 2
         }) });
 
        style_posible =  new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: 'brown',
+          color: '#FA5858',
           width: 2
         }) });
 
-    
+     var info = document.getElementById('info');
+     var container = document.getElementById('popup');
+     var content = document.getElementById('popup-content');
+
+
+
+  var  popup = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
+      element: container,
+      autoPan: true,
+      autoPanAnimation: {
+            duration: 250
+          }
+  }));
 
 /*
     var vectorLayer = new ol.layer.Vector({
@@ -196,17 +207,19 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
       source: vectorSource_geoserver_new
     });
 
-
-    
-    
     
     var osmLayer = new ol.layer.Tile({
       title: 'OSM',
       type: 'base',
       visible: 'true',
+      opacity: 0.9,
       source: new ol.source.OSM()
     });
 
+    var noneLayer = new ol.layer.Tile({
+      title: 'Sin Mapa',
+      type: 'base'
+    });
     vector = new ol.layer.Vector({ source: new ol.source.Vector()});
 
     var view =  new ol.View({
@@ -216,13 +229,14 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
     });
 
     map  = new ol.Map({
+      
       target: 'map',
       layers: [
         new ol.layer.Group({
           id:'osm',
           title: 'Mapa Base',
           layers: [
-            osmLayer
+             noneLayer, osmLayer
           ]
         }),
         new ol.layer.Group({
@@ -247,26 +261,34 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
       new ol.style.Style({
         stroke: new ol.style.Stroke({
           color: 'green',
-          width: 3
+          width: 6
         }) })
     });
 
     var highlight;
-    var displayFeatureInfo = function(pixel) {
+    var displayFeatureInfo = function(pixel, coordinate) {
       var feature = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
         return feature;
       });
-      var info = document.getElementById('info');
-      var data = document.getElementById('data');
-      var obs = document.getElementById('obs');
       if (feature) {
-        info.innerHTML = feature.get('id') + ': ' + feature.get('street');
-        data.innerHTML = feature.get('id') + ': ' + feature.get('street');
-        obs.innerHTML = feature.get('id') + ': ' + feature.get('street');
+
+              container.style.display = 'block';
+                
+                information = 'Street: '+ feature.get('street') + '<br/>' ;
+                information += 'Inicio: '+ feature.get('number_door_start_original') + ' Fin: ' + feature.get('number_door_end_original') + '<br/>';
+                information += 'Obs: ' + feature.get('gw_status');
+              content.innerHTML = information;
+               popup.setPosition(coordinate);
+                map.addOverlay(popup);
+  
+      
       } else {
         info.innerHTML = '&nbsp;';
         data.innerHTML = '&nbsp;';
         obs.innerHTML = '&nbsp;';
+        content.innerHTML = '&nbsp;';
+        container.style.display = 'none';
+
       }
       if (feature !== highlight) {
         if (highlight) {
@@ -293,16 +315,17 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
     map.on('pointermove', onMouseMove);*/
 
     map.on('pointermove', function(evt) {
-      
+ var coordinate = evt.coordinate;
+
       if (evt.dragging) {
         return;
       }
       var pixel = map.getEventPixel(evt.originalEvent);
-      displayFeatureInfo(pixel);
+      displayFeatureInfo(pixel , coordinate);
     });
 
-    map.on('click', function(evt) {
 
+    map.on('click', function(evt) {
       if (evt.dragging) {
         return;
       }
@@ -310,7 +333,6 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
       feature = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
         return feature;
       });
-
 
       if (feature) {
 
@@ -357,8 +379,6 @@ var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/ge
     map.addControl(mainbar);
     edit_ol();
     bar_ol();
-  
-  
   
   };
 
