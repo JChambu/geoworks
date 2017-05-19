@@ -10,63 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170515134255) do
+ActiveRecord::Schema.define(version: 20170519153942) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
   enable_extension "hstore"
   enable_extension "uuid-ossp"
-
-  create_table "20170426_tramos_lh_v1", primary_key: "gid", force: :cascade do |t|
-    t.string   "source",     limit: 254
-    t.string   "empresa",    limit: 254
-    t.decimal  "geodiv1id"
-    t.string   "departamen", limit: 254
-    t.decimal  "geodiv2id"
-    t.string   "localidad",  limit: 254
-    t.decimal  "geomanid"
-    t.string   "nombre_man", limit: 254
-    t.decimal  "coordenada"
-    t.decimal  "coordena_1"
-    t.decimal  "calleid"
-    t.string   "nombre_cal", limit: 254
-    t.decimal  "puerta_ini"
-    t.decimal  "puerta_fin"
-    t.string   "paridad",    limit: 254
-    t.string   "coordena_2", limit: 254
-    t.string   "coordena_3", limit: 254
-    t.string   "coordena_4", limit: 254
-    t.string   "coordena_5", limit: 254
-    t.string   "id_zona",    limit: 254
-    t.string   "zona_nombr", limit: 254
-    t.string   "cod_manzan", limit: 254
-    t.decimal  "new_coorx1"
-    t.decimal  "new_coory1"
-    t.decimal  "new_coorx2"
-    t.decimal  "new_coory2"
-    t.decimal  "pta_medio"
-    t.string   "obs",        limit: 254
-    t.decimal  "id_tramo"
-    t.decimal  "dif_pta",                                                      precision: 10
-    t.string   "desfasaje",  limit: 50
-    t.string   "trm_s_coor", limit: 50
-    t.decimal  "gw_div1",                                                      precision: 10
-    t.decimal  "gw_div2",                                                      precision: 10
-    t.decimal  "gw_geoman",                                                    precision: 10
-    t.decimal  "gw_qh",                                                        precision: 10
-    t.decimal  "gw_calleid",                                                   precision: 10
-    t.decimal  "gw_pta_ini",                                                   precision: 10
-    t.decimal  "gw_pta_fin",                                                   precision: 10
-    t.string   "gw_paridad", limit: 2
-    t.float    "gw_coorx1"
-    t.float    "gw_coory1"
-    t.float    "gw_coorx2"
-    t.float    "gw_coory2"
-    t.string   "gw_estado",  limit: 50
-    t.geometry "geom",       limit: {:srid=>4326, :type=>"multi_line_string"}
-    t.index ["geom"], name: "20170426_tramos_lh_v1_geom_idx", using: :gist
-  end
 
   create_table "actions", force: :cascade do |t|
     t.string   "name"
@@ -236,6 +186,7 @@ ActiveRecord::Schema.define(version: 20170515134255) do
     t.integer  "gw_pta_fin"
     t.string   "gw_paridad"
     t.string   "gw_status"
+    t.string   "paridad"
   end
 
   create_table "geomanid", primary_key: "gid", force: :cascade do |t|
@@ -564,6 +515,56 @@ ActiveRecord::Schema.define(version: 20170515134255) do
     t.decimal  "orden"
     t.geometry "geom",       limit: {:srid=>4326, :type=>"multi_line_string"}
     t.index ["geom"], name: "tramo_geom_idx", using: :gist
+  end
+
+  create_table "tramov1", primary_key: "gid", id: :integer, default: -> { "nextval('\"20170426_tramos_lh_v1_gid_seq\"'::regclass)" }, force: :cascade do |t|
+    t.string   "source",     limit: 254
+    t.string   "empresa",    limit: 254
+    t.decimal  "geodiv1id"
+    t.string   "departamen", limit: 254
+    t.decimal  "geodiv2id"
+    t.string   "localidad",  limit: 254
+    t.decimal  "geomanid"
+    t.string   "nombre_man", limit: 254
+    t.decimal  "coordenada"
+    t.decimal  "coordena_1"
+    t.decimal  "calleid"
+    t.string   "nombre_cal", limit: 254
+    t.decimal  "puerta_ini"
+    t.decimal  "puerta_fin"
+    t.string   "paridad",    limit: 254
+    t.string   "coordena_2", limit: 254
+    t.string   "coordena_3", limit: 254
+    t.string   "coordena_4", limit: 254
+    t.string   "coordena_5", limit: 254
+    t.string   "id_zona",    limit: 254
+    t.string   "zona_nombr", limit: 254
+    t.string   "cod_manzan", limit: 254
+    t.decimal  "new_coorx1"
+    t.decimal  "new_coory1"
+    t.decimal  "new_coorx2"
+    t.decimal  "new_coory2"
+    t.decimal  "pta_medio"
+    t.string   "obs",        limit: 254
+    t.decimal  "id_tramo"
+    t.decimal  "dif_pta",                                                precision: 10
+    t.string   "desfasaje",  limit: 50
+    t.string   "trm_s_coor", limit: 50
+    t.decimal  "gw_div1",                                                precision: 10
+    t.decimal  "gw_div2",                                                precision: 10
+    t.decimal  "gw_geoman",                                              precision: 10
+    t.decimal  "gw_qh",                                                  precision: 10
+    t.decimal  "gw_calleid",                                             precision: 10
+    t.decimal  "gw_pta_ini",                                             precision: 10
+    t.decimal  "gw_pta_fin",                                             precision: 10
+    t.string   "gw_paridad", limit: 2
+    t.float    "gw_coorx1"
+    t.float    "gw_coory1"
+    t.float    "gw_coorx2"
+    t.float    "gw_coory2"
+    t.string   "gw_estado",  limit: 50
+    t.geometry "geom",       limit: {:srid=>4326, :type=>"line_string"}
+    t.index ["geom"], name: "20170426_tramos_lh_v1_geom_idx", using: :gist
   end
 
   create_table "users", force: :cascade do |t|

@@ -87,6 +87,6 @@ class GeoEditionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def geo_edition_params
-      params.require(:geo_edition).permit(:name, :the_geom_segment, :line, :id, :gw_pta_ini, :gw_pta_fin, :poi_status_id)
+      params.require(:geo_edition).permit(:name, :the_geom_segment, :line, :id, :gw_pta_ini, :gw_pta_fin, :poi_status_id, :gw_paridad)
     end
 end
