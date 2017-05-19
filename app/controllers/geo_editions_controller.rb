@@ -60,7 +60,7 @@ class GeoEditionsController < ApplicationController
     
     respond_to do |format|
       if @geo_edition.update(geo_edition_params)
-        format.html { redirect_to @geo_edition, notice: 'Geo edition was successfully updated.' }
+        format.html { redirect_to edit_geo_edition_path(@geo_edition.id) }
         format.json { render :show, status: :ok, location: @geo_edition }
       else
         format.html { render :edit }
@@ -87,6 +87,6 @@ class GeoEditionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def geo_edition_params
-      params.require(:geo_edition).permit(:name, :the_geom_segment, :line, :id, :gw_pta_ini, :gw_pta_fin, :poi_status_id, :gw_paridad)
+      params.require(:geo_edition).permit(:name, :the_geom_segment, :line, :id, :gw_pta_ini, :gw_pta_fin, :poi_status_id, :gw_paridad, :gw_div1, :gw_div2, :gw_geomainid)
     end
 end

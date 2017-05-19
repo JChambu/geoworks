@@ -22,11 +22,11 @@
   <% end %>
 
   <div class="span12">
-    <%= f.hidden_field :id %>
+
     <div class="span5">
       <div class="span12">
         <div class=" span4">
-          <%= f.input :code, disabled: true %>
+          <%= f.input :id %>
         </div>
         <div class="field span4">
           <%= f.input :street, disabled: true %>
@@ -36,6 +36,9 @@
         </div>
       </div>
       <div class="span12">
+        <div class=" span4">
+          <%= f.input :code, disabled: true %>
+        </div>
         <div class="field span4">
           <%= f.input :number_door_start_original, disabled: true %>
         </div>
@@ -80,7 +83,7 @@
     </div>
   </div>
   <div>
-    <%= f.hidden_field :line  %>
+    <%= f.input :line  %>
   </div>
   <div id="map">
     <div id="popup" class="ol-popup ">
