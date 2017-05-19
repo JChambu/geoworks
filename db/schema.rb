@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170519153942) do
+ActiveRecord::Schema.define(version: 20170519155838) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -179,7 +179,7 @@ ActiveRecord::Schema.define(version: 20170519153942) do
     t.integer  "poi_status_id"
     t.integer  "gw_div1"
     t.integer  "gw_div2"
-    t.integer  "gw_geoman"
+    t.integer  "gw_geomainid"
     t.integer  "gw_qh"
     t.integer  "gw_calleid"
     t.integer  "gw_pta_ini"
