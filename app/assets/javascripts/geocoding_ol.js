@@ -20,7 +20,7 @@ Navarra.geocoding_ol = function (){
     });
 
     //*******************Layers localhost**********************//
-        var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
+/*        var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
     //var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
     var layer_geoserver_geomainid = 'geoworks_lvh:geomanid';
     var layer_geoserver_manzana = 'geoworks_lvh:manzanas';
@@ -33,11 +33,11 @@ var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geowork
     var layer_geoserver_gw_status_ok = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_ok&maxFeatures=10050&outputFormat=application%2Fjson'
 
     var url = 'http://localhost:8080/geoserver/wms'
-    
+  */  
     //*******************Layers Geoworks**********************//
     //    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
     //    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
-/*    var layer_geoserver_manzana = 'geoworks_supercanal:manzanas';
+  var layer_geoserver_manzana = 'geoworks_supercanal:manzanas';
     var layer_geoserver_geomainid = 'geoworks_supercanal:geomanid';
     var layer_geoserver_cobertura = 'geoworks_supercanal:cobertura';
     var layer_geoserver_new = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
@@ -50,7 +50,7 @@ var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geowork
     var layer_geoserver_gw_status_ok = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_ok&maxFeatures=10050&outputFormat=application%2Fjson'
     var url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
 
-*/
+
 
     var vectorSource = new ol.source.Vector();
     /*    var vectorSource_geoserver_tramos = new ol.source.Vector({
@@ -137,6 +137,7 @@ var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geowork
     var  popup = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
       element: container,
      // autoPan: true,
+      stopEvent: false,
       autoPanAnimation: {
         duration: 250
       }
@@ -230,6 +231,9 @@ var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geowork
     map  = new ol.Map({
 
       target: 'map',
+      controls: ol.control.defaults().extend([
+                  new ol.control.FullScreen()
+                ]),
       layers: [
         new ol.layer.Group({
           id:'osm',
@@ -264,6 +268,7 @@ var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geowork
         }) })
     });
 
+        map.addOverlay(popup);
     var highlight;
     var displayFeatureInfo = function(pixel, coordinate) {
 
@@ -279,9 +284,10 @@ var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geowork
         information = 'Street: '+ feature.get('street') + '<br/>' ;
         information += 'Inicio: '+ feature.get('number_door_start_original') + ' Fin: ' + feature.get('number_door_end_original') + '<br/>';
         information += 'Obs: ' + feature.get('gw_status');
+        information += '<a href="#" data-action="yes">Yes</a>, <a href="#" data-action="no">No</a>';
         content.innerHTML = information;
         popup.setPosition(coordinate);
-        map.addOverlay(popup);
+
 
 
       } else {
