@@ -50,6 +50,9 @@ class ExtendedListingsController < ApplicationController
       params[:q][:created_at_lteq]= params[:q][:created_at_lteq].to_date.end_of_day if !params[:q][:created_at_lteq].blank?
     end
 
+    if current_user.role != 'Admin'
+      params[:q] = {:user_id_eq => current_user.id}
+    end
     @search = ExtendedListing.search(params[:q] )
     @extended_listings = @search.result.paginate(:page => params[:page])
   end
@@ -63,6 +66,10 @@ class ExtendedListingsController < ApplicationController
   def new
     @extended_listing = ExtendedListing.new
     @extended_listing.city_id = params[:city_id] if !params[:city_id].nil?
+    @extended_listing.poi_type_id = params[:poi_type_id] if !params[:poi_type_id].nil?
+    @extended_listing.poi_sub_type_id = params[:poi_sub_type_id] if !params[:poi_sub_type_id].nil?
+
+
     #@extended_listing.category_id = params[:category_id] if !params[:category_id].nil?
   end
 
@@ -125,7 +132,7 @@ class ExtendedListingsController < ApplicationController
       @to_date = params[:q][:control_date_lteq]
       return
     end
-   # params[:q] = {:poi_status_id_eq => 4} 
+    params[:q] = {user_id: current_user.id} 
   end
 
 
