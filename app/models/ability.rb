@@ -25,6 +25,9 @@ class Ability
       can :search, :pois
       can :manage, Parking
       #Poi sub types
+      can :visualize, :poi_type_sub_types
+      can :visualize, :poi_type_chains
+      can :visualize, :poi_type_food_types
       can :edit, User do |u|
         u.id == user.id
       end
