@@ -24,9 +24,6 @@ Navarra.extended_listings.action_edit = function(){
 Navarra.extended_listings.action_new = function(){
    
     loadPoiSubTypesComboEl = function(result) {
-
-      console.log(result);
-
       Navarra.common.form.loadComboOptions("#extended_listing_poi_sub_type_id", result, "name");
     },
 
@@ -138,7 +135,7 @@ Navarra.extended_listings.action_new = function(){
     bindInputFocusOutEl();
     loadLatLonFieldsEl();
     bindPoiTypesComboChangeEl();
-    loadPoiSubTypesComboEl();
+    //loadPoiSubTypesComboEl();
     //Navarra.geocoding_ol.init();
   } 
   return {
