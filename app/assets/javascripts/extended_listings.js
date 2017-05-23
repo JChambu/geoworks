@@ -139,7 +139,7 @@ Navarra.extended_listings.action_new = function(){
     loadLatLonFieldsEl();
     bindPoiTypesComboChangeEl();
     loadPoiSubTypesComboEl();
-    Navarra.geocoding_ol.init();
+    //Navarra.geocoding_ol.init();
   } 
   return {
     init: init
