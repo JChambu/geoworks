@@ -1,4 +1,8 @@
 #map {
-  height: 400px;
-  width: 90%;
+  position: relative;
+  border: 1px solid #AAA;
+  border-radius: 4px;
+  background-color: #EEE;
+  z-index:100
 }
+

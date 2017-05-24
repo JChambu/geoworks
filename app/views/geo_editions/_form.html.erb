@@ -20,76 +20,56 @@
       </ul>
     </div>
   <% end %>
-
   <div class="span12">
+    <section id="sidebar_info" class="span3">
 
-    <div class="span5">
-      <div class="span12">
-        <div class=" span4">
-          <%= f.input :id %>
-        </div>
-        <div class="field span4">
+        <div class="span12">
+          <%= f.input :id, input_html: {class: "span6"} %>
           <%= f.input :street, disabled: true %>
-        </div>
-        <div class="field span4">
           <%= f.input :paridad, disabled: true %>
-        </div>
-      </div>
-      <div class="span12">
-        <div class=" span4">
           <%= f.input :code, disabled: true %>
+          <div class="span6">
+          <%= f.input :number_door_start_original, disabled: true , input_html: {class: "span5"}%>
+          </div>
+          <div class="span5">
+          <%= f.input :number_door_end_original, disabled: true, input_html:{class: "span6"} %>
+          </div>
         </div>
-        <div class="field span4">
-          <%= f.input :number_door_start_original, disabled: true %>
+        <div class="span12">
+          <div class="span6">
+          <%= f.input :gw_pta_ini,  input_html:{class: "span6"} %>
         </div>
-        <div class="field span4">
-          <%= f.input :number_door_end_original, disabled: true %>
+          <div class="span6">
+          <%= f.input :gw_pta_fin,  input_html:{class: "span6"}  %>
+        </div>
+          <%= f.input :gw_paridad %>
+          <div class="span3">
+            <%= f.input :gw_div1, input_html:{class: "span12"}   %>
+        </div>
+          <div class="span3">
+            <%= f.input :gw_div2, input_html:{class: "span12"}   %>
+        </div>
+          <div class="span5">
+            <%= f.input :gw_geomainid, input_html:{class: "span12"}   %>
+        </div>
+            <%= control_group(f.select(:poi_status_id, poi_statuses_for_select, :selected => @poi_status_id, :include_blank => true), Poi.human_attribute_name(:poi_status_id)) %>
+      <%= f.input :line, as: :hidden  %>
+        </div>
+    </section>
+
+    <section  class="span9">
+      <div id="map">
+        <div id="popup" class="ol-popup ">
+          <div id="popup-content">
+          </div>
         </div>
       </div>
+    </section>
+  </div>
+
       <div class="span12 actions">
         <%= f.submit class: 'btn btn-primary' %>
       </div>
-    </div>
-
-    <div class="span6">
-
-      <div class="span12">
-        <div class="field span4">
-          <%= f.input :gw_pta_ini%>
-        </div>
-        <div class="field span4">
-          <%= f.input :gw_pta_fin %>
-        </div>
-        <div class="field span4">
-          <%= f.input :gw_paridad %>
-        </div>
-
-        <div class="span12">
-        
-        <div class=" span4">
-          <%= f.input :gw_div1 %>
-        </div>
-        <div class=" span4">
-          <%= f.input :gw_div2 %>
-        </div>
-        <div class=" span4">
-          <%= f.input :gw_geomainid %>
-        </div>
-        <div class="span12">
-            <%= control_group(f.select(:poi_status_id, poi_statuses_for_select, :selected => @poi_status_id, :include_blank => true), Poi.human_attribute_name(:poi_status_id)) %>
-        </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div>
-    <%= f.input :line  %>
-  </div>
-  <div id="map">
-    <div id="popup" class="ol-popup ">
-      <div id="popup-content"></div>
-    </div>
-  </div>
   <div id="info">
   </div>
 <% end %>
