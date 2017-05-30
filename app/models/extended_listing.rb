@@ -36,25 +36,27 @@ class ExtendedListing < ActiveRecord::Base
 
   #def self.build_geom (address, number, city_id)
 
-  def build_geom 
+  def self.build_geom 
 
-    if self.latitude and self.longitude and
-        !self.latitude.to_s.empty? and !self.longitude.to_s.empty?
-      self.the_geom = "POINT(#{self.longitude} #{self.latitude})"
-    end
 
-    # @extended = ExtendedListing.where("delivery  = 15  and city_id is not null and poi_status_id = 2 ")
-    # @extended.each do |e|
-    # city = City.find(e.city_id) 
-    # department = city.department
-    # province = department.province
-    # country = province.country
-    # @address = [[e.address_new, e.number_new], city.name, department.name, province.name, country.name].join(', ')
+    #if self.latitude and self.longitude and
+    #    !self.latitude.to_s.empty? and !self.longitude.to_s.empty?
+    #  self.the_geom = "POINT(#{self.longitude} #{self.latitude})"
+    #end
 
-    # geocode = Geocoder.coordinates(@address)
-    # geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
-    # e.update_attribute(:the_geom, geom )
+     @extended = ExtendedListing.where("poi_status_id = 3 ")
+     @extended.each do |e|
+     city = City.find(e.city_id) 
+     department = city.department
+     province = department.province
+     country = province.country
+     @address = [[e.address, e.number], city.name, department.name, province.name, country.name].join(', ')
 
+     geocode = Geocoder.coordinates(@address)
+     geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
+     e.update_attribute(:the_geom, geom )
+
+  end
   end
 
   def self.find_possible_duplicates attributes
