@@ -5,7 +5,15 @@ class GeoEditionsController < ApplicationController
   # GET /geo_editions.json
 
   def geoeditions_edit
-    
+    @geo_edition = GeoEdition.first 
+    @segment = @geo_edition.the_geom_segment_original
+    if !@segment.nil?
+      @num_point_segment = (@segment.num_points - 1 )
+ (0..@num_point_segment).each {|n|
+ p @segment.point_n(n).y 
+ p @segment.point_n(n).x 
+ }
+  end
   end
   
   
@@ -27,6 +35,7 @@ class GeoEditionsController < ApplicationController
   def edit
 
     @segment = @geo_edition.the_geom_segment_original
+
     if !@segment.nil?
       @num_point_segment = (@segment.num_points - 1 )
  (0..@num_point_segment).each {|n|
@@ -55,6 +64,7 @@ class GeoEditionsController < ApplicationController
   # PATCH/PUT /geo_editions/1
   # PATCH/PUT /geo_editions/1.json
   def update
+
 
     @geo_edition = GeoEdition.find(params[:geo_edition][:id])
     

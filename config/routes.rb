@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   get 'pois/total_poi_validates' => 'pois#total_poi_validates'
   get 'poi_addresses/total_poi_validates' => 'poi_addresses#total_poi_validates'
   get 'poi_types/:id/sub_types' => 'poi_types#sub_types'
-  
+
   get 'country/:id/provinces' => 'locations#provinces'
   get 'province/:id/departments' => 'locations#departments'
   get 'department/:id/cities' => 'locations#department_cities'
@@ -18,135 +18,139 @@ Rails.application.routes.draw do
   get 'poi_types/:id/chains' => 'poi_types#chains'
   get 'poi_types/:id/food_types' => 'poi_types#food_types'
 
+
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
-   resources :customers
-  
-  get "geo_editions/geoeditions_edit" 
-  resources :geo_editions
-  resources :extended_listings  do
-    collection do
-      get :duplicated
-      get :georeferenced
-    end
-end
+    resources :customers
 
-  resources :parkings do
-    collection do
-      get :search
+    get "geo_editions/geoeditions_edit" => 'geo_editions#geoeditions_edit' 
+    resources :geo_editions
+
+    resources :extended_listings  do
+      collection do
+        get :duplicated
+        get :georeferenced
+      end
     end
+
+    resources :parkings do
+      collection do
+        get :search
+      end
+    end
+    resources :extended_listing_loads
+    resources :categories
+    resources :customers
+    get "reports/pois"
+    get 'poi_addresses/georeferenced' 
+    resources :restaurant_types
+    resources :poi_address_loads
+    resources :generate_deliveries
+    get "reports/users"
+    get "reports/poi_verification"
+    get "reports/poi_verification_maps"
+    get "reports/update" => 'reports#update', :as=> :update_poi
+
+    get "reports/verificated_multiple" => 'reports#verificated_multiple'
+    get "reports/update_revised" => 'reports#update_revised'
+    get 'pois/check' => 'pois#check'
+    get 'configuration' => 'configuration#index'
+    put 'configuration/:id' => 'configuration#update', :as => :update_configuration
+    resources :poi_addresses
+    resources :pois do
+      collection do
+        get :download
+        get :search
+        get :deliver
+        get :deliveries_pois
+        get :duplicated
+
+        delete :delete_multiple
+      end
+    end
+
+    resources :load_locations, :except => [:edit, :update] do
+      collection do
+        get :upload_xls
+      end
+    end
+
+    resources :poi_loads, :except => [:edit, :update] do
+      collection do
+        get :download_xls_example
+      end
+      member do
+        get :download_source_file
+        get :download_errors_file
+      end
+    end
+
+    resources :poi_sub_types
+    resources :poi_sources
+    resources :street_types
+    resources :food_types
+    resources :poi_types
+    resources :chains
+    devise_for :users
+    resources :users
+
+    # The priority is based upon order of creation: first created -> highest priority.
+    # See how all your routes lay out with "rake routes".
+
+    # You can have the root of your site routed with "root"
+
+    root 'pois#index'
+    #end
+
+    # Example of regular route:
+    #   get 'products/:id' => 'catalog#view'
+
+    # Example of named route that can be invoked with purchase_url(id: product.id)
+    #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
+
+    # Example resource route (maps HTTP verbs to controller actions automatically):
+    #   resources :products
+
+    # Example resource route with options:
+    #   resources :products do
+    #     member do
+    #       get 'short'
+    #       post 'toggle'
+    #     end
+    #
+    #     collection do
+    #       get 'sold'
+    #     end
+    #   end
+
+    # Example resource route with sub-resources:
+    #   resources :products do
+    #     resources :comments, :sales
+    #     resource :seller
+    #   end
+
+    # Example resource route with more complex sub-resources:
+    #   resources :products do
+    #     resources :comments
+    #     resources :sales do
+    #       get 'recent', on: :collection
+    #     end
+    #   end
+
+    # Example resource route with concerns:
+    #   concern :toggleable do
+    #     post 'toggle'
+    #   end
+    #   resources :posts, concerns: :toggleable
+    #   resources :photos, concerns: :toggleable
+
+    # Example resource route within a namespace:
+    #   namespace :admin do
+    #     # Directs /admin/products/* to Admin::ProductsController
+    #     # (app/controllers/admin/products_controller.rb)
+    #     resources :products
+    #   end
   end
-  resources :extended_listing_loads
-  resources :categories
-  resources :customers
-  get "reports/pois"
-  get 'poi_addresses/georeferenced' 
-  resources :restaurant_types
-  resources :poi_address_loads
-  resources :generate_deliveries
-  get "reports/users"
-  get "reports/poi_verification"
-  get "reports/poi_verification_maps"
-  get "reports/update" => 'reports#update', :as=> :update_poi
-
-  get "reports/verificated_multiple" => 'reports#verificated_multiple'
-  get "reports/update_revised" => 'reports#update_revised'
-  get 'pois/check' => 'pois#check'
-  get 'configuration' => 'configuration#index'
-  put 'configuration/:id' => 'configuration#update', :as => :update_configuration
-  resources :poi_addresses
-  resources :pois do
-    collection do
-      get :download
-      get :search
-      get :deliver
-      get :deliveries_pois
-      get :duplicated
-
-      delete :delete_multiple
-    end
-  end
-
-  resources :load_locations, :except => [:edit, :update] do
-    collection do
-      get :upload_xls
-    end
-  end
-
-  resources :poi_loads, :except => [:edit, :update] do
-    collection do
-      get :download_xls_example
-    end
-    member do
-      get :download_source_file
-      get :download_errors_file
-    end
-  end
-
-  resources :poi_sub_types
-  resources :poi_sources
-  resources :street_types
-  resources :food_types
-  resources :poi_types
-  resources :chains
-  devise_for :users
-  resources :users
-  
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
-
-  # You can have the root of your site routed with "root"
-  root 'pois#index'
-
-  # Example of regular route:
-  #   get 'products/:id' => 'catalog#view'
-
-  # Example of named route that can be invoked with purchase_url(id: product.id)
-  #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
-
-  # Example resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
-
-  # Example resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Example resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Example resource route with more complex sub-resources:
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', on: :collection
-  #     end
-  #   end
-  
-  # Example resource route with concerns:
-  #   concern :toggleable do
-  #     post 'toggle'
-  #   end
-  #   resources :posts, concerns: :toggleable
-  #   resources :photos, concerns: :toggleable
-
-  # Example resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
-end
-match '*path', to: redirect("/#{I18n.default_locale}/%{path}"), via: :all
-match '', to: redirect("/#{I18n.default_locale}"), via: :all
+  match '*path', to: redirect("/#{I18n.default_locale}/%{path}"), via: :all
+  match '', to: redirect("/#{I18n.default_locale}"), via: :all
 end

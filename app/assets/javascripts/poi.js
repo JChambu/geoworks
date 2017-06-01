@@ -48,6 +48,7 @@ Navarra.pois.action_edit = function() {
   },
 
     loadPoiSubTypesCombo = function(result) {
+      console.log(result);
       Navarra.common.form.loadComboOptions("#poi_poi_sub_type_id", result, "name");
     },
 

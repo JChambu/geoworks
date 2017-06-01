@@ -1,3 +1,67 @@
-<div id="map"></div>
-<div id="info"></div>
 
+<%= content_for :head do %>
+  <script type="text/javascript">
+<% if @geo_edition.the_geom_segment_original %>
+  <% (0..@num_point_segment).each {|n| 
+  %>
+  Navarra.geo_editions.config.line.push(<%= @segment.point_n(n).y %>  + ', ' +   <%= @segment.point_n(n).x %>)
+<% } %>
+<% end %>
+
+  </script>
+<% end  %>
+<%= simple_form_for @geo_edition do |f| %>
+  <div class="span12">
+    <section id="sidebar_info" class="span3">
+
+      <div class="span12">
+        <%= f.input :id, as: :hidden %>
+        <%= f.input :street, disabled: true %>
+        <%= f.input :paridad, disabled: true %>
+        <%= f.input :code, disabled: true %>
+        <div class="span6">
+          <%= f.input :number_door_start_original, disabled: true , input_html: {class: "span5"}%>
+        </div>
+        <div class="span5">
+          <%= f.input :number_door_end_original, disabled: true, input_html:{class: "span6"} %>
+        </div>
+      </div>
+      <div class="span12">
+        <div class="span6">
+          <%= f.input :gw_pta_ini,  input_html:{class: "span6"} %>
+        </div>
+        <div class="span6">
+          <%= f.input :gw_pta_fin,  input_html:{class: "span6"}  %>
+        </div>
+        <%= f.input :gw_paridad %>
+        <div class="span3">
+          <%= f.input :gw_div1, input_html:{class: "span12"}   %>
+        </div>
+        <div class="span3">
+          <%= f.input :gw_div2, input_html:{class: "span12"}   %>
+        </div>
+        <div class="span5">
+          <%= f.input :gw_geomainid, input_html:{class: "span12"}   %>
+        </div>
+        <%= f.input :line  %>
+        <%= control_group(f.select(:poi_status_id, poi_statuses_for_select, :selected => @poi_status_id, :include_blank => true), Poi.human_attribute_name(:poi_status_id)) %>
+
+      </div>
+    </section>
+
+    <section  class="span9">
+      <div id="map">
+        <div id="popup" class="ol-popup ">
+          <div id="popup-content">
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="span12 actions">
+    <%= f.submit class: 'btn btn-primary' %>
+  </div>
+  <div id="info">
+  </div>
+<% end %>

@@ -12,7 +12,7 @@ class ExtendedListingsController < ApplicationController
   def georeferenced
     if current_user.name == 'Admin'
       @extended = ExtendedListing.build_geom
-  end
+    end
   end
 
   def possible_duplicates
@@ -87,6 +87,7 @@ class ExtendedListingsController < ApplicationController
    
     respond_to do |format|
       if @extended_listing.save
+        
         format.html { redirect_to new_extended_listing_path(extended_listing_params), notice: 'Extended listing was successfully created.' }
         format.json { render action: 'show', status: :created, location: @extended_listing }
       else

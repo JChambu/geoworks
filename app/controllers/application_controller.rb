@@ -7,9 +7,10 @@ class ApplicationController < ActionController::Base
  #   redirect_to root_url, :flash => { :error => t("flash_message.authorized_access") }
  # end
 
-  before_filter :authenticate_user!
-  before_filter :set_flash_manager
-  before_filter :set_locale 
+  before_action :authenticate_user!
+  before_action :set_flash_manager
+  before_action :set_locale 
+  before_action :current_tenant
   helper_method :flashman
   layout :layout_by_resource
   def layout_by_resource

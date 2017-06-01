@@ -4,7 +4,8 @@ module PoiTypesHelper
   end
 
   def poi_type_sub_types_for_select poi_type_id
-    poi_type = PoiType.find_by_id poi_type_id
+
+    poi_type = PoiType.find_by(id: poi_type_id)
     return [] unless poi_type
     poi_type.poi_sub_types.map { |sub_type| [sub_type.name, sub_type.id] }
   end

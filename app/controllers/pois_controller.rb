@@ -47,7 +47,6 @@ class PoisController < ApplicationController
 
   # GET /pois/new
   def new
-
   end
 
   # GET /pois/1/edit

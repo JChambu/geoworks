@@ -23,9 +23,9 @@
   <div class="span12">
     <section id="sidebar_info" class="span3">
 
-        <div class="span12">
-          <%= f.input :id, input_html: {class: "span6"} %>
-          <%= f.input :street, disabled: true %>
+      <div class="span12">
+          <%= f.input :id, as: :hidden %>
+          <%= f.input :street, disabled: true, input_html: {class: "info"} %>
           <%= f.input :paridad, disabled: true %>
           <%= f.input :code, disabled: true %>
           <div class="span6">
@@ -53,7 +53,7 @@
             <%= f.input :gw_geomainid, input_html:{class: "span12"}   %>
         </div>
             <%= control_group(f.select(:poi_status_id, poi_statuses_for_select, :selected => @poi_status_id, :include_blank => true), Poi.human_attribute_name(:poi_status_id)) %>
-      <%= f.input :line, as: :hidden  %>
+      <%= f.input :line  %>
         </div>
     </section>
 

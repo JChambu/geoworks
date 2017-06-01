@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require navarra
 //= require common
+//= require layers
 //= require chosen
 //= require jquery-ui
 //= require ajax_chosen
@@ -22,4 +23,5 @@
 //= require ol3/controlbar
 //= require ol3/buttoncontrol
 //= require ol3/togglecontrol
+//= require ol3/ol3-popup
 //= require_tree .
