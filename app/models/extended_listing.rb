@@ -44,7 +44,7 @@ class ExtendedListing < ActiveRecord::Base
     #  self.the_geom = "POINT(#{self.longitude} #{self.latitude})"
     #end
 
-     @extended = ExtendedListing.where("poi_status_id = 3 ")
+     @extended = ExtendedListing.where("poi_status_id = 4 ")
      @extended.each do |e|
      city = City.find(e.city_id) 
      department = city.department
