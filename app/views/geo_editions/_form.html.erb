@@ -1,6 +1,8 @@
 <%= content_for :head do %>
   <script type="text/javascript">
+
 <% if @geo_edition.the_geom_segment_original %>
+  
   <% (0..@num_point_segment).each {|n| 
   %>
   Navarra.geo_editions.config.line.push(<%= @segment.point_n(n).y %>  + ', ' +   <%= @segment.point_n(n).x %>)
@@ -10,17 +12,13 @@
   </script>
 <% end  %>
 <%= simple_form_for @geo_edition do |f| %>
-  <% if geo_edition.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(geo_edition.errors.count, "error") %> prohibited this geo_edition from being saved:</h2>
-      <ul>
-        <% geo_edition.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <div>
+    <%=f.error_notification errors: true  %>
+  </div>
+  
+  
   <div class="span12">
+  
     <section id="sidebar_info" class="span3">
 
       <div class="span12">
@@ -53,7 +51,7 @@
             <%= f.input :gw_geomainid, input_html:{class: "span12"}   %>
         </div>
             <%= control_group(f.select(:poi_status_id, poi_statuses_for_select, :selected => @poi_status_id, :include_blank => true), Poi.human_attribute_name(:poi_status_id)) %>
-      <%= f.input :line  %>
+      <%= f.input :line, as: :hidden %>
         </div>
     </section>
 

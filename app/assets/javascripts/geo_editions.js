@@ -1,13 +1,22 @@
 Navarra.namespace("geo_editions.action_index");
 Navarra.namespace("geo_editions.action_new");
 Navarra.namespace("geo_editions.action_edit");
+Navarra.namespace("geo_editions.action_update");
 Navarra.namespace("geo_editions.action_geoeditions_edit");
 
 Navarra.geo_editions.config = {
   "line":[]
 }
+Navarra.geo_editions.action_update = function(){
 
-
+ init = function(){
+    Navarra.geocoding_ol.init();
+    Navarra.poi_search_panel.init();
+  } 
+  return {
+    init: init
+  }
+}();
 
 Navarra.geo_editions.action_edit = function(){
 

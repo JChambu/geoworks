@@ -264,6 +264,8 @@ es:
   errors: &errors
     format: ! '%{attribute} %{message}'
     models:
+      geo_editions:
+        poi_status_id: "aaa"
       app_configuration:
         al_least_one_configuration: Debe existir por lo menos una configuración activa en el sistema.
       poi:

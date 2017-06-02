@@ -4,6 +4,8 @@ class GeoEdition < ApplicationRecord
 
   attr_accessor :line
 
+  validates :poi_status_id, presence: true
+  
   def build_geom_line
 
     if self.line and !self.line.to_s.empty?

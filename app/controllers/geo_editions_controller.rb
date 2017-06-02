@@ -24,6 +24,7 @@ class GeoEditionsController < ApplicationController
   # GET /geo_editions/1
   # GET /geo_editions/1.json
   def show
+
   end
 
   # GET /geo_editions/new
@@ -33,7 +34,6 @@ class GeoEditionsController < ApplicationController
 
   # GET /geo_editions/1/edit
   def edit
-
     @segment = @geo_edition.the_geom_segment_original
 
     if !@segment.nil?
@@ -64,13 +64,21 @@ class GeoEditionsController < ApplicationController
   # PATCH/PUT /geo_editions/1
   # PATCH/PUT /geo_editions/1.json
   def update
-
-
     @geo_edition = GeoEdition.find(params[:geo_edition][:id])
     
+    @segment = @geo_edition.the_geom_segment_original
+    if !@segment.nil?
+      @num_point_segment = (@segment.num_points - 1 )
+ (0..@num_point_segment).each {|n|
+ p @segment.point_n(n).y 
+ p @segment.point_n(n).x 
+ }
+  end
+    
     respond_to do |format|
+    
       if @geo_edition.update(geo_edition_params)
-        format.html { redirect_to edit_geo_edition_path(@geo_edition.id) }
+        format.html { redirect_to edit_geo_edition_path(@geo_edition.id), flashman.update_success  }
         format.json { render :show, status: :ok, location: @geo_edition }
       else
         format.html { render :edit }
@@ -97,6 +105,6 @@ class GeoEditionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def geo_edition_params
-      params.require(:geo_edition).permit(:name, :the_geom_segment, :line, :id, :gw_pta_ini, :gw_pta_fin, :poi_status_id, :gw_paridad, :gw_div1, :gw_div2, :gw_geomainid)
+      params.require(:geo_edition).permit(:name, :the_geom_segment, :line, :id, :gw_pta_ini, :gw_pta_fin, :poi_status_id, :gw_paridad, :gw_div1, :gw_div2, :gw_geomainid).merge(user_id: current_user.id)
     end
 end

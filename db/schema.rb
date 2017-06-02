@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170519155838) do
+ActiveRecord::Schema.define(version: 20170602133837) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -187,6 +187,7 @@ ActiveRecord::Schema.define(version: 20170519155838) do
     t.string   "gw_paridad"
     t.string   "gw_status"
     t.string   "paridad"
+    t.integer  "user_id"
   end
 
   create_table "geomanid", primary_key: "gid", force: :cascade do |t|

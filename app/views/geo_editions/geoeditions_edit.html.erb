@@ -43,7 +43,7 @@
         <div class="span5">
           <%= f.input :gw_geomainid, input_html:{class: "span12"}   %>
         </div>
-        <%= f.input :line  %>
+        <%= f.input :line, as: :hidden  %>
         <%= control_group(f.select(:poi_status_id, poi_statuses_for_select, :selected => @poi_status_id, :include_blank => true), Poi.human_attribute_name(:poi_status_id)) %>
 
       </div>

@@ -23,7 +23,8 @@ Navarra.layers.basemaps = function(){
 
 Navarra.layers.add  =function() { 
   //*******************Layers localhost**********************//
-/*  var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
+/*
+  var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
   //var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
   var layer_geoserver_geomainid = 'geoworks_lvh:geomanid';
   var layer_geoserver_manzana = 'geoworks_lvh:manzanas';
@@ -41,7 +42,7 @@ Navarra.layers.add  =function() {
   //    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
   //    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
   
-    var layer_geoserver_manzana = 'geoworks_supercanal:manzanas';
+   var layer_geoserver_manzana = 'geoworks_supercanal:manzanas';
     var layer_geoserver_geomainid = 'geoworks_supercanal:geomanid';
     var layer_geoserver_cobertura = 'geoworks_supercanal:cobertura';
     var layer_geoserver_new = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
@@ -53,8 +54,6 @@ Navarra.layers.add  =function() {
     var layer_geoserver_gw_status_posible = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_posible_barrio&maxFeatures=10050&outputFormat=application%2Fjson' 
     var layer_geoserver_gw_status_ok = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_ok&maxFeatures=10050&outputFormat=application%2Fjson'
     var url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
-
-
 
   var vectorSource = new ol.source.Vector();
   /*    var vectorSource_geoserver_tramos = new ol.source.Vector({
@@ -122,8 +121,9 @@ Navarra.layers.add  =function() {
       style_sin_info.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
         image: new ol.style.Icon({
-          src: 'https://openlayers.org/en/v4.1.1/examples/data/arrow.png',
+          src: '/images/arrow.png',
           anchor: [0.75, 0.5],
+          scale: 0.03,
           rotateWithView: true,
           rotation: -rotation
         })
@@ -151,8 +151,9 @@ Navarra.layers.add  =function() {
       style_ok.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
         image: new ol.style.Icon({
-          src: 'https://openlayers.org/en/v4.1.1/examples/data/arrow.png',
+          src: '/images/arrow.png',
           anchor: [0.75, 0.5],
+          scale: 0.03,
           rotateWithView: true,
           rotation: -rotation
         })
@@ -179,8 +180,9 @@ Navarra.layers.add  =function() {
       style_posible.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
         image: new ol.style.Icon({
-          src: 'https://openlayers.org/en/v4.1.1/examples/data/arrow.png',
+          src: '/images/arrow.png',
           anchor: [0.75, 0.5],
+          scale: 0.03,
           rotateWithView: true,
           rotation: -rotation
         })
@@ -207,8 +209,9 @@ Navarra.layers.add  =function() {
       style_desfasaje.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
         image: new ol.style.Icon({
-          src: 'https://openlayers.org/en/v4.1.1/examples/data/arrow.png',
+          src: '/images/arrow.png',
           anchor: [0.75, 0.5],
+          scale: 0.03,
           rotateWithView: true,
           rotation: -rotation
         })
