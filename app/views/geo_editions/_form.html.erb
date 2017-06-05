@@ -20,14 +20,14 @@
     <section id="sidebar_info" class="span3">
       <div class="span12">
           <%= f.input :id, as: :hidden %>
-          <%= f.input :street, input_html: {class: "info"} %>
-          <%= f.input :paridad %>
-          <%= f.input :code%>
+          <%= f.input :street, input_html: {class: "info"}, readonly: true %>
+          <%= f.input :paridad, readonly: true %>
+          <%= f.input :code, readonly: true%>
           <div class="span6">
-          <%= f.input :number_door_start_original, label:"Numbero puerta inicio",  input_html: {class: "span5"}%>
+          <%= f.input :number_door_start_original,  readonly: true, label:"Numbero puerta inicio",  input_html: {class: "span5"}%>
           </div>
           <div class="span5">
-          <%= f.input :number_door_end_original, label: "Numero puerta fin", input_html:{class: "span6"} %>
+          <%= f.input :number_door_end_original, readonly: true, label: "Numero puerta fin", input_html:{class: "span6"} %>
           </div>
         </div>
       <div class="span12">

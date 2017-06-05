@@ -70,6 +70,7 @@ class GeoEditionsController < ApplicationController
     params[:geo_edition][:gw_pta_ini] = params[:geo_edition][:number_door_start_original] if params[:geo_edition][:gw_pta_ini].blank?
     params[:geo_edition][:gw_pta_fin] = params[:geo_edition][:number_door_end_original] if params[:geo_edition][:gw_pta_fin].blank?
 
+
     @segment = @geo_edition.the_geom_segment_original
     if !@segment.nil?
       @num_point_segment = (@segment.num_points - 1 )

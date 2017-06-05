@@ -71,7 +71,7 @@ Navarra.geocoding_ol = function (){
       style: 
       new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: 'green',
+          color: 'red',
           width: 6
         }) })
     });

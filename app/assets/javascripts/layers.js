@@ -15,7 +15,7 @@ Navarra.layers.basemaps = function(){
     type: 'base'
   });
 
-  return [osmLayer, noneLayer];
+  return [noneLayer, osmLayer];
 
 }
 
@@ -132,6 +132,34 @@ Navarra.layers.add  =function() {
     return style_sin_info;
   };
 
+  var styleNew = function(feature) {
+    geometry = feature.getGeometry();
+    style_new = [
+      new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: '#298A08',
+          width: 2
+        }) 
+      })
+    ]
+    geometry.forEachSegment(function(start, end) {
+      dx = end[0] - start[0];
+      dy = end[1] - start[1];
+      rotation = Math.atan2(dy, dx);
+      //  arrows
+      style_new.push(new ol.style.Style({
+        geometry: new ol.geom.Point(end),
+        image: new ol.style.Icon({
+          src: '/images/arrow.png',
+          anchor: [0.75, 0.5],
+          scale: 0.03,
+          rotateWithView: true,
+          rotation: -rotation
+        })
+      }));
+    });
+    return style_new;
+  };
 
   var styleOk = function(feature) {
     geometry = feature.getGeometry();
@@ -281,7 +309,8 @@ Navarra.layers.add  =function() {
   var vectorLayerNew = new ol.layer.Vector({
     title:'Segmentos nuevos',
     type: 'overlays',
-    source: vectorSource_geoserver_new
+    source: vectorSource_geoserver_new,
+    style: styleNew
   });
 
   return [
