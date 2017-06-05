@@ -51,8 +51,6 @@ Navarra.geo_editions.action_new = function(){
 Navarra.geo_editions.action_geoeditions_edit = function(){
  init = function(){
     Navarra.geocoding_ol.init();
-
-
  }
 
   return {

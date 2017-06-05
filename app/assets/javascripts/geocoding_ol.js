@@ -78,8 +78,6 @@ Navarra.geocoding_ol = function (){
 
     map.addOverlay(popup);
 
-
-
     map.on('pointermove', function(evt) {
 
       var coordinate = evt.coordinate;
@@ -114,6 +112,11 @@ Navarra.geocoding_ol = function (){
         $("#geo_edition_number_door_start_original").attr("value", feature.get('number_door_start_original'));
         $("#geo_edition_number_door_end_original").attr("value", feature.get('number_door_end_original'));
         $("#geo_edition_code").attr("value", feature.get('code'));
+        $("#geo_edition_gw_code").attr("value", feature.get('gw_code'));
+        $("#geo_edition_gw_pta_ini").attr("value", feature.get('gw_pta_ini'));
+        $("#geo_edition_gw_pta_fin").attr("value", feature.get('gw_pta_fin'));
+        $("#geo_edition_gw_paridad").attr("value", feature.get('gw_paridad'));
+        
       } 
     });
 
@@ -168,10 +171,7 @@ Navarra.geocoding_ol = function (){
       highlight = feature;
     }
   };
-
-
   var edit_ol = function(){ 
-
     editbar = new ol.control.Bar(
       {toggleOne: true,// one control active at the same time
         group:false// group controls together

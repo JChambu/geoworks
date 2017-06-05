@@ -65,7 +65,11 @@ class GeoEditionsController < ApplicationController
   # PATCH/PUT /geo_editions/1.json
   def update
     @geo_edition = GeoEdition.find(params[:geo_edition][:id])
-    
+    params[:geo_edition][:gw_code]    = params[:geo_edition][:code] if params[:geo_edition][:gw_code].blank?
+    params[:geo_edition][:gw_paridad] = params[:geo_edition][:paridad] if params[:geo_edition][:gw_paridad].blank?
+    params[:geo_edition][:gw_pta_ini] = params[:geo_edition][:number_door_start_original] if params[:geo_edition][:gw_pta_ini].blank?
+    params[:geo_edition][:gw_pta_fin] = params[:geo_edition][:number_door_end_original] if params[:geo_edition][:gw_pta_fin].blank?
+
     @segment = @geo_edition.the_geom_segment_original
     if !@segment.nil?
       @num_point_segment = (@segment.num_points - 1 )
@@ -105,6 +109,6 @@ class GeoEditionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def geo_edition_params
-      params.require(:geo_edition).permit(:name, :the_geom_segment, :line, :id, :gw_pta_ini, :gw_pta_fin, :poi_status_id, :gw_paridad, :gw_div1, :gw_div2, :gw_geomainid).merge(user_id: current_user.id)
+      params.require(:geo_edition).permit(:name, :the_geom_segment, :line, :id, :code, :number_door_start_original, :number_door_end_original, :gw_pta_ini, :gw_pta_fin, :poi_status_id, :gw_paridad, :gw_div1, :gw_div2, :gw_geomainid, :gw_street, :gw_code).merge(user_id: current_user.id)
     end
 end

@@ -16,43 +16,38 @@
     <%=f.error_notification errors: true  %>
   </div>
   
-  
   <div class="span12">
-  
     <section id="sidebar_info" class="span3">
-
       <div class="span12">
           <%= f.input :id, as: :hidden %>
-          <%= f.input :street, disabled: true, input_html: {class: "info"} %>
-          <%= f.input :paridad, disabled: true %>
-          <%= f.input :code, disabled: true %>
+          <%= f.input :street, input_html: {class: "info"} %>
+          <%= f.input :paridad %>
+          <%= f.input :code%>
           <div class="span6">
-          <%= f.input :number_door_start_original, disabled: true , input_html: {class: "span5"}%>
+          <%= f.input :number_door_start_original, input_html: {class: "span5"}%>
           </div>
           <div class="span5">
-          <%= f.input :number_door_end_original, disabled: true, input_html:{class: "span6"} %>
+          <%= f.input :number_door_end_original, input_html:{class: "span6"} %>
           </div>
         </div>
-        <div class="span12">
-          <div class="span6">
+      <div class="span12">
+        <div class="span6">
           <%= f.input :gw_pta_ini,  input_html:{class: "span6"} %>
         </div>
-          <div class="span6">
+        <div class="span6">
           <%= f.input :gw_pta_fin,  input_html:{class: "span6"}  %>
         </div>
-          <%= f.input :gw_paridad %>
-          <div class="span3">
-            <%= f.input :gw_div1, input_html:{class: "span12"}   %>
+        <div class="span6">
+        <%= f.input :gw_paridad %>
         </div>
-          <div class="span3">
-            <%= f.input :gw_div2, input_html:{class: "span12"}   %>
+        <div class="span6">
+          <%= f.input :gw_code, input_html:{class: "span12"}   %>
         </div>
-          <div class="span5">
-            <%= f.input :gw_geomainid, input_html:{class: "span12"}   %>
+        <div class="span6">
+        <%= control_group(f.select(:poi_status_id, poi_statuses_for_select, :selected => @poi_status_id, :include_blank => true), Poi.human_attribute_name(:poi_status_id)) %>
         </div>
-            <%= control_group(f.select(:poi_status_id, poi_statuses_for_select, :selected => @poi_status_id, :include_blank => true), Poi.human_attribute_name(:poi_status_id)) %>
-      <%= f.input :line, as: :hidden %>
-        </div>
+        <%= f.input :line, as: :hidden  %>
+      </div>
     </section>
 
     <section  class="span9">

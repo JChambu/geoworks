@@ -10,13 +10,76 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170602133837) do
+ActiveRecord::Schema.define(version: 20170605120723) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
   enable_extension "hstore"
   enable_extension "uuid-ossp"
+
+  create_table "20170531_gw_manzanas_ush", primary_key: "ogc_fid", force: :cascade do |t|
+    t.string   "ciudad nom",   limit: 254
+    t.decimal  "div1",                                                  precision: 10
+    t.string   "departamen",   limit: 254
+    t.decimal  "div2",                                                  precision: 10
+    t.string   "localidad",    limit: 254
+    t.decimal  "manzana",                                               precision: 10
+    t.string   "manzana_1",    limit: 254
+    t.decimal  "hogares",                                               precision: 10
+    t.decimal  "geoposici?",                                            precision: 24, scale: 15
+    t.decimal  "geoposic_1",                                            precision: 24, scale: 15
+    t.geometry "wkb_geometry", limit: {:srid=>4326, :type=>"geometry"}
+    t.index ["wkb_geometry"], name: "20170531_gw_manzanas_ush_wkb_geometry_geom_idx", using: :gist
+  end
+
+  create_table "20170531_gw_tramos_ush", primary_key: "ogc_fid", force: :cascade do |t|
+    t.string   "source",       limit: 254
+    t.string   "empresa",      limit: 254
+    t.float    "geodiv1id"
+    t.string   "departamen",   limit: 254
+    t.float    "geodiv2id"
+    t.string   "localidad",    limit: 254
+    t.float    "geomanid"
+    t.string   "nombre_man",   limit: 254
+    t.string   "coordenada",   limit: 254
+    t.string   "coordena_1",   limit: 254
+    t.float    "calleid"
+    t.string   "nombre_cal",   limit: 254
+    t.float    "puerta_ini"
+    t.float    "puerta_fin"
+    t.string   "paridad",      limit: 254
+    t.string   "coordena_2",   limit: 254
+    t.string   "coordena_3",   limit: 254
+    t.string   "coordena_4",   limit: 254
+    t.string   "coordena_5",   limit: 254
+    t.string   "id_zona",      limit: 254
+    t.string   "zona_nombr",   limit: 254
+    t.string   "cod_manzan",   limit: 254
+    t.float    "orden"
+    t.float    "id_gis"
+    t.decimal  "coor_x1_gi",                                               precision: 33, scale: 16
+    t.decimal  "coor_x2_gi",                                               precision: 33, scale: 16
+    t.decimal  "coor_y1_gi",                                               precision: 33, scale: 16
+    t.decimal  "coor_y2_gi",                                               precision: 33, scale: 16
+    t.string   "observ",       limit: 254
+    t.decimal  "gw_div1",                                                  precision: 10
+    t.decimal  "gw_div2",                                                  precision: 10
+    t.decimal  "gw_geoman",                                                precision: 10
+    t.decimal  "gw_qh",                                                    precision: 10
+    t.decimal  "gw_calleid",                                               precision: 10
+    t.decimal  "gw_pta_ini",                                               precision: 10
+    t.decimal  "gw_pta_fin",                                               precision: 10
+    t.string   "gw_paridad",   limit: 2
+    t.decimal  "gw_coorx1",                                                precision: 13, scale: 6
+    t.decimal  "gw_coory1",                                                precision: 13, scale: 6
+    t.decimal  "gw_coorx2",                                                precision: 13, scale: 6
+    t.decimal  "gw_coory2",                                                precision: 13, scale: 6
+    t.string   "gw_estado",    limit: 50
+    t.decimal  "20170531_p",                                               precision: 10
+    t.geometry "wkb_geometry", limit: {:srid=>4326, :type=>"line_string"}
+    t.index ["wkb_geometry"], name: "20170531_gw_tramos_ush_wkb_geometry_geom_idx", using: :gist
+  end
 
   create_table "actions", force: :cascade do |t|
     t.string   "name"
@@ -188,6 +251,8 @@ ActiveRecord::Schema.define(version: 20170602133837) do
     t.string   "gw_status"
     t.string   "paridad"
     t.integer  "user_id"
+    t.string   "gw_street"
+    t.string   "gw_code"
   end
 
   create_table "geomanid", primary_key: "gid", force: :cascade do |t|
