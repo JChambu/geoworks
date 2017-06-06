@@ -44,7 +44,9 @@ Navarra.layers.add  =function() {
 
    var layer_geoserver_manzana = 'geoworks_supercanal:manzanas';
     var layer_geoserver_geomainid = 'geoworks_supercanal:geomanid';
+    var layer_geoserver_cobertura_bar = 'geoworks_supercanal:cobertura_bar';
     var layer_geoserver_cobertura = 'geoworks_supercanal:cobertura';
+
     var layer_geoserver_new = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_new_geo_editions&maxFeatures=10001&outputFormat=application%2Fjson'
     var url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
     var layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_sin_info&maxFeatures=10000&outputFormat=application%2Fjson'
@@ -90,10 +92,21 @@ Navarra.layers.add  =function() {
     url: url,
     params: { LAYERS: layer_geoserver_manzana, VERSION: '1.1.0'} 
   });
+ 
+  
+  var vectorSource_geoserver_cobertura_bar = new ol.source.TileWMS({
+    url: url,
+    params: { LAYERS: layer_geoserver_cobertura_bar, VERSION: '1.1.0'} 
+  });
+  
   var vectorSource_geoserver_cobertura = new ol.source.TileWMS({
     url: url,
     params: { LAYERS: layer_geoserver_cobertura, VERSION: '1.1.0'} 
   });
+
+
+
+
 
   var vectorSource_geoserver_new = new ol.source.Vector({
     url: layer_geoserver_new,
@@ -166,7 +179,7 @@ Navarra.layers.add  =function() {
     style_ok = [
       new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: '#82FA58',
+          color: '#424242',
           width: 2
         }) 
       })
@@ -298,6 +311,16 @@ Navarra.layers.add  =function() {
     source: vectorSource_geoserver_manzana
   });
 
+
+  var vectorLayerCoberturaBar = new ol.layer.Tile({
+    title:'Cobertura 2',
+    type: 'overlays',
+    opacity: 0.4,
+    visible: 'false',
+    source: vectorSource_geoserver_cobertura_bar
+  });
+
+
   var vectorLayerCobertura = new ol.layer.Tile({
     title:'Cobertura',
     type: 'overlays',
@@ -314,7 +337,7 @@ Navarra.layers.add  =function() {
   });
 
   return [
-    vectorLayerCobertura, vectorLayerGeomainid, vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk ];
+    vectorLayerCoberturaBar, vectorLayerCobertura, vectorLayerGeomainid, vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk ];
 
 }
 
