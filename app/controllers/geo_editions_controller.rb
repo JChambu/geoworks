@@ -6,6 +6,8 @@ class GeoEditionsController < ApplicationController
 
   def geoeditions_edit
     @geo_edition = GeoEdition.first 
+    @count = GeoEdition.where(user_id: current_user.id)
+    
     @segment = @geo_edition.the_geom_segment_original
     if !@segment.nil?
       @num_point_segment = (@segment.num_points - 1 )
@@ -35,6 +37,7 @@ class GeoEditionsController < ApplicationController
   # GET /geo_editions/1/edit
   def edit
     @segment = @geo_edition.the_geom_segment_original
+    @count = GeoEdition.where(user_id: current_user.id)
 
     if !@segment.nil?
       @num_point_segment = (@segment.num_points - 1 )
