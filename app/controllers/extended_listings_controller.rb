@@ -81,10 +81,10 @@ class ExtendedListingsController < ApplicationController
   # POST /extended_listings.json
   def create
 
+    params[:extended_listing].merge!(user_id: current_user.id)
     @extended_listing = ExtendedListing.new(extended_listing_params)
     #category =  Category.where(id: extended_listing_params[:category_id]).select(:category_original).first
     #@extended_listing[:category_original_id] = category.category_original.to_i
-   
     respond_to do |format|
       if @extended_listing.save
         
@@ -145,6 +145,6 @@ class ExtendedListingsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def extended_listing_params
-    params.require(:extended_listing).permit(:name, :street, :the_geom, :city_id,  :category_id, :phone, :source, :address, :number, :address, :number, :poi_status_id, :category_original_id, :latitude, :longitude, :poi_type_id, :poi_sub_type_id).merge(user_id: current_user.id )
+    params.require(:extended_listing).permit(:name, :street, :the_geom, :city_id,  :category_id, :phone, :source, :address, :number, :address, :number, :poi_status_id, :category_original_id, :latitude, :longitude, :poi_type_id, :poi_sub_type_id, :website, :email, :user_id)
   end
 end
