@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170608111444) do
+ActiveRecord::Schema.define(version: 20170609121847) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -253,6 +253,7 @@ ActiveRecord::Schema.define(version: 20170608111444) do
     t.integer  "poi_sub_type_id"
     t.string   "website"
     t.string   "email"
+    t.integer  "neighborhood_id"
   end
 
   create_table "food_types", force: :cascade do |t|
