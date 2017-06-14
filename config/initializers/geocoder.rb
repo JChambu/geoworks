@@ -49,5 +49,6 @@ Geocoder.configure(
   #api_key: "AIzaSyDBgTkc_XNRYs4zZ_kOeTaa9ydmVERABcw" 
 #  api_key: " AIzaSyDc_EcZgnoYZAyo1x9Y5TahSDNSQ-nEjss" #gks2
  # api_key: "AIzaSyBi81-flX6VLfM5Q7m3dEnN2VyfekfdbSU" #gks3
-  api_key: "AIzaSyDIGJm4yvryaGcRD4oKK1XnbSGbJyoMNbU" #gks4
+ # api_key: "AIzaSyDIGJm4yvryaGcRD4oKK1XnbSGbJyoMNbU" #gks4
+  api_key: "AIzaSyCTAwW8c4mKX0Ow897Q9aLojHZoa3hBlAQ" #gks5
 )
