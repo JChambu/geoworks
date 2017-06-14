@@ -53,7 +53,7 @@ class ExtendedListing < ActiveRecord::Base
      province = department.province
      country = province.country
      #@address = [[e.address, e.number], city.name, department.name, province.name, country.name].join(', ')
-     @address = [[e.address, e.number], city.name,  country.name].join(', ')
+     @address = [[e.address, e.number], department.name,  country.name].join(', ')
 
      geocode = Geocoder.coordinates(@address)
      geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?

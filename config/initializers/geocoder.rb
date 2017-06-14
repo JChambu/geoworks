@@ -46,11 +46,11 @@ Geocoder.configure(
    #api_key: "AIzaSyA0U3-pdBemLlkXGrFK0rVWZhVCL506kAE"
   # api_key: "AIzaSyCRcOWYZrmE-uw1k45zaOxM6Ew_--ntfbA"
   #  api_key: "AIzaSyAZBimR8PR-OWDXb-BCPJkOMh9f0Z15fAw"
-#  api_key: " AIzaSyDc_EcZgnoYZAyo1x9Y5TahSDNSQ-nEjss" #gks2
+  api_key: " AIzaSyDc_EcZgnoYZAyo1x9Y5TahSDNSQ-nEjss" #gks2
  # api_key: "AIzaSyBi81-flX6VLfM5Q7m3dEnN2VyfekfdbSU" #gks3
  # api_key: "AIzaSyDIGJm4yvryaGcRD4oKK1XnbSGbJyoMNbU" #gks4
  # api_key: "AIzaSyCTAwW8c4mKX0Ow897Q9aLojHZoa3hBlAQ" #gks5
-  api_key: "AIzaSyDBgTkc_XNRYs4zZ_kOeTaa9ydmVERABcw" #gks6 
+ # api_key: "AIzaSyDBgTkc_XNRYs4zZ_kOeTaa9ydmVERABcw" #gks6 
   
  # lookup: :nominatim
 
