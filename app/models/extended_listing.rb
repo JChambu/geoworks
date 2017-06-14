@@ -49,8 +49,8 @@ class ExtendedListing < ActiveRecord::Base
      @extended = ExtendedListing.where("poi_status_id = 4 ")
      @extended.each do |e|
      city = City.find(e.city_id) 
-     #department = city.department
-     #province = department.province
+     department = city.department
+     province = department.province
      country = province.country
      #@address = [[e.address, e.number], city.name, department.name, province.name, country.name].join(', ')
      @address = [[e.address, e.number], city.name,  country.name].join(', ')
