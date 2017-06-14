@@ -21,7 +21,7 @@ class ExtendedListing < ActiveRecord::Base
   delegate :name, :to => :poi_type, :prefix => true, :allow_nil => true
   delegate :name, :to => :poi_sub_type, :prefix => true, :allow_nil => true
   delegate :name, :to => :poi_status, :prefix => true, :allow_nil => true
-  before_save :create_geom
+  #before_save :create_geom
 
   before_save :formated_strings
   validates :city_id, :name, :street,   presence: true
