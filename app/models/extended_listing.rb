@@ -21,7 +21,7 @@ class ExtendedListing < ActiveRecord::Base
   delegate :name, :to => :poi_type, :prefix => true, :allow_nil => true
   delegate :name, :to => :poi_sub_type, :prefix => true, :allow_nil => true
   delegate :name, :to => :poi_status, :prefix => true, :allow_nil => true
- # before_save :build_geom
+  before_save :create_geom
 
   before_save :formated_strings
   validates :city_id, :name, :street,   presence: true
@@ -36,21 +36,24 @@ class ExtendedListing < ActiveRecord::Base
 
   #def self.build_geom (address, number, city_id)
 
+  def create_geom 
+
+    if self.latitude and self.longitude and
+        !self.latitude.to_s.empty? and !self.longitude.to_s.empty?
+      self.the_geom = "POINT(#{self.longitude} #{self.latitude})"
+    end
+  end 
+
   def self.build_geom 
-
-
-    #if self.latitude and self.longitude and
-    #    !self.latitude.to_s.empty? and !self.longitude.to_s.empty?
-    #  self.the_geom = "POINT(#{self.longitude} #{self.latitude})"
-    #end
 
      @extended = ExtendedListing.where("poi_status_id = 4 ")
      @extended.each do |e|
      city = City.find(e.city_id) 
-     department = city.department
-     province = department.province
+     #department = city.department
+     #province = department.province
      country = province.country
-     @address = [[e.address, e.number], city.name, department.name, province.name, country.name].join(', ')
+     #@address = [[e.address, e.number], city.name, department.name, province.name, country.name].join(', ')
+     @address = [[e.address, e.number], city.name,  country.name].join(', ')
 
      geocode = Geocoder.coordinates(@address)
      geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
