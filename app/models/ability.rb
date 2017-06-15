@@ -19,6 +19,7 @@ class Ability
     
     if user.is? "User"
       #Poi
+      can :manage, ExtendedListing
       can :manage, Poi
       can :visualize, :duplicated
       can :visualize, :possible_duplicates
