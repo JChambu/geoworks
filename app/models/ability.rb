@@ -28,7 +28,7 @@ class Ability
       #Poi sub types
       can :manage, :poi_type_sub_types
       can :visualize, :poi_type_chains
-      an :visualize, :poi_type_food_types
+      can :visualize, :poi_type_food_types
       can :edit, User do |u|
         u.id == user.id
       end
