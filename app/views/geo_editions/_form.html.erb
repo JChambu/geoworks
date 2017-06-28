@@ -17,48 +17,7 @@
   </div>
   
   <div class="span12">
- 
-    <section id="sidebar_info" class="span3">
-      <div class="span12 lead">Cantidad Registro Actualizados: [
-        <%= @count.count %> ] 
-      </div>
-
-      <div class="span12">
-        <%= f.input :id, as: :hidden %>
-        <%= f.input :street, readonly: true %>
-        <%= f.input :paridad, readonly: true %>
-        <%= f.input :code, readonly: true %>
-        <div class="span6">
-          <%= f.input :number_door_start_original, label: "Numero puerta inicio", input_html: {class: "span5"}, readonly: true%>
-        </div>
-        <div class="span5">
-          <%= f.input :number_door_end_original, ilabel: "Numero puerta fin", input_html:{class: "span6"}, readonly: true %>
-        </div>
-      </div>
-      <div class="span12">
-        <div class="span6">
-          <%= f.input :gw_pta_ini,  input_html:{class: "span6"} %>
-        </div>
-        <div class="span6">
-          <%= f.input :gw_pta_fin,  input_html:{class: "span6"}  %>
-        </div>
-        <div class="span12">
-            <%= f.input :gw_street, input_html:{class: "span12"}  %>
-        </div>
-        <div class="span6">
-          <%= f.input :gw_paridad , input_html:{class: "span6"}   %>
-        </div>
-        <div class="span5">
-          <%= f.input :gw_code, input_html:{class: "span6"}   %>
-        </div>
-        <div class="span12">
-        <%= control_group(f.select(:poi_status_id, poi_statuses_for_select, :selected => @poi_status_id, :include_blank => true), Poi.human_attribute_name(:poi_status_id)) %>
-        </div>
-        <%= f.input :line, as: :hidden  %>
-      </div>
-    </section>
-    
-    
+    <%= render "sidebar", f: f %>
 
     <section  class="span9">
       <div id="map">
@@ -69,7 +28,6 @@
       </div>
     </section>
   </div>
-
       <div class="span12 actions">
   <% if @geo_edition.user_id == current_user.id || @geo_edition.user_id.nil? %>
     <%= f.submit class: 'btn btn-primary' %>

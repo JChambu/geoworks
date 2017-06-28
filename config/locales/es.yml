@@ -57,7 +57,7 @@ es:
         parking_capacity: Capacidad de Estacionamientos
         side_street: Lado de Calle
         poi_statuses: Estado
-        
+
     poi:
       duplicated:
         title: Posibles Duplicados
@@ -542,6 +542,12 @@ es:
         poi_load_id: "ID Grupo de Carga"
         p_action_id: "Poi Accion"
         last_update: "Ultima Modificación"
+      geo_edition:  
+        street: Calle
+        Paridad: Paridad
+        code: Código
+        number_door_start_original: Num. Puerta Inicio
+        number_door_end_original: Num. Puerta Fin
       parking:
         name: Nombre
         brand: Marca

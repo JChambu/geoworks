@@ -5,9 +5,11 @@ class GeoEditionsController < ApplicationController
   # GET /geo_editions.json
 
   def geoeditions_edit
-    @geo_edition = GeoEdition.first 
+
+    @geo_edition = GeoEdition.where(user_id: current_user.id).where.not(the_geom_segment_original: nil).order(:updated_at).last
+    @geo_edition = GeoEdition.last if @geo_edition.nil?
+     
     @count = GeoEdition.where(user_id: current_user.id)
-    
     @segment = @geo_edition.the_geom_segment_original
     if !@segment.nil?
       @num_point_segment = (@segment.num_points - 1 )
@@ -36,6 +38,7 @@ class GeoEditionsController < ApplicationController
 
   # GET /geo_editions/1/edit
   def edit
+   
     @segment = @geo_edition.the_geom_segment_original
     @count = GeoEdition.where(user_id: current_user.id)
 
@@ -107,12 +110,13 @@ class GeoEditionsController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
+    
     def set_geo_edition
       @geo_edition = GeoEdition.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def geo_edition_params
-      params.require(:geo_edition).permit(:name, :the_geom_segment, :line, :id, :code, :number_door_start_original, :number_door_end_original, :gw_pta_ini, :gw_pta_fin, :poi_status_id, :gw_paridad, :gw_div1, :gw_div2, :gw_geomainid, :gw_street, :gw_code).merge(user_id: current_user.id)
+      params.require(:geo_edition).permit(:name, :the_geom_segment, :line, :id, :code, :number_door_start_original, :number_door_end_original, :gw_pta_ini, :gw_pta_fin, :poi_status_id, :gw_paridad, :gw_div1, :gw_div2, :gw_geomainid, :gw_street, :gw_code, :observations).merge(user_id: current_user.id)
     end
 end

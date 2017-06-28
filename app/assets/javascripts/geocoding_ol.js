@@ -77,7 +77,6 @@ Navarra.geocoding_ol = function (){
     });
 
     map.addOverlay(popup);
-
     map.on('pointermove', function(evt) {
 
       var coordinate = evt.coordinate;
@@ -90,7 +89,6 @@ Navarra.geocoding_ol = function (){
       if (evt.dragging)  {
         return;
       }
-
       var pixel = map.getEventPixel(evt.originalEvent);
       displayFeatureInfo(pixel , coordinate);
     });
@@ -104,8 +102,9 @@ Navarra.geocoding_ol = function (){
         return feature;
       });
 
-      if (feature) {
 
+      if (feature) {
+      console.log(feature.get('observations'));
         $("#geo_edition_id").attr("value", feature.get('id'));
         $("#geo_edition_name").attr("value", feature.get('name'));
         $("#geo_edition_street").attr("value", feature.get('street'));
@@ -113,14 +112,16 @@ Navarra.geocoding_ol = function (){
         $("#geo_edition_number_door_end_original").attr("value", feature.get('number_door_end_original'));
         $("#geo_edition_code").attr("value", feature.get('code'));
         $("#geo_edition_gw_code").attr("value", feature.get('gw_code'));
+        $("#geo_edition_gw_street").attr("value", feature.get('gw_street'));
         $("#geo_edition_gw_pta_ini").attr("value", feature.get('gw_pta_ini'));
         $("#geo_edition_gw_pta_fin").attr("value", feature.get('gw_pta_fin'));
         $("#geo_edition_gw_paridad").attr("value", feature.get('gw_paridad'));
-        
+        $("#geo_edition_observations").val( feature.get('observations'));
+        $("#geo_edition_poi_status_id").attr("value", feature.get('poi_status_id'));
       } 
     });
 
-    if (Navarra.geo_editions.config.line)
+    if (Navarra.geo_editions.config.line != "")
     {
       str = Navarra.geo_editions.config.line[0];
       coorde = str.split(',');
@@ -133,7 +134,6 @@ Navarra.geocoding_ol = function (){
     map.addControl(mainbar);
     edit_ol();
     bar_ol();
-
   };
 
 
@@ -195,11 +195,11 @@ Navarra.geocoding_ol = function (){
       }
     }));
   var  info = function(i){
-    {$("#info").html(i||"");
-
+    {
+      $("#info").html(i||"");
     }
   }
-
+  
   var bar_ol = function(){
     selectCtrl =  new ol.control.Toggle(
       {
@@ -318,15 +318,11 @@ Navarra.geocoding_ol = function (){
       //  measureTooltip.setOffset([0, -7]);
         // unset sketch
         var coordAdd = [];
-          
         coordFirst =  geom.getFirstCoordinate()[0] + " " +  geom.getFirstCoordinate()[1];
         coordLast =  geom.getLastCoordinate()[0] + " " +  geom.getLastCoordinate()[1];
-
         coordAdd.push(coordFirst);      
         coordAdd.push(coordLast);      
-        
         console.log(coordAdd);
-        
         $('#geo_edition_line').attr("value", coordAdd);
         
         sketch = null;
@@ -342,6 +338,7 @@ Navarra.geocoding_ol = function (){
     var regexParse = new RegExp('([a-z][^.]+).*');
     var domain = document.domain;
     subdomain = regexParse.exec(domain);
+    return subdomain[0];
   }
 
   var enableMap = function(){ 
@@ -442,7 +439,7 @@ Navarra.geocoding_ol = function (){
     map.addLayer(vector);
   }*/
 
-    /* var doGeocode = function(opt){
+     var doGeocode = function(opt){
     //removeAllMarkers();
     address = opt.county + " " +  opt.location +" " +  opt.searchTerm
     /*Geocoder Here*/ 
@@ -455,7 +452,7 @@ Navarra.geocoding_ol = function (){
         addMarker_ol(coord);
       });
     });*/
-    /* $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + address, function(data){
+     $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + address, function(data){
       var items = [];
       $.each(data, function(key, val) {
         coord = [val.lon, val.lat]
@@ -466,11 +463,12 @@ Navarra.geocoding_ol = function (){
 
   var  removeAllMarkers =  function(){
     map.getLayers().item(0).getSource().clear();
-  }*/
+  }
 
     return {
-      init: init
-      //    doGeocode: doGeocode,
+      init: init,
+      load_subdomain: load_subdomain,
+          doGeocode: doGeocode,
       //    enableMap: enableMap,
       //    latitude_ol: latitude_ol,
       //    longitude_ol: longitude_ol,

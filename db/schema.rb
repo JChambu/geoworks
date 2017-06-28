@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170609121847) do
+ActiveRecord::Schema.define(version: 20170626184150) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -254,6 +254,7 @@ ActiveRecord::Schema.define(version: 20170609121847) do
     t.string   "website"
     t.string   "email"
     t.integer  "neighborhood_id"
+    t.geometry "the_geom_new",         limit: {:srid=>4326, :type=>"point"}
   end
 
   create_table "food_types", force: :cascade do |t|
@@ -303,6 +304,7 @@ ActiveRecord::Schema.define(version: 20170609121847) do
     t.integer  "user_id"
     t.string   "gw_street"
     t.string   "gw_code"
+    t.text     "observations"
     t.index ["the_geom_segment_original"], name: "gw_geom", using: :gist
   end
 
@@ -675,6 +677,13 @@ ActiveRecord::Schema.define(version: 20170609121847) do
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "tmp_streets", id: :integer, default: -> { "nextval('tmp_segment_id_seq'::regclass)" }, force: :cascade do |t|
+    t.geometry "the_geom",     limit: {:srid=>4326, :type=>"geometry"}
+    t.integer  "start_number"
+    t.integer  "end_number"
+    t.index ["the_geom"], name: "tmp_streets_the_geom", using: :gist
   end
 
   create_table "tramo", primary_key: "gid", force: :cascade do |t|

@@ -23,8 +23,13 @@ Navarra.layers.basemaps = function(){
 
 Navarra.layers.add  =function() { 
   //*******************Layers localhost**********************//
-/*
-  var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
+subdomain = Navarra.geocoding_ol.load_subdomain();
+console.log(subdomain);
+
+
+if (subdomain == "lvh.me"){
+
+      var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
   //var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
   var layer_geoserver_geomainid = 'geoworks_lvh:geomanid';
   var layer_geoserver_manzana = 'geoworks_lvh:manzanas';
@@ -38,8 +43,10 @@ Navarra.layers.add  =function() {
   var layer_geoserver_gw_status_ok = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_ok&maxFeatures=10050&outputFormat=application%2Fjson'
 
   var url = 'http://localhost:8080/geoserver/wms'
-  */
-  //*******************Layers Geoworks**********************//
+}
+
+if (subdomain == "supercanal"){
+  //*******************Layers Geoworks**********************/
   //    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
   //    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
 
@@ -58,7 +65,11 @@ Navarra.layers.add  =function() {
     var layer_geoserver_gw_status_ok = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_ok&maxFeatures=30050&outputFormat=application%2Fjson'
     var url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
 
-  var vectorSource = new ol.source.Vector();
+}
+
+
+if (subdomain == "supercanal" || subdomain == "lvh.me"){
+var vectorSource = new ol.source.Vector();
   /*    var vectorSource_geoserver_tramos = new ol.source.Vector({
       url: layer_geoserver_tramos,
       format: new ol.format.GeoJSON()
@@ -340,5 +351,6 @@ Navarra.layers.add  =function() {
   return [
     vectorLayerCoberturaBar, vectorLayerCobertura, vectorLayerGeomainid, vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk ];
 
+}
 }
 
