@@ -27,7 +27,7 @@ subdomain = Navarra.geocoding_ol.load_subdomain();
 console.log(subdomain);
 
 
-if (subdomain == "lvh.me"){
+/*if (subdomain == "lvh.me"){
 
       var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
   //var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
@@ -44,8 +44,8 @@ if (subdomain == "lvh.me"){
 
   var url = 'http://localhost:8080/geoserver/wms'
 }
-
-if (subdomain == "supercanal"){
+*/
+//if (subdomain == "supercanal"){
   //*******************Layers Geoworks**********************/
   //    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
   //    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
@@ -65,7 +65,7 @@ if (subdomain == "supercanal"){
     var layer_geoserver_gw_status_ok = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_ok&maxFeatures=30050&outputFormat=application%2Fjson'
     var url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
 
-}
+//}
 
 
 if (subdomain == "supercanal" || subdomain == "lvh.me"){
