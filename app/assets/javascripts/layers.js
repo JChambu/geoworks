@@ -68,7 +68,7 @@ console.log(subdomain);
 //}
 
 
-if (subdomain == "supercanal" || subdomain == "lvh.me"){
+//if (subdomain == "supercanal" || subdomain == "lvh.me"){
 var vectorSource = new ol.source.Vector();
   /*    var vectorSource_geoserver_tramos = new ol.source.Vector({
       url: layer_geoserver_tramos,
@@ -351,6 +351,6 @@ var vectorSource = new ol.source.Vector();
   return [
     vectorLayerCoberturaBar, vectorLayerCobertura, vectorLayerGeomainid, vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk ];
 
-}
+//}
 }
 
