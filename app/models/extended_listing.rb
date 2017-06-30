@@ -48,6 +48,7 @@ class ExtendedListing < ActiveRecord::Base
 
      @extended = ExtendedListing.where("poi_status_id = 4 ")
      @extended.each do |e|
+     geom = ''
      city = City.find(e.city_id) 
      department = city.department
      province = department.province
