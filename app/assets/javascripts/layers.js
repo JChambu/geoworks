@@ -392,7 +392,7 @@ var vectorSource = new ol.source.Vector();
   vectorLayerDesfasaje.setVisible(false);
   vectorLayerManzana.setVisible(false); 
   vectorLayerCobertura.setVisible(false);
-  vectorLayerNew.setVisible(false); 
+ // vectorLayerNew.setVisible(false); 
   return [
     vectorLayerCoberturaBar, vectorLayerCobertura,  vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk, vectorLayerRevisar  ];
 
