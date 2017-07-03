@@ -26,8 +26,7 @@ Navarra.layers.add  =function() {
 subdomain = Navarra.geocoding_ol.load_subdomain();
 console.log(subdomain);
 
-
-/*if (subdomain == "lvh.me"){
+if (subdomain == "lvh.me"){
 
       var layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
   //var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
@@ -41,11 +40,12 @@ console.log(subdomain);
   var layer_geoserver_gw_status_sin_info = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_sin_info&maxFeatures=10050&outputFormat=application%2Fjson'
   var layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_posible_barrio&maxFeatures=10050&outputFormat=application%2Fjson'
   var layer_geoserver_gw_status_ok = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_ok&maxFeatures=10050&outputFormat=application%2Fjson'
-
+  var layer_geoserver_gw_status_revisar = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_revisar&maxFeatures=10050&outputFormat=application%2Fjson'
+  
   var url = 'http://localhost:8080/geoserver/wms'
 }
-*/
-//if (subdomain == "supercanal"){
+
+if (subdomain == "supercanal"){
   //*******************Layers Geoworks**********************/
   //    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
   //    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
@@ -63,10 +63,9 @@ console.log(subdomain);
 
     var layer_geoserver_gw_status_posible = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_posible_barrio&maxFeatures=30050&outputFormat=application%2Fjson' 
     var layer_geoserver_gw_status_ok = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_ok&maxFeatures=30050&outputFormat=application%2Fjson'
+    var layer_geoserver_gw_status_revisar = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_revisar&maxFeatures=30050&outputFormat=application%2Fjson'
     var url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
-
-//}
-
+}
 
 //if (subdomain == "supercanal" || subdomain == "lvh.me"){
 var vectorSource = new ol.source.Vector();
@@ -95,6 +94,10 @@ var vectorSource = new ol.source.Vector();
     format: new ol.format.GeoJSON()
   });
 
+  var vectorSource_geoserver_tramos_revisar = new ol.source.Vector({
+    url: layer_geoserver_gw_status_revisar,
+    format: new ol.format.GeoJSON()
+  });
   var vectorSource_geoserver_geomainid = new ol.source.TileWMS({
     url: url,
     params: { LAYERS: layer_geoserver_geomainid, VERSION: '1.1.0'} 
@@ -215,6 +218,34 @@ var vectorSource = new ol.source.Vector();
     return style_ok;
   };
 
+  var styleRevisar = function(feature) {
+    geometry = feature.getGeometry();
+    style_revisar = [
+      new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: '#FFA500',
+          width: 2
+        }) 
+      })
+    ]
+    geometry.forEachSegment(function(start, end) {
+      dx = end[0] - start[0];
+      dy = end[1] - start[1];
+      rotation = Math.atan2(dy, dx);
+      //  arrows
+      style_revisar.push(new ol.style.Style({
+        geometry: new ol.geom.Point(end),
+        image: new ol.style.Icon({
+          src: '/images/arrow.png',
+          anchor: [0.75, 0.5],
+          scale: 0.03,
+          rotateWithView: true,
+          rotation: -rotation
+        })
+      }));
+    });
+    return style_revisar;
+  };
   var stylePosibleBarrio = function(feature) {
     geometry = feature.getGeometry();
     style_posible = [
@@ -283,12 +314,12 @@ var vectorSource = new ol.source.Vector();
       visible: 'false'
     });*/
 
-  var vectorLayerGeomainid = new ol.layer.Tile({
+/*  var vectorLayerGeomainid = new ol.layer.Tile({
     title:'GeomainID',
     type: 'overlays',
     source: vectorSource_geoserver_geomainid
   });
-
+*/
   var vectorLayerSinInfo = new ol.layer.Vector({
     title:'Gw status_Sin_Info',
     type: 'overlays',
@@ -296,6 +327,13 @@ var vectorSource = new ol.source.Vector();
     style: styleSinInfo
   });
 
+  var vectorLayerRevisar = new ol.layer.Vector({
+    title:'Gw status Revisar',
+    type: 'overlays',
+    source:vectorSource_geoserver_tramos_revisar,
+    style: styleRevisar
+  });
+  
   var vectorLayerPosible = new ol.layer.Vector({
     title:'Gw status_Posible_Barrio',
     type: 'overlays',
@@ -328,7 +366,6 @@ var vectorSource = new ol.source.Vector();
     title:'Cobertura 2',
     type: 'overlays',
     opacity: 0.4,
-    visible: 'false',
     source: vectorSource_geoserver_cobertura_bar
   });
 
@@ -348,8 +385,16 @@ var vectorSource = new ol.source.Vector();
     style: styleNew
   });
 
+  vectorLayerCoberturaBar.setVisible(false);
+  vectorLayerSinInfo.setVisible(false);
+  vectorLayerPosible.setVisible(false);
+  vectorLayerOk.setVisible(false); 
+  vectorLayerDesfasaje.setVisible(false);
+  vectorLayerManzana.setVisible(false); 
+  vectorLayerCobertura.setVisible(false);
+  vectorLayerNew.setVisible(false); 
   return [
-    vectorLayerCoberturaBar, vectorLayerCobertura, vectorLayerGeomainid, vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk ];
+    vectorLayerCoberturaBar, vectorLayerCobertura,  vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk, vectorLayerRevisar  ];
 
 //}
 }

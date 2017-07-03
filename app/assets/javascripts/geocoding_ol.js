@@ -104,7 +104,7 @@ Navarra.geocoding_ol = function (){
 
 
       if (feature) {
-      console.log(feature.get('observations'));
+        console.log(feature.get('poi_status_id'));
         $("#geo_edition_id").attr("value", feature.get('id'));
         $("#geo_edition_name").attr("value", feature.get('name'));
         $("#geo_edition_street").attr("value", feature.get('street'));
@@ -117,7 +117,7 @@ Navarra.geocoding_ol = function (){
         $("#geo_edition_gw_pta_fin").attr("value", feature.get('gw_pta_fin'));
         $("#geo_edition_gw_paridad").attr("value", feature.get('gw_paridad'));
         $("#geo_edition_observations").val( feature.get('observations'));
-        $("#geo_edition_poi_status_id").attr("value", feature.get('poi_status_id'));
+        $("#geo_edition_poi_status_id").val( feature.get('poi_status_id'));
       } 
     });
 
@@ -322,7 +322,6 @@ Navarra.geocoding_ol = function (){
         coordLast =  geom.getLastCoordinate()[0] + " " +  geom.getLastCoordinate()[1];
         coordAdd.push(coordFirst);      
         coordAdd.push(coordLast);      
-        console.log(coordAdd);
         $('#geo_edition_line').attr("value", coordAdd);
         
         sketch = null;
@@ -338,6 +337,8 @@ Navarra.geocoding_ol = function (){
     var regexParse = new RegExp('([a-z][^.]+).*');
     var domain = document.domain;
     subdomain = regexParse.exec(domain);
+    console.log(subdomain[0]);
+    console.log(domain);
     return subdomain[0];
   }
 

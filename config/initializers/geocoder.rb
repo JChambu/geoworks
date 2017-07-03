@@ -42,7 +42,7 @@ Geocoder.configure(
 
 =end
 #google
-   lookup: :google,
+  # lookup: :google,
    #api_key: "AIzaSyA0U3-pdBemLlkXGrFK0rVWZhVCL506kAE"
   # api_key: "AIzaSyCRcOWYZrmE-uw1k45zaOxM6Ew_--ntfbA"
   #  api_key: "AIzaSyAZBimR8PR-OWDXb-BCPJkOMh9f0Z15fAw"
