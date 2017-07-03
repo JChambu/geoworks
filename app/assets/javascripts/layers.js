@@ -45,7 +45,7 @@ if (subdomain == "lvh.me"){
   var url = 'http://localhost:8080/geoserver/wms'
 }
 
-if (subdomain == "supercanal"){
+if (subdomain == "supercanal.geoworks.gisworking.com"){
   //*******************Layers Geoworks**********************/
   //    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
   //    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
@@ -67,7 +67,7 @@ if (subdomain == "supercanal"){
     var url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
 }
 
-//if (subdomain == "supercanal" || subdomain == "lvh.me"){
+if (subdomain == "supercanal.geoworks.gisworking.com" || subdomain == "lvh.me"){
 var vectorSource = new ol.source.Vector();
   /*    var vectorSource_geoserver_tramos = new ol.source.Vector({
       url: layer_geoserver_tramos,
@@ -396,6 +396,6 @@ var vectorSource = new ol.source.Vector();
   return [
     vectorLayerCoberturaBar, vectorLayerCobertura,  vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk, vectorLayerRevisar  ];
 
-//}
+}
 }
 
