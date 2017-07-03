@@ -385,14 +385,14 @@ var vectorSource = new ol.source.Vector();
     style: styleNew
   });
 
-  vectorLayerCoberturaBar.setVisible(false);
+  //vectorLayerCoberturaBar.setVisible(false);
   vectorLayerSinInfo.setVisible(false);
   vectorLayerPosible.setVisible(false);
-  vectorLayerOk.setVisible(false); 
+ //vectorLayerOk.setVisible(false); 
   vectorLayerDesfasaje.setVisible(false);
-  vectorLayerManzana.setVisible(false); 
-  vectorLayerCobertura.setVisible(false);
- // vectorLayerNew.setVisible(false); 
+  //vectorLayerManzana.setVisible(false); 
+  //vectorLayerCobertura.setVisible(false);
+  //vectorLayerNew.setVisible(false); 
   return [
     vectorLayerCoberturaBar, vectorLayerCobertura,  vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk, vectorLayerRevisar  ];
 
