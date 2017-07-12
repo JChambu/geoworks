@@ -1,5 +1,7 @@
 class GeoEditionsController < ApplicationController
   before_action :set_geo_edition, only: [:show, :edit, :update, :destroy]
+  before_action :count_rows
+
 
   # GET /geo_editions
   # GET /geo_editions.json
@@ -8,8 +10,7 @@ class GeoEditionsController < ApplicationController
 
     @geo_edition = GeoEdition.where(user_id: current_user.id).where.not(the_geom_segment_original: nil).order(:updated_at).last
     @geo_edition = GeoEdition.last if @geo_edition.nil?
-     
-    @count = GeoEdition.where(user_id: current_user.id)
+    
     @segment = @geo_edition.the_geom_segment_original
     if !@segment.nil?
       @num_point_segment = (@segment.num_points - 1 )
@@ -71,11 +72,6 @@ class GeoEditionsController < ApplicationController
   # PATCH/PUT /geo_editions/1.json
   def update
     @geo_edition = GeoEdition.find(params[:geo_edition][:id])
-    params[:geo_edition][:gw_code]    = params[:geo_edition][:code] if params[:geo_edition][:gw_code].blank?
-    params[:geo_edition][:gw_paridad] = params[:geo_edition][:paridad] if params[:geo_edition][:gw_paridad].blank?
-    params[:geo_edition][:gw_pta_ini] = params[:geo_edition][:number_door_start_original] if params[:geo_edition][:gw_pta_ini].blank?
-    params[:geo_edition][:gw_pta_fin] = params[:geo_edition][:number_door_end_original] if params[:geo_edition][:gw_pta_fin].blank?
-
 
     @segment = @geo_edition.the_geom_segment_original
     if !@segment.nil?
@@ -113,6 +109,10 @@ class GeoEditionsController < ApplicationController
     
     def set_geo_edition
       @geo_edition = GeoEdition.find(params[:id])
+    end
+
+    def count_rows
+      @count = GeoEdition.where(user_id: current_user.id)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

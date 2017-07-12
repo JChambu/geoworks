@@ -264,13 +264,14 @@ es:
   errors: &errors
     format: ! '%{attribute} %{message}'
     models:
-      geo_editions:
-        poi_status_id: "aaa"
+      geo_edition:
+        gw_paridad_error: "algo mal"
       app_configuration:
         al_least_one_configuration: Debe existir por lo menos una configuración activa en el sistema.
       poi:
         undefined_control_date: Debe seleccionar una fecha de control.
         nonexistent: No existe Poi con el identificador dado.
+
         invalid_poi_action: "El poi Action para los poi nuevos, debe ser: new o check "
         same_original_and_duplicated: El identificador del duplicado no puede ser igual al del Poi.
         empty_geometry: Debe seleccionar una ubicación en el mapa.

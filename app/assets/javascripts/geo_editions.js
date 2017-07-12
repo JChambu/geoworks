@@ -5,7 +5,8 @@ Navarra.namespace("geo_editions.action_update");
 Navarra.namespace("geo_editions.action_geoeditions_edit");
 
 Navarra.geo_editions.config = {
-  "line":[]
+  "line":[],
+  "company": null
 }
 Navarra.geo_editions.action_update = function(){
 
@@ -20,9 +21,18 @@ Navarra.geo_editions.action_update = function(){
 
 Navarra.geo_editions.action_edit = function(){
 
+  loadCompany= function(){
+    $('#geo_edition_company').on('click', function(){
+        name_company =  $('#geo_edition_company option:selected').text();
+        Navarra.geo_editions.config.company =  name_company;
+          Navarra.geocoding_ol.updateMap();   
+    });
+  }
+
+
  init = function(){
+   loadCompany();
     Navarra.geocoding_ol.init();
-    Navarra.poi_search_panel.init();
   } 
   return {
     init: init
@@ -32,15 +42,6 @@ Navarra.geo_editions.action_edit = function(){
 Navarra.geo_editions.action_new = function(){
  init = function(){
     Navarra.geocoding_ol.init();
-    Navarra.poi_search_panel.init();
-   // initCitiesChosen();
-   //bindAddMarkerButtonClickEl();
-   //bindSearchAddress();
-    //expresion();
-   // bindInputFocusOutEl();
-   //loadLatLonFieldsEl();
- //bindPoiTypesComboChangeEl();
-   //loadPoiSubTypesComboEl();
   } 
   return {
     init: init
@@ -50,7 +51,8 @@ Navarra.geo_editions.action_new = function(){
 
 Navarra.geo_editions.action_geoeditions_edit = function(){
  init = function(){
-    Navarra.geocoding_ol.init();
+ Navarra.geo_editions.action_edit;
+   Navarra.geocoding_ol.init();
  }
 
   return {

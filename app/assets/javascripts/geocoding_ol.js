@@ -118,6 +118,7 @@ Navarra.geocoding_ol = function (){
         $("#geo_edition_gw_paridad").attr("value", feature.get('gw_paridad'));
         $("#geo_edition_observations").val( feature.get('observations'));
         $("#geo_edition_poi_status_id").val( feature.get('poi_status_id'));
+        $("#geo_edition_paridad").val( feature.get('paridad'));
       } 
     });
 
@@ -136,6 +137,32 @@ Navarra.geocoding_ol = function (){
     bar_ol();
   };
 
+
+  var updateMap = function(){
+
+   map.getLayers().forEach(function (layer) {
+         map.removeLayer(layer);
+   });
+   
+   map.getLayers().forEach(function (layer) {
+         map.removeLayer(layer);
+   });
+      group1=  new ol.layer.Group({
+          id:'osm',
+          title: 'Mapa Base',
+          layers: Navarra.layers.basemaps()
+        }),
+  
+  group2 =  new ol.layer.Group({
+          id: 'Layers',
+          title: 'Capas',
+          layers: Navarra.layers.add()
+        }),
+    
+      map.addLayer(group1);
+      map.addLayer(group2);
+      map.addLayer(vector);
+  }
 
 
   var displayFeatureInfo = function(pixel, coordinate) {
@@ -322,7 +349,9 @@ Navarra.geocoding_ol = function (){
         coordLast =  geom.getLastCoordinate()[0] + " " +  geom.getLastCoordinate()[1];
         coordAdd.push(coordFirst);      
         coordAdd.push(coordLast);      
-        $('#geo_edition_line').attr("value", coordAdd);
+       console.log(coordAdd); 
+        
+        $('#geo_edition_line').val( coordAdd);
         
         sketch = null;
         // unset tooltip so that a new one can be created
@@ -470,6 +499,7 @@ Navarra.geocoding_ol = function (){
       init: init,
       load_subdomain: load_subdomain,
           doGeocode: doGeocode,
+      updateMap: updateMap
       //    enableMap: enableMap,
       //    latitude_ol: latitude_ol,
       //    longitude_ol: longitude_ol,
