@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
 
 
+#  resources :streets
   get 'locations/cities' => 'locations#cities'
   get 'pois/possible_duplicates' => 'pois#possible_duplicates'
   get 'parkings/possible_duplicates' => 'parkings#possible_duplicates'
@@ -23,13 +24,15 @@ Rails.application.routes.draw do
 
     resources :customers
 
-    get "geo_editions/geoeditions_edit" => 'geo_editions#geoeditions_edit' 
     resources :geo_editions
+   # get "geo_editions/geoeditions_edit" => 'geo_editions#geoeditions_edit' 
+
 
     resources :extended_listings  do
       collection do
         get :duplicated
         get :georeferenced
+        get :congrated_points
       end
     end
 

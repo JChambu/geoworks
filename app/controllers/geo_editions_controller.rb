@@ -1,7 +1,8 @@
 class GeoEditionsController < ApplicationController
+
+#  before_action :get_id, only:[:edit]
   before_action :set_geo_edition, only: [:show, :edit, :update, :destroy]
   before_action :count_rows
-
 
   # GET /geo_editions
   # GET /geo_editions.json
@@ -107,7 +108,16 @@ class GeoEditionsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     
-    def set_geo_edition
+  def get_id
+    
+    @geo_edition = GeoEdition.where(user_id: current_user.id).where.not(the_geom_segment_original: nil, company: nil).order(:updated_at).last if params[:id].nil?
+    @geo_edition = GeoEdition.last if @geo_edition.nil?
+    params[:id] = @geo_edition
+
+  end
+  
+  
+  def set_geo_edition
       @geo_edition = GeoEdition.find(params[:id])
     end
 
