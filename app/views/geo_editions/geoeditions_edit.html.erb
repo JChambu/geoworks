@@ -13,6 +13,18 @@
 <% end  %>
 <%= simple_form_for @geo_edition do |f| %>
 
+  <div class="alert alert-danger>
+    <%=f.error_notification errors: true  %>
+    <% if @geo_edition.errors.any? %>
+      <div>
+        <ul>
+          <% @geo_edition.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
   <div class="span12">
     <%= render "sidebar" , f: f %>
 

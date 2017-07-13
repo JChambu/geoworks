@@ -33,8 +33,9 @@ var   vectorSource, vectorSource_geoserver_tramos_desfasaje, vectorSource_geoser
 Navarra.layers.add  =function() { 
   //*******************Layers localhost**********************//
 subdomain = Navarra.geocoding_ol.load_subdomain();
-filter = "cql_filter=(company='"+ Navarra.geo_editions.config.company+"')";
 
+filter = "cql_filter=(company='"+ Navarra.geo_editions.config.company+"')";
+console.log(filter);
   if (subdomain == "supercanal.geoworks.gisworking.com" || subdomain == "lvh.me"){
 
    Navarra.layers.vectorSources();
@@ -79,15 +80,14 @@ Navarra.layers.urls = function(){
     layer_geoserver_geomainid = 'geoworks_supercanal:geomanid';
     layer_geoserver_cobertura_bar = 'geoworks_supercanal:cobertura_bar';
     layer_geoserver_cobertura = 'geoworks_supercanal:cobertura';
-    layer_geoserver_new = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_new_geo_editions&maxFeatures=30000&outputFormat=application%2Fjson'
-    url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
-    layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_sin_info&maxFeatures=30000&outputFormat=application%2Fjson'
+    layer_geoserver_new = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_new_geo_editions&maxFeatures=30000&outputFormat=application%2Fjson&' + filter;
+    layer_geoserver_gw_status_sin_info = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_sin_info&maxFeatures=30000&outputFormat=application%2Fjson&' + filter;
 
-     layer_geoserver_gw_status_desfasaje = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_desfasaje&maxFeatures=30050&outputFormat=application%2Fjson'
+     layer_geoserver_gw_status_desfasaje = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_desfasaje&maxFeatures=30050&outputFormat=application%2Fjson&' + filter;
 
-    layer_geoserver_gw_status_posible = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_posible_barrio&maxFeatures=30050&outputFormat=application%2Fjson' 
-    layer_geoserver_gw_status_ok = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_ok&maxFeatures=30050&outputFormat=application%2Fjson'
-    layer_geoserver_gw_status_revisar = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_revisar&maxFeatures=30050&outputFormat=application%2Fjson'
+    layer_geoserver_gw_status_posible = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_posible_barrio&maxFeatures=30050&outputFormat=application%2Fjson&' + filter;
+    layer_geoserver_gw_status_ok = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_ok&maxFeatures=30050&outputFormat=application%2Fjson&' + filter;
+    layer_geoserver_gw_status_revisar = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_revisar&maxFeatures=30050&outputFormat=application%2Fjson&' + filter;
      url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
   }
 
@@ -127,23 +127,23 @@ Navarra.layers.urls();
   });
   vectorSource_geoserver_geomainid = new ol.source.TileWMS({
     url: url,
-    params: { LAYERS: layer_geoserver_geomainid, VERSION: '1.1.0', cql_filter: Navarra.geo_editions.config.company} 
+    params: { LAYERS: layer_geoserver_geomainid, VERSION: '1.1.0'} 
   });
 
   vectorSource_geoserver_manzana = new ol.source.TileWMS({
     url: url,
-    params: { LAYERS: layer_geoserver_manzana, VERSION: '1.1.0', cql_filter: Navarra.geo_editions.config.company} 
+    params: { LAYERS: layer_geoserver_manzana, VERSION: '1.1.0'} 
   });
 
   
   vectorSource_geoserver_cobertura_bar = new ol.source.TileWMS({
     url: url,
-    params: { LAYERS: layer_geoserver_cobertura_bar, VERSION: '1.1.0', cql_filter: Navarra.geo_editions.config.company} 
+    params: { LAYERS: layer_geoserver_cobertura_bar, VERSION: '1.1.0'} 
   });
 
   vectorSource_geoserver_cobertura = new ol.source.TileWMS({
     url: url,
-    params: { LAYERS: layer_geoserver_cobertura, VERSION: '1.1.0', cql_filter: Navarra.geo_editions.config.company} 
+    params: { LAYERS: layer_geoserver_cobertura, VERSION: '1.1.0' } 
   });
 
   vectorSource_geoserver_new = new ol.source.Vector({
