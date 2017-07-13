@@ -35,7 +35,6 @@ Navarra.layers.add  =function() {
 subdomain = Navarra.geocoding_ol.load_subdomain();
 
 filter = "cql_filter=(company='"+ Navarra.geo_editions.config.company+"')";
-console.log(filter);
   if (subdomain == "supercanal.geoworks.gisworking.com" || subdomain == "lvh.me"){
 
    Navarra.layers.vectorSources();
@@ -48,10 +47,8 @@ console.log(filter);
   }
 }
 
-
-
 Navarra.layers.urls = function(){
- if (subdomain == "lvh.me"){
+/* if (subdomain == "lvh.me"){
 
      url = 'http://localhost:8080/geoserver/wms'
 
@@ -69,9 +66,9 @@ Navarra.layers.urls = function(){
     layer_geoserver_gw_status_ok = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_ok&maxFeatures=10050&outputFormat=application%2Fjson&' + filter;
     layer_geoserver_gw_status_revisar = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_revisar&maxFeatures=10050&outputFormat=application%2Fjson&'+filter;
 
-  }
+  }*/
 
-  if (subdomain == "supercanal.geoworks.gisworking.com"){
+//  if (subdomain == "supercanal.geoworks.gisworking.com"){
     //*******************Layers Geoworks**********************/
     //    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
     //    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
@@ -89,7 +86,7 @@ Navarra.layers.urls = function(){
     layer_geoserver_gw_status_ok = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_ok&maxFeatures=30050&outputFormat=application%2Fjson&' + filter;
     layer_geoserver_gw_status_revisar = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:gw_status_revisar&maxFeatures=30050&outputFormat=application%2Fjson&' + filter;
      url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
-  }
+ // }
 
 }
 
