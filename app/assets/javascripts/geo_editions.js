@@ -50,8 +50,18 @@ Navarra.geo_editions.action_new = function(){
 
 
 Navarra.geo_editions.action_geoeditions_edit = function(){
- init = function(){
- Navarra.geo_editions.action_edit;
+
+  loadCompany= function(){
+    $('#geo_edition_company').on('click', function(){
+        name_company =  $('#geo_edition_company option:selected').text();
+        Navarra.geo_editions.config.company =  name_company;
+          Navarra.geocoding_ol.updateMap();   
+    });
+  }
+  
+  
+  init = function(){
+  loadCompany();
    Navarra.geocoding_ol.init();
  }
 
