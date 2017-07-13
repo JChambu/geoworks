@@ -12,8 +12,8 @@ class GeoEdition < ApplicationRecord
   
   validates :gw_pta_ini, numericality: {only_integer: true}, allow_nil: true
   validates :gw_pta_ini, numericality: {less_than: :gw_pta_fin }, if: "gw_pta_fin.present?"
-  validates :gw_pta_ini, numericality: {odd: :true}, if: "gw_pta_fin.odd?"
-  validates :gw_pta_ini, numericality: {even: :true}, if: "gw_pta_fin.even?"
+  validates :gw_pta_ini, numericality: {odd: :true}, if: "!gw_pta_fin.blank? && gw_pta_fin.odd? "
+  validates :gw_pta_ini, numericality: {even: :true}, if: "!gw_pta_fin.blank? &&  gw_pta_fin.even?"
 
   validates :gw_pta_fin, numericality: {only_integer: true}, allow_nil: true
   validates :gw_pta_fin, numericality: {grather_than: :gw_pta_ini}, if: "gw_pta_ini.present?"
