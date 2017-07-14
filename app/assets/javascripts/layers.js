@@ -27,9 +27,9 @@ var  vectorLayerSinInfo,  vectorLayerRevisar,  vectorLayerPosible,  vectorLayerO
 
 var layer_geoserver_tramos,  layer_geoserver_geomainid,  layer_geoserver_manzana,   layer_geoserver_cobertura,  layer_geoserver_cobertura_bar, layer_geoserver_new,  layer_geoserver_gw_status_desfasaje,   layer_geoserver_gw_status_sin_info,  layer_geoserver_gw_status_posible, layer_geoserver_gw_status_ok, layer_geoserver_gw_status_revisar 
 
-
 var   vectorSource, vectorSource_geoserver_tramos_desfasaje, vectorSource_geoserver_tramos_sin_info,  vectorSource_geoserver_tramos_posible, vectorSource_geoserver_tramos_ok, vectorSource_geoserver_tramos_revisar,  vectorSource_geoserver_geomainid,  vectorSource_geoserver_manzana, vectorSource_geoserver_cobertura_bar, vectorSource_geoserver_cobertura,  vectorSource_geoserver_new
 
+var styleSinInfo,  styleNew,  styleOk, styleRevisar, stylePosibleBarrio, styleDesfasaje,   
 Navarra.layers.add  =function() { 
   //*******************Layers localhost**********************//
 subdomain = Navarra.geocoding_ol.load_subdomain();
@@ -151,7 +151,7 @@ Navarra.layers.urls();
   
 }
 
-var styleSinInfo,  styleNew,  styleOk, styleRevisar, stylePosibleBarrio, styleDesfasaje,   
+
     styleLayers = function(){
       /********Styles********/
       styleSinInfo = function(feature) {
@@ -330,7 +330,7 @@ var styleSinInfo,  styleNew,  styleOk, styleRevisar, stylePosibleBarrio, styleDe
 
     }
 
-var  vectorLayerSinInfo,  vectorLayerRevisar,  vectorLayerPosible,  vectorLayerOk,   vectorLayerDesfasaje, vectorLayerManzana, vectorLayerCoberturaBar, vectorLayerCobertura, vectorLayerNew    
+//var  vectorLayerSinInfo,  vectorLayerRevisar,  vectorLayerPosible,  vectorLayerOk,   vectorLayerDesfasaje, vectorLayerManzana, vectorLayerCoberturaBar, vectorLayerCobertura, vectorLayerNew    
  
 
 
@@ -412,7 +412,8 @@ var  vectorLayerSinInfo,  vectorLayerRevisar,  vectorLayerPosible,  vectorLayerO
       vectorLayerNew = new ol.layer.Vector({
         title:'Segmentos nuevos',
         type: 'overlays',
-        source: vectorSource_geoserver_new
+        source: vectorSource_geoserver_new,
+        style: styleNew
       });
 
       //vectorLayerCoberturaBar.setVisible(false);
