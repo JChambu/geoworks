@@ -29,7 +29,7 @@ var layer_geoserver_tramos,  layer_geoserver_geomainid,  layer_geoserver_manzana
 
 var   vectorSource, vectorSource_geoserver_tramos_desfasaje, vectorSource_geoserver_tramos_sin_info,  vectorSource_geoserver_tramos_posible, vectorSource_geoserver_tramos_ok, vectorSource_geoserver_tramos_revisar,  vectorSource_geoserver_geomainid,  vectorSource_geoserver_manzana, vectorSource_geoserver_cobertura_bar, vectorSource_geoserver_cobertura,  vectorSource_geoserver_new
 
-var styleSinInfo,  styleNew,  styleOk, styleRevisar, stylePosibleBarrio, styleDesfasaje,   
+var styleSinInfo,  styleNew,  styleOk, styleRevisar, stylePosibleBarrio, styleDesfasaje   
 Navarra.layers.add  =function() { 
   //*******************Layers localhost**********************//
 subdomain = Navarra.geocoding_ol.load_subdomain();
