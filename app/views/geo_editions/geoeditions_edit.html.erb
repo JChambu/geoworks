@@ -1,4 +1,3 @@
-
 <%= content_for :head do %>
   <script type="text/javascript">
 <% if @geo_edition.the_geom_segment_original %>
@@ -12,8 +11,7 @@
   </script>
 <% end  %>
 <%= simple_form_for @geo_edition do |f| %>
-
-  <div class="alert alert-danger>
+  <div class="alert alert-danger">
     <%=f.error_notification errors: true  %>
     <% if @geo_edition.errors.any? %>
       <div>
@@ -25,6 +23,7 @@
       </div>
     <% end %>
   </div>
+
   <div class="span12">
     <%= render "sidebar" , f: f %>
 

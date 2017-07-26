@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170626184150) do
+ActiveRecord::Schema.define(version: 20170705122736) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -673,6 +673,21 @@ ActiveRecord::Schema.define(version: 20170626184150) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "streets", force: :cascade do |t|
+    t.integer  "start_number"
+    t.integer  "end_number"
+    t.integer  "count_intersections"
+    t.float    "meters_long_intersection"
+    t.line     "the_geom"
+    t.string   "name"
+    t.integer  "city_id"
+    t.integer  "street_type_id"
+    t.integer  "code"
+    t.string   "city_name"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
   create_table "terms", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
@@ -680,9 +695,10 @@ ActiveRecord::Schema.define(version: 20170626184150) do
   end
 
   create_table "tmp_streets", id: :integer, default: -> { "nextval('tmp_segment_id_seq'::regclass)" }, force: :cascade do |t|
-    t.geometry "the_geom",     limit: {:srid=>4326, :type=>"geometry"}
+    t.geometry "the_geom",             limit: {:srid=>4326, :type=>"geometry"}
     t.integer  "start_number"
     t.integer  "end_number"
+    t.integer  "number_intersections"
     t.index ["the_geom"], name: "tmp_streets_the_geom", using: :gist
   end
 

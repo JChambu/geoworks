@@ -2,8 +2,9 @@ Rails.application.routes.draw do
 
 
 
-#  resources :streets
+
   get 'locations/cities' => 'locations#cities'
+  get 'streets/search' => 'streets#search'
   get 'pois/possible_duplicates' => 'pois#possible_duplicates'
   get 'parkings/possible_duplicates' => 'parkings#possible_duplicates'
   get 'extended_listings/possible_duplicates' => 'extended_listings#possible_duplicates'
@@ -24,6 +25,7 @@ Rails.application.routes.draw do
 
     resources :customers
 
+  resources :streets
     resources :geo_editions
    # get "geo_editions/geoeditions_edit" => 'geo_editions#geoeditions_edit' 
 

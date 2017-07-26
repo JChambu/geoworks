@@ -10,7 +10,7 @@ Navarra.geo_editions.config = {
 }
 Navarra.geo_editions.action_update = function(){
 
- init = function(){
+  init = function(){
     Navarra.geocoding_ol.init();
     Navarra.poi_search_panel.init();
   } 
@@ -22,50 +22,54 @@ Navarra.geo_editions.action_update = function(){
 Navarra.geo_editions.action_edit = function(){
 
   loadCompany= function(){
+
+
     $('#geo_edition_company').on('click', function(){
-        name_company =  $('#geo_edition_company option:selected').text();
-        Navarra.geo_editions.config.company =  name_company;
-          Navarra.geocoding_ol.updateMap();   
+      name_company =  $('#geo_edition_company option:selected').text();
+      Navarra.geo_editions.config.company =  name_company;
+      Navarra.geocoding_ol.updateMap();   
+      bindStreets(name_company);
+
     });
   }
 
 
- init = function(){
-   loadCompany();
-    Navarra.geocoding_ol.init();
-  } 
-  return {
-    init: init
-  }
-}();
-  
-Navarra.geo_editions.action_new = function(){
- init = function(){
-    Navarra.geocoding_ol.init();
-  } 
-  return {
-    init: init
-  }
-}();
-
-
-Navarra.geo_editions.action_geoeditions_edit = function(){
-
-  loadCompany= function(){
-    $('#geo_edition_company').on('click', function(){
-        name_company =  $('#geo_edition_company option:selected').text();
-        Navarra.geo_editions.config.company =  name_company;
-          Navarra.geocoding_ol.updateMap();   
+  bindStreets= function(name_company){
+      combo_select = "#geo_edition_gw_calleid";
+    $.ajax({
+      type: 'GET',
+      url: '/streets/search',
+      dataType: 'json',
+      data: {city_name: name_company},
+     success: function (data) {
+      var results = '<option></option>';
+      $.each(data, function (i, val) {
+console.log(val);
+        results += "<option value='" +  val.id + "'>" + val.name  "</option>";
+      });
+       console.log(results);
+    $(combo_select).html(results);
+     }
     });
-  }
-  
-  
+      }
+
+
   init = function(){
-  loadCompany();
-   Navarra.geocoding_ol.init();
- }
-
+    loadCompany();
+    Navarra.geocoding_ol.init();
+  } 
   return {
     init: init
   }
 }();
+
+Navarra.geo_editions.action_new = function(){
+  init = function(){
+    Navarra.geocoding_ol.init();
+  } 
+  return {
+    init: init
+  }
+}();
+
+

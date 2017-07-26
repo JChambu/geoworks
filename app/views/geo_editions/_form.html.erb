@@ -13,10 +13,10 @@
   </script>
 <% end  %>
 <%= simple_form_for @geo_edition do |f| %>
-  <div class="alert alert-danger">
+  <div >
     <%=f.error_notification errors: true  %>
     <% if @geo_edition.errors.any? %>
-      <div>
+      <div class="alert alert-danger">
         <ul>
           <% @geo_edition.errors.full_messages.each do |message| %>
             <li><%= message %></li>
