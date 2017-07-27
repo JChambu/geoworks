@@ -44,8 +44,7 @@ Navarra.geo_editions.action_edit = function(){
      success: function (data) {
       var results = '<option></option>';
       $.each(data, function (i, val) {
-console.log(val);
-        results += "<option value='" +  val.id + "'>" + val.name  "</option>";
+        results += "<option value='" +  val.id + "'>" + val.name +  "</option>";
       });
        console.log(results);
     $(combo_select).html(results);
