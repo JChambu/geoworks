@@ -5,7 +5,7 @@ module GeoEditionsHelper
   end
 
   def geo_edition_street_id_select(company)
-    Street.where(city_name: company).map {|street|[ street.name, street.id]} 
+    Street.where(city_name: company).order(:name).map {|street|[ street.name, street.id]} 
   end
 
 

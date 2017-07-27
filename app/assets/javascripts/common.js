@@ -70,6 +70,7 @@ Navarra.common.validations = function() {
   }
 }();
 
+
 Navarra.common.poi = function() {
   var initHeaderSearch = function(str) {
     $("#poi_select").ajaxChosen({
@@ -147,10 +148,29 @@ Navarra.common.form = function() {
     return options;
   };
 
+
+  loadStreets = function(combo_select, name_company){
+  
+    $.ajax({
+      type: 'GET',
+      url: '/streets/search',
+      dataType: 'json',
+      data: {city_name: name_company},
+     success: function (data) {
+      var results = '<option></option>';
+      $.each(data, function (i, val) {
+        results += "<option value='" +  val.id + "'>" + val.name +  "</option>";
+      });
+       console.log(results);
+    $(combo_select).html(results);
+     }
+    });
+  }
   
   return {
     chosen: chosen,
     loadComboOptions: loadComboOptions,
-    searchAddress: searchAddress
+    searchAddress: searchAddress,
+    loadStreets: loadStreets
   }
 }();

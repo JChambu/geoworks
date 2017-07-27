@@ -118,6 +118,7 @@ Navarra.geocoding_ol = function (){
         $("#geo_edition_observations").val( feature.get('observations'));
         $("#geo_edition_poi_status_id").val( feature.get('poi_status_id'));
         $("#geo_edition_paridad").attr("value", feature.get('paridad'));
+        $("#geo_edition_gw_calleid").val( feature.get('gw_calleid'));
       } 
     });
 

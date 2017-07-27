@@ -36,20 +36,7 @@ Navarra.geo_editions.action_edit = function(){
 
   bindStreets= function(name_company){
       combo_select = "#geo_edition_gw_calleid";
-    $.ajax({
-      type: 'GET',
-      url: '/streets/search',
-      dataType: 'json',
-      data: {city_name: name_company},
-     success: function (data) {
-      var results = '<option></option>';
-      $.each(data, function (i, val) {
-        results += "<option value='" +  val.id + "'>" + val.name +  "</option>";
-      });
-       console.log(results);
-    $(combo_select).html(results);
-     }
-    });
+        Navarra.common.form.loadStreets(combo_select, name_company);
       }
 
 
