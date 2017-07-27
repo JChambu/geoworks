@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Start number:</strong>
+  <%= @street.start_number %>
+</p>
+
+<p>
+  <strong>End number:</strong>
+  <%= @street.end_number %>
+</p>
+
+<p>
+  <strong>Count intersections:</strong>
+  <%= @street.count_intersections %>
+</p>
+
+<p>
+  <strong>Meters long intersection:</strong>
+  <%= @street.meters_long_intersection %>
+</p>
+
+<p>
+  <strong>The geom:</strong>
+  <%= @street.the_geom %>
+</p>
+
+<%= link_to 'Edit', edit_street_path(@street) %> |
+<%= link_to 'Back', streets_path %>

@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Streets</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Start number</th>
+      <th>End number</th>
+      <th>Count intersections</th>
+      <th>Meters long intersection</th>
+      <th>The geom</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @streets.each do |street| %>
+      <tr>
+        <td><%= street.start_number %></td>
+        <td><%= street.end_number %></td>
+        <td><%= street.count_intersections %></td>
+        <td><%= street.meters_long_intersection %></td>
+        <td><%= street.the_geom %></td>
+        <td><%= link_to 'Show', street %></td>
+        <td><%= link_to 'Edit', edit_street_path(street) %></td>
+        <td><%= link_to 'Destroy', street, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Street', new_street_path %>
