@@ -5,6 +5,8 @@ Navarra.namespace("layers.vectorSources");
 Navarra.namespace("layers.vectorLayers");
 Navarra.namespace("layers.labels");
 
+
+
 Navarra.layers.basemaps = function(){
 
   var osmLayer = new ol.layer.Tile({
@@ -32,8 +34,12 @@ var   vectorSource, vectorSource_geoserver_tramos_desfasaje, vectorSource_geoser
 
 var styleSinInfo,  styleNew,  styleOk, styleRevisar, stylePosibleBarrio, styleDesfasaje   
 
+
 Navarra.layers.labels = function(){
+
   subdomain = Navarra.geocoding_ol.load_subdomain();
+
+
 
   if (subdomain == "lvh.me"){
     url = 'http://localhost:8080/geoserver/wms';
@@ -43,9 +49,12 @@ Navarra.layers.labels = function(){
   if (subdomain == "supercanal.geoworks.gisworking.com"){
 
     url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
-    layers_geoserver_label = 'geoworks_supercanal:label_number_door'
+
+    layers_geoserver_label = 'geoworks_lvh:label_number_door'
   }
-  }
+
+
+
 
   vectorSource_layer_label = new ol.source.TileWMS({
     url: url,
@@ -53,16 +62,15 @@ Navarra.layers.labels = function(){
   });
 
   var label = new ol.layer.Tile({
-    title: 'eti',
-    visible: 'true',
+    title: 'Etiqueta',
     opacity: 0.9,
     source: vectorSource_layer_label 
 
   });
 
+  label.setVisible(false);
   return [label];
 }
-
 
 Navarra.layers.add  =function() { 
   //*******************Layers localhost**********************//
