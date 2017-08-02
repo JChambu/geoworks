@@ -1,5 +1,6 @@
 Navarra.namespace("geocoding_ol");
 
+
 Navarra.geocoding_ol.config = {
   'line':[]
 }
@@ -54,6 +55,11 @@ Navarra.geocoding_ol = function (){
           id: 'Layers',
           title: 'Capas',
           layers: Navarra.layers.add()
+        }),
+        new ol.layer.Group({
+          id: 'labels',
+          title: 'etiquetas',
+          layers: Navarra.layers.labels()
         }),
         vector
       ],
@@ -158,9 +164,18 @@ Navarra.geocoding_ol = function (){
           title: 'Capas',
           layers: Navarra.layers.add()
         }),
-    
+  
+
+  group3 =  new ol.layer.Group({
+          id: 'Labels',
+          title: 'Labels',
+          layers: Navarra.layers.labels()
+        }),
+
+
       map.addLayer(group1);
       map.addLayer(group2);
+      map.addLayer(group3);
       map.addLayer(vector);
   }
 
@@ -170,6 +185,8 @@ Navarra.geocoding_ol = function (){
     content.innerHTML = '&nbsp;';
     container.style.display = 'none';
     var feature = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+    
+      
       return feature;
     });
     if (feature) {

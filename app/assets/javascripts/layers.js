@@ -3,6 +3,7 @@ Navarra.namespace("layers.basemaps");
 Navarra.namespace("layers.urls");
 Navarra.namespace("layers.vectorSources");
 Navarra.namespace("layers.vectorLayers");
+Navarra.namespace("layers.labels");
 
 Navarra.layers.basemaps = function(){
 
@@ -23,13 +24,46 @@ Navarra.layers.basemaps = function(){
 
 
 var filter, subdomain 
-var  vectorLayerSinInfo,  vectorLayerRevisar,  vectorLayerPosible,  vectorLayerOk,   vectorLayerDesfasaje, vectorLayerManzana, vectorLayerCoberturaBar, vectorLayerCobertura, vectorLayerNew    
+var  vectorLayerSinInfo,  vectorLayerRevisar,  vectorLayerPosible,  vectorLayerOk,   vectorLayerDesfasaje, vectorLayerManzana, vectorLayerCoberturaBar, vectorLayerCobertura, vectorLayerNew 
 
 var layer_geoserver_tramos,  layer_geoserver_geomainid,  layer_geoserver_manzana,   layer_geoserver_cobertura,  layer_geoserver_cobertura_bar, layer_geoserver_new,  layer_geoserver_gw_status_desfasaje,   layer_geoserver_gw_status_sin_info,  layer_geoserver_gw_status_posible, layer_geoserver_gw_status_ok, layer_geoserver_gw_status_revisar 
 
 var   vectorSource, vectorSource_geoserver_tramos_desfasaje, vectorSource_geoserver_tramos_sin_info,  vectorSource_geoserver_tramos_posible, vectorSource_geoserver_tramos_ok, vectorSource_geoserver_tramos_revisar,  vectorSource_geoserver_geomainid,  vectorSource_geoserver_manzana, vectorSource_geoserver_cobertura_bar, vectorSource_geoserver_cobertura,  vectorSource_geoserver_new
 
 var styleSinInfo,  styleNew,  styleOk, styleRevisar, stylePosibleBarrio, styleDesfasaje   
+
+Navarra.layers.labels = function(){
+  subdomain = Navarra.geocoding_ol.load_subdomain();
+
+  if (subdomain == "lvh.me"){
+    url = 'http://localhost:8080/geoserver/wms';
+    layers_geoserver_label = 'geoworks_lvh:label_number_door'
+  }
+
+  if (subdomain == "supercanal.geoworks.gisworking.com"){
+
+    url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
+    layers_geoserver_label = 'geoworks_lvh:label_number_door'
+  }
+  }
+
+  vectorSource_layer_label = new ol.source.TileWMS({
+    url: url,
+    params: { LAYERS: layers_geoserver_label, VERSION: '1.1.0'} 
+  });
+
+  var label = new ol.layer.Tile({
+    title: 'eti',
+    visible: 'true',
+    opacity: 0.9,
+    source: vectorSource_layer_label 
+
+  });
+
+  return [label];
+}
+
+
 Navarra.layers.add  =function() { 
   //*******************Layers localhost**********************//
   subdomain = Navarra.geocoding_ol.load_subdomain();
@@ -40,9 +74,22 @@ Navarra.layers.add  =function() {
     Navarra.layers.vectorSources();
     styleLayers();
     Navarra.layers.vectorLayers();
-    console.log(vectorLayerOk);
+
+    var label = new ol.layer.Tile({
+      title: 'eti',
+      type: 'overlays',
+      visible: 'true',
+      source: new ol.source.TileWMS({
+        url:'http://localhost:8080/geoserver/wms',
+        PARAMS: {LAYERS: 'geoworks_lvh:label_number_door', VERSION: '1.1.0'} 
+      })
+    });
+
+
+
+
     return [
-      vectorLayerCoberturaBar, vectorLayerCobertura,  vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk, vectorLayerRevisar  ];
+      vectorLayerCoberturaBar, vectorLayerCobertura,  vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk, vectorLayerRevisar, label  ];
     //    return [vectorLayerOk,  vectorLayerDesfasaje ];
   }
 }
@@ -53,13 +100,11 @@ Navarra.layers.urls = function(){
     url = 'http://localhost:8080/geoserver/wms'
 
     layer_geoserver_tramos =  'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson' ;
-    //var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
     layer_geoserver_geomainid = 'geoworks_lvh:geomanid';
     layer_geoserver_manzana = 'geoworks_lvh:manzanas';
     layer_geoserver_cobertura = 'geoworks_lvh:cobertura';
     layer_geoserver_cobertura_bar = 'geoworks_lvh:cobertura';
     layer_geoserver_new = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:view_new_geo_editions&maxFeatures=10050&outputFormat=application%2Fjson&styles=';
-    //    var layer_geoserver_gw_status_desfasaje = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_desfasaje&maxFeatures=50&outputFormat=application%2Fjson'
     layer_geoserver_gw_status_desfasaje = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_desfasaje&maxFeatures=10050&outputFormat=application%2Fjson&'+ filter;
     layer_geoserver_gw_status_sin_info = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_sin_info&maxFeatures=10050&outputFormat=application%2Fjson&'+ filter;
     layer_geoserver_gw_status_posible = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:gw_status_posible_barrio&maxFeatures=10050&outputFormat=application%2Fjson&' + filter;
@@ -70,9 +115,6 @@ Navarra.layers.urls = function(){
 
   if (subdomain == "supercanal.geoworks.gisworking.com"){
     //*******************Layers Geoworks**********************/
-    //    var layer_geoserver_tramos = 'http://geoworks.gisworking.com:8080/geoserver/geoworks_supercanal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_supercanal:view_geo_editions&maxFeatures=10000&outputFormat=application%2Fjson';
-    //    var layer_geoserver_geomainid = 'http://localhost:8080/geoserver/geoworks_lvh/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks_lvh:geomanid&maxFeatures=50&outputFormat=application%2Fjson'
-
     layer_geoserver_manzana = 'geoworks_supercanal:manzanas';
     layer_geoserver_geomainid = 'geoworks_supercanal:geomanid';
     layer_geoserver_cobertura_bar = 'geoworks_supercanal:cobertura_bar';
@@ -168,8 +210,8 @@ styleLayers = function(){
       dx = end[0] - start[0];
       dy = end[1] - start[1];
       rotation = Math.atan2(dy, dx);
-        
-      style_sin_info.push(new ol.style.Style({
+
+      /*      style_sin_info.push(new ol.style.Style({
           text: new ol.style.Text({
           font: '14px Verdana',
           text: getText(feature),
@@ -177,7 +219,7 @@ styleLayers = function(){
           textBaseline: 'bottom',
             rotation: -rotation
         })
-        })),
+        })),*/
       //  arrows
       style_sin_info.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
@@ -198,7 +240,8 @@ styleLayers = function(){
     style_new = [
       new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: '#298A08',
+          //color: '#298A08',
+          color: 'brown',
           width: 2
         }) 
       })
@@ -207,16 +250,21 @@ styleLayers = function(){
       dx = end[0] - start[0];
       dy = end[1] - start[1];
       rotation = Math.atan2(dy, dx);
-        
-      style_new.push(new ol.style.Style({
+
+
+      if (rotation < 0){
+        rotation_text = Math.atan2(-dy,dx);
+      }else{
+        rotation_text = Math.atan2(-dy, -dx);
+      }
+      /*      style_new.push(new ol.style.Style({
           text: new ol.style.Text({
           font: '14px Verdana',
           text: getText(feature),
           fill: new ol.style.Fill({color: 'black'}),
-          textBaseline: 'bottom',
-            rotation: -rotation
+          textBaseline: 'bottom'
         })
-        })),
+        })),*/
       //  arrows
       style_new.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
@@ -233,24 +281,23 @@ styleLayers = function(){
   };
 
 
-var getText = function(feature){
+  var getText = function(feature){
 
-  if (feature.get('gw_pta_ini') != null && feature.get('gw_pta_fin') != null) {
-var      text = feature.get('gw_pta_ini') + " - " + feature.get('gw_pta_fin');
-  console.log(feature.get('gw_pta_ini')); 
-//  }else{
-   
-  //      text = feature.get('number_door_start_original') + " - " + feature.get('number_door_end_original');
-    
+    if (feature.get('gw_pta_ini') != null && feature.get('gw_pta_fin') != null) {
+      var      text = feature.get('gw_pta_ini') + " - " + feature.get('gw_pta_fin');
+      //  }else{
+
+      //      text = feature.get('number_door_start_original') + " - " + feature.get('number_door_end_original');
+
     }
-return text;
+    return text;
 
 
-}
+  }
 
 
   styleOk = function(feature) {
-   var rotation;
+    var rotation;
     geometry = feature.getGeometry();
     style_ok = [
       new ol.style.Style({
@@ -266,8 +313,8 @@ return text;
       dy = end[1] - start[1];
       rotation = Math.atan2(dy, dx);
       //  arrows
-      
-        style_ok.push(new ol.style.Style({
+
+      /*        style_ok.push(new ol.style.Style({
           text: new ol.style.Text({
           font: '14px Verdana',
           text: getText(feature),
@@ -276,7 +323,7 @@ return text;
             rotation: -rotation
         })
         })),
-      
+        */
       style_ok.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
         image: new ol.style.Icon({
@@ -305,16 +352,18 @@ return text;
       dx = end[0] - start[0];
       dy = end[1] - start[1];
       rotation = Math.atan2(dy, dx);
-        
+
+
+      /*
       style_revisar.push(new ol.style.Style({
           text: new ol.style.Text({
           font: '14px Verdana',
           text: getText(feature),
           fill: new ol.style.Fill({color: 'black'}),
           textBaseline: 'bottom',
-            rotation: -rotation
+            rotation: rotation_text
         })
-        })),
+        })),*/
       //  arrows
       style_revisar.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
@@ -343,8 +392,8 @@ return text;
       dx = end[0] - start[0];
       dy = end[1] - start[1];
       rotation = Math.atan2(dy, dx);
-        
-      style_posible.push(new ol.style.Style({
+
+      /*      style_posible.push(new ol.style.Style({
           text: new ol.style.Text({
           font: '14px Verdana',
           text: getText(feature),
@@ -352,7 +401,7 @@ return text;
           textBaseline: 'bottom',
             rotation: -rotation
         })
-        })),
+        })),*/
       //  arrows
       style_posible.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
@@ -382,27 +431,27 @@ return text;
       dx = end[0] - start[0];
       dy = end[1] - start[1];
       rotation = Math.atan2(dy, dx);
-        
+
       style_desfasaje.push(new ol.style.Style({
-          text: new ol.style.Text({
+        text: new ol.style.Text({
           font: '14px Verdana',
           text: getText(feature),
           fill: new ol.style.Fill({color: 'black'}),
           textBaseline: 'bottom',
-            rotation: -rotation
-        })
-        })),
-      //  arrows
-      style_desfasaje.push(new ol.style.Style({
-        geometry: new ol.geom.Point(end),
-        image: new ol.style.Icon({
-          src: '/images/arrow.png',
-          anchor: [0.75, 0.5],
-          scale: 0.03,
-          rotateWithView: true,
           rotation: -rotation
         })
-      }));
+      })),
+        //  arrows
+        style_desfasaje.push(new ol.style.Style({
+          geometry: new ol.geom.Point(end),
+          image: new ol.style.Icon({
+            src: '/images/arrow.png',
+            anchor: [0.75, 0.5],
+            scale: 0.03,
+            rotateWithView: true,
+            rotation: -rotation
+          })
+        }));
     });
     return style_desfasaje;
   };
