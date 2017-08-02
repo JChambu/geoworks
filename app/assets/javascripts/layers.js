@@ -43,7 +43,7 @@ Navarra.layers.labels = function(){
   if (subdomain == "supercanal.geoworks.gisworking.com"){
 
     url = 'http://geoworks.gisworking.com:8080/geoserver/wms'
-    layers_geoserver_label = 'geoworks_lvh:label_number_door'
+    layers_geoserver_label = 'geoworks_supercanal:label_number_door'
   }
   }
 
