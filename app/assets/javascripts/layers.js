@@ -168,6 +168,16 @@ styleLayers = function(){
       dx = end[0] - start[0];
       dy = end[1] - start[1];
       rotation = Math.atan2(dy, dx);
+        
+      style_sin_info.push(new ol.style.Style({
+          text: new ol.style.Text({
+          font: '14px Verdana',
+          text: getText(feature),
+          fill: new ol.style.Fill({color: 'black'}),
+          textBaseline: 'bottom',
+            rotation: -rotation
+        })
+        })),
       //  arrows
       style_sin_info.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
@@ -197,6 +207,16 @@ styleLayers = function(){
       dx = end[0] - start[0];
       dy = end[1] - start[1];
       rotation = Math.atan2(dy, dx);
+        
+      style_new.push(new ol.style.Style({
+          text: new ol.style.Text({
+          font: '14px Verdana',
+          text: getText(feature),
+          fill: new ol.style.Fill({color: 'black'}),
+          textBaseline: 'bottom',
+            rotation: -rotation
+        })
+        })),
       //  arrows
       style_new.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
@@ -213,6 +233,21 @@ styleLayers = function(){
   };
 
 
+var getText = function(feature){
+
+  if (feature.get('gw_pta_ini') != null && feature.get('gw_pta_fin') != null) {
+var      text = feature.get('gw_pta_ini') + " - " + feature.get('gw_pta_fin');
+  console.log(feature.get('gw_pta_ini')); 
+//  }else{
+   
+  //      text = feature.get('number_door_start_original') + " - " + feature.get('number_door_end_original');
+    
+    }
+return text;
+
+
+}
+
 
   styleOk = function(feature) {
    var rotation;
@@ -220,7 +255,7 @@ styleLayers = function(){
     style_ok = [
       new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: 'red',
+          color: 'black',
           width: 2
         }),
 
@@ -235,7 +270,7 @@ styleLayers = function(){
         style_ok.push(new ol.style.Style({
           text: new ol.style.Text({
           font: '14px Verdana',
-          text: feature.get('number_door_start_original') + " - " + feature.get('number_door_end_original'),
+          text: getText(feature),
           fill: new ol.style.Fill({color: 'black'}),
           textBaseline: 'bottom',
             rotation: -rotation
@@ -270,6 +305,16 @@ styleLayers = function(){
       dx = end[0] - start[0];
       dy = end[1] - start[1];
       rotation = Math.atan2(dy, dx);
+        
+      style_revisar.push(new ol.style.Style({
+          text: new ol.style.Text({
+          font: '14px Verdana',
+          text: getText(feature),
+          fill: new ol.style.Fill({color: 'black'}),
+          textBaseline: 'bottom',
+            rotation: -rotation
+        })
+        })),
       //  arrows
       style_revisar.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
@@ -298,6 +343,16 @@ styleLayers = function(){
       dx = end[0] - start[0];
       dy = end[1] - start[1];
       rotation = Math.atan2(dy, dx);
+        
+      style_posible.push(new ol.style.Style({
+          text: new ol.style.Text({
+          font: '14px Verdana',
+          text: getText(feature),
+          fill: new ol.style.Fill({color: 'black'}),
+          textBaseline: 'bottom',
+            rotation: -rotation
+        })
+        })),
       //  arrows
       style_posible.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
@@ -327,6 +382,16 @@ styleLayers = function(){
       dx = end[0] - start[0];
       dy = end[1] - start[1];
       rotation = Math.atan2(dy, dx);
+        
+      style_desfasaje.push(new ol.style.Style({
+          text: new ol.style.Text({
+          font: '14px Verdana',
+          text: getText(feature),
+          fill: new ol.style.Fill({color: 'black'}),
+          textBaseline: 'bottom',
+            rotation: -rotation
+        })
+        })),
       //  arrows
       style_desfasaje.push(new ol.style.Style({
         geometry: new ol.geom.Point(end),
@@ -341,8 +406,6 @@ styleLayers = function(){
     });
     return style_desfasaje;
   };
-
-
 }
 
 //var  vectorLayerSinInfo,  vectorLayerRevisar,  vectorLayerPosible,  vectorLayerOk,   vectorLayerDesfasaje, vectorLayerManzana, vectorLayerCoberturaBar, vectorLayerCobertura, vectorLayerNew    
