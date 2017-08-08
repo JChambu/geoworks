@@ -7,6 +7,8 @@ Navarra.geocoding_ol.config = {
 
 Navarra.geocoding_ol = function (){
   var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
+
+  
   var init= function() {
 
     iconStyle = new ol.style.Style({
@@ -145,14 +147,21 @@ Navarra.geocoding_ol = function (){
 
 
   var updateMap = function(){
+  
+    
+        console.log( map.getLayers().getArray());
+    map.getLayers().removeLayers;
+    
+    /* map.getLayers().forEach(function (layer) {
 
-   map.getLayers().forEach(function (layer) {
-         map.removeLayer(layer);
+         //map.removeLayer(layer);
    });
    
-   map.getLayers().forEach(function (layer) {
+/*   map.getLayers().forEach(function (layer) {
+
          map.removeLayer(layer);
-   });
+   });*/
+
       group1=  new ol.layer.Group({
           id:'osm',
           title: 'Mapa Base',
@@ -164,14 +173,11 @@ Navarra.geocoding_ol = function (){
           title: 'Capas',
           layers: Navarra.layers.add()
         }),
-  
-
   group3 =  new ol.layer.Group({
           id: 'Labels',
           title: 'Labels',
           layers: Navarra.layers.labels()
         }),
-
 
       map.addLayer(group1);
       map.addLayer(group2);
@@ -512,7 +518,7 @@ Navarra.geocoding_ol = function (){
     return {
       init: init,
       load_subdomain: load_subdomain,
-          doGeocode: doGeocode,
+      doGeocode: doGeocode,
       updateMap: updateMap
       //    enableMap: enableMap,
       //    latitude_ol: latitude_ol,
