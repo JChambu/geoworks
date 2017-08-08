@@ -2,7 +2,7 @@
   <script type="text/javascript">
 
 
-<% if @geo_edition.the_geom_segment_original  || @geo_edition.the_geom_segment %>
+<% if @geo_edition.the_geom_segment_original  || @geo_edition.the_geom_segment || @geo_edition_last.the_geom_segment_original  || @geo_edition_last.the_geom_segment  %>
 
         <% (0..@num_point_segment).each {|n| 
     %>

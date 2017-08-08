@@ -9,9 +9,11 @@ class GeoEditionsController < ApplicationController
 
   def geoeditions_edit
 
-    @geo_edition = GeoEdition.where(user_id: current_user.id).where.not(the_geom_segment_original: nil).order(:updated_at).last
+    @geo_edition = GeoEdition.where(user_id: current_user.id).where.not(the_geom_segment_original: nil ).order(:updated_at).last
     @geo_edition = GeoEdition.last if @geo_edition.nil?
     
+
+
     @segment = @geo_edition.the_geom_segment_original
     if !@segment.nil?
       @num_point_segment = (@segment.num_points - 1 )
@@ -46,6 +48,7 @@ class GeoEditionsController < ApplicationController
  (0..@num_point_segment).each {|n|
  p @segment.point_n(n).y 
  p @segment.point_n(n).x 
+
  }
   end
   end
