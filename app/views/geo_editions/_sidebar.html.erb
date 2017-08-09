@@ -1,6 +1,13 @@
 <section id="sidebar_info" class="span3">
   <div class="span12 lead">Cantidad Registro Actualizados: [ <%= @count.count if !@count.nil?%> ] 
+
+<div class="span6 inline">
     <%= link_to "Nuevo", new_geo_edition_path(), class: 'btn btn-primary'  %>
+    <%=label_tag "Geomanid"  %>
+    <%= text_field_tag :q %>
+    <%= link_to "Buscar" , "#", class: "btn btn-primary filter" %>
+  
+</div>
   </div>
   <div class="span12">
     

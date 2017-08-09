@@ -4,6 +4,19 @@ class GeoEditionsController < ApplicationController
   before_action :set_geo_edition, only: [:show, :edit, :update, :destroy]
   before_action :count_rows
 
+
+def search_blocks
+  @code = params[:id].split('-')
+  @block = Block.where(div1: @code[0], manzana: @code[1]).select(:geom)
+  @block.each {|n|
+    @block_coordinate =[ n.geom.x , n.geom.y]
+  }
+  render json: @block_coordinate
+
+end
+
+
+
   # GET /geo_editions
   # GET /geo_editions.json
 

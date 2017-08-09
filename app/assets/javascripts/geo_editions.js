@@ -22,7 +22,7 @@ Navarra.geo_editions.action_update = function(){
 Navarra.geo_editions.action_edit = function(){
 
   loadCompany= function(){
-    $('#geo_edition_company').on('click', function(){
+    $('#geo_edition_company').on('change', function(){
       name_company =  $('#geo_edition_company option:selected').text();
       Navarra.geo_editions.config.company =  name_company;
       Navarra.geocoding_ol.updateMap();   
@@ -35,16 +35,32 @@ Navarra.geo_editions.action_edit = function(){
     Navarra.common.form.loadStreets(combo_select, name_company);
   }
 
-  findGeomainid = function(){
-    $('#find_block').on('click', function(){
+  findGeomanid = function(){
+    $('.filter').on('click', function(e){
+        e.preventDefault();
+        geomanid = $("#q").val();
+    $.ajax({
+      type: 'GET',
+      url: '/geo_editions/search_blocks',
+      dataType: 'json',
+      data: { 'id': geomanid },
+     success: function (data) {
+       Navarra.geocoding_ol.addMarker_ol(data);
+     }
+    });
+       // coord = ['-71.381399', '-41.13125'];
 
-    })
+
+
+    });
+
   }
 
   init = function(){
 
    loadCompany();
     Navarra.geocoding_ol.init();
+    findGeomanid = findGeomanid();
   } 
   return {
     init: init
