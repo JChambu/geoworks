@@ -3,8 +3,10 @@ Rails.application.routes.draw do
 
 
 
+
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
+  get 'geo_editions/search_blocks' => 'geo_editions#search_blocks'
   get 'pois/possible_duplicates' => 'pois#possible_duplicates'
   get 'parkings/possible_duplicates' => 'parkings#possible_duplicates'
   get 'extended_listings/possible_duplicates' => 'extended_listings#possible_duplicates'
@@ -23,6 +25,8 @@ Rails.application.routes.draw do
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
+
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
     resources :customers
 
   resources :streets
