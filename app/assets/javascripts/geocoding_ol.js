@@ -519,7 +519,8 @@ Navarra.geocoding_ol = function (){
       init: init,
       load_subdomain: load_subdomain,
       doGeocode: doGeocode,
-      updateMap: updateMap
+      updateMap: updateMap,
+      addMarker_ol: addMarker_ol
       //    enableMap: enableMap,
       //    latitude_ol: latitude_ol,
       //    longitude_ol: longitude_ol,
