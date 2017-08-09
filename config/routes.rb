@@ -26,7 +26,7 @@ Rails.application.routes.draw do
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
 
-  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+#  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
     resources :customers
 
   resources :streets
