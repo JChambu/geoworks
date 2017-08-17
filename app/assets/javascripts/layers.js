@@ -38,9 +38,7 @@ var styleSinInfo,  styleNew,  styleOk, styleRevisar, stylePosibleBarrio, styleDe
 Navarra.layers.labels = function(){
 
   subdomain = Navarra.geocoding_ol.load_subdomain();
-
-
-
+var url, layers_geoserver_label ;
   if (subdomain == "lvh.me"){
     url = 'http://localhost:8080/geoserver/wms';
     layers_geoserver_label = 'geoworks_lvh:label_number_door'
@@ -52,9 +50,6 @@ Navarra.layers.labels = function(){
 
     layers_geoserver_label = 'geoworks_supercanal:label_number_door'
   }
-
-
-
 
   vectorSource_layer_label = new ol.source.TileWMS({
     url: url,
@@ -552,10 +547,10 @@ Navarra.layers.vectorLayers = function(){
   });
 
   //vectorLayerCoberturaBar.setVisible(false);
-  vectorLayerSinInfo.setVisible(false);
-  vectorLayerPosible.setVisible(false);
+  //vectorLayerSinInfo.setVisible(false);
+  //vectorLayerPosible.setVisible(false);
   //vectorLayerOk.setVisible(false); 
-  vectorLayerDesfasaje.setVisible(false);
+  //vectorLayerDesfasaje.setVisible(false);
   //vectorLayerManzana.setVisible(false); 
   //vectorLayerCobertura.setVisible(false);
   //vectorLayerNew.setVisible(false); 
