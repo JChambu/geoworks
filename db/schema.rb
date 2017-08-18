@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170705122736) do
+ActiveRecord::Schema.define(version: 20170818121523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -138,6 +138,21 @@ ActiveRecord::Schema.define(version: 20170705122736) do
     t.integer  "gisworking_initial_identifier"
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
+  end
+
+  create_table "blocks", primary_key: "gid", id: :integer, default: -> { "nextval('\"20170427_manzanas_lh_gid_seq\"'::regclass)" }, force: :cascade do |t|
+    t.string   "ciudad nom", limit: 254
+    t.decimal  "div1",                                             precision: 10
+    t.string   "departamen", limit: 254
+    t.decimal  "div2",                                             precision: 10
+    t.string   "localidad",  limit: 254
+    t.decimal  "manzana",                                          precision: 10
+    t.string   "manzana_1",  limit: 254
+    t.decimal  "hogares",                                          precision: 10
+    t.decimal  "geoposici?"
+    t.decimal  "geoposic_1"
+    t.geometry "geom",       limit: {:srid=>4326, :type=>"point"}
+    t.index ["geom"], name: "20170427_manzanas_lh_geom_idx", using: :gist
   end
 
   create_table "categories", force: :cascade do |t|
@@ -286,8 +301,8 @@ ActiveRecord::Schema.define(version: 20170705122736) do
     t.string   "number_door_end"
     t.string   "code"
     t.geometry "the_geom",                   limit: {:srid=>4326, :type=>"point"}
-    t.datetime "created_at",                                                             null: false
-    t.datetime "updated_at",                                                             null: false
+    t.datetime "created_at",                                                                             null: false
+    t.datetime "updated_at",                                                                             null: false
     t.geometry "the_geom_segment_original",  limit: {:srid=>4326, :type=>"line_string"}
     t.geometry "the_geom_segment",           limit: {:srid=>4326, :type=>"line_string"}
     t.integer  "poi_status_id"
@@ -305,6 +320,7 @@ ActiveRecord::Schema.define(version: 20170705122736) do
     t.string   "gw_street"
     t.string   "gw_code"
     t.text     "observations"
+    t.boolean  "delivered",                                                              default: false
     t.index ["the_geom_segment_original"], name: "gw_geom", using: :gist
   end
 
@@ -410,21 +426,6 @@ ActiveRecord::Schema.define(version: 20170705122736) do
     t.datetime "updated_at",     null: false
     t.string   "status"
     t.string   "directory_name"
-  end
-
-  create_table "manzanas", primary_key: "gid", id: :integer, default: -> { "nextval('\"20170427_manzanas_lh_gid_seq\"'::regclass)" }, force: :cascade do |t|
-    t.string   "ciudad nom", limit: 254
-    t.decimal  "div1",                                             precision: 10
-    t.string   "departamen", limit: 254
-    t.decimal  "div2",                                             precision: 10
-    t.string   "localidad",  limit: 254
-    t.decimal  "manzana",                                          precision: 10
-    t.string   "manzana_1",  limit: 254
-    t.decimal  "hogares",                                          precision: 10
-    t.decimal  "geoposici?"
-    t.decimal  "geoposic_1"
-    t.geometry "geom",       limit: {:srid=>4326, :type=>"point"}
-    t.index ["geom"], name: "20170427_manzanas_lh_geom_idx", using: :gist
   end
 
   create_table "p_actions", force: :cascade do |t|
