@@ -1,0 +1,139 @@
+GeoEditionLists = React.createClass({
+  getInitialState: function() {
+    return { edit: false };
+  },   
+  propTypes: {
+    company: React.PropTypes.string,
+    gw_pta_ini: React.PropTypes.string,
+    gw_pta_fin: React.PropTypes.string,
+    gw_paridad: React.PropTypes.string,
+    gw_code: React.PropTypes.string,
+  },
+
+  handleToggle: function(e) {
+    e.preventDefault();
+    this.setState({ edit: !this.state.edit });
+  },
+
+  handleUpdate: function(e) {
+
+    e.preventDefault();
+    if (this.validRecord()) {
+      var event_data = {
+        id: this.props.event.id,
+        company: this.recordValue("company"),
+        gw_pta_ini: this.recordValue("gw_pta_ini"),
+        gw_pta_fin: this.recordValue("gw_pta_fin"),
+        gw_paridad: this.recordValue("gw_paridad"),
+        gw_code: this.recordValue("gw_code"),
+      };
+      $.ajax({
+        method: 'PUT',
+        url: '/geo_editions/' + this.props.event.id,
+        data: { geo_edition: event_data },
+        datatype: 'json',
+        success: function(data) {
+          this.props.handleUpdateRecord(this.props.event, data);
+          this.setState({ edit: false });
+        }.bind(this),
+        error: function(xhr, status, error) {                  
+          alert('Cannot update requested record: ', error);                                                                       
+        }        
+      });
+    } else {
+      alert('Please fill all fields.');
+    }
+  },
+
+  validRecord: function() {          
+    if (this.recordValue("company")){                           
+      return true;             
+    } else {                   
+      return false;        
+    }                      
+  },
+  
+  recordValue: function(field) {
+    return ReactDOM.findDOMNode(this.refs[field]).value;
+  },
+
+  renderForm: function() {
+    return(
+      <tr>
+        <td></td>
+        <td>
+          <input name="company"
+            defaultValue={this.props.event.company}
+            className="form-control"
+            type="text"
+            ref="company"
+          />
+        </td>
+        <td>
+          <input name="gw_pta_ini"
+            defaultValue={this.props.event.gw_pta_ini}
+            className="form-control"
+            type="text"
+            ref="gw_pta_ini"
+          />
+        </td>
+        <td>
+          <input name="gw_pta_fin"
+            defaultValue={this.props.event.gw_pta_fin}
+            className="form-control"
+            type="text"
+            ref="gw_pta_fin"
+          />
+        </td>
+        <td>
+          <input name="gw_paridad"
+            defaultValue={this.props.event.gw_paridad}
+            className="form-control"
+            type="text"
+            ref="gw_paridad"
+          />
+        </td>
+        <td>
+          <input name="gw_code"
+            defaultValue={this.props.event.gw_code}
+            className="form-control"
+            type="text"
+            ref="gw_code"
+          />
+        </td>
+        <td>
+          <a className="btn btn-success btn-sm"
+            onClick={this.handleUpdate}>
+            Save
+          </a>
+          <a className="btn btn-default btn-sm"
+            onClick={this.handleToggle} >
+            Cancel
+          </a>
+        </td>
+      </tr>
+    );
+  },
+  renderRecord: function() {                            
+    var event = this.props.event;                       
+    return(                                             
+      <tr>
+        <td>{event.id}</td>
+        <td>{event.company}</td>
+        <td>{event.gw_pta_ini}</td>
+        <td>{event.gw_pta_fin}</td>
+        <td>{event.gw_paridad}</td>
+        <td>{event.gw_code}</td>
+        <td><a className="btn btn-primary btn-xs" onClick={this.handleToggle}> Edit </a> </td>
+      </tr>
+    );
+  },
+
+  render: function() {
+    if (this.state.edit) {
+      return(this.renderForm());
+    } else {
+      return(this.renderRecord());
+    }
+  }
+});

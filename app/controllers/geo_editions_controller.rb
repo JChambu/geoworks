@@ -39,7 +39,13 @@ end
   
   
   def index
-    @geo_editions = GeoEdition.all.paginate(page: params[:page]).order(:street)
+    @geo_editions = GeoEdition.all.paginate(page: params[:page]).order(:id)
+    respond_to do |format|  ## Add this
+          format.json { render json: @geo_editions, status: :ok}
+              format.html 
+                  ## Other format
+                end  
+    
   end
 
   # GET /geo_editions/1
@@ -101,6 +107,7 @@ end
   # PATCH/PUT /geo_editions/1
   # PATCH/PUT /geo_editions/1.json
   def update
+    
     @geo_edition = GeoEdition.find(params[:geo_edition][:id])
 
     @segment = @geo_edition.the_geom_segment_original
@@ -111,12 +118,13 @@ end
  p @segment.point_n(n).x 
  }
   end
-    
+   
     respond_to do |format|
-    
+   
       if @geo_edition.update(geo_edition_params)
+        format.json { render json: @geo_edition }
         format.html { redirect_to edit_geo_edition_path(@geo_edition.id), flashman.update_success  }
-        format.json { render :show, status: :ok, location: @geo_edition }
+
       else
         format.html { render :edit }
         format.json { render json: @geo_edition.errors, status: :unprocessable_entity }

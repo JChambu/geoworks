@@ -12,6 +12,7 @@ gem 'sass-rails', '~> 5.0.6'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.2'
 gem 'pg_search'
+gem 'rails_admin', '~>1.2'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'therubyracer', platforms: :ruby
 # Use jquery as the JavaScript library
@@ -40,6 +41,8 @@ gem 'spreadsheet'
 gem 'delayed_job_active_record'
 gem 'daemons'
 gem 'geocoder'
+gem 'react-rails', github: 'reactjs/react-rails'
+
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password

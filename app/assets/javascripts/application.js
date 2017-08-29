@@ -24,4 +24,7 @@
 //= require ol3/buttoncontrol
 //= require ol3/togglecontrol
 //= require ol3/ol3-popup
+//= require react
+//= require react_ujs
+//= require components
 //= require_tree .
