@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170818121523) do
+ActiveRecord::Schema.define(version: 20170831134941) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -321,6 +321,8 @@ ActiveRecord::Schema.define(version: 20170818121523) do
     t.string   "gw_code"
     t.text     "observations"
     t.boolean  "delivered",                                                              default: false
+    t.boolean  "yard"
+    t.boolean  "wasteland"
     t.index ["the_geom_segment_original"], name: "gw_geom", using: :gist
   end
 

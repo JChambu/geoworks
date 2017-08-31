@@ -265,7 +265,7 @@ es:
     format: ! '%{attribute} %{message}'
     models:
       geo_edition:
-        gw_paridad_error: "algo mal"
+        gw_paridad_error: "Error en Paridad"
       app_configuration:
         al_least_one_configuration: Debe existir por lo menos una configuración activa en el sistema.
       poi:
@@ -549,6 +549,8 @@ es:
         code: Código
         number_door_start_original: Num. Puerta Inicio
         number_door_end_original: Num. Puerta Fin
+        yard: Sin Frente
+        wasteland: Baldio
       parking:
         name: Nombre
         brand: Marca

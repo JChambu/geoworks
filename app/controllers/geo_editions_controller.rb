@@ -164,6 +164,6 @@ end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def geo_edition_params
-      params.require(:geo_edition).permit(:name, :the_geom_segment, :line, :id, :code, :number_door_start_original, :number_door_end_original, :gw_pta_ini, :gw_pta_fin, :poi_status_id, :gw_paridad, :gw_div1, :gw_div2, :gw_geomainid, :gw_street, :gw_code, :observations, :gw_calleid, :company).merge(user_id: current_user.id)
+      params.require(:geo_edition).permit(:name, :the_geom_segment, :line, :id, :code, :number_door_start_original, :number_door_end_original, :gw_pta_ini, :gw_pta_fin, :poi_status_id, :gw_paridad, :gw_div1, :gw_div2, :gw_geomainid, :gw_street, :gw_code, :observations, :gw_calleid, :company, :yard, :wasteland).merge(user_id: current_user.id)
     end
 end
