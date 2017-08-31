@@ -22,8 +22,11 @@ var AllItems = React.createClass({
                 <th className="col-md-3">id</th>
                 <th className="col-md-3">Nombre</th>
                 <th className="col-md-2">Puerta Inicio</th>
+                <th className="col-md-2">GW Puerta Inicio</th>
                 <th className="col-md-3">Puerta Fin</th>
+                <th className="col-md-3">GW Puerta Fin</th>
                 <th className="col-md-4">Paridad</th>
+                <th className="col-md-4">GW Paridad</th>
                 <th className="col-md-4">Code</th>
               </tr>
             </thead>

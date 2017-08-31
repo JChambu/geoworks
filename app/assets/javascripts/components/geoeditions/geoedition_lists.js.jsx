@@ -70,12 +70,19 @@ GeoEditionLists = React.createClass({
           />
         </td>
         <td>
+            {this.props.event.number_door_start_original}
+        </td>
+        <td>
           <input name="gw_pta_ini"
             defaultValue={this.props.event.gw_pta_ini}
-            className="form-control"
+            className="input-min"
             type="text"
             ref="gw_pta_ini"
           />
+        </td>
+
+        <td>
+          {this.props.event.number_door_end_original}
         </td>
         <td>
           <input name="gw_pta_fin"
@@ -84,6 +91,9 @@ GeoEditionLists = React.createClass({
             type="text"
             ref="gw_pta_fin"
           />
+        </td>
+        <td>
+            {this.props.event.paridad}
         </td>
         <td>
           <input name="gw_paridad"
@@ -120,8 +130,11 @@ GeoEditionLists = React.createClass({
       <tr>
         <td>{event.id}</td>
         <td>{event.company}</td>
+        <td>{event.number_door_start_original}</td>
         <td>{event.gw_pta_ini}</td>
+        <td>{event.number_door_end_original}</td>
         <td>{event.gw_pta_fin}</td>
+        <td>{event.paridad}</td>
         <td>{event.gw_paridad}</td>
         <td>{event.gw_code}</td>
         <td><a className="btn btn-primary btn-xs" onClick={this.handleToggle}> Edit </a> </td>
