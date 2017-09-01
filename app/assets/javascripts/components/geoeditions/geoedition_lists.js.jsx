@@ -132,6 +132,7 @@ GeoEditionLists = React.createClass({
             <option value = "2">Validado</option>
         </select>
         </td>
+
         <td>
           <a className="btn btn-success btn-sm"
             onClick={this.handleUpdate}>
@@ -159,6 +160,7 @@ GeoEditionLists = React.createClass({
         <td>{event.gw_paridad}</td>
         <td>{event.gw_code}</td>
         <td><a className="btn btn-primary btn-xs" onClick={this.handleToggle}> Edit </a> </td>
+        <td><a href={'/geo_editions/' + this.props.event.id + '/edit' }> Mapa</a></td>
       </tr>
     );
   },
