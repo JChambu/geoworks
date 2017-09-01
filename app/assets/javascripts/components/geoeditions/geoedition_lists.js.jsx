@@ -39,6 +39,7 @@ GeoEditionLists = React.createClass({
           this.setState({ edit: false });
         }.bind(this),
         error: function(xhr, status, error) {                  
+          console.log(status);
           alert('Cannot update requested record: ', error);                                                                       
         }        
       });
