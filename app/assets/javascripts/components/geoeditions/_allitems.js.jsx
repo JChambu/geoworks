@@ -15,13 +15,14 @@ var AllItems = React.createClass({
               }.bind(this));
 
 
-  return(
+    return(
+
     <table className="table table-striped">
        <thead>
               <tr>
                 <th className="col-md-3">id</th>
                 <th className="col-md-3">Nombre</th>
-                <th className="col-md-2">Puerta Inicio</th>
+                <th className="col-md-1">Puerta Inicio</th>
                 <th className="col-md-2">GW Puerta Inicio</th>
                 <th className="col-md-3">Puerta Fin</th>
                 <th className="col-md-3">GW Puerta Fin</th>

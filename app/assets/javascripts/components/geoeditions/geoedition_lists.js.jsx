@@ -8,6 +8,7 @@ GeoEditionLists = React.createClass({
     gw_pta_fin: React.PropTypes.string,
     gw_paridad: React.PropTypes.string,
     gw_code: React.PropTypes.string,
+    poi_status_id: React.PropTypes.string,
   },
 
   handleToggle: function(e) {
@@ -26,6 +27,7 @@ GeoEditionLists = React.createClass({
         gw_pta_fin: this.recordValue("gw_pta_fin"),
         gw_paridad: this.recordValue("gw_paridad"),
         gw_code: this.recordValue("gw_code"),
+        poi_status_id: this.recordValue("poi_status_id"),
       };
       $.ajax({
         method: 'PUT',
@@ -58,13 +60,17 @@ GeoEditionLists = React.createClass({
   },
 
   renderForm: function() {
+    var options = [
+      { value: 'one', label: 'One' },
+        { value: 'two', label: 'Two' }
+    ];
     return(
       <tr>
         <td></td>
         <td>
           <input name="company"
             defaultValue={this.props.event.company}
-            className="form-control"
+            className="form-control span12"
             type="text"
             ref="company"
           />
@@ -72,10 +78,10 @@ GeoEditionLists = React.createClass({
         <td>
             {this.props.event.number_door_start_original}
         </td>
-        <td>
+        <td className="input-min">
           <input name="gw_pta_ini"
             defaultValue={this.props.event.gw_pta_ini}
-            className="input-min"
+            className="form-control  span6"
             type="text"
             ref="gw_pta_ini"
           />
@@ -87,7 +93,7 @@ GeoEditionLists = React.createClass({
         <td>
           <input name="gw_pta_fin"
             defaultValue={this.props.event.gw_pta_fin}
-            className="form-control"
+            className="form-control span6"
             type="text"
             ref="gw_pta_fin"
           />
@@ -98,7 +104,7 @@ GeoEditionLists = React.createClass({
         <td>
           <input name="gw_paridad"
             defaultValue={this.props.event.gw_paridad}
-            className="form-control"
+            className="form-control span6"
             type="text"
             ref="gw_paridad"
           />
@@ -106,10 +112,25 @@ GeoEditionLists = React.createClass({
         <td>
           <input name="gw_code"
             defaultValue={this.props.event.gw_code}
-            className="form-control"
+            className="form-control span6"
             type="text"
             ref="gw_code"
           />
+        </td>
+        <td>
+          
+          <select name="poi_status_id"
+            className="form-control span12"
+            ref="poi_status_id"
+          defaultValue={this.props.event.poi_status_id}>
+            <option value = "6">Alta</option>
+            <option value = "4">Baja</option>
+            <option value = "8">Check</option>
+            <option value = "5">Modificacion</option>
+            <option value = "1">No Validado</option>
+            <option value = "8">Revisar</option>
+            <option value = "2">Validado</option>
+        </select>
         </td>
         <td>
           <a className="btn btn-success btn-sm"

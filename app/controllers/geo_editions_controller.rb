@@ -39,7 +39,8 @@ end
   
   
   def index
-    @geo_editions = GeoEdition.all.paginate(page: params[:page]).order(:id)
+    #@geo_editions = GeoEdition.all.paginate(page: params[:page]).order(:id)
+    @geo_editions = GeoEdition.where(user_id: current_user.id, poi_status_id: 8)
     respond_to do |format|  ## Add this
           format.json { render json: @geo_editions, status: :ok}
               format.html 
