@@ -128,7 +128,7 @@ GeoEditionLists = React.createClass({
             <option value = "8">Check</option>
             <option value = "5">Modificacion</option>
             <option value = "1">No Validado</option>
-            <option value = "8">Revisar</option>
+            <option value = "7">Revisar</option>
             <option value = "2">Validado</option>
         </select>
         </td>
