@@ -44,6 +44,7 @@ Navarra.geocoding_ol = function (){
 
     map  = new ol.Map({
       target: 'map',
+     renderer: 'canvas',
       controls: ol.control.defaults().extend([
         new ol.control.FullScreen()
       ]),
@@ -127,6 +128,8 @@ Navarra.geocoding_ol = function (){
         $("#geo_edition_poi_status_id").val( feature.get('poi_status_id'));
         $("#geo_edition_paridad").attr("value", feature.get('paridad'));
         $("#geo_edition_gw_calleid").val( feature.get('gw_calleid'));
+        $("#geo_edition_yard").prop( "checked", feature.get('yard'));
+        $("#geo_edition_wasteland").prop( "checked", feature.get('wasteland'));
       } 
     });
 
