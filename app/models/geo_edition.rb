@@ -4,21 +4,28 @@ class GeoEdition < ApplicationRecord
 
   attr_accessor :line
 
-  validates :poi_status_id, presence: true, allow_blank: false
-  validates :paridad, presence: true, if: "!gw_paridad.present?"
+  has_paper_trail
+   validates :poi_status_id, presence: true, allow_blank: false
+   validates :paridad, presence: true, if: "!gw_paridad.present?"
+  # #validates :number_door_start_original, numericality: {odd: :true}, if: "number_door_end_original.odd? && gw_paridad.nil?"
+  # #validates :number_door_end_original_, numericality: {odd: :true}, if: "number_door_start_original.odd? && gw_paridad.nil?"
+   validates :gw_pta_ini, numericality: {only_integer: true}, allow_nil: true
+   validates :gw_pta_ini, numericality: {less_than: :gw_pta_fin }, if: "gw_pta_fin.present?"
+   validates :gw_pta_ini, numericality: {odd: :true}, if: "!gw_pta_fin.blank? && gw_pta_fin.odd? "
+   validates :gw_pta_ini, numericality: {even: :true}, if: "!gw_pta_fin.blank? &&  gw_pta_fin.even?"
+   validates :gw_pta_fin, numericality: {only_integer: true}, allow_nil: true
+   validates :gw_pta_fin, numericality: {grather_than: :gw_pta_ini}, if: "gw_pta_ini.present?"
+   validate  :gw_paridad, if: :new_paridad?
+   validate :yard, if: :is_yard?
+   validate :wasteland, if: :is_wasteland?
 
-  #validates :number_door_start_original, numericality: {odd: :true}, if: "number_door_end_original.odd? && gw_paridad.nil?"
-  #validates :number_door_end_original_, numericality: {odd: :true}, if: "number_door_start_original.odd? && gw_paridad.nil?"
+  #  validaes :poi_status_id, if: :validate_for_status
 
-  validates :gw_pta_ini, numericality: {only_integer: true}, allow_nil: true
-  validates :gw_pta_ini, numericality: {less_than: :gw_pta_fin }, if: "gw_pta_fin.present?"
-  validates :gw_pta_ini, numericality: {odd: :true}, if: "!gw_pta_fin.blank? && gw_pta_fin.odd? "
-  validates :gw_pta_ini, numericality: {even: :true}, if: "!gw_pta_fin.blank? &&  gw_pta_fin.even?"
-  validates :gw_pta_fin, numericality: {only_integer: true}, allow_nil: true
-  validates :gw_pta_fin, numericality: {grather_than: :gw_pta_ini}, if: "gw_pta_ini.present?"
-  validate  :gw_paridad, if: :new_paridad?
-  validate :yard, if: :is_yard?
-  validate :wasteland, if: :is_wasteland?
+
+
+  def validate_for_status
+
+  end
 
 
   def is_yard?
