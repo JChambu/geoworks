@@ -31,6 +31,7 @@ class GeoEdition < ApplicationRecord
           validates_presence_of :gw_pta_ini, :gw_code, :gw_calleid, :gw_paridad, :line
       when PoiStatus.name_status('Modificado').id
           validates_presence_of :gw_pta_fin, :gw_paridad, :the_geom_segment_original
+          validates_absence_of :gw_pta_ini, :gw_code, :gw_calleid
       when PoiStatus.name_status('Baja').id
           validates_absence_of :gw_pta_ini, :gw_pta_fin, :gw_paridad, :gw_code, :line, :gw_calleid
       when PoiStatus.name_status('validated').id
