@@ -1,16 +1,26 @@
 <%= content_for :head do %>
   <script type="text/javascript">
 
-<% if @geo_edition.the_geom_segment_original  || @geo_edition.the_geom_segment || @geo_edition_last.the_geom_segment_original  || @geo_edition_last.the_geom_segment  %>
+<% if @num_point_segment %>
 
         <% (0..@num_point_segment).each {|n| 
     %>
           Navarra.geo_editions.config.line.push(<%= @segment.point_n(n).y %>  + ', ' +   <%= @segment.point_n(n).x %>)
-          console.log(Navarra.geo_editions.config.line);
-    <% } %>
-    <% end %>
-      Navarra.geo_editions.config.company = '<%= @geo_edition.company %>';
+    //      console.log(Navarra.geo_editions.config.line);
+          <% } %>
 
+      Navarra.geo_editions.config.company = '<%= @geo_edition.company %>';
+    <% else %>
+        <% if @segment.to_s %>
+          segment = '<%= @segment %>'
+    points = segment.split(',');
+    points.forEach(function(n){
+      point = n.split(' ').reverse().join(', ');
+      Navarra.geo_editions.config.line.push(point);
+    })
+    <% end %>
+      Navarra.geo_editions.config.company = '<%= params[:geo_edition][:company] %>';
+    <% end %>
   </script>
 <% end  %>
 <%= simple_form_for @geo_edition do |f| %>
@@ -26,7 +36,6 @@
       </div>
     <% end %>
   </div>
-
   <div class="span12">
     <%= render "sidebar", f: f %>
 

@@ -308,6 +308,19 @@ es:
         related_poi_sub_types: El Tipo de Poi tiene Subtipos de Poi relacionados.
         related_chains: El Tipo de Poi tiene Cadenas relacionadas.
         related_food_types: El Tipo de Poi tiene Tipos de comida relacionados.
+      geo_edition:
+        attributes:
+          gw_pta_ini:
+            present: Debe estar en vacio
+          gw_pta_fin:
+            present: Debe estar en vacio
+          gw_paridad:
+            present: Debe estar en vacio
+          gw_code:
+            present: Debe estar en vacio
+          gw_calleid:
+            present: Debe estar en vacio
+
     messages:
       invalid_email: "Formato de mail inválido. Formato válido: some@mail.com"
       invalid_url: "Formato de url inválido. Formato váido: http://wwww.someurl.com"

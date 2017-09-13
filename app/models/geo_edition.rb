@@ -6,6 +6,7 @@ class GeoEdition < ApplicationRecord
 
   has_paper_trail
    validates :poi_status_id, presence: true, allow_blank: false
+
    validates :paridad, presence: true, if: "!gw_paridad.present?"
   # #validates :number_door_start_original, numericality: {odd: :true}, if: "number_door_end_original.odd? && gw_paridad.nil?"
   # #validates :number_door_end_original_, numericality: {odd: :true}, if: "number_door_start_original.odd? && gw_paridad.nil?"
@@ -18,15 +19,24 @@ class GeoEdition < ApplicationRecord
    validate  :gw_paridad, if: :new_paridad?
    validate :yard, if: :is_yard?
    validate :wasteland, if: :is_wasteland?
-
-  #  validaes :poi_status_id, if: :validate_for_status
+   validate :poi_status_id, if: :validate_for_status
+  #validate :poi_status_id, if: :validate_for_status
 
 
 
   def validate_for_status
 
+    case  self.poi_status_id
+      when PoiStatus.name_status('Alta').id
+          validates_presence_of :gw_pta_ini, :gw_code, :gw_calleid, :gw_paridad, :line
+      when PoiStatus.name_status('Modificado').id
+          validates_presence_of :gw_pta_fin, :gw_paridad, :the_geom_segment_original
+      when PoiStatus.name_status('Baja').id
+          validates_absence_of :gw_pta_ini, :gw_pta_fin, :gw_paridad, :gw_code, :line, :gw_calleid
+      when PoiStatus.name_status('validated').id
+          validates_absence_of :gw_pta_ini, :gw_pta_fin, :gw_paridad, :gw_code, :line, :gw_calleid
+      end
   end
-
 
   def is_yard?
     self.gw_pta_ini = 77775  if self.yard?

@@ -2,6 +2,7 @@ Navarra.namespace("geo_editions.action_index");
 Navarra.namespace("geo_editions.action_new");
 Navarra.namespace("geo_editions.action_edit");
 Navarra.namespace("geo_editions.action_update");
+Navarra.namespace("geo_editions.action_create");
 Navarra.namespace("geo_editions.action_geoeditions_edit");
 
 Navarra.geo_editions.config = {
@@ -19,6 +20,16 @@ Navarra.geo_editions.action_update = function(){
   }
 }();
 
+Navarra.geo_editions.action_create = function(){
+
+  init = function(){
+    Navarra.geocoding_ol.init();
+    Navarra.poi_search_panel.init();
+  } 
+  return {
+    init: init
+  }
+}();
 Navarra.geo_editions.action_edit = function(){
 
   loadCompany= function(){
@@ -57,8 +68,10 @@ Navarra.geo_editions.action_edit = function(){
   }
 
   init = function(){
-
-   loadCompany();
+    sessionStorage.setItem('prueba', 'holamundo');
+  console.log(sessionStorage);
+    
+    loadCompany();
     Navarra.geocoding_ol.init();
     findGeomanid = findGeomanid();
   } 
