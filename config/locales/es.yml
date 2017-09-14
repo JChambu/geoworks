@@ -265,7 +265,7 @@ es:
     format: ! '%{attribute} %{message}'
     models:
       geo_edition:
-        gw_paridad_error: "Error en Paridad"
+
       app_configuration:
         al_least_one_configuration: Debe existir por lo menos una configuración activa en el sistema.
       poi:
@@ -320,7 +320,8 @@ es:
             present: Debe estar en vacio
           gw_calleid:
             present: Debe estar en vacio
-
+          base:
+            gw_paridad_error: "Error en Paridad"
     messages:
       invalid_email: "Formato de mail inválido. Formato válido: some@mail.com"
       invalid_url: "Formato de url inválido. Formato váido: http://wwww.someurl.com"
