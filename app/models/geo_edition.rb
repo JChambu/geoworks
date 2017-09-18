@@ -28,7 +28,7 @@ class GeoEdition < ApplicationRecord
 
     case  self.poi_status_id
       when PoiStatus.name_status('Alta').id
-          validates_presence_of :gw_pta_ini, :gw_code, :gw_calleid, :gw_paridad, :line
+          validates_presence_of :gw_pta_ini, :gw_code, :gw_calleid, :gw_paridad
       when PoiStatus.name_status('Modificado').id
         if self.gw_pta_fin.blank? and  self.gw_paridad.blank? 
             errors[:base] = "No puede estar Gw_paridad y Gw_pta_ini no pueden estar en blanco"
