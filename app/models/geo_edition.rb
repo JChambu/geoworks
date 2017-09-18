@@ -40,7 +40,7 @@ class GeoEdition < ApplicationRecord
           validates_absence_of :gw_pta_ini, :gw_code, :gw_calleid
         end
       when PoiStatus.name_status('Baja').id
-          validates_absence_of :gw_pta_ini, :gw_pta_fin, :gw_paridad, :gw_code, :line, :gw_calleid
+          validates_absence_of :gw_pta_ini, :gw_pta_fin, :gw_paridad, :gw_code,  :gw_calleid
           validates_presence_of :observations
       when PoiStatus.name_status('validated').id
           validates_absence_of :gw_pta_ini, :gw_pta_fin, :gw_paridad, :gw_code, :line, :gw_calleid
