@@ -30,10 +30,15 @@ class GeoEdition < ApplicationRecord
       when PoiStatus.name_status('Alta').id
           validates_presence_of :gw_pta_ini, :gw_code, :gw_calleid, :gw_paridad
       when PoiStatus.name_status('Modificado').id
+
+        if !self.yard? and !self.wasteland?
+        puts self.yard?
+        puts self.wasteland?
         if self.gw_pta_fin.blank? and  self.gw_paridad.blank? 
             errors[:base] = "No puede estar Gw_paridad y Gw_pta_ini no pueden estar en blanco"
           end
           validates_absence_of :gw_pta_ini, :gw_code, :gw_calleid
+        end
       when PoiStatus.name_status('Baja').id
           validates_absence_of :gw_pta_ini, :gw_pta_fin, :gw_paridad, :gw_code, :line, :gw_calleid
           validates_presence_of :observations
