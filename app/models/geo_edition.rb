@@ -34,7 +34,7 @@ class GeoEdition < ApplicationRecord
         if !self.yard? and !self.wasteland?
         puts self.yard?
         puts self.wasteland?
-        if self.gw_pta_fin.blank? and  self.gw_paridad.blank? 
+        if self.gw_pta_fin.blank? and  self.gw_paridad.blank? and self.line.blank? 
             errors[:base] = "No puede estar Gw_paridad y Gw_pta_ini no pueden estar en blanco"
           end
           validates_absence_of :gw_pta_ini, :gw_code, :gw_calleid
@@ -44,11 +44,13 @@ class GeoEdition < ApplicationRecord
           validates_presence_of :observations
       when PoiStatus.name_status('validated').id
           validates_absence_of :gw_pta_ini, :gw_pta_fin, :gw_paridad, :gw_code, :line, :gw_calleid
-          validates_presence_of :observations
+  #       validates_presence_of :observations
       when PoiStatus.name_status('not_validated').id
           validates_presence_of :observations
       end
   end
+
+
 
   def is_yard?
     self.gw_pta_ini = 77775  if self.yard?
