@@ -15,6 +15,13 @@ class ExtendedListingsController < ApplicationController
     end
   end
 
+
+  def congrated_points
+    @congrated = ExtendedListing.congrated_point
+  end
+
+
+
   def possible_duplicates
 #    authorize! :visualize, :possible_duplicates
     @extended = ExtendedListing.find_possible_duplicates(params[:extended_listing])
@@ -50,9 +57,7 @@ class ExtendedListingsController < ApplicationController
       params[:q][:created_at_lteq]= params[:q][:created_at_lteq].to_date.end_of_day if !params[:q][:created_at_lteq].blank?
     end
 
-    if current_user.role != 'Admin'
       params[:q] = {:user_id_eq => current_user.id}
-    end
     @search = ExtendedListing.search(params[:q] )
     @extended_listings = @search.result.paginate(:page => params[:page])
   end
@@ -83,6 +88,9 @@ class ExtendedListingsController < ApplicationController
 
     params[:extended_listing].merge!(user_id: current_user.id)
     @extended_listing = ExtendedListing.new(extended_listing_params)
+
+
+
     #category =  Category.where(id: extended_listing_params[:category_id]).select(:category_original).first
     #@extended_listing[:category_original_id] = category.category_original.to_i
     respond_to do |format|
@@ -100,10 +108,8 @@ class ExtendedListingsController < ApplicationController
   # PATCH/PUT /extended_listings/1
   # PATCH/PUT /extended_listings/1.json
   def update
-    
     #category =  Category.where(id: extended_listing_params[:category_id]).select(:category_original).first
     #@extended_listing[:category_original_id] = category.category_original.to_i
-    
     respond_to do |format|
       if @extended_listing.update(extended_listing_params)
         format.html { redirect_to @extended_listing, notice: 'Extended listing was successfully updated.' }
@@ -141,7 +147,6 @@ class ExtendedListingsController < ApplicationController
   def set_extended_listing
     @extended_listing = ExtendedListing.find(params[:id])
   end
-
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def extended_listing_params
