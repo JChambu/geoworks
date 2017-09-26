@@ -57,7 +57,7 @@ class ExtendedListingsController < ApplicationController
       params[:q][:created_at_lteq]= params[:q][:created_at_lteq].to_date.end_of_day if !params[:q][:created_at_lteq].blank?
     end
     if current_user.role != 'Admin'
-    params[:q] = {:user_id_eq => current_user.id}
+    params[:q][:user_id_eq] = current_user.id
     end
     @search = ExtendedListing.search(params[:q] )
     @extended_listings = @search.result.paginate(:page => params[:page])
