@@ -56,10 +56,12 @@ class ExtendedListingsController < ApplicationController
       params[:q][:created_at_gteq]= params[:q][:created_at_gteq].to_date.beginning_of_day if !params[:q][:created_at_gteq].blank?
       params[:q][:created_at_lteq]= params[:q][:created_at_lteq].to_date.end_of_day if !params[:q][:created_at_lteq].blank?
     end
-
-      params[:q] = {:user_id_eq => current_user.id}
+    if current_user.role != 'Admin'
+    params[:q] = {:user_id_eq => current_user.id}
+    end
     @search = ExtendedListing.search(params[:q] )
     @extended_listings = @search.result.paginate(:page => params[:page])
+  
   end
 
   # GET /extended_listings/1
@@ -139,7 +141,7 @@ class ExtendedListingsController < ApplicationController
       @to_date = params[:q][:control_date_lteq]
       return
     end
-    params[:q] = {user_id: current_user.id} 
+    #params[:q] = {user_id: current_user.id} 
   end
 
 
