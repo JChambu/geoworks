@@ -82,7 +82,7 @@ class GeoEditionsController < ApplicationController
   def edit
 
     @segment = @geo_edition.the_geom_segment_original 
-    @segment = @geo_edition.the_geom_segment if @segment.nil? or @segment.blank? 
+    @segment = @geo_edition.the_geom_segment if @segment.blank? 
     @count = GeoEdition.where(user_id: current_user.id)
 
     if !@segment.nil?
