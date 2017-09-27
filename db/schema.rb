@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170831134941) do
+ActiveRecord::Schema.define(version: 20170927130628) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -214,6 +214,30 @@ ActiveRecord::Schema.define(version: 20170831134941) do
     t.string   "supplier_map", default: "osm"
   end
 
+  create_table "data_cleasing_projects", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "data_cleasings", force: :cascade do |t|
+    t.jsonb    "properties"
+    t.integer  "data_cleasing_project_id"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  create_table "data_cleasings_fields", force: :cascade do |t|
+    t.string   "name"
+    t.boolean  "required"
+    t.boolean  "cleasing_data"
+    t.integer  "data_cleasing_project_id"
+    t.integer  "regexp_type_id"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",   default: 0, null: false
     t.integer  "attempts",   default: 0, null: false
@@ -270,6 +294,9 @@ ActiveRecord::Schema.define(version: 20170831134941) do
     t.string   "email"
     t.integer  "neighborhood_id"
     t.geometry "the_geom_new",         limit: {:srid=>4326, :type=>"point"}
+    t.string   "phone_2"
+    t.string   "phone_2_new"
+    t.string   "street_2"
   end
 
   create_table "food_types", force: :cascade do |t|
@@ -662,6 +689,14 @@ ActiveRecord::Schema.define(version: 20170831134941) do
     t.integer  "country_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "regexp_types", force: :cascade do |t|
+    t.string   "name"
+    t.string   "expresion"
+    t.text     "observations"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "restaurant_types", force: :cascade do |t|

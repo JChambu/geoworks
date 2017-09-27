@@ -18,45 +18,29 @@ Navarra.geocoding_ol.longitude_ol = <%= @extended_listing.the_geom.x %>
     <div class="form-inputs span12">
       <div class="span12">
         <%= f.input :name %>
-      </div>
-      <div class="span6" >
         <%= f.input :poi_type_id, :collection => poi_types_for_select %>
-      </div>
-      <div class="span5" >
         <%= f.input :poi_sub_type_id, :collection => poi_type_sub_types_for_select(@extended_listing.poi_type_id) %>
-      </div>
-      <div class="span12">
-      <div class="span3">
         <%= f.input :phone %>
-      </div>
-      <div class="span4">
+
+        <%= f.input :phone_2 %>
         <%= f.input :website%>
-      </div>
-    <div class="span4">
         <%= f.input :email%>
-      </div>
-    </div>
-      </div>
-    <div class="span12"> 
-      <div class="span6">
         <%= f.input :city_id,  collection: city_for_chosen(@extended_listing.city_id),  input_html: {class: "span8"} %>
-      </div>
-      <div class="span3">
         <%= f.input :street, input_html: {class: 'street'} %>
-      </div>
-      <div class="span3">
+      
+        <%= f.input :street_2, input_html: {class: 'street'} %>
         <%= f.input :number %>
         <%= f.input :latitude, as: :hidden %>
         <%= f.input :longitude, as: :hidden %>
       </div>
-    </div>
-  
+
     <div class="span12"> 
       <div class="span6">
-          <% link_to t("views.poi.form.buttons.suggest_location"), "#", :class => 'btn', :id => 'suggest-locations-btn-el' %>
+          <%= link_to t("views.poi.form.buttons.suggest_location"), "#", :class => 'btn', :id => 'suggest-locations-btn-el' %>
       </div>
     </div>
-  </div>
+    </div>
+</div>
   
   <div class="form-actions">
     <%= f.button :submit, class: 'btn-primary' %>
