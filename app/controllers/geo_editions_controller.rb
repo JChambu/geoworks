@@ -85,7 +85,7 @@ class GeoEditionsController < ApplicationController
     @segment = @geo_edition.the_geom_segment if @segment.blank? 
     @count = GeoEdition.where(user_id: current_user.id)
 
-    if !@segment.nil?
+    if !@segment.nil? and  @segment.num_points > 0
       @num_point_segment = (@segment.num_points - 1 )
       (0..@num_point_segment).each {|n|
         p @segment.point_n(n).y 
