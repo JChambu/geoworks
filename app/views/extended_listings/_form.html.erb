@@ -27,8 +27,8 @@ Navarra.geocoding_ol.longitude_ol = <%= @extended_listing.the_geom.x %>
         <%= f.input :email%>
         <%= f.input :city_id,  collection: city_for_chosen(@extended_listing.city_id),  input_html: {class: "span8"} %>
         <%= f.input :street, input_html: {class: 'street'} %>
-      
         <%= f.input :street_2, input_html: {class: 'street'} %>
+        <%= f.input :street_3, input_html: {class: 'street'} %>
         <%= f.input :number %>
         <%= f.input :latitude, as: :hidden %>
         <%= f.input :longitude, as: :hidden %>
