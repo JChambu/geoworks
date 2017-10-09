@@ -60,7 +60,7 @@ class ExtendedListingsController < ApplicationController
     params[:q][:user_id_eq] = current_user.id
     end
     @search = ExtendedListing.search(params[:q])
-    @search.sorts = 'name, street'
+    @search.sorts = ['name','street']
     @extended_listings = @search.result.paginate(:page => params[:page])
   
   end
