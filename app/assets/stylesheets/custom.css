@@ -3021,7 +3021,7 @@ ul.social li {
   display: block;
   position: relative;
   -moz-opacity: 1;
-  filter: alpha(opacity:100);
+  filter: alpha(opacity=100);
   opacity: 1;
   color: #666;
 }
@@ -3138,7 +3138,7 @@ ul.social li {
   display: block;
   position: relative;
   -moz-opacity: 1;
-  filter: alpha(opacity:100);
+  filter: alpha(opacity=100);
   opacity: 1;
   color: #666;
 }
