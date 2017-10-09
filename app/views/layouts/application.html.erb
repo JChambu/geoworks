@@ -3,23 +3,7 @@
   <head>
     <%= render :partial => 'common/head' %>
   </head>
-  <body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action] %>">
-    <%= render :partial => 'common/header' %>
-    <div id="content" class="container-fluid">
-      <div class="row-fluid">
-        <% if content_for? :left_sidebar %>
-          <div class="span<%= ApplicationHelper::LEFT_SIDEBAR_COLUMNS %>">
-            <div class="well">
-              <%= yield :left_sidebar %>
-            </div>
-          </div>
-        <% end %>
-        <div class="<%= content_span_class %>">
-          <%= flash_messages %>
-          <%= yield %>
-        </div>
-      </div>
-    </div> 
-    <%= render :partial => 'common/footer' %>
+  <body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action] %>" class="nav-md">
+        <%= render partial: 'layouts/header' %>
   </body>
 </html>

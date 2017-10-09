@@ -12,12 +12,14 @@ gem 'sass-rails', '~> 5.0.6'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.2'
 gem 'pg_search'
-gem 'rails_admin', '~>1.2'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'therubyracer', platforms: :ruby
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
+#gem 'gentelella-rails'
+#gem 'modernizr-rails'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
 gem 'webpack-rails'
@@ -33,10 +35,10 @@ gem 'will_paginate-bootstrap'
 gem 'simple_form'
 gem 'paper_trail'
 gem 'validates_email_format_of'
-gem 'twitter-bootstrap-rails'
+#gem 'twitter-bootstrap-rails'
 gem 'ransack', github:"activerecord-hackery/ransack", branch:"master"
-gem 'twitter-bootstrap-rails'
-gem 'less-rails-bootstrap'
+#gem 'twitter-bootstrap-rails'
+#gem 'less-rails-bootstrap'
 gem 'spreadsheet'
 gem 'delayed_job_active_record'
 gem 'daemons'

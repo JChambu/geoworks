@@ -1,13 +1,15 @@
 Rails.application.routes.draw do
 
 
-
-
-
+  resources :regexp_types
+  resources :data_cleasings_fields
+  resources :data_cleasings
+  resources :data_cleasing_projects
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
   get 'geo_editions/search_blocks' => 'geo_editions#search_blocks'
   get 'pois/possible_duplicates' => 'pois#possible_duplicates'
+  get 'geo_editions/errors' => 'geo_editions#errors'
   get 'parkings/possible_duplicates' => 'parkings#possible_duplicates'
   get 'extended_listings/possible_duplicates' => 'extended_listings#possible_duplicates'
   get 'pois/around' => 'pois#around'
@@ -25,10 +27,10 @@ Rails.application.routes.draw do
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
+ get 'dashboard/index'
 
-#  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+    #  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
     resources :customers
-
   resources :streets
     resources :geo_editions
    # get "geo_editions/geoeditions_edit" => 'geo_editions#geoeditions_edit' 
@@ -108,7 +110,8 @@ Rails.application.routes.draw do
 
     # You can have the root of your site routed with "root"
 
-    root 'pois#index'
+    #root 'pois#index'
+    root 'dashboard#index'
     #end
 
     # Example of regular route:
