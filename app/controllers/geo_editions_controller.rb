@@ -131,10 +131,11 @@ class GeoEditionsController < ApplicationController
       if @geo_edition.update(geo_edition_params)
         format.json { render json: @geo_edition }
         format.html { redirect_to edit_geo_edition_path(@geo_edition.id), flashman.update_success  }
-
+        format.js   
       else
         format.json { render json: @geo_edition.errors, status: :unprocessable_entity }
         format.html { render :edit }
+        format.js  
 
       end
     end

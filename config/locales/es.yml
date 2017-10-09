@@ -561,7 +561,7 @@ es:
         street: Calle
         Paridad: Paridad
         code: Código
-        number_door_start_original: Num. Puerta Inicio
+        number_door_start_original: Num. Pta. Ini.
         number_door_end_original: Num. Puerta Fin
         yard: Sin Frente
         wasteland: Baldio
@@ -644,7 +644,10 @@ es:
         poi_type_id: "Tipo de Poi"
       extended_listing:
         name: "Nombre"
+        phone: "Telefono"
+        phone_2: "Telefono 2"
         street: "Calle"
+        street: "Calle 2"
         city: "Ciudad"
         category: "Categoria"
         user: "Usuario"

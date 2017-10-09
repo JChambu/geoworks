@@ -33,6 +33,7 @@ Navarra.geo_editions.action_create = function(){
 Navarra.geo_editions.action_edit = function(){
 
   loadCompany= function(){
+    console.log("prueba");
     $('#geo_edition_company').on('change', function(){
       name_company =  $('#geo_edition_company option:selected').text();
       Navarra.geo_editions.config.company =  name_company;
@@ -42,6 +43,7 @@ Navarra.geo_editions.action_edit = function(){
   }
 
   bindStreets= function(name_company){
+console.log("com");
     combo_select = "#geo_edition_gw_calleid";
     Navarra.common.form.loadStreets(combo_select, name_company);
   }
@@ -60,17 +62,11 @@ Navarra.geo_editions.action_edit = function(){
      }
     });
        // coord = ['-71.381399', '-41.13125'];
-
-
-
     });
-
   }
-
   init = function(){
-    sessionStorage.setItem('prueba', 'holamundo');
-  console.log(sessionStorage);
-    
+//    sessionStorage.setItem('prueba', 'holamundo');
+//  console.log(sessionStorage);
     loadCompany();
     Navarra.geocoding_ol.init();
     findGeomanid = findGeomanid();
