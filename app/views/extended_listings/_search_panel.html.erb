@@ -1,28 +1,32 @@
 <%= simple_form_for @search, :url =>@search_ext, html: {method: :get} do |f|  %>
 
   <div class="form-group">
-    <div class="col-md-12">
+    <div class="col-md-2">
       <% if current_user.role == 'Admin' %>
         <%= f.label :user_id_eq   %>
         <%= f.select  :user_id_eq,  users_for_select, {include_blank: true},  {class: 'form-control'} %>
       <% end %>
 
     </div>
-    <div class="col-md-12">
+    <div class="col-md-2">
       <%= f.label :category_id_eq %>
       <%= f.select :category_id_eq, categories_for_select, {:include_blank => true}, {class: 'form-control'} %>
     </div>
-    <div class="col-md-12">
+    <div class="col-md-2">
       <%= f.label :country_id_eq %>
       <%= f.select :country_id_eq, countries_for_select, {:include_blank => true}, {class: 'form-control'} %>
     </div>
-    <div class="col-md-12">
+    <div class="col-md-2">
       <%= f.label :province_id_eq %>
       <%= f.select :province_id_eq, provinces_for_select(@country_id), {:include_blank => true}, {class: 'form-control'} %>
     </div>
+    <div class="col-md-2">
+      <%= f.label :poi_status_id_eq %>
+      <%= f.select :poi_status_id_eq, poi_statuses_for_select, {:include_blank => true}, {class: 'form-control'} %>
+    </div>
   </div>
   <div class="form-actions">
-    <%= f.submit(t("buttons.search"), :class => 'btn') %>
+    <%= f.submit(t("buttons.search"), :class => 'btn btn-success') %>
   </div>
   </div>
 <% end %>
