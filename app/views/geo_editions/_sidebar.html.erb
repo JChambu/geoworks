@@ -22,23 +22,32 @@
     </div>
   </div>
   <div class="col-md-12">
+ 
+  <div class="col-md-2"></div>  
+    <div class="col-md-3">
+      <%= f.label :gw_calleid %>
+      <%= f.select :gw_calleid, geo_edition_street_id_select(@geo_edition.company),  {:include_blank => true}, class: "form-control col-md-4" %>
+    </div>
+    <div class="col-md-1">
+      <%= f.input :gw_paridad , input_html:{class: "col-md-12"}   %>
+    </div>
+    <div class="col-md-2">
+      <%= f.input :gw_code, input_html:{class: "col-md-10"}   %>
+    </div>
+
     <div class="col-md-2">
       <%= f.input :gw_pta_ini,  input_html:{class: "form-control col-md-6"} %>
     </div>
     <div class="col-md-2">
       <%= f.input :gw_pta_fin,  input_html:{class: "form-control col-md-6"}  %>
     </div>
-    <div class="col-md-4">
-      <%= f.label :gw_calleid %>
-      <%= f.select :gw_calleid, geo_edition_street_id_select(@geo_edition.company),  {:include_blank => true}, class: "form-control col-md-4" %>
-    </div>
-    <div class="col-md-2">
-      <%= f.input :gw_paridad , input_html:{class: "col-md-6"}   %>
-    </div>
-    <div class="col-md-2">
-      <%= f.input :gw_code, input_html:{class: "col-md-10"}   %>
-    </div>
-    </div>
+
+
+
+  
+  
+  
+  </div>
     
     <div class="col-md-12">
     <div class="col-md-2">

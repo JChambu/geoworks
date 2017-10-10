@@ -24,15 +24,23 @@
   </script>
 <% end  %>
 <%= simple_form_for @geo_edition do |f| %>
-        <div id="map">
-          <div id="popup" class="ol-popup ">
-            <div id="popup-content">
-            </div>
-          </div>
-        </div>
-<div id="info">
-</div>
+  <div id="map">
+    <div id="popup" class="ol-popup ">
+      <div id="popup-content">
+      </div>
+    </div>
+  </div>
+  <div id="info">
+  </div>
   <div id="comments">
+  </div>
+  <div>
+    <%= f.error_notification %>
+    <ul>
+      <% @geo_edition.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
   </div>
   <div class="x_panel">
     <div class="x_panel tile fixed_height_320">
@@ -47,9 +55,9 @@
             <%= link_to "Buscar" , "#", class: "btn btn-warning filter" %>
 
           </div>
-            <div class="col-md-2 actions">
-              <%= f.submit class: 'btn btn-primary' %>
-            </div>
+          <div class="col-md-2 actions">
+            <%= f.submit class: 'btn btn-primary' %>
+          </div>
 
         </div>
         <ul class="nav navbar-right panel_toolbox">
