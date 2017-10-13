@@ -34,8 +34,8 @@ class GeoEdition < ApplicationRecord
         if !self.yard? and !self.wasteland?
         puts self.yard?
         puts self.wasteland?
-        if self.gw_pta_fin.blank? and  self.gw_paridad.blank? and self.line.blank? 
-            errors[:base] = "No puede estar Gw_paridad y Gw_pta_ini no pueden estar en blanco"
+        if self.gw_pta_fin.blank? and  self.gw_paridad.blank? and self.line.blank? and self.gw_the_geom_segment.blank? 
+            errors[:base] = "No puede estar Gw_paridad y Gw_pta_fin no pueden estar en blanco"
           end
           validates_absence_of :gw_pta_ini, :gw_code, :gw_calleid
         end
