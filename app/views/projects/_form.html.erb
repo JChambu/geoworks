@@ -1,0 +1,24 @@
+<%= form_for(project) do |f| %>
+  <% if project.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(project.errors.count, "error") %> prohibited this project from being saved:</h2>
+
+      <ul>
+      <% project.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.hidden_field :project_type_id %>
+
+ <%= f.fields_for :properties, OpenStruct.new(@project.properties)  do |builder| %>
+       <% @project.project_type.fields.each do |field| %>
+               <%= render "projects/fields/#{field.field_type}", field: field, f: builder %>
+                   <% end %>
+                     <% end %>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

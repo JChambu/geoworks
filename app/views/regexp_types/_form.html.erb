@@ -1,0 +1,32 @@
+<%= form_for(regexp_type) do |f| %>
+  <% if regexp_type.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(regexp_type.errors.count, "error") %> prohibited this regexp_type from being saved:</h2>
+
+      <ul>
+      <% regexp_type.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :expresion %>
+    <%= f.text_field :expresion %>
+  </div>
+
+  <div class="field">
+    <%= f.label :observations %>
+    <%= f.text_area :observations %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

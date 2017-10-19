@@ -1,10 +1,8 @@
 Rails.application.routes.draw do
 
 
-  resources :regexp_types
-  resources :data_cleasings_fields
-  resources :data_cleasings
-  resources :data_cleasing_projects
+
+  resources :projects
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
   get 'geo_editions/search_blocks' => 'geo_editions#search_blocks'
@@ -29,6 +27,8 @@ Rails.application.routes.draw do
 
  get 'dashboard/index'
 
+  resources :project_types
+  resources :regexp_types
     #  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
     resources :customers
   resources :streets

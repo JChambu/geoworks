@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @regexp_type.name %>
+</p>
+
+<p>
+  <strong>Expresion:</strong>
+  <%= @regexp_type.expresion %>
+</p>
+
+<p>
+  <strong>Observations:</strong>
+  <%= @regexp_type.observations %>
+</p>
+
+<%= link_to 'Edit', edit_regexp_type_path(@regexp_type) %> |
+<%= link_to 'Back', regexp_types_path %>

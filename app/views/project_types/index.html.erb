@@ -1,0 +1,46 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Project Types</h1>
+
+<table class="table table-stripe">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>User</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @project_types.each do |project_type| %>
+      <tr>
+        <td><%= project_type.name %></td>
+        <td><%= project_type.user.name %></td>
+        <td><%= link_to "agregar Registros", projects_path(project_type_id: project_type.id) %></td>
+        <td><%= link_to 'Show', project_type %></td>
+        <td><%= link_to 'Edit', edit_project_type_path(project_type) %></td>
+        <td><%= link_to 'Destroy', project_type, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+Fulcum
+
+<table class="table">
+  <thead>
+    <th>id</th>
+    <th>nombre</th>
+    <th></th>
+  </thead>
+  <tbody>
+    <% @project_fulcrum.objects.each do |project| %>
+      <tr>
+        <td><%= project['id'] %></td>
+        <td><%= project['name'] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br>
+<%= link_to 'New Project Type', new_project_type_path %>

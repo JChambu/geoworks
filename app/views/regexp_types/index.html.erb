@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Regexp Types</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Expresion</th>
+      <th>Observations</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @regexp_types.each do |regexp_type| %>
+      <tr>
+        <td><%= regexp_type.name %></td>
+        <td><%= regexp_type.expresion %></td>
+        <td><%= regexp_type.observations %></td>
+        <td><%= link_to 'Show', regexp_type %></td>
+        <td><%= link_to 'Edit', edit_regexp_type_path(regexp_type) %></td>
+        <td><%= link_to 'Destroy', regexp_type, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Regexp Type', new_regexp_type_path %>

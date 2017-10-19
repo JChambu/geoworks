@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171003123035) do
+ActiveRecord::Schema.define(version: 20171012171528) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -685,6 +685,35 @@ ActiveRecord::Schema.define(version: 20171003123035) do
     t.date     "last_update"
   end
 
+  create_table "project_fields", force: :cascade do |t|
+    t.string   "name"
+    t.string   "field_type"
+    t.boolean  "required"
+    t.boolean  "cleasing_data"
+    t.boolean  "georeferenced"
+    t.integer  "project_type_id"
+    t.integer  "regexp_type_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.index ["project_type_id"], name: "index_project_fields_on_project_type_id", using: :btree
+  end
+
+  create_table "project_types", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_project_types_on_user_id", using: :btree
+  end
+
+  create_table "projects", force: :cascade do |t|
+    t.jsonb    "properties"
+    t.integer  "project_type_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.index ["project_type_id"], name: "index_projects_on_project_type_id", using: :btree
+  end
+
   create_table "provinces", force: :cascade do |t|
     t.string   "name"
     t.integer  "country_id"
@@ -859,4 +888,7 @@ ActiveRecord::Schema.define(version: 20171003123035) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
   end
 
+  add_foreign_key "project_fields", "project_types"
+  add_foreign_key "project_types", "users"
+  add_foreign_key "projects", "project_types"
 end
