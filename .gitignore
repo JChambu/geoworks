@@ -20,3 +20,4 @@
 /public/webpack
 /public/poi
 /public/poi_addresses
+*.sw*
