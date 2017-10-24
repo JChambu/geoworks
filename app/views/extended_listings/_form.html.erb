@@ -16,7 +16,7 @@ Navarra.geocoding_ol.longitude_ol = <%= @extended_listing.the_geom.x %>
     <div id="possible_duplicates" class="span12"></div>
 
     <div class="form-inputs span12">
-      <div class="span12">
+      <div class="col-md-12">
         <%= f.input :name %>
         <%= f.input :poi_type_id, :collection => poi_types_for_select %>
         <%= f.input :poi_sub_type_id, :collection => poi_type_sub_types_for_select(@extended_listing.poi_type_id) %>
@@ -25,7 +25,7 @@ Navarra.geocoding_ol.longitude_ol = <%= @extended_listing.the_geom.x %>
         <%= f.input :phone_2 %>
         <%= f.input :website%>
         <%= f.input :email%>
-        <%= f.input :city_id,  collection: city_for_chosen(@extended_listing.city_id),  input_html: {class: "span8"} %>
+        <%= f.input :city_id,  collection: city_for_chosen(@extended_listing.city_id),  input_html: {class: "col-md-8"} %>
         <%= f.input :street, input_html: {class: 'street'} %>
         <%= f.input :street_2, input_html: {class: 'street'} %>
         <%= f.input :street_3, input_html: {class: 'street'} %>

@@ -89,8 +89,8 @@ Navarra.poi_search_panel = function() {
     bindCountryComboChange();
     bindProvinceComboChange();
     bindDepartmentComboChange();
-    $('#q_control_date_gteq').datepicker({dateFormat: 'dd M yy'});
-    $('#q_control_date_lteq').datepicker({dateFormat: 'dd M yy'});
+    //$('#q_control_date_gteq').datepicker({dateFormat: 'dd M yy'});
+   // $('#q_control_date_lteq').datepicker({dateFormat: 'dd M yy'});
   }
 
   return {
