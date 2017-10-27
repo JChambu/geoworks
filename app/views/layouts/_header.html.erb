@@ -32,7 +32,11 @@
               <li><a><i class="fa fa-desktop"></i> Servicios <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu" style="display: none">
                   <li><%= link_to  t('menu.admin.extended_listings'), extended_listings_path() %></li>
-                  <li><%= link_to t('menu.geo_editions.title'), edit_geo_edition_path(last_id) %></li>
+                  <% if last_id.nil? %>
+                    <li><%= link_to t('menu.geo_editions.title'), geo_editions_path()%></li>
+                  <% else %>
+                  <li><%= link_to t('menu.geo_editions.title'), edit_geo_edition_path(last_id)%></li>
+                <% end %>
                 </ul>
               </li>
 
