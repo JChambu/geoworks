@@ -64,7 +64,7 @@ class ExtendedListing < ActiveRecord::Base
 
   def self.build_geom 
 
-    @extended = ExtendedListings.where("poi_status_id = 2 ")
+    @extended = ExtendedListing.where("poi_status_id = 2 ")
     @extended.each do |e|
       geom = ''
       #city = City.find(e.city_id) 
