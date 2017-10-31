@@ -2,6 +2,8 @@ class ExtendedListing < ActiveRecord::Base
 
   include PgSearch
 
+  require 'rgeo/active_record/spatial_factory_store'
+
   belongs_to :city
   has_one :department, :through => :city
   has_one :province, :through => :department
@@ -36,6 +38,22 @@ class ExtendedListing < ActiveRecord::Base
 
   #def self.build_geom (address, number, city_id)
 
+
+  def self.congrated_point
+
+    sql = "select a.the_geom, count(a.the_geom) as cantidad from extended_listings a ,
+    (select st_buffer(the_geom, 0.000001) as the_geom from extended_listings group by the_geom ) as b  
+    where st_contains(b.the_geom, a.the_geom) group by a.the_geom having count(a.the_geom) > 1 order by count(*) desc limit 20 "
+
+    @congrated = ActiveRecord::Base.connection.execute(sql)
+
+  end
+
+  def self.buffer
+  end
+
+
+
   def create_geom 
 
     if self.latitude and self.longitude and
@@ -46,21 +64,21 @@ class ExtendedListing < ActiveRecord::Base
 
   def self.build_geom 
 
-     @extended = ExtendedListing.where("poi_status_id = 4 ")
-     @extended.each do |e|
-     geom = ''
-     city = City.find(e.city_id) 
-     department = city.department
-     province = department.province
-     country = province.country
-     #@address = [[e.address, e.number], city.name, department.name, province.name, country.name].join(', ')
-     @address = [[e.address, e.number], department.name,  country.name].join(', ')
+    @extended = ExtendedListings.where("poi_status_id = 2 ")
+    @extended.each do |e|
+      geom = ''
+      #city = City.find(e.city_id) 
+      #department = city.department
+      province = e.province_name
+      country = "Chile"
+      #@address = [[e.address, e.number], city.name, department.name, province.name, country.name].join(', ')
+      @address = [[e.street, e.number, street_2, street_3], province,  country].join(', ')
 
-     geocode = Geocoder.coordinates(@address)
-     geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
-     e.update_attribute(:the_geom, geom )
+      geocode = Geocoder.coordinates(@address)
+      geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
+      e.update_attribute(:the_geom, geom )
 
-  end
+    end
   end
 
   def self.find_possible_duplicates attributes

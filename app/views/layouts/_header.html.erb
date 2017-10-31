@@ -35,8 +35,11 @@
                   <% if last_id.nil? %>
                     <li><%= link_to t('menu.geo_editions.title'), geo_editions_path()%></li>
                   <% else %>
-                  <li><%= link_to t('menu.geo_editions.title'), edit_geo_edition_path(last_id)%></li>
-                <% end %>
+                    <li><%= link_to t('menu.geo_editions.title'), edit_geo_edition_path(last_id)%></li>
+                  <% end %>
+      <% if current_user.name == 'Admin' %>
+        <li><%=  link_to  t('menu.admin.extended_listings_georeferenced'), georeferenced_extended_listings_path  %></li>
+      <% end  %>
                 </ul>
               </li>
 
