@@ -3,17 +3,14 @@
   <head>
     <%= render :partial => 'common/head' %>
   </head>
-  <body>
-      <div class="container-fluid">
-        <%= image_tag 'gw_banner.png' %>
-      </div>
-    <div class="container-fluid">
-      <div class="row-fluid">    
-        <div class="span-12">
+  <body class="login_image">
+      <div>
           <%= flash_messages %>
+        <div class="login_div">
+          
           <%= yield %>
         </div>
-      </div>      
+
     </div>
     <%= render :partial => 'common/footer' %>
   </body>
