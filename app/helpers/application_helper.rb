@@ -1,51 +1,51 @@
 module ApplicationHelper
-	LEFT_SIDEBAR_COLUMNS = 3
-	CONTENT_COLUMNS = 12
+  LEFT_SIDEBAR_COLUMNS = 3
+  CONTENT_COLUMNS = 12
 
   def safe_action_name action
     return "action_#{action}"
   end
 
-	def content_span_class
-		columns = CONTENT_COLUMNS
-		columns = CONTENT_COLUMNS - LEFT_SIDEBAR_COLUMNS if content_for? :left_sidebar
-		"col-md-#{columns}"
-	end
-
-	def def left_sidebar_span_class
-		"col-md-#{LEFT_SIDEBAR_COLUMNS}"
-	end
-
-	def nav_item label, path
-		content_tag :li, link_to(t(label), path)
-	end
-
-	def nav_divider 
-    "<li class='divider'></li>".html_safe
-    
+  def content_span_class
+    columns = CONTENT_COLUMNS
+    columns = CONTENT_COLUMNS - LEFT_SIDEBAR_COLUMNS if content_for? :left_sidebar
+    "col-md-#{columns}"
   end
-	def nav_dropdown_item label
-		return nav_item(label, "#") unless block_given?
-		content_tag(:li, class: 'dropdown') do
-			link_to(t(label), "#", class: 'dropdown-toggle', data: {toggle: 'dropdown'}) +
 
-			content_tag(:ul, yield, class: 'dropdown-menu')
-		end
-	end
+  def def left_sidebar_span_class
+    "col-md-#{LEFT_SIDEBAR_COLUMNS}"
+  end
 
-	def nav_subdropdown_item label
-		return nav_item(label, "#") unless block_given?
-		content_tag(:li, class: 'dropdown-submenu') do
-			link_to(t(label), "#", class: 'dropdown-toggle', data: {toggle: 'dropdown'}) +
-			content_tag(:ul, yield, class: 'dropdown-menu')
-	end
-	end
-	def pager collection
-		will_paginate collection,
-			:previous_label => t("pager.previous"),
-			:next_label => t("pager.next"),
-			renderer: BootstrapPagination::Rails
-	end
+  def nav_item label, path
+    content_tag :li, link_to(t(label), path)
+  end
+
+  def nav_divider 
+    "<li class='divider'></li>".html_safe
+
+  end
+  def nav_dropdown_item label
+    return nav_item(label, "#") unless block_given?
+    content_tag(:li, class: 'dropdown') do
+      link_to(t(label), "#", class: 'dropdown-toggle', data: {toggle: 'dropdown'}) +
+
+        content_tag(:ul, yield, class: 'dropdown-menu')
+    end
+  end
+
+  def nav_subdropdown_item label
+    return nav_item(label, "#") unless block_given?
+    content_tag(:li, class: 'dropdown-submenu') do
+      link_to(t(label), "#", class: 'dropdown-toggle', data: {toggle: 'dropdown'}) +
+        content_tag(:ul, yield, class: 'dropdown-menu')
+    end
+  end
+  def pager collection
+    will_paginate collection,
+      :previous_label => t("pager.previous"),
+      :next_label => t("pager.next"),
+      renderer: BootstrapPagination::Rails
+  end
 
   def control_group control, attr = ''
 
@@ -59,8 +59,8 @@ module ApplicationHelper
   end
 
   def order_link model_class, attr
-  	return model_class.human_attribute_name(attr) unless @search
-  	sort_link @search, attr, model_class.human_attribute_name(attr)
+    return model_class.human_attribute_name(attr) unless @search
+    sort_link @search, attr, model_class.human_attribute_name(attr)
   end
 
   def yes_no_label boolean
@@ -79,9 +79,17 @@ module ApplicationHelper
     end
 
     "<td style=\"width: 20px;\">" +
-    "<div class=\"ui-state-default ui-corner-all\">" +
-    link_to('', path, settings) +
-    "</div>" + 
-    "</td>"
+      "<div class=\"ui-state-default ui-corner-all\">" +
+      link_to('', path, settings) +
+      "</div>" + 
+      "</td>"
+  end
+  def link_to_add_fields(name, f, association)
+    new_object = f.object.send(association).klass.new
+    id = new_object.object_id
+    fields = f.fields_for(association, new_object, child_index: id) do |builder|
+      render(association.to_s.singularize + "_fields", f: builder)
+    end
+    link_to(name, '#', class: "add_fields", data: {id: id, fields: fields.gsub("\n", "")})
   end
 end
