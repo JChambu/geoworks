@@ -2,6 +2,7 @@
 
 <h1>Project Types</h1>
 
+<%= link_to 'New Project Type', new_project_type_path %>
 <table class="table table-stripe">
   <thead>
     <tr>
@@ -17,6 +18,8 @@
         <td><%= project_type.name %></td>
         <td><%= project_type.user.name %></td>
         <td><%= link_to "agregar Registros", projects_path(project_type_id: project_type.id) %></td>
+        <td><%= link_to 'Maps', project_types_maps_path(project_type_id: project_type.id)%></td>
+        <td><%= link_to 'Dashboard', project_types_dashboard_path(project_type.id) %></td>
         <td><%= link_to 'Show', project_type %></td>
         <td><%= link_to 'Edit', edit_project_type_path(project_type) %></td>
         <td><%= link_to 'Destroy', project_type, method: :delete, data: { confirm: 'Are you sure?' } %></td>
@@ -34,13 +37,11 @@ Fulcum
     <th></th>
   </thead>
   <tbody>
-    <% @project_fulcrum.objects.each do |project| %>
+    <% #@project_fulcrum.objects.each do |project| %>
       <tr>
-        <td><%= project['id'] %></td>
-        <td><%= project['name'] %></td>
       </tr>
-    <% end %>
+    <% #end %>
   </tbody>
 </table>
 <br>
-<%= link_to 'New Project Type', new_project_type_path %>
+

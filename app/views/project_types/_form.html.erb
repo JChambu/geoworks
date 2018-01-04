@@ -25,3 +25,19 @@
     <%= f.submit %>
   </div>
 <% end %>
+
+<%= simple_form_for @project_type, html: {multipart: true}  do |f| %>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+        <%= f.file_field(:file, multiple: true)  %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+
+<% end %>
+
+

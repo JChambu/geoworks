@@ -2,11 +2,17 @@
 
 <h1>Projects</h1>
 
+<%= link_to 'Nuevo registro', new_project_path(@project_type) %>
+<%= link_to 'Exportar', projects_path(project_type_id: @project_type, format: 'csv') %>
+
+<div>
+  <%= will_paginate %>
+</div>
 <table class="table table-stripe">
   <thead>
     <tr>
       <% @fields.each do |field|  %>
-        <th><%= field.name %></th>        
+        <th><%= order_link Project, field.name%></th>        
       <% end %>
     </tr>
   </thead>
@@ -14,8 +20,7 @@
     <% @projects.each do |project| %>
       <tr>
         <% project.properties.each do |property| %>
-          <td><%= property[1]%></td>
-
+          <td><%= property[1]   %></td>
         <% end %>
         <td><%= link_to 'Show', project %></td>
         <td><%= link_to 'Edit', edit_project_path(project) %></td>
@@ -26,4 +31,4 @@
 </table>
 <br>
 
-<%= link_to 'Nuevo registro', new_project_path(@project_type) %>
+
