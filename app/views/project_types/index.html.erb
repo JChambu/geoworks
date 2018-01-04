@@ -17,7 +17,7 @@
       <tr>
         <td><%= project_type.name %></td>
         <td><%= project_type.user.name %></td>
-        <td><%= link_to "agregar Registros", projects_path(project_type_id: project_type.id) %></td>
+        <td><%= link_to "Registros", projects_path(project_type_id: project_type.id) %></td>
         <td><%= link_to 'Maps', project_types_maps_path(project_type_id: project_type.id)%></td>
         <td><%= link_to 'Dashboard', project_types_dashboard_path(project_type.id) %></td>
         <td><%= link_to 'Show', project_type %></td>
