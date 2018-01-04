@@ -606,7 +606,7 @@ ActiveRecord::Schema.define(version: 20171129141820) do
     t.integer  "project_type_id"
     t.datetime "created_at",                                               null: false
     t.datetime "updated_at",                                               null: false
-    t.geometry "the_geom",       :srid=>4326
+    t.point "the_geom",       :srid=>4326
     t.index ["project_type_id"], name: "index_projects_on_project_type_id", using: :btree
   end
 
