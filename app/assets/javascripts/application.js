@@ -15,6 +15,8 @@
 //= require bootstrap.min
 //= require switchery/switchery.min
 //= require nicescroll/jquery.nicescroll.min
+//= require progressbar
+//= require moment.min
 //= require custom
 //= require navarra
 //= require common
@@ -33,4 +35,4 @@
 //= require react
 //= require react_ujs
 //= require components
-//= require_tree .
+//= require_tree 

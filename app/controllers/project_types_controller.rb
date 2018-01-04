@@ -3,9 +3,16 @@ class ProjectTypesController < ApplicationController
 
   # GET /project_types
   # GET /project_types.json
+  def maps
+  end
+  
+  def dashboard
+      @counts = ProjectType.counters(params[:id])
+
+  end
   def index
     @project_types = ProjectType.all
-    @project_fulcrum = ProjectType.query_fulcrum
+  # @project_fulcrum = ProjectType.query_fulcrum
   end
 
   # GET /project_types/1
@@ -26,7 +33,6 @@ class ProjectTypesController < ApplicationController
   # POST /project_types.json
   def create
     @project_type = ProjectType.new(project_type_params)
-
     respond_to do |format|
       if @project_type.save
         format.html { redirect_to @project_type, notice: 'Project type was successfully created.' }
@@ -70,6 +76,6 @@ class ProjectTypesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def project_type_params
-      params.require(:project_type).permit(:name, fields_attributes: [:id, :field_type, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id]).merge(user_id: current_user.id)
+      params.require(:project_type).permit(:name, {file:[]}, fields_attributes: [:id, :field_type, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id]).merge(user_id: current_user.id)
     end
 end
