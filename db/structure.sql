@@ -1,0 +1,2363 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.6.3
+-- Dumped by pg_dump version 10.1
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: postgis; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA postgis;
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: actions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE actions (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: actions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE actions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: actions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE actions_id_seq OWNED BY actions.id;
+
+
+--
+-- Name: app_configurations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE app_configurations (
+    id integer NOT NULL,
+    gisworking_initial_identifier integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: app_configurations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE app_configurations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: app_configurations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE app_configurations_id_seq OWNED BY app_configurations.id;
+
+
+--
+-- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE ar_internal_metadata (
+    key character varying NOT NULL,
+    value character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: blocks; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE blocks (
+    id integer NOT NULL,
+    manzana integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: blocks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE blocks_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: blocks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE blocks_id_seq OWNED BY blocks.id;
+
+
+--
+-- Name: categories; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE categories (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    category_original integer,
+    prefix boolean DEFAULT false
+);
+
+
+--
+-- Name: categories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE categories_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE categories_id_seq OWNED BY categories.id;
+
+
+--
+-- Name: chains; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE chains (
+    id integer NOT NULL,
+    name character varying,
+    identifier character varying,
+    poi_type_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    objetive integer DEFAULT 0,
+    country_id integer,
+    alias character varying
+);
+
+
+--
+-- Name: chains_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE chains_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: chains_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE chains_id_seq OWNED BY chains.id;
+
+
+--
+-- Name: cities; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE cities (
+    id integer NOT NULL,
+    name character varying,
+    department_id integer,
+    zip character varying,
+    proiority integer,
+    the_geom point,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: cities_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE cities_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: cities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE cities_id_seq OWNED BY cities.id;
+
+
+--
+-- Name: countries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE countries (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: countries_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE countries_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: countries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE countries_id_seq OWNED BY countries.id;
+
+
+--
+-- Name: customers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE customers (
+    id integer NOT NULL,
+    name character varying,
+    subdomain character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    supplier_map character varying DEFAULT 'osm'::character varying
+);
+
+
+--
+-- Name: customers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE customers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: customers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE customers_id_seq OWNED BY customers.id;
+
+
+--
+-- Name: delayed_jobs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE delayed_jobs (
+    id integer NOT NULL,
+    priority integer DEFAULT 0 NOT NULL,
+    attempts integer DEFAULT 0 NOT NULL,
+    handler text NOT NULL,
+    last_error text,
+    run_at timestamp without time zone,
+    locked_at timestamp without time zone,
+    failed_at timestamp without time zone,
+    locked_by character varying,
+    queue character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: delayed_jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE delayed_jobs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: delayed_jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE delayed_jobs_id_seq OWNED BY delayed_jobs.id;
+
+
+--
+-- Name: departments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE departments (
+    id integer NOT NULL,
+    name character varying,
+    province_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: departments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE departments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: departments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE departments_id_seq OWNED BY departments.id;
+
+
+--
+-- Name: extended_listing_loads; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE extended_listing_loads (
+    id integer NOT NULL,
+    name character varying,
+    status character varying,
+    success_count integer,
+    fail_count integer,
+    already_loaded_count integer,
+    directory_name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: extended_listing_loads_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extended_listing_loads_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extended_listing_loads_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extended_listing_loads_id_seq OWNED BY extended_listing_loads.id;
+
+
+--
+-- Name: extended_listings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE extended_listings (
+    id integer NOT NULL,
+    name character varying,
+    street character varying,
+    city_id integer,
+    user_id integer,
+    category_id integer,
+    the_geom point,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    phone character varying,
+    source character varying,
+    address character varying,
+    number character varying,
+    hash_value character varying,
+    identifier integer NOT NULL,
+    poi_status_id integer DEFAULT 2,
+    category_original_id integer,
+    poi_type_id integer,
+    poi_sub_type_id integer,
+    website character varying,
+    email character varying,
+    neighborhood_id integer,
+    phone_2 character varying,
+    phone_2_new character varying,
+    street_2 character varying,
+    street_3 character varying
+);
+
+
+--
+-- Name: extended_listings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extended_listings_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extended_listings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extended_listings_id_seq OWNED BY extended_listings.id;
+
+
+--
+-- Name: extended_listings_identifier_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extended_listings_identifier_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extended_listings_identifier_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extended_listings_identifier_seq OWNED BY extended_listings.identifier;
+
+
+--
+-- Name: food_types; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE food_types (
+    id integer NOT NULL,
+    name character varying,
+    poi_type_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    code character varying
+);
+
+
+--
+-- Name: food_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE food_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: food_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE food_types_id_seq OWNED BY food_types.id;
+
+
+--
+-- Name: generate_deliveries; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE generate_deliveries (
+    id integer NOT NULL,
+    name character varying,
+    country_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: generate_deliveries_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE generate_deliveries_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: generate_deliveries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE generate_deliveries_id_seq OWNED BY generate_deliveries.id;
+
+
+--
+-- Name: geo_editions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE geo_editions (
+    id integer NOT NULL,
+    name character varying,
+    street character varying,
+    number character varying,
+    address character varying,
+    company character varying,
+    city integer,
+    recid integer,
+    number_door_start_original character varying,
+    number_door_start character varying,
+    number_door_end_original character varying,
+    number_door_end character varying,
+    code character varying,
+    the_geom point,
+    the_geom_segment line,
+    the_geom_segment_original line,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    poi_status_id integer,
+    gw_div1 integer,
+    gw_div2 integer,
+    gw_geomainid integer,
+    gw_qh integer,
+    gw_calleid integer,
+    gw_pta_ini integer,
+    gw_pta_fin integer,
+    gw_paridad character varying,
+    gw_status character varying,
+    paridad character varying,
+    user_id integer,
+    gw_street character varying,
+    gw_code character varying,
+    observations text,
+    delivered boolean DEFAULT false,
+    yard boolean,
+    wasteland boolean
+);
+
+
+--
+-- Name: geo_editions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE geo_editions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: geo_editions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE geo_editions_id_seq OWNED BY geo_editions.id;
+
+
+--
+-- Name: load_locations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE load_locations (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    status character varying,
+    directory_name character varying
+);
+
+
+--
+-- Name: load_locations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE load_locations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: load_locations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE load_locations_id_seq OWNED BY load_locations.id;
+
+
+--
+-- Name: p_actions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE p_actions (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: p_actions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE p_actions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: p_actions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE p_actions_id_seq OWNED BY p_actions.id;
+
+
+--
+-- Name: parkings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE parkings (
+    id integer NOT NULL,
+    name character varying,
+    street character varying,
+    brand character varying,
+    operator character varying,
+    facility_type_id integer,
+    levels integer,
+    city_id integer,
+    the_geom geometry(Point,4326),
+    the_geom_entrance geometry(Point,4326),
+    the_geom_exit geometry(Point,4326),
+    phone character varying,
+    website character varying,
+    detailed_pricing_model character varying,
+    price numeric(10,2),
+    currency character varying,
+    available_payment_methods character varying,
+    regular_openning_hours character varying,
+    exceptions_opening character varying,
+    the_geom_area geometry(Polygon,4326),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    number integer,
+    restrinctions character varying,
+    max_drive_height character varying,
+    max_drive_width character varying,
+    elevators boolean DEFAULT false,
+    escalators boolean DEFAULT false,
+    handicapped_accessible boolean DEFAULT false,
+    handicapped_parking_spaces boolean DEFAULT false,
+    women_parking_spaces boolean DEFAULT false,
+    sanitation_facilities boolean DEFAULT false,
+    restroom_available boolean DEFAULT false,
+    secure_parking boolean DEFAULT false,
+    security_manned boolean DEFAULT false,
+    electric_vehicle_charging_points boolean DEFAULT false,
+    connector_type boolean DEFAULT false,
+    number_of_connectors boolean DEFAULT false,
+    charge_point_operator boolean DEFAULT false,
+    payment_methods boolean DEFAULT false,
+    light boolean DEFAULT false,
+    motorcycle_parking_spaces boolean DEFAULT false,
+    family_friendly boolean DEFAULT false,
+    carwash boolean DEFAULT false,
+    parking_disc boolean DEFAULT false,
+    parking_ticket boolean DEFAULT false,
+    gate boolean DEFAULT false,
+    monitored boolean DEFAULT false,
+    "none" boolean DEFAULT false,
+    total_space character varying,
+    space_available character varying,
+    available character varying,
+    trend character varying,
+    total_disabled_space character varying,
+    available_disabled_space character varying,
+    flag boolean DEFAULT false,
+    the_geom_area_original character varying,
+    user_id integer,
+    p_action_id integer,
+    poi_status_id integer,
+    payment character varying,
+    parking_configuration character varying,
+    parking_capacity character varying,
+    parking_type character varying,
+    machine_readable boolean,
+    maximum_duration character varying,
+    tow_away_zone boolean,
+    street_sweeping boolean,
+    street_mall_time_market boolean,
+    pedestrian_zone_time boolean,
+    snow_route boolean,
+    clearway boolean,
+    residential boolean,
+    handicapped boolean,
+    diplomatic boolean,
+    media_press boolean,
+    other boolean,
+    loading_unloading_zone boolean,
+    drop_pick_up_zona boolean,
+    disabled_handicap_only boolean,
+    private_parking boolean,
+    commercial_vehicles_only boolean,
+    side_street character varying,
+    max_duration_parking_disc character varying
+);
+
+
+--
+-- Name: parkings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE parkings_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: parkings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE parkings_id_seq OWNED BY parkings.id;
+
+
+--
+-- Name: pg_search_documents; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE pg_search_documents (
+    id integer NOT NULL,
+    content text,
+    searchable_type character varying,
+    searchable_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: pg_search_documents_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE pg_search_documents_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: pg_search_documents_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE pg_search_documents_id_seq OWNED BY pg_search_documents.id;
+
+
+--
+-- Name: poi_address_loads; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE poi_address_loads (
+    id integer NOT NULL,
+    name character varying,
+    status character varying,
+    directory_name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    success_count character varying,
+    fail_count character varying,
+    already_loaded_count character varying,
+    city_id integer,
+    color character varying
+);
+
+
+--
+-- Name: poi_address_loads_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE poi_address_loads_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: poi_address_loads_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE poi_address_loads_id_seq OWNED BY poi_address_loads.id;
+
+
+--
+-- Name: poi_addresses; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE poi_addresses (
+    id integer NOT NULL,
+    city_id integer,
+    street character varying,
+    number character varying,
+    neighborhood character varying,
+    block character varying,
+    house character varying,
+    the_geom point,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    user_id integer,
+    source character varying,
+    color character varying,
+    address_complete character varying,
+    rol_number character varying,
+    city_name character varying,
+    department_name character varying,
+    province_name character varying,
+    country_name character varying,
+    p_action_id integer,
+    note character varying,
+    phone character varying,
+    web character varying,
+    name character varying,
+    recid integer,
+    name_company character varying,
+    phone_company character varying,
+    birthdate date
+);
+
+
+--
+-- Name: poi_addresses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE poi_addresses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: poi_addresses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE poi_addresses_id_seq OWNED BY poi_addresses.id;
+
+
+--
+-- Name: poi_loads; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE poi_loads (
+    id integer NOT NULL,
+    name character varying,
+    load_date timestamp without time zone,
+    status character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    success_count integer,
+    fail_count integer,
+    already_loaded_count integer,
+    directory_name character varying
+);
+
+
+--
+-- Name: poi_loads_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE poi_loads_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: poi_loads_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE poi_loads_id_seq OWNED BY poi_loads.id;
+
+
+--
+-- Name: poi_sources; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE poi_sources (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: poi_sources_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE poi_sources_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: poi_sources_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE poi_sources_id_seq OWNED BY poi_sources.id;
+
+
+--
+-- Name: poi_statuses; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE poi_statuses (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: poi_statuses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE poi_statuses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: poi_statuses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE poi_statuses_id_seq OWNED BY poi_statuses.id;
+
+
+--
+-- Name: poi_sub_types; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE poi_sub_types (
+    id integer NOT NULL,
+    name character varying,
+    poi_type_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    identifier integer
+);
+
+
+--
+-- Name: poi_sub_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE poi_sub_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: poi_sub_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE poi_sub_types_id_seq OWNED BY poi_sub_types.id;
+
+
+--
+-- Name: poi_types; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE poi_types (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    code character varying
+);
+
+
+--
+-- Name: poi_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE poi_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: poi_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE poi_types_id_seq OWNED BY poi_types.id;
+
+
+--
+-- Name: pois; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE pois (
+    id integer NOT NULL,
+    name character varying,
+    short_name character varying,
+    website character varying,
+    email character varying,
+    second_email character varying,
+    note text,
+    cel_number character varying,
+    phone character varying,
+    second_phone character varying,
+    fax character varying,
+    house_number character varying,
+    contact text,
+    priority integer,
+    location text,
+    city_id integer,
+    chain_id integer,
+    food_type_id integer,
+    poi_source_id integer,
+    poi_type_id integer,
+    poi_sub_type_id integer,
+    street_name character varying,
+    street_type_id integer,
+    user_id integer,
+    poi_status_id integer,
+    active boolean DEFAULT true,
+    deleted boolean DEFAULT false,
+    duplicated_identifier integer,
+    identifier integer,
+    control_date date,
+    the_geom geometry(Point,4326),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    poi_load_id integer,
+    old_identifier integer,
+    identifier_hash character varying,
+    p_action_id integer,
+    verification boolean DEFAULT false,
+    internal_observation character varying,
+    restaurant_type_id integer,
+    last_update date
+);
+
+
+--
+-- Name: pois_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE pois_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: pois_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE pois_id_seq OWNED BY pois.id;
+
+
+--
+-- Name: project_fields; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE project_fields (
+    id integer NOT NULL,
+    name character varying,
+    field_type character varying,
+    required boolean,
+    cleasing_data boolean,
+    georeferenced boolean,
+    project_type_id integer,
+    regexp_type_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: project_fields_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE project_fields_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: project_fields_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE project_fields_id_seq OWNED BY project_fields.id;
+
+
+--
+-- Name: project_types; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE project_types (
+    id integer NOT NULL,
+    name character varying,
+    user_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    directory_name character varying
+);
+
+
+--
+-- Name: project_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE project_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: project_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE project_types_id_seq OWNED BY project_types.id;
+
+
+--
+-- Name: projects; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE projects (
+    id integer NOT NULL,
+    properties jsonb,
+    project_type_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    the_geom geometry(Geometry,4326)
+);
+
+
+--
+-- Name: projects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE projects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: projects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE projects_id_seq OWNED BY projects.id;
+
+
+--
+-- Name: provinces; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE provinces (
+    id integer NOT NULL,
+    name character varying,
+    country_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: provinces_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE provinces_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: provinces_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE provinces_id_seq OWNED BY provinces.id;
+
+
+--
+-- Name: regexp_types; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE regexp_types (
+    id integer NOT NULL,
+    name character varying,
+    expresion character varying,
+    observations text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: regexp_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE regexp_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: regexp_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE regexp_types_id_seq OWNED BY regexp_types.id;
+
+
+--
+-- Name: restaurant_types; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE restaurant_types (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: restaurant_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE restaurant_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: restaurant_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE restaurant_types_id_seq OWNED BY restaurant_types.id;
+
+
+--
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE schema_migrations (
+    version character varying NOT NULL
+);
+
+
+--
+-- Name: street_types; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE street_types (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: street_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE street_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: street_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE street_types_id_seq OWNED BY street_types.id;
+
+
+--
+-- Name: streets; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE streets (
+    id integer NOT NULL,
+    start_number integer,
+    end_number integer,
+    count_intersections integer,
+    meters_long_intersection double precision,
+    the_geom line,
+    name character varying,
+    city_id integer,
+    street_type_id integer,
+    code integer,
+    city_name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: streets_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE streets_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: streets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE streets_id_seq OWNED BY streets.id;
+
+
+--
+-- Name: terms; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE terms (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: terms_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE terms_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: terms_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE terms_id_seq OWNED BY terms.id;
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE users (
+    id integer NOT NULL,
+    role character varying,
+    name character varying,
+    email character varying DEFAULT ''::character varying NOT NULL,
+    encrypted_password character varying DEFAULT ''::character varying NOT NULL,
+    remember_created_at timestamp without time zone,
+    sign_in_count integer DEFAULT 0,
+    current_sign_in_at timestamp without time zone,
+    last_sign_in_at timestamp without time zone,
+    current_sign_in_ip character varying,
+    last_sign_in_ip character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    failed_attempts integer DEFAULT 0 NOT NULL,
+    unlock_token character varying,
+    locked_at timestamp without time zone
+);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE users_id_seq OWNED BY users.id;
+
+
+--
+-- Name: verification_pois; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE verification_pois (
+    id integer NOT NULL,
+    poi_id integer,
+    user_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: verification_pois_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE verification_pois_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: verification_pois_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE verification_pois_id_seq OWNED BY verification_pois.id;
+
+
+--
+-- Name: versions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE versions (
+    id integer NOT NULL,
+    item_type character varying NOT NULL,
+    item_id integer NOT NULL,
+    event character varying NOT NULL,
+    whodunnit character varying,
+    object text,
+    created_at timestamp without time zone
+);
+
+
+--
+-- Name: versions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE versions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: versions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE versions_id_seq OWNED BY versions.id;
+
+
+--
+-- Name: actions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY actions ALTER COLUMN id SET DEFAULT nextval('actions_id_seq'::regclass);
+
+
+--
+-- Name: app_configurations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY app_configurations ALTER COLUMN id SET DEFAULT nextval('app_configurations_id_seq'::regclass);
+
+
+--
+-- Name: blocks id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY blocks ALTER COLUMN id SET DEFAULT nextval('blocks_id_seq'::regclass);
+
+
+--
+-- Name: categories id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY categories ALTER COLUMN id SET DEFAULT nextval('categories_id_seq'::regclass);
+
+
+--
+-- Name: chains id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY chains ALTER COLUMN id SET DEFAULT nextval('chains_id_seq'::regclass);
+
+
+--
+-- Name: cities id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY cities ALTER COLUMN id SET DEFAULT nextval('cities_id_seq'::regclass);
+
+
+--
+-- Name: countries id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY countries ALTER COLUMN id SET DEFAULT nextval('countries_id_seq'::regclass);
+
+
+--
+-- Name: customers id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY customers ALTER COLUMN id SET DEFAULT nextval('customers_id_seq'::regclass);
+
+
+--
+-- Name: delayed_jobs id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY delayed_jobs ALTER COLUMN id SET DEFAULT nextval('delayed_jobs_id_seq'::regclass);
+
+
+--
+-- Name: departments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY departments ALTER COLUMN id SET DEFAULT nextval('departments_id_seq'::regclass);
+
+
+--
+-- Name: extended_listing_loads id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extended_listing_loads ALTER COLUMN id SET DEFAULT nextval('extended_listing_loads_id_seq'::regclass);
+
+
+--
+-- Name: extended_listings id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extended_listings ALTER COLUMN id SET DEFAULT nextval('extended_listings_id_seq'::regclass);
+
+
+--
+-- Name: extended_listings identifier; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extended_listings ALTER COLUMN identifier SET DEFAULT nextval('extended_listings_identifier_seq'::regclass);
+
+
+--
+-- Name: food_types id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY food_types ALTER COLUMN id SET DEFAULT nextval('food_types_id_seq'::regclass);
+
+
+--
+-- Name: generate_deliveries id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY generate_deliveries ALTER COLUMN id SET DEFAULT nextval('generate_deliveries_id_seq'::regclass);
+
+
+--
+-- Name: geo_editions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY geo_editions ALTER COLUMN id SET DEFAULT nextval('geo_editions_id_seq'::regclass);
+
+
+--
+-- Name: load_locations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY load_locations ALTER COLUMN id SET DEFAULT nextval('load_locations_id_seq'::regclass);
+
+
+--
+-- Name: p_actions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY p_actions ALTER COLUMN id SET DEFAULT nextval('p_actions_id_seq'::regclass);
+
+
+--
+-- Name: parkings id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY parkings ALTER COLUMN id SET DEFAULT nextval('parkings_id_seq'::regclass);
+
+
+--
+-- Name: pg_search_documents id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pg_search_documents ALTER COLUMN id SET DEFAULT nextval('pg_search_documents_id_seq'::regclass);
+
+
+--
+-- Name: poi_address_loads id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_address_loads ALTER COLUMN id SET DEFAULT nextval('poi_address_loads_id_seq'::regclass);
+
+
+--
+-- Name: poi_addresses id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_addresses ALTER COLUMN id SET DEFAULT nextval('poi_addresses_id_seq'::regclass);
+
+
+--
+-- Name: poi_loads id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_loads ALTER COLUMN id SET DEFAULT nextval('poi_loads_id_seq'::regclass);
+
+
+--
+-- Name: poi_sources id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_sources ALTER COLUMN id SET DEFAULT nextval('poi_sources_id_seq'::regclass);
+
+
+--
+-- Name: poi_statuses id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_statuses ALTER COLUMN id SET DEFAULT nextval('poi_statuses_id_seq'::regclass);
+
+
+--
+-- Name: poi_sub_types id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_sub_types ALTER COLUMN id SET DEFAULT nextval('poi_sub_types_id_seq'::regclass);
+
+
+--
+-- Name: poi_types id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_types ALTER COLUMN id SET DEFAULT nextval('poi_types_id_seq'::regclass);
+
+
+--
+-- Name: pois id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pois ALTER COLUMN id SET DEFAULT nextval('pois_id_seq'::regclass);
+
+
+--
+-- Name: project_fields id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY project_fields ALTER COLUMN id SET DEFAULT nextval('project_fields_id_seq'::regclass);
+
+
+--
+-- Name: project_types id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY project_types ALTER COLUMN id SET DEFAULT nextval('project_types_id_seq'::regclass);
+
+
+--
+-- Name: projects id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY projects ALTER COLUMN id SET DEFAULT nextval('projects_id_seq'::regclass);
+
+
+--
+-- Name: provinces id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY provinces ALTER COLUMN id SET DEFAULT nextval('provinces_id_seq'::regclass);
+
+
+--
+-- Name: regexp_types id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY regexp_types ALTER COLUMN id SET DEFAULT nextval('regexp_types_id_seq'::regclass);
+
+
+--
+-- Name: restaurant_types id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY restaurant_types ALTER COLUMN id SET DEFAULT nextval('restaurant_types_id_seq'::regclass);
+
+
+--
+-- Name: street_types id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY street_types ALTER COLUMN id SET DEFAULT nextval('street_types_id_seq'::regclass);
+
+
+--
+-- Name: streets id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY streets ALTER COLUMN id SET DEFAULT nextval('streets_id_seq'::regclass);
+
+
+--
+-- Name: terms id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY terms ALTER COLUMN id SET DEFAULT nextval('terms_id_seq'::regclass);
+
+
+--
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+--
+-- Name: verification_pois id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY verification_pois ALTER COLUMN id SET DEFAULT nextval('verification_pois_id_seq'::regclass);
+
+
+--
+-- Name: versions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY versions ALTER COLUMN id SET DEFAULT nextval('versions_id_seq'::regclass);
+
+
+--
+-- Name: actions actions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY actions
+    ADD CONSTRAINT actions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: app_configurations app_configurations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY app_configurations
+    ADD CONSTRAINT app_configurations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY ar_internal_metadata
+    ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: blocks blocks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY blocks
+    ADD CONSTRAINT blocks_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: categories categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY categories
+    ADD CONSTRAINT categories_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: chains chains_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY chains
+    ADD CONSTRAINT chains_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cities cities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY cities
+    ADD CONSTRAINT cities_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: countries countries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY countries
+    ADD CONSTRAINT countries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: customers customers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY customers
+    ADD CONSTRAINT customers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: delayed_jobs delayed_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY delayed_jobs
+    ADD CONSTRAINT delayed_jobs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: departments departments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY departments
+    ADD CONSTRAINT departments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extended_listing_loads extended_listing_loads_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extended_listing_loads
+    ADD CONSTRAINT extended_listing_loads_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extended_listings extended_listings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extended_listings
+    ADD CONSTRAINT extended_listings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: food_types food_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY food_types
+    ADD CONSTRAINT food_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: generate_deliveries generate_deliveries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY generate_deliveries
+    ADD CONSTRAINT generate_deliveries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: geo_editions geo_editions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY geo_editions
+    ADD CONSTRAINT geo_editions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: load_locations load_locations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY load_locations
+    ADD CONSTRAINT load_locations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: p_actions p_actions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY p_actions
+    ADD CONSTRAINT p_actions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: parkings parkings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY parkings
+    ADD CONSTRAINT parkings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pg_search_documents pg_search_documents_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pg_search_documents
+    ADD CONSTRAINT pg_search_documents_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: poi_address_loads poi_address_loads_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_address_loads
+    ADD CONSTRAINT poi_address_loads_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: poi_addresses poi_addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_addresses
+    ADD CONSTRAINT poi_addresses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: poi_loads poi_loads_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_loads
+    ADD CONSTRAINT poi_loads_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: poi_sources poi_sources_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_sources
+    ADD CONSTRAINT poi_sources_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: poi_statuses poi_statuses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_statuses
+    ADD CONSTRAINT poi_statuses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: poi_sub_types poi_sub_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_sub_types
+    ADD CONSTRAINT poi_sub_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: poi_types poi_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY poi_types
+    ADD CONSTRAINT poi_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pois pois_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pois
+    ADD CONSTRAINT pois_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: project_fields project_fields_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY project_fields
+    ADD CONSTRAINT project_fields_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: project_types project_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY project_types
+    ADD CONSTRAINT project_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: projects projects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY projects
+    ADD CONSTRAINT projects_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: provinces provinces_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY provinces
+    ADD CONSTRAINT provinces_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: regexp_types regexp_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY regexp_types
+    ADD CONSTRAINT regexp_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: restaurant_types restaurant_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY restaurant_types
+    ADD CONSTRAINT restaurant_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY schema_migrations
+    ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: street_types street_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY street_types
+    ADD CONSTRAINT street_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: streets streets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY streets
+    ADD CONSTRAINT streets_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: terms terms_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY terms
+    ADD CONSTRAINT terms_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: verification_pois verification_pois_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY verification_pois
+    ADD CONSTRAINT verification_pois_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: versions versions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY versions
+    ADD CONSTRAINT versions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: delayed_jobs_priority; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX delayed_jobs_priority ON delayed_jobs USING btree (priority, run_at);
+
+
+--
+-- Name: index_pg_search_documents_on_searchable_type_and_searchable_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_pg_search_documents_on_searchable_type_and_searchable_id ON pg_search_documents USING btree (searchable_type, searchable_id);
+
+
+--
+-- Name: index_project_fields_on_project_type_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_project_fields_on_project_type_id ON project_fields USING btree (project_type_id);
+
+
+--
+-- Name: index_project_types_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_project_types_on_user_id ON project_types USING btree (user_id);
+
+
+--
+-- Name: index_projects_on_project_type_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_projects_on_project_type_id ON projects USING btree (project_type_id);
+
+
+--
+-- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
+
+
+--
+-- Name: index_users_on_unlock_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_unlock_token ON users USING btree (unlock_token);
+
+
+--
+-- Name: index_versions_on_item_type_and_item_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_versions_on_item_type_and_item_id ON versions USING btree (item_type, item_id);
+
+
+--
+-- Name: project_fields fk_rails_b6f8db6003; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY project_fields
+    ADD CONSTRAINT fk_rails_b6f8db6003 FOREIGN KEY (project_type_id) REFERENCES project_types(id);
+
+
+--
+-- Name: projects fk_rails_d7ca4cafeb; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY projects
+    ADD CONSTRAINT fk_rails_d7ca4cafeb FOREIGN KEY (project_type_id) REFERENCES project_types(id);
+
+
+--
+-- Name: project_types fk_rails_f786c03c54; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY project_types
+    ADD CONSTRAINT fk_rails_f786c03c54 FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+SET search_path TO "public", "postgis";
+
+INSERT INTO schema_migrations (version) VALUES
+('20130712200422'),
+('20130712202501'),
+('20130712203244'),
+('20130712213531'),
+('20130712213701'),
+('20130712213724'),
+('20130712213824'),
+('20130712214619'),
+('20130715204959'),
+('20130716162158'),
+('20130716222456'),
+('20130722201635'),
+('20130723171738'),
+('20130727224622'),
+('20130727225014'),
+('20130729152410'),
+('20130729232640'),
+('20130730205108'),
+('20130802161930'),
+('20130802213706'),
+('20140321173957'),
+('20140321183208'),
+('20140321191518'),
+('20150211192354'),
+('20150815025523'),
+('20150903144510'),
+('20151111162301'),
+('20151216185716'),
+('20160125121901'),
+('20160331042003'),
+('20160411132731'),
+('20160610180826'),
+('20160614135136'),
+('20160711122603'),
+('20160714144748'),
+('20160714190301'),
+('20160728141659'),
+('20160818182716'),
+('20160824025942'),
+('20160902151714'),
+('20160906171104'),
+('20160906181015'),
+('20160908161607'),
+('20160915185501'),
+('20160929122519'),
+('20160929130245'),
+('20161006163523'),
+('20161018115728'),
+('20161020181359'),
+('20161028130406'),
+('20161109132537'),
+('20161118150927'),
+('20161130170735'),
+('20161130172957'),
+('20161130195711'),
+('20161228214311'),
+('20170116205359'),
+('20170117141109'),
+('20170203140610'),
+('20170207203335'),
+('20170209123239'),
+('20170209123540'),
+('20170211192009'),
+('20170228223801'),
+('20170329141559'),
+('20170330153434'),
+('20170331135955'),
+('20170331144751'),
+('20170331211118'),
+('20170401132722'),
+('20170404134053'),
+('20170405021153'),
+('20170405142624'),
+('20170405172200'),
+('20170420052648'),
+('20170424200126'),
+('20170424200710'),
+('20170424203712'),
+('20170425174157'),
+('20170426121854'),
+('20170502023002'),
+('20170502040156'),
+('20170505122458'),
+('20170510131228'),
+('20170515134255'),
+('20170519153942'),
+('20170519155838'),
+('20170602133837'),
+('20170605120723'),
+('20170608111444'),
+('20170609121847'),
+('20170626184150'),
+('20170705122736'),
+('20170808193743'),
+('20170818121523'),
+('20170831134941'),
+('20170915125850'),
+('20170927130628'),
+('20171003123035'),
+('20171011204141'),
+('20171012170523'),
+('20171012171528'),
+('20171106220541'),
+('20171116124255'),
+('20171129141820');
+
+
