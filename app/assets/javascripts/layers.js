@@ -593,7 +593,7 @@ Navarra.layers.vectorLayers = function(){
 [vectorLayerCoberturaBar, vectorLayerCobertura,  vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk, vectorLayerRevisar].forEach(function(layer){
     layer.on('change:visible', function(e){
       console.log(layer);
-  console.log(`Mi capa ${layer.name} está visible ? ${layer.getVisible()}`)  
+  console.log('Mi capa ${layer.name} está visible ? ${layer.getVisible()}')  
     }) 
   })
 }
