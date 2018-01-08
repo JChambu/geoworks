@@ -4,7 +4,7 @@ class ProjectTypesController < ApplicationController
   # GET /project_types
   # GET /project_types.json
   def maps
-    params[:data_id] = '10e64be4-f9c5-4f32-8505-523628c52d46'
+  #  params[:data_id] = '10e64be4-f9c5-4f32-8505-523628c52d46'
       @maps = ProjectType.records_maps(params[:data_id])
   end
  
