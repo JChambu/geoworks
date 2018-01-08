@@ -23,10 +23,12 @@ Rails.application.routes.draw do
   get 'poi_types/:id/food_types' => 'poi_types#food_types'
 
 
-  scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
+ get 'project_types/maps' => 'project_types#maps'
+ get 'project_types/graph3' => 'project_types#graph2'
+ 
+ scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
  get 'dashboard/index'
- get 'project_types/maps'
  get 'project_types/:id/dashboard' => 'project_types#dashboard',  :as => :project_types_dashboard
 
 
