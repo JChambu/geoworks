@@ -18,7 +18,6 @@
 //= require progressbar
 //= require moment.min
 //= require chart.min
-//= require custom
 //= require navarra
 //= require common
 //= require layers
