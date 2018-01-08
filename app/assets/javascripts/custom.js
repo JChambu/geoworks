@@ -520,13 +520,13 @@ function init_chart_doughnut(){
 
   console.log('init_chart_doughnut');
     
-        data = {labels:[{"prueba1":10, "prueba2":20, "prueba3":30}]};
+/*        data = {labels:[{"prueba1":10, "prueba2":20, "prueba3":30}]};
      var labels = [];
     $.each(data, function(i, val) {
           console.log(val[0]);  
       
     })
-        console.log(labels);
+        console.log(labels);*/
   if ($('.canvasDoughnut').length){
 
 
