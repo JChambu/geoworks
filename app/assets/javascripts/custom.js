@@ -498,7 +498,7 @@ var randNum = function() {
   return (Math.floor(Math.random() * (1 + 40 - 20))) + 20;
 };
 
-
+/*
 function init_charts() {
 
           console.log('run_charts  typeof [' + typeof (Chart) + ']');
@@ -512,7 +512,7 @@ function init_charts() {
                       enabled: false
                     };
 }
-
+*/
 
 function init_chart_doughnut(){
 
@@ -576,11 +576,9 @@ function init_chart_doughnut(){
 }
 
 
-
-
 $(document).ready(function() {
   init_daterangepicker();
   init_flot_chart();
-  init_charts(); 
+//  init_charts(); 
   init_chart_doughnut();
 });
