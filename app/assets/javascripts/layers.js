@@ -1,5 +1,6 @@
 Navarra.namespace("layers.add");
 Navarra.namespace("layers.basemaps");
+Navarra.namespace("layers.api");
 Navarra.namespace("layers.urls");
 Navarra.namespace("layers.vectorSources");
 Navarra.namespace("layers.vectorLayers");
@@ -23,6 +24,47 @@ Navarra.layers.basemaps = function(){
 
   return [noneLayer, osmLayer];
 }
+
+
+Navarra.layers.api = function(){
+let data_f = []
+    $.ajax({
+        type: 'GET',
+        url: '/project_types/maps.json',
+        datatype: 'json',
+        data: {data_id: '10e64be4-f9c5-4f32-8505-523628c52d46'},
+      success: function(data){
+        data_f = data;
+    },
+      error: function(XHR, textStatus, error){
+        console.log(error);
+      }
+    })
+
+  return data_f;
+/*
+  var markers = new ol.layer.Tile({
+    title: 'OSM',
+    type: 'layer',
+    visible: 'true',
+    opacity: 0.9,
+    source: new ol.source.OSM()
+  });
+
+  return [markers];
+*/
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 var filter, subdomain 
@@ -542,9 +584,12 @@ Navarra.layers.vectorLayers = function(){
   vectorLayerNew = new ol.layer.Vector({
     title:'Segmentos nuevos',
     type: 'overlays',
+    name: 'nuevo',
     source: vectorSource_geoserver_new,
     style: styleNew
   });
+
+
 
   //vectorLayerCoberturaBar.setVisible(false);
   //vectorLayerSinInfo.setVisible(false);
@@ -555,6 +600,12 @@ Navarra.layers.vectorLayers = function(){
   //vectorLayerCobertura.setVisible(false);
   //vectorLayerNew.setVisible(false); 
 
+[vectorLayerCoberturaBar, vectorLayerCobertura,  vectorLayerManzana,  vectorLayerNew,  vectorLayerDesfasaje, vectorLayerSinInfo, vectorLayerPosible, vectorLayerOk, vectorLayerRevisar].forEach(function(layer){
+    layer.on('change:visible', function(e){
+      console.log(layer);
+  console.log(`Mi capa ${layer.name} está visible ? ${layer.getVisible()}`)  
+    }) 
+  })
 }
 
 

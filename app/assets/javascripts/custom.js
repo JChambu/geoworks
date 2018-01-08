@@ -492,13 +492,95 @@ function init_flot_chart(){
 
 
 function gd(year, month, day) {
-      return new Date(year, month - 1, day).getTime();
-    }
+  return new Date(year, month - 1, day).getTime();
+}
 var randNum = function() {
-      return (Math.floor(Math.random() * (1 + 40 - 20))) + 20;
-    };
+  return (Math.floor(Math.random() * (1 + 40 - 20))) + 20;
+};
+
+
+function init_charts() {
+
+          console.log('run_charts  typeof [' + typeof (Chart) + ']');
+
+          if( typeof (Chart) === 'undefined'){ return; }
+
+          console.log('init_charts');
+
+
+          Chart.defaults.global.legend = {
+                      enabled: false
+                    };
+}
+
+
+function init_chart_doughnut(){
+
+  if( typeof (Chart) === 'undefined'){ return; }
+
+  console.log('init_chart_doughnut');
+    
+        data = {labels:[{"prueba1":10, "prueba2":20, "prueba3":30}]
+     var labels = [];
+    $.each(data, function(i, val) {
+          console.log(val[0]);  
+      
+    })
+        console.log(labels);
+  if ($('.canvasDoughnut').length){
+
+
+    var chart_doughnut_settings = {
+      type: 'doughnut',
+      tooltipFillColor: "rgba(51, 51, 51, 0.55)",
+      data: {
+        labels: [
+          "Symbian",
+          "Blackberry",
+          "Other",
+          "Android",
+          "IOS"
+        ],
+        datasets: [{
+          data: [15, 20, 30, 10, 30],
+          backgroundColor: [
+            "#BDC3C7",
+            "#9B59B6",
+            "#E74C3C",
+            "#26B99A",
+            "#3498DB"
+          ],
+          hoverBackgroundColor: [
+            "#CFD4D8",
+            "#B370CF",
+            "#E95E4F",
+            "#36CAAB",
+            "#49A9EA"
+          ]
+        }]
+      },
+      options: {
+        legend: false,
+        responsive: false
+      }
+    }
+    $('.canvasDoughnut').each(function(){
+
+      var chart_element = $(this);
+      var chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
+
+    });
+
+  }
+
+}
+
+
+
 
 $(document).ready(function() {
   init_daterangepicker();
   init_flot_chart();
+  init_charts(); 
+  init_chart_doughnut();
 });
