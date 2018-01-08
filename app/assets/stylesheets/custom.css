@@ -1,3 +1,7 @@
+.map { 
+  height: 20%; 
+  width: 20%;
+}
 .login_image{
   background-image: url("Slide_Oficina_v3.jpg");
   z-index: -1;
@@ -419,7 +423,7 @@ body {
   height: 200px;
 }
 .overflow_hidden {
-  overflow: hidden
+/*  overflow: hidden*/
 }
 .progress-bar-dark {
   background-color: #34495E !important;
@@ -494,7 +498,7 @@ table.no-margin .progress {
 }
 .row {
   margin-right: -10px;
-  margin-left: -10px;
+  margin-left: 0px;
 }
 .grid_slider .col-md-6 {
   padding: 0 40px;

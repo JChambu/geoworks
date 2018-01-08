@@ -1,14 +1,11 @@
-<div class="right_col" role="main" style="min-height: 1657px;">
+<div class="container" role="main" >
+
+  <%= hidden_field_tag :data_id, params[:id] %>
   <%= render "count" %>
-  <%= render "graph1" %>
   <br />
-  <div class="row">
-  
+    <%= render 'maps' %>
     <%= render "graph2" %>
     <%= render "graph3" %>
     <%= render "graph4" %>
+</div>
 
-
-
-            </div>
-            </div>

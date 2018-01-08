@@ -4,15 +4,27 @@ class ProjectTypesController < ApplicationController
   # GET /project_types
   # GET /project_types.json
   def maps
+    params[:data_id] = '10e64be4-f9c5-4f32-8505-523628c52d46'
+      @maps = ProjectType.records_maps(params[:data_id])
   end
-  
-  def dashboard
-      @counts = ProjectType.counters(params[:id])
+ 
+  def graph2
+    params[:data_id] = 'b4a38670-0fbc-45d6-a162-48517e4198ba'
+    @query = ProjectType.graph2(params[:data_id])
+  end
 
+
+
+  def dashboard
+    #      @counts = ProjectType.counters(params[:id])
+      @counts = ProjectType.records_fulcrum(params[:id]).total_count
+  
   end
+
   def index
-    @project_types = ProjectType.all
-  # @project_fulcrum = ProjectType.query_fulcrum
+   @project_types = ProjectType.all
+   @project_types = @project_types.paginate(:page => params[:page])
+   @project_fulcrum = ProjectType.query_fulcrum
   end
 
   # GET /project_types/1
@@ -27,6 +39,7 @@ class ProjectTypesController < ApplicationController
 
   # GET /project_types/1/edit
   def edit
+
   end
 
   # POST /project_types

@@ -37,10 +37,14 @@ Fulcum
     <th></th>
   </thead>
   <tbody>
-    <% #@project_fulcrum.objects.each do |project| %>
+    <% @project_fulcrum.objects.each do |project| %>
+
       <tr>
+        <td><%= project['id'] %></td>
+        <td><%= project['name'] %></td>
+        <td><%= link_to 'Dashboard', project_types_dashboard_path(project['id']) %></td>
       </tr>
-    <% #end %>
+    <% end %>
   </tbody>
 </table>
 <br>

@@ -15,12 +15,14 @@ class ProjectType < ApplicationRecord
   attr_accessor :file
 
   before_save :save_shp_file, if: :file_exist? 
-  after_save :load_file 
+  after_create :load_file 
   #before_save :load_rgeoserver
 
   #after_save :load_shape,  if: :file_exist?
   #validate :file_exist?
   #validate :validate_options
+
+
 
   def file_exist?
     if !self.file.nil?
@@ -34,7 +36,8 @@ class ProjectType < ApplicationRecord
       p f.content_type
 
       case f.content_type
-      when 'application/dbf', 'application/octet-stream','application/x-anjuta','application/octet-stream','application/x-dbf','application/x-esri-shape','application/x-esri-shape'
+      #when 'application/dbf', 'application/octet-stream','application/x-anjuta','application/octet-stream','application/x-dbf','application/x-esri-shape'
+      when 'application/x-esri-shape'
         load_shape()
       when 'text/csv'
         load_csv()
@@ -73,7 +76,6 @@ class ProjectType < ApplicationRecord
      @d.each do |item|
        p item
       @it = item
-pry
        #     items =  item
 
   #    Project.create(properties: items, project_type_id: self.id)
@@ -88,9 +90,6 @@ pry
     data.each do |item|
 
       @item = item 
-
-      pry
-
 
      # Project.create(properties: items, project_type_id: self.id)
     end
@@ -114,6 +113,30 @@ pry
     forms = client.forms.all
   end
 
+
+  def self.records_fulcrum(id)
+    
+    client = Fulcrum::Client.new('c6abd6bd9e786cecd7a105395126352bde51d99e054c44256f1652ae0a4fbe4ef4bbf4f2022d84af')
+    @records = client.records.all(form_id: id )
+  end
+
+
+  def self.records_maps(id)
+    
+    client = Fulcrum::Client.new('c6abd6bd9e786cecd7a105395126352bde51d99e054c44256f1652ae0a4fbe4ef4bbf4f2022d84af')
+    @records = client.records.all(form_id: id )
+  end
+
+
+  def self.graph2(id)
+    
+    client = Fulcrum::Client.new('c6abd6bd9e786cecd7a105395126352bde51d99e054c44256f1652ae0a4fbe4ef4bbf4f2022d84af')
+    @records = client.records.all(form_id: id )
+  end
+
+
+
+
   def save_shp_file
     @directory = Geoworks::Shp.save(self.file, "shape")
     self.directory_name = @directory.split("/").last
@@ -123,7 +146,9 @@ pry
     file_name = @directory[1].split('.').first
     RGeo::Shapefile::Reader.open("#{@directory[0]}/#{file_name}.shp") do |file|
       file.each do |record|
+        p record.index
         if record.index == 0
+         pry
           record.keys.each do |field|
             @new_project_field =  ProjectField.create(name: field, field_type: 'text_field', project_type_id: self.id)
             @new_project_field.save
