@@ -50,7 +50,7 @@ Navarra.geo_openlayers = function(){
       view: view
     });
 
-      addMarker_op()
+      addMarker_op();
 
   }
   
