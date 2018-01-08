@@ -26,7 +26,7 @@ Navarra.layers.basemaps = function(){
 }
 
 
-Navarra.layers.api = function(){
+/*Navarra.layers.api = function(){
 let data_f = []
     $.ajax({
         type: 'GET',
@@ -52,18 +52,8 @@ let data_f = []
   });
 
   return [markers];
-*/
-}
 
-
-
-
-
-
-
-
-
-
+}*/
 
 
 
