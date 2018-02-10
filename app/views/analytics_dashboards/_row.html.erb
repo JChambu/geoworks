@@ -1,0 +1,12 @@
+<tr>
+  <td><%= analytics_dashboard.title %></td>
+  <td><%= analytics_dashboard.description %></td>
+  <td><%= analytics_dashboard.fields %></td>
+  <td><%= analytics_dashboard.analysis_type %></td>
+  <td><%= analytics_dashboard.chart %></td>
+  <td><%= analytics_dashboard.chart %></td>
+  <td><%= analytics_dashboard.card %></td>
+  <td><%= link_to 'Show', project_type_analytics_dashboard_path(@project_type, analytics_dashboard.id) %></td>
+  <td><%= link_to 'Edit', edit_project_type_analytics_dashboard_path(@project_type, analytics_dashboard) %></td>
+  <td><%= link_to 'Destroy', project_type_analytics_dashboard_path(@project_type,analytics_dashboard), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+</tr>

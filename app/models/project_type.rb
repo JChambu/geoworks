@@ -8,21 +8,22 @@ class ProjectType < ApplicationRecord
   require 'net/http'
   require 'uri'
   require 'csv'
+
   belongs_to :user
   has_many :fields, class_name: "ProjectField"
+  has_many :analytics_dashboards
+  has_many :projects
   accepts_nested_attributes_for :fields, allow_destroy: true
 
   attr_accessor :file
 
   before_save :save_shp_file, if: :file_exist? 
-  after_create :load_file 
+  after_create :load_file, if: :file_exist? 
   #before_save :load_rgeoserver
 
   #after_save :load_shape,  if: :file_exist?
-  #validate :file_exist?
+
   #validate :validate_options
-
-
 
   def file_exist?
     if !self.file.nil?
@@ -32,11 +33,10 @@ class ProjectType < ApplicationRecord
 
   def load_file 
     self.file.each do |f|
-
       p f.content_type
 
       case f.content_type
-      #when 'application/dbf', 'application/octet-stream','application/x-anjuta','application/octet-stream','application/x-dbf','application/x-esri-shape'
+        #when 'application/dbf', 'application/octet-stream','application/x-anjuta','application/octet-stream','application/x-dbf','application/x-esri-shape'
       when 'application/x-esri-shape'
         load_shape()
       when 'text/csv'
@@ -48,7 +48,7 @@ class ProjectType < ApplicationRecord
       when  'application/geo+json'
         load_geojson()
       end
-      end
+    end
 
   end
 
@@ -72,13 +72,13 @@ class ProjectType < ApplicationRecord
     items = []
     data = Rgeo::GeoJSON.decode("#{@directory[0]}/#{file_name}.json", json_parser: :json )
 
-   @d = data
-     @d.each do |item|
-       p item
+    @d = data
+    @d.each do |item|
+      p item
       @it = item
-       #     items =  item
+      #     items =  item
 
-  #    Project.create(properties: items, project_type_id: self.id)
+      #    Project.create(properties: items, project_type_id: self.id)
     end
   end
 
@@ -86,12 +86,12 @@ class ProjectType < ApplicationRecord
     file_name = @directory[1].split('.').first
     items = []
     data = JSON.parse(File.read("#{@directory[0]}/#{file_name}.geojson"))
-@d = data
+    @d = data
     data.each do |item|
 
       @item = item 
 
-     # Project.create(properties: items, project_type_id: self.id)
+      # Project.create(properties: items, project_type_id: self.id)
     end
   end
 
@@ -108,28 +108,57 @@ class ProjectType < ApplicationRecord
     end
   end
 
-  def self.query_fulcrum
+
+  def self.migration
+    @forms = query_fulcrum
+
+    @forms.objects.each do |form|
+      @project_type = ProjectType.where(name: form['name'], user_id: 1).first_or_create
+
+      form['elements'].each do |e| 
+        @new_project_field =  ProjectField.where(key:e['key']).first_or_create(name: e['label'], field_type: 'text_field', project_type_id: @project_type.id, key: e['key']).update_attributes!(name: e['label'], field_type: 'text_field', project_type_id: @project_type.id, key: e['key'])
+      end
+
+      @record = records_fulcrum(form['id'] )
+      @record.objects.each do |value|
+
+        @geom = "POINT(#{value['longitude']} #{value['latitude']})" 
+        @projects = Project.create( properties: value, project_type_id: 97, the_geom: @geom )
+      end
+
+    end
+
+  end
+
+
+  def self.conect_fulcrum
     client = Fulcrum::Client.new('c6abd6bd9e786cecd7a105395126352bde51d99e054c44256f1652ae0a4fbe4ef4bbf4f2022d84af')
-    forms = client.forms.all
+  end
+
+
+  def self.query_fulcrum
+    client = conect_fulcrum
+    #      forms = client.forms.find('10e64be4-f9c5-4f32-8505-523628c52d46')
+    forms = client.forms.all()
+
   end
 
 
   def self.records_fulcrum(id)
-    
-    client = Fulcrum::Client.new('c6abd6bd9e786cecd7a105395126352bde51d99e054c44256f1652ae0a4fbe4ef4bbf4f2022d84af')
-    @records = client.records.all(form_id: id )
+    client = conect_fulcrum
+    @records = client.records.all(form_id: id, per_page: 1000 )
   end
 
 
   def self.records_maps(id)
-    
+
     client = Fulcrum::Client.new('c6abd6bd9e786cecd7a105395126352bde51d99e054c44256f1652ae0a4fbe4ef4bbf4f2022d84af')
     @records = client.records.all(form_id: id )
   end
 
 
   def self.graph2(id)
-    
+
     client = Fulcrum::Client.new('c6abd6bd9e786cecd7a105395126352bde51d99e054c44256f1652ae0a4fbe4ef4bbf4f2022d84af')
     @records = client.records.all(form_id: id )
   end
@@ -148,7 +177,7 @@ class ProjectType < ApplicationRecord
       file.each do |record|
         p record.index
         if record.index == 0
-         pry
+          pry
           record.keys.each do |field|
             @new_project_field =  ProjectField.create(name: field, field_type: 'text_field', project_type_id: self.id)
             @new_project_field.save
@@ -187,8 +216,5 @@ class ProjectType < ApplicationRecord
   def self.counters(id)
     count = Project.where(project_type_id: id).count
   end
-
-
-
 
 end

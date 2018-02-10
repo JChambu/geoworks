@@ -2,7 +2,8 @@ Rails.application.routes.draw do
 
 
 
-  resources :projects
+
+
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
   get 'geo_editions/search_blocks' => 'geo_editions#search_blocks'
@@ -24,15 +25,22 @@ Rails.application.routes.draw do
 
 
  get 'project_types/maps' => 'project_types#maps'
+ get 'project_types/kpi' => 'project_types#kpi'
  get 'project_types/graph3' => 'project_types#graph2'
  
  scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
+
+  resources :charts
+  resources :analysis_types
  get 'dashboard/index'
  get 'project_types/:id/dashboard' => 'project_types#dashboard',  :as => :project_types_dashboard
 
 
-  resources :project_types
+  resources :project_types do 
+  resources :analytics_dashboards
+  resources :projects
+  end
   resources :regexp_types
     #  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
     resources :customers
@@ -116,7 +124,7 @@ Rails.application.routes.draw do
     # You can have the root of your site routed with "root"
 
     #root 'pois#index'
-    root 'dashboard#index'
+    root 'project_types#index'
     #end
 
     # Example of regular route:

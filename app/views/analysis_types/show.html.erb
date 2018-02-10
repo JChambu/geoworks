@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @analysis_type.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @analysis_type.description %>
+</p>
+
+<%= link_to 'Edit', edit_analysis_type_path(@analysis_type) %> |
+<%= link_to 'Back', analysis_types_path %>

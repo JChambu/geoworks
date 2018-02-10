@@ -1,0 +1,2 @@
+class AnalysisType < ApplicationRecord
+end

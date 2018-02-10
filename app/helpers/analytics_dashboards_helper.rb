@@ -1,0 +1,2 @@
+module AnalyticsDashboardsHelper
+end

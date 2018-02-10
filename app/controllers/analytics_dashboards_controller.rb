@@ -1,0 +1,84 @@
+class AnalyticsDashboardsController < ApplicationController
+  before_action :set_project_type
+  before_action :set_analytics_dashboard, only: [:show, :edit, :update, :destroy]
+  
+  # GET /analytics_dashboards
+  # GET /analytics_dashboards.json
+  def index
+    @analytics_dashboards = @project_type.analytics_dashboards.all
+  end
+
+  # GET /analytics_dashboards/1
+  # GET /analytics_dashboards/1.json
+  def show
+  end
+
+  # GET /analytics_dashboards/new
+  def new
+    @analytics_dashboard = AnalyticsDashboard.new
+  end
+
+  # GET /analytics_dashboards/1/edit
+  def edit
+  end
+
+  # POST /analytics_dashboards
+  # POST /analytics_dashboards.json
+  def create
+    @analytics_dashboard = @project_type.analytics_dashboards.new(analytics_dashboard_params)
+
+    respond_to do |format|
+      if @analytics_dashboard.save
+        format.js 
+        format.html { redirect_to project_type_analytics_dashboards_path(@project_type), notice: 'Analytics dashboard was successfully created.' }
+        format.json { render :show, status: :created, location: @analytics_dashboard }
+
+      else
+        format.js  {render json: @analytics_dashboard.errors, status: :unprocessable_entity }
+        format.html { render :new }
+        format.json { render json: @analytics_dashboard.errors, status: :unprocessable_entity }
+
+      end
+    end
+  end
+
+  # PATCH/PUT /analytics_dashboards/1
+  # PATCH/PUT /analytics_dashboards/1.json
+  def update
+    respond_to do |format|
+      if @analytics_dashboard.update(analytics_dashboard_params)
+        format.html { redirect_to @analytics_dashboard, notice: 'Analytics dashboard was successfully updated.' }
+        format.json { render :show, status: :ok, location: @analytics_dashboard }
+      else
+        format.html { render :edit }
+        format.json { render json: @analytics_dashboard.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  # DELETE /analytics_dashboards/1
+  # DELETE /analytics_dashboards/1.json
+  def destroy
+    @analytics_dashboard.destroy
+    respond_to do |format|
+      format.html { redirect_to analytics_dashboards_url, notice: 'Analytics dashboard was successfully destroyed.' }
+      format.json { head :no_content }
+    end
+  end
+
+  private
+    # Use callbacks to share common setup or constraints between actions.
+
+  def set_project_type
+    @project_type = ProjectType.find(params[:project_type_id])
+  end
+  
+  def set_analytics_dashboard
+      @analytics_dashboard = AnalyticsDashboard.find(params[:id])
+    end
+
+    # Never trust parameters from the scary internet, only allow the white list through.
+    def analytics_dashboard_params
+      params.require(:analytics_dashboard).permit(:title, :description, :fields, :analysis_type_id, :chart_id, :chart, :card)
+    end
+end

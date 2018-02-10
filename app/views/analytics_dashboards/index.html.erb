@@ -1,0 +1,28 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Analytics Dashboards</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Fields</th>
+      <th>Analysis type</th>
+      <th>Chart</th>
+      <th>Chart</th>
+      <th>Card</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @analytics_dashboards.each do |analytics_dashboard| %>
+      <%= render "row", analytics_dashboard: analytics_dashboard %>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Analytics Dashboard', new_project_type_analytics_dashboard_path(@project_type), remote: true %>

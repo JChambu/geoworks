@@ -3,9 +3,22 @@ class ProjectTypesController < ApplicationController
 
   # GET /project_types
   # GET /project_types.json
+
+  def kpi
+    @querys=[]
+    @data = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
+    @data1 = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
+  
+    @querys << {"kpi1":@data}
+     @querys << {"kpi2":@data1}
+  end
+  
+  
   def maps
-  #  params[:data_id] = '10e64be4-f9c5-4f32-8505-523628c52d46'
-      @maps = ProjectType.records_maps(params[:data_id])
+  # params[:data_id] = '10e64be4-f9c5-4f32-8505-523628c52d46'
+#      @maps = ProjectType.records_maps(params[:data_id])
+    @projects = Project.where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom)")
+
   end
  
   def graph2
@@ -13,12 +26,19 @@ class ProjectTypesController < ApplicationController
     @query = ProjectType.graph2(params[:data_id])
   end
 
-
-
   def dashboard
-    #      @counts = ProjectType.counters(params[:id])
-      @counts = ProjectType.records_fulcrum(params[:id]).total_count
-  
+    #@counts = ProjectType.counters(params[:id])
+
+    @analytics = AnalyticsDashboard.where(project_type_id: params[:id])
+    @data = []
+    @analytics.each do |a|
+      @type = a.analysis_type.name
+      @field = "coalesce((" + a.fields + " )::numeric,0)" 
+      @title = a.title.to_s
+      
+      @data << { "#{@title}": Project.where(project_type_id: params[:id]).send(@type,@field).round(3)}
+    end
+    @items = ProjectType.where(id: params[:id])
   end
 
   def index
