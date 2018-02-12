@@ -1,6 +1,6 @@
-.map { 
-  height: 20%; 
-  width: 20%;
+.map_custom { 
+  height: 400px; 
+  width: 100%;
 }
 .login_image{
   background-image: url("Slide_Oficina_v3.jpg");

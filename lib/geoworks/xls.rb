@@ -1,4 +1,5 @@
 module Geoworks
+
   class Xls
     require 'fileutils'
     require 'spreadsheet'
@@ -57,9 +58,6 @@ module Geoworks
 
     def self.validate_file_to_read file
       raise Geoworks::Exceptions::XlsNoFileError unless file
-
-
-
       if (file.content_type != "application/xls" and  file.content_type != "application/vnd.ms-excel")
         raise Geoworks::Exceptions::InvalidXlsFileError
       end
@@ -71,18 +69,16 @@ module Geoworks
     end
 
     def self.dir_exist? path
-     # File.exists?(path) and 
+      # File.exists?(path) and 
       File.directory?(path)
       #File.dirname path
     end
 
     def self.generate_directory directory_path
-     
       xls_directory = [Rails.public_path.to_s, directory_path.to_s, Time.now.to_datetime.strftime("%d%m%Y%H%M%S")].join("/")
       FileUtils.mkdir_p(xls_directory)
       xls_directory
     end
-
     def self.save file, directory_path, file_name
       validate_file_to_read file
       file_name = file.original_filename unless file_name

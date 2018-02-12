@@ -27,14 +27,13 @@ $(function () {
       }
     }
   });
-
-  $('#menu_toggle').click(function () {
-    if ($('body').hasClass('nav-md')) {
-      $('body').removeClass('nav-md').addClass('nav-sm');
-      $('.left_col').removeClass('scroll-view').removeAttr('style');
-      $('.sidebar-footer').hide();
-
-      if ($('#sidebar-menu li').hasClass('active')) {
+  //Habilitar para extender menu
+  // $('#menu_toggle').click(function () {
+  // if ($('body').hasClass('nav-md')) {
+  $('body').removeClass('nav-md').addClass('nav-sm');
+  $('.left_col').removeClass('scroll-view').removeAttr('style');
+  $('.sidebar-footer').hide();
+  /* if ($('#sidebar-menu li').hasClass('active')) {
         $('#sidebar-menu li.active').addClass('active-sm').removeClass('active');
       }
     } else {
@@ -44,8 +43,8 @@ $(function () {
       if ($('#sidebar-menu li').hasClass('active-sm')) {
         $('#sidebar-menu li.active-sm').addClass('active').removeClass('active-sm');
       }
-    }
-  });
+    }*/
+  // });
 });
 
 /* Sidebar Menu active class */
@@ -517,68 +516,116 @@ function init_charts() {
 function init_chart_doughnut(){
 
   if( typeof (Chart) === 'undefined'){ return; }
-
   console.log('init_chart_doughnut');
-    
-/*        data = {labels:[{"prueba1":10, "prueba2":20, "prueba3":30}]};
-     var labels = [];
-    $.each(data, function(i, val) {
-          console.log(val[0]);  
-      
-    })
-        console.log(labels);*/
-  if ($('.canvasDoughnut').length){
+
+  if ($('.graphics').length){
+    $.ajax({
+      type: 'GET',
+      url: '/project_types/kpi.json',
+      datatype: 'json',
+      success: function(data){
+        //        data.forEach(function(element){
+
+        for(var i = 0; i < data.length; i ++){
+          var reg = data[i];
+
+          $.each(reg, function(index, value){
+
+            var div_graph = document.createElement('div');
+            var canvas_graph = document.createElement('canvas');
+            div_graph.id = 'graph'+index;
+            canvas_graph.id = 'canvas'+index;
+            canvas_graph.height = 180;
+            canvas_graph.width = 320;
+            canvas_graph.className = 'canvas'+index ;
+
+          html = '<div class="col-md-4 col-sm-4 col-xs-12">' + 
+'  <div class="x_panel tile fixed_height_320 overflow_hidden">'+
+'    <div class="x_title">'+
+'      <h2>Graphs</h2>'+
+'      <ul class="nav navbar-right panel_toolbox">'+
+'        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>'+
+'        </li>'+
+'        <li class="dropdown">'+
+'        </li>'+
+'        <li><a class="close-link"><i class="fa fa-close"></i></a>'+
+'        </li>'+
+'      </ul>'+
+'    <div class="clearfix"></div>'+
+'    </div>'+
+' <div class="x_content_'+index+'">';
+
+              $('.graphics').append(html);
+            
+  var lab = [];
+  var da=[];
+            $.each(value, function(i, v ){
+              lab.push(i);
+              da.push(v);
+          })
+              var chart_doughnut_settings = {
+                type: 'doughnut',
+                tooltipFillColor: "rgba(51, 51, 51, 0.55)",
+                data: {
+                  labels: lab,
+                  datasets: [{
+                    data:  da , 
+                    backgroundColor: [
+                      "#BDC3C7",
+                      "#9B59B6",
+                      "#E74C3C",
+                    ],
+                  }]
+                },
+                options: {
+                  legend: {
+                    position: 'top',
+                  },
+                  display: true,
+                  responsive: false
+                }
+              }
+              $('.x_content_'+index).append(canvas_graph);
+                 var cc = '#'+canvas_graph.id;               
+                $(cc).each(function(){
 
 
-    var chart_doughnut_settings = {
-      type: 'doughnut',
-      tooltipFillColor: "rgba(51, 51, 51, 0.55)",
-      data: {
-        labels: [
-          "Symbian",
-          "Blackberry",
-          "Other",
-          "Android",
-          "IOS"
-        ],
-        datasets: [{
-          data: [15, 20, 30, 10, 30],
-          backgroundColor: [
-            "#BDC3C7",
-            "#9B59B6",
-            "#E74C3C",
-            "#26B99A",
-            "#3498DB"
-          ],
-          hoverBackgroundColor: [
-            "#CFD4D8",
-            "#B370CF",
-            "#E95E4F",
-            "#36CAAB",
-            "#49A9EA"
-          ]
-        }]
-      },
-      options: {
-        legend: false,
-        responsive: false
+
+                var chart_element = $(this);
+                var chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
+
+
+                
+                });
+
+close_html = '</div>'+
+  '</div>'+
+'</div>';
+
+              $('.graphics').append( close_html);
+
+            })
+
+//          })
+        }
       }
-    }
-    $('.canvasDoughnut').each(function(){
+    })
 
-      var chart_element = $(this);
-      var chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
 
-    });
 
+    //}
+    // }
+    // }
+    //});
+    //}
+    // });
   }
 
 }
 
-
 $(document).ready(function() {
   init_daterangepicker();
   init_flot_chart();
-//  init_charts(); 
-  init_chart_doughnut();
+  //  init_charts(); 
+  //  init_chart_doughnut();
 });

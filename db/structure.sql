@@ -59,6 +59,76 @@ ALTER SEQUENCE actions_id_seq OWNED BY actions.id;
 
 
 --
+-- Name: analysis_types; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE analysis_types (
+    id integer NOT NULL,
+    name character varying,
+    description character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: analysis_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE analysis_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: analysis_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE analysis_types_id_seq OWNED BY analysis_types.id;
+
+
+--
+-- Name: analytics_dashboards; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE analytics_dashboards (
+    id integer NOT NULL,
+    title character varying,
+    description character varying,
+    fields json,
+    analysis_type_id integer,
+    chart_id integer,
+    chart boolean,
+    card boolean,
+    project_type_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: analytics_dashboards_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE analytics_dashboards_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: analytics_dashboards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE analytics_dashboards_id_seq OWNED BY analytics_dashboards.id;
+
+
+--
 -- Name: app_configurations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -199,6 +269,37 @@ CREATE SEQUENCE chains_id_seq
 --
 
 ALTER SEQUENCE chains_id_seq OWNED BY chains.id;
+
+
+--
+-- Name: charts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE charts (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: charts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE charts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: charts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE charts_id_seq OWNED BY charts.id;
 
 
 --
@@ -1154,7 +1255,8 @@ CREATE TABLE project_fields (
     project_type_id integer,
     regexp_type_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    key character varying
 );
 
 
@@ -1567,6 +1669,20 @@ ALTER TABLE ONLY actions ALTER COLUMN id SET DEFAULT nextval('actions_id_seq'::r
 
 
 --
+-- Name: analysis_types id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY analysis_types ALTER COLUMN id SET DEFAULT nextval('analysis_types_id_seq'::regclass);
+
+
+--
+-- Name: analytics_dashboards id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY analytics_dashboards ALTER COLUMN id SET DEFAULT nextval('analytics_dashboards_id_seq'::regclass);
+
+
+--
 -- Name: app_configurations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1592,6 +1708,13 @@ ALTER TABLE ONLY categories ALTER COLUMN id SET DEFAULT nextval('categories_id_s
 --
 
 ALTER TABLE ONLY chains ALTER COLUMN id SET DEFAULT nextval('chains_id_seq'::regclass);
+
+
+--
+-- Name: charts id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY charts ALTER COLUMN id SET DEFAULT nextval('charts_id_seq'::regclass);
 
 
 --
@@ -1848,6 +1971,22 @@ ALTER TABLE ONLY actions
 
 
 --
+-- Name: analysis_types analysis_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY analysis_types
+    ADD CONSTRAINT analysis_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: analytics_dashboards analytics_dashboards_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY analytics_dashboards
+    ADD CONSTRAINT analytics_dashboards_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: app_configurations app_configurations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1885,6 +2024,14 @@ ALTER TABLE ONLY categories
 
 ALTER TABLE ONLY chains
     ADD CONSTRAINT chains_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: charts charts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY charts
+    ADD CONSTRAINT charts_pkey PRIMARY KEY (id);
 
 
 --
@@ -2175,6 +2322,27 @@ CREATE INDEX delayed_jobs_priority ON delayed_jobs USING btree (priority, run_at
 
 
 --
+-- Name: index_analytics_dashboards_on_analysis_type_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_analytics_dashboards_on_analysis_type_id ON analytics_dashboards USING btree (analysis_type_id);
+
+
+--
+-- Name: index_analytics_dashboards_on_chart_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_analytics_dashboards_on_chart_id ON analytics_dashboards USING btree (chart_id);
+
+
+--
+-- Name: index_analytics_dashboards_on_project_type_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_analytics_dashboards_on_project_type_id ON analytics_dashboards USING btree (project_type_id);
+
+
+--
 -- Name: index_pg_search_documents_on_searchable_type_and_searchable_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2224,11 +2392,35 @@ CREATE INDEX index_versions_on_item_type_and_item_id ON versions USING btree (it
 
 
 --
+-- Name: analytics_dashboards fk_rails_67ca88eba4; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY analytics_dashboards
+    ADD CONSTRAINT fk_rails_67ca88eba4 FOREIGN KEY (chart_id) REFERENCES charts(id);
+
+
+--
+-- Name: analytics_dashboards fk_rails_899c706712; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY analytics_dashboards
+    ADD CONSTRAINT fk_rails_899c706712 FOREIGN KEY (project_type_id) REFERENCES project_types(id);
+
+
+--
 -- Name: project_fields fk_rails_b6f8db6003; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY project_fields
     ADD CONSTRAINT fk_rails_b6f8db6003 FOREIGN KEY (project_type_id) REFERENCES project_types(id);
+
+
+--
+-- Name: analytics_dashboards fk_rails_c8a5c46e0a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY analytics_dashboards
+    ADD CONSTRAINT fk_rails_c8a5c46e0a FOREIGN KEY (analysis_type_id) REFERENCES analysis_types(id);
 
 
 --
@@ -2358,6 +2550,11 @@ INSERT INTO schema_migrations (version) VALUES
 ('20171012171528'),
 ('20171106220541'),
 ('20171116124255'),
-('20171129141820');
+('20171129141820'),
+('20180131133941'),
+('20180205185939'),
+('20180205190009'),
+('20180205192133'),
+('20180205192340');
 
 

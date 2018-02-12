@@ -1,10 +1,5 @@
 <p id="notice"><%= notice %></p>
-
 <h1>Projects</h1>
-
-<%= link_to 'Nuevo registro', new_project_path(@project_type) %>
-<%= link_to 'Exportar', projects_path(project_type_id: @project_type, format: 'csv') %>
-
 <div>
 </div>
 <table class="table table-stripe">
@@ -16,14 +11,13 @@
     </tr>
   </thead>
   <tbody>
-    <% @projects.each do |project| %>
+    <% @projects.each do |project | %>
       <tr>
-        <% project.properties.each do |property| %>
-          <td><%= property[1]   %></td>
+        <% @fields.each do |field|  %>
+          <td>
+              <%= project.properties[field.name] %>
+          </td>
         <% end %>
-        <td><%= link_to 'Show', project %></td>
-        <td><%= link_to 'Edit', edit_project_path(project) %></td>
-        <td><%= link_to 'Destroy', project, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>

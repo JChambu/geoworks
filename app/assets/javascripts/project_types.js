@@ -2,7 +2,6 @@ Navarra.namespace("project_types.action_maps");
 Navarra.namespace("project_types.action_dashboard");
 
 
-
 $(document).on('click', 'form .remove_fields', function(event){
 
   $(this).prev('input[type=hidden]').val('1')
@@ -21,6 +20,7 @@ Navarra.project_types.action_dashboard = function(){
 
   init = function(){
     Navarra.geo_openlayers.init();
+    init_chart_doughnut();
 }
   return {
     init: init

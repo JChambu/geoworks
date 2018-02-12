@@ -30,5 +30,6 @@ module Geoworks
     config.autoload_paths += %W(#{config.root}/lib)
     PaperTrail.serializer = JSON
     #config.active_job.queue_adapter = :delayed_job
+    config.active_record.schema_format = :sql
   end
 end

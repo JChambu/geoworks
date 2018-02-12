@@ -8,9 +8,17 @@ class ProjectTypesController < ApplicationController
     @querys=[]
     @data = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
     @data1 = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
+    @data2 = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
+    @data3 = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
+    @data4 = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
+    @data5 = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
   
     @querys << {"kpi1":@data}
      @querys << {"kpi2":@data1}
+     @querys << {"kpi3":@data2}
+     @querys << {"kpi4":@data3}
+     @querys << {"kpi5":@data4}
+     @querys << {"kpi6":@data5}
   end
   
   
