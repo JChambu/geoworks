@@ -16,6 +16,7 @@
           </div>
           <div class="profile_info">
             <span>Bienvenido,</span>
+             <%= link_to t('menu.logout'), destroy_user_session_path, method: :delete %>
             <h2><%=current_user.name  %> </h2>
           </div>
         </div>
@@ -37,9 +38,9 @@
                   <% else %>
                     <li><%= link_to t('menu.geo_editions.title'), edit_geo_edition_path(last_id)%></li>
                   <% end %>
-      <% if current_user.name == 'Admin' %>
-        <li><%=  link_to  t('menu.admin.extended_listings_georeferenced'), georeferenced_extended_listings_path  %></li>
-      <% end  %>
+                  <% if current_user.name == 'Admin' %>
+                    <li><%=  link_to  t('menu.admin.extended_listings_georeferenced'), georeferenced_extended_listings_path  %></li>
+                  <% end  %>
                 </ul>
               </li>
 
@@ -55,10 +56,6 @@
                   <li><%= link_to t('menu.admin.categories'), categories_path() %></li>
                 </ul>
               </li>
-
-
-
-
             </ul>
           </div>
 
@@ -86,38 +83,32 @@
 
     <!-- top navigation -->
     <div class="top_nav">
-
       <div class="nav_menu">
-        <nav class="" role="navigation">
+        <nav>
           <div class="nav toggle">
-            <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+             <ul class="nav navbar-nav navbar-right">
+               <li class="" ><a><i class="fa fa-cog"></i>  <span class="fa fa-chevron-down"></span></a></li>
+            </ul>
           </div>
-
         </nav>
       </div>
 
     </div>
     <!-- /top navigation -->
-
-
     <!-- page content -->
     <div class="right_col" role="main">
-
       <div class="row">
         <%= yield %>
         <!-- footer content -->
       </div>
+    </div>
+    <!-- /page content -->
       <footer>
-        <div class="copyright-info">
-          <p class="pull-right">Geowork by <a href="https://gisworking.com">Gisworking</a>  
+          <p class="pull-right">Geoworks by <a href="https://gisworking.com">Gisworking</a>  
           </p>
-        </div>
         <div class="clearfix"></div>
       </footer>
       <!-- /footer content -->
-    </div>
-    <!-- /page content -->
 
   </div>
-
 </div>
