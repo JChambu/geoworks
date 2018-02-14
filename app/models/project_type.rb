@@ -115,17 +115,38 @@ class ProjectType < ApplicationRecord
     @forms.objects.each do |form|
       @project_type = ProjectType.where(name: form['name'], user_id: 1).first_or_create
 
-      form['elements'].each do |e| 
+      item_statics = ["latitude", "longitude","status"]
+
+      item_statics.each do |is|
+        @new_project_field =  ProjectField.where(key: is, project_type_id: @project_type.id).first_or_create(name: is, field_type: 'text_field', project_type_id: @project_type.id, key: is).update_attributes!(name: is, field_type: 'text_field', project_type_id: @project_type.id, key: is)
+      end 
+
+
+      form['elements'].each do |e|
+
         @new_project_field =  ProjectField.where(key:e['key']).first_or_create(name: e['label'], field_type: 'text_field', project_type_id: @project_type.id, key: e['key']).update_attributes!(name: e['label'], field_type: 'text_field', project_type_id: @project_type.id, key: e['key'])
       end
 
       @record = records_fulcrum(form['id'] )
       @record.objects.each do |value|
-
         @geom = "POINT(#{value['longitude']} #{value['latitude']})" 
-        @projects = Project.create( properties: value, project_type_id: 97, the_geom: @geom )
-      end
 
+        items = {
+          "longitude"=> value['longitude'],
+          "latitude" => value['latitude'],
+          "status"=>    value['status'],
+          "created_at"=>  value['created_at']
+        }
+        if  value['form_values'] 
+          i = {}  
+          value['form_values'].each do |item|
+            i["#{item[0]}"] = "#{item[1]}"
+          end
+        end
+        @it = items.merge(i)
+        @projects = Project.create( properties: @it,  properties_original: value, project_type_id: @project_type.id, the_geom: @geom)
+
+      end
     end
 
   end
@@ -137,34 +158,29 @@ class ProjectType < ApplicationRecord
 
 
   def self.query_fulcrum
-    client = conect_fulcrum
+    #client = conect_fulcrum
     #      forms = client.forms.find('10e64be4-f9c5-4f32-8505-523628c52d46')
-    forms = client.forms.all()
+    #forms = client.forms.all()
 
   end
 
 
   def self.records_fulcrum(id)
     client = conect_fulcrum
-    @records = client.records.all(form_id: id, per_page: 1000 )
+    @records = client.records.all(form_id: id, per_page: 2 )
   end
 
 
   def self.records_maps(id)
-
     client = Fulcrum::Client.new('c6abd6bd9e786cecd7a105395126352bde51d99e054c44256f1652ae0a4fbe4ef4bbf4f2022d84af')
     @records = client.records.all(form_id: id )
   end
-
 
   def self.graph2(id)
 
     client = Fulcrum::Client.new('c6abd6bd9e786cecd7a105395126352bde51d99e054c44256f1652ae0a4fbe4ef4bbf4f2022d84af')
     @records = client.records.all(form_id: id )
   end
-
-
-
 
   def save_shp_file
     @directory = Geoworks::Shp.save(self.file, "shape")
@@ -177,7 +193,6 @@ class ProjectType < ApplicationRecord
       file.each do |record|
         p record.index
         if record.index == 0
-          pry
           record.keys.each do |field|
             @new_project_field =  ProjectField.create(name: field, field_type: 'text_field', project_type_id: self.id)
             @new_project_field.save

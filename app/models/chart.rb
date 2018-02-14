@@ -1,3 +1,3 @@
 class Chart < ApplicationRecord
-#  belongs_to :analytics_dashboard
+  #has_many :analytics_dashboards
 end

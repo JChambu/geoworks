@@ -6,19 +6,18 @@ class ProjectTypesController < ApplicationController
 
   def kpi
     @querys=[]
-    @data = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
-    @data1 = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
-    @data2 = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
-    @data3 = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
-    @data4 = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
-    @data5 = Project.where(project_type_id: 115).select("properties->>'status'").group("properties->>'status'").count
-  
-    @querys << {"kpi1":@data}
-     @querys << {"kpi2":@data1}
-     @querys << {"kpi3":@data2}
-     @querys << {"kpi4":@data3}
-     @querys << {"kpi5":@data4}
-     @querys << {"kpi6":@data5}
+    @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], chart: true)
+      @analytics_charts.each do |chart|
+        @field_chart = "properties->>'"+chart.project_field.name+"'"
+        @group = "group"
+        @conditions = "where"
+        @fields_2 =  "properties->>'status' = '2'"
+        @data =   Project.where(project_type_id: params[:data_id]).send(@conditions, @fields_2).send( @group, @field_chart).count
+        @querys << {"#{chart.title}":@data}
+      end
+
+   #  @data = Project.where(project_type_id: 336).select("properties->>'status'").group("properties->>'status'").count
+    # @querys << {"kpi1":@data}
   end
   
   
@@ -37,14 +36,22 @@ class ProjectTypesController < ApplicationController
   def dashboard
     #@counts = ProjectType.counters(params[:id])
 
-    @analytics = AnalyticsDashboard.where(project_type_id: params[:id])
+    @analytics = AnalyticsDashboard.where(project_type_id: params[:id], chart: false)
     @data = []
     @analytics.each do |a|
+
+      @a = a
       @type = a.analysis_type.name
-      @field = "coalesce((" + a.fields + " )::numeric,0)" 
+      @field = "coalesce((properties->>'" + a.project_field.name + "' )::numeric,0)" 
+
+    @sql = "project_type_id = #{params[:id]}" 
+    @conditions_field = a.conditions_field
+
+    if !@conditions_field.blank?
+       @sql += " and properties->>'" + a.project_field.name + "' " + a.filter_input + "'#{a.input_value}'"
+      end
       @title = a.title.to_s
-      
-      @data << { "#{@title}": Project.where(project_type_id: params[:id]).send(@type,@field).round(3)}
+@data << { "#{@title}": Project.where(@sql).send(@type,@field).round(3)}
     end
     @items = ProjectType.where(id: params[:id])
   end
@@ -52,7 +59,7 @@ class ProjectTypesController < ApplicationController
   def index
    @project_types = ProjectType.all
    @project_types = @project_types.paginate(:page => params[:page])
-   @project_fulcrum = ProjectType.query_fulcrum
+   #@project_fulcrum = ProjectType.query_fulcrum
   end
 
   # GET /project_types/1

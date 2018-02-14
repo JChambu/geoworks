@@ -98,14 +98,18 @@ CREATE TABLE analytics_dashboards (
     id integer NOT NULL,
     title character varying,
     description character varying,
-    fields json,
     analysis_type_id integer,
     chart_id integer,
     chart boolean,
     card boolean,
     project_type_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    group_field character varying,
+    conditions_field character varying,
+    project_field_id integer,
+    filter_input character varying,
+    input_value character varying
 );
 
 
@@ -1322,7 +1326,8 @@ CREATE TABLE projects (
     project_type_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    the_geom geometry(Geometry,4326)
+    the_geom geometry(Geometry,4326),
+    properties_original jsonb
 );
 
 
@@ -2555,6 +2560,10 @@ INSERT INTO schema_migrations (version) VALUES
 ('20180205185939'),
 ('20180205190009'),
 ('20180205192133'),
-('20180205192340');
+('20180205192340'),
+('20180213134336'),
+('20180213191820'),
+('20180213202457'),
+('20180214133448');
 
 

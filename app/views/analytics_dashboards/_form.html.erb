@@ -5,13 +5,12 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title"><%= title %></h4>
       </div>
-      <%= simple_form_for([@project_type, @analytics_dashboard],  html: {role: :form,  remote: true}) do |f| %>
+      <%= simple_form_for([@project_type, @analytics_dashboard],  html: {role: :form,  remote: true, class: 'form form-inline'}) do |f| %>
         <div class="modal-body">
 
           <% if @analytics_dashboard.errors.any? %>
             <div id="error_explanation">
               <h2><%= pluralize(@analytics_dashboard.errors.count, "error") %> prohibited this analytics_dashboard from being saved:</h2>
-
               <ul>
                 <% @analytics_dashboard.errors.full_messages.each do |message| %>
                   <li><%= message %></li>
@@ -20,42 +19,27 @@
             </div>
           <% end %>
 
-          <div class="field">
-            <%= f.label :title %>
-            <%= f.text_field :title %>
-          </div>
+            <%= f.input :title %>
+            <%= f.input :description %>
+            <%= f.input :project_field_id, label: "project_field", :collection => fields_for_select %>
+            <%= f.input :analysis_type_id, :collection => analysis_types_for_select %>
+            <%= f.input :chart_id, collection: chart_types_for_select %>
+            <div>
+              <%= f.label :chart, "Graficar" %>
+              <%= f.check_box :chart%>
+            </div>
 
-          <div class="field">
-            <%= f.label :description %>
-            <%= f.text_field :description %>
-          </div>
-
-          <div class="field">
-            <%= f.label :fields %>
-            <%= f.text_field :fields %>
-          </div>
-
-          <div class="field">
-            <%= f.label :analysis_type_id %>
-            <%= f.text_field :analysis_type_id %>
-          </div>
-
-          <div class="field">
-            <%= f.label :chart_id %>
-            <%= f.text_field :chart_id %>
-          </div>
-
-          <div class="field">
-            <%= f.label :chart %>
-            <%= f.check_box :chart %>
-          </div>
-
-          <div class="field">
-            <%= f.label :card %>
-            <%= f.check_box :card %>
-          </div>
-        </div>
-
+            <div class="col-md-12">
+              <div class="col-md-3">
+                <%= f.input :conditions_field, collection: fields_for_select %>
+              </div>
+              <div class="col-md-3">
+              <%= f.input :filter_input, collection: [['=', 'eq']] %>
+              </div>
+              <div class="col-md-3">
+              <%= f.input :input_value %>
+              </div>
+            </div>
         <div class="modal-footer">
 
           <div class="actions">

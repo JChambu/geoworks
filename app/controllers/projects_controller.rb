@@ -1,13 +1,22 @@
 class ProjectsController < ApplicationController
+  before_action :set_project_type
   before_action :set_project, only: [:show, :edit, :update, :destroy]
 
   # GET /projects
   # GET /projects.json
   def index
-    @projects = Project.all
+    
+    @search = @project_type.projects.all
+    @search = @search.search(params[:q])
+    @projects = @search.result.paginate(:page => params[:page])
     @fields = ProjectField.where(project_type_id: params[:project_type_id])
     @project_type = params[:project_type_id]
-  end
+ 
+    respond_to do |format|
+      format.html
+      format.csv { send_data @projects.to_csv, filename: "users-#{Date.today}.csv" }
+          end
+    end
 
   # GET /projects/1
   # GET /projects/1.json
@@ -16,7 +25,8 @@ class ProjectsController < ApplicationController
 
   # GET /projects/new
   def new
-    @project = Project.new(project_type_id: params[:project_type_id])
+
+    @project = Project.new(project_type_id: params[:format])
   end
 
   # GET /projects/1/edit
@@ -65,7 +75,12 @@ class ProjectsController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_project
+
+  def set_project_type
+    @project_type = ProjectType.find(params[:project_type_id])
+  end
+
+  def set_project
       @project = Project.find(params[:id])
     end
 

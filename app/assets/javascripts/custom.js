@@ -519,10 +519,17 @@ function init_chart_doughnut(){
   console.log('init_chart_doughnut');
 
   if ($('.graphics').length){
+    
+  var  data_id =  $('#data_id').val();
+
+
+
     $.ajax({
+
       type: 'GET',
       url: '/project_types/kpi.json',
       datatype: 'json',
+      data: {data_id: data_id},
       success: function(data){
         //        data.forEach(function(element){
 
@@ -542,7 +549,7 @@ function init_chart_doughnut(){
           html = '<div class="col-md-4 col-sm-4 col-xs-12">' + 
 '  <div class="x_panel tile fixed_height_320 overflow_hidden">'+
 '    <div class="x_title">'+
-'      <h2>Graphs</h2>'+
+'      <h2>'+index+'</h2>'+
 '      <ul class="nav navbar-right panel_toolbox">'+
 '        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>'+
 '        </li>'+

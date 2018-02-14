@@ -25,6 +25,7 @@ class AnalyticsDashboardsController < ApplicationController
   # POST /analytics_dashboards
   # POST /analytics_dashboards.json
   def create
+
     @analytics_dashboard = @project_type.analytics_dashboards.new(analytics_dashboard_params)
 
     respond_to do |format|
@@ -79,6 +80,6 @@ class AnalyticsDashboardsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def analytics_dashboard_params
-      params.require(:analytics_dashboard).permit(:title, :description, :fields, :analysis_type_id, :chart_id, :chart, :card)
+      params.require(:analytics_dashboard).permit(:title, :description, :project_field_id, :analysis_type_id, :chart_id, :chart, :card, :group_field, :conditions_field, :filter_input, :input_value)
     end
 end

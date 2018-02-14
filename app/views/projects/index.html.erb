@@ -15,7 +15,7 @@
       <tr>
         <% @fields.each do |field|  %>
           <td>
-              <%= project.properties[field.name] %>
+              <%= project.properties[field.key] if !project.properties[field.key].blank?%>
           </td>
         <% end %>
       </tr>
