@@ -10,24 +10,16 @@
   <%= @analytics_dashboard.description %>
 </p>
 
-<p>
-  <strong>Fields:</strong>
-  <%= @analytics_dashboard.fields %>
-</p>
 
 <p>
   <strong>Analysis type:</strong>
   <%= @analytics_dashboard.analysis_type %>
 </p>
 
-<p>
-  <strong>Chart:</strong>
-  <%= @analytics_dashboard.chart %>
-</p>
 
 <p>
   <strong>Chart:</strong>
-  <%= @analytics_dashboard.chart %>
+  <%= @analytics_dashboard.graph %>
 </p>
 
 <p>
@@ -35,5 +27,3 @@
   <%= @analytics_dashboard.card %>
 </p>
 
-<%= link_to 'Edit', edit_analytics_dashboard_path(@analytics_dashboard) %> |
-<%= link_to 'Back', analytics_dashboards_path %>

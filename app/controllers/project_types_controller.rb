@@ -6,9 +6,9 @@ class ProjectTypesController < ApplicationController
 
   def kpi
     @querys=[]
-    @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], chart: true)
+    @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], graph: true)
     @analytics_charts.each do |chart|
-      
+     
       if chart.project_field.field_type == 'ChoiceField'
       field_select = "jsonb_array_elements(properties->'"+ chart.project_field.key+"'->'choice_values')"
       else
@@ -24,8 +24,10 @@ class ProjectTypesController < ApplicationController
         sql += " and properties->>'" + chart.project_field.key + "' " + chart.filter_input + "'#{chart.input_value}'"
       end
       @group = "group"
+      chart_type = chart.chart.name
       @data =   Project.where(sql).send( @group, field_select).count
-      @querys << {"#{chart.title}":@data}
+      @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data }
+
     end
 
     #  @data = Project.where(project_type_id: 336).select("properties->>'status'").group("properties->>'status'").count
@@ -47,7 +49,7 @@ class ProjectTypesController < ApplicationController
 
   def dashboard
     
-    @analytics = AnalyticsDashboard.where(project_type_id: params[:id], chart: false)
+    @analytics = AnalyticsDashboard.where(project_type_id: params[:id], graph: false)
     @data = []
     @analytics.each do |a|
       analysis_type = a.analysis_type.name

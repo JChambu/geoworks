@@ -5,8 +5,13 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title"> </h4>
       </div>
+
       <%= simple_form_for([@project_type, @analytics_dashboard],  html: {role: :form,  remote: true, class: 'form form-inline'}) do |f| %>
         <div class="modal-body">
+
+          <div id="alert-success">
+            
+          </div>
 
           <% if @analytics_dashboard.errors.any? %>
             <div id="error_explanation">
@@ -25,8 +30,8 @@
             <%= f.input :analysis_type_id, :collection => analysis_types_for_select %>
             <%= f.input :chart_id, collection: chart_types_for_select %>
             <div>
-              <%= f.label :chart, "Graficar" %>
-              <%= f.check_box :chart%>
+              <%= f.label :graph, "Graficar" %>
+              <%= f.check_box :graph%>
             </div>
 
             <div class="col-md-12">

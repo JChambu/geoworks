@@ -1,14 +1,13 @@
+<%- model_class = ProjectType -%>
+
 <p id="notice"><%= notice %></p>
-
-<h1>Project Types</h1>
-
+<h1>Projectos</h2>
 <%= pager @project_types %>
 <%= link_to 'New Project Type', new_project_type_path %>
 <table class="table table-stripe">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>User</th>
+      <th><%= model_class.human_attribute_name(:name) %></th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -17,7 +16,6 @@
     <% @project_types.each do |project_type| %>
       <tr>
         <td><%= link_to project_type.name, project_type_projects_path(project_type) %></td>
-        <td><%= link_to 'Maps', project_types_maps_path(project_type_id: project_type.id)%></td>
         <td><%= link_to 'Dashboard', project_types_dashboard_path(project_type.id) %></td>
         <td><%= link_to "Setting", project_type_analytics_dashboards_path(project_type.id)%></td>
         <td><%= link_to 'Edit', edit_project_type_path(project_type) %></td>
@@ -26,17 +24,4 @@
     <% end %>
   </tbody>
 </table>
-
-Fulcrum
-
-<table class="table">
-  <thead>
-    <th>id</th>
-    <th>nombre</th>
-    <th></th>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
-<br>
 

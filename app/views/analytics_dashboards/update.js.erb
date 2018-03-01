@@ -1,0 +1,4 @@
+      // add the row to the table, show alert and hide modal
+    $('table tbody').append(' <%= j render "row", analytics_dashboard: @analytics_dashboard %>');
+  $('.alert-success').html("El producto ha sido creado con éxito").show();
+  $('#ana-modal').modal('hide');
