@@ -7,59 +7,68 @@ class ProjectTypesController < ApplicationController
   def kpi
     @querys=[]
     @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], chart: true)
-      @analytics_charts.each do |chart|
-        @field_chart = "properties->>'"+chart.project_field.name+"'"
-        @group = "group"
-        @conditions = "where"
-        @fields_2 =  "properties->>'status' = '2'"
-        @data =   Project.where(project_type_id: params[:data_id]).send(@conditions, @fields_2).send( @group, @field_chart).count
-        @querys << {"#{chart.title}":@data}
-      end
+    @analytics_charts.each do |chart|
+      
+      if chart.project_field.field_type == 'ChoiceField'
+      field_select = "jsonb_array_elements(properties->'"+ chart.project_field.key+"'->'choice_values')"
+      else
+      field_select = "properties->'"+ chart.project_field.key+"'"
+      end 
 
-   #  @data = Project.where(project_type_id: 336).select("properties->>'status'").group("properties->>'status'").count
+      analysis_type = chart.analysis_type.name
+
+      sql = "project_type_id = #{params[:data_id]}" 
+      conditions_field = chart.conditions_field
+
+      if !conditions_field.blank?
+        sql += " and properties->>'" + chart.project_field.key + "' " + chart.filter_input + "'#{chart.input_value}'"
+      end
+      @group = "group"
+      @data =   Project.where(sql).send( @group, field_select).count
+      @querys << {"#{chart.title}":@data}
+    end
+
+    #  @data = Project.where(project_type_id: 336).select("properties->>'status'").group("properties->>'status'").count
     # @querys << {"kpi1":@data}
   end
-  
-  
+
+
   def maps
-  # params[:data_id] = '10e64be4-f9c5-4f32-8505-523628c52d46'
-#      @maps = ProjectType.records_maps(params[:data_id])
+    # params[:data_id] = '10e64be4-f9c5-4f32-8505-523628c52d46'
+    #      @maps = ProjectType.records_maps(params[:data_id])
     @projects = Project.where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom)")
 
   end
- 
+
   def graph2
     params[:data_id] = 'b4a38670-0fbc-45d6-a162-48517e4198ba'
     @query = ProjectType.graph2(params[:data_id])
   end
 
   def dashboard
-    #@counts = ProjectType.counters(params[:id])
-
+    
     @analytics = AnalyticsDashboard.where(project_type_id: params[:id], chart: false)
     @data = []
     @analytics.each do |a|
+      analysis_type = a.analysis_type.name
+      field_select = "coalesce((properties->>'" + a.project_field.name + "' )::numeric,0)" 
 
-      @a = a
-      @type = a.analysis_type.name
-      @field = "coalesce((properties->>'" + a.project_field.name + "' )::numeric,0)" 
+      sql = "project_type_id = #{params[:id]}" 
+      conditions_field = a.conditions_field
 
-    @sql = "project_type_id = #{params[:id]}" 
-    @conditions_field = a.conditions_field
-
-    if !@conditions_field.blank?
-       @sql += " and properties->>'" + a.project_field.name + "' " + a.filter_input + "'#{a.input_value}'"
+      if !conditions_field.blank?
+        sql += " and properties->>'" + a.project_field.name + "' " + a.filter_input + "'#{a.input_value}'"
       end
       @title = a.title.to_s
-@data << { "#{@title}": Project.where(@sql).send(@type,@field).round(3)}
+      @data << { "#{@title}": Project.where(sql).send(analysis_type,field_select).round(3)}
     end
     @items = ProjectType.where(id: params[:id])
   end
 
   def index
-   @project_types = ProjectType.all
-   @project_types = @project_types.paginate(:page => params[:page])
-   #@project_fulcrum = ProjectType.query_fulcrum
+    @project_types = ProjectType.all
+    @project_types = @project_types.paginate(:page => params[:page])
+    #@project_fulcrum = ProjectType.query_fulcrum
   end
 
   # GET /project_types/1
@@ -117,13 +126,13 @@ class ProjectTypesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_project_type
-      @project_type = ProjectType.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_project_type
+    @project_type = ProjectType.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def project_type_params
-      params.require(:project_type).permit(:name, {file:[]}, fields_attributes: [:id, :field_type, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id]).merge(user_id: current_user.id)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def project_type_params
+    params.require(:project_type).permit(:name, {file:[]}, fields_attributes: [:id, :field_type, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id]).merge(user_id: current_user.id)
+  end
 end
