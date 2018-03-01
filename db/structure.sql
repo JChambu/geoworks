@@ -23,6 +23,34 @@ CREATE SCHEMA postgis;
 
 SET search_path = public, pg_catalog;
 
+--
+-- Name: create_jsonb_flat_view(text, text, text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION create_jsonb_flat_view(table_name text, regular_columns text, json_column text) RETURNS text
+    LANGUAGE plpgsql
+    AS $_$
+declare
+    cols text;
+begin
+    execute format ($ex$
+        select string_agg(format('%2$s->>%%1$L "%%1$s"', key), ', ')
+        from (
+            select distinct key
+            from %1$s, jsonb_each(%2$s)
+            order by 1
+            ) s;
+        $ex$, table_name, json_column)
+    into cols;
+    execute format($ex$
+        drop view if exists %1$s_view;
+        create view %1$s_view as 
+        select %2$s, %3$s from %1$s
+        $ex$, table_name, regular_columns, cols);
+    return cols;
+end $_$;
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -304,6 +332,40 @@ CREATE SEQUENCE charts_id_seq
 --
 
 ALTER SEQUENCE charts_id_seq OWNED BY charts.id;
+
+
+--
+-- Name: choice_lists; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE choice_lists (
+    id integer NOT NULL,
+    name character varying,
+    key character varying,
+    value character varying,
+    label character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: choice_lists_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE choice_lists_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: choice_lists_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE choice_lists_id_seq OWNED BY choice_lists.id;
 
 
 --
@@ -1351,6 +1413,334 @@ ALTER SEQUENCE projects_id_seq OWNED BY projects.id;
 
 
 --
+-- Name: projects_view; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW projects_view AS
+ SELECT projects.id,
+    (projects.properties ->> '0245'::text) AS "0245",
+    (projects.properties ->> '0263'::text) AS "0263",
+    (projects.properties ->> '02b2'::text) AS "02b2",
+    (projects.properties ->> '03db'::text) AS "03db",
+    (projects.properties ->> '045d'::text) AS "045d",
+    (projects.properties ->> '0570'::text) AS "0570",
+    (projects.properties ->> '05d5'::text) AS "05d5",
+    (projects.properties ->> '07f0'::text) AS "07f0",
+    (projects.properties ->> '0ee0'::text) AS "0ee0",
+    (projects.properties ->> '0f1e'::text) AS "0f1e",
+    (projects.properties ->> '0f93'::text) AS "0f93",
+    (projects.properties ->> '1173'::text) AS "1173",
+    (projects.properties ->> '119c'::text) AS "119c",
+    (projects.properties ->> '1413'::text) AS "1413",
+    (projects.properties ->> '14b7'::text) AS "14b7",
+    (projects.properties ->> '1569'::text) AS "1569",
+    (projects.properties ->> '1587'::text) AS "1587",
+    (projects.properties ->> '159b'::text) AS "159b",
+    (projects.properties ->> '15f5'::text) AS "15f5",
+    (projects.properties ->> '1623'::text) AS "1623",
+    (projects.properties ->> '1645'::text) AS "1645",
+    (projects.properties ->> '1713'::text) AS "1713",
+    (projects.properties ->> '1732'::text) AS "1732",
+    (projects.properties ->> '1802'::text) AS "1802",
+    (projects.properties ->> '186d'::text) AS "186d",
+    (projects.properties ->> '18e4'::text) AS "18e4",
+    (projects.properties ->> '1915'::text) AS "1915",
+    (projects.properties ->> '1bbb'::text) AS "1bbb",
+    (projects.properties ->> '1fc3'::text) AS "1fc3",
+    (projects.properties ->> '230b'::text) AS "230b",
+    (projects.properties ->> '2330'::text) AS "2330",
+    (projects.properties ->> '2356'::text) AS "2356",
+    (projects.properties ->> '241a'::text) AS "241a",
+    (projects.properties ->> '26d8'::text) AS "26d8",
+    (projects.properties ->> '27d3'::text) AS "27d3",
+    (projects.properties ->> '2807'::text) AS "2807",
+    (projects.properties ->> '284a'::text) AS "284a",
+    (projects.properties ->> '2873'::text) AS "2873",
+    (projects.properties ->> '28f9'::text) AS "28f9",
+    (projects.properties ->> '2924'::text) AS "2924",
+    (projects.properties ->> '292e'::text) AS "292e",
+    (projects.properties ->> '2c78'::text) AS "2c78",
+    (projects.properties ->> '2d55'::text) AS "2d55",
+    (projects.properties ->> '2df0'::text) AS "2df0",
+    (projects.properties ->> '2e65'::text) AS "2e65",
+    (projects.properties ->> '2ef5'::text) AS "2ef5",
+    (projects.properties ->> '2f03'::text) AS "2f03",
+    (projects.properties ->> '2f52'::text) AS "2f52",
+    (projects.properties ->> '300a'::text) AS "300a",
+    (projects.properties ->> '30f2'::text) AS "30f2",
+    (projects.properties ->> '3158'::text) AS "3158",
+    (projects.properties ->> '3191'::text) AS "3191",
+    (projects.properties ->> '3232'::text) AS "3232",
+    (projects.properties ->> '33d4'::text) AS "33d4",
+    (projects.properties ->> '3436'::text) AS "3436",
+    (projects.properties ->> '346f'::text) AS "346f",
+    (projects.properties ->> '349f'::text) AS "349f",
+    (projects.properties ->> '3514'::text) AS "3514",
+    (projects.properties ->> '359c'::text) AS "359c",
+    (projects.properties ->> '3771'::text) AS "3771",
+    (projects.properties ->> '3796'::text) AS "3796",
+    (projects.properties ->> '38e4'::text) AS "38e4",
+    (projects.properties ->> '3a8d'::text) AS "3a8d",
+    (projects.properties ->> '3af5'::text) AS "3af5",
+    (projects.properties ->> '3c5b'::text) AS "3c5b",
+    (projects.properties ->> '3d4b'::text) AS "3d4b",
+    (projects.properties ->> '3e55'::text) AS "3e55",
+    (projects.properties ->> '3e5e'::text) AS "3e5e",
+    (projects.properties ->> '3e94'::text) AS "3e94",
+    (projects.properties ->> '3f43'::text) AS "3f43",
+    (projects.properties ->> '3f72'::text) AS "3f72",
+    (projects.properties ->> '407a'::text) AS "407a",
+    (projects.properties ->> '412c'::text) AS "412c",
+    (projects.properties ->> '4133'::text) AS "4133",
+    (projects.properties ->> '4206'::text) AS "4206",
+    (projects.properties ->> '4430'::text) AS "4430",
+    (projects.properties ->> '44cc'::text) AS "44cc",
+    (projects.properties ->> '45b0'::text) AS "45b0",
+    (projects.properties ->> '4687'::text) AS "4687",
+    (projects.properties ->> '46bb'::text) AS "46bb",
+    (projects.properties ->> '46e1'::text) AS "46e1",
+    (projects.properties ->> '4703'::text) AS "4703",
+    (projects.properties ->> '4742'::text) AS "4742",
+    (projects.properties ->> '4797'::text) AS "4797",
+    (projects.properties ->> '484d'::text) AS "484d",
+    (projects.properties ->> '4858'::text) AS "4858",
+    (projects.properties ->> '4a42'::text) AS "4a42",
+    (projects.properties ->> '4a60'::text) AS "4a60",
+    (projects.properties ->> '4bf3'::text) AS "4bf3",
+    (projects.properties ->> '4c01'::text) AS "4c01",
+    (projects.properties ->> '4c25'::text) AS "4c25",
+    (projects.properties ->> '4cdb'::text) AS "4cdb",
+    (projects.properties ->> '4fa2'::text) AS "4fa2",
+    (projects.properties ->> '5032'::text) AS "5032",
+    (projects.properties ->> '5074'::text) AS "5074",
+    (projects.properties ->> '5151'::text) AS "5151",
+    (projects.properties ->> '5184'::text) AS "5184",
+    (projects.properties ->> '530b'::text) AS "530b",
+    (projects.properties ->> '54f6'::text) AS "54f6",
+    (projects.properties ->> '5516'::text) AS "5516",
+    (projects.properties ->> '553e'::text) AS "553e",
+    (projects.properties ->> '5557'::text) AS "5557",
+    (projects.properties ->> '55a0'::text) AS "55a0",
+    (projects.properties ->> '55e3'::text) AS "55e3",
+    (projects.properties ->> '5680'::text) AS "5680",
+    (projects.properties ->> '57d4'::text) AS "57d4",
+    (projects.properties ->> '583b'::text) AS "583b",
+    (projects.properties ->> '585d'::text) AS "585d",
+    (projects.properties ->> '58ae'::text) AS "58ae",
+    (projects.properties ->> '5a7f'::text) AS "5a7f",
+    (projects.properties ->> '5ac5'::text) AS "5ac5",
+    (projects.properties ->> '5b19'::text) AS "5b19",
+    (projects.properties ->> '5bf1'::text) AS "5bf1",
+    (projects.properties ->> '5c7e'::text) AS "5c7e",
+    (projects.properties ->> '5d56'::text) AS "5d56",
+    (projects.properties ->> '5fe4'::text) AS "5fe4",
+    (projects.properties ->> '5fe6'::text) AS "5fe6",
+    (projects.properties ->> '60b0'::text) AS "60b0",
+    (projects.properties ->> '6407'::text) AS "6407",
+    (projects.properties ->> '6474'::text) AS "6474",
+    (projects.properties ->> '6508'::text) AS "6508",
+    (projects.properties ->> '6648'::text) AS "6648",
+    (projects.properties ->> '6652'::text) AS "6652",
+    (projects.properties ->> '6767'::text) AS "6767",
+    (projects.properties ->> '6928'::text) AS "6928",
+    (projects.properties ->> '6959'::text) AS "6959",
+    (projects.properties ->> '6a32'::text) AS "6a32",
+    (projects.properties ->> '6a75'::text) AS "6a75",
+    (projects.properties ->> '6d79'::text) AS "6d79",
+    (projects.properties ->> '6e96'::text) AS "6e96",
+    (projects.properties ->> '6f8b'::text) AS "6f8b",
+    (projects.properties ->> '6ff4'::text) AS "6ff4",
+    (projects.properties ->> '701e'::text) AS "701e",
+    (projects.properties ->> '717a'::text) AS "717a",
+    (projects.properties ->> '721c'::text) AS "721c",
+    (projects.properties ->> '7250'::text) AS "7250",
+    (projects.properties ->> '7300'::text) AS "7300",
+    (projects.properties ->> '73e8'::text) AS "73e8",
+    (projects.properties ->> '7429'::text) AS "7429",
+    (projects.properties ->> '742e'::text) AS "742e",
+    (projects.properties ->> '742f'::text) AS "742f",
+    (projects.properties ->> '762c'::text) AS "762c",
+    (projects.properties ->> '7670'::text) AS "7670",
+    (projects.properties ->> '7751'::text) AS "7751",
+    (projects.properties ->> '78de'::text) AS "78de",
+    (projects.properties ->> '7926'::text) AS "7926",
+    (projects.properties ->> '7998'::text) AS "7998",
+    (projects.properties ->> '79e4'::text) AS "79e4",
+    (projects.properties ->> '7a5f'::text) AS "7a5f",
+    (projects.properties ->> '7a62'::text) AS "7a62",
+    (projects.properties ->> '7a97'::text) AS "7a97",
+    (projects.properties ->> '7b45'::text) AS "7b45",
+    (projects.properties ->> '7b87'::text) AS "7b87",
+    (projects.properties ->> '7bc5'::text) AS "7bc5",
+    (projects.properties ->> '7d55'::text) AS "7d55",
+    (projects.properties ->> '7f52'::text) AS "7f52",
+    (projects.properties ->> '7f69'::text) AS "7f69",
+    (projects.properties ->> '80c2'::text) AS "80c2",
+    (projects.properties ->> '80f4'::text) AS "80f4",
+    (projects.properties ->> '810f'::text) AS "810f",
+    (projects.properties ->> '815a'::text) AS "815a",
+    (projects.properties ->> '8370'::text) AS "8370",
+    (projects.properties ->> '8374'::text) AS "8374",
+    (projects.properties ->> '83c4'::text) AS "83c4",
+    (projects.properties ->> '85e6'::text) AS "85e6",
+    (projects.properties ->> '860e'::text) AS "860e",
+    (projects.properties ->> '8614'::text) AS "8614",
+    (projects.properties ->> '8892'::text) AS "8892",
+    (projects.properties ->> '892f'::text) AS "892f",
+    (projects.properties ->> '897d'::text) AS "897d",
+    (projects.properties ->> '89d2'::text) AS "89d2",
+    (projects.properties ->> '89ea'::text) AS "89ea",
+    (projects.properties ->> '8a0a'::text) AS "8a0a",
+    (projects.properties ->> '8bb9'::text) AS "8bb9",
+    (projects.properties ->> '8cff'::text) AS "8cff",
+    (projects.properties ->> '8d2e'::text) AS "8d2e",
+    (projects.properties ->> '8d49'::text) AS "8d49",
+    (projects.properties ->> '8deb'::text) AS "8deb",
+    (projects.properties ->> '9020'::text) AS "9020",
+    (projects.properties ->> '9022'::text) AS "9022",
+    (projects.properties ->> '9042'::text) AS "9042",
+    (projects.properties ->> '90f6'::text) AS "90f6",
+    (projects.properties ->> '9264'::text) AS "9264",
+    (projects.properties ->> '938a'::text) AS "938a",
+    (projects.properties ->> '93a7'::text) AS "93a7",
+    (projects.properties ->> '93f0'::text) AS "93f0",
+    (projects.properties ->> '93f7'::text) AS "93f7",
+    (projects.properties ->> '9542'::text) AS "9542",
+    (projects.properties ->> '95c3'::text) AS "95c3",
+    (projects.properties ->> '96cd'::text) AS "96cd",
+    (projects.properties ->> '9757'::text) AS "9757",
+    (projects.properties ->> '979a'::text) AS "979a",
+    (projects.properties ->> '97a0'::text) AS "97a0",
+    (projects.properties ->> '9820'::text) AS "9820",
+    (projects.properties ->> '9a07'::text) AS "9a07",
+    (projects.properties ->> '9b2a'::text) AS "9b2a",
+    (projects.properties ->> '9c3d'::text) AS "9c3d",
+    (projects.properties ->> '9e08'::text) AS "9e08",
+    (projects.properties ->> '9e2f'::text) AS "9e2f",
+    (projects.properties ->> '9e81'::text) AS "9e81",
+    (projects.properties ->> '9fab'::text) AS "9fab",
+    (projects.properties ->> '9fe9'::text) AS "9fe9",
+    (projects.properties ->> 'a09a'::text) AS a09a,
+    (projects.properties ->> 'a11e'::text) AS a11e,
+    (projects.properties ->> 'a175'::text) AS a175,
+    (projects.properties ->> 'a2b5'::text) AS a2b5,
+    (projects.properties ->> 'a401'::text) AS a401,
+    (projects.properties ->> 'a44c'::text) AS a44c,
+    (projects.properties ->> 'a453'::text) AS a453,
+    (projects.properties ->> 'a760'::text) AS a760,
+    (projects.properties ->> 'a7d6'::text) AS a7d6,
+    (projects.properties ->> 'a870'::text) AS a870,
+    (projects.properties ->> 'aa8e'::text) AS aa8e,
+    (projects.properties ->> 'aaae'::text) AS aaae,
+    (projects.properties ->> 'ad0f'::text) AS ad0f,
+    (projects.properties ->> 'ae59'::text) AS ae59,
+    (projects.properties ->> 'af47'::text) AS af47,
+    (projects.properties ->> 'b079'::text) AS b079,
+    (projects.properties ->> 'b232'::text) AS b232,
+    (projects.properties ->> 'b2e9'::text) AS b2e9,
+    (projects.properties ->> 'b361'::text) AS b361,
+    (projects.properties ->> 'b7f6'::text) AS b7f6,
+    (projects.properties ->> 'b885'::text) AS b885,
+    (projects.properties ->> 'b8c2'::text) AS b8c2,
+    (projects.properties ->> 'ba2d'::text) AS ba2d,
+    (projects.properties ->> 'ba69'::text) AS ba69,
+    (projects.properties ->> 'bb53'::text) AS bb53,
+    (projects.properties ->> 'bb60'::text) AS bb60,
+    (projects.properties ->> 'bc62'::text) AS bc62,
+    (projects.properties ->> 'bcb7'::text) AS bcb7,
+    (projects.properties ->> 'bcba'::text) AS bcba,
+    (projects.properties ->> 'beff'::text) AS beff,
+    (projects.properties ->> 'bf4a'::text) AS bf4a,
+    (projects.properties ->> 'bf6a'::text) AS bf6a,
+    (projects.properties ->> 'bfe9'::text) AS bfe9,
+    (projects.properties ->> 'c021'::text) AS c021,
+    (projects.properties ->> 'c022'::text) AS c022,
+    (projects.properties ->> 'c0c0'::text) AS c0c0,
+    (projects.properties ->> 'c1f0'::text) AS c1f0,
+    (projects.properties ->> 'c205'::text) AS c205,
+    (projects.properties ->> 'c221'::text) AS c221,
+    (projects.properties ->> 'c3e2'::text) AS c3e2,
+    (projects.properties ->> 'c46d'::text) AS c46d,
+    (projects.properties ->> 'c472'::text) AS c472,
+    (projects.properties ->> 'c4b0'::text) AS c4b0,
+    (projects.properties ->> 'c4ce'::text) AS c4ce,
+    (projects.properties ->> 'c5f5'::text) AS c5f5,
+    (projects.properties ->> 'c730'::text) AS c730,
+    (projects.properties ->> 'c770'::text) AS c770,
+    (projects.properties ->> 'c839'::text) AS c839,
+    (projects.properties ->> 'cc1f'::text) AS cc1f,
+    (projects.properties ->> 'cc7e'::text) AS cc7e,
+    (projects.properties ->> 'cc80'::text) AS cc80,
+    (projects.properties ->> 'cd12'::text) AS cd12,
+    (projects.properties ->> 'cf2b'::text) AS cf2b,
+    (projects.properties ->> 'cfda'::text) AS cfda,
+    (projects.properties ->> 'Ciudad'::text) AS "Ciudad",
+    (projects.properties ->> 'Cliente'::text) AS "Cliente",
+    (projects.properties ->> 'created_at'::text) AS created_at,
+    (projects.properties ->> 'd027'::text) AS d027,
+    (projects.properties ->> 'd028'::text) AS d028,
+    (projects.properties ->> 'd130'::text) AS d130,
+    (projects.properties ->> 'd207'::text) AS d207,
+    (projects.properties ->> 'd225'::text) AS d225,
+    (projects.properties ->> 'd3c0'::text) AS d3c0,
+    (projects.properties ->> 'd3f3'::text) AS d3f3,
+    (projects.properties ->> 'd511'::text) AS d511,
+    (projects.properties ->> 'd70c'::text) AS d70c,
+    (projects.properties ->> 'd70d'::text) AS d70d,
+    (projects.properties ->> 'd9b4'::text) AS d9b4,
+    (projects.properties ->> 'd9cc'::text) AS d9cc,
+    (projects.properties ->> 'd9d4'::text) AS d9d4,
+    (projects.properties ->> 'dadb'::text) AS dadb,
+    (projects.properties ->> 'dafd'::text) AS dafd,
+    (projects.properties ->> 'db36'::text) AS db36,
+    (projects.properties ->> 'dc2a'::text) AS dc2a,
+    (projects.properties ->> 'dc85'::text) AS dc85,
+    (projects.properties ->> 'dd35'::text) AS dd35,
+    (projects.properties ->> 'df66'::text) AS df66,
+    (projects.properties ->> 'df8d'::text) AS df8d,
+    (projects.properties ->> 'Dirección'::text) AS "Dirección",
+    (projects.properties ->> 'e19d'::text) AS e19d,
+    (projects.properties ->> 'e394'::text) AS e394,
+    (projects.properties ->> 'e4e9'::text) AS e4e9,
+    (projects.properties ->> 'e693'::text) AS e693,
+    (projects.properties ->> 'ea04'::text) AS ea04,
+    (projects.properties ->> 'ebe4'::text) AS ebe4,
+    (projects.properties ->> 'ece2'::text) AS ece2,
+    (projects.properties ->> 'ecee'::text) AS ecee,
+    (projects.properties ->> 'ee0d'::text) AS ee0d,
+    (projects.properties ->> 'EECC'::text) AS "EECC",
+    (projects.properties ->> 'f0df'::text) AS f0df,
+    (projects.properties ->> 'f130'::text) AS f130,
+    (projects.properties ->> 'f199'::text) AS f199,
+    (projects.properties ->> 'f24e'::text) AS f24e,
+    (projects.properties ->> 'f2b1'::text) AS f2b1,
+    (projects.properties ->> 'f2e1'::text) AS f2e1,
+    (projects.properties ->> 'f3ac'::text) AS f3ac,
+    (projects.properties ->> 'f422'::text) AS f422,
+    (projects.properties ->> 'f4d1'::text) AS f4d1,
+    (projects.properties ->> 'f61d'::text) AS f61d,
+    (projects.properties ->> 'f63c'::text) AS f63c,
+    (projects.properties ->> 'f6c8'::text) AS f6c8,
+    (projects.properties ->> 'f6f2'::text) AS f6f2,
+    (projects.properties ->> 'f8b4'::text) AS f8b4,
+    (projects.properties ->> 'f9b4'::text) AS f9b4,
+    (projects.properties ->> 'fa4e'::text) AS fa4e,
+    (projects.properties ->> 'fad9'::text) AS fad9,
+    (projects.properties ->> 'fbb4'::text) AS fbb4,
+    (projects.properties ->> 'fc7f'::text) AS fc7f,
+    (projects.properties ->> 'fc83'::text) AS fc83,
+    (projects.properties ->> 'fcc4'::text) AS fcc4,
+    (projects.properties ->> 'latitude'::text) AS latitude,
+    (projects.properties ->> 'longitude'::text) AS longitude,
+    (projects.properties ->> 'NOMBRE'::text) AS "NOMBRE",
+    (projects.properties ->> 'Provincia'::text) AS "Provincia",
+    (projects.properties ->> 'Razón Social'::text) AS "Razón Social",
+    (projects.properties ->> 'status'::text) AS status,
+    (projects.properties ->> 'TELCONTACTO'::text) AS "TELCONTACTO"
+   FROM projects;
+
+
+--
 -- Name: provinces; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1723,6 +2113,13 @@ ALTER TABLE ONLY charts ALTER COLUMN id SET DEFAULT nextval('charts_id_seq'::reg
 
 
 --
+-- Name: choice_lists id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY choice_lists ALTER COLUMN id SET DEFAULT nextval('choice_lists_id_seq'::regclass);
+
+
+--
 -- Name: cities id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2037,6 +2434,14 @@ ALTER TABLE ONLY chains
 
 ALTER TABLE ONLY charts
     ADD CONSTRAINT charts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: choice_lists choice_lists_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY choice_lists
+    ADD CONSTRAINT choice_lists_pkey PRIMARY KEY (id);
 
 
 --
@@ -2564,6 +2969,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20180213134336'),
 ('20180213191820'),
 ('20180213202457'),
-('20180214133448');
+('20180214133448'),
+('20180227225634');
 
 

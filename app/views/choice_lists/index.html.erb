@@ -1,0 +1,33 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Choice Lists</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Key</th>
+      <th>Value</th>
+      <th>Label</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @choice_lists.each do |choice_list| %>
+      <tr>
+        <td><%= choice_list.name %></td>
+        <td><%= choice_list.key %></td>
+        <td><%= choice_list.value %></td>
+        <td><%= choice_list.label %></td>
+        <td><%= link_to 'Show', choice_list %></td>
+        <td><%= link_to 'Edit', edit_choice_list_path(choice_list) %></td>
+        <td><%= link_to 'Destroy', choice_list, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Choice List', new_choice_list_path %>

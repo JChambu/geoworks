@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @choice_list.name %>
+</p>
+
+<p>
+  <strong>Key:</strong>
+  <%= @choice_list.key %>
+</p>
+
+<p>
+  <strong>Value:</strong>
+  <%= @choice_list.value %>
+</p>
+
+<p>
+  <strong>Label:</strong>
+  <%= @choice_list.label %>
+</p>
+
+<%= link_to 'Edit', edit_choice_list_path(@choice_list) %> |
+<%= link_to 'Back', choice_lists_path %>

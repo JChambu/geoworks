@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
 
 
+  resources :choice_lists
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
   get 'geo_editions/search_blocks' => 'geo_editions#search_blocks'
@@ -22,7 +23,6 @@ Rails.application.routes.draw do
 
   get 'poi_types/:id/chains' => 'poi_types#chains'
   get 'poi_types/:id/food_types' => 'poi_types#food_types'
-
 
  get 'project_types/maps' => 'project_types#maps'
  get 'project_types/kpi' => 'project_types#kpi'
