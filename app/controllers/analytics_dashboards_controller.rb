@@ -48,6 +48,7 @@ class AnalyticsDashboardsController < ApplicationController
   def update
     respond_to do |format|
       if @analytics_dashboard.update(analytics_dashboard_params)
+        format.js 
         format.html { redirect_to @analytics_dashboard, notice: 'Analytics dashboard was successfully updated.' }
         format.json { render :show, status: :ok, location: @analytics_dashboard }
       else
@@ -80,6 +81,6 @@ class AnalyticsDashboardsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def analytics_dashboard_params
-      params.require(:analytics_dashboard).permit(:title, :description, :project_field_id, :analysis_type_id, :chart_id, :chart, :card, :group_field, :conditions_field, :filter_input, :input_value)
+      params.require(:analytics_dashboard).permit(:title, :description, :project_field_id, :analysis_type_id, :chart_id, :graph, :card, :group_field, :conditions_field, :filter_input, :input_value)
     end
 end
