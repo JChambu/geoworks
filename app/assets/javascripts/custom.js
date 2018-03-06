@@ -534,13 +534,9 @@ function init_kpi(){
         '</div>'+
         '</div>'+
         '</div>'
-
         $('.tile_count').append(html);
-
       }) 
     }});
-
-
 }
 
 function init_chart_doughnut(){
