@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   get 'poi_types/:id/food_types' => 'poi_types#food_types'
 
  get 'project_types/maps' => 'project_types#maps'
+
  get 'project_types/kpi' => 'project_types#kpi'
  get 'project_types/graph3' => 'project_types#graph2'
  
@@ -40,6 +41,7 @@ Rails.application.routes.draw do
   resources :project_types do 
   resources :analytics_dashboards
   resources :projects
+ get 'project_types/filters' => 'project_types#filters', as: :filters
   end
   resources :regexp_types
     #  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
