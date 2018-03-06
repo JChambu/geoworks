@@ -1,4 +1,9 @@
+<% if @analytics_dashboard.errors.empty? %>
       // add the row to the table, show alert and hide modal
-    $('table tbody').append(' <%= j render "row", analytics_dashboard: @analytics_dashboard %>');
-  $('.alert-success').html("El producto ha sido creado con éxito").show();
+    $('table tbody tr#<%= @analytics_dashboard.id %>').replaceWith(' <%= j render "row", analytics_dashboard: @analytics_dashboard %>');
+  $('.alert-success').html("El registro ha sido modificado con éxito").show();
   $('#ana-modal').modal('hide');
+<% else %>
+      // show first error
+    alert('<%= @analytics_dashboard.errors.full_messages[0] %>');
+<% end %>

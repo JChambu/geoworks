@@ -128,16 +128,16 @@ CREATE TABLE analytics_dashboards (
     description character varying,
     analysis_type_id integer,
     chart_id integer,
-    chart boolean,
+    graph boolean,
     card boolean,
     project_type_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     group_field character varying,
-    conditions_field character varying,
     project_field_id integer,
     filter_input character varying,
-    input_value character varying
+    input_value character varying,
+    condition_field_id integer
 );
 
 
@@ -342,7 +342,7 @@ CREATE TABLE choice_lists (
     id integer NOT NULL,
     name character varying,
     key character varying,
-    value character varying,
+    value jsonb,
     label character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -2970,6 +2970,8 @@ INSERT INTO schema_migrations (version) VALUES
 ('20180213191820'),
 ('20180213202457'),
 ('20180214133448'),
-('20180227225634');
+('20180227225634'),
+('20180301151945'),
+('20180303134221');
 
 

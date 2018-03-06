@@ -4,30 +4,74 @@ class ProjectTypesController < ApplicationController
   # GET /project_types
   # GET /project_types.json
 
+  def filters
+    respond_to do |format|
+      format.html
+      format.js
+
+    end
+  end
+
+  def dashboard
+    
+   # miny = params[:size_box][0].to_f
+   # minx = params[:size_box][1].to_f
+   # maxy = params[:size_box][2].to_f
+   # maxx = params[:size_box][3].to_f
+    
+    # @analytics = AnalyticsDashboard.where(project_type_id: params[:id], graph: false)
+    # @data = []
+    # @analytics.each do |a|
+    #   analysis_type = a.analysis_type.name
+    #   field_select = "coalesce((properties->>'" + a.project_field.name + "' )::numeric,0)" 
+
+    #   sql = "project_type_id = #{params[:id]}" 
+    #   conditions_field = a.condition_field
+
+    #   if !conditions_field.blank?
+    #     sql += " and properties->>'" + conditions_field.key + "' " + a.filter_input + "'#{a.input_value}'"
+    #   end
+    #   @title = a.title.to_s
+    #   @data << { "#{@title}": Project.where(sql).send(analysis_type,field_select).round(3)}
+    # end
+  end
+
   def kpi
+
     @querys=[]
-    @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], graph: true)
+  
+    minx = params[:size_box][0].to_f
+    miny = params[:size_box][1].to_f
+    maxx = params[:size_box][2].to_f
+    maxy = params[:size_box][3].to_f
+    @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], graph: params[:graph])
     @analytics_charts.each do |chart|
-     
+
       if chart.project_field.field_type == 'ChoiceField'
-      field_select = "jsonb_array_elements(properties->'"+ chart.project_field.key+"'->'choice_values')"
+        field_select = "jsonb_array_elements(properties->'"+ chart.project_field.key+"'->'choice_values')"
       else
-      field_select = "properties->'"+ chart.project_field.key+"'"
+        field_select = "properties->'"+ chart.project_field.key+"'"
       end 
-
       analysis_type = chart.analysis_type.name
+      sql = "project_type_id = #{params[:data_id]} " 
+      sql += " and st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326) && #{:the_geom}" 
 
-      sql = "project_type_id = #{params[:data_id]}" 
-      conditions_field = chart.conditions_field
+      conditions_field = chart.condition_field
 
       if !conditions_field.blank?
         sql += " and properties->>'" + chart.project_field.key + "' " + chart.filter_input + "'#{chart.input_value}'"
       end
-      @group = "group"
-      chart_type = chart.chart.name
-      @data =   Project.where(sql).send( @group, field_select).count
-      @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data }
 
+      if params[:graph] == "true"
+        @group = "group"
+        chart_type = chart.chart.name
+        @data =   Project.where(sql).send( @group, field_select).count
+        @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data}
+      else
+        @data =   Project.where(sql)
+        @querys << { "title":"#{chart.title}", "data":@data}
+
+      end
     end
 
     #  @data = Project.where(project_type_id: 336).select("properties->>'status'").group("properties->>'status'").count
@@ -36,9 +80,17 @@ class ProjectTypesController < ApplicationController
 
 
   def maps
-    # params[:data_id] = '10e64be4-f9c5-4f32-8505-523628c52d46'
-    #      @maps = ProjectType.records_maps(params[:data_id])
-    @projects = Project.where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom)")
+
+    @projects = Project.where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom), properties->>'status' as status, properties->>'05d5' as client_id, 
+properties->>'f2b1' as razon_social,
+properties->>'9e2f' as ejecutivo
+
+                                                                        
+                                                                        ")
+
+    if !params[:provincia].blank?
+    @projects = @projects.where("properties->>'7926'=?", params[:provincia])
+    end
 
   end
 
@@ -47,26 +99,11 @@ class ProjectTypesController < ApplicationController
     @query = ProjectType.graph2(params[:data_id])
   end
 
-  def dashboard
-    
-    @analytics = AnalyticsDashboard.where(project_type_id: params[:id], graph: false)
-    @data = []
-    @analytics.each do |a|
-      analysis_type = a.analysis_type.name
-      field_select = "coalesce((properties->>'" + a.project_field.name + "' )::numeric,0)" 
 
-      sql = "project_type_id = #{params[:id]}" 
-      conditions_field = a.conditions_field
 
-      if !conditions_field.blank?
-        sql += " and properties->>'" + a.project_field.name + "' " + a.filter_input + "'#{a.input_value}'"
-      end
-      @title = a.title.to_s
-      @data << { "#{@title}": Project.where(sql).send(analysis_type,field_select).round(3)}
-    end
-    @items = ProjectType.where(id: params[:id])
-  end
 
+  
+  
   def index
     @project_types = ProjectType.all
     @project_types = @project_types.paginate(:page => params[:page])

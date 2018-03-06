@@ -44,7 +44,7 @@ class AnalyticsDashboardsController < ApplicationController
   end
 
   # PATCH/PUT /analytics_dashboards/1
-  # PATCH/PUT /analytics_dashboards/1.json
+  # PATCH/PUT /analytics_dashboards/2.json
   def update
     respond_to do |format|
       if @analytics_dashboard.update(analytics_dashboard_params)
@@ -81,6 +81,6 @@ class AnalyticsDashboardsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def analytics_dashboard_params
-      params.require(:analytics_dashboard).permit(:title, :description, :project_field_id, :analysis_type_id, :chart_id, :graph, :card, :group_field, :conditions_field, :filter_input, :input_value)
+      params.require(:analytics_dashboard).permit(:title, :description, :project_field_id, :analysis_type_id, :chart_id, :graph, :card, :group_field, :condition_field_id, :filter_input, :input_value)
     end
 end

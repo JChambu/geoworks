@@ -513,55 +513,82 @@ function init_charts() {
 }
 */
 
+function init_kpi(){
+
+  var size_box = Navarra.project_types.config.size_box;
+  $('.tile_count').empty();
+  var  data_id =  $('#data_id').val();
+  $.ajax({
+
+    type: 'GET',
+    url: '/project_types/kpi.json',
+    datatype: 'json',
+    data: {data_id: data_id, size_box: size_box, graph: false},
+    success: function(data){
+      data.forEach(function(element){
+
+        html = ' <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">'+
+          '<span class="count_top"><i class="fa fa-user"></i>'+element['title']+'</span>'+
+          '<div class="count">'+element['data'].length+'</div>'
+        '</div>'
+        '</div>'
+
+        $('.tile_count').append(html);
+
+      }) 
+    }});
+
+
+}
+
 function init_chart_doughnut(){
 
   if( typeof (Chart) === 'undefined'){ return; }
-  console.log('init_chart_doughnut');
 
   if ($('.graphics').length){
-    
-  var  data_id =  $('#data_id').val();
 
+    $('.graphics').empty();
+
+    var size_box = Navarra.project_types.config.size_box;
+    var  data_id =  $('#data_id').val();
     $.ajax({
 
       type: 'GET',
       url: '/project_types/kpi.json',
       datatype: 'json',
-      data: {data_id: data_id},
+      data: {data_id: data_id, size_box: size_box, graph: true},
       success: function(data){
         //        data.forEach(function(element){
-
-
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
 
 
-var data_entry = {};
-var type_chart = "";
-var title = "";
+          var data_entry = {};
+          var type_chart = "";
+          var title = "";
 
           $.each(reg, function(index, value){
 
 
-if (index == 'type_chart'){
-  type_chart = value[0]; 
-  type_chart =  type_chart ;
-}
-if (index == 'title'){
-  title = value ;
-}
-if (index == 'data'){
-    data_entry = value;
+            if (index == 'type_chart'){
+              type_chart = value[0]; 
+              type_chart =  type_chart ;
+            }
+            if (index == 'title'){
+              title = value ;
+            }
+            if (index == 'data'){
+              data_entry = value;
 
-            var div_graph = document.createElement('div');
-            var canvas_graph = document.createElement('canvas');
-            div_graph.id = 'graph'+title;
-            canvas_graph.id = 'canvas'+title;
-            canvas_graph.height = 180;
-            canvas_graph.width = 320;
-            canvas_graph.className = 'canvas'+title ;
+              var div_graph = document.createElement('div');
+              var canvas_graph = document.createElement('canvas');
+              div_graph.id = 'graph'+title;
+              canvas_graph.id = 'canvas'+title;
+              canvas_graph.height = 180;
+              canvas_graph.width = 320;
+              canvas_graph.className = 'canvas'+title ;
 
-          html = '<div class="col-md-4 col-sm-4 col-xs-12">' + 
+              html = '<div class="col-md-4 col-sm-4 col-xs-12">' + 
 '  <div class="x_panel tile fixed_height_320 overflow_hidden">'+
 '    <div class="x_title">'+
 '      <h2>'+title+'</h2>'+
@@ -578,13 +605,13 @@ if (index == 'data'){
 ' <div class="x_content_'+title+'">';
 
               $('.graphics').append(html);
-            
-  var lab = [];
-  var da=[];
-            $.each(data_entry, function(i, v ){
-              lab.push(i);
-              da.push(v);
-          })
+
+              var lab = [];
+              var da=[];
+              $.each(data_entry, function(i, v ){
+                lab.push(i);
+                da.push(v);
+              })
               var chart_doughnut_settings = {
                 type: type_chart,
                 data: {
@@ -603,23 +630,23 @@ if (index == 'data'){
                 }
               }
               $('.x_content_'+title).append(canvas_graph);
-                 var cc = '#'+canvas_graph.id;               
-                $(cc).each(function(){
+              var cc = '#'+canvas_graph.id;               
+              $(cc).each(function(){
 
                 var chart_element = $(this);
                 var chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
-                
-                });
 
-close_html = '</div>'+
-  '</div>'+
+              });
+
+              close_html = '</div>'+
+                '</div>'+
 '</div>';
 
               $('.graphics').append( close_html);
-}
-            })
+            }
+          })
 
-//          })
+          //          })
         }
       }
     })
@@ -637,22 +664,22 @@ close_html = '</div>'+
 }
 
 
-   var poolColors = function (a) {
-             var pool = [];
-             for(i=0;i<a;i++){
-                           pool.push(dynamicColors());
-                       }
-             return pool;
-         }
+var poolColors = function (a) {
+  var pool = [];
+  for(i=0;i<a;i++){
+    pool.push(dynamicColors());
+  }
+  return pool;
+}
 
-    var dynamicColors = function() {
-              var r = Math.floor(Math.random() * 255);
-              var g = Math.floor(Math.random() * 255);
-              var b = Math.floor(Math.random() * 255);
-              return "rgb(" + r + "," + g + "," + b + ")";
-          }
+var dynamicColors = function() {
+  var r = Math.floor(Math.random() * 255);
+  var g = Math.floor(Math.random() * 255);
+  var b = Math.floor(Math.random() * 255);
+  return "rgb(" + r + "," + g + "," + b + ")";
+}
 
- 
+
 $(document).ready(function() {
   init_daterangepicker();
   init_flot_chart();

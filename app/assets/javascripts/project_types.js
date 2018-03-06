@@ -2,6 +2,11 @@ Navarra.namespace("project_types.action_maps");
 Navarra.namespace("project_types.action_dashboard");
 
 
+Navarra.project_types.config = {
+  filtrado: '',
+  size_box: []
+}
+
 $(document).on('click', 'form .remove_fields', function(event){
 
   $(this).prev('input[type=hidden]').val('1')
@@ -15,15 +20,25 @@ $(document).on('click', 'form .add_fields', function(event){
   event.preventDefault();
 });
 
+$(document).on('click', '#enviar', function(event){
+
+  Navarra.project_types.config.filtrado = 'SANTA FE';    
+  Navarra.geo_openlayers.addMarker_op();
+  init_chart_doughnut();
+  $("#filters-modal").modal('hide');
+
+});
 
 Navarra.project_types.action_dashboard = function(){
-
   init = function(){
+
     Navarra.geo_openlayers.init();
-    init_chart_doughnut();
-}
+   // init_chart_doughnut();
+   // init_kpi();
+  }
+
   return {
-    init: init
+    init: init,
   }
 }();
 
