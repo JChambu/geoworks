@@ -85,8 +85,8 @@ body.nav-sm .container.body .left_col {
   z-index: 200;
 }
 body.nav-sm .container.body .right_col {
-  padding: 0px 1px;
-  margin-left: 70px;
+  padding: 10px 10px;
+  margin-left: 80px;
   z-index: 2;
 }
 body.nav-sm .navbar.nav_title {
@@ -1589,8 +1589,8 @@ table.dataTable td.focus {
                   background: #425567;
                 }
                 .tile_count {
-                  margin-bottom: 5px;
-                  margin-top: 5px;
+                  margin-bottom: 10px;
+                  margin-top: 10px;
                 }
                 .tile_count div:first-child .left {
                   border: 0;
@@ -1746,7 +1746,7 @@ table.dataTable td.focus {
                 .tile-stats {
                   position: relative;
                   display: block;
-                  margin-bottom: 0px;
+                  margin-bottom: 10px;
                   border: 1px solid #E4E4E4;
                   -webkit-border-radius: 5px;
                   overflow: hidden;

@@ -542,9 +542,7 @@ function init_chart_doughnut(){
   if( typeof (Chart) === 'undefined'){ return; }
 
   if ($('.graphics').length){
-
     $('.graphics').empty();
-
     var size_box = Navarra.project_types.config.size_box;
     var  data_id =  $('#data_id').val();
     $.ajax({
@@ -558,13 +556,11 @@ function init_chart_doughnut(){
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
 
-
           var data_entry = {};
           var type_chart = "";
           var title = "";
 
           $.each(reg, function(index, value){
-
 
             if (index == 'type_chart'){
               type_chart = value[0]; 

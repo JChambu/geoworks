@@ -16,9 +16,7 @@ class ProjectTypesController < ApplicationController
   end
 
   def kpi
-
     @querys=[]
-
     minx = params[:size_box][0].to_f
     miny = params[:size_box][1].to_f
     maxx = params[:size_box][2].to_f
@@ -26,6 +24,7 @@ class ProjectTypesController < ApplicationController
     @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], graph: params[:graph])
     @analytics_charts.each do |chart|
 
+       @ch = chart
       if chart.project_field.field_type == 'ChoiceField'
         field_select = "jsonb_array_elements(properties->'"+ chart.project_field.key+"'->'choice_values')"
       else
@@ -47,10 +46,10 @@ class ProjectTypesController < ApplicationController
         @data =   Project.where(sql).send( @group, field_select).count
         @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data}
       else
-        @data =   Project.where(sql)
+        @data =   Project.where(sql).send("select", field_select)
         @querys << { "title":"#{chart.title}", "data":@data}
-
       end
+
     end
   end
 
