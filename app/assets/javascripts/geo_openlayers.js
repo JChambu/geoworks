@@ -2,9 +2,9 @@ Navarra.namespace("geo_openlayers");
 
 Navarra.geo_openlayers = function(){
   var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
+  var move_tmp = 0;
 
   var init = function(){
-
     iconStyle = new ol.style.Style({
       image : new ol.style.Icon(({
         anchor : [ 0.5, 46 ],
@@ -19,7 +19,7 @@ Navarra.geo_openlayers = function(){
     var view =  new ol.View({
       projection: 'EPSG:4326',
       center: [-68.8167, -32.8833],
-      zoom: 10
+      zoom: 5
     });
 
     map  = new ol.Map({
@@ -43,13 +43,18 @@ Navarra.geo_openlayers = function(){
     });
 
     addMarker_op();
-    
+
+    var size = map.getView().calculateExtent(map.getSize());
     map.on('moveend', function(){
-      var size = map.getView().calculateExtent(map.getSize());
-      Navarra.project_types.config.size_box = size;   
-      init_chart_doughnut();  
-      init_kpi();
-    })
+      if (move_tmp == 1){
+        currentSize = map.getView().calculateExtent(map.getSize());
+        Navarra.project_types.config.size_box = currentSize;   
+        init_chart_doughnut();  
+        init_kpi();
+      }else{
+        move_tmp = 1 ;
+      }
+    });
 
     var mousePosition = new ol.control.MousePosition({
       coordinateFormat: ol.coordinate.createStringXY(2),
@@ -58,7 +63,7 @@ Navarra.geo_openlayers = function(){
       undefinedHTML: '&nbsp;'
     });
     map.addControl(mousePosition);
-    
+
     var element = document.getElementById('popup');
     var popup = new ol.Overlay({
       element: element,
@@ -67,13 +72,13 @@ Navarra.geo_openlayers = function(){
 
     });
     map.addOverlay(popup);
-   // display popup on click
+    // display popup on click
     map.on('click', function(evt) {
       var feature = map.forEachFeatureAtPixel(evt.pixel,
         function(feature, layer) {
           return feature;
         });
-    
+
       if (feature) {
         detail = "Num Cliente: "+ feature.get('client_id') + '<br>' ;
         detail += "Estado: "+ feature.get('status') + '<br>' ;
@@ -95,7 +100,7 @@ Navarra.geo_openlayers = function(){
     });
 
     // change mouse cursor when over marker
-   /* map.on('pointermove', function(e) {
+    /* map.on('pointermove', function(e) {
       if (e.dragging) {
         $(element).popover('destroy');
         return;
@@ -104,7 +109,7 @@ Navarra.geo_openlayers = function(){
       var hit = map.hasFeatureAtPixel(pixel);
       map.getTarget().style.cursor = hit ? 'pointer' : '';
     });
-*/
+    */
   }
 
   addMarker_op = function(){

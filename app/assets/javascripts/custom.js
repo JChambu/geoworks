@@ -514,7 +514,6 @@ function init_charts() {
 */
 
 function init_kpi(){
-
   var size_box = Navarra.project_types.config.size_box;
   $('.tile_count').empty();
   var  data_id =  $('#data_id').val();
@@ -526,8 +525,7 @@ function init_kpi(){
     data: {data_id: data_id, size_box: size_box, graph: false},
     success: function(data){
       data.forEach(function(element){
-
-        html = ' <div class="animated flipInY col-md-2 col-sm-4 col-xs-6">'+
+        html = ' <div class="col-md-2 col-sm-4 col-xs-6">'+
           '<div class="tile-stats"> '+ 
           '<div class="count">'+element['data'].length+'</div>'+
           '<h5>'+ element['title']+'</h5>'+
