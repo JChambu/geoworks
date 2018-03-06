@@ -1,17 +1,8 @@
 <%= form_for :q, :method => :get  do |f| %>
 
-
-<div class="container" role="main" >
-
-  <%= link_to 'New Analytics Dashboard', new_project_type_analytics_dashboard_path(params[:id]), remote: true %>
-
-  <%= link_to 'Filtrar', project_type_filters_path(params[:id]) , :remote => true  %>
-  
   <%= hidden_field_tag :data_id, params[:id] %>
-
   <%= render "count" %>
   <%= render 'maps' %>
   <%= render "graph3" %>
 
-</div>
 <% end %>

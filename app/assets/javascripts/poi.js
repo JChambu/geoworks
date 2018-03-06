@@ -13,6 +13,7 @@ Navarra.pois.config = {
 };
 
 Navarra.pois.action_index = function() {
+
   var init = function() {
     Navarra.poi_search_panel.init();
 
@@ -48,7 +49,6 @@ Navarra.pois.action_edit = function() {
   },
 
     loadPoiSubTypesCombo = function(result) {
-      console.log(result);
       Navarra.common.form.loadComboOptions("#poi_poi_sub_type_id", result, "name");
     },
 

@@ -1,11 +1,13 @@
 .map_custom { 
-  height: 400px; 
+  height: 300px; 
   width: 100%;
 }
 .login_image{
   background-image: url("Slide_Oficina_v3.jpg");
   z-index: -1;
 }
+
+
 .login_input{
   width: 270px;
   height: 42px;
@@ -83,7 +85,7 @@ body.nav-sm .container.body .left_col {
   z-index: 200;
 }
 body.nav-sm .container.body .right_col {
-  padding: 10px 20px;
+  padding: 0px 1px;
   margin-left: 70px;
   z-index: 2;
 }
@@ -423,7 +425,7 @@ body {
   height: 200px;
 }
 .overflow_hidden {
-/*  overflow: hidden*/
+  /*  overflow: hidden*/
 }
 .progress-bar-dark {
   background-color: #34495E !important;
@@ -1587,8 +1589,8 @@ table.dataTable td.focus {
                   background: #425567;
                 }
                 .tile_count {
-                  margin-bottom: 20px;
-                  margin-top: 20px;
+                  margin-bottom: 5px;
+                  margin-top: 5px;
                 }
                 .tile_count div:first-child .left {
                   border: 0;
@@ -1744,7 +1746,7 @@ table.dataTable td.focus {
                 .tile-stats {
                   position: relative;
                   display: block;
-                  margin-bottom: 12px;
+                  margin-bottom: 0px;
                   border: 1px solid #E4E4E4;
                   -webkit-border-radius: 5px;
                   overflow: hidden;

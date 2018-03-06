@@ -16,7 +16,7 @@
           </div>
           <div class="profile_info">
             <span>Bienvenido,</span>
-             <%= link_to t('menu.logout'), destroy_user_session_path, method: :delete %>
+            <%= link_to t('menu.logout'), destroy_user_session_path, method: :delete %>
             <h2><%=current_user.name  %> </h2>
           </div>
         </div>
@@ -32,13 +32,9 @@
               <% end %>
               <li><a><i class="fa fa-desktop"></i> Servicios <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu" style="display: none">
-                  <li><%= link_to  t('menu.admin.extended_listings'), extended_listings_path() %></li>
-                  <% if last_id.nil? %>
-                    <li><%= link_to t('menu.geo_editions.title'), geo_editions_path()%></li>
-                  <% else %>
-                    <li><%= link_to t('menu.geo_editions.title'), edit_geo_edition_path(last_id)%></li>
-                  <% end %>
                   <% if current_user.name == 'Admin' %>
+                  <li><%= link_to  t('menu.admin.extended_listings'), extended_listings_path() %></li>
+
                     <li><%=  link_to  t('menu.admin.extended_listings_georeferenced'), georeferenced_extended_listings_path  %></li>
                   <% end  %>
                 </ul>
@@ -62,38 +58,30 @@
         </div>
         <!-- /sidebar menu -->
 
-        <!-- /menu footer buttons -->
-        <div class="sidebar-footer hidden-small">
-          <a data-toggle="tooltip" data-placement="top" title="Settings">
-            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-          </a>
-          <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-            <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-          </a>
-          <a data-toggle="tooltip" data-placement="top" title="Lock">
-            <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-          </a>
-          <a data-toggle="tooltip" data-placement="top" title="Logout">
-            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-          </a>
-        </div>
-        <!-- /menu footer buttons -->
       </div>
     </div>
 
     <!-- top navigation -->
-    <div class="top_nav">
-      <div class="nav_menu">
-        <nav>
-          <div class="nav toggle">
-             <ul class="nav navbar-nav navbar-right">
-               <li class="" ><a><i class="fa fa-cog"></i>  <span class="fa fa-chevron-down"></span></a></li>
-            </ul>
-          </div>
-        </nav>
-      </div>
+    <div class="right_col" role="main">
+      <div class="row">
+    <nav class="navbar navbar-default">
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
 
-    </div>
+          <%if params[:controller] == 'project_types' %>
+             <%if params[:action] == 'dashboard' %>
+            <li><%= link_to  new_project_type_analytics_dashboard_path(params[:id]), remote: true do  %><i class="fa fa-plus-circle fa-2x"></i> 
+              <% end %> </li>
+            <li><%= link_to project_type_filters_path(params[:id]) , :remote => true  do  %><i class="fa fa-filter fa-2x"></i> 
+              <% end %> </li>
+          <% end %>
+          <% end %>
+        </ul>
+      </div>
+    </nav>
+
+      </div>
+      </div>
     <!-- /top navigation -->
     <!-- page content -->
     <div class="right_col" role="main">
@@ -103,12 +91,12 @@
       </div>
     </div>
     <!-- /page content -->
-      <footer>
-          <p class="pull-right">Geoworks by <a href="https://gisworking.com">Gisworking</a>  
-          </p>
-        <div class="clearfix"></div>
-      </footer>
-      <!-- /footer content -->
+    <footer>
+      <p class="pull-right">Geoworks by <a href="https://gisworking.com">Gisworking</a>  
+      </p>
+      <div class="clearfix"></div>
+    </footer>
+    <!-- /footer content -->
 
   </div>
 </div>

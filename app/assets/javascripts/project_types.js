@@ -1,7 +1,6 @@
 Navarra.namespace("project_types.action_maps");
 Navarra.namespace("project_types.action_dashboard");
 
-
 Navarra.project_types.config = {
   filtrado: '',
   size_box: []
@@ -33,8 +32,6 @@ Navarra.project_types.action_dashboard = function(){
   init = function(){
 
     Navarra.geo_openlayers.init();
-   // init_chart_doughnut();
-   // init_kpi();
   }
 
   return {

@@ -38,9 +38,9 @@ GeoEditionLists = React.createClass({
           this.props.handleUpdateRecord(this.props.event, data);
           this.setState({ edit: false });
         }.bind(this),
-        error: function(xhr, status, error) {                  
-          console.log(status);
-          alert('Cannot update requested record: ', error);                                                                       
+        error: function(xhr, status, error ) {
+          var request_error= xhr.responseText
+          alert('No se actualizo el registro: ' +  request_error);                                                                       
         }        
       });
     } else {

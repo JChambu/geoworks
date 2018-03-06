@@ -58,9 +58,6 @@ Navarra.geo_openlayers = function(){
       undefinedHTML: '&nbsp;'
     });
     map.addControl(mousePosition);
-
-
-    
     
     var element = document.getElementById('popup');
     var popup = new ol.Overlay({
@@ -110,9 +107,6 @@ Navarra.geo_openlayers = function(){
 */
   }
 
-  var  removeAllMarkers =  function(){
-    map.getLayers().item(1).getSource().clear();
-  }
   addMarker_op = function(){
     var size = map.getView().calculateExtent(map.getSize());
 
@@ -137,7 +131,6 @@ Navarra.geo_openlayers = function(){
 
           if (val['longitude'] != null && val['latitude'] != null){
             coord = [val['longitude'], val['latitude']];
-
 
             iconGeometry = new ol.geom.Point(coord);
 

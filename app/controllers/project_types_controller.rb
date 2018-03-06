@@ -13,33 +13,12 @@ class ProjectTypesController < ApplicationController
   end
 
   def dashboard
-    
-   # miny = params[:size_box][0].to_f
-   # minx = params[:size_box][1].to_f
-   # maxy = params[:size_box][2].to_f
-   # maxx = params[:size_box][3].to_f
-    
-    # @analytics = AnalyticsDashboard.where(project_type_id: params[:id], graph: false)
-    # @data = []
-    # @analytics.each do |a|
-    #   analysis_type = a.analysis_type.name
-    #   field_select = "coalesce((properties->>'" + a.project_field.name + "' )::numeric,0)" 
-
-    #   sql = "project_type_id = #{params[:id]}" 
-    #   conditions_field = a.condition_field
-
-    #   if !conditions_field.blank?
-    #     sql += " and properties->>'" + conditions_field.key + "' " + a.filter_input + "'#{a.input_value}'"
-    #   end
-    #   @title = a.title.to_s
-    #   @data << { "#{@title}": Project.where(sql).send(analysis_type,field_select).round(3)}
-    # end
   end
 
   def kpi
 
     @querys=[]
-  
+
     minx = params[:size_box][0].to_f
     miny = params[:size_box][1].to_f
     maxx = params[:size_box][2].to_f
@@ -73,9 +52,6 @@ class ProjectTypesController < ApplicationController
 
       end
     end
-
-    #  @data = Project.where(project_type_id: 336).select("properties->>'status'").group("properties->>'status'").count
-    # @querys << {"kpi1":@data}
   end
 
 
@@ -83,27 +59,20 @@ class ProjectTypesController < ApplicationController
 
     @projects = Project.where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom), properties->>'status' as status, properties->>'05d5' as client_id, 
 properties->>'f2b1' as razon_social,
-properties->>'9e2f' as ejecutivo
-
-                                                                        
-                                                                        ")
+properties->>'9e2f' as ejecutivo")
 
     if !params[:provincia].blank?
-    @projects = @projects.where("properties->>'7926'=?", params[:provincia])
+      @projects = @projects.where("properties->>'7926'=?", params[:provincia])
     end
 
   end
 
   def graph2
-    params[:data_id] = 'b4a38670-0fbc-45d6-a162-48517e4198ba'
-    @query = ProjectType.graph2(params[:data_id])
+    ##  params[:data_id] = 'b4a38670-0fbc-45d6-a162-48517e4198ba'
+    #  @query = ProjectType.graph2(params[:data_id])
   end
 
 
-
-
-  
-  
   def index
     @project_types = ProjectType.all
     @project_types = @project_types.paginate(:page => params[:page])

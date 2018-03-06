@@ -6,8 +6,8 @@ Navarra.namespace("common.poi");
 
 Navarra.common.request = function() {
   var ajax = function(url, type, successFunction, errorFunction, data) {
-    if(!url) {
-      console.log("Undefined url param");
+if(!url) {
+    console.log("Undefined url param");
       return;
     }
 
@@ -161,7 +161,6 @@ Navarra.common.form = function() {
       $.each(data, function (i, val) {
         results += "<option value='" +  val.id + "'>" + val.name +  "</option>";
       });
-       console.log(results);
     $(combo_select).html(results);
      }
     });

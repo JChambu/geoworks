@@ -527,10 +527,12 @@ function init_kpi(){
     success: function(data){
       data.forEach(function(element){
 
-        html = ' <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">'+
-          '<span class="count_top"><i class="fa fa-user"></i>'+element['title']+'</span>'+
-          '<div class="count">'+element['data'].length+'</div>'
-        '</div>'
+        html = ' <div class="animated flipInY col-md-2 col-sm-4 col-xs-6">'+
+          '<div class="tile-stats"> '+ 
+          '<div class="count">'+element['data'].length+'</div>'+
+          '<h5>'+ element['title']+'</h5>'+
+        '</div>'+
+        '</div>'+
         '</div>'
 
         $('.tile_count').append(html);
