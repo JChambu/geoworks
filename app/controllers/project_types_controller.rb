@@ -21,17 +21,21 @@ class ProjectTypesController < ApplicationController
     miny = params[:size_box][1].to_f
     maxx = params[:size_box][2].to_f
     maxy = params[:size_box][3].to_f
+
     @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], graph: params[:graph])
+   
     @analytics_charts.each do |chart|
 
-       @ch = chart
+      sql = "project_type_id = #{params[:data_id]} " 
+      
       if chart.project_field.field_type == 'ChoiceField'
-        field_select = "jsonb_array_elements(properties->'"+ chart.project_field.key+"'->'choice_values')"
+        field_select = "properties->>'"+ chart.project_field.key+"'"
+        field_select += ", choice_lists.label"
       else
         field_select = "properties->'"+ chart.project_field.key+"'"
       end 
       analysis_type = chart.analysis_type.name
-      sql = "project_type_id = #{params[:data_id]} " 
+
       sql += " and st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326) && #{:the_geom}" 
 
       conditions_field = chart.condition_field
@@ -42,8 +46,14 @@ class ProjectTypesController < ApplicationController
 
       if params[:graph] == "true"
         @group = "group"
-        chart_type = chart.chart.name
+        @join = ("join choice_lists  on (properties->>'#{chart.project_field.key}')::integer = choice_lists.id" )
+
+      if chart.project_field.field_type == 'ChoiceField'
+        @data =   Project.joins(@join).where(sql).send( @group, field_select).count
+      else
         @data =   Project.where(sql).send( @group, field_select).count
+      end 
+        chart_type = chart.chart.name
         @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data}
       else
         @data =   Project.where(sql).send("select", field_select)

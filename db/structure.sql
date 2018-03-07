@@ -342,7 +342,7 @@ CREATE TABLE choice_lists (
     id integer NOT NULL,
     name character varying,
     key character varying,
-    value jsonb,
+    value character varying,
     label character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -1323,7 +1323,7 @@ CREATE TABLE project_fields (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     key character varying,
-    choice_list_id integer
+    choice_list_id character varying
 );
 
 
@@ -2974,6 +2974,8 @@ INSERT INTO schema_migrations (version) VALUES
 ('20180227225634'),
 ('20180301151945'),
 ('20180303134221'),
-('20180306150411');
+('20180306150411'),
+('20180306211512'),
+('20180306214255');
 
 

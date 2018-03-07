@@ -118,7 +118,8 @@ class ProjectType < ApplicationRecord
       
       list['choices'].each do |choice|
 
-      choise_list = ChoiceList.where(name: list['name'], key: ['id']).first_or_create(name: list['name'], key: list['id'], value: choice['value'], label: choice['label']).update_attributes!(name: list['name'], key: list['id'], value: choice['value'], label: choice['label'])
+
+      choise_list = ChoiceList.where(name: list['name'], key: list['id'], value: choice['value'], label: choice['label']).first_or_create(name: list['name'], key: list['id'], value: choice['value'], label: choice['label']).update_attributes!(name: list['name'], key: list['id'], value: choice['value'], label: choice['label'])
     end
       end
     
@@ -126,7 +127,9 @@ class ProjectType < ApplicationRecord
 
     @forms.objects.each do |form|
       if form['name'] == 'Nextel'
-      
+     
+        @form = form
+        
         @project_type = ProjectType.where(name: form['name'], user_id: 1).first_or_create
         item_statics = ["latitude", "longitude","status"]
 
@@ -135,17 +138,19 @@ class ProjectType < ApplicationRecord
       end 
 
       form['elements'].each do |e|
-        @new_project_field =  ProjectField.where(key:e['key']).first_or_create(name: e['label'], field_type: 'text_field', project_type_id: @project_type.id, key: e['key']).update_attributes!(name: e['label'], field_type: e['type'], project_type_id: @project_type.id, key: e['key'])
+
+        @new_project_field =  ProjectField.where(key:e['key']).first_or_create(name: e['label'], field_type: e['type'], project_type_id: @project_type.id, key: e['key'], choice_list_id: e['choice_list_id']).update_attributes!(name: e['label'], field_type: e['type'], project_type_id: @project_type.id, key: e['key'], choice_list_id: e['choice_list_id'])
   
           if !e['elements'].nil?
             e['elements'].each do |element|
-                @new_project_field =  ProjectField.where(key:element['key']).first_or_create(name: element['label'], field_type: 'text_field', project_type_id: @project_type.id, key: element['key']).update_attributes!(name: element['label'], field_type: element['type'], project_type_id: @project_type.id, key: element['key'])
+                @new_project_field =  ProjectField.where(key:element['key']).first_or_create(name: element['label'], field_type: 'text_field', project_type_id: @project_type.id, key: element['key'], choice_list_id: element['choice_list_id']).update_attributes!(name: element['label'], field_type: element['type'], project_type_id: @project_type.id, key: element['key'],choice_list_id: element['choice_list_id'] )
             end
           end
       end
       
       @record = records_fulcrum(form['id'] )
       @record.objects.each do |value|
+
         @geom = "POINT(#{value['longitude']} #{value['latitude']})" 
 @val = value['form_values']
         items = {
@@ -157,7 +162,21 @@ class ProjectType < ApplicationRecord
         if  value['form_values'] 
           i = {}  
           value['form_values'].each do |item|
+
+            properties = ProjectField.where(key: item[0])
+            if properties[0][:field_type] == 'ChoiceField'
+
+              if !properties[0][:choice_list_id].nil? 
+              ch_list = ChoiceList.where(key:properties[0][:choice_list_id], value: item[1]["choice_values"] )  
+              
+              p  i["#{item[0]}"] = ch_list[0][:id]
+pry
+              else
+                i["#{item[0]}"] = item[1]
+              end
+            else
             i["#{item[0]}"] = item[1]
+            end
           end
         end
         @it = items.merge(i)
@@ -188,7 +207,7 @@ class ProjectType < ApplicationRecord
 
   def self.records_fulcrum(id)
     client = conect_fulcrum
-    @records = client.records.all(form_id: id, per_page: 1000)
+    @records = client.records.all(form_id: id, per_page: 301)
   end
 
 
