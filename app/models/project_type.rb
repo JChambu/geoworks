@@ -207,7 +207,7 @@ pry
 
   def self.records_fulcrum(id)
     client = conect_fulcrum
-    @records = client.records.all(form_id: id, per_page: 301)
+    @records = client.records.all(form_id: id, per_page: 1000)
   end
 
 
