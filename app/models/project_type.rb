@@ -166,11 +166,14 @@ class ProjectType < ApplicationRecord
             properties = ProjectField.where(key: item[0])
             if properties[0][:field_type] == 'ChoiceField'
 
-              if !properties[0][:choice_list_id].nil? 
-              ch_list = ChoiceList.where(key:properties[0][:choice_list_id], value: item[1]["choice_values"] )  
-              
-              p  i["#{item[0]}"] = ch_list[0][:id]
-pry
+              if !properties[0][:choice_list_id].nil? and !item[1]["choice_values"].nil? 
+              ch_list = ChoiceList.where(key:properties[0][:choice_list_id], 'value': item[1]["choice_values"] )  
+                if !ch_list[0].nil?
+                i["#{item[0]}"] = ch_list[0][:id]
+                else
+
+                i["#{item[1]}"] = item[1]
+                end
               else
                 i["#{item[0]}"] = item[1]
               end
