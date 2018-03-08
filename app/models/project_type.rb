@@ -215,7 +215,7 @@ class ProjectType < ApplicationRecord
 
   def self.records_fulcrum(id)
     client = conect_fulcrum
-    @records = client.records.all(form_id: id, per_page: 100000z)
+    @records = client.records.all(form_id: id, per_page: 10000)
   end
 
 
