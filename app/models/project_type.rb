@@ -111,79 +111,84 @@ class ProjectType < ApplicationRecord
 
   def self.migration
 
-    
-   @choice_lists = fulcrum_choice_lists    
-   
+
+    @choice_lists = fulcrum_choice_lists    
+
     @choice_lists.objects.each do |list|
-      
+
       list['choices'].each do |choice|
 
 
-      choise_list = ChoiceList.where(name: list['name'], key: list['id'], value: choice['value'], label: choice['label']).first_or_create(name: list['name'], key: list['id'], value: choice['value'], label: choice['label']).update_attributes!(name: list['name'], key: list['id'], value: choice['value'], label: choice['label'])
-    end
+        choise_list = ChoiceList.where(name: list['name'], key: list['id'], value: choice['value'], label: choice['label']).first_or_create(name: list['name'], key: list['id'], value: choice['value'], label: choice['label']).update_attributes!(name: list['name'], key: list['id'], value: choice['value'], label: choice['label'])
       end
-    
+    end
+
     @forms = query_fulcrum
 
     @forms.objects.each do |form|
       if form['name'] == 'Nextel'
-     
+
         @form = form
-        
+
         @project_type = ProjectType.where(name: form['name'], user_id: 1).first_or_create
         item_statics = ["latitude", "longitude","status"]
 
-      item_statics.each do |is|
-        @new_project_field =  ProjectField.where(key: is, project_type_id: @project_type.id).first_or_create(name: is, field_type: 'text_field', project_type_id: @project_type.id, key: is).update_attributes!(name: is, field_type: 'text_field', project_type_id: @project_type.id, key: is)
-      end 
+        item_statics.each do |is|
+          @new_project_field =  ProjectField.where(key: is, project_type_id: @project_type.id).first_or_create(name: is, field_type: 'text_field', project_type_id: @project_type.id, key: is).update_attributes!(name: is, field_type: 'text_field', project_type_id: @project_type.id, key: is)
+        end 
 
-      form['elements'].each do |e|
+        form['elements'].each do |e|
 
-        @new_project_field =  ProjectField.where(key:e['key']).first_or_create(name: e['label'], field_type: e['type'], project_type_id: @project_type.id, key: e['key'], choice_list_id: e['choice_list_id']).update_attributes!(name: e['label'], field_type: e['type'], project_type_id: @project_type.id, key: e['key'], choice_list_id: e['choice_list_id'])
-  
+          @new_project_field =  ProjectField.where(key:e['key']).first_or_create(name: e['label'], field_type: e['type'], project_type_id: @project_type.id, key: e['key'], choice_list_id: e['choice_list_id']).update_attributes!(name: e['label'], field_type: e['type'], project_type_id: @project_type.id, key: e['key'], choice_list_id: e['choice_list_id'])
+
           if !e['elements'].nil?
             e['elements'].each do |element|
-                @new_project_field =  ProjectField.where(key:element['key']).first_or_create(name: element['label'], field_type: 'text_field', project_type_id: @project_type.id, key: element['key'], choice_list_id: element['choice_list_id']).update_attributes!(name: element['label'], field_type: element['type'], project_type_id: @project_type.id, key: element['key'],choice_list_id: element['choice_list_id'] )
-            end
-          end
-      end
-      
-      @record = records_fulcrum(form['id'] )
-      @record.objects.each do |value|
-
-        @geom = "POINT(#{value['longitude']} #{value['latitude']})" 
-@val = value['form_values']
-        items = {
-          "longitude"=> value['longitude'],
-          "latitude" => value['latitude'],
-          "status"=>    value['status'],
-          "created_at"=>  value['created_at']
-        }
-        if  value['form_values'] 
-          i = {}  
-          value['form_values'].each do |item|
-
-            properties = ProjectField.where(key: item[0])
-            if properties[0][:field_type] == 'ChoiceField'
-
-              if !properties[0][:choice_list_id].nil? and !item[1]["choice_values"].nil? 
-              ch_list = ChoiceList.where(key:properties[0][:choice_list_id], 'value': item[1]["choice_values"] )  
-                if !ch_list[0].nil?
-                i["#{item[0]}"] = ch_list[0][:id]
-                else
-
-                i["#{item[1]}"] = item[1]
-                end
-              else
-                i["#{item[0]}"] = item[1]
-              end
-            else
-            i["#{item[0]}"] = item[1]
+              @new_project_field =  ProjectField.where(key:element['key']).first_or_create(name: element['label'], field_type: 'text_field', project_type_id: @project_type.id, key: element['key'], choice_list_id: element['choice_list_id']).update_attributes!(name: element['label'], field_type: element['type'], project_type_id: @project_type.id, key: element['key'],choice_list_id: element['choice_list_id'] )
             end
           end
         end
-        @it = items.merge(i)
-        @projects = Project.create( properties: @it,  properties_original: value, project_type_id: @project_type.id, the_geom: @geom)
+
+        @record = records_fulcrum(form['id'] )
+        @record.objects.each do |val|
+
+          @geom = "POINT(#{val['longitude']} #{val['latitude']})" 
+          @val = val['form_values']
+          items = {
+            "longitude"=> val['longitude'],
+            "latitude" => val['latitude'],
+            "status"=>    val['status'],
+            "created_at"=>  val['created_at']
+          }
+          if  val['form_values'] 
+            i = {}  
+            val['form_values'].each do |item|
+
+              properties = ProjectField.where(key: item[0])
+
+              if properties[0][:field_type] == 'ChoiceField' and !properties[0][:choice_list_id].nil?
+                ch_list = ChoiceList.where(key:properties[0][:choice_list_id], value: item[1]["choice_values"] )  
+                @ch_l = ch_list
+                if !ch_list[0].nil?
+                i["#{item[0]}"] = ch_list[0].id
+                else
+                i["#{item[0]}"] = item[1]
+                end
+              else
+                if properties[0][:field_type] == 'ChoiceField' 
+    
+                  if !item[1]['other_values'].nil?
+                    i["#{item[0]}"] = item[1]['other_values']
+                  else
+                    i["#{item[0]}"] = item[1]['choice_values']
+                  end
+                else
+                i["#{item[0]}"] = item[1]
+              end
+            end
+            end
+          @it = items.merge(i)
+          @projects = Project.where("properties_original->>'id' ='#{val['id']}'").first_or_create( properties: @it,  properties_original: val, project_type_id: @project_type.id, the_geom: @geom).update_attributes( properties: @it,  properties_original: val, project_type_id: @project_type.id, the_geom: @geom)
+        end
       end
     end
   end
@@ -196,8 +201,8 @@ class ProjectType < ApplicationRecord
   end
 
   def self.fulcrum_choice_lists
-      client = conect_fulcrum
-      choice_lists = client.choice_lists.all()
+    client = conect_fulcrum
+    choice_lists = client.choice_lists.all()
   end
 
   def self.query_fulcrum
@@ -210,7 +215,7 @@ class ProjectType < ApplicationRecord
 
   def self.records_fulcrum(id)
     client = conect_fulcrum
-    @records = client.records.all(form_id: id, per_page: 1000)
+    @records = client.records.all(form_id: id, per_page: 100000z)
   end
 
 

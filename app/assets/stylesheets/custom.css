@@ -1,6 +1,7 @@
 .map_custom { 
   height: 300px; 
   width: 100%;
+  padding-bottom: 20px;
 }
 .login_image{
   background-image: url("Slide_Oficina_v3.jpg");
@@ -75,7 +76,11 @@
   -ms-transition: all .2s;
 }
 
-
+.graphics{
+-webkit-box-shadow: 3px 6px 31px 4px rgba(176,174,176,1);
+-moz-box-shadow: 3px 6px 31px 4px rgba(176,174,176,1);
+box-shadow: 3px 6px 31px 4px rgba(176,174,176,1);
+}
 
 body.nav-sm .container.body .left_col {
   width: 70px;
@@ -86,6 +91,7 @@ body.nav-sm .container.body .left_col {
 }
 body.nav-sm .container.body .right_col {
   padding: 10px 10px;
+  background: #BDBDBD;
   margin-left: 80px;
   z-index: 2;
 }
@@ -881,6 +887,9 @@ h2 {
   display: inline-block;
   background: #fff;
   border: 1px solid #E6E9ED;
+  -webkit-box-shadow: 10px 16px 31px 4px rgba(133,126,133,1);
+  -moz-box-shadow: 10px 16px 31px 4px rgba(133,126,133,1);
+  box-shadow: 10px 16px 31px 4px rgba(133,126,133,1);
   -webkit-column-break-inside: avoid;
   -moz-column-break-inside: avoid;
   column-break-inside: avoid;
@@ -1589,15 +1598,18 @@ table.dataTable td.focus {
                   background: #425567;
                 }
                 .tile_count {
-                  margin-bottom: 10px;
-                  margin-top: 10px;
+                  background: #e7e7e7;
+                  margin-bottom: 20px;
+                  margin-top: 0px;
+                  padding: 10px;
                 }
                 .tile_count div:first-child .left {
                   border: 0;
                 }
                 .tile_count .tile_stats_count {
                   border-left: 0px solid #333;
-                  padding: 0;
+                  padding: 10;
+                  border-left: 2px solid #ADB2B5;
                 }
                 .tile_stats_count .left {
                   width: 15%;
@@ -1616,7 +1628,12 @@ table.dataTable td.focus {
                   text-overflow: ellipsis;
                   white-space: nowrap;
                 }
+                .count_top{
+                  color: #0B0B61;
+                }
                 .tile_stats_count .count {
+                
+                  color: #0B0B61;
                   font-size: 40px;
                   line-height: 47px;
                   font-weight: 600;

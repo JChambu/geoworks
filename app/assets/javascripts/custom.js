@@ -525,11 +525,9 @@ function init_kpi(){
     data: {data_id: data_id, size_box: size_box, graph: false},
     success: function(data){
       data.forEach(function(element){
-        html = ' <div class="col-md-2 col-sm-4 col-xs-6">'+
-          '<div class="tile-stats"> '+ 
-          '<div class="count">'+element['data'].length+'</div>'+
-          '<h5>'+ element['title']+'</h5>'+
-        '</div>'+
+        html = ' <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">'+
+          '<span class="count_top">'+element['title']+'</span>'+
+          '<div class="count">'+ element['data'].length+'</div>'+
         '</div>'+
         '</div>'
         $('.tile_count').append(html);
@@ -603,7 +601,8 @@ function init_chart_doughnut(){
               $.each(data_entry, function(i, v ){
                 lab.push(i);
                 da.push(v);
-              })
+              });
+
               var chart_doughnut_settings = {
                 type: type_chart,
                 data: {
@@ -615,10 +614,9 @@ function init_chart_doughnut(){
                 },
                 options: {
                   legend: {
+                    display: true,
                     position: 'top',
                   },
-                  display: true,
-                  responsive: false
                 }
               }
               $('.x_content_'+title).append(canvas_graph);

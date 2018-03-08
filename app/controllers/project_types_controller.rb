@@ -28,11 +28,11 @@ class ProjectTypesController < ApplicationController
 
       sql = "project_type_id = #{params[:data_id]} " 
       
-      if chart.project_field.field_type == 'ChoiceField'
+      if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
         field_select = "properties->>'"+ chart.project_field.key+"'"
         field_select += ", choice_lists.label"
       else
-        field_select = "properties->'"+ chart.project_field.key+"'"
+        field_select = "properties->>'"+ chart.project_field.key+"'"
       end 
       analysis_type = chart.analysis_type.name
 
@@ -46,9 +46,9 @@ class ProjectTypesController < ApplicationController
 
       if params[:graph] == "true"
         @group = "group"
+      
+        if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
         @join = ("join choice_lists  on (properties->>'#{chart.project_field.key}')::integer = choice_lists.id" )
-
-      if chart.project_field.field_type == 'ChoiceField'
         @data =   Project.joins(@join).where(sql).send( @group, field_select).count
       else
         @data =   Project.where(sql).send( @group, field_select).count
