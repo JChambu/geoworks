@@ -15,7 +15,9 @@ Navarra.layers.basemaps = function(){
     type: 'base',
     visible: 'true',
     opacity: 0.9,
-    source: new ol.source.OSM()
+    source: new ol.source.OSM({
+     "url": "http://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    } )
   });
   var noneLayer = new ol.layer.Tile({
     title: 'Sin Mapa',

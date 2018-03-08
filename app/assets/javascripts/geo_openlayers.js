@@ -15,11 +15,15 @@ Navarra.geo_openlayers = function(){
       }))
     });
 
+
+
     vector = new ol.layer.Vector({ source: new ol.source.Vector()});
     var view =  new ol.View({
       projection: 'EPSG:4326',
-      center: [-68.8167, -32.8833],
-      zoom: 5
+      center: [-63.8167, -33.8833],
+      extent: [-73.41544, -55.25, -53.62835, -21.83231],
+      minZoom:5,
+      zoom: 10
     });
 
     map  = new ol.Map({
