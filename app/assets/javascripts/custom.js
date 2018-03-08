@@ -497,7 +497,7 @@ var randNum = function() {
   return (Math.floor(Math.random() * (1 + 40 - 20))) + 20;
 };
 
-/*
+
 function init_charts() {
 
           console.log('run_charts  typeof [' + typeof (Chart) + ']');
@@ -511,7 +511,7 @@ function init_charts() {
                       enabled: false
                     };
 }
-*/
+
 
 function init_kpi(){
   var size_box = Navarra.project_types.config.size_box;
@@ -574,7 +574,7 @@ function init_chart_doughnut(){
               var canvas_graph = document.createElement('canvas');
               div_graph.id = 'graph'+title;
               canvas_graph.id = 'canvas'+title;
-              canvas_graph.height = 180;
+              canvas_graph.height = 120;
               canvas_graph.width = 320;
               canvas_graph.className = 'canvas'+title ;
 
@@ -608,6 +608,7 @@ function init_chart_doughnut(){
                 data: {
                   labels: lab,
                   datasets: [{
+                    label: title,
                     data:  da , 
                     backgroundColor: poolColors(da.length) 
                   }]
@@ -615,8 +616,13 @@ function init_chart_doughnut(){
                 options: {
                   legend: {
                     display: true,
-                    position: 'top',
+                    position: 'right',
+                    labels: {
+                                  boxWidth: 10,
+                                  fontSize: 10
+                    }
                   },
+                  animateScale: true
                 }
               }
               $('.x_content_'+title).append(canvas_graph);
