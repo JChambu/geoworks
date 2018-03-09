@@ -500,22 +500,22 @@ var randNum = function() {
 
 function init_charts() {
 
-          console.log('run_charts  typeof [' + typeof (Chart) + ']');
+  console.log('run_charts  typeof [' + typeof (Chart) + ']');
 
-          if( typeof (Chart) === 'undefined'){ return; }
+  if( typeof (Chart) === 'undefined'){ return; }
 
-          console.log('init_charts');
+  console.log('init_charts');
 
 
-          Chart.defaults.global.legend = {
-                      enabled: false
-                    };
+  Chart.defaults.global.legend = {
+    enabled: false
+  };
 }
 
 
 function init_kpi(){
   var size_box = Navarra.project_types.config.size_box;
-  $('.tile_count').empty();
+
   var  data_id =  $('#data_id').val();
   $.ajax({
 
@@ -525,12 +525,22 @@ function init_kpi(){
     data: {data_id: data_id, size_box: size_box, graph: false},
     success: function(data){
       data.forEach(function(element){
-        html = ' <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">'+
-          '<span class="count_top">'+element['title']+'</span>'+
-          '<div class="count">'+ element['data'].length+'</div>'+
-        '</div>'+
-        '</div>'
-        $('.tile_count').append(html);
+
+        if ($('.kpi_'+ element['id']).length) {
+          $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'">'+ element['data'].length+'</div>');
+        }else{
+
+
+          html = ' <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">'+
+            '<span class="count_top">'+element['title']+'</span>'+
+            '<div class="count  kpi_'+ element['id'] +'">'+ element['data'].length+'</div>'+
+            '</div>'+
+            '</div>'
+          $('.tile_count').append(html);
+
+        }
+
+
       }) 
     }});
 }
@@ -618,8 +628,8 @@ function init_chart_doughnut(){
                     display: true,
                     position: 'right',
                     labels: {
-                                  boxWidth: 10,
-                                  fontSize: 10
+                      boxWidth: 10,
+                      fontSize: 10
                     }
                   },
                   animateScale: true

@@ -57,7 +57,7 @@ class ProjectTypesController < ApplicationController
         @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data}
       else
         @data =   Project.where(sql).send("select", field_select)
-        @querys << { "title":"#{chart.title}", "data":@data}
+        @querys << { "title":"#{chart.title}", "data":@data, "id":"#{chart.id}"}
       end
 
     end
