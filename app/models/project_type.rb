@@ -170,8 +170,8 @@ class ProjectType < ApplicationRecord
                 @ch_l = ch_list
                 if !ch_list[0].nil?
                 i["#{item[0]}"] = ch_list[0].id
-                else
-                i["#{item[0]}"] = item[1]
+           #     else
+           #     i["#{item[0]}"] = item[1]
                 end
               else
                 if properties[0][:field_type] == 'ChoiceField' 
