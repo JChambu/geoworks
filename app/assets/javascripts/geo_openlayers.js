@@ -137,6 +137,7 @@ Navarra.geo_openlayers = function(){
         var feature = [];
         $.each(data, function(i,val){
 var colorMarker = val['color'];
+          console.log(val['contratos'])
           if (val['longitude'] != null && val['latitude'] != null){
             coord = [val['longitude'], val['latitude']];
 

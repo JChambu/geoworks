@@ -89,7 +89,6 @@ $(function () {
   /** ******  collapse panel  *********************** **/
   // Close ibox function
   $('.close-link').click(function () {
-    console.log("cierre");
     var content = $(this).closest('div.x_panel');
     content.remove();
   });
@@ -525,15 +524,16 @@ function init_kpi(){
     data: {data_id: data_id, size_box: size_box, graph: false},
     success: function(data){
       data.forEach(function(element){
-
+ 
+        console.log(element);
         if ($('.kpi_'+ element['id']).length) {
-          $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'">'+ element['data'].length+'</div>');
+          $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'">'+ element['data']+'</div>');
         }else{
 
 
           html = ' <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">'+
             '<span class="count_top">'+element['title']+'</span>'+
-            '<div class="count  kpi_'+ element['id'] +'">'+ element['data'].length+'</div>'+
+            '<div class="count  kpi_'+ element['id'] +'">'+ element['data']+'</div>'+
             '</div>'+
             '</div>'
           $('.tile_count').append(html);

@@ -44,6 +44,21 @@ class ProjectTypesController < ApplicationController
         sql += " and properties->>'" + chart.project_field.key + "' " + chart.filter_input + "'#{chart.input_value}'"
       end
 
+      if analysis_type == "Promedio"
+
+        @data_extra = Project.where(sql).select("round((sum((properties->>'00d8')::numeric) / count((properties->>'05d5')::numeric)),2) as promedio")
+        @querys << { "title":"Promedio", "data":@data_extra[0]['promedio'], "id":"#{chart.id}"}
+
+      else
+
+      if analysis_type == "Participacion"
+
+        @total_clientes = Project.where("project_type_id": params[:data_id]).count
+        @data_extra_2 = 0 
+        @data_extra_2 = Project.where(sql).select("round((((count(properties->>'05d5')::numeric) /  #{@total_clientes}) * 100 ),2)  as participacion") if @total_clientes > 0 
+        @querys << { "title":"% Participacion", "data":@data_extra_2[0]['participacion'], "id":"#{chart.id}"}
+      else
+      
       if params[:graph] == "true"
         @group = "group"
       
@@ -56,10 +71,14 @@ class ProjectTypesController < ApplicationController
         chart_type = chart.chart.name
         @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data}
       else
-        @data =   Project.where(sql).send("select", field_select)
+        #@data =   Project.where(sql).sum("(#{field_select})::float") #funciona bien la suma
+        #@data =   Project.where(sql).count("(#{field_select})::float") #funciona bien el contar
+        @data =   Project.where(sql).send(analysis_type, "(#{field_select})::float")
         @querys << { "title":"#{chart.title}", "data":@data, "id":"#{chart.id}"}
+     
       end
-
+      end
+      end
     end
   end
 
@@ -68,7 +87,8 @@ class ProjectTypesController < ApplicationController
 
     @projects = Project.where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom),  properties->>'05d5' as client_id, 
 properties->>'f2b1' as razon_social,
-properties->>'9e2f' as ejecutivo, properties->>'02d8' as contratos,
+properties->>'9e2f' as ejecutivo, 
+properties->>'00d8' as contratos,
 
 case 
 properties->>'status'
