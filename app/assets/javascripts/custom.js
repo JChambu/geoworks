@@ -613,6 +613,26 @@ function init_chart_doughnut(){
                 da.push(v);
               });
 
+var option_legend = {
+    legend:{ 
+          display: false
+    } }
+
+  if (type_chart == 'doughnut'){
+
+ option_legend = {
+                  legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                      boxWidth: 5,
+                      fullWidth: true,
+                      fontSize: 10
+                    }
+                  },
+}
+}
+
               var chart_doughnut_settings = {
                 type: type_chart,
                 data: {
@@ -620,20 +640,10 @@ function init_chart_doughnut(){
                   datasets: [{
                     label: title,
                     data:  da , 
-                    backgroundColor: poolColors(da.length) 
+                    backgroundColor: poolColors(da.length ) 
                   }]
                 },
-                options: {
-                  legend: {
-                    display: true,
-                    position: 'right',
-                    labels: {
-                      boxWidth: 10,
-                      fontSize: 10
-                    }
-                  },
-                  animateScale: true
-                }
+                options:  option_legend
               }
               $('.x_content_'+title).append(canvas_graph);
               var cc = '#'+canvas_graph.id;               
@@ -673,16 +683,20 @@ function init_chart_doughnut(){
 var poolColors = function (a) {
   var pool = [];
   for(i=0;i<a;i++){
-    pool.push(dynamicColors());
+    pool.push(dynamicColors(i));
   }
   return pool;
 }
 
-var dynamicColors = function() {
-  var r = Math.floor(Math.random() * 255);
+var dynamicColors = function(i) {
+/*  var r = Math.floor(Math.random() * 255);
   var g = Math.floor(Math.random() * 255);
   var b = Math.floor(Math.random() * 255);
-  return "rgb(" + r + "," + g + "," + b + ")";
+  return "rgb(" + r + "," + g + "," + b + ")";*/
+colors = ['rgb(128, 0, 128)', 'rgb(255, 0, 255)' ]
+return colors[i];
+
+
 }
 
 

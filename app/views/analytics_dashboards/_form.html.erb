@@ -39,7 +39,7 @@
                 <%= f.input :condition_field_id, collection: fields_for_select, input_html:{class: "col-md-12"} %>
               </div>
               <div class="col-md-3">
-                <%= f.input :filter_input, collection: ['=', '<', '>', '>=', '<=', 'in', 'ilike'] %>
+                <%= f.input :filter_input, collection: ['=','!=', '<', '>', '>=', '<=', 'in', 'ilike', 'is null', 'is not null'] %>
               </div>
               <div class="col-md-3">
               <%= f.input :input_value %>

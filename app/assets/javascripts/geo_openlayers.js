@@ -87,13 +87,12 @@ Navarra.geo_openlayers = function(){
         detail = "Num Cliente: "+ feature.get('client_id') + '<br>' ;
         detail += "Estado: "+ feature.get('status') + '<br>' ;
         detail += "Razon Social: " + feature.get("razon_social") + '<br>';
-        detail += "Ejecutivo: " + feature.get("ejecutivo")
+        detail += "Ejecutivo: " + feature.get("ejecutivo")+ '<br>';
+        detail += "Contratos: " + feature.get("contratos");
 
         popup.setPosition(evt.coordinate);
         $(element).popover({
           'animation': true,
-          'title':'datos',
-          'placement': 'top',
           'html': true,
           'content': detail 
         });
@@ -137,7 +136,7 @@ Navarra.geo_openlayers = function(){
       success: function(data){
         var feature = [];
         $.each(data, function(i,val){
-
+var colorMarker = val['color'];
           if (val['longitude'] != null && val['latitude'] != null){
             coord = [val['longitude'], val['latitude']];
 
@@ -149,11 +148,22 @@ Navarra.geo_openlayers = function(){
               client_id: val['client_id'],
               razon_social: val['razon_social'],
               ejecutivo: val['ejecutivo'],
+              contratos: val['contratos'],
               population: 4000,
               rainfall: 500
-
             });
-            iconFeature.setStyle(iconStyle);
+            
+            iconFeature.setStyle(
+              new ol.style.Style({
+                image : new ol.style.Icon(({
+                            opacity: 1,
+                            scale: 0.5,
+                  color: colorMarker,
+                  crossOrigin: 'anonymous',
+                            src: 'https://openlayers.org/en/v4.6.4/examples/data/dot.png'
+                }))
+              })
+            );
             feature.push(iconFeature);
           }});
 

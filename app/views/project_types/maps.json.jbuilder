@@ -5,6 +5,8 @@ json.array! @projects do |item|
   json.client_id item['client_id']
   json.razon_social item['razon_social']
   json.ejecutivo item['ejecutivo']
+  json.contratos item['contratos']
+  json.color item['color']
 end
 
 

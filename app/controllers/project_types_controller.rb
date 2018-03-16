@@ -66,9 +66,29 @@ class ProjectTypesController < ApplicationController
 
   def maps
 
-    @projects = Project.where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom), properties->>'status' as status, properties->>'05d5' as client_id, 
+    @projects = Project.where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom),  properties->>'05d5' as client_id, 
 properties->>'f2b1' as razon_social,
-properties->>'9e2f' as ejecutivo")
+properties->>'9e2f' as ejecutivo, properties->>'02d8' as contratos,
+
+case 
+properties->>'status'
+when '1' then 'Excelente' 
+when '2' then 'Bueno' 
+when '3' then 'Regular' 
+when '4' then 'Malo' 
+when '0' then 'Baja' 
+else
+'N/C' end as status,
+case 
+properties->>'status'
+when '1' then '#A9F5BC' 
+when '2' then '#58ACFA' 
+when '3' then '#F7FE2E' 
+when '4' then '#FE2E2E' 
+when '0' then '#FFFFFF' 
+else
+'#000000' end as color")
+                                                                        
 
     if !params[:provincia].blank?
       @projects = @projects.where("properties->>'7926'=?", params[:provincia])

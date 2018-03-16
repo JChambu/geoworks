@@ -40,3 +40,6 @@
 .ol-popup-closer:after {
   content: "✖";
 }
+ .popover-content {
+           min-width: 250px;
+                 }
