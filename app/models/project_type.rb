@@ -175,11 +175,10 @@ class ProjectType < ApplicationRecord
                 end
               else
                 if properties[0][:field_type] == 'ChoiceField' 
-    
                   if !item[1]['other_values'].nil?
-                    i["#{item[0]}"] = item[1]['other_values']
+                    i["#{item[0]}"] = item[1]['other_values'][0]
                   else
-                    i["#{item[0]}"] = item[1]['choice_values']
+                    i["#{item[0]}"] = item[1]['choice_values'][0]
                   end
                 else
                 i["#{item[0]}"] = item[1]

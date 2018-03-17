@@ -22,8 +22,8 @@ Navarra.geo_openlayers = function(){
       projection: 'EPSG:4326',
       center: [-63.8167, -33.8833],
       extent: [-73.41544, -55.25, -53.62835, -21.83231],
-      minZoom:5,
-      zoom: 10
+      minZoom:3,
+      zoom: 7
     });
 
     map  = new ol.Map({
@@ -136,8 +136,7 @@ Navarra.geo_openlayers = function(){
       success: function(data){
         var feature = [];
         $.each(data, function(i,val){
-var colorMarker = val['color'];
-          console.log(val['contratos'])
+          var colorMarker = val['color'];
           if (val['longitude'] != null && val['latitude'] != null){
             coord = [val['longitude'], val['latitude']];
 

@@ -345,7 +345,8 @@ CREATE TABLE choice_lists (
     value character varying,
     label character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    color character varying
 );
 
 
@@ -2976,6 +2977,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20180303134221'),
 ('20180306150411'),
 ('20180306211512'),
-('20180306214255');
+('20180306214255'),
+('20180317044723');
 
 

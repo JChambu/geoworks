@@ -560,10 +560,11 @@ function init_chart_doughnut(){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true},
       success: function(data){
+        
+        
         //        data.forEach(function(element){
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
-
           var data_entry = {};
           var type_chart = "";
           var title = "";
@@ -579,17 +580,17 @@ function init_chart_doughnut(){
             }
             if (index == 'data'){
               data_entry = value;
-
+console.log(data_entry);
               var div_graph = document.createElement('div');
               var canvas_graph = document.createElement('canvas');
               div_graph.id = 'graph'+title;
               canvas_graph.id = 'canvas'+title;
-              canvas_graph.height = 120;
-              canvas_graph.width = 320;
+              canvas_graph.height = 160;
+              canvas_graph.width = 450;
               canvas_graph.className = 'canvas'+title ;
 
-              html = '<div class="col-md-4 col-sm-4 col-xs-12">' + 
-'  <div class="x_panel tile fixed_height_320 overflow_hidden">'+
+              html = '<div class="col-md-6 col-sm-6 col-xs-12">' + 
+'  <div class="x_panel tile fixed_height_450 overflow_hidden">'+
 '    <div class="x_title">'+
 '      <h2>'+title+'</h2>'+
 '      <ul class="nav navbar-right panel_toolbox">'+
@@ -608,10 +609,23 @@ function init_chart_doughnut(){
 
               var lab = [];
               var da=[];
+              var colorBackground = []
               $.each(data_entry, function(i, v ){
-                lab.push(i);
-                da.push(v);
+
+
+
+              /*  var str = i.split("#")
+                if ( str[1]!= "undefined"){
+                colorBackground.push("#"+str[1]);
+                }else{
+                  colorBackground.push(poolColors(1) );
+                }
+*/
+                lab.push(v['label']);
+                da.push(v['count']);
+                colorBackground.push(v['color'])
               });
+
 
 var option_legend = {
     legend:{ 
@@ -634,13 +648,14 @@ var option_legend = {
 }
 
               var chart_doughnut_settings = {
-                type: type_chart,
+                type: "horizontalBar",
                 data: {
                   labels: lab,
                   datasets: [{
                     label: title,
                     data:  da , 
-                    backgroundColor: poolColors(da.length ) 
+                   // backgroundColor: poolColors(da.length ) 
+                    backgroundColor: colorBackground 
                   }]
                 },
                 options:  option_legend
@@ -689,12 +704,12 @@ var poolColors = function (a) {
 }
 
 var dynamicColors = function(i) {
-/*  var r = Math.floor(Math.random() * 255);
+  var r = Math.floor(Math.random() * 255);
   var g = Math.floor(Math.random() * 255);
   var b = Math.floor(Math.random() * 255);
-  return "rgb(" + r + "," + g + "," + b + ")";*/
-colors = ['rgb(128, 0, 128)', 'rgb(255, 0, 255)' ]
-return colors[i];
+  return "rgb(" + r + "," + g + "," + b + ")";
+//colors = ['rgb(128, 0, 128)', 'rgb(255, 0, 255)' ]
+//return colors[i];
 
 
 }

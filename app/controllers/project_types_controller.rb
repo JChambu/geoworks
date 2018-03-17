@@ -17,6 +17,8 @@ class ProjectTypesController < ApplicationController
 
   def kpi
     @querys=[]
+
+    #Extend
     minx = params[:size_box][0].to_f
     miny = params[:size_box][1].to_f
     maxx = params[:size_box][2].to_f
@@ -26,19 +28,33 @@ class ProjectTypesController < ApplicationController
    
     @analytics_charts.each do |chart|
 
+      #tipo de analisis
+      analysis_type = chart.analysis_type.name
+      
+      #condiciones extras
+      conditions_field = chart.condition_field
+     
       sql = "project_type_id = #{params[:data_id]} " 
+      sql += " and st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326) && #{:the_geom}" 
       
       if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
-        field_select = "properties->>'"+ chart.project_field.key+"'"
-        field_select += ", choice_lists.label"
+
+        field_select = " (choice_lists.color) as color"
+        field_select += ", (choice_lists.label) as label"
+        field_select += ", #{analysis_type}(properties->>'" + chart.project_field.key + "')"
+       
+        field_group = "properties->>'"+ chart.project_field.key + "'"
+        field_group += ", label, color"
+      
       else
-        field_select = "properties->>'"+ chart.project_field.key+"'"
+        if params[:graph] == true
+        field_select = " #{analysis_type}(properties->>'" + chart.project_field.key + "')"
+        field_select += ", properties->>'" + chart.project_field.key + "' as label "
+        field_group = "properties->>'"+ chart.project_field.key + "'"
+        else
+        field_select = " properties->>'" + chart.project_field.key + "'"
+        end
       end 
-      analysis_type = chart.analysis_type.name
-
-      sql += " and st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326) && #{:the_geom}" 
-
-      conditions_field = chart.condition_field
 
       if !conditions_field.blank?
         sql += " and properties->>'" + chart.project_field.key + "' " + chart.filter_input + "'#{chart.input_value}'"
@@ -46,30 +62,30 @@ class ProjectTypesController < ApplicationController
 
       if analysis_type == "Promedio"
 
-        @data_extra = Project.where(sql).select("round((sum((properties->>'00d8')::numeric) / count((properties->>'05d5')::numeric)),2) as promedio")
-        @querys << { "title":"Promedio", "data":@data_extra[0]['promedio'], "id":"#{chart.id}"}
+        @data_extra= Project.where(sql).select("round((sum((properties->>'00d8')::numeric) / count((properties->>'05d5')::numeric)),2) as promedio")
+        @querys << { "title":"#{chart.title}", "data":@data_extra[0]['promedio'], "id":"#{chart.id}"}
 
       else
-
       if analysis_type == "Participacion"
-
         @total_clientes = Project.where("project_type_id": params[:data_id]).count
         @data_extra_2 = 0 
         @data_extra_2 = Project.where(sql).select("round((((count(properties->>'05d5')::numeric) /  #{@total_clientes}) * 100 ),2)  as participacion") if @total_clientes > 0 
-        @querys << { "title":"% Participacion", "data":@data_extra_2[0]['participacion'], "id":"#{chart.id}"}
+        @querys << { "title":"#{chart.title}", "data":@data_extra_2[0]['participacion'], "id":"#{chart.id}"}
       else
       
       if params[:graph] == "true"
-        @group = "group"
       
         if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
         @join = ("join choice_lists  on (properties->>'#{chart.project_field.key}')::integer = choice_lists.id" )
-        @data =   Project.joins(@join).where(sql).send( @group, field_select).count
+        @data =   Project.joins(@join).where(sql).select(field_select).group(field_group)
       else
-        @data =   Project.where(sql).send( @group, field_select).count
+        @data =   Project.where(sql).select(field_select).group(field_group)
       end 
         chart_type = chart.chart.name
+
         @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data}
+      
+      
       else
         #@data =   Project.where(sql).sum("(#{field_select})::float") #funciona bien la suma
         #@data =   Project.where(sql).count("(#{field_select})::float") #funciona bien el contar
@@ -85,29 +101,12 @@ class ProjectTypesController < ApplicationController
 
   def maps
 
-    @projects = Project.where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom),  properties->>'05d5' as client_id, 
+    @projects = Project.joins("join choice_lists on (projects.properties->>'897d')::integer = choice_lists.id").where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom),  properties->>'06d5' as client_id, 
 properties->>'f2b1' as razon_social,
 properties->>'9e2f' as ejecutivo, 
 properties->>'00d8' as contratos,
-
-case 
-properties->>'status'
-when '1' then 'Excelente' 
-when '2' then 'Bueno' 
-when '3' then 'Regular' 
-when '4' then 'Malo' 
-when '0' then 'Baja' 
-else
-'N/C' end as status,
-case 
-properties->>'status'
-when '1' then '#A9F5BC' 
-when '2' then '#58ACFA' 
-when '3' then '#F7FE2E' 
-when '4' then '#FE2E2E' 
-when '0' then '#FFFFFF' 
-else
-'#000000' end as color")
+label ,
+color  ")
                                                                         
 
     if !params[:provincia].blank?
