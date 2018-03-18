@@ -52,7 +52,11 @@ class ProjectTypesController < ApplicationController
         field_select += ", properties->>'" + chart.project_field.key + "' as label "
         field_group = "properties->>'"+ chart.project_field.key + "'"
         else
-        field_select = " properties->>'" + chart.project_field.key + "'"
+
+        field_select = " #{analysis_type}(properties->>'" + chart.project_field.key + "')"
+        field_select += ", properties->>'" + chart.project_field.key + "' as label"
+        
+        field_group = "properties->>'"+ chart.project_field.key + "'"
         end
       end 
 
@@ -101,7 +105,7 @@ class ProjectTypesController < ApplicationController
 
   def maps
 
-    @projects = Project.joins("join choice_lists on (projects.properties->>'897d')::integer = choice_lists.id").where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom),  properties->>'06d5' as client_id, 
+    @projects = Project.joins("left join choice_lists on (projects.properties->>'897d')::integer = choice_lists.id").where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom),  properties->>'06d5' as client_id, 
 properties->>'f2b1' as razon_social,
 properties->>'9e2f' as ejecutivo, 
 properties->>'00d8' as contratos,

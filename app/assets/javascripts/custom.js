@@ -648,7 +648,7 @@ var option_legend = {
 }
 
               var chart_doughnut_settings = {
-                type: "horizontalBar",
+                type: type_chart,
                 data: {
                   labels: lab,
                   datasets: [{
