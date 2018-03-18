@@ -55,6 +55,7 @@ class ProjectTypesController < ApplicationController
 
         field_select = " #{analysis_type}(properties->>'" + chart.project_field.key + "')"
         field_select += ", properties->>'" + chart.project_field.key + "' as label"
+        field_select_without_graph = " properties->>'" + chart.project_field.key + "'"
         
         field_group = "properties->>'"+ chart.project_field.key + "'"
         end
@@ -93,7 +94,7 @@ class ProjectTypesController < ApplicationController
       else
         #@data =   Project.where(sql).sum("(#{field_select})::float") #funciona bien la suma
         #@data =   Project.where(sql).count("(#{field_select})::float") #funciona bien el contar
-        @data =   Project.where(sql).send(analysis_type, "(#{field_select})::float")
+        @data =   Project.where(sql).send(analysis_type, "(#{field_select_without_graph})::float")
         @querys << { "title":"#{chart.title}", "data":@data, "id":"#{chart.id}"}
      
       end
