@@ -74,7 +74,7 @@ class ProjectTypesController < ApplicationController
       if analysis_type == "Participacion"
         @total_clientes = Project.where("project_type_id": params[:data_id]).count
         @data_extra_2 = 0 
-        @data_extra_2 = Project.where(sql).select("round((((count(properties->>'05d5')::numeric) /  #{@total_clientes}) * 100 ),2)  as participacion") if @total_clientes > 0 
+        @data_extra_2 = Project.where(sql).select("round((((count(properties->>'05d5')::numeric) /  #{@total_clientes}) * 100 ),0)  as participacion") if @total_clientes > 0 
         @querys << { "title":"#{chart.title}", "data":@data_extra_2[0]['participacion'], "id":"#{chart.id}"}
       else
       
@@ -106,7 +106,7 @@ class ProjectTypesController < ApplicationController
 
   def maps
 
-    @projects = Project.joins("left join choice_lists on (projects.properties->>'897d')::integer = choice_lists.id").where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom),  properties->>'06d5' as client_id, 
+    @projects = Project.joins("left join choice_lists on (projects.properties->>'897d')::integer = choice_lists.id").where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom),  properties->>'05d5' as client_id, 
 properties->>'f2b1' as razon_social,
 properties->>'9e2f' as ejecutivo, 
 properties->>'00d8' as contratos,
