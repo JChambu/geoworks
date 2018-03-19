@@ -22,7 +22,7 @@ Navarra.geo_openlayers = function(){
       projection: 'EPSG:4326',
       center: [-63.8167, -33.8833],
       extent: [-73.41544, -55.25, -53.62835, -21.83231],
-      minZoom:3,
+      //minZoom:3,
       zoom: 7
     });
 
