@@ -110,8 +110,20 @@ class ProjectTypesController < ApplicationController
 properties->>'f2b1' as razon_social,
 properties->>'9e2f' as ejecutivo, 
 properties->>'00d8' as contratos,
-label ,
-color  ")
+case (properties->>'status')::integer
+when 1 then 'Excelente'
+when 2 then 'Bueno'
+when 3 then 'Regular'
+when 4 then 'Malo'
+end as label,
+
+case (properties->>'status')::integer
+when 1 then '#A9F5BC'
+when 2 then '#58ACFA'
+when 3 then '#F7FE2E'
+when 4 then '#FE2E2E'
+end as color
+              ")
                                                                         
 
     if !params[:provincia].blank?
