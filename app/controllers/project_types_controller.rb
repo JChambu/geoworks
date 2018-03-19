@@ -67,7 +67,7 @@ class ProjectTypesController < ApplicationController
 
       if analysis_type == "Promedio"
 
-        @data_extra= Project.where(sql).select("round((sum((properties->>'00d8')::numeric) / count((properties->>'05d5')::numeric)),2) as promedio")
+        @data_extra= Project.where(sql).where("properties->>'00d8' is not null").select("round((sum((properties->>'00d8')::numeric) / count((properties->>'05d5')::numeric)),2) as promedio")
         @querys << { "title":"#{chart.title}", "data":@data_extra[0]['promedio'], "id":"#{chart.id}"}
 
       else
