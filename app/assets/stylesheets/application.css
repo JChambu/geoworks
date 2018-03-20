@@ -16,6 +16,8 @@
  *= require ol3/ol3-layerswitcher
  *= require ol3/controlbar
  *= require ol3/ol3-popup
+ *= animate.css/animate.min
+ *= overwrite.css
+
  *= require_tree .
  */
-

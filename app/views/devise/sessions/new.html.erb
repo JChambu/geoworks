@@ -1,17 +1,19 @@
 <%= simple_form_for(resource,
   :as => resource_name,
-  :url => session_path(resource_name),
-  :html => { :class => 'form-horizontal'}) do |f| %>
+  :url => session_path(resource_name))  do |f| %>
 
-  <%= f.input :email, label: false, placeholder: "Email",  required: false, autofocus: true, input_html: {class: "login_input"} %>
-  <%= f.input :password, label: false, placeholder: "Password", input_html: {class: "login_input"} %>
+<div class="form-group">
+  <%= f.label :email, "Email" %>
+  <%= f.input :email, label: false, placeholder: "Email",  required: false, autofocus: true, input_html: {class: "form-control"} %>
+</div>
+ <div class="form-group">
+   <%= f.label :password, "Contraseña" %>
+<%= f.input :password, label: false, placeholder: "Password", input_html: {class: "form-control"} %>
+</div>
 
-  <% if devise_mapping.rememberable? -%>
-    <% f.input :remember_me, as: :boolean, input_html: { checked: "checked" }  %>
-  <% end -%>
+<div class="text-center">
+  <%= f.button :submit, "Ingresar", class: 'btn btn-primary btn-lg submit' %>
+</div>
+               <div class="clearfix"></div>
 
-  <div class="form-actions ">
-    <%= f.button :submit, "Entrar", class: 'login_button' %>
-  </div>
 <% end %>
-

@@ -3,15 +3,30 @@
   <head>
     <%= render :partial => 'common/head' %>
   </head>
-  <body class="login_image">
+ <body class="login">
       <div>
           <%= flash_messages %>
-        <div class="login_div">
-          
-          <%= yield %>
-        </div>
+          <div>
+               <a class="hiddenanchor" id="signup"></a>
+               <a class="hiddenanchor" id="signin"></a>
 
+               <div class="login_wrapper">
+                 <div class="animate form login_form card">
+                   <div class="company-logo">
+                    <%=image_tag "picture", class:"img-circle", alt:""%>
+
+                   </div>
+                   <section class="login_content">
+
+          <%= yield %>
+        </section>
+        <div class="logo-geoworks">
+          <%=image_tag "logo_geoworks.png", alt:""  %>
+
+        </div>
+      </div>
     </div>
-    <%= render :partial => 'common/footer' %>
+  </div>
+</div>
   </body>
 </html>
