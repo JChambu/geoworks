@@ -1,23 +1,28 @@
 <p id="notice"><%= notice %></p>
 <h1>Projects</h1>
 <div>
+  <%= pager @projects %>
 </div>
 <table class="table table-stripe">
   <thead>
     <tr>
+      <th>#</th>
       <% @fields.each do |field|  %>
-        <th><%= order_link Project, field.name%></th>        
+        <th><%=  field.name%></th>        
       <% end %>
+
     </tr>
   </thead>
   <tbody>
     <% @projects.each do |project | %>
       <tr>
+      <td><%= project.id %></td>
         <% @fields.each do |field|  %>
           <td>
               <%= project.properties[field.key] if !project.properties[field.key].blank?%>
           </td>
         <% end %>
+          <td><%= project.the_geom %></td>
       </tr>
     <% end %>
   </tbody>
