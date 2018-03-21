@@ -34,8 +34,8 @@ class ProjectTypesController < ApplicationController
       #condiciones extras
       conditions_field = chart.condition_field
      
-      sql = "project_type_id = #{params[:data_id]} " 
-      sql += " and st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326) && #{:the_geom}" 
+      @data = Project.where(project_type_id: params[:data_id])
+      #sql += " and st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})" 
       
       if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
 
@@ -62,7 +62,7 @@ class ProjectTypesController < ApplicationController
       end 
 
       if !conditions_field.blank?
-        sql += " and properties->>'" + chart.project_field.key + "' " + chart.filter_input + "'#{chart.input_value}'"
+        sql = " properties->>'" + chart.project_field.key + "' " + chart.filter_input + "'#{chart.input_value}'"
       end
 
       if analysis_type == "Promedio"
@@ -82,21 +82,20 @@ class ProjectTypesController < ApplicationController
       
         if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
         @join = ("join choice_lists  on (properties->>'#{chart.project_field.key}')::integer = choice_lists.id" )
-        @data =   Project.joins(@join).where(sql).select(field_select).group(field_group)
+        @data =   @data.joins(@join).where(sql).select(field_select).group(field_group)
       else
-        @data =   Project.where(sql).select(field_select).group(field_group)
+
+        @data =   @data.where(sql).select(field_select).group(field_group)
       end 
         chart_type = chart.chart.name
 
         @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data}
       
-      
       else
         #@data =   Project.where(sql).sum("(#{field_select})::float") #funciona bien la suma
         #@data =   Project.where(sql).count("(#{field_select})::float") #funciona bien el contar
-        @data =   Project.where(sql).send(analysis_type, "(#{field_select_without_graph})::float")
+        @data =   @data.where(sql).send(analysis_type, "(#{field_select_without_graph})::float")
         @querys << { "title":"#{chart.title}", "data":@data, "id":"#{chart.id}"}
-     
       end
       end
       end

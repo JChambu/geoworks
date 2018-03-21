@@ -59,7 +59,7 @@ class ProjectType < ApplicationRecord
 
       if i == 0 
         row.headers.each do |field|
-          @new_project_field =  ProjectField.create(name: field, field_type: 'text_field', project_type_id: self.id)
+          @new_project_field =  ProjectField.create(name: field, key: field, field_type: 'text_field', project_type_id: self.id)
         end
       end
       items = row.to_h
