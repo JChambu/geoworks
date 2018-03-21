@@ -106,7 +106,12 @@ class ProjectTypesController < ApplicationController
 
   def maps
 
-    @projects = Project.joins("left join choice_lists on (projects.properties->>'897d')::integer = choice_lists.id").where(project_type_id: params[:data_id]).select("st_x(the_geom), st_y(the_geom),  properties->>'05d5' as client_id, 
+
+    if params[:data_id] == '2'
+      @projects = Project.where(project_type_id: params[:data_id]).select("the_geom")
+    else
+
+    @projects = Project.joins("left join choice_lists on (projects.properties->>'897d')::integer = choice_lists.id").where(project_type_id: params[:data_id]).select("the_geom,  properties->>'05d5' as client_id, 
 properties->>'f2b1' as razon_social,
 properties->>'9e2f' as ejecutivo, 
 properties->>'00d8' as contratos,
@@ -124,7 +129,7 @@ when 3 then '#F7FE2E'
 when 4 then '#FE2E2E'
 end as color
               ")
-                                                                        
+    end                                                                
 
     if !params[:provincia].blank?
       @projects = @projects.where("properties->>'7926'=?", params[:provincia])
