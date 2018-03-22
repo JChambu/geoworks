@@ -35,7 +35,7 @@ class ProjectTypesController < ApplicationController
       conditions_field = chart.condition_field
      
       @data = Project.where(project_type_id: params[:data_id])
-      #sql += " and st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})" 
+      sql = " st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})" 
       
       if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
 
