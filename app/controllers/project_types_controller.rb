@@ -62,7 +62,7 @@ class ProjectTypesController < ApplicationController
       end 
 
       if !conditions_field.blank?
-        sql = " properties->>'" + chart.project_field.key + "' " + chart.filter_input + "'#{chart.input_value}'"
+        sql += " and properties->>'" + chart.project_field.key + "' " + chart.filter_input + "'#{chart.input_value}'"
       end
 
       if analysis_type == "Promedio"
