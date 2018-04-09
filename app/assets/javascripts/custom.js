@@ -588,9 +588,8 @@ console.log(data_entry);
               canvas_graph.height = 160;
               canvas_graph.width = 450;
               canvas_graph.className = 'canvas'+title ;
-
-              html = '<div class="col-md-6 col-sm-6 col-xs-12">' + 
-'  <div class="x_panel tile fixed_height_450 overflow_hidden">'+
+              html =  '<div class="col-md-6 col-sm-6 col-xs-12">' + 
+                '<div class="dashboard_graph card">' + 
 '    <div class="x_title">'+
 '      <h2>'+title+'</h2>'+
 '      <ul class="nav navbar-right panel_toolbox">'+
