@@ -580,13 +580,13 @@ function init_chart_doughnut(){
             }
             if (index == 'data'){
               data_entry = value;
-              console.log(data_entry);
               var div_graph = document.createElement('div');
               var canvas_graph = document.createElement('canvas');
               div_graph.id = 'graph'+title;
               canvas_graph.id = 'canvas'+title;
-              canvas_graph.height = 160;
-              canvas_graph.width = 450;
+              canvas_graph.height = 150;
+              canvas_graph.width = 600;
+              canvas_graph.style= "style='width: 160px; height:100px";
               canvas_graph.className = 'canvas'+title ;
               html =  '<div class="col-md-6 col-sm-6 col-xs-12">' + 
                 '<div class="x_panel tile fixed_height_320 card">' + 
@@ -602,7 +602,7 @@ function init_chart_doughnut(){
 '      </ul>'+
 '    <div class="clearfix"></div>'+
 '    </div>'+
-' <div class="x_content_'+title+'">';
+' <div class="x_content_'+title+'">'
 
               $('.graphics').append(html);
 
@@ -638,8 +638,7 @@ function init_chart_doughnut(){
                     display: true,
                     position: 'right',
                     labels: {
-                      boxWidth: 5,
-                      fullWidth: true,
+                      boxWidth: 20,
                       fontSize: 10
                     }
                   },
@@ -670,8 +669,7 @@ function init_chart_doughnut(){
 
               close_html = '</div>'+
                 '</div>'+
-'</div>'+
-                '</br>';
+'</div>';
 
               $('.graphics').append( close_html);
             }
