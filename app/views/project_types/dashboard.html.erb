@@ -2,7 +2,11 @@
 
   <%= hidden_field_tag :data_id, params[:id] %>
   <%= render "count" %>
-  <%= render 'maps' %>
+  
+ <div class="row">
+   <%= render 'maps' %>
+  </div>
+  <br/>
   <%= render "graph3" %>
 
 <% end %>
