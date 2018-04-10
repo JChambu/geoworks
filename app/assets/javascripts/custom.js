@@ -524,7 +524,7 @@ function init_kpi(){
     data: {data_id: data_id, size_box: size_box, graph: false},
     success: function(data){
       data.forEach(function(element){
- 
+
         console.log(element);
         if ($('.kpi_'+ element['id']).length) {
           $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'">'+ element['data']+'</div>');
@@ -560,8 +560,8 @@ function init_chart_doughnut(){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true},
       success: function(data){
-        
-        
+
+
         //        data.forEach(function(element){
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
@@ -580,7 +580,7 @@ function init_chart_doughnut(){
             }
             if (index == 'data'){
               data_entry = value;
-console.log(data_entry);
+              console.log(data_entry);
               var div_graph = document.createElement('div');
               var canvas_graph = document.createElement('canvas');
               div_graph.id = 'graph'+title;
@@ -613,27 +613,27 @@ console.log(data_entry);
 
 
 
-              /*  var str = i.split("#")
+                /*  var str = i.split("#")
                 if ( str[1]!= "undefined"){
                 colorBackground.push("#"+str[1]);
                 }else{
                   colorBackground.push(poolColors(1) );
                 }
-*/
+                */
                 lab.push(v['label']);
                 da.push(v['count']);
                 colorBackground.push(v['color'])
               });
 
 
-var option_legend = {
-    legend:{ 
-          display: false
-    } }
+              var option_legend = {
+                legend:{ 
+                  display: false
+                } }
 
-  if (type_chart == 'doughnut'){
+              if (type_chart == 'doughnut'){
 
- option_legend = {
+                option_legend = {
                   legend: {
                     display: true,
                     position: 'right',
@@ -643,8 +643,8 @@ var option_legend = {
                       fontSize: 10
                     }
                   },
-}
-}
+                }
+              }
 
               var chart_doughnut_settings = {
                 type: type_chart,
@@ -653,7 +653,7 @@ var option_legend = {
                   datasets: [{
                     label: title,
                     data:  da , 
-                   // backgroundColor: poolColors(da.length ) 
+                    // backgroundColor: poolColors(da.length ) 
                     backgroundColor: colorBackground 
                   }]
                 },
@@ -671,7 +671,7 @@ var option_legend = {
               close_html = '</div>'+
                 '</div>'+
 '</div>'+
-  '</br>';
+                '</br>';
 
               $('.graphics').append( close_html);
             }
@@ -708,8 +708,8 @@ var dynamicColors = function(i) {
   var g = Math.floor(Math.random() * 255);
   var b = Math.floor(Math.random() * 255);
   return "rgb(" + r + "," + g + "," + b + ")";
-//colors = ['rgb(128, 0, 128)', 'rgb(255, 0, 255)' ]
-//return colors[i];
+  //colors = ['rgb(128, 0, 128)', 'rgb(255, 0, 255)' ]
+  //return colors[i];
 
 
 }
