@@ -525,15 +525,14 @@ function init_kpi(){
     success: function(data){
       data.forEach(function(element){
 
-        console.log(element);
         if ($('.kpi_'+ element['id']).length) {
-          $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'">'+ element['data']+'</div>');
+          $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ element['data']+'</div>');
         }else{
 
 
           html = ' <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">'+
             '<span class="count_top">'+element['title']+'</span>'+
-            '<div class="count  kpi_'+ element['id'] +'">'+ element['data']+'</div>'+
+            '<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ element['data']+'</div>'+
             '</div>'+
             '</div>'
           $('.tile_count').append(html);

@@ -16,7 +16,6 @@ Navarra.geo_openlayers = function(){
     });
 
 
-
     vector = new ol.layer.Vector({ source: new ol.source.Vector()});
     var view =  new ol.View({
       projection: 'EPSG:4326',
@@ -153,15 +152,15 @@ Navarra.geo_openlayers = function(){
               population: 4000,
               rainfall: 500
             });
-            
+
             iconFeature.setStyle(
               new ol.style.Style({
                 image : new ol.style.Icon(({
-                            opacity: 1,
-                            scale: 0.5,
+                  opacity: 1,
+                  scale: 0.5,
                   color: colorMarker,
                   crossOrigin: 'anonymous',
-                            src: 'https://openlayers.org/en/v4.6.4/examples/data/dot.png'
+                  src: 'https://openlayers.org/en/v4.6.4/examples/data/dot.png'
                 }))
               })
             );
@@ -186,6 +185,9 @@ Navarra.geo_openlayers = function(){
       }
     })
   };
+
+
+
 
   return {
     init: init,
