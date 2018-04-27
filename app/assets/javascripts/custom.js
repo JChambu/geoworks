@@ -1,3 +1,37 @@
+/**
+ *  * Resize function without multiple trigger
+ *   *
+ *    * Usage:
+ *     * $(window).smartresize(function(){
+ *      *     // code here
+ *       * });
+ *        */
+
+
+color1 = '#6f98fc';
+color2 = '#fce36f';
+color5 = '#fb3027';
+color6 = '#47fe57';
+color3 = '#fd8f0c';
+color4 = '#a46ffc';
+color7 = '#c8fc6f';
+color8 = '#6ffcfa';
+colorlines = '#eeeeee';
+
+
+var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],
+  $BODY = $('body'),
+  $MENU_TOGGLE = $('#menu_toggle'),
+  $SIDEBAR_MENU = $('#sidebar-menu'),
+  $SIDEBAR_FOOTER = $('.sidebar-footer'),
+  $LEFT_COL = $('.left_col'),
+  $RIGHT_COL = $('.right_col'),
+  $NAV_MENU = $('.nav_menu'),
+  $FOOTER = $('footer');
+
+
+
+
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -30,7 +64,7 @@ $(function () {
   //Habilitar para extender menu
   // $('#menu_toggle').click(function () {
   // if ($('body').hasClass('nav-md')) {
-  $('body').removeClass('nav-md').addClass('nav-sm');
+  $('body').removeClass('nav-md').addClass('nav-md');
   $('.left_col').removeClass('scroll-view').removeAttr('style');
   $('.sidebar-footer').hide();
   /* if ($('#sidebar-menu li').hasClass('active')) {
@@ -544,6 +578,10 @@ function init_kpi(){
     }});
 }
 
+function capitalize(s){
+      return s.toLowerCase().replace( /\b./g, function(a){ return a.toUpperCase(); } );
+};
+
 function init_chart_doughnut(){
 
   if( typeof (Chart) === 'undefined'){ return; }
@@ -559,8 +597,6 @@ function init_chart_doughnut(){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true},
       success: function(data){
-
-
         //        data.forEach(function(element){
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
@@ -578,13 +614,15 @@ function init_chart_doughnut(){
               title = value ;
             }
             if (index == 'data'){
-              data_entry = value;
+              data_general = value;
+              data_entry = data_general.reverse(function(a,b){return a.count > b.count})
+              console.log(data_entry);
               var div_graph = document.createElement('div');
               var canvas_graph = document.createElement('canvas');
               div_graph.id = 'graph'+title;
               canvas_graph.id = 'canvas'+title;
               canvas_graph.height = 150;
-              canvas_graph.width = 600;
+              canvas_graph.width = 570;
               canvas_graph.style= "style='width: 160px; height:100px";
               canvas_graph.className = 'canvas'+title ;
               html =  '<div class="col-md-6 col-sm-6 col-xs-12">' + 
@@ -608,9 +646,7 @@ function init_chart_doughnut(){
               var lab = [];
               var da=[];
               var colorBackground = []
-              $.each(data_entry, function(i, v ){
-
-
+              $.each(data_entry.sort().slice(0,10), function(i, v ){
 
                 /*  var str = i.split("#")
                 if ( str[1]!= "undefined"){
@@ -619,11 +655,10 @@ function init_chart_doughnut(){
                   colorBackground.push(poolColors(1) );
                 }
                 */
-                lab.push(v['label']);
+                lab.push(capitalize(v['label']));
                 da.push(v['count']);
                 colorBackground.push(v['color'])
               });
-
 
               var option_legend = {
                 legend:{ 
@@ -638,7 +673,7 @@ function init_chart_doughnut(){
                     position: 'right',
                     labels: {
                       boxWidth: 20,
-                      fontSize: 10
+                      fontSize: 8
                     }
                   },
                 }
@@ -668,25 +703,13 @@ function init_chart_doughnut(){
 
               close_html = '</div>'+
                 '</div>'+
-'</div>';
-
+        '</div>';
               $('.graphics').append( close_html);
             }
           })
-
-          //          })
         }
       }
     })
-
-
-
-    //}
-    // }
-    // }
-    //});
-    //}
-    // });
   }
 
 }
