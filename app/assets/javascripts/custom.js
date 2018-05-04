@@ -614,13 +614,9 @@ function init_chart_doughnut(){
               title = value ;
             }
             if (index == 'data'){
-              data_entry = value;
-
-
-             
-
-
-
+              data_general = value;
+              data_entry = data_general.reverse(function(a,b){return a.count > b.count})
+              console.log(data_entry);
               var div_graph = document.createElement('div');
               var canvas_graph = document.createElement('canvas');
               div_graph.id = 'graph'+title;
@@ -660,12 +656,9 @@ function init_chart_doughnut(){
                 }
                 */
                 lab.push(capitalize(v['label']));
-                da.push(parseFloat(v['count']));
+                da.push(v['count']);
                 colorBackground.push(v['color'])
-              
               });
-             
-              da = da.sort(function(a, b){return b - a});
 
               var option_legend = {
                 legend:{ 

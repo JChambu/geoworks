@@ -85,7 +85,7 @@ class ProjectTypesController < ApplicationController
         @data =   @data.joins(@join).where(sql).select(field_select).group(field_group)
       else
 
-        @data =   @data.where(sql).select(field_select).group(field_group)
+        @data =   @data.where(sql).select(field_select).group(field_group).order(count: :desc).limit(10)
       end 
         chart_type = chart.chart.name
 
