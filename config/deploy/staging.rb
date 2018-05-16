@@ -11,7 +11,7 @@
   set :stage, :staging
   set :rails_env, 'staging'
 
-  server 'navarra.xoomcode.com', user: 'webapps', roles: %w{ web app}, my_property: :my_value
+  server 'gis_staging.com', user: 'webapps', roles: %w{ web app}, my_property: :my_value
 # role-based syntax
 # ==================
 
@@ -20,9 +20,9 @@
 # property set. Specify the username and a domain or IP for the server.
 # Don't use `:all`, it's a meta role.
 
-  role :app, %w{webapps@navarra.xoomcode.com}
-  role :web, %w{webapps@navarra.xoomcode.com}
-  role :db,  %w{webapps@navarra.xoomcode.com}
+  role :app, %w{deployer@gis_staging.com}
+  role :web, %w{deployer@gis_staging.com}
+  role :db,  %w{deployer@gis_staging.com}
 
 
 # role-based syntax
