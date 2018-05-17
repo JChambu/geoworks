@@ -8,8 +8,8 @@
 # server "db.example.com", user: "deploy", roles: %w{db}
 
 
-  set :stage, :staging
-  set :rails_env, 'staging'
+  set :stage, :production
+  set :rails_env, 'production'
 
   server 'gis_staging.com', user: 'webapps', roles: %w{ web app}, my_property: :my_value
 # role-based syntax
