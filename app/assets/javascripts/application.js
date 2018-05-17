@@ -33,7 +33,4 @@
 //= require geocoding_ol
 //= require flot/jquery.flot
 //= require flot/jquery.flot.resize
-//= require react
-//= require react_ujs
-//= require components
 //= require_tree 
