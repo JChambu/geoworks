@@ -16,6 +16,7 @@
 # property set. Specify the username and a domain or IP for the server.
 # Don't use `:all`, it's a meta role.
 
+set :rvm_ruby_version, '2.3.0'
   role :app, %w{webapps@navarra.xoomcode.com}
   role :web, %w{webapps@navarra.xoomcode.com}
   role :db,  %w{webapps@navarra.xoomcode.com}
