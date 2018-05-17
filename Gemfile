@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'rails', '~> 5.0.1'
+gem 'rails', '~> 5.1.0'
 gem 'pg', '~> 0.18'
 gem 'puma', '~> 3.0'
 gem 'sass-rails', '~> 5.0.6'
@@ -21,6 +21,7 @@ gem 'fulcrum'
 gem 'rgeoserver'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'json'
+gem 'figaro'
 gem 'jbuilder', '~> 2.5'
 gem 'webpack-rails'
 gem 'foreman'
@@ -38,14 +39,17 @@ gem 'simple_form'
 gem 'paper_trail'
 gem 'validates_email_format_of'
 #gem 'twitter-bootstrap-rails'
-gem 'ransack', github:"activerecord-hackery/ransack", branch:"master"
+#gem 'ransack', github:"activerecord-hackery/ransack", branch:"master"
+gem 'ransack'
 #gem 'twitter-bootstrap-rails'
 #gem 'less-rails-bootstrap'
 gem 'spreadsheet'
 gem 'delayed_job_active_record'
 gem 'daemons'
 gem 'geocoder'
-gem 'react-rails', github: 'reactjs/react-rails'
+#gem 'react-rails'
+gem 'webpacker'
+gem 'webpacker-react', "~> 0.3.2"
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
@@ -62,7 +66,6 @@ group :development, :test do
   gem 'capistrano-rails', '~> 1.2'
   gem 'capistrano-rvm'
   gem 'capistrano-bundler'
-
 
 end
 
