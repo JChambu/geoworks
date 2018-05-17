@@ -38,6 +38,7 @@ gem 'will_paginate-bootstrap'
 gem 'simple_form'
 gem 'paper_trail'
 gem 'validates_email_format_of'
+gem 'listen', '~> 3.0.5'
 #gem 'twitter-bootstrap-rails'
 #gem 'ransack', github:"activerecord-hackery/ransack", branch:"master"
 gem 'ransack'
