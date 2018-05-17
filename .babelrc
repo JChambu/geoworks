@@ -1,0 +1,21 @@
+{
+  "presets": [
+   ["es2015"],
+    "react",
+    ["env", {
+      "modules": false,
+      "targets": {
+        "browsers": "> 1%",
+        "uglify": true
+      },
+      "useBuiltIns": true
+    }]
+  ],
+
+  "plugins": [
+    "syntax-dynamic-import",
+    "transform-object-rest-spread",
+    "babel-plugin-transform-class-properties",
+    ["transform-class-properties", { "spec": true }]
+  ]
+}
