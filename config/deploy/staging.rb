@@ -20,7 +20,7 @@
 # property set. Specify the username and a domain or IP for the server.
 # Don't use `:all`, it's a meta role.
 
-  set :rbenv_ruby_version, '2.3.0'
+  set :rbenv_ruby, '2.3.0'
   role :app, %w{deployer@gis_staging.com}
   role :web, %w{deployer@gis_staging.com}
   role :db,  %w{deployer@gis_staging.com}
