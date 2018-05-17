@@ -35,17 +35,26 @@ append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/syst
 
 # Default value for keep_releases is 5
 set :keep_releases, 5
+before "deploy:assets:precompile", "deploy:yarn_install"
 namespace :deploy do
 
-
-desc 'Runs rake db:seed'
-task :seed => [:set_rails_env] do
-  on primary fetch(:migration_role) do
-    within release_path do
-      with rails_env: fetch(:rails_env) do
-        execute :rake, "db:seed"
+  desc 'Run rake yarn:install'
+  task :yarn_install do
+    on roles(:web) do
+      within release_path do
+        execute("cd #{release_path} && yarn install")
       end
     end
   end
-end
+
+  desc 'Runs rake db:seed'
+  task :seed => [:set_rails_env] do
+    on primary fetch(:migration_role) do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          execute :rake, "db:seed"
+        end
+      end
+    end
+  end
 end
