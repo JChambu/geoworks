@@ -11,13 +11,13 @@
  *= require_self
  *= require jquery-ui
  *= require bootstrap.min
- *= require custom
  *= require font-awesome
  *= require ol3/ol3-layerswitcher
  *= require ol3/controlbar
  *= require ol3/ol3-popup
  *= animate.css/animate.min
- *= overwrite.css
+ *= require custom
+ *= require overwrite.css
 
  *= require_tree .
  */
