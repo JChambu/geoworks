@@ -12,7 +12,7 @@
   set :rails_env, 'production'
   set :default_env, { 'NODE_ENV' => 'production' }
 
-  server 'gis_staging.com', user: 'webapps', roles: %w{ web app}, my_property: :my_value
+  server 'geoworks_stag.com', user: 'deployer', roles: %w{ web app}, my_property: :my_value
 # role-based syntax
 # ==================
 
@@ -21,10 +21,10 @@
 # property set. Specify the username and a domain or IP for the server.
 # Don't use `:all`, it's a meta role.
 
-  set :rbenv_ruby, '2.3.0'
-  role :app, %w{deployer@gis_staging.com}
-  role :web, %w{deployer@gis_staging.com}
-  role :db,  %w{deployer@gis_staging.com}
+  #set :rbenv_ruby, '2.3.0'
+  role :app, %w{deployer@geoworks_stag.com}
+  role :web, %w{deployer@geoworks_stag.com}
+  role :db,  %w{deployer@geoworks_stag.com}
 
 
 # role-based syntax
