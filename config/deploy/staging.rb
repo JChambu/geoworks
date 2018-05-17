@@ -10,6 +10,7 @@
 
   set :stage, :production
   set :rails_env, 'production'
+  set :default_env, { 'NODE_ENV' => 'production' }
 
   server 'gis_staging.com', user: 'webapps', roles: %w{ web app}, my_property: :my_value
 # role-based syntax
