@@ -12,7 +12,7 @@
   set :rails_env, 'staging'
   #set :default_env, { 'NODE_ENV' => 'production' }
 
-  server 'gis_stating.com', user: 'deployer', roles: %w{ web app}, my_property: :my_value
+  server 'gis_staging.com', user: 'deployer', roles: %w{ web app}, my_property: :my_value
 # role-based syntax
 # ==================
 
