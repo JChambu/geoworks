@@ -8,11 +8,11 @@
 # server "db.example.com", user: "deploy", roles: %w{db}
 
 
-  set :stage, :production
-  set :rails_env, 'production'
-  set :default_env, { 'NODE_ENV' => 'production' }
+  set :stage, :staging
+  set :rails_env, 'staging'
+  #set :default_env, { 'NODE_ENV' => 'production' }
 
-  server 'geoworks_stag.com', user: 'deployer', roles: %w{ web app}, my_property: :my_value
+  server 'gis_stating.com', user: 'deployer', roles: %w{ web app}, my_property: :my_value
 # role-based syntax
 # ==================
 
@@ -22,9 +22,9 @@
 # Don't use `:all`, it's a meta role.
 
   #set :rbenv_ruby, '2.3.0'
-  role :app, %w{deployer@geoworks_stag.com}
-  role :web, %w{deployer@geoworks_stag.com}
-  role :db,  %w{deployer@geoworks_stag.com}
+  role :app, %w{deployer@gis_staging.com}
+  role :web, %w{deployer@gis_staging.com}
+  role :db,  %w{deployer@gis_staging.com}
 
 
 # role-based syntax
