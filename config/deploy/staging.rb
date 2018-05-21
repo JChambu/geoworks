@@ -8,8 +8,8 @@
 # server "db.example.com", user: "deploy", roles: %w{db}
 
 
-  set :stage, :staging
-  set :rails_env, 'staging'
+  set :stage, :production
+  set :rails_env, 'production'
   #set :default_env, { 'NODE_ENV' => 'production' }
 
   server 'gis_staging.com', user: 'deployer', roles: %w{ web app}, my_property: :my_value
