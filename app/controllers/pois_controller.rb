@@ -1,5 +1,5 @@
 class PoisController < ApplicationController
-  before_filter :new_poi, :only => [:create]
+  #before_filter :new_poi, :only => [:create]
   load_and_authorize_resource
   before_action :set_poi, only: [:show, :edit, :update, :destroy]
   before_action :prepare_search_values, only: [:index ]

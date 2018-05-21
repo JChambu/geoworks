@@ -1,5 +1,5 @@
 class PoiLoadsController < ApplicationController
-  before_filter :new_poi_load, :only => [:create]
+  #before_filter :new_poi_load, :only => [:create]
   load_and_authorize_resource
   before_action :set_poi_load, only: [:show, :destroy, :download_source_file, :download_errors_file]
 

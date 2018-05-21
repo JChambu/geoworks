@@ -1,6 +1,6 @@
 class LoadLocationsController < ApplicationController
 
-  before_filter :new_load_location, :only => [:create]
+  #before_filter :new_load_location, :only => [:create]
   load_and_authorize_resource
 
   def index

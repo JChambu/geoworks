@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_filter :new_user, :only => [:create]
+  #before_filter :new_user, :only => [:create]
   load_and_authorize_resource
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 

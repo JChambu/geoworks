@@ -1,5 +1,5 @@
 class PoiTypesController < ApplicationController
-  before_filter :new_poi_type, :only => [:create]
+  #before_filter :new_poi_type, :only => [:create]
   load_and_authorize_resource :only => [:create, :update, :index]
   before_action :set_poi_type, only: [:show, :edit, :update, :destroy, :sub_types, :chains, :food_types]
 

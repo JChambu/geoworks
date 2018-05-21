@@ -1,5 +1,5 @@
 class PoiSubTypesController < ApplicationController
-  before_filter :new_poi_sub_type, :only => [:create]
+  #before_filter :new_poi_sub_type, :only => [:create]
   load_and_authorize_resource
   before_action :set_poi_sub_type, only: [:show, :edit, :update, :destroy]
 

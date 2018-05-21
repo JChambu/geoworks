@@ -1,5 +1,5 @@
 class FoodTypesController < ApplicationController
-  before_filter :new_food_type, :only => [:create]
+  #before_filter :new_food_type, :only => [:create]
   load_and_authorize_resource
   before_action :set_food_type, only: [:show, :edit, :update, :destroy]
 
