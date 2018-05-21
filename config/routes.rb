@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
 
   resources :choice_lists
+
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
   get 'geo_editions/search_blocks' => 'geo_editions#search_blocks'
@@ -37,8 +38,9 @@ Rails.application.routes.draw do
  get 'dashboard/index'
  get 'project_types/:id/dashboard' => 'project_types#dashboard',  :as => :project_types_dashboard
 
-
+get 'panel', to: 'project_types#panel'
   resources :project_types do 
+    
   resources :analytics_dashboards
   resources :projects
  get 'project_types/filters' => 'project_types#filters', as: :filters
