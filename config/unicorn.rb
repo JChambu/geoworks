@@ -16,5 +16,4 @@ stderr_path "/opt/geoworks/shared/log/unicorn.stderr.log"
 stdout_path "/opt/geoworks/shared/log/unicorn.stdout.log"
 
 # Set proccess id path
-pid "#{shared_dir}/pids/unicorn.pid"
-~                                            
+pid "#{shared_dir}/pids/unicorn.pid"                                            
