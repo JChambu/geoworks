@@ -151,15 +151,21 @@ Navarra.geo_openlayers = function(){
   /*  pointLayer.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
       selectedFeatures.push(feature);
     });*/
+
+    var source = new ol.source.Vector({wrapX: false});
+
+          var vector = new ol.layer.Vector({
+                    source: source
+                  });
     var geom = event.target.getGeometry();
-    var feat = new ol.Feature({
-      geometry: geom
-    });
-    source.addFeature(feat);
-    select_draw =  new ol.layer.Vector({
-      source: source
-    })
-    map.addLayer(select_draw);
+  draw = new ol.interaction.Draw({
+                source: source,
+                type: value,
+                geometryFunction: geom
+              });
+              map.addInteraction(draw);
+  
+  
   });
 
 
