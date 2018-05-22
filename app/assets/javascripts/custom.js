@@ -546,8 +546,10 @@ function init_charts() {
 }
 
 
-function init_kpi(){
+function init_kpi(size_box = null){
+if (size_box== null){
   var size_box = Navarra.project_types.config.size_box;
+}
 
   var  data_id =  $('#data_id').val();
   $.ajax({
@@ -582,13 +584,15 @@ function capitalize(s){
       return s.toLowerCase().replace( /\b./g, function(a){ return a.toUpperCase(); } );
 };
 
-function init_chart_doughnut(){
+function init_chart_doughnut(size_box = null){
 
   if( typeof (Chart) === 'undefined'){ return; }
 
   if ($('.graphics').length){
     $('.graphics').empty();
+    if (size_box== null){
     var size_box = Navarra.project_types.config.size_box;
+    }
     var  data_id =  $('#data_id').val();
     $.ajax({
 

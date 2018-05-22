@@ -1,7 +1,7 @@
 Navarra.namespace("geo_openlayers");
 
 Navarra.geo_openlayers = function(){
-  var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
+  var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight, vectorSource, pointLayer;
   var move_tmp = 0;
 
   var init = function(){
@@ -112,7 +112,56 @@ Navarra.geo_openlayers = function(){
       map.getTarget().style.cursor = hit ? 'pointer' : '';
     });
     */
+    // Add or remove interactions
+    $('#select').on('click', function(event) {
+      var checked = !$('#select').hasClass('active');
+      if(checked) {
+        map.addInteraction(selectInteraction);
+        map.addInteraction(dragBoxInteraction);
+        
+      } else {
+        map.removeInteraction(selectInteraction);
+        map.removeInteraction(dragBoxInteraction);
+      }
+    });
+
+
   }
+
+
+  // Initialize the interactions
+  var selectInteraction = new ol.interaction.Select({
+    condition: ol.events.condition.never
+  });
+  var dragBoxInteraction = new ol.interaction.DragBox({
+    style: new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: [25, 255, 255, 1]
+      })
+    })
+  });
+  var source = new ol.source.Vector();
+  
+  dragBoxInteraction.on('boxend', function(event) {
+    //var selectedFeatures = selectInteraction.getFeatures();
+    //selectedFeatures.clear();
+    var extent = dragBoxInteraction.getGeometry().getExtent();
+    init_kpi(extent);
+    init_chart_doughnut(extent);
+  /*  pointLayer.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
+      selectedFeatures.push(feature);
+    });*/
+    var geom = event.target.getGeometry();
+    var feat = new ol.Feature({
+      geometry: geom
+    });
+    source.addFeature(feat);
+    select_draw =  new ol.layer.Vector({
+      source: source
+    })
+    map.addLayer(select_draw);
+  });
+
 
   addMarker_op = function(){
     var size = map.getView().calculateExtent(map.getSize());
