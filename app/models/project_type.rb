@@ -31,6 +31,97 @@ class ProjectType < ApplicationRecord
     end
   end
 
+  def kpi
+
+    @querys=[]
+    #Extend
+    minx = params[:size_box][0].to_f
+    miny = params[:size_box][1].to_f
+    maxx = params[:size_box][2].to_f
+    maxy = params[:size_box][3].to_f
+
+    @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], graph: params[:graph])
+   
+    @analytics_charts.each do |chart|
+
+      #tipo de analisis
+      analysis_type = chart.analysis_type.name
+      
+      #condiciones extras
+      conditions_field = chart.condition_field
+     
+      @data = Project.where(project_type_id: params[:data_id])
+      #sql += " and st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})" 
+      
+      if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
+
+        field_select = " (choice_lists.color) as color"
+        field_select += ", (choice_lists.label) as label"
+        field_select += ", #{analysis_type}(properties->>'" + chart.project_field.key + "')"
+       
+        field_group = "properties->>'"+ chart.project_field.key + "'"
+        field_group += ", label, color"
+      
+      else
+        if params[:graph] == true
+        field_select = " #{analysis_type}(properties->>'" + chart.project_field.key + "')"
+        field_select += ", properties->>'" + chart.project_field.key + "' as label "
+        field_group = "properties->>'"+ chart.project_field.key + "'"
+        else
+
+        field_select = " #{analysis_type}(properties->>'" + chart.project_field.key + "')"
+        field_select += ", properties->>'" + chart.project_field.key + "' as label"
+        field_select_without_graph = " properties->>'" + chart.project_field.key + "'"
+        
+        field_group = "properties->>'"+ chart.project_field.key + "'"
+        end
+      end 
+
+      if !conditions_field.blank?
+        sql = " properties->>'" + chart.project_field.key + "' " + chart.filter_input + "'#{chart.input_value}'"
+      end
+
+      if analysis_type == "Promedio"
+
+        @data_extra= Project.where(sql).where("(properties->>'00d8') is not null").select("round((sum((properties->>'00d8')::numeric) / count((properties->>'05d5')::numeric)),2) as promedio")
+        @querys << { "title":"#{chart.title}", "data":@data_extra[0]['promedio'], "id":"#{chart.id}"}
+
+      else
+      if analysis_type == "Participacion"
+        @total_clientes = Project.where("project_type_id": params[:data_id]).count
+        @data_extra_2 = 0 
+        @data_extra_2 = Project.where(sql).select("round((((count(properties->>'05d5')::numeric) /  #{@total_clientes}) * 100 ),0)  as participacion") if @total_clientes > 0 
+        @querys << { "title":"#{chart.title}", "data":@data_extra_2[0]['participacion'], "id":"#{chart.id}"}
+      else
+      
+      if params[:graph] == "true"
+      
+        if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
+        @join = ("join choice_lists  on (properties->>'#{chart.project_field.key}')::integer = choice_lists.id" )
+        @data =   @data.joins(@join).where(sql).select(field_select).group(field_group)
+      else
+
+        @data =   @data.where(sql).select(field_select).group(field_group)
+      end 
+        chart_type = chart.chart.name
+
+        @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data}
+      
+      else
+        #@data =   Project.where(sql).sum("(#{field_select})::float") #funciona bien la suma
+        #@data =   Project.where(sql).count("(#{field_select})::float") #funciona bien el contar
+        @data =   @data.where(sql).send(analysis_type, "(#{field_select_without_graph})::float")
+        @querys << { "title":"#{chart.title}", "data":@data, "id":"#{chart.id}"}
+      end
+      end
+      end
+    end
+  end
+
+
+
+
+
   def load_file 
     self.file.each do |f|
       p f.content_type
@@ -174,8 +265,10 @@ class ProjectType < ApplicationRecord
            #     i["#{item[0]}"] = item[1]
                 end
               else
+
                 if properties[0][:field_type] == 'ChoiceField' 
-                  if !item[1]['other_values'].nil?
+
+                  if !item[1]['other_values'].empty?
                     i["#{item[0]}"] = item[1]['other_values'][0]
                   else
                     i["#{item[0]}"] = item[1]['choice_values'][0]
@@ -214,7 +307,7 @@ class ProjectType < ApplicationRecord
 
   def self.records_fulcrum(id)
     client = conect_fulcrum
-    @records = client.records.all(form_id: id, per_page: 10000)
+    @records = client.records.all(form_id: id, per_page: 100000)
   end
 
 
@@ -232,13 +325,14 @@ class ProjectType < ApplicationRecord
   def save_shp_file
     @directory = Geoworks::Shp.save(self.file, "shape")
     self.directory_name = @directory.split("/").last
+  
   end
 
   def load_shape
     file_name = @directory[1].split('.').first
     RGeo::Shapefile::Reader.open("#{@directory[0]}/#{file_name}.shp") do |file|
       file.each do |record|
-        p record.index
+         record.index
         if record.index == 0
           record.keys.each do |field|
             @new_project_field =  ProjectField.create(name: field, field_type: 'text_field', project_type_id: self.id)
@@ -248,21 +342,28 @@ class ProjectType < ApplicationRecord
       end
       file.rewind
       file.each do |record|
-        @attribu = record.attributes
-        @data = @attribu
-        @geom = record.geometry.as_text
-        @projects = Project.create( properties: @data, project_type_id: self.id, the_geom: @geom )
+        @properties = {}
+        i = {}
+        record.attributes.each do |val|
+p          i["#{val[0]}"] = val[1]
+        end
+       
+        @properties.merge(i)
+        p        @geom = record.geometry.as_text
+        @projects = Project.create( properties: @properties, project_type_id: self.id, the_geom: @geom )
         record = file.next
       end
     end
   end
 
   def self.load_rgeoserver
-    uri = URI.parse("http://localhost:8080/geoserver/rest/workspaces")
-    request = Net::HTTP::Post.new(uri)
+#   curl -u admin:geoserver -XGET http://localhost:8080/geoserver/rest/layers.json
+    
+    uri = URI.parse("http://localhost:8080/geoserver/rest/layers.xml")
+    request = Net::HTTP::Get.new(uri)
     request.basic_auth("admin", "geoserver")
-    request.content_type = "text/xml"
-    request.body = "<workspace><name>acme_ruby_23</name></workspace>"
+#    request.content_type = "text/xml"
+#    request.body = "<workspace><name>acme_ruby_23</name></workspace>"
 
     req_options = {
       use_ssl: uri.scheme == "https",
@@ -271,12 +372,20 @@ class ProjectType < ApplicationRecord
     response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
       http.request(request)
     end
-    # response.code
-    # # response.body
+    response.code
+    response.body
   end
 
   def self.counters(id)
     count = Project.where(project_type_id: id).count
   end
+
+  def  kpi
+
+  end
+
+
+
+
 
 end
