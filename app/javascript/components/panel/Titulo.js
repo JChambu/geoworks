@@ -1,24 +1,17 @@
 import React, { Component } from 'react';
-import {Bar} from 'react-chartjs-2';
-import 'chartjs-plugin-annotation';
-class Chart extends Component {
+
+class Titulo extends Component {
   constructor(props){
     super(props);
     this.state = {
-      chartData:props.chartData,
-      chartOption:props.chartOption,
   }
-  this.handleClick = this.handleClick.bind(this);
+    this.handleClick = this.handleClick.bind(this);
 }
-  static defaultProps = {
-    displayLegend: true,
-    responsive: false,
-  }
 
-  handleClick(event,chartData,chartOption,NumeroElemento) {
+handleClick(event) {
   var NumeroElemento=this.props.NumeroElemento;
   var TipoElemento=this.props.TipoElemento;
-  var id=event.target.parentNode.id;
+  var id=event.target.id;
   if(document.getElementById(id).style.opacity==0.4){
     document.getElementById(id).style.opacity=1;
   }else{
@@ -37,23 +30,35 @@ class Chart extends Component {
     document.getElementById('botonModifElemento').style.display='inline-block';
     document.getElementById(id).style.opacity=0.4;
   }
-  chartData=this.state.chartData;
-  chartOption=this.chartOption;
-  this.props.onClick(event,chartData,chartOption,NumeroElemento)
 }
   render(){
     var NumeroElemento=this.props.NumeroElemento;
+    var ElementoWidth=this.props.ElementoWidth;
+    var ElementoAlign=this.props.ElementoAlign;
+    var ElementoMarginTop=this.props.ElementoMarginTop;
+    var ElementoMarginRight=this.props.ElementoMarginRight;
+    var ElementoMarginLeft=this.props.ElementoMarginLeft;
+    var ElementoSize=this.props.ElementoSize;
+    var ElementoColor=this.props.ElementoColor;
+
+   
     return (
-      <div id={'Elemento'+NumeroElemento} style={{textAlign:'center', width:'100%'}} autoFocus onClick={this.handleClick}>
-       <Bar
-        data={this.props.chartData}
-        height={540}
-        options={
-          this.props.chartOption          
-        }
-        />
+      <div id={'Elementodiv'+NumeroElemento}style={{width:'100%'}}>
+        <input className="Titulo1"  
+          style={{width:'96%', 
+                  textAlign:ElementoAlign,
+                  marginTop:ElementoMarginTop+'px',
+                  marginRight:ElementoMarginRight+'px',
+                  marginLeft:ElementoMarginLeft+'px',
+                  color:ElementoColor,
+                  fontSize:ElementoSize+'em',
+                }}
+          onClick={this.handleClick}
+          id={'Elemento'+NumeroElemento}
+          autoFocus
+           />
       </div>
       )
   }
 }
-export default Chart;
+export default Titulo;

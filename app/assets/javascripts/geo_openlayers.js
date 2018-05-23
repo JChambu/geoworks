@@ -116,52 +116,72 @@ Navarra.geo_openlayers = function(){
     $('#select').on('click', function(event) {
       var checked = !$('#select').hasClass('active');
       if(checked) {
-        map.addInteraction(dragBoxInteraction);
-        
+        addInteraction();
+
       } else {
         //map.removeInteraction(selectInteraction);
         //map.removeInteraction(dragBoxInteraction);
       }
     });
+
+    var ssource =  new ol.source.Vector({features: features})
+
+    var featureOverlay = new ol.layer.Vector({
+      source: ssource,
+      style: new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: 'rgba(255, 255, 255, 0.8)'
+        }),
+        stroke: new ol.style.Stroke({
+          color: '#ffcc33',
+          width: 2
+        }),
+        image: new ol.style.Circle({
+          radius: 7,
+          fill: new ol.style.Fill({
+            color: '#ffcc33'
+          })
+        })
+      })
+    });
+    featureOverlay.setMap(map);
+
+  }
+
+  var features = new ol.Collection();
+  var draw;
+  function addInteraction() {
+map.removeInteraction(lastFeature);
+    draw = new ol.interaction.Draw({
+      features: features,
+      type: 'Polygon'
+    });
+    var lastFeature;
+    var removeLastFeature = function() {
+      if (lastFeature)
+      pointLayer.getSource();
+    };
+
+    draw.on('drawend',function(evt){
+      removeLastFeature();  
+      var selectedFeatures = selectInteraction.getFeatures();
+      selectedFeatures.clear();
+      extent = evt.feature.getGeometry().getExtent();
+/*      pointLayer.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
+        selectedFeatures.push(feature);
+      });*/
+      init_kpi(extent);
+      lastFeature = evt.feature;
+    })
+
+    map.addInteraction(draw);
   }
 
   // Initialize the interactions
   var selectInteraction = new ol.interaction.Select({
     condition: ol.events.condition.never
   });
-  var dragBoxInteraction = new ol.interaction.Draw({
-    type: 'Polygon',
-    source: pointLayer,
-  style: new ol.style.Style({
-                        fill: new ol.style.Fill({
-                                                  color: 'rgba(55, 155, 55, 0.3)'
-                                              }),
-                        stroke: new ol.style.Stroke({
-                                                  color: 'rgba(55, 155, 55, 0.8)',
-                                                  width: 1
-                                              }),
-                        image: new ol.style.Circle({
-                                                  radius: 7,
-                                                  fill: new ol.style.Fill({
-                                                                                color: 'rgba(55, 155, 55, 0.5)',
-                                                                            })
-                                                                                                })
-                                                                                                                })
-  
-  
-  });
-  var source = new ol.source.Vector();
-  
-  dragBoxInteraction.on('drawend', function(event) {
-    //var selectedFeatures = selectInteraction.getFeatures();
-    //selectedFeatures.clear();
-    var extent = event.feature.getGeometry().getExtent();
-    init_kpi(extent);
-    init_chart_doughnut(extent);
-  /*  pointLayer.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
-      selectedFeatures.push(feature);
-    });*/
-  });
+
 
 
   addMarker_op = function(){

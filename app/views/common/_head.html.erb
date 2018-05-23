@@ -30,6 +30,7 @@
   <script src="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.js"></script>
   <%= javascript_include_tag 'application' %>
   <%= javascript_pack_tag 'panel' %>
+  <%= stylesheet_pack_tag 'panel' %>
   <% if content_for? :head %>
       <%= yield :head %>
     <% end %>
