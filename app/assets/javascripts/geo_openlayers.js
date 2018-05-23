@@ -76,7 +76,7 @@ Navarra.geo_openlayers = function(){
     });
     map.addOverlay(popup);
     // display popup on click
-    map.on('click', function(evt) {
+    map.on('rightclick', function(evt) {
       var feature = map.forEachFeatureAtPixel(evt.pixel,
         function(feature, layer) {
           return feature;
@@ -116,56 +116,51 @@ Navarra.geo_openlayers = function(){
     $('#select').on('click', function(event) {
       var checked = !$('#select').hasClass('active');
       if(checked) {
-        map.addInteraction(selectInteraction);
         map.addInteraction(dragBoxInteraction);
         
       } else {
-        map.removeInteraction(selectInteraction);
-        map.removeInteraction(dragBoxInteraction);
+        //map.removeInteraction(selectInteraction);
+        //map.removeInteraction(dragBoxInteraction);
       }
     });
-
-
   }
-
 
   // Initialize the interactions
   var selectInteraction = new ol.interaction.Select({
     condition: ol.events.condition.never
   });
-  var dragBoxInteraction = new ol.interaction.DragBox({
-    style: new ol.style.Style({
-      stroke: new ol.style.Stroke({
-        color: [25, 255, 255, 1]
-      })
-    })
+  var dragBoxInteraction = new ol.interaction.Draw({
+    type: 'Polygon',
+    source: pointLayer,
+  style: new ol.style.Style({
+                        fill: new ol.style.Fill({
+                                                  color: 'rgba(55, 155, 55, 0.3)'
+                                              }),
+                        stroke: new ol.style.Stroke({
+                                                  color: 'rgba(55, 155, 55, 0.8)',
+                                                  width: 1
+                                              }),
+                        image: new ol.style.Circle({
+                                                  radius: 7,
+                                                  fill: new ol.style.Fill({
+                                                                                color: 'rgba(55, 155, 55, 0.5)',
+                                                                            })
+                                                                                                })
+                                                                                                                })
+  
+  
   });
   var source = new ol.source.Vector();
   
-  dragBoxInteraction.on('boxend', function(event) {
+  dragBoxInteraction.on('drawend', function(event) {
     //var selectedFeatures = selectInteraction.getFeatures();
     //selectedFeatures.clear();
-    var extent = dragBoxInteraction.getGeometry().getExtent();
+    var extent = event.feature.getGeometry().getExtent();
     init_kpi(extent);
     init_chart_doughnut(extent);
   /*  pointLayer.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
       selectedFeatures.push(feature);
     });*/
-
-    var source = new ol.source.Vector({wrapX: false});
-
-          var vector = new ol.layer.Vector({
-                    source: source
-                  });
-    var geom = event.target.getGeometry();
-  draw = new ol.interaction.Draw({
-                source: source,
-                type: value,
-                geometryFunction: geom
-              });
-              map.addInteraction(draw);
-  
-  
   });
 
 
