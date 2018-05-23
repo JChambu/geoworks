@@ -128,7 +128,7 @@ get 'panel', to: 'project_types#panel'
     # You can have the root of your site routed with "root"
 
     #root 'pois#index'
-    root 'project_types#index'
+    root 'project_types#panel'
     #end
 
     # Example of regular route:

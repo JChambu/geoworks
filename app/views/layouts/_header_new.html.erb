@@ -1,41 +1,6 @@
 <div class="container body">
   <div class="main_container">
-    <div class="col-md-3 left_col">
-      <div class="left_col scroll-view">
-        <div class="navbar nav_title" style="border: 0;">
-          <%= link_to  "#", class: "site_title" do  %> <%= image_tag "logo_geoworks2.png" %> <% end %>
-        </div>
-
-        <div class="clearfix"></div>
-
-
-        <br />
-
-        <!-- sidebar menu -->
-        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-          <div class="menu_section">
-            <h3>General</h3>
-            <ul class="nav side-menu">
-              <li><%= link_to project_types_path() do %><i class="fa fa-folder-open"></i> Proyectos <span class="fa fa-chevron-down"></span><% end %>
-              </li>
-              <li><a><i class="fa fa-clipboard"></i> Servicios <span class="fa fa-chevron-down"></span></a>
-
-                <ul class="nav child_menu" style="display: block">
-                  <% if current_user.name == 'Admin' %>
-                  <li><%= link_to  t('menu.admin.extended_listings'), extended_listings_path() %></li>
-
-                    <li><%=  link_to  t('menu.admin.extended_listings_georeferenced'), georeferenced_extended_listings_path  %></li>
-                  <% end  %>
-                </ul>
-              </li>
-              <li><a><i class="fa fa-cogs"></i> Ajustes <span class="fa fa-chevron-down"></span></a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <!-- /sidebar menu -->
-      </div>
-    </div>
+    
     <!-- top navigation -->
     <div class="top_nav">
       <div class="nav_menu">
@@ -80,8 +45,8 @@
     </div>
     <!-- /top navigation -->
 
-    <div class="right_col" role="main">
+    
       <%= yield %>
-    </div>
+    
   </div>
 </div>

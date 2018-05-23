@@ -1,6 +1,6 @@
 import React from 'react';
 import {PanelForm} from '../components/panel/panel_form';
-import WebpackerReact from 'webpacker-react'
+import WebpackerReact from 'webpacker-react';
 
 export class Panel extends React.Component{
 
