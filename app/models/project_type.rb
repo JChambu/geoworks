@@ -331,6 +331,7 @@ class ProjectType < ApplicationRecord
   def load_shape
     file_name = @directory[1].split('.').first
     RGeo::Shapefile::Reader.open("#{@directory[0]}/#{file_name}.shp") do |file|
+     @file = file
       file.each do |record|
          record.index
         if record.index == 0
@@ -342,15 +343,16 @@ class ProjectType < ApplicationRecord
       end
       file.rewind
       file.each do |record|
-        @properties = {}
-        i = {}
+        @prop = {}
+        @i = {}
         record.attributes.each do |val|
-p          i["#{val[0]}"] = val[1]
+         @val = val
+          
+            @i["#{val[0]}"] = val[1]
         end
        
-        @properties.merge(i)
-        p        @geom = record.geometry.as_text
-        @projects = Project.create( properties: @properties, project_type_id: self.id, the_geom: @geom )
+        @geom = record.geometry.as_text
+        @projects = Project.create( properties: @i.to_h, project_type_id: self.id, the_geom: @geom )
         record = file.next
       end
     end

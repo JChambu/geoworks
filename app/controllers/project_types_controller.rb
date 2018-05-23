@@ -94,7 +94,7 @@ class ProjectTypesController < ApplicationController
       else
         #@data =   Project.where(sql).sum("(#{field_select})::float") #funciona bien la suma
         #@data =   Project.where(sql).count("(#{field_select})::float") #funciona bien el contar
-        @data =   @data.where(sql).send(analysis_type, "(#{field_select_without_graph})::float")
+        @data =   @data.where(sql).send(analysis_type, "(#{field_select_without_graph})")
         @querys << { "title":"#{chart.title}", "data":@data, "id":"#{chart.id}"}
       end
       end
