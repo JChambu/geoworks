@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Source Sans Pro";
+  src: url("SourceSansPro-Light.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Source Sans Pro Bold";
+  src: url("SourceSansPro-SemiBold.ttf") format("truetype");
+}
 .App {
 font-size: 18px;
 font-family: "Source Sans Pro",sans-serif;
