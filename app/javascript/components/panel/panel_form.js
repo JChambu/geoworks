@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './App.css';
+import '../../src/panel.css';
 import logo from './logo.png';
 import logoGeo from './logoGeo.svg';
 import logocliente from './logocliente.png';
