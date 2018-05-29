@@ -1579,7 +1579,7 @@ onAjaxCallback1(xmlhttp) {
 ///Tercer llamado Ajax
 
 buscarKPI(event){
-fetch('http://45.55.84.16/project_types/kpi.json?data_id=440&graph=true', {'credentials': 'same-origin', 
+fetch('http://45.55.84.16/project_types/kpi.json?data_id=24&graph=true', {'credentials': 'same-origin', 
 //  var IDProyectos=this.state.IDProyectos;
 //  var IDProy1=document.getElementById('selectProyecto').selectedIndex;
  // var IDProy=IDProyectos[IDProy1-1];
