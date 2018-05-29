@@ -32,6 +32,7 @@
             <div>
               <%= f.label :graph, "Graficar" %>
               <%= f.check_box :graph%>
+            <%= f.input :group_field_id, label: "group_field", :collection => fields_for_select %>
             </div>
 
             <div class="col-md-12">

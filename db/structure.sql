@@ -133,7 +133,7 @@ CREATE TABLE analytics_dashboards (
     project_type_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    group_field character varying,
+    group_field_id integer,
     project_field_id integer,
     filter_input character varying,
     input_value character varying,

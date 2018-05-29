@@ -1,9 +1,6 @@
 Rails.application.routes.draw do
 
 
-
-
-
   resources :choice_lists
 
   get 'locations/cities' => 'locations#cities'
@@ -25,102 +22,110 @@ Rails.application.routes.draw do
   get 'poi_types/:id/chains' => 'poi_types#chains'
   get 'poi_types/:id/food_types' => 'poi_types#food_types'
 
- get 'project_types/maps' => 'project_types#maps'
+  get 'project_types/maps' => 'project_types#maps'
 
- get 'project_types/kpi' => 'project_types#kpi'
- get 'project_types/graph3' => 'project_types#graph2'
- 
- scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
+  get 'project_types/kpi' => 'project_types#kpi'
+  get 'project_types/graph3' => 'project_types#graph2'
+
+  scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
+
+
+  get 'project_fields/index'
+  post 'project_fields/create'
+  post 'analytics_dashboards/create'
+  get 'project_fields/:id/show' =>'project_fields#show'
+  get 'project_types/index'
+
 
 
   resources :charts
   resources :analysis_types
- get 'dashboard/index'
- get 'project_types/:id/dashboard' => 'project_types#dashboard',  :as => :project_types_dashboard
+  get 'dashboard/index'
+  get 'project_types/:id/dashboard' => 'project_types#dashboard',  :as => :project_types_dashboard
 
-get 'panel', to: 'project_types#panel'
+  get 'panel', to: 'project_types#panel'
   resources :project_types do 
-    
-  resources :analytics_dashboards
-  resources :projects
- get 'project_types/filters' => 'project_types#filters', as: :filters
+
+    resources :analytics_dashboards
+    resources :projects
+    get 'project_types/filters' => 'project_types#filters', as: :filters
   end
   resources :regexp_types
     #  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
     resources :customers
-  resources :streets
+    resources :streets
     resources :geo_editions
    # get "geo_editions/geoeditions_edit" => 'geo_editions#geoeditions_edit' 
 
 
-    resources :extended_listings  do
-      collection do
-        get :duplicated
-        get :georeferenced
-        get :congrated_points
-      end
+   resources :extended_listings  do
+    collection do
+      get :duplicated
+      get :georeferenced
+      get :congrated_points
     end
+  end
 
-    resources :parkings do
-      collection do
-        get :search
-      end
+  resources :parkings do
+    collection do
+      get :search
     end
-    resources :extended_listing_loads
-    resources :categories
-    resources :customers
-    get "reports/pois"
-    get 'poi_addresses/georeferenced' 
-    resources :restaurant_types
-    resources :poi_address_loads
-    resources :generate_deliveries
-    get "reports/users"
-    get "reports/poi_verification"
-    get "reports/poi_verification_maps"
-    get "reports/update" => 'reports#update', :as=> :update_poi
+  end
+  resources :extended_listing_loads
+  resources :categories
+  resources :customers
+  get "reports/pois"
+  get 'poi_addresses/georeferenced' 
+  resources :restaurant_types
+  resources :poi_address_loads
+  resources :generate_deliveries
+  get "reports/users"
+  get "reports/poi_verification"
+  get "reports/poi_verification_maps"
+  get "reports/update" => 'reports#update', :as=> :update_poi
 
-    get "reports/verificated_multiple" => 'reports#verificated_multiple'
-    get "reports/update_revised" => 'reports#update_revised'
-    get 'pois/check' => 'pois#check'
-    get 'configuration' => 'configuration#index'
-    put 'configuration/:id' => 'configuration#update', :as => :update_configuration
-    resources :poi_addresses
-    resources :pois do
-      collection do
-        get :download
-        get :search
-        get :deliver
-        get :deliveries_pois
-        get :duplicated
+  get "reports/verificated_multiple" => 'reports#verificated_multiple'
+  get "reports/update_revised" => 'reports#update_revised'
+  get 'pois/check' => 'pois#check'
+  get 'configuration' => 'configuration#index'
+  put 'configuration/:id' => 'configuration#update', :as => :update_configuration
+  resources :poi_addresses
+  resources :pois do
+    collection do
+      get :download
+      get :search
+      get :deliver
+      get :deliveries_pois
+      get :duplicated
 
-        delete :delete_multiple
-      end
+      delete :delete_multiple
     end
+  end
 
-    resources :load_locations, :except => [:edit, :update] do
-      collection do
-        get :upload_xls
-      end
+  resources :load_locations, :except => [:edit, :update] do
+    collection do
+      get :upload_xls
     end
+  end
 
-    resources :poi_loads, :except => [:edit, :update] do
-      collection do
-        get :download_xls_example
-      end
-      member do
-        get :download_source_file
-        get :download_errors_file
-      end
+  resources :poi_loads, :except => [:edit, :update] do
+    collection do
+      get :download_xls_example
     end
+    member do
+      get :download_source_file
+      get :download_errors_file
+    end
+  end
 
-    resources :poi_sub_types
-    resources :poi_sources
-    resources :street_types
-    resources :food_types
-    resources :poi_types
-    resources :chains
-    devise_for :users
-    resources :users
+  resources :poi_sub_types
+  resources :poi_sources
+  resources :street_types
+  resources :food_types
+  resources :poi_types
+  resources :chains
+  devise_for :users
+  resources :users
 
     # The priority is based upon order of creation: first created -> highest priority.
     # See how all your routes lay out with "rake routes".

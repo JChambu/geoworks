@@ -31,7 +31,6 @@ Navarra.layers.basemaps = function(){
 
   //function applies greyscale to every pixel in canvas
   function greyscale(context) {
- console.log(context);
     var canvas = context.canvas;
     var width = canvas.width;
     var height = canvas.height;
@@ -52,14 +51,9 @@ Navarra.layers.basemaps = function(){
       data[i+3] = 255; // Alpha
     }
     context.putImageData(imageData,0,0);
-
   }
-
-
-
   return [noneLayer, osmLayer];
 }
-
 
 /*Navarra.layers.api = function(){
 let data_f = []
