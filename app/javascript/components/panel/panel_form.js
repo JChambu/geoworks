@@ -32,7 +32,7 @@ constructor(){
     super();
     this.state = {
   //    url:'http://www.misfinanzassimples.com/Graficos/php/'
-      url:'http://localhost:3000/es/',
+      url:'http://45.55.84.16/es/',
       baseProyectos:'project_types/index.json',
       panelVisible:['block',"none","none","none","none","none","none","none"],
       PanelHover:[1],
@@ -700,6 +700,7 @@ handleClickNuevoElemento(event) {
     var chartOption=this.state.chartOption;
     var chartOptionElemento=this.state.chartOptionElemento;
     chartOptionElemento[cantidadElementos]=chartOption;
+
     var chartData={
       labels:this.state.labels,
       datasets: this.state.DataSets}
@@ -741,6 +742,8 @@ handleClickNuevoElemento(event) {
 
 var chartDataElemento=this.state.chartDataElemento;
 var chartOptionElemento=this.state.chartOptionElemento;
+console.log(chartDataElemento);
+
 var cadenaParametros = 'ChartData='+encodeURIComponent(chartDataElemento)+'&chartOptionElemento='+encodeURIComponent(chartOptionElemento);
   fetch('/project_fields/create?data ='+cadenaParametros, {'credentials': 'same-origin',
   method: 'post', 
@@ -1478,7 +1481,7 @@ buscarProyectos(event){
 var url=this.state.url;
 var baseProyectos=this.state.baseProyectos;
 //fetch(url+baseProyectos)
-fetch('http://localhost:3000/es/project_types/index.json', {'credentials': 'same-origin'})
+fetch('http://45.55.84.16/es/project_types/index.json', {'credentials': 'same-origin'})
     .then(this.onAjaxCallbackProyectos);
 }
 
@@ -1511,7 +1514,7 @@ handleClickCampos(event){
   var IDProy1=document.getElementById('nombreTabla').selectedIndex;
   var IDProy=IDProyectos[IDProy1-1];
   var cadenaParametros = 'IDP='+encodeURIComponent(IDProy);
-fetch('http://localhost:3000/es/project_fields/index.json?id='+IDProy, {'credentials': 'same-origin'})
+fetch('http://45.55.84.16/es/project_fields/index.json?id='+IDProy, {'credentials': 'same-origin'})
     .then(this.onAjaxCallback);
 }
 
@@ -1576,7 +1579,7 @@ onAjaxCallback1(xmlhttp) {
 ///Tercer llamado Ajax
 
 buscarKPI(event){
-fetch('http://localhost:3000/project_types/kpi.json?data_id=440&graph=true', {'credentials': 'same-origin', 
+fetch('http://45.55.84.16/project_types/kpi.json?data_id=440&graph=true', {'credentials': 'same-origin', 
 //  var IDProyectos=this.state.IDProyectos;
 //  var IDProy1=document.getElementById('selectProyecto').selectedIndex;
  // var IDProy=IDProyectos[IDProy1-1];
