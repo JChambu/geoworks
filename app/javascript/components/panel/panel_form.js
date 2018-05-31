@@ -1,38 +1,15 @@
 import React, { Component } from 'react';
 import '../../src/panel.css';
-import logo from './logo.png';
-import logoGeo from './logoGeo.svg';
-import logocliente from './logocliente.png';
-import folder from './folder1.png';
-import mapa from './mapa.png';
-import reporte from './reporte.png';
-import bullet from './bullet.png';
-import texto from './texto.png';
-import comentario from './comentario.png';
-import panel from './panel.png';
-import cuadrado from './cuadrado.png';
-import engranajes from './engranajes.png';
-import dashboard from './dashboard.png';
 import grafico from './grafico.png';
-import icon1 from './icon1.svg';
-import icon2 from './icon2.svg';
-import icon3 from './icon3.svg';
-import icon4 from './icon4.svg';
-import icon5 from './icon5.svg';
-import mapaejemplo from './mapaejemplo.jpg';
-import Logo from './Logo';
-import Titulo from './Titulo';
 import Chart from './Chart';
-import Comentario from './Comentario';
-import Tabla from './Tabla';
-import TablaEditada from './TablaEditada';
+import panel from './panel.png';
 
 export class PanelForm extends React.Component {
-constructor(){
+	  constructor(){
     super();
     this.state = {
   //    url:'http://www.misfinanzassimples.com/Graficos/php/'
-      url:'http://45.55.84.16/es/',
+      url:'http://localhost:3000/es/',
       baseProyectos:'project_types/index.json',
       panelVisible:['block',"none","none","none","none","none","none","none"],
       PanelHover:[1],
@@ -56,25 +33,6 @@ constructor(){
       ElementoColor:[],
       VinetaColor:[],
 
-      BaseDatos:["","Oferta Edificios","Disponibilidad","Disponibilidad (sin Gespania)","Venta Mensual","Meses para Agotar Stock","Superficie Util Promedio","Superficie Terraza","Precio Lista | UF","Precio Unitario | UFm2","PxQ Mensual | UF miles"],
-      cantidadColumnas:[],
-      cantidadFilas:[],
-      EncabezadoColumna:[],
-      ValoresColumna:[],
-      ValoresColumnaEditado:[],
-      ValoresFilaD:[],
-      ValoresTexto:[],
-      ValoresDato:[],
-      ValoresPorcentaje:[],
-      color:[],
-      BordeIzquierdo:[],
-      contadorBI:0,
-      BordeSuperior:[],
-      contadorBS:0,
-      BordeDerecho:[],
-      contadorBD:0,
-      BordeInferior:[],
-      contadorBIn:0,
       
       chartDataElemento:[],
       chartOptionElemento:[],
@@ -113,7 +71,9 @@ constructor(){
             }]
           }},
       DatosXTitulo:[],
+      DatosIDKpi:[],
       DatosX:[],
+      indiceDatosX:1,
       DataSets: [{
                 label:"Serie 1",
                 data: [1,2,3,4,5], 
@@ -204,6 +164,8 @@ constructor(){
     this.buscarProyectos=this.buscarProyectos.bind(this);
     this.onAjaxCallbackProyectos=this.onAjaxCallbackProyectos.bind(this);
     this.onAjaxCallbackGuardarElementos=this.onAjaxCallbackGuardarElementos.bind(this);
+    //this.onAjaxCallbackElementos=this.onAjaxCallbackElementos.bind(this);
+    this.getElementos=this.getElementos.bind(this);
 
 }
 
@@ -395,7 +357,6 @@ handleChangeSerie(event) {
   var DataSets = [];
     for(var x=0;x<cantidadSeries;x++){
       var NombreSerie=document.getElementById('nomserie'+x).value;
-//      if(NombreSerie==''){NombreSerie="Serie"+(x+1)}
       var indiceX=document.getElementById('selectDatosX').selectedIndex;
       var indice=document.getElementById('dataserie'+x).selectedIndex;
       if (indiceX==0 || indice==0){DataSerie=[0,0,0,0]}else{var DataSerie=DatosSeries[indiceX-1][indice-1]}
@@ -476,11 +437,11 @@ handleChangeDatosX(event) {
       );
     this.setState({
     SelectDatos:SelectDatos,
+    indiceDatosX:indice,
     });
 }
 
 handleClickMasSeries(event) {
-
   var cantidadSeries=this.state.cantidadSeries;
     cantidadSeries++; 
     var DatosX=this.state.DatosX
@@ -598,9 +559,36 @@ onClickGrafico(event,chartData,chartOption,NumeroElemento){
   var posicion=DatosX.indexOf(labels);
   document.getElementById('selectDatosX').selectedIndex = (posicion+1);
   var cantidadSeries=DataSets.length;
-  for(var x=0;x<DataSets.length;x++){
- //   document.getElementById('nomserie'+x).value=DataSets[x].label;
+  var fil=[];
+    for(var a=0;a<cantidadSeries;a++){fil[a]=a}
+  var DatosSeriesTexto=this.state.DatosSeriesTexto;
+  var seleccion=[];
+  for(var a=0;a<DatosSeriesTexto[posicion].length;a++){
+    var data=chartData.datasets[a].data;
+    var posicion1=DatosSeriesTexto[posicion].indexOf(data);
+  alert(data)
+  alert(posicion1);
+    if (a==posicion1){seleccion[a]='true'}else{seleccion[a]='false'}
   }
+    const opcionesDatosSeries = DatosSeriesTexto[posicion].map((opcion) =>
+       <option key={opcion.toString()} selected={seleccion[opcion]}>{opcion}</option>
+      );
+    const SelectDatos = fil.map((fila) =>
+      <li key={'datos'+fila} style={{width:'100%', padding:'0px'}}>
+        <p style={{display:'inline-block', width:'20%', margin:'2px 0px', fontSize:'0.5em'}}>{'Serie '+(fila+1)}</p>
+        <select style={{width:'70%', display:'inline-block',margin:'2px 0px', fontSize:'0.6em'}} id={'dataserie'+fila} onChange={this.handleChangeSerie}>
+            {opcionesDatosSeries}
+          </select>
+      </li>
+      );
+
+this.setState({
+    cantidadSeries:cantidadSeries,
+    chartOption:chartOption,
+    labels:labels,
+    DataSets:DataSets,
+    SelectDatos:SelectDatos,
+    });
   /*
   label:Serie[z][x],
           data: DataSerie[z][x], 
@@ -612,13 +600,6 @@ onClickGrafico(event,chartData,chartOption,NumeroElemento){
           borderColor: borderColor[x][z],
           pointStyle:PointStyleString[PointStyleIndex[x][z]]
           */
- 
-  this.setState({
-    cantidadSeries:cantidadSeries,
-    chartOption:chartOption,
-    labels:labels,
-    DataSets:DataSets
-    });
 }
 
 handleClickElemento(event) {
@@ -641,12 +622,76 @@ handleClickElemento(event) {
 
     if(estadopanel==4 || estadopanel==5){
       document.getElementById('PanelCentral').style.visibility='hidden';
-    }      
-    this.setState({
+    } 
+    if(estadopanel==5){
+  document.getElementById('AnchoGrafico').value = '';
+  document.getElementById('PanelEdicion').style.width='25%';
+  document.getElementById('selectDatosX').selectedIndex = 0;
+  var cantidadSeries=1;
+  var fil=[];
+    for(var a=0;a<cantidadSeries;a++){fil[a]=a}
+  var DatosSeriesTexto=this.state.DatosSeriesTexto;
+  var seleccion=[];
+  for(var a=0;a<DatosSeriesTexto[0].length;a++){if (a==0){seleccion[a]='true'}else{seleccion[a]='false'}}
+    const opcionesDatosSeries = DatosSeriesTexto[0].map((opcion) =>
+       <option key={opcion.toString()} selected={seleccion[opcion]}>{opcion}</option>
+      );
+    const SelectDatos = fil.map((fila) =>
+      <li key={'datos'+fila} style={{width:'100%', padding:'0px'}}>
+        <p style={{display:'inline-block', width:'20%', margin:'2px 0px', fontSize:'0.5em'}}>{'Serie '+(fila+1)}</p>
+        <select style={{width:'70%', display:'inline-block',margin:'2px 0px', fontSize:'0.6em'}} id={'dataserie'+fila} onChange={this.handleChangeSerie}>
+            {opcionesDatosSeries}
+          </select>
+      </li>
+      );
+      this.setState({
+      SelectDatos:SelectDatos,
+      chartOption:{ 
+        maintainAspectRatio: false,
+        elements:{
+            line:{
+              borderWidth:0
+            }
+          },
+          legend:{
+            display: true,
+            position:'bottom',
+            labels:{
+              boxWidth:40,
+              padding:10,
+              usePointStyle:true,
+            },
+          },
+          scales: {
+            yAxes: [{
+          id: 'left-y-axis',
+          type: 'linear',
+          position: 'left',
+          }
+        ,{
+          id: 'right-y-axis',
+          type: 'linear',
+          position: 'right',
+          }
+        ] ,
+            xAxes: [{
+              id: 'x-axis',
+              barPercentage:1,
+              categoryPercentage: 1,
+            }]
+          }},
+      DataSets: [{
+                label:"Serie 1",
+                data: [1,2,3,4,5], 
+                type: 'bar',
+                }],
+      labels:[1,2,3,4,5],
+      cantidadSeries:1,  
+
     estadopanel:estadopanel,
     });
   }
-
+}
 handleClickNuevoElemento(event) {
    var estadopanel=this.state.estadopanel;
    var ElementoWidth=this.state.ElementoWidth;
@@ -700,7 +745,6 @@ handleClickNuevoElemento(event) {
     var chartOption=this.state.chartOption;
     var chartOptionElemento=this.state.chartOptionElemento;
     chartOptionElemento[cantidadElementos]=chartOption;
-
     var chartData={
       labels:this.state.labels,
       datasets: this.state.DataSets}
@@ -742,12 +786,39 @@ handleClickNuevoElemento(event) {
 
 var chartDataElemento=this.state.chartDataElemento;
 var chartOptionElemento=this.state.chartOptionElemento;
-console.log(chartDataElemento);
+var indiceX=document.getElementById('selectDatosX').selectedIndex;
+var DatosIDKpi=this.state.DatosIDKpi;
+console.log(indiceX);
+var DatosEnviar={};
+for(var a=0;a<chartDataElemento.length;a++){
+  var cantidadseries=chartDataElemento[a].datasets.length;
+  alert(cantidadseries);
+  var Series=[];
+  for(var b=0;b<cantidadseries;b++){
+    var indiceSerie=document.getElementById('dataserie'+b).selectedIndex;
+    console.log(indiceSerie);
+    var DatosIDKpiElemento=DatosIDKpi[indiceX][indiceSerie];
+    Series[b]={"label":chartDataElemento[a].datasets[b].label,
+              "data":DatosIDKpiElemento,
+              "type":"bar",
+             }
+    }
+  DatosEnviar={"kpi":DatosIDKpiElemento,
+                      "datasets":Series,
+                    }
+}
 
-var cadenaParametros = 'ChartData='+encodeURIComponent(chartDataElemento)+'&chartOptionElemento='+encodeURIComponent(chartOptionElemento);
-  fetch('/project_fields/create?data ='+cadenaParametros, {'credentials': 'same-origin',
+//var cadenaParametros = 'DatosEnviar='+encodeURIComponent(DatosEnviar);
+var myo = {};
+myo = DatosEnviar;
+console.log(DatosEnviar);
+var myo_json = JSON.stringify(myo);
+//var myo_json = DatosEnviar;
+
+
+  fetch('http://localhost:3000/es/charts/create?properties='+ myo_json, {'credentials': 'same-origin',
   method: 'post', 
-  body: cadenaParametros,
+  //	body: cadenaParametros,
   headers:{
             'X-CSRF-Token': window.TokenSocial.token
           }
@@ -855,166 +926,105 @@ handleClickModifElemento(event) {
 
 
 renderLogo(i) {
-
-  return (
-  <Logo
-    NumeroElemento={i}
-    TipoElemento={this.state.TipoElemento[i]}
-    ElementoWidth={this.state.ElementoWidth[i]}
-    ElementoAlign={this.state.ElementoAlign[i]}
-    ElementoMarginTop={this.state.ElementoMarginTop[i]}
-    ElementoMarginRight={this.state.ElementoMarginRight[i]}
-    ElementoMarginLeft={this.state.ElementoMarginLeft[i]}
-
-  />
-  );
 }
 
 renderTitulo(i) {
-  return (
-  <Titulo
-    NumeroElemento={i}
-    TipoElemento={this.state.TipoElemento[i]}
-    ElementoAlign={this.state.ElementoAlign[i]}
-    ElementoMarginTop={this.state.ElementoMarginTop[i]}
-    ElementoMarginRight={this.state.ElementoMarginRight[i]}
-    ElementoMarginLeft={this.state.ElementoMarginLeft[i]}
-    ElementoSize={this.state.ElementoSize[i]}
-    ElementoColor={this.state.ElementoColor[i]}
-
-  />
-  );
 }
 
 
 renderComentario(i) {
-  return (
-  <Comentario
-    NumeroElemento={i}
-    TipoElemento={this.state.TipoElemento[i]}
-    ElementoWidth={this.state.ElementoWidth[i]}
-    ElementoMarginTop={this.state.ElementoMarginTop[i]}
-    ElementoMarginRight={this.state.ElementoMarginRight[i]}
-    ElementoMarginLeft={this.state.ElementoMarginLeft[i]}
-    ElementoSize={this.state.ElementoSize[i]}
-    ElementoColor={this.state.ElementoColor[i]}
-    VinetaColor={this.state.VinetaColor[i]}
-  />
-  );
+ 
 }
 
   componentWillMount(i){
     this.buscarProyectos(i);
     this.buscarKPI(i);
-  //  this.getElementos(i);
   }
 
   getElementos(i){
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-      var respuesta = xmlhttp.responseText;
-      var c=8;
-      
 
-for(var x=0; x<respuesta.length/c; x++){
-    var TipoElemento=respuesta[x*c]
-   var ElementoWidth= respuesta[x*c+1];
-   var ElementoAlign= respuesta[x*c+2];
-   var ElementoMarginTop=respuesta[x*c+3];
-   var ElementoMarginRight=respuesta[x*c+4];
-   var ElementoMarginLeft=respuesta[x*c+5];
-   var ElementoSize=respuesta[x*c+6]
-   var ElementoColor=respuesta[x*c+7];
-   var VinetaColor=respuesta[x*c+8]   
+document.getElementById('botonNuevo6').click();
+fetch('http://localhost:3000/es/charts/16.json', {'credentials': 'same-origin'
+  }).then(response => response.json()).then((value) => {
    
+        var valuearray = value;
+        var TipoElemento=[];
+        var chartDataElemento=[];
+        var chartOptionElemento=[];
+        var Elementos=[];
+        var DatosX=this.state.DatosX
+        var DatosSeries=this.state.DatosSeries;
+        var DatosIDKpi=this.state.DatosIDKpi;
 
-   //var AnchoGrafico=respuesta[x*c+9]
+         for(var y=0;y<valuearray.length;y++){
+   //       var indice= valuearray[y].kpi
 
-   //var cantidadColumnas=this.state.cantidadColumnas;
-   //var cantidadFilas=this.state.cantidadFilas;
-   //var EncabezadoColumna=this.state.EncabezadoColumna;
-   //var ValoresColumna=this.state.ValoresColumna;
-   ElementoWidth.push(document.getElementById('ElementoWidth').value);
-   ElementoAlign.push(document.getElementById('ElementoAlign').value);
-   ElementoMarginTop.push(document.getElementById('ElementoMarginTop').value);
-   ElementoMarginRight.push(document.getElementById('ElementoMarginRight').value);
-   ElementoMarginLeft.push(document.getElementById('ElementoMarginLeft').value);
-   ElementoSize.push(document.getElementById('ElementoSize').value);
-   ElementoColor.push(document.getElementById('ElementoColor').value);
-   VinetaColor.push(document.getElementById('VinetaColor').value);
-   var Ancho=100;
- //  if(estadopanel==5){Ancho=document.getElementById('AnchoGrafico').value}
- // AnchoGrafico.push(Ancho)
- //  var TipoElemento=this.state.TipoElemento;
-   TipoElemento.push(TipoElemento);
-   this.setState({
-    ElementoWidth:ElementoWidth,
-    ElementoAlign:ElementoAlign,
-    ElementoMarginTop:ElementoMarginTop,
-    ElementoMarginRight:ElementoMarginRight,
-    ElementoMarginLeft:ElementoMarginLeft,
-    ElementoSize:ElementoSize,
-    ElementoColor:ElementoColor,
-    VinetaColor:VinetaColor,
-    TipoElemento:TipoElemento,
-//    AnchoGrafico:AnchoGrafico,
-    });
-  var cantidadElementos=x;
-  var Elementos=this.state.Elementos;
-  if(TipoElemento==1){var imagen= [this.renderLogo(cantidadElementos)]}
-  if(TipoElemento==2){var imagen= [this.renderTitulo(cantidadElementos)]}
-  if(TipoElemento==3){var imagen= [this.renderComentario(cantidadElementos)]}
-/*  if(TipoElemento==4){var imagen= [this.renderTabla(cantidadElementos)]}
-  if(TipoElemento==5){
-    var chartDataElemento=this.state.chartDataElemento;
-    var chartOption=this.state.chartOption;
-    var chartOptionElemento=this.state.chartOptionElemento;
-    chartOptionElemento[cantidadElementos]=chartOption;
-    var chartData={
-      labels:this.state.labels,
-      datasets: this.state.DataSets}
-    chartDataElemento[cantidadElementos]=chartData;
-    this.setState({
-    chartDataElemento:chartDataElemento,
-    chartOptionElemento:chartOptionElemento,
-    });
-  var imagen= [this.renderGrafico(cantidadElementos)]}
-  */
-  const imagen1 = imagen.map((img) =>
-  <li key={'Elemento'+cantidadElementos}>
-    {img}
-  </li>
-);
- 
-  Elementos.push(imagen1);
+         var arr_properties = JSON.parse(valuearray[y].properties); 
 
-  document.getElementById('panelElemento').style.visibility='hidden';
-  document.getElementById('PanelCentral').style.visibility='visible';
-  this.setState({
+          var datasets=arr_properties.datasets;
+
+          var DataSets=[];
+          for(var z=0;z<datasets.length;z++){
+            var indice=datasets[z].data;
+          for (var i = 0; i < DatosIDKpi.length; i++) {
+            var index = DatosIDKpi[i].indexOf(indice);
+
+            if (index > -1) {
+            var indice1=i;
+            var indice2=index;
+           }
+           }
+            var labelX=DatosX[indice1];
+            var labeldata=datasets[z].label;
+            var data=DatosSeries[indice1][indice2];
+            var type=datasets[z].type;
+            DataSets[z]={
+                label:labeldata,
+                data: data, 
+                type: type,
+                }
+          }
+          var chartData={
+          labels:labelX,
+          datasets: DataSets,
+        }
+        var chartOption={}
+        chartDataElemento.push(chartData);
+        chartOptionElemento.push(chartOption);
+        TipoElemento.push(5);
+        this.setState({
+          chartDataElemento:chartDataElemento,
+          chartOptionElemento:chartOptionElemento,
+          TipoElemento:TipoElemento,
+        });   
+       
+        var imagen= [this.renderGrafico(y)];
+        
+        const imagen1 = imagen.map((img) =>
+        <li key={'Elemento'+y}>
+          {img}
+         </li>
+        );
+        Elementos.push(imagen1);
+}
+document.getElementById('panelElemento').style.visibility='hidden';
+    document.getElementById('PanelCentral').style.visibility='visible';
+this.setState({
     Elementos:Elementos,
-    cantidadElementos:cantidadElementos,
+    cantidadElementos:valuearray.length,
+       });
     });
-
-
-
-      }
-
-    }
-    }
-  var cadenaParametros = '';
-  xmlhttp.open('POST', 'php/buscarelementos.php');
-  xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
-  xmlhttp.send(cadenaParametros); 
 }
 
-
+//onAjaxCallbackElementos(xmlhttp) {}
+//   var Ancho=100;
 
 renderGrafico(i) {
+  var chartData=this.state.chartDataElemento[i];
     return (
   <Chart
     chartOption={this.state.chartOptionElemento[i]}
-    chartData={this.state.chartDataElemento[i]}
+    chartData={chartData}
     NumeroElemento={i}
     TipoElemento={this.state.TipoElemento[i]}
     onClick={this.onClickGrafico}
@@ -1024,456 +1034,7 @@ renderGrafico(i) {
 }
 
 renderTabla(i) {
-    // Ajax calls here
-    var NombreEdificio=["Gespania","Gespania","Gespania","Gespania","Gespania","Amira","Amira","Amira","Velas Montemar","Velas Montemar","Velas Montemar","Velas Montemar","Velas Montemar","Costa Montemar","Costa Montemar","Costa Montemar","Costa Montemar","Costa Montemar","Costa Montemar","Altair","Altair","Altair","Altair","Altair","Mares Montemar","Mares Montemar","Mares Montemar","Mares Montemar","Mares Montemar","Tantum E2","Tantum E2","Tantum E2","Tantum E2","Tantum E2","Dunas Montemar","Dunas Montemar","Dunas Montemar","Dunas Montemar","Dunas Montemar","Dunas Montemar","Mirador Montemar","Mirador Montemar","Mirador Montemar","Mirador Montemar","Mirador Montemar","Mirador Montemar","Almar","Almar","Almar","Almar","Marina de Montemar","Marina de Montemar","Marina de Montemar","Marina de Montemar","Marina de Montemar","Vista Higuerillas","Vista Higuerillas","Vista Higuerillas","Vista Brava","Vista Brava","Vista Brava","Vista Brava","Costa Montemar E2","Costa Montemar E2","Costa Montemar E2","Costa Montemar E2","Alto Lilenes","Alto Lilenes","Entre Lomas E1","Entre Lomas E1","Entre Lomas E1","Entre Lomas E1","Entre Lomas E1","Entre Lomas E2","Entre Lomas E2","Entre Lomas E2","Entre Lomas E2","Brava","Brava","Brava","Brava","Brava","Brava","Brava","Brava"];
-    var Util=[39.3,51.5,64.2,56.4,82.3,106.9,76.2,63.2,87.0,88.7,55.3,57.6,56.9,58.6,56.6,69.5,43.2,32.8,60.9,43.4,51.5,48.9,62.3,79.1,35.8,37.2,55.4,60.8,90.0,62.0,62.0,64.8,103.9,110.5,36.5,45.8,55.8,65.6,67.1,86.4,54.4,66.3,65.3,84.0,136.8,142.5,35.6,62.8,63.7,65.5,39.6,56.2,66.1,79.2,103.2,37.6,54.4,73.9,42.0,60.8,109.2,123.9,32.8,43.4,55.5,73.5,65.6,119.5,34.6,47.8,51.9,64.7,73.8,34.1,47.9,52.2,64.5,33.1,61.5,65.0,67.0,96.0,110.8,116.3,129.4];
-    var Terraza=[7.25667,7.45000,13.86333,14.10709,16.35000,21.75000,19.38000,17.84000,13.28000,19.97000,12.48000,15.23000,10.88000,11.06000,11.66000,9.17000,8.56000,8.25000,8.25000,14.91000,9.21000,9.21000,10.68000,14.91000,11.12000,12.77000,17.85000,12.79000,13.78000,13.54000,23.00000,19.20000,22.06000,14.49000,7.53000,9.64000,6.97000,9.89000,7.47000,8.71000,11.40000,23.59000,20.43000,12.11000,130.73000,157.69000,13.16000,13.05000,15.70000,15.90000,6.52000,15.46000,18.23000,12.48000,17.25000,11.80000,13.50000,12.90000,15.12000,22.00000,24.06000,29.52000,8.90000,11.10000,11.60000,9.50000,15.30000,36.84000,4.26000,4.55000,8.55000,10.42000,10.56000,5.10000,5.40000,10.00000,12.40000,7.40000,13.39000,11.50000,11.96000,20.70000,14.63000,17.16000,25.76000];
-    var Dormitorios=[1,1,2,2,3,3,2,2,3,3,2,2,2,2,2,3,1,1,2,1,1,1,2,1,1,1,2,2,3,2,2,1,3,3,1,1,2,2,2,2,2,2,2,2,3,3,1,2,2,2,1,2,2,2,3,1,2,2,1,2,3,3,1,1,2,3,2,3,1,1,2,2,2,1,1,2,2,1,1,2,2,3,3,3,3];
-    var Mediodormi=[0,0.1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0.1,0.1,0,0.2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.1,0.1,0,0,0.1,0.1,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0.1,0,0,0,0,0,0.1,0,0,0,0,0,0.1,0,0,0.1,0,0.1,0,0,0,0.1,0,0.1,0,0,0,0];
-    var Oferta=[84,28,84,55,28,45,46,23,11,11,44,22,11,26,44,26,26,16,8,1,39,18,19,36,21,21,7,14,22,9,9,11,16,8,25,25,27,53,26,27,10,11,7,8,1,1,42,84,42,42,44,22,44,22,23,24,72,24,4,20,9,5,58,55,54,18,22,44,36,49,92,17,16,49,47,31,14,55,7,42,25,6,6,6,6];
-    var Disponible=[84,28,84,55,28,5,4,1,0,4,1,0,0,0,0,0,0,0,3,0,16,3,1,18,6,6,2,3,7,3,3,0,2,2,25,23,16,52,25,27,2,4,5,7,1,1,7,25,17,20,39,19,42,20,22,4,9,5,3,17,8,4,38,35,35,13,12,32,0,0,5,0,0,8,7,8,4,41,6,23,18,3,6,3,1];
-    var Descuento=[0,0,0,0,0,0,0,0,0,8,8,0,0,0,0,0,0,0,0,4,4,4,4,4,0,0,0,0,0,8,8,8,8,8,5,5,5,5,5,5,3,3,3,3,3,3,2,2,2,2,12,12,12,12,12,8,8,8,10,10,10,10,5,5,5,5,0,0,0,0,0,0,0,0,0,0,0,12,12,12,12,12,12,12,12];
-    var UFMinimo=[2266,3121,4049,3608,4619,6831,5635,4771,6900,6542,4475,4700,4650,3450,3333,3780,2821,2300,4000,2868,3376,3525,4141,4377,5580,2690,3950,4130,5470,6170,6294,6205,7966,8706,1990,2642,3710,4090,3890,4790,4824,5720,5458,6024,13680,15783,3348,3990,4390,4621,2835,4764,4856,6208,7252,2964,4042,5312,3890,6312,8658,10550,2750,3524,4110,4890,4850,5850,2100,2901,3457,4005,4597,2371,2997,3649,4467,3247,6036,5630,6621,8512,9683,9632,11746];
-    var UFMaximo=[2812,3546,4587,4154,5168,8111,6121,4771,6900,7800,4475,4700,4650,3900,3954,4000,2932,2478,4050,3368,3895,3548,4141,5190,3515,4100,4943,4850,6660,6461,6567,6281,8303,8795,2726,3015,3837,4980,4729,5731,4835,5889,5625,6207,13680,15783,3540,5382,5743,5776,3092,5027,5119,6274,7392,3247,4534,5930,4090,6620,10320,10900,3050,3700,4300,5210,5730,8550,2447,3088,3621,4211,4955,2622,3513,4036,4927,4456,6892,6814,7147,8827,10854,9765,11746];
-    var Estado=[1,1,1,1,1,5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,3,3,3,1,1,1,1,1,1,1,1,4,4,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1];
-    var FechaVenta=["2018-03","2018-03","2018-03","2018-03","2018-03","2014-10","2014-10","2014-10","2014-03","2014-03","2014-03","2014-03","2014-03","2015-08","2015-08","2015-08","2015-08","2015-08","2015-08","2015-09","2015-09","2015-09","2015-09","2015-09","2015-12","2015-12","2015-12","2015-12","2015-12","2015-11","2015-11","2015-11","2015-11","2015-11","2017-07","2017-07","2017-07","2017-07","2017-07","2017-07","2017-01","2017-01","2017-01","2017-01","2017-01","2017-01","2017-01","2017-01","2017-01","2017-01","2017-05","2017-05","2017-05","2017-05","2017-05","2017-07","2017-07","2017-07","2017-12","2017-12","2017-12","2017-12","2017-10","2017-10","2017-10","2017-10","2016-11","2016-11","2017-02","2017-02","2017-02","2017-02","2017-02","2017-07","2017-07","2017-07","2017-07","2017-07","2017-07","2017-07","2017-07","2017-07","2017-07","2017-07","2017-07"];
-    var FechaEntrega=["","","","","","2016-12","2016-12","2016-12","2016-12","2016-12","2016-12","2016-12","2016-12","2018-07","2018-07","2018-07","2018-07","2018-07","2018-07","2018-12","2018-12","2018-12","2018-12","2018-12","2018-11","2018-11","2018-11","2018-11","2018-11","2017-11","2017-11","2017-11","2017-11","2017-11","2019-10","2019-10","2019-10","2019-10","2019-10","2019-10","2018-10","2018-10","2018-10","2018-10","2018-10","2018-10","2019-04","2019-04","2019-04","2019-04","2019-05","2019-05","2019-05","2019-05","2019-05","2020-06","2020-06","2020-06","2019-12","2019-12","2019-12","2019-12","2021-06","2021-06","2021-06","2021-06","2018-07","2018-07","2019-12","2019-12","2019-12","2019-12","2019-12","2020-12","2020-12","2020-12","2020-12","2020-12","2020-12","2020-12","2020-12","2020-12","2020-12","2020-12","2020-12"];
-
-    var FechaCatastro="2018-03";
-    var FechaReporte="2018-04";
-    var FechaInicial="2014-05-02";
-    var FechaFinal="2020-12-02";
-
-
-    //Procesamiento de datos
-    var cantidadDatos=NombreEdificio.length;
-    var UtilMediaTerraza=[];
-    var Vendidos=[];
-    var SupUtil=[];
-    var SupTerraza=[];
-    var UFMinimoDesc=[];
-    var UFMaximoDesc=[];
-    var UFPromedioDesc=[];
-    var UF=[];
-    var SupUtilDisp=[];
-    var UFDisp=[];
-    var UFm2=[];
-    var UFm2xUtil=[];
-    for(var a=0;a<cantidadDatos;a++){
-      UtilMediaTerraza[a]=Util[a]+0.5*Terraza[a];
-      Vendidos[a]=Oferta[a]-Disponible[a];
-      SupUtil[a]=Util[a]*Oferta[a];
-      SupTerraza[a]=Terraza[a]*Oferta[a];
-      UFMinimoDesc[a]=UFMinimo[a]*(1-Descuento[a]/100);
-      UFMaximoDesc[a]=UFMaximo[a]*(1-Descuento[a]/100);
-      UFPromedioDesc[a]=(UFMinimoDesc[a]+UFMaximoDesc[a])/2;
-      UF[a]=UFPromedioDesc[a]*SupUtil[a];
-      SupUtilDisp[a]=Util[a]*Disponible[a];
-      UFDisp[a]=UFPromedioDesc[a]*SupUtilDisp[a];
-      UFm2[a]=UFPromedioDesc[a]/UtilMediaTerraza[a];
-      UFm2xUtil[a]=UFm2[a]*SupUtil[a];
-    }
-    var MesesVenta=[];
-    for(a=0;a<cantidadDatos;a++){
-      MesesVenta[a]=[((Date.parse(FechaCatastro)-Date.parse(FechaVenta[a]))/(1000*60*60*24*365/12)).toFixed(0)];
-    }
-    var VentaMensual=[];
-    var VentaMensualDis=[]
-    for(a=0;a<cantidadDatos;a++){
-      if(MesesVenta[a]!=0){
-      VentaMensual[a]=Vendidos[a]/MesesVenta[a];
-      } else {VentaMensual[a]=0}
-      if(Disponible[a]>0){VentaMensualDis[a]=VentaMensual[a]}else{VentaMensualDis[a]=0}
-    }
-
-    //Sumatoria por Edificio
-    var Edificios=[];
-    var UtilEdif=[];
-    var OfertaEdif=[];
-    var DisponibleEdif=[];
-    var VendidosEdif=[];
-    var TotalOferta=0;
-    var TotalDisponible=0;
-    var TotalVendidos=0;
-    var TotalVentaMensualDis=0;
-    var TotalSupUtil=0;
-    var TotalSupTerraza=0;
-    var TotalUF=0;
-    var FechaVentaEdif=[];
-    var FechaEntregaEdif=[];
-    var MesesVentaEdif=[];
-    var VentaMensualEdif=[];
-    var VentaMensualDisEdif=[];
-    var SupUtilEdif=[];
-    var SupTerrazaEdif=[];
-    var UFEdif=[];
-    var UFDispEdif=[];
-    var SupUtilDispEdif=[];
-    var UFm2xUtilEdif=[];
-    for(a=0;a<cantidadDatos;a++){
-      var existe=0;
-      TotalOferta=TotalOferta+Oferta[a];
-      TotalDisponible=TotalDisponible+Disponible[a];
-      TotalVendidos=TotalVendidos+Vendidos[a];
-      TotalVentaMensualDis=TotalVentaMensualDis+VentaMensualDis[a];
-      TotalSupUtil=TotalSupUtil+SupUtil[a];
-      TotalSupTerraza=TotalSupTerraza+SupTerraza[a];
-      TotalUF=TotalUF+UF[a];
-      for(var b=0;b<Edificios.length;b++){
-        if(NombreEdificio[a]===Edificios[b]){
-          existe=1;
-          UtilEdif[b]=UtilEdif[b]+Util[a];
-          OfertaEdif[b]=OfertaEdif[b]+Oferta[a];
-          DisponibleEdif[b]=DisponibleEdif[b]+Disponible[a];
-          VendidosEdif[b]=VendidosEdif[b]+Vendidos[a];
-          VentaMensualEdif[b]=VentaMensualEdif[b]+VentaMensual[a];
-          VentaMensualDisEdif[b]=VentaMensualDisEdif[b]+VentaMensualDis[a];
-          SupUtilEdif[b]=SupUtilEdif[b]+SupUtil[a];
-          SupTerrazaEdif[b]=SupTerrazaEdif[b]+SupTerraza[a];
-          UFEdif[b]=UFEdif[b]+UF[a];
-          UFDispEdif[b]=UFDispEdif[b]+UFDisp[a];
-          SupUtilDispEdif[b]=SupUtilDispEdif[b]+SupUtilDisp[a];
-          UFm2xUtilEdif[b]=UFm2xUtilEdif[b]+UFm2xUtil[a];
-        }
-      }
-      if(existe===0){
-        Edificios.push(NombreEdificio[a]);
-        UtilEdif.push(Util[a]);
-        OfertaEdif.push(Oferta[a]);
-        DisponibleEdif.push(Disponible[a]);
-        VendidosEdif.push(Vendidos[a]);
-        FechaVentaEdif.push(FechaVenta[a]);
-        FechaEntregaEdif.push(FechaEntrega[a]);
-        MesesVentaEdif.push(MesesVenta[a]);
-        VentaMensualEdif.push(VentaMensual[a]);
-        VentaMensualDisEdif.push(VentaMensualDis[a]);
-        SupUtilEdif.push(SupUtil[a]);
-        SupTerrazaEdif.push(SupTerraza[a]);
-        UFDispEdif.push(UFDisp[a]);
-        UFEdif.push(UF[a]);
-        SupUtilDispEdif.push(SupUtilDisp[a]);
-        UFm2xUtilEdif.push(UFm2xUtil[a]);
-      }
-    }
-    var cantidadEdificios=Edificios.length;
-    var MASEdif=[];
-    var PPSupUtil=[];
-    var PPSupTerraza=[];
-    var PPUFEdif=[];
-    var PPUFDispEdif=[];
-    var PPUFm2Edif=[];
-    var PxQEdif=[];
-    for(a=0;a<cantidadEdificios;a++){
-      if(VentaMensualDisEdif[a]==0){MASEdif[a]=0}else{MASEdif[a]=DisponibleEdif[a]/VentaMensualDisEdif[a]}
-      PPSupUtil[a]=SupUtilEdif[a]/OfertaEdif[a];
-      PPSupTerraza[a]=SupTerrazaEdif[a]/OfertaEdif[a];
-      PPUFEdif[a]=UFEdif[a]/SupUtilEdif[a];
-      PPUFDispEdif[a]=UFDispEdif[a]/SupUtilDispEdif[a];
-      PPUFm2Edif[a]=UFm2xUtilEdif[a]/SupUtilEdif[a];
-      PxQEdif[a]=PPUFEdif[a]*VentaMensualEdif[a]/1000;
-    }
-    var SectorOferta=TotalOferta/cantidadEdificios;
-    var TotalDisponiblesinProyecto=TotalDisponible-DisponibleEdif[0];
-    var SectorDisponiblesinProyecto=TotalDisponiblesinProyecto/(cantidadEdificios-1);
-    var SectorVentaMensualDis=TotalVentaMensualDis/(cantidadEdificios-1);
-    var SectorMAS=TotalDisponible/TotalVentaMensualDis;
-    var SectorPPSupUtil= TotalSupUtil/TotalOferta;
-    var SectorPPSupTerraza=TotalSupTerraza/TotalOferta;
-    var SectorPPUF=TotalUF/TotalSupUtil;
-
-    var cantidadtrimestres=Math.ceil((Date.parse(FechaFinal)-Date.parse(FechaInicial))/(1000*60*60*24*365/12)/3);
-    var cantidadtrimestresReporte=Math.ceil((Date.parse(FechaReporte)-Date.parse(FechaInicial))/(1000*60*60*24*365/12)/3);
-    var anioI= new Date(FechaInicial);
-    var anioInicial=anioI.getFullYear();
-    var primerTrimestre=Math.ceil((Date.parse(anioInicial+'-12-31')-Date.parse(FechaInicial))/(1000*60*60*24*365/12)/3);
-
-
-    var Cronograma=[];
-
-      Cronograma[0]=[];
-      Cronograma[0][0]="SECTOR";
-      Cronograma[1]=[];
-      Cronograma[1][0]="Edificio";
-    for(a=0;a<cantidadtrimestres/4;a++){
-      Cronograma[0][a+1]=anioInicial+a;
-    }
-      Cronograma[0][a+1]="Viviendas Edificio";
-      Cronograma[0][a+2]="Viviendas Disponibles";
-      Cronograma[0][a+3]="Meses en Venta";
-      Cronograma[0][a+4]="Inicio Ventas";
-      Cronograma[0][a+5]="Entrega Informada";
-
-    var titulosTrim=["4T","3T","2T","1T"];
-    var trim=primerTrimestre-1;
-    for(a=0;a<cantidadtrimestres;a++){
-      Cronograma[1][a+1]=[titulosTrim[trim]];
-      trim--
-      if(trim<0){trim=3}
-    }
-    Cronograma[2]=[];
-    Cronograma[2][0]="Costa Montemar";
-    
-    for(b=0;b<cantidadEdificios;b++){
-      Cronograma[3+b]=[];
-      Cronograma[3+b][0]=Edificios[b];
-      var cantidadtrimestresEntrega=Math.ceil((Date.parse(FechaEntregaEdif[b]+'-5')-Date.parse(FechaInicial))/(1000*60*60*24*365/12)/3);
-      for(a=0;a<cantidadtrimestres;a++){
-        Cronograma[3+b][a+1]="";
-        if(a==(cantidadtrimestresReporte+1 - Math.ceil(MesesVentaEdif[b]/3))) {Cronograma[3+b][a+1]="V"}
-        if(a==cantidadtrimestresEntrega-1) {Cronograma[3+b][a+1]="E"}
-        if(a==cantidadtrimestres-1 && cantidadtrimestresEntrega>cantidadtrimestres){Cronograma[3+b][a+1]="E>"}
-       }
-      Cronograma[3+b][a+1]=MASEdif[b].toFixed(1);
-      Cronograma[3+b][a+2]=DisponibleEdif[b];
-      Cronograma[3+b][a+3]=MesesVentaEdif[b];
-      Cronograma[3+b][a+4]=FechaVentaEdif[b];
-      Cronograma[3+b][a+5]=FechaEntregaEdif[b];
-    }
-    var ColorCrono=[];
-    for(a=0;a<Cronograma.length;a++){
-      ColorCrono[a]=[];
-      for(b=0;b<Cronograma[a].length;b++){
-        ColorCrono[a][b]=0;
-        if(b==Cronograma[a].length-3 && a!=1){ColorCrono[a][b]=1}
-        if(b==Cronograma[a].length-4 && a!=1){ColorCrono[a][b]=1}
-        if(b==Cronograma[a].length-5 && a!=1){ColorCrono[a][b]=1}
-        if(b==cantidadtrimestresReporte+1){ColorCrono[a][b]=5}
-        if(b>(cantidadtrimestresReporte+1 - Math.ceil(MesesVentaEdif[a-3]/3)) && b<cantidadtrimestresReporte+1){ColorCrono[a][b]=3}
-        if(b<(cantidadtrimestresReporte+1 + Math.ceil(MASEdif[a-3]/3)) && b>cantidadtrimestresReporte+1 && b<=cantidadtrimestres){ColorCrono[a][b]=4}
-        if(Math.ceil(MASEdif[a-3]/3)>cantidadtrimestres- cantidadtrimestresReporte && b==cantidadtrimestres){
-          if(Math.ceil(MASEdif[a-3]/3)-cantidadtrimestres+cantidadtrimestresReporte>4){Cronograma[a][b]=">>"}else{Cronograma[a][b]=">"}
-        }
-      }
-    }
-
-////********///// Carga DINAMICA de DATOS en las TABLAS
-
-  var DatosT=["",OfertaEdif,DisponibleEdif,DisponibleEdif.slice(1),VentaMensualDisEdif.slice(1),MASEdif.slice(1),PPSupUtil,PPSupTerraza,PPUFEdif,PPUFm2Edif,PxQEdif.slice(1)];
-  var TituloTabla=this.state.EncabezadoColumna[i];
-  var ColumnasT=["Oferta Edificios","Disponibilidad (sin Gespania)","Venta Mensual","Meses para Agotar Stock","Superficie Util Promedio","Superficie Terraza","Precio Lista | UF","Precio Unitario | UFm2","PxQ Mensual | UF miles"];
-  // ValorT = valor a Mostrar en la Tabla: 0=Encabezado Columna 1=Sumatoria Total 2=Mínimo 3=Máximo 4=Promedio Simple 5=Promedio Ponderado 6=Valor Unico[posición en el Array] 7=Porcentaje[columna a calcular, columna total] 8=Texto Libre
-  var ValorT=[  [[0],[2,0,0],[3,0,0],[4,0,0],[6,0,0,0],[8,"Mas Denso"]],
-                [[0],[2,2,0],[3,2,0],[4,2,0],[6,1,0,0],[8,""]],
-                [[0],[2,3,1],[3,3,1],[4,3,1],[8,"-"],[8,""]],
-                [[0],[2,4,1],[3,4,1],[4,4,1],[8,"-"],[8,""]],
-                [[0],[2,5,1],[3,5,1],[4,5,1],[6,5,0,1],[7,4,3,0]],
-                [[0],[2,6,1],[3,6,1],[4,6,1],[6,6,0,1],[7,4,3,0]],
-                [[0],[2,7,0],[3,7,0],[4,7,0],[6,7,0,1],[7,4,3,0]],
-                [[0],[2,8,1],[3,8,1],[4,8,1],[6,8,0,1],[7,4,3,0]],
-                [[0],[2,9,1],[3,9,1],[4,9,1],[8,"-"],[8,""]] ]
-  var ValorT=[];
-  var ValoresColumna=this.state.ValoresColumna;
-  var ValoresFilaD=this.state.ValoresFilaD;
-  var ValoresTexto=this.state.ValoresTexto;
-  var ValoresDato=this.state.ValoresDato;
-  var ValoresPorcentaje=this.state.ValoresPorcentaje;
-  var cantidadFilas=this.state.cantidadFilas;
-  var cantidadColumnas=this.state.cantidadColumnas;
-  for(var a=0;a<cantidadFilas[i];a++){
-    ValorT[a]=[];
-    for(var b=0;b<cantidadColumnas[i];b++){
-     ValorT[a][b]=[ValoresColumna[i][a][b],ValoresFilaD[i][a][b],0]
-    }
-  }
-  //Armado de Tabla:
-  var Valor=[];
-  var cantidadFilas=this.state.cantidadFilas;
-  var cantidadColumnas=this.state.cantidadColumnas;
-  var BaseDatos=this.state.BaseDatos;
-  Valor[0]=TituloTabla;
-  for(a=0;a<cantidadFilas[i];a++){
-    Valor[a+1]=[];
-    for(b=0;b<cantidadColumnas[i];b++){
-      if(ValorT[a][b][0]==''){Valor[a+1][b]=''}
-      if(ValorT[a][b][0]==1){Valor[a+1][b]=BaseDatos[ValoresFilaD[i][a][b]]}
-      if(ValorT[a][b][0]==2){
-        var posicion=Edificios.indexOf(ValoresDato[i][a][b]);
-        Valor[a+1][b]=DatosT[ValorT[a][b][1]][posicion];
-      }
-      if(ValorT[a][b][0]==3){Valor[a+1][b]=(DatosT[ValorT[a][b][1]].reduce(function(v1,v2){return v1+v2})).toFixed(ValorT[a][b][3])}
-      if(ValorT[a][b][0]==4){Valor[a+1][b]=Math.min.apply(false,DatosT[ValorT[a][b][1]]).toFixed(ValorT[a][b][3])}
-      if(ValorT[a][b][0]==5){Valor[a+1][b]=Math.max.apply(false,DatosT[ValorT[a][b][1]]).toFixed(ValorT[a][b][3])}
-      if(ValorT[a][b][0]==6){Valor[a+1][b]=((DatosT[ValorT[a][b][1]].reduce(function(v1,v2){return v1+v2}))/DatosT[ValorT[a][b][1]].length).toFixed(ValorT[a][b][3])}
-      if(ValorT[a][b][0]==7){Valor[a+1][b]=(DatosT[ValorT[a][b][1]][ValorT[a][b][2]]).toFixed(ValorT[a][b][3]) }
-      if(ValorT[a][b][0]==9){Valor[a+1][b]=ValoresTexto[i][a][b]}
-    }
-   for(b=0;b<cantidadColumnas;b++){
-     if(ValorT[a][b][0]==8){
-
-      Valor[a+1][b]=((parseFloat( Valor[a+1][ValoresPorcentaje[i][a][b].split('/')[0]]) - parseFloat( Valor[a+1][ValoresPorcentaje[i][a][b].split('/')[1]]))/parseFloat( Valor[a+1][ValoresPorcentaje[i][a][b].split('/')[1]])*100).toFixed(ValorT[a][b][3])+'%'}
-    }
-  }
-    //Carga de datos en las tablas de los reportes
-    var datosTabla = [
-      Valor,
-
-
-  //     Cronograma
-       ];
-
-    var colorCeldaString=["white","rgb(212,210,223)","rgb(242,198,132)","rgb(239,239,106","rgb(247,162,199)","black"]
-    var colorCeldaIndex = [ [[0,0,2,0,0,2],
-                            [1,1,2,1,1,2],
-                            [1,1,2,1,1,2],
-                            [0,0,2,0,0,2],
-                            [0,0,2,0,0,2],
-                            [1,1,2,1,1,2],
-                            [1,1,2,1,1,2],
-                            [1,1,2,1,1,2],
-                            [1,1,2,1,1,2],
-                            [1,1,2,1,1,2]],
-                          [[0,0,0],
-                          [0,0,0],
-                          [1,1,1],
-                          [1,1,1],
-                          [1,1,1],
-                          [0,0,0],
-                          [0,0,0],
-                          [0,0,0],
-                          [1,1,1],
-                          [1,1,1],
-                          [1,1,1],
-                          [1,1,1],
-                          [1,1,1],
-                          [0,0,0]],
-
-                          ColorCrono
-                          ];
-    var borderString=["dotted 2px rgb(30,30,30)","solid 4px rgb(30,30,30)","none","solid 2px rgb(30,30,30)"];
-    //Indices de Bordes para cada celda: Top,Right,Bottom,Left
-    var borderIndex=[[[[0,1,0,0],[1,0,0,1],[1,0,0,0],[1,1,0,0],[0,0,0,1],[0,0,0,0]],
-                      [[0,1,0,0],[0,0,0,1],[0,0,0,0],[0,1,0,0],[0,0,0,1],[0,0,0,0]],
-                      [[0,1,0,0],[0,0,0,1],[0,0,0,0],[0,1,0,0],[0,0,0,1],[0,0,0,0]],
-                      [[0,1,0,0],[0,0,0,1],[0,0,0,0],[0,1,0,0],[0,0,0,1],[0,0,0,0]],
-                      [[0,1,0,0],[0,0,0,1],[0,0,0,0],[0,1,0,0],[0,0,0,1],[0,0,0,0]],
-                      [[0,1,0,0],[0,0,0,1],[0,0,0,0],[0,1,0,0],[0,0,0,1],[0,0,0,0]],
-                      [[0,1,0,0],[0,0,0,1],[0,0,0,0],[0,1,0,0],[0,0,0,1],[0,0,0,0]],
-                      [[0,1,0,0],[0,0,0,1],[0,0,0,0],[0,1,0,0],[0,0,0,1],[0,0,0,0]],
-                      [[0,1,0,0],[0,0,0,1],[0,0,0,0],[0,1,0,0],[0,0,0,1],[0,0,0,0]],
-                      [[0,1,0,0],[0,0,1,1],[0,0,1,0],[0,1,1,0],[0,0,0,1],[0,0,0,0]]  ],
-                      
-                      [[[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-                      [[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-                      [[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-                      [[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-                      [[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-                      [[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-                      [[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-                      [[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-                      [[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-                      [[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-                      [[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-                      [[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-                      [[0,0,0,0],[0,0,0,0],[0,0,0,0]],
-                      [[0,0,0,0],[0,0,0,0],[0,0,0,0]]],
-
-                      [[[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3]],
-                      [[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3],[3,3,3,3]],
-                      [[3,2,3,2]],
-                      [[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2]],
-                      [[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2]],
-                      [[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2]],
-                      [[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2]],
-                      [[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2]],
-                      [[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2]],
-                      [[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2]],
-                      [[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2]],
-                      [[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2]],
-                      [[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2]],
-                      [[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2]],
-                      [[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2]],
-                      [[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2]],
-                      [[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2]],
-                      [[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2]],
-                      [[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2]],
-                      [[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2]],
-                      [[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2],[2,2,3,2]]]
-
-                      ];
-
-    var AnchoMax=[];
-    var Alineacion=[];
-    var ColSpan=[];
-    var RowSpan=[];
-    var TamañoLetra=[];
-    var Padding=[];
-    var Negrita=[];
-    for (var t=0;t<datosTabla.length;t++){
-      AnchoMax[t]=[];
-      Alineacion[t]=[];
-      ColSpan[t]=[];
-      RowSpan[t]=[];
-      TamañoLetra[t]=[];
-      Padding[t]=[];
-      Negrita[t]=[];
-      for(var f=0;f<datosTabla[t].length;f++){
-        AnchoMax[t][f]=[];
-        Alineacion[t][f]=[];
-        ColSpan[t][f]=[];
-        RowSpan[t][f]=[];
-        TamañoLetra[t][f]=[];
-        Padding[t][f]=[];
-        Negrita[t][f]=[];
-        for(var c=0;c<datosTabla[t][f].length;c++){
-              if(t===0||t===1){
-                if(c===0){AnchoMax[t][f][c] = 260}else{AnchoMax[t][f][c] = 90}
-              }
-              if((t===2)){
-                if(c===0){AnchoMax[t][f][c] = 140}else{
-                  if(c<=28){AnchoMax[t][f][c] = 20}else{AnchoMax[t][f][c] = 60}
-                }
-              }
-              if(c===0){Alineacion[t][f][c] = 'left'}else{
-                if(t===0||t===1){Alineacion[t][f][c] = 'right'}
-                if((t===2)){Alineacion[t][f][c] = 'center'}
-                }
-              ColSpan[t][f][c] = 1;
-              if((t===2)&&(f===0)&&((c===1||c===2||c===3||c===4||c===5||c===6||c===7))){ColSpan[t][f][c] = 4}
-              if((t===2)&&(f===2)&&(c===0)){ColSpan[t][f][c] = 36}
-              RowSpan[t][f][c] = 1;
-              if((t===2)&&(f===0)&&((c===8||c===9||c===10||c===11||c===12))){RowSpan[t][f][c] = 2}
-              TamañoLetra[t][f][c] = '18px';
-              if(t===2){TamañoLetra[t][f][c] = '10px'}
-              Padding[t][f][c]='10px';
-              if(t===2){
-                Padding[t][f][c] = '2px 0px';
-                if(((c===0||c>=8)&&(f===0))||(c===0&&f===2)) {Padding[t][f][c] = '2px 5px';}
-                if(c===0&&f!==0&&f!==2) {Padding[t][f][c] = '2px 15px';}
-              }
-        }
-      }
-    }
-    var datosTabla1=this.state.datosTabla;
-    alert(datosTabla1[0]+'Antes');
-    alert(datosTabla1[1]+'Antes');
-    datosTabla1.push(Valor);
-    alert(datosTabla1[0]);
-    alert(datosTabla1[1]);
-    this.setState({
-      datosTabla: datosTabla1,
-   //   AnchoMax:AnchoMax,
-    //  Alineacion:Alineacion,
-     // ColSpan:ColSpan,
-     // RowSpan:RowSpan,
-     // TamañoLetra:TamañoLetra,
-     // Padding:Padding,
-    });
-  return (
-  <Tabla
-    datosTabla={datosTabla1[i]}
-    color={this.state.color[i]}
-    BordeSuperior={this.state.BordeSuperior[i]}
-    BordeDerecho={this.state.BordeDerecho[i]}
-    BordeInferior={this.state.BordeInferior[i]}
-    BordeIzquierdo={this.state.BordeIzquierdo[i]}
-    AnchoMax={AnchoMax[i]}
-    Alineacion={Alineacion[i]}
-    ColSpan={ColSpan[i]}
-    RowSpan={RowSpan[i]}
-    TamañoLetra={TamañoLetra[i]}
-    Padding={Padding[i]}
-  />
-  );
+  
 }
 
 //// Llamada Ajax Proyectos
@@ -1481,9 +1042,10 @@ buscarProyectos(event){
 var url=this.state.url;
 var baseProyectos=this.state.baseProyectos;
 //fetch(url+baseProyectos)
-fetch('http://45.55.84.16/es/project_types/index.json', {'credentials': 'same-origin'})
+fetch('http://localhost:3000/es/project_types/index.json', {'credentials': 'same-origin'})
     .then(this.onAjaxCallbackProyectos);
 }
+
 
 onAjaxCallbackProyectos(xmlhttp) {
   if ( xmlhttp.status==200){
@@ -1514,8 +1076,9 @@ handleClickCampos(event){
   var IDProy1=document.getElementById('nombreTabla').selectedIndex;
   var IDProy=IDProyectos[IDProy1-1];
   var cadenaParametros = 'IDP='+encodeURIComponent(IDProy);
-fetch('http://45.55.84.16/es/project_fields/index.json?id='+IDProy, {'credentials': 'same-origin'})
-    .then(this.onAjaxCallback);
+ fetch('http://localhost:3000/es/project_fields/index.json?id='+IDProy, {'credentials': 'same-origin'
+    
+}).then(this.onAjaxCallback);
 }
 
 onAjaxCallback(xmlhttp) {
@@ -1535,6 +1098,7 @@ onAjaxCallback(xmlhttp) {
       );
   }
 }
+
 
 ///Segundo llamado Ajax
 
@@ -1572,6 +1136,8 @@ onAjaxCallback1(xmlhttp) {
     });
       }.bind(this),
       );
+
+    
   }
   }
 
@@ -1579,17 +1145,15 @@ onAjaxCallback1(xmlhttp) {
 ///Tercer llamado Ajax
 
 buscarKPI(event){
-fetch('http://45.55.84.16/project_types/kpi.json?data_id=24&graph=true', {'credentials': 'same-origin', 
+fetch('http://localhost:3000/project_types/kpi.json?data_id=440&graph=true', {'credentials': 'same-origin',
 //  var IDProyectos=this.state.IDProyectos;
 //  var IDProy1=document.getElementById('selectProyecto').selectedIndex;
  // var IDProy=IDProyectos[IDProy1-1];
  // var cadenaParametros = 'IDP='+encodeURIComponent(IDProy);
  // fetch('/project_fields/create?data ='+cadenaParametros, {'credentials': 'same-origin',
-  headers:{
-    //'Content-type': 'application/x-www-form-urlencoded'
-           'X-CSRF-Token': window.TokenSocial.token
-          }
-    }).then(this.onAjaxCallback2);
+  //method: 'post', 
+
+  }).then(this.onAjaxCallback2);
 }
 
 onAjaxCallback2(xmlhttp) {
@@ -1602,6 +1166,7 @@ onAjaxCallback2(xmlhttp) {
         var DatosSeriesTexto=[];
         var DatosX=[];
         var DatosSeries=[];
+        var DatosIDKpi=[];
         for(var y=0;y<valuearray.length;y++){
           var existe=0;
           var K1=[];
@@ -1615,24 +1180,28 @@ onAjaxCallback2(xmlhttp) {
             if(valuearray[y].group==DatosXTitulo[z]){
               existe=1;
               DatosSeriesTexto[z-1].push(valuearray[y].select);
+              DatosIDKpi[z-1].push(valuearray[y].kpi_id);
               DatosSeries[z-1][DatosSeriesTexto[z-1].length-2]=K2;
             }
           }
           if(existe==0){
             DatosXTitulo.push(valuearray[y].group);
             DatosSeriesTexto[DatosXTitulo.length-2]=[""];
+            DatosIDKpi[DatosXTitulo.length-2]=[""];
             DatosSeriesTexto[DatosXTitulo.length-2].push(valuearray[y].select);
+            DatosIDKpi[DatosXTitulo.length-2].push(valuearray[y].kpi_id);
             DatosX[DatosXTitulo.length-2]=K1;
             DatosSeries[DatosXTitulo.length-2]=[];
             DatosSeries[DatosXTitulo.length-2][0]=K2;
           }
         }
-        
+        alert(DatosIDKpi);
         this.setState({
         DatosXTitulo:DatosXTitulo,
         DatosX: DatosX,
         DatosSeries: DatosSeries,
         DatosSeriesTexto: DatosSeriesTexto,
+        DatosIDKpi:DatosIDKpi,
     });
       }.bind(this),
       );
@@ -1729,7 +1298,8 @@ onAjaxCallback2(xmlhttp) {
     var fil=[];
     for(var a=0;a<cantidadSeries;a++){
       fil[a]=a;
-      if(a<longDataSets){LabelTraer[a]=DataSets[a].label;}else{LabelTraer[a]='Serie'+a+1}
+      var b=a+1;
+      if(a<longDataSets){LabelTraer[a]=DataSets[a].label;}else{LabelTraer[a]='Serie'+b}
     }
     const NombSerie = fil.map((columna) =>
       <li key={'nombreserie'+columna} style={{width:'100%', padding:'0px'}}>
@@ -1737,7 +1307,22 @@ onAjaxCallback2(xmlhttp) {
         <input className="InputPanel" type="text"  style={{width:'70%', display:'inline-block',margin:'2px 0px'}} id={'nomserie'+columna} onChange={this.handleChangeSerie} value={LabelTraer[columna]}  />
       </li>
       );
-    
+     
+    var fil=[];
+    for(var a=0;a<cantidadSeries;a++){fil[a]=a}
+    var DatosSeriesTexto=this.state.DatosSeriesTexto;
+    var indiceDatosX=this.state.indiceDatosX;
+    const opcionesDatosSeries = DatosSeriesTexto[indiceDatosX-1].map((opcion) =>
+       <option key={opcion.toString()}>{opcion}</option>
+      );
+    const SelectDatos = fil.map((fila) =>
+      <li key={'datos'+fila} style={{width:'100%', padding:'0px'}}>
+        <p style={{display:'inline-block', width:'20%', margin:'2px 0px', fontSize:'0.5em'}}>{'Serie '+(fila+1)}</p>
+        <select style={{width:'70%', display:'inline-block',margin:'2px 0px', fontSize:'0.6em'}} id={'dataserie'+fila} onChange={this.handleChangeSerie}>
+            {opcionesDatosSeries}
+          </select>
+      </li>
+      );
     const EjeSerie = fil.map((fila) =>
       <li key={'datos'+fila} style={{width:'100%', padding:'0px'}}>
         <p style={{display:'inline-block', width:'20%', margin:'2px 0px', fontSize:'0.5em', verticalAlign:'midle'}}>{'Serie '+(fila+1)}</p>
@@ -1779,64 +1364,18 @@ onAjaxCallback2(xmlhttp) {
     return (
       <div className="App">
         <div className="PanelControl">
-          <img src={logoGeo} className="LogoGeo"/>
-        <div className="PanelInicial" id="PanelInicial" style={{display:panelVisibleInv}}>
-          <div className="DivBotonesLaterales" onClick={this.handleClickBotonesLaterales} id="botonLateral0" style={{opacity:PanelHover[0]}}>
-            <img src={folder} className="Icono"/>
-            <h5>Proyectos</h5>
-          </div>
-            <div className="Division" > </div>
-          <div className="DivBotonesLaterales" onClick={this.handleClickBotonesLaterales} id="botonLateral1" style={{opacity:PanelHover[1]}}>
-            <img src={engranajes} className="Icono"/>
-            <h5>Indicadores</h5>
-          </div>
-            <div className="Division" > </div>
           <div className="DivBotonesLaterales" onClick={this.handleClickBotonesLaterales} id="botonLateral2" style={{opacity:PanelHover[2]}}>
             <img src={panel} className="Icono"/>
             <h5>Tableros</h5>
           </div>
             <div className="Division" > </div>
-          <div className="DivBotonesLaterales" onClick={this.handleClickBotonesLaterales} id="botonLateral3" style={{opacity:PanelHover[3]}}>
-            <img src={reporte} className="Icono"/>
-            <h5>Reportes</h5>
-          </div>
         </div>
 
         <div className="PanelInicial" style={{display:panelVisible[6]}}>
-          <div className="ElementoPanel" style={{display:panelVisibleInv}}>
-          <img src={logo} className="LogoPanel" id="botonPanel1" onClick={this.handleClickElemento} />
-          </div>
-          <div className="ElementoPanel" style={{display:panelVisibleInv}}>
-            <h2 className="Titulo" id="botonPanel2" style={{display:panelVisibleInv}} onClick={this.handleClickElemento}>T</h2>
-            </div>
-          <div className="ElementoPanel" style={{display:panelVisibleInv}}>
-            <img src={bullet} className="Icono"/>
-            <div className="DivClick" id="botonPanel3"  onClick={this.handleClickElemento}></div>
-          </div>
-          <h6>TABLERO</h6>
-          <div className="DivBotonesLaterales" onClick={this.handleClickElemento} id="botonPanel1">
-            <img src={cuadrado} className="Icono"/>
-            <h5>Indicador</h5>
-          </div>
-          <div className="Division" > </div>
-          <div className="DivBotonesLaterales" onClick={this.handleClickElemento} id="botonPanel2">
-            <img src={mapa} className="Icono"/>
-            <h5>Mapa</h5>
-          </div>
-          <div className="Division" > </div>
           <div className="DivBotonesLaterales" onClick={this.handleClickElemento} id="botonPanel5">
-            <img src={grafico} className="Icono"/>
+            <img src={grafico} className="Icono" style={{width:'4%', marginLeft:'15%'}}/>
             <h5>Grafico</h5>
           </div>
-          <div className="Division" > </div>
-          <div className="DivBotonesLaterales" onClick={this.handleClickElemento} id="botonPanel4">
-            <img src={dashboard} className="Icono"/>
-            <h5>Tabla</h5>
-          </div>
-          <div className="ElementoPanel" style={{display:panelVisibleInv}}>
-            <h3 className="SaltoPTexto" style={{display:panelVisible[6]}}>Salto de Pagina</h3>
-          </div>
-        </div>
         </div>
         <div className="PanelElemento" id="panelElemento">
           <div className="BotonCancelar" onClick={this.handleClickCancelElemento}>
@@ -1882,15 +1421,6 @@ onAjaxCallback2(xmlhttp) {
 
           <div id="Op7" style={{width:'100%', overflowY:'scroll', overflowX:'hidden', height:'380px'}}>
 
-          <div className="Lapiz" onClick={this.handleClickLapiz}>
-            <div className="PuntaLapiz"></div>
-            <div className="CentroLapiz"></div>
-            <div className="FinalLapiz"></div>
-          </div>
-         <TablaEditada
-          BaseDatos={this.state.BaseDatos}
-          onClick={this.onAlert}
-         />
          </div>
 
          <div id="Op8" style={{width:'100%', overflowY:'scroll', overflowX:'hidden', height:'380px'}}>
@@ -1901,7 +1431,7 @@ onAjaxCallback2(xmlhttp) {
             <select style={{width:'90%'}} id="selectDatosX" onChange={this.handleChangeDatosX}>{opciones}</select>
           </div>
          <p style={{width:'50%'}}>SERIES</p>
-         <input type="button" className="BotonMas" value="+" onClick={this.handleClickMasSeries} />
+         <input type="button" className="BotonMas" id='botonMasSerie' value="+" onClick={this.handleClickMasSeries} />
          <input type="button" className="BotonMas" value="-" onClick={this.handleClickMenosSeries} />
          <p style={{width:'90%', marginTop:'5px'}}>Nombre</p> 
          <ul>{NombSerie}</ul>
@@ -1951,53 +1481,8 @@ onAjaxCallback2(xmlhttp) {
 
         </div>
 
-        <div className="PanelProyectos" style={{display:panelVisible[0]}}>
-          <img src={logocliente} className="LogoCliente" />
-          <h4>Proyectos</h4>
-          <div className="DivBotonNuevo">
-          <input type="button" className="BotonNuevo" value="NUEVO PROYECTO" onClick={this.handleClickBotonesNuevo} id="botonNuevo4" />
-          </div>
-          <div className="Box">
-          <table>
-            <thead>
-              <tr>
-                <td>Nombre</td>
-                <td></td>
-                <td></td>
-              </tr>
-            </thead>
-            <tbody>
-            {tablaProyecto}
-            </tbody>
-          </table>
-          </div>
-        </div>
-
-        <div className="PanelProyectos" style={{display:panelVisible[1]}}>
-          <img src={logocliente} className="LogoCliente" />
-          <h4>INDICADORES DE GESTION</h4>
-          <div className="DivBotonNuevo">
-          <input type="button" className="BotonNuevo" value="NUEVOS INDICADORES "onClick={this.handleClickBotonesNuevo} id="botonNuevo5" />
-          </div>
-          <div className="Box">
-          <table>
-            <thead>
-              <tr>
-                <td>Nombre</td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-            </thead>
-            <tbody>
-            {tablaKPI}
-            </tbody>
-          </table>
-          </div>
-        </div>
 
          <div className="PanelProyectos" style={{display:panelVisible[2]}}>
-         <img src={logocliente} className="LogoCliente" />
           <h4>Tableros</h4>
            <div className="DivBotonNuevo">
           <input type="button" className="BotonNuevo" value="NUEVO TABLERO " onClick={this.handleClickBotonesNuevo} id="botonNuevo6" />
@@ -2013,13 +1498,13 @@ onAjaxCallback2(xmlhttp) {
             </thead>
             <tbody>
             <tr>
-              <td>Abril - GESPANIA</td>
-              <td>Ver</td>
+              <td onClick={this.getElementos}>Abril - GESPANIA</td>
+              <td onClick={this.getElementos}>Ver</td>
               <td>Editar</td>
             </tr>
              <tr>
-              <td>Mayo - GESPANIA</td>
-              <td>Ver</td>
+              <td onClick={this.getElementos}>Mayo - GESPANIA</td>
+              <td onClick={this.getElementos}>Ver</td>
               <td>Editar</td>
             </tr>
             </tbody>
@@ -2027,81 +1512,6 @@ onAjaxCallback2(xmlhttp) {
           </div>
           </div>
 
-         <div className="PanelProyectos" style={{display:panelVisible[3]}}>
-         <img src={logocliente} className="LogoCliente" />
-          <h4>Reportes</h4>
-           <div className="DivBotonNuevo">
-          <input type="button" className="BotonNuevo" value="NUEVO REPORTE" onClick={this.handleClickBotonesNuevo} id="botonNuevo7"/>
-          </div>
-          <div className="Box">
-           <table>
-            <thead>
-              <tr>
-                <td>Nombre</td>
-                <td></td>
-                <td></td>
-              </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td>Abril - GESPANIA</td>
-              <td>Ver</td>
-              <td>Editar</td>
-            </tr>
-             <tr>
-              <td>Mayo - GESPANIA</td>
-              <td>Ver</td>
-              <td>Editar</td>
-            </tr>
-            </tbody>
-          </table>
-          </div>
-          </div>
-
-        <div className="PanelProyectos" style={{display:panelVisible[4]}}>
-         <img src={logocliente} className="LogoCliente" />
-          <h4>Nuevo Proyecto</h4>
-          <div className="Box">
-           <h6>Nombre</h6>
-           <input type="text" className="Entrada" />
-           <br/>
-            <h6>Campos</h6>
-           <input type="button" className="BotonMas1" value="+" />
-           <input type="button" className="BotonMas1" value="-" />
-           <br/>
-           <select className="Entrada">
-            <option></option>
-            <option>Texto</option>
-            <option>Numero</option>
-            <option>Fecha</option>
-            <option>Check</option>
-           </select>
-           <input type="text" className="Entrada" placeholder="Nombre del Campo" />
-          <div className="DivBotonNuevo">
-            <input type="button" className="BotonNuevo" value="CREAR PROYECTO" />
-          </div>
-          </div>
-          </div>
-
-        <div className="PanelProyectos" style={{display:panelVisible[5]}}>
-         <img src={logocliente} className="LogoCliente" />
-          <h4>Nuevos Indicadores de Gestión</h4>
-          <div className="Box">
-            <h6>Datos desde Proyecto</h6>
-             <select className="Entrada" id="nombreTabla" onChange={this.handleClickCampos}>
-             <option></option>
-             {opcionesProyectos}
-            </select>
-            <br/>
-            <h6>Campos</h6>
-            <input type="button" className="BotonMas1" value="+" onClick={this.handleClickMasAnalisis}/>
-            <input type="button" className="BotonMas1" value="-" onClick={this.handleClickMenosAnalisis} />
-            <div>{LineasAnalisis}</div>
-            <div className="DivBotonNuevo">
-              <input type="button" className="BotonNuevo" value="CREAR INDICADORES DE GESTION" onClick={this.handleClickGuardarAnalisis} />
-            </div>
-          </div>
-          </div>
 
          <div className="PanelProyectos" style={{display:panelVisible[6]}}>
            <h6>Proyecto</h6>
@@ -2109,12 +1519,6 @@ onAjaxCallback2(xmlhttp) {
               <option></option>
               {opcionesProyectos}
             </select>
-            <img src={icon1} className="Icono1"/>
-            <img src={icon2} className="Icono1"/>
-            <img src={icon3} className="Icono1"/>
-            <img src={icon4} className="Icono1"/>
-            <img src={icon5} className="Icono1"/>
-         <img src={mapaejemplo} className="Mapa"/>
          </div>
         <div className="PanelCentral" id="PanelCentral">{Elementos}</div>
         <div>
@@ -2125,4 +1529,3 @@ onAjaxCallback2(xmlhttp) {
     );
   }
 }
-

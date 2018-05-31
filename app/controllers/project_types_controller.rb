@@ -37,16 +37,18 @@ class ProjectTypesController < ApplicationController
       
       #Datos para agrupar
       field_group_name = chart.group_field.name 
+      
+
       @data = Project.where(project_type_id: params[:data_id])
       sql = "1=1"
      
-          field_group = "properties->>'"+ chart.group_field.key + "'"
+         field_group = "properties->>'"+ chart.group_field.key + "'"
          field_select = " #{analysis_type}((properties->>'" + chart.project_field.key + "')::float) as count, "
          field_select += field_group + " as label"
 
-         chart_type = chart.chart.name
+        # chart_type = chart.chart.name
          @data =   @data.where(sql).select(field_select).group(field_group).order(count: :desc).limit(10)
-      @querys<< { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data, "group": field_group_name, "select":chart.project_field.name}
+         @querys<< { "title":"#{chart.title}", "kpi_id":chart.id,  "data":@data, "group": field_group_name, "select":chart.project_field.name}
       
       
       

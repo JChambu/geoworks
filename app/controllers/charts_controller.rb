@@ -1,5 +1,5 @@
 class ChartsController < ApplicationController
-  before_action :set_chart, only: [:show, :edit, :update, :destroy]
+  before_action :set_chart, only: [ :edit, :update, :destroy]
 
   # GET /charts
   # GET /charts.json
@@ -10,6 +10,8 @@ class ChartsController < ApplicationController
   # GET /charts/1
   # GET /charts/1.json
   def show
+    @chart = Chart.where(project_type_id: 440)
+  
   end
 
   # GET /charts/new
@@ -24,8 +26,11 @@ class ChartsController < ApplicationController
   # POST /charts
   # POST /charts.json
   def create
-    @chart = Chart.new(chart_params)
+    #properties = params[:properties].gsub!(/\"/, '\'')
+    properties = params[:properties]
+    @p = properties
 
+    @chart = Chart.new(properties: properties)
     respond_to do |format|
       if @chart.save
         format.html { redirect_to @chart, notice: 'Chart was successfully created.' }
@@ -69,6 +74,6 @@ class ChartsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def chart_params
-      params.require(:chart).permit(:name)
+      params.require(:chart).permit(:name, :properties, :project_type_id)
     end
 end

@@ -1,1 +1,4 @@
-json.partial! "charts/chart", chart: @chart
+json.array! @chart do |item|
+  json.properties item.properties
+end
+
