@@ -53,8 +53,8 @@ Navarra.geo_openlayers = function(){
         currentSize = map.getView().calculateExtent(map.getSize());
         Navarra.project_types.config.size_box = currentSize;  
         size_box = currentSize; 
-        IDProyectoActual = 440;
         handleKpi(currentSize);
+        handleIdProyecto(440);
 
 //#####ejecuta al hacer zoom
         //init_chart_doughnut();  

@@ -32,7 +32,7 @@ Navarra.project_types.action_dashboard = function(){
   init = function(){
   var  project_id = $("#data_id").val();
     Navarra.geo_openlayers.init();
-    IDProyectoActual = project_id;
+    handleIdProyecto( project_id);
     window.graphs();
   }
 

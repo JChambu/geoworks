@@ -7,6 +7,7 @@ import panel from './panel.png';
 export class PanelForm extends React.Component {
     constructor(){
     super();
+
     this.state = {
   //    url:'http://www.misfinanzassimples.com/Graficos/php/'
       url:'http://45.55.84.16/es/',
@@ -166,7 +167,7 @@ export class PanelForm extends React.Component {
     //this.onAjaxCallbackElementos=this.onAjaxCallbackElementos.bind(this);
     this.getElementos=this.getElementos.bind(this);
     window.graphs = this.graphs.bind(this);
-    window.handleKpi=this.handleK.bind(this);
+    window.handleKpi=this.handleKpi.bind(this);
     window.size_box;
     window.handleIdProyecto=this.handleIdProyecto.bind(this);
    
@@ -180,7 +181,7 @@ handleIdProyecto(event) {
     });
      }
 
-  handleK(event) {
+  handleKpi(event) {
      //this.sizeBox = this.state.size_box;
      var box = size_box;
     this.buscarKPI(box);
@@ -982,7 +983,7 @@ fetch('http://45.55.84.16/es/charts/index.json', {'credentials': 'same-origin'
         var DatosSeries=this.state.DatosSeries;
         var DatosIDKpi=this.state.DatosIDKpi;
 
-        console.log(DatosX);
+        console.log("chart" + DatosX);
 
 
          for(var y=0;y<valuearray.length;y++){
