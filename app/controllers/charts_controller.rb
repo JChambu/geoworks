@@ -28,9 +28,10 @@ class ChartsController < ApplicationController
   def create
     #properties = params[:properties].gsub!(/\"/, '\'')
     properties = params[:properties]
-    @p = properties
+   
+    project_type_id = params[:project_type_id]
 
-    @chart = Chart.new(properties: properties)
+    @chart = Chart.new(properties: properties, project_type_id: project_type_id)
     respond_to do |format|
       if @chart.save
         format.html { redirect_to @chart, notice: 'Chart was successfully created.' }

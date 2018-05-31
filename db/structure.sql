@@ -1,10 +1,3 @@
---
--- PostgreSQL database dump
---
-
--- Dumped from database version 9.6.3
--- Dumped by pg_dump version 10.1
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -133,11 +126,11 @@ CREATE TABLE analytics_dashboards (
     project_type_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    group_field_id integer,
     project_field_id integer,
     filter_input character varying,
     input_value character varying,
-    condition_field_id integer
+    condition_field_id integer,
+    group_field_id integer
 );
 
 
@@ -311,7 +304,9 @@ CREATE TABLE charts (
     id integer NOT NULL,
     name character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    project_type_id integer,
+    properties jsonb
 );
 
 
@@ -2804,6 +2799,20 @@ CREATE INDEX index_versions_on_item_type_and_item_id ON versions USING btree (it
 
 
 --
+-- Name: project_geomx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX project_geomx ON projects USING btree (the_geom NULLS FIRST);
+
+
+--
+-- Name: properties_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX properties_idx ON projects USING gin (properties);
+
+
+--
 -- Name: analytics_dashboards fk_rails_67ca88eba4; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2857,7 +2866,7 @@ ALTER TABLE ONLY project_types
 
 SET search_path TO "public", "postgis";
 
-INSERT INTO schema_migrations (version) VALUES
+INSERT INTO "schema_migrations" (version) VALUES
 ('20130712200422'),
 ('20130712202501'),
 ('20130712203244'),
@@ -2978,6 +2987,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20180306150411'),
 ('20180306211512'),
 ('20180306214255'),
-('20180317044723');
+('20180317044723'),
+('20180530014129');
 
 

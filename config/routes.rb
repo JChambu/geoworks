@@ -37,7 +37,7 @@ Rails.application.routes.draw do
   get 'project_types/index'
 
 
-
+  post 'charts/create'
   resources :charts
   resources :analysis_types
   get 'dashboard/index'

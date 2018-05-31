@@ -18,12 +18,18 @@ class ProjectTypesController < ApplicationController
   def kpi
 
     @querys=[]
-
+    ####nuevo"""
+    @size_box = params[:size_box].split(',') if !params[:size_box].nil?
+    p minx = @size_box[0].to_f if !params[:size_box].nil?
+    p miny = @size_box[1].to_f if !params[:size_box].nil?
+    p maxx = @size_box[2].to_f if !params[:size_box].nil?
+    p maxy = @size_box[3].to_f if !params[:size_box].nil?
+#########3
     #Extend
-    minx = params[:size_box][0].to_f if !params[:size_box].nil?
-    miny = params[:size_box][1].to_f if !params[:size_box].nil?
-    maxx = params[:size_box][2].to_f if !params[:size_box].nil?
-    maxy = params[:size_box][3].to_f if !params[:size_box].nil?
+    #minx = params[:size_box][0].to_f if !params[:size_box].nil?
+    #miny = params[:size_box][1].to_f if !params[:size_box].nil?
+    #maxx = params[:size_box][2].to_f if !params[:size_box].nil?
+    #maxy = params[:size_box][3].to_f if !params[:size_box].nil?
 
     @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], graph: params[:graph])
    
@@ -34,23 +40,21 @@ class ProjectTypesController < ApplicationController
       
       #condiciones extras
       conditions_field = chart.condition_field 
-      
+     
       #Datos para agrupar
       field_group_name = chart.group_field.name 
-      
-
       @data = Project.where(project_type_id: params[:data_id])
       sql = "1=1"
+      #sql += "and  st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})" 
      
          field_group = "properties->>'"+ chart.group_field.key + "'"
          field_select = " #{analysis_type}((properties->>'" + chart.project_field.key + "')::float) as count, "
          field_select += field_group + " as label"
 
         # chart_type = chart.chart.name
-         @data =   @data.where(sql).select(field_select).group(field_group).order(count: :desc).limit(10)
+         @data =   @data.where(sql).select(field_select).group(field_group).order(count: :desc).limit(100)
          @querys<< { "title":"#{chart.title}", "kpi_id":chart.id,  "data":@data, "group": field_group_name, "select":chart.project_field.name}
-      
-      
+    
       
       # sql = " st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})" 
       

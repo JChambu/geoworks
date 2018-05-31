@@ -51,9 +51,14 @@ Navarra.geo_openlayers = function(){
     map.on('moveend', function(){
       if (move_tmp == 1){
         currentSize = map.getView().calculateExtent(map.getSize());
-        Navarra.project_types.config.size_box = currentSize;   
-        init_chart_doughnut();  
-        init_kpi();
+        Navarra.project_types.config.size_box = currentSize;  
+        size_box = currentSize; 
+        IDProyectoActual = 440;
+        handleKpi(currentSize);
+
+//#####ejecuta al hacer zoom
+        //init_chart_doughnut();  
+        //init_kpi();
       }else{
         move_tmp = 1 ;
       }
@@ -76,6 +81,9 @@ Navarra.geo_openlayers = function(){
     });
     map.addOverlay(popup);
     // display popup on click
+
+
+
     map.on('rightclick', function(evt) {
       var feature = map.forEachFeatureAtPixel(evt.pixel,
         function(feature, layer) {
@@ -181,7 +189,6 @@ map.removeInteraction(lastFeature);
   var selectInteraction = new ol.interaction.Select({
     condition: ol.events.condition.never
   });
-
 
 
   addMarker_op = function(){

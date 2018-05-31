@@ -5,11 +5,11 @@ import Chart from './Chart';
 import panel from './panel.png';
 
 export class PanelForm extends React.Component {
-	  constructor(){
+    constructor(){
     super();
     this.state = {
   //    url:'http://www.misfinanzassimples.com/Graficos/php/'
-      url:'http://localhost:3000/es/',
+      url:'http://45.55.84.16/es/',
       baseProyectos:'project_types/index.json',
       panelVisible:['block',"none","none","none","none","none","none","none"],
       PanelHover:[1],
@@ -18,7 +18,7 @@ export class PanelForm extends React.Component {
       KPI:[],
       Proyectos:[],
       IDProyectos:[],
-
+      
       estadopanel:0,
       Elementos:[],
       cantidadElementos:0,
@@ -137,6 +137,7 @@ export class PanelForm extends React.Component {
       margensuperior:[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,50,50],
       margeninferior:[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,55,55],
       giro:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,180],
+
 }
     this.handleClickElemento = this.handleClickElemento.bind(this);
     this.handleClickNuevoElemento = this.handleClickNuevoElemento.bind(this);
@@ -166,9 +167,27 @@ export class PanelForm extends React.Component {
     this.onAjaxCallbackGuardarElementos=this.onAjaxCallbackGuardarElementos.bind(this);
     //this.onAjaxCallbackElementos=this.onAjaxCallbackElementos.bind(this);
     this.getElementos=this.getElementos.bind(this);
-
+    window.graphs = this.graphs.bind(this);
+    window.handleKpi=this.handleK.bind(this);
+    window.size_box;
+    window.IDProyectoActual;
+   
 }
 
+  handleK(event) {
+     //this.sizeBox = this.state.size_box;
+     var box = size_box;
+    this.buscarKPI(box);
+    this.getElementos();
+     }
+
+  graphs(){
+    //console.log(IDProyectoActual);
+      
+      this.getElementos();
+
+      //this.IDProyectoActual = this.IDProyectoActual;
+  }
 
 handleClickMasAnalisis(event) {
  var Analisis=this.state.Analisis;
@@ -178,6 +197,7 @@ handleClickMasAnalisis(event) {
     Analisis:Analisis,
     });
 }
+
 handleClickMenosAnalisis(event) {
  var Analisis=this.state.Analisis;
  var displayOpAnalisis=this.state.displayOpAnalisis;
@@ -489,8 +509,7 @@ handleClickMenosSeries(event) {
     this.setState({
     SelectDatos:SelectDatos,
     });
- 
-    }
+     }
     this.setState({
     cantidadSeries:cantidadSeries,
     });
@@ -566,8 +585,8 @@ onClickGrafico(event,chartData,chartOption,NumeroElemento){
   for(var a=0;a<DatosSeriesTexto[posicion].length;a++){
     var data=chartData.datasets[a].data;
     var posicion1=DatosSeriesTexto[posicion].indexOf(data);
-  alert(data)
-  alert(posicion1);
+//  alert(data)
+ // alert(posicion1);
     if (a==posicion1){seleccion[a]='true'}else{seleccion[a]='false'}
   }
     const opcionesDatosSeries = DatosSeriesTexto[posicion].map((opcion) =>
@@ -788,16 +807,13 @@ var chartDataElemento=this.state.chartDataElemento;
 var chartOptionElemento=this.state.chartOptionElemento;
 var indiceX=document.getElementById('selectDatosX').selectedIndex;
 var DatosIDKpi=this.state.DatosIDKpi;
-console.log(indiceX);
 var DatosEnviar={};
 for(var a=0;a<chartDataElemento.length;a++){
   var cantidadseries=chartDataElemento[a].datasets.length;
-  alert(cantidadseries);
   var Series=[];
   for(var b=0;b<cantidadseries;b++){
     var indiceSerie=document.getElementById('dataserie'+b).selectedIndex;
-    console.log(indiceSerie);
-    var DatosIDKpiElemento=DatosIDKpi[indiceX][indiceSerie];
+    var DatosIDKpiElemento=DatosIDKpi[indiceX-1][indiceSerie];
     Series[b]={"label":chartDataElemento[a].datasets[b].label,
               "data":DatosIDKpiElemento,
               "type":"bar",
@@ -815,10 +831,14 @@ console.log(DatosEnviar);
 var myo_json = JSON.stringify(myo);
 //var myo_json = DatosEnviar;
 
+  var IDProyectos=this.state.IDProyectos;
+  var IDProy1=document.getElementById('selectProyecto').selectedIndex;
+  var IDProy=IDProyectos[IDProy1-1];
 
-  fetch('http://localhost:3000/es/charts/create?properties='+ myo_json, {'credentials': 'same-origin',
+  console.log(IDProy);
+  fetch('http://45.55.84.16/es/charts/create?properties='+myo_json+'&project_type_id='+IDProy, {'credentials': 'same-origin',
   method: 'post', 
-  //	body: cadenaParametros,
+  //  body: cadenaParametros,
   headers:{
             'X-CSRF-Token': window.TokenSocial.token
           }
@@ -833,9 +853,7 @@ onAjaxCallbackGuardarElementos(xmlhttp) {
       this.setState({
     });
       }.bind(this),
-      );
-
-    
+      );   
   }
   }
 
@@ -943,10 +961,12 @@ renderComentario(i) {
 
   getElementos(i){
 
-document.getElementById('botonNuevo6').click();
-fetch('http://localhost:3000/es/charts/16.json', {'credentials': 'same-origin'
+//document.getElementById('botonNuevo6').click();
+fetch('http://45.55.84.16/es/charts/index.json', {'credentials': 'same-origin'
   }).then(response => response.json()).then((value) => {
    
+   //console.log("chart"+ value);
+
         var valuearray = value;
         var TipoElemento=[];
         var chartDataElemento=[];
@@ -956,13 +976,12 @@ fetch('http://localhost:3000/es/charts/16.json', {'credentials': 'same-origin'
         var DatosSeries=this.state.DatosSeries;
         var DatosIDKpi=this.state.DatosIDKpi;
 
+        console.log(DatosX);
+
+
          for(var y=0;y<valuearray.length;y++){
-   //       var indice= valuearray[y].kpi
-
          var arr_properties = JSON.parse(valuearray[y].properties); 
-
           var datasets=arr_properties.datasets;
-
           var DataSets=[];
           for(var z=0;z<datasets.length;z++){
             var indice=datasets[z].data;
@@ -972,8 +991,7 @@ fetch('http://localhost:3000/es/charts/16.json', {'credentials': 'same-origin'
             if (index > -1) {
             var indice1=i;
             var indice2=index;
-           }
-           }
+           }     }
             var labelX=DatosX[indice1];
             var labeldata=datasets[z].label;
             var data=DatosSeries[indice1][indice2];
@@ -1016,9 +1034,6 @@ this.setState({
     });
 }
 
-//onAjaxCallbackElementos(xmlhttp) {}
-//   var Ancho=100;
-
 renderGrafico(i) {
   var chartData=this.state.chartDataElemento[i];
     return (
@@ -1041,8 +1056,7 @@ renderTabla(i) {
 buscarProyectos(event){
 var url=this.state.url;
 var baseProyectos=this.state.baseProyectos;
-//fetch(url+baseProyectos)
-fetch('http://localhost:3000/es/project_types/index.json', {'credentials': 'same-origin'})
+fetch('http://45.55.84.16/es/project_types/index.json', {'credentials': 'same-origin'})
     .then(this.onAjaxCallbackProyectos);
 }
 
@@ -1065,8 +1079,6 @@ onAjaxCallbackProyectos(xmlhttp) {
     });
       }.bind(this),
       );
-
-    
   }
 }
 
@@ -1075,8 +1087,10 @@ handleClickCampos(event){
   var IDProyectos=this.state.IDProyectos;
   var IDProy1=document.getElementById('nombreTabla').selectedIndex;
   var IDProy=IDProyectos[IDProy1-1];
+  this.state.project_type_id = IDProy;
+
   var cadenaParametros = 'IDP='+encodeURIComponent(IDProy);
- fetch('http://localhost:3000/es/project_fields/index.json?id='+IDProy, {'credentials': 'same-origin'
+ fetch('http://45.55.84.16/es/project_fields/index.json?id='+IDProy, {'credentials': 'same-origin'
     
 }).then(this.onAjaxCallback);
 }
@@ -1135,17 +1149,17 @@ onAjaxCallback1(xmlhttp) {
       this.setState({
     });
       }.bind(this),
-      );
-
-    
+      );    
   }
   }
 
 
 ///Tercer llamado Ajax
 
-buscarKPI(event){
-fetch('http://localhost:3000/project_types/kpi.json?data_id=440&graph=true', {'credentials': 'same-origin',
+buscarKPI(box, data_id){
+   //console.log("buscarKPI"+ window.IDProyectoActual);
+   data_id = 440;
+fetch('http://45.55.84.16/project_types/kpi.json?data_id='+data_id+'&graph=true&size_box='+ box, {'credentials': 'same-origin',
 //  var IDProyectos=this.state.IDProyectos;
 //  var IDProy1=document.getElementById('selectProyecto').selectedIndex;
  // var IDProy=IDProyectos[IDProy1-1];
@@ -1195,7 +1209,7 @@ onAjaxCallback2(xmlhttp) {
             DatosSeries[DatosXTitulo.length-2][0]=K2;
           }
         }
-        alert(DatosIDKpi);
+     //   alert(DatosIDKpi);
         this.setState({
         DatosXTitulo:DatosXTitulo,
         DatosX: DatosX,
@@ -1244,7 +1258,6 @@ onAjaxCallback2(xmlhttp) {
         </tr>
            );
     }
-
     var Campos=this.state.Campos;
     const opcionescampos = Campos.map((opcion) =>
     <option key={opcion.toString()}>{opcion}</option>
