@@ -18,6 +18,7 @@ export class PanelForm extends React.Component {
       KPI:[],
       Proyectos:[],
       IDProyectos:[],
+      IDProyectoActual:0,
       
       estadopanel:0,
       Elementos:[],
@@ -113,9 +114,6 @@ export class PanelForm extends React.Component {
                   ],
       SelectDatos:[],
 
-
-
-
       idcomentario: [0,1,2,3,4,5,6,7,8,9,10],
       datosTabla:[],
       colorCelda:{},
@@ -170,9 +168,17 @@ export class PanelForm extends React.Component {
     window.graphs = this.graphs.bind(this);
     window.handleKpi=this.handleK.bind(this);
     window.size_box;
-    window.IDProyectoActual;
+    window.handleIdProyecto=this.handleIdProyecto.bind(this);
    
 }
+
+handleIdProyecto(event) {
+  console.log("handle" + event);
+   this.setState({
+    IDProyectoActual:event,
+    url:"hola",
+    });
+     }
 
   handleK(event) {
      //this.sizeBox = this.state.size_box;
@@ -1112,8 +1118,6 @@ onAjaxCallback(xmlhttp) {
       );
   }
 }
-
-
 ///Segundo llamado Ajax
 
 handleClickGuardarAnalisis(event){
@@ -1156,10 +1160,14 @@ onAjaxCallback1(xmlhttp) {
 
 ///Tercer llamado Ajax
 
-buscarKPI(box, data_id){
+buscarKPI(box){
    //console.log("buscarKPI"+ window.IDProyectoActual);
-   data_id = 440;
-fetch('http://45.55.84.16/project_types/kpi.json?data_id='+data_id+'&graph=true&size_box='+ box, {'credentials': 'same-origin',
+   
+   /*var Prueba=this.state.IDProyectoActual;
+   var urlPrueba=this.state.url;
+   console.log("esto es prueba"+ Prueba);
+   console.log("esto es pruebaurl"+ urlPrueba);*/
+fetch('http://45.55.84.16/project_types/kpi.json?data_id=24&graph=true&size_box='+ box, {'credentials': 'same-origin',
 //  var IDProyectos=this.state.IDProyectos;
 //  var IDProy1=document.getElementById('selectProyecto').selectedIndex;
  // var IDProy=IDProyectos[IDProy1-1];
