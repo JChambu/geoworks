@@ -133,7 +133,7 @@ Rails.application.routes.draw do
     # You can have the root of your site routed with "root"
 
     #root 'pois#index'
-    root 'project_types#panel'
+    root 'project_types#index'
     #end
 
     # Example of regular route:
