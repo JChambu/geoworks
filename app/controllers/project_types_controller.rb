@@ -17,6 +17,7 @@ class ProjectTypesController < ApplicationController
 
 def kpi
 
+
     @querys=[]
     #Extend
     #
@@ -35,6 +36,7 @@ def kpi
       #condiciones extras
       conditions_field = chart.condition_field
      
+
       @data = Project.where(project_type_id: params[:data_id])
       sql = " st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})" 
       
