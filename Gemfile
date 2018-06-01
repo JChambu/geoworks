@@ -49,8 +49,8 @@ gem 'delayed_job_active_record'
 gem 'daemons'
 gem 'geocoder'
 #gem 'react-rails'
-#gem 'webpacker'
-#gem 'webpacker-react', "~> 0.3.2"
+gem 'webpacker'
+gem 'webpacker-react', "~> 0.3.2"
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
