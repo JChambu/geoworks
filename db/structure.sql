@@ -130,7 +130,8 @@ CREATE TABLE analytics_dashboards (
     filter_input character varying,
     input_value character varying,
     condition_field_id integer,
-    group_field_id integer
+    group_field_id integer,
+    const_field character varying
 );
 
 
@@ -2988,6 +2989,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20180306211512'),
 ('20180306214255'),
 ('20180317044723'),
-('20180530014129');
+('20180530014129'),
+('20180601030159');
 
 
