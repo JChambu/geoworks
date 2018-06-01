@@ -3,6 +3,7 @@ Navarra.namespace("geo_openlayers");
 Navarra.geo_openlayers = function(){
   var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight, vectorSource, pointLayer;
   var move_tmp = 0;
+  var draw, lastFeature;
 
   var init = function(){
     iconStyle = new ol.style.Style({
@@ -14,7 +15,6 @@ Navarra.geo_openlayers = function(){
         src : '/images/marker-1.png'
       }))
     });
-
 
     vector = new ol.layer.Vector({ source: new ol.source.Vector()});
     var view =  new ol.View({
@@ -52,11 +52,6 @@ Navarra.geo_openlayers = function(){
       if (move_tmp == 1){
         currentSize = map.getView().calculateExtent(map.getSize());
         Navarra.project_types.config.size_box = currentSize;  
-       /* size_box = currentSize; 
-        handleKpi(currentSize);
-        handleIdProyecto(440);*/
-
-//#####ejecuta al hacer zoom
         init_chart_doughnut();  
         init_kpi();
       }else{
@@ -81,8 +76,6 @@ Navarra.geo_openlayers = function(){
     });
     map.addOverlay(popup);
     // display popup on click
-
-
 
     map.on('rightclick', function(evt) {
       var feature = map.forEachFeatureAtPixel(evt.pixel,
@@ -121,16 +114,22 @@ Navarra.geo_openlayers = function(){
     });
     */
     // Add or remove interactions
-    $('#select').on('click', function(event) {
-      var checked = !$('#select').hasClass('active');
-      if(checked) {
-        addInteraction();
+    //
 
-      } else {
-        //map.removeInteraction(selectInteraction);
-        //map.removeInteraction(dragBoxInteraction);
-      }
+    $('#select').on('click', function(event) {
+      var checked = $('#select').hasClass('active');
+      if (checked){
+        console.log("deshabilitado");
+        $('#select').removeClass('active');
+        features.remove(lastFeature);
+        map.removeInteraction(draw);
+      }else{
+        $('#select').addClass('active');
+        console.log("habilitado");
+        addInteraction();
+      }  
     });
+
 
     var ssource =  new ol.source.Vector({features: features})
 
@@ -157,25 +156,29 @@ Navarra.geo_openlayers = function(){
   }
 
   var features = new ol.Collection();
-  var draw;
+
   function addInteraction() {
-map.removeInteraction(lastFeature);
+
     draw = new ol.interaction.Draw({
       features: features,
       type: 'Polygon'
     });
-    var lastFeature;
+
     var removeLastFeature = function() {
       if (lastFeature)
-      pointLayer.getSource();
+        features.remove(lastFeature);
     };
 
+    draw.on('drawstart', function(evt){
+      removeLastFeature(); 
+    });
+
     draw.on('drawend',function(evt){
-      removeLastFeature();  
+
       var selectedFeatures = selectInteraction.getFeatures();
       selectedFeatures.clear();
       extent = evt.feature.getGeometry().getExtent();
-/*      pointLayer.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
+      /*      pointLayer.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
         selectedFeatures.push(feature);
       });*/
       init_kpi(extent);
