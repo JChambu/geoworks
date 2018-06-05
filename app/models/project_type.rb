@@ -336,7 +336,7 @@ class ProjectType < ApplicationRecord
          record.index
         if record.index == 0
           record.keys.each do |field|
-            @new_project_field =  ProjectField.create(name: field, field_type: 'text_field', project_type_id: self.id)
+            @new_project_field =  ProjectField.create(name: field, field_type: 'text_field', project_type_id: self.id, key: field)
             @new_project_field.save
           end
         end
