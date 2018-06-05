@@ -186,6 +186,7 @@ Navarra.geo_openlayers = function(){
       /*      pointLayer.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
         selectedFeatures.push(feature);
       });*/
+        init_chart_doughnut(extent);  
       init_kpi(extent);
       lastFeature = evt.feature;
     })
