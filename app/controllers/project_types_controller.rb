@@ -15,7 +15,17 @@ class ProjectTypesController < ApplicationController
   def dashboard
   end
 
-def kpi
+  def kpi
+    @op_graph = params[:graph]
+      @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box])
+  end
+
+
+
+def kpi_2
+
+
+      @querys = ProjectType.kpi_new(params[:data_id], params[:graph], params[:size_box])
 
 
     @querys=[]
@@ -25,7 +35,6 @@ def kpi
     miny = params[:size_box][1].to_f if !params[:size_box].nil?
     maxx = params[:size_box][2].to_f if !params[:size_box].nil?
     maxy = params[:size_box][3].to_f if !params[:size_box].nil?
-
 
     @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], graph: params[:graph])
    
@@ -88,12 +97,11 @@ def kpi
         @data =   @data.joins(@join).where(sql).select(field_select).group(field_group)
       else
 
-        @data =   @data.where(sql).select(field_select).group(field_group)
+        @data =   @data.where(sql).select(field_select).group(field_group).order(field_group)
       end 
         chart_type = chart.chart.name
-
-        @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data}
-      
+        
+        @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":{"serie1":@d1, "serie2":@d2}}
       else
         #@data =   Project.where(sql).sum("(#{field_select})::float") #funciona bien la suma
         #@data =   Project.where(sql).count("(#{field_select})::float") #funciona bien el contar
