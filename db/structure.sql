@@ -131,7 +131,9 @@ CREATE TABLE analytics_dashboards (
     input_value character varying,
     condition_field_id integer,
     const_field character varying,
-    group_field_id integer
+    group_field_id integer,
+    association_id integer,
+    assoc_kpi boolean
 );
 
 
@@ -2991,6 +2993,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20180317044723'),
 ('20180530014129'),
 ('20180601030159'),
-('20180601114253');
+('20180601114253'),
+('20180606181003'),
+('20180606200023');
 
 

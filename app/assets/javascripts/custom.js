@@ -30,8 +30,6 @@ var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],
   $FOOTER = $('footer');
 
 
-
-
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -547,9 +545,9 @@ function init_charts() {
 
 
 function init_kpi(size_box = null){
-if (size_box== null){
-  var size_box = Navarra.project_types.config.size_box;
-}
+  if (size_box== null){
+    var size_box = Navarra.project_types.config.size_box;
+  }
 
   var  data_id =  $('#data_id').val();
   $.ajax({
@@ -581,7 +579,7 @@ if (size_box== null){
 }
 
 function capitalize(s){
-      return s.toLowerCase().replace( /\b./g, function(a){ return a.toUpperCase(); } );
+  return s.toLowerCase().replace( /\b./g, function(a){ return a.toUpperCase(); } );
 };
 
 function init_chart_doughnut(size_box = null){
@@ -591,7 +589,161 @@ function init_chart_doughnut(size_box = null){
   if ($('.graphics').length){
     $('.graphics').empty();
     if (size_box== null){
-    var size_box = Navarra.project_types.config.size_box;
+      var size_box = Navarra.project_types.config.size_box;
+    }
+    var  data_id =  $('#data_id').val();
+    $.ajax({
+
+      type: 'GET',
+      url: '/project_types/kpi.json',
+      datatype: 'json',
+      data: {data_id: data_id, size_box: size_box, graph: true},
+      success: function(data){
+        //        data.forEach(function(element){
+        for(var i = 0; i < data.length; i ++){
+          var reg = data[i];
+          var data_entry = {};
+          var type_chart = "";
+          var title = "";
+
+          $.each(reg, function(index, value){
+
+            if (index == 'type_chart'){
+              type_chart = value[0]; 
+              type_chart =  type_chart ;
+            }
+            if (index == 'title'){
+              title = value ;
+            }
+            if (index == 'data'){
+              data_general = value;
+
+              
+              
+
+              var series = [];
+              var lab;
+              $.each(data_general, function(idx, vax){
+
+                  
+                var da=[];
+                var colorBackground = []
+                lab = [];
+                $.each(vax, function(i, v ){
+                  lab.push(v['label']);
+                  da.push(v['count']);
+                  colorBackground.push(v['color'])
+                });
+                series.push(da);
+              });
+
+              
+
+              var div_graph = document.createElement('div');
+              html =  '<div class="col-md-6 col-sm-6 col-xs-12">' + 
+                '<div class="x_panel tile fixed_height_320 card">' + 
+'    <div class="x_title">'+
+'      <h2>'+title+'</h2>'+
+'      <ul class="nav navbar-right panel_toolbox">'+
+'        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>'+
+'        </li>'+
+'        <li class="dropdown">'+
+'        </li>'+
+'        <li><a class="close-link"><i class="fa fa-close"></i></a>'+
+'        </li>'+
+'      </ul>'+
+'    <div class="clearfix"></div>'+
+'    </div>'+
+' <div class="ct-chart_'+title+'">'
+
+              $('.graphics').append(html);
+
+              var options = {
+                height: 250 , 
+                axisX: {
+                        labelInterpolationFnc: function(value, index) {
+                                return index % 2 === 0 ? value : null;
+                              }
+                      }
+              };
+
+
+          var datt = {
+                labels: lab,
+                series: series
+          }
+              
+//              new Chartist.Bar('.ct-chart_'+title, datt, options)
+              //
+              console.log(type_chart);
+              switch (type_chart)
+              {
+                     case "bar":
+                  new Chartist.Bar('.ct-chart_'+title, datt, options)
+                                      break;
+                     case "line":
+                  new Chartist.Line('.ct-chart_'+title, datt, options)
+                                      break;
+                     case "line_area":
+              options = {
+                high: 10,
+                height: 250 , 
+                  showArea: true,
+                  showLine: false,
+                  showPoint: false,
+                  fullWidth: true,
+                  axisX: {
+                        showLabel: false,
+                        showGrid: false
+                          }
+              
+              }
+
+                  new Chartist.Line('.ct-chart_'+title, datt, options)
+                                      break;
+            }
+
+/*              new Chartist.Line('.ct-chart_'+title, {
+                labels: lab,
+                series: series
+              }, {
+                  showArea: true,
+                  showLine: false,
+                  showPoint: false,
+                  fullWidth: true,
+                  axisX: {
+                        showLabel: false,
+                        showGrid: false
+              }
+              
+              });*/
+
+              close_html = '</div>'+
+                '</div>'+
+                '</div>';
+              $('.graphics').append( close_html);
+            }
+          })
+        }
+      }
+    })
+  }
+
+}
+
+
+
+
+
+
+function init_chart_doughnut_2(size_box = null){
+
+  if( typeof (Chart) === 'undefined'){ return; }
+
+  if ($('.graphics').length){
+    $('.graphics').empty();
+    if (size_box== null){
+      var size_box = Navarra.project_types.config.size_box;
     }
     var  data_id =  $('#data_id').val();
     $.ajax({
@@ -707,7 +859,7 @@ function init_chart_doughnut(size_box = null){
 
               close_html = '</div>'+
                 '</div>'+
-        '</div>';
+                '</div>';
               $('.graphics').append( close_html);
             }
           })
@@ -745,3 +897,4 @@ $(document).ready(function() {
   //  init_charts(); 
   //  init_chart_doughnut();
 });
+

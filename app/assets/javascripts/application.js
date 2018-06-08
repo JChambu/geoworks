@@ -17,6 +17,7 @@
 //= require nicescroll/jquery.nicescroll.min
 //= require progressbar
 //= require moment.min
+//= require chartist
 //= require chart
 //= require custom
 //= require navarra
