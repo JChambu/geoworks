@@ -17,6 +17,7 @@ class ProjectTypesController < ApplicationController
 
   def kpi
     @op_graph = params[:graph]
+
       @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box])
   end
 

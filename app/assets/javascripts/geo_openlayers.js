@@ -52,12 +52,11 @@ Navarra.geo_openlayers = function(){
       if (move_tmp == 1){
         
       checked = $('#select').hasClass('active');
-        console.log(checked);
       if (!checked){
         currentSize = map.getView().calculateExtent(map.getSize());
         Navarra.project_types.config.size_box = currentSize;  
         init_chart_doughnut();  
-        init_kpi();
+        //init_kpi();
       }
       }else{
         move_tmp = 1 ;
@@ -124,13 +123,11 @@ Navarra.geo_openlayers = function(){
     $('#select').on('click', function(event) {
       checked = $('#select').hasClass('active');
       if (checked){
-        console.log("deshabilitado");
         $('#select').removeClass('active');
         features.remove(lastFeature);
         map.removeInteraction(draw);
       }else{
         $('#select').addClass('active');
-        console.log("habilitado");
         addInteraction();
       }  
     });
@@ -266,7 +263,6 @@ Navarra.geo_openlayers = function(){
         //}})
       },
       error: function(XHR, textStatus, error){
-        console.log(error);
       }
     })
   };
