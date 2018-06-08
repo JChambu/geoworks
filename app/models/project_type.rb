@@ -52,7 +52,7 @@ class ProjectType < ApplicationRecord
     @items = {}
       @data = Project.where(project_type_id: chart.project_type_id).where("st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
          @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
-         @field_select += ", properties->>'" + chart.group_field.key + "' as label "
+         @field_select += ", properties->>'" + chart.group_field.key + "' as name "
          @field_group = "properties->>'"+ chart.group_field.key + "'"
          @data=   @data.select(@field_select).group(@field_group).order(@field_group)
       

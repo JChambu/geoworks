@@ -619,8 +619,6 @@ function init_chart_doughnut(size_box = null){
               data_general = value;
 
               
-              
-
               var series = [];
               var lab;
               $.each(data_general, function(idx, vax){
@@ -630,11 +628,12 @@ function init_chart_doughnut(size_box = null){
                 var colorBackground = []
                 lab = [];
                 $.each(vax, function(i, v ){
-                  lab.push(v['label']);
+                  lab.push(v['name']);
                   da.push(v['count']);
                   colorBackground.push(v['color'])
                 });
-                series.push(da);
+                series.push({"data":da, "name":title});
+                console.log(series);
               });
 
               
@@ -654,17 +653,23 @@ function init_chart_doughnut(size_box = null){
 '      </ul>'+
 '    <div class="clearfix"></div>'+
 '    </div>'+
-' <div class="ct-chart_'+title+'">'
+' <div class="ct-chart_'+title+' .ct-legend">'
 
               $('.graphics').append(html);
 
               var options = {
-                height: 250 , 
+                height: 200 , 
                 axisX: {
                         labelInterpolationFnc: function(value, index) {
                                 return index % 2 === 0 ? value : null;
                               }
-                      }
+                      },
+                plugins: [
+                Chartist.plugins.ctPointLabels({
+                        textAnchor: 'top'
+                      }),
+                  Chartist.plugins.legend()
+                ]
               };
 
 
@@ -692,7 +697,6 @@ function init_chart_doughnut(size_box = null){
                         showLabel: false,
                         showGrid: false
                           }
-              
               }
 
                   new Chartist.Line('.ct-chart_'+title, datt, options)
@@ -726,7 +730,6 @@ function init_chart_doughnut(size_box = null){
   }
 
 }
-
 
 
 
