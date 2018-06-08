@@ -673,9 +673,6 @@ function init_chart_doughnut(size_box = null){
                 series: series
           }
               
-//              new Chartist.Bar('.ct-chart_'+title, datt, options)
-              //
-              console.log(type_chart);
               switch (type_chart)
               {
                      case "bar":

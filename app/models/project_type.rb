@@ -36,10 +36,10 @@ class ProjectType < ApplicationRecord
     @querys=[]
     #Extend
     #
-    minx = size_box[0].to_f if size_box.nil?
-    miny = size_box[1].to_f if size_box.nil?
-    maxx = size_box[2].to_f if size_box.nil?
-    maxy = size_box[3].to_f if size_box.nil?
+    minx = size_box[0].to_f if !size_box.nil?
+    miny = size_box[1].to_f if !size_box.nil?
+    maxx = size_box[2].to_f if !size_box.nil?
+    maxy = size_box[3].to_f if !size_box.nil?
      
    
     @op = option_graph
@@ -50,7 +50,7 @@ class ProjectType < ApplicationRecord
       @analytics_charts.each do |chart|
       
     @items = {}
-         @data = Project.where(project_type_id: chart.project_type_id)
+      @data = Project.where(project_type_id: chart.project_type_id).where("st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
          @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
          @field_select += ", properties->>'" + chart.group_field.key + "' as label "
          @field_group = "properties->>'"+ chart.group_field.key + "'"
