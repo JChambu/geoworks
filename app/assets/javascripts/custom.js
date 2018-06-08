@@ -686,7 +686,6 @@ function init_chart_doughnut(size_box = null){
                                       break;
                      case "line_area":
               options = {
-                high: 10,
                 height: 250 , 
                   showArea: true,
                   showLine: false,
