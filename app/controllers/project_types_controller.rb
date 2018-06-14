@@ -17,8 +17,12 @@ class ProjectTypesController < ApplicationController
 
   def kpi
     @op_graph = params[:graph]
-
+    @querys = ''
+    if @op_graph == 'true'
       @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box])
+    else
+      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box])
+    end
   end
 
 

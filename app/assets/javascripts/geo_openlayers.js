@@ -56,7 +56,7 @@ Navarra.geo_openlayers = function(){
         currentSize = map.getView().calculateExtent(map.getSize());
         Navarra.project_types.config.size_box = currentSize;  
         init_chart_doughnut();  
-        //init_kpi();
+        init_kpi();
       }
       }else{
         move_tmp = 1 ;

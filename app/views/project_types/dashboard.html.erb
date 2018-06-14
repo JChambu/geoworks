@@ -2,14 +2,14 @@
 
   <%= hidden_field_tag :data_id, params[:id] %>
   <%= render "count" %>
-  
- <div class="row">
-   <%= render 'maps' %>
+
+  <div class="row">
+    <%= render 'maps' %>
   </div>
   <br/>
   <div class="row">
-     <%=render 'graph3'  %>
+    <%=render 'graph3'  %>
+    <canvas id="canvas"></canvas>
+
   </div>
-    <div>
-    </div>
 <% end %>

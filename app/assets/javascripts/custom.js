@@ -114,15 +114,12 @@ function init_kpi(size_box = null){
     data: {data_id: data_id, size_box: size_box, graph: false},
     success: function(data){
       data.forEach(function(element){
-
         if ($('.kpi_'+ element['id']).length) {
-          $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ element['data']+'</div>');
+          $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ element['data'][0]['count']+'</div>');
         }else{
-
-
           html = ' <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">'+
             '<span class="count_top">'+element['title']+'</span>'+
-            '<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ element['data']+'</div>'+
+            '<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ element['data'][0]['count']+'</div>'+
             '</div>'+
             '</div>'
           $('.tile_count').append(html);
@@ -139,6 +136,7 @@ function capitalize(s){
 };
 
 function init_chart_doughnut(size_box = null){
+
 
   if( typeof (Chart) === 'undefined'){ return; }
 
@@ -161,6 +159,7 @@ function init_chart_doughnut(size_box = null){
           var data_entry = {};
           var type_chart = "";
           var title = "";
+          var chart;
 
           $.each(reg, function(index, value){
 
@@ -190,18 +189,19 @@ function init_chart_doughnut(size_box = null){
               });
 
               var div_graph = document.createElement('div');
-              html =  '<div class="col-md-6 col-sm-6 col-xs-12">' + 
-                      '<div class="x_panel tile fixed_height_320 card">' + 
-                      '<div class="x_title">'+
-                      ' <h2>'+title+'</h2>'+
-                      ' <ul class="nav navbar-right panel_toolbox">'+
-                      '   <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>'+
-                      '   <li class="dropdown"></li>'+
-                      '   <li><a class="close-link"><i class="fa fa-close"></i></a></li>'+
-                      ' </ul>'+
-                      ' <div class="clearfix"></div>'+
-                      '</div>'+
-                      '<div class="ct-chart ct-chart_'+title+' ct-chart-line-classname">'
+              html =  
+                '<div class="col-md-6 col-sm-6 col-xs-12">' + 
+                '<div class="x_panel tile fixed_height_320 card">' + 
+                '<div class="x_title">'+
+                ' <h2>'+title+'</h2>'+
+                ' <ul class="nav navbar-right panel_toolbox">'+
+                '   <li><a class="collapse-link" ><i class="fa fa-chevron-up"></i></a></li>'+
+                '   <li class="dropdown"></li>'+
+                '   <li><a class="close-link"><i class="fa fa-close"></i></a></li>'+
+                ' </ul>'+
+                ' <div class="clearfix"></div>'+
+                '</div>'+
+                '<div class="ct-chart ct-chart_'+title+' ct-chart-line-classname" id="ct-chart_'+title+'">'
 
               $('.graphics').append(html);
 
@@ -233,10 +233,10 @@ function init_chart_doughnut(size_box = null){
               switch (type_chart)
               {
                 case "bar":
-                  new Chartist.Bar('.ct-chart_'+title, datt, options)
+                chart =  new Chartist.Bar('.ct-chart_'+title, datt, options)
                   break;
                 case "line":
-                  new Chartist.Line('.ct-chart_'+title, datt, options)
+                chart =   new Chartist.Line('.ct-chart_'+title, datt, options)
                   break;
                 case "line_area":
                   options = {
@@ -249,26 +249,19 @@ function init_chart_doughnut(size_box = null){
                       showLabel: false,
                       showGrid: false
                     }
-                  }
 
-                  new Chartist.Line('.ct-chart_'+title, datt, options)
+                  }
+                  chart =new Chartist.Line('.ct-chart_'+title, datt, options)
                   break;
               }
 
-              /*              new Chartist.Line('.ct-chart_'+title, {
-                labels: lab,
-                series: series
-              }, {
-                  showArea: true,
-                  showLine: false,
-                  showPoint: false,
-                  fullWidth: true,
-                  axisX: {
-                        showLabel: false,
-                        showGrid: false
-              }
+/*chart.on('draw', function(data) {
+      inlineCSStoSVG(chart.container.id);
+    });*/
+              /*document.getElementById("rasterCanvas").addEventListener('click', function() {
+                      exportToCanvas(chart.container.id);
+                    });*/
 
-              });*/
 
               close_html = '</div>'+
                 '</div>'+
@@ -282,6 +275,71 @@ function init_chart_doughnut(size_box = null){
   }
 
 }
+
+//NB: not exhaustive, but it'll do for our usecase.
+function inlineCSStoSVG(id) {
+  var nodes = document.querySelectorAll("#" + id + " *");
+  for (var i = 0; i < nodes.length; ++i) {
+    var elemCSS = window.getComputedStyle(nodes[i], null);
+
+    nodes[i].removeAttribute('xmlns');
+    nodes[i].style.fill = elemCSS.fill;
+    nodes[i].style.fillOpacity = elemCSS.fillOpacity;
+    nodes[i].style.stroke = elemCSS.stroke;
+    nodes[i].style.strokeLinecap = elemCSS.strokeLinecap;
+    nodes[i].style.strokeDasharray = elemCSS.strokeDasharray;
+    nodes[i].style.strokeWidth = elemCSS.strokeWidth;
+    nodes[i].style.fontSize = "13";
+    nodes[i].style.fontFamily = elemCSS.fontFamily;
+    nodes[i].style.backgroundColor= elemCSS.backgroundColor;
+    //Finally, solution to embbed HTML in foreignObject https://stackoverflow.com/a/37124551
+    if (nodes[i].nodeName === "SPAN") {
+      nodes[i].setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+    }
+  }
+}
+
+function exportToCanvas(id) {
+
+  var svgElem = document.querySelector("#" + id + " svg");
+  svgElem.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+
+  var canvas = document.getElementById('canvas');
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.canvas.height = svgElem.clientHeight;
+  ctx.canvas.width = svgElem.clientWidth;
+
+  var DOMURL = window.URL || window.webkitURL || window;
+  var img = new Image();
+  img.crossOrigin = "Anonymous";
+  var blob = undefined;
+  //IEsupport : As per https://gist.github.com/Prinzhorn/5a9d7db4e4fb9372b2e6#gistcomment-2075344
+  try {
+    blob = new Blob([svgElem.outerHTML], {
+      type: "image/svg+xml;charset=utf-8"
+    });
+  }
+  catch (e) {
+    if (e.name == "InvalidStateError") {
+      var bb = new MSBlobBuilder();
+      bb.append(svgElem.outerHTML);
+      blob = bb.getBlob("image/svg+xml;charset=utf-8");
+    }
+    else {
+      throw e; //Fallthrough exception, if it wasn't for IE corner-case
+    }
+  }
+  var url = DOMURL.createObjectURL(blob);
+  img.onload = function() {
+    ctx.drawImage(img, 0, 0);
+    DOMURL.revokeObjectURL(url);
+  }
+  img.src = url;
+
+}
+
 
 
 var poolColors = function (a) {
@@ -303,3 +361,27 @@ var dynamicColors = function(i) {
 
 }
 
+function d3sel(event){
+  var mySVG = document.querySelector('#svblock'), // Inline SVG element
+    tgtImage = document.querySelector('#diagram_png'),    // Where to draw the result
+    can = document.createElement('canvas'), // Not shown on page
+    ctx = can.getContext('2d'),
+    loader = new Image; // Not shown on page
+
+
+  loader.width  = 300;
+  loader.height = 300; 
+
+  loader.onload = function() {
+    ctx.drawImage( loader, 0, 0, loader.width, loader.height );
+    tgtImage.src = can.toDataURL();
+  };
+  var svgAsXML = (new XMLSerializer).serializeToString( mySVG );
+  loader.src = 'data:image/svg+xml,' + encodeURIComponent( svgAsXML );
+
+}
+
+
+/*$(document).ready(function() {
+   d3sel(); 
+})*/

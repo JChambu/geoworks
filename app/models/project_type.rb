@@ -31,63 +31,78 @@ class ProjectType < ApplicationRecord
     end
   end
 
-  def self.kpi_new(project_type_id, option_graph, size_box)
+  def self.kpi_without_graph(project_type_id, option_graph, size_box)
 
-    @querys=[]
-    #Extend
-    #
+    querys=[]
     minx = size_box[0].to_f if !size_box.nil?
     miny = size_box[1].to_f if !size_box.nil?
     maxx = size_box[2].to_f if !size_box.nil?
     maxy = size_box[3].to_f if !size_box.nil?
-     
-   
     @op = option_graph
+    @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
 
-    
+    @analytics_charts.each do |chart|
+
+      data = Project.where(project_type_id: chart.project_type_id).where("st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+      @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
+      data=   data.select(@field_select)
+      querys << { "title":"#{chart.title}", "description":"kpi_sin grafico", "data":data, "id": chart.id}
+
+    end
+    querys
+  end
+
+  def self.kpi_new(project_type_id, option_graph, size_box)
+
+    querys=[]
+    minx = size_box[0].to_f if !size_box.nil?
+    miny = size_box[1].to_f if !size_box.nil?
+    maxx = size_box[2].to_f if !size_box.nil?
+    maxy = size_box[3].to_f if !size_box.nil?
+    @op = option_graph
     @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: true, assoc_kpi:false)
 
-      @analytics_charts.each do |chart|
-      
-    @items = {}
-      @data = Project.where(project_type_id: chart.project_type_id).where("st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
-         @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
-         @field_select += ", properties->>'" + chart.group_field.key + "' as name "
-         @field_group = "properties->>'"+ chart.group_field.key + "'"
-         @data=   @data.select(@field_select).group(@field_group).order(@field_group)
-      
-          @items['serie1'] = @data
+    @analytics_charts.each do |chart|
+
+      @items = {}
+      data = Project.where(project_type_id: chart.project_type_id).where("st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+      @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
+      @field_select += ", properties->>'" + chart.group_field.key + "' as name "
+      @field_group = "properties->>'"+ chart.group_field.key + "'"
+      data=   data.select(@field_select).group(@field_group).order(@field_group)
+
+      @items['serie1'] = data
 
       if (!chart.association_id.nil?)
         @analytics_charts = AnalyticsDashboard.where(id: chart.association_id)
         @analytics_charts.each do |chart|
-      
-         @data2 = Project.where(project_type_id: chart.project_type_id)
-         @field_select2 = analysis_type(chart.analysis_type.name, chart.project_field.key)+ 'as count'
-         @field_select2 += ", properties->>'" + chart.group_field.key + "' as label "
-         @field_group2 = "properties->>'"+ chart.group_field.key + "'"
-         @data2=   @data.select(@field_select2).group(@field_group2).order(@field_group2)
-      
+
+          @data2 = Project.where(project_type_id: chart.project_type_id)
+          @field_select2 = analysis_type(chart.analysis_type.name, chart.project_field.key)+ 'as count'
+          @field_select2 += ", properties->>'" + chart.group_field.key + "' as label "
+          @field_group2 = "properties->>'"+ chart.group_field.key + "'"
+          @data2=   data.select(@field_select2).group(@field_group2).order(@field_group2)
+
           @items['series2'] = @data2
 
-      end
+        end
       end
 
 
-         chart_type = chart.chart.name
-      @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"description":"Holaaaaa description", "group_field":@field_group, "data":@items}
+      chart_type = chart.chart.name
+      querys << { "title":"#{chart.title}", "type_chart":[chart_type],"description":"Holaaaaa description", "group_field":@field_group, "data":@items}
 
     end
- @querys
+    querys
   end
 
   def self.analysis_type(type, field)
-      
-      case type
-        when 'sum'
-           query = " #{type}((properties->>'" + field+ "')::float)"
-        when 'count'
-           query = " #{type}((properties->>'" + field+ "'))"
+
+    case type
+    when 'sum'
+      query = " #{type}((properties->>'" + field+ "')::float)"
+    when 'count'
+      query = " #{type}((properties->>'" + field+ "'))"
     end
   end
 
