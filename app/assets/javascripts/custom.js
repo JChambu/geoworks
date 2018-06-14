@@ -205,13 +205,27 @@ function init_chart_doughnut(size_box = null){
 
               $('.graphics').append(html);
 
-              var options = {
-                height: 200 , 
-                axisX: {
-                  labelInterpolationFnc: function(value, index) {
-                    return index % 2 === 0 ? value : null;
+
+
+              var datt = {
+                labels: lab,
+                series: series
+              }
+
+              switch (type_chart)
+              {
+                case "bar":
+                  options = {
+                    plugins: [
+                            Chartist.plugins.ctBarLabels()
+                          ]
                   }
-                },
+                chart =  new Chartist.Bar('.ct-chart_'+title, datt, options)
+                  break;
+                case "line":
+
+              options = {
+                height: 200 , 
                 plugins: [
                   Chartist.plugins.ctPointLabels({
                     labelClass: 'ct-label',
@@ -224,18 +238,6 @@ function init_chart_doughnut(size_box = null){
                   Chartist.plugins.legend()
                 ]
               };
-
-              var datt = {
-                labels: lab,
-                series: series
-              }
-
-              switch (type_chart)
-              {
-                case "bar":
-                chart =  new Chartist.Bar('.ct-chart_'+title, datt, options)
-                  break;
-                case "line":
                 chart =   new Chartist.Line('.ct-chart_'+title, datt, options)
                   break;
                 case "line_area":

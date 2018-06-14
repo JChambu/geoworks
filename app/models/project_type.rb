@@ -47,7 +47,6 @@ class ProjectType < ApplicationRecord
       @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
       data=   data.select(@field_select)
       querys << { "title":"#{chart.title}", "description":"kpi_sin grafico", "data":data, "id": chart.id}
-
     end
     querys
   end
