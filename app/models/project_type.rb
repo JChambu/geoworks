@@ -423,7 +423,7 @@ class ProjectType < ApplicationRecord
         record.attributes.each do |val|
           @val = val
 
-          @i["#{val[0]}"] = val[1].to_s.parameterize
+          @i["#{val[0]}"] = val[1]
         end
 
         @geom = record.geometry.as_text
