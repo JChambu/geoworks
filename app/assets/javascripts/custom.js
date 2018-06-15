@@ -189,6 +189,7 @@ function init_chart_doughnut(size_box = null){
               });
 
               var div_graph = document.createElement('div');
+              var title_graph = title.replace(" ", "_");
               html =  
                 '<div class="col-md-6 col-sm-6 col-xs-12">' + 
                 '<div class="x_panel tile fixed_height_320 card">' + 
@@ -201,7 +202,7 @@ function init_chart_doughnut(size_box = null){
                 ' </ul>'+
                 ' <div class="clearfix"></div>'+
                 '</div>'+
-                '<div class="ct-chart ct-chart_'+title+' ct-chart-line-classname" id="ct-chart_'+title+'">'
+                '<div class="ct-chart ct-chart_'+title_graph+' ct-chart-line-classname" id="ct-chart_'+title_graph+'">'
 
               $('.graphics').append(html);
 
@@ -220,7 +221,7 @@ function init_chart_doughnut(size_box = null){
                             Chartist.plugins.ctBarLabels()
                           ]
                   }
-                chart =  new Chartist.Bar('.ct-chart_'+title, datt, options)
+                chart =  new Chartist.Bar('.ct-chart_'+title_graph, datt, options)
                   break;
                 case "line":
 
@@ -238,7 +239,7 @@ function init_chart_doughnut(size_box = null){
                   Chartist.plugins.legend()
                 ]
               };
-                chart =   new Chartist.Line('.ct-chart_'+title, datt, options)
+                chart =   new Chartist.Line('.ct-chart_'+title_graph, datt, options)
                   break;
                 case "line_area":
                   options = {
@@ -253,7 +254,7 @@ function init_chart_doughnut(size_box = null){
                     }
 
                   }
-                  chart =new Chartist.Line('.ct-chart_'+title, datt, options)
+                  chart =new Chartist.Line('.ct-chart_'+title_graph, datt, options)
                   break;
               }
 
