@@ -275,7 +275,7 @@ end as color
 
 
   def index
-    @project_types = ProjectType.where(id: 16).where(id:23)
+    @project_types = ProjectType.find(id: 16)
     @project_types = @project_types.paginate(:page => params[:page])
     #@project_fulcrum = ProjectType.query_fulcrum
   end
