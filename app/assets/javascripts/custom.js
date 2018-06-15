@@ -118,6 +118,7 @@ function init_kpi(size_box = null){
           $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ element['data'][0]['count']+'</div>');
         }else{
           var count_element= element['data'][0]['count'];
+          console.log(count_element);
           html = ' <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">'+
             '<span class="count_top">'+element['title']+'</span>'+
             '<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ count_element +'</div>'+
