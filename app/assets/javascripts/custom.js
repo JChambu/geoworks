@@ -102,7 +102,7 @@ $(window).resize(function () {
 
 function init_kpi(size_box = null){
   if (size_box== null){
-    var size_box = Navarra.project_types.config.size_box;
+    //var size_box = Navarra.project_types.config.size_box;
   }
 
   var  data_id =  $('#data_id').val();
@@ -145,7 +145,7 @@ function init_chart_doughnut(size_box = null){
   if ($('.graphics').length){
     $('.graphics').empty();
     if (size_box== null){
-      var size_box = Navarra.project_types.config.size_box;
+//      var size_box = Navarra.project_types.config.size_box;
     }
     var  data_id =  $('#data_id').val();
     $.ajax({

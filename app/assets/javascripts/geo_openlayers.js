@@ -1,20 +1,24 @@
 Navarra.namespace("geo_openlayers");
 
 Navarra.geo_openlayers = function(){
-  var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight, vectorSource, pointLayer;
+  var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight, vectorSource, pointLayer, checked_multi, features;
+  var geometry_container = [];
   var move_tmp = 0;
-  var draw, lastFeature;
+  var draw, lastFeature; 
+  var featureAll = [];
 
   var init = function(){
-    iconStyle = new ol.style.Style({
-      image : new ol.style.Icon(({
-        anchor : [ 0.5, 46 ],
-        anchorXUnits : 'fraction',
-        anchorYUnits : 'pixels',
-        opacity : 0.75,
-        src : '/images/marker-1.png'
-      }))
-    });
+
+    iconStyle = 
+      new ol.style.Style({
+        image : new ol.style.Icon(({
+          opacity: 1,
+          scale: 0.5,
+          color: 'gray',
+          crossOrigin: 'anonymous',
+          src: 'https://openlayers.org/en/v4.6.4/examples/data/dot.png'
+        }))
+      });
 
     vector = new ol.layer.Vector({ source: new ol.source.Vector()});
     var view =  new ol.View({
@@ -50,14 +54,14 @@ Navarra.geo_openlayers = function(){
     var size = map.getView().calculateExtent(map.getSize());
     map.on('moveend', function(){
       if (move_tmp == 1){
-        
-      checked = $('#select').hasClass('active');
-      if (!checked){
-        currentSize = map.getView().calculateExtent(map.getSize());
-        Navarra.project_types.config.size_box = currentSize;  
-        init_chart_doughnut();  
-        init_kpi();
-      }
+
+        checked = $('#select, #create_multi').hasClass('active');
+        if (!checked){
+          currentSize = map.getView().calculateExtent(map.getSize());
+          Navarra.project_types.config.size_box = currentSize;  
+          init_chart_doughnut();  
+          init_kpi();
+        }
       }else{
         move_tmp = 1 ;
       }
@@ -88,11 +92,6 @@ Navarra.geo_openlayers = function(){
         });
 
       if (feature) {
-        detail = "Num Cliente: "+ feature.get('client_id') + '<br>' ;
-        detail += "Estado: "+ feature.get('status') + '<br>' ;
-        detail += "Razon Social: " + feature.get("razon_social") + '<br>';
-        detail += "Ejecutivo: " + feature.get("ejecutivo")+ '<br>';
-        detail += "Contratos: " + feature.get("contratos");
 
         popup.setPosition(evt.coordinate);
         $(element).popover({
@@ -120,18 +119,46 @@ Navarra.geo_openlayers = function(){
     // Add or remove interactions
     //
 
+
+
     $('#select').on('click', function(event) {
       checked = $('#select').hasClass('active');
       if (checked){
         $('#select').removeClass('active');
-        features.remove(lastFeature);
+        //Borra el ultimo feature
+        //features.remove(lastFeature);
         map.removeInteraction(draw);
+
       }else{
         $('#select').addClass('active');
-        addInteraction();
+        //funciona la seleccion
+        draw = new ol.interaction.Select();
+        map.addInteraction(draw);
+        // fin seleccion
+        //modificacions features
+        // modifyInteraction();
+        //end
       }  
     });
 
+    $('#create_multi').on('click', function(event) {
+      checked_multi = $('#create_multi').hasClass('active');
+      if (checked_multi){
+        $('#create_multi').removeClass('active');
+        //Borra toda los features
+        removeAll();
+        map.removeInteraction(draw);
+
+        var extent = pointLayer.getSource().getExtent();
+        pointLayer.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
+          feature.setStyle(iconStyle);            
+        });
+      }else{
+        $('#create_multi').addClass('active');
+        checked_multi = $('#create_multi').hasClass('active');
+        addInteraction();
+      }  
+    });
 
     var ssource =  new ol.source.Vector({features: features})
 
@@ -154,10 +181,35 @@ Navarra.geo_openlayers = function(){
       })
     });
     featureOverlay.setMap(map);
-
   }
 
-  var features = new ol.Collection();
+  features = new ol.Collection();
+
+  function modifyInteraction(){
+    draw = new ol.interaction.Modify({
+      features: features
+    });
+
+
+
+    draw.on('modifyend',function(evt){
+      var feat = evt.features.getArray();
+      for (var i=0;i<feat.length;i++){
+
+        var mod_polygon = feat[i].getGeometry().getCoordinates();
+
+        $.each(coordinate_polygon, function(i,val){
+          geometry_container.push(val); 
+        });
+
+        init_kpi(geometry_container);
+        init_chart_doughnut(geometry_container);  
+        lastFeature = evt.feature;
+        featureAll.push(lastFeature);
+      }
+    })
+    map.addInteraction(draw);
+  }
 
   function addInteraction() {
 
@@ -171,21 +223,58 @@ Navarra.geo_openlayers = function(){
         features.remove(lastFeature);
     };
 
+    removeAll = function() {
+      $.each(featureAll, function(i,val){
+        features.remove(val);
+      })
+
+      return;
+    };
+
     draw.on('drawstart', function(evt){
-      removeLastFeature(); 
+      if(!checked_multi == true){
+        removeLastFeature(); 
+      }
+    });
+    var fill = new ol.style.Fill({
+      color: [180, 0, 0, 0.3]
+    });
+
+    var stroke = new ol.style.Stroke({
+      color: [180, 0, 0, 1],
+      width: 1
+    });
+
+
+    var style_up = new ol.style.Style({
+      image: new ol.style.Circle({
+        fill: fill,
+        stroke: stroke,
+        radius: 8
+      }),
+      fill: fill,
+      stroke: stroke
     });
 
     draw.on('drawend',function(evt){
 
-      var selectedFeatures = selectInteraction.getFeatures();
-      selectedFeatures.clear();
+      modifyInteraction();
+      //var selectedFeatures = selectInteraction.getFeatures();
+      //selectedFeatures.clear();
       extent = evt.feature.getGeometry().getExtent();
-      /*      pointLayer.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
-        selectedFeatures.push(feature);
-      });*/
-        init_chart_doughnut(extent);  
-      init_kpi(extent);
+      pointLayer.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
+        feature.setStyle(style_up);            
+        //console.log(feature.getGeometry().getCoordinates());
+      });
+      var coordinate_polygon = evt.feature.getGeometry().getCoordinates();
+      $.each(coordinate_polygon, function(i,val){
+        geometry_container.push(val); 
+      });
+
+      init_kpi(geometry_container);
+      init_chart_doughnut(geometry_container);  
       lastFeature = evt.feature;
+      featureAll.push(lastFeature);
     })
 
     map.addInteraction(draw);
@@ -197,7 +286,7 @@ Navarra.geo_openlayers = function(){
   });
 
 
-  addMarker_op = function(){
+  addMarker_op = function(color='black'){
     var size = map.getView().calculateExtent(map.getSize());
 
     var data_id =  $("#data_id").val();
@@ -210,6 +299,8 @@ Navarra.geo_openlayers = function(){
 
       map.removeLayer(pointLayer);
     }
+
+
     $.ajax({
       type: 'GET',
       url: '/project_types/maps.json',
@@ -218,34 +309,17 @@ Navarra.geo_openlayers = function(){
       success: function(data){
         var feature = [];
         $.each(data, function(i,val){
-          var colorMarker = val['color'];
+          //          var colorMarker = val['color'];
           if (val['longitude'] != null && val['latitude'] != null){
             coord = [val['longitude'], val['latitude']];
-
             iconGeometry = new ol.geom.Point(coord);
-
             var iconFeature = new ol.Feature({
               geometry: iconGeometry,
-              status: val['status'],
-              client_id: val['client_id'],
-              razon_social: val['razon_social'],
-              ejecutivo: val['ejecutivo'],
-              contratos: val['contratos'],
               population: 4000,
               rainfall: 500
             });
+            iconFeature.setStyle(iconStyle);
 
-            iconFeature.setStyle(
-              new ol.style.Style({
-                image : new ol.style.Icon(({
-                  opacity: 1,
-                  scale: 0.5,
-                  color: colorMarker,
-                  crossOrigin: 'anonymous',
-                  src: 'https://openlayers.org/en/v4.6.4/examples/data/dot.png'
-                }))
-              })
-            );
             feature.push(iconFeature);
           }});
 
@@ -268,15 +342,9 @@ Navarra.geo_openlayers = function(){
   };
 
 
-
-
   return {
     init: init,
     addMarker_op: addMarker_op,
-    //    enableMap: enableMap,
-    //    latitude_ol: latitude_ol,
-    //    longitude_ol: longitude_ol,
-    //    line_ol: line_ol
 
   }
 }();

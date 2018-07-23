@@ -33,6 +33,19 @@ class ProjectType < ApplicationRecord
 
   def self.kpi_without_graph(project_type_id, option_graph, size_box)
 
+@arr1 = []
+
+@size = size_box
+if !@size.blank?
+@size.each do |a,x|
+    z = []
+    x.each do |b,y|
+      z.push(y)
+    end
+    @arr1.push([z])
+  end
+  end
+
     querys=[]
     minx = size_box[0].to_f if !size_box.nil?
     miny = size_box[1].to_f if !size_box.nil?
@@ -43,9 +56,12 @@ class ProjectType < ApplicationRecord
 
     @analytics_charts.each do |chart|
 
-
-
-      data = Project.where(project_type_id: chart.project_type_id).where("st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+    
+      if @size.blank?
+      data = Project.where(project_type_id: chart.project_type_id)
+  else
+      data = Project.where(project_type_id: chart.project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
+  end
       field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
       conditions_field = chart.condition_field
       if !conditions_field.blank?
@@ -59,6 +75,18 @@ class ProjectType < ApplicationRecord
 
   def self.kpi_new(project_type_id, option_graph, size_box)
 
+@arr1 = []
+
+@size = size_box
+if !@size.blank?
+@size.each do |a,x|
+    z = []
+    x.each do |b,y|
+      z.push(y)
+    end
+    @arr1.push([z])
+  end
+  end
     querys=[]
     minx = size_box[0].to_f if !size_box.nil?
     miny = size_box[1].to_f if !size_box.nil?
@@ -69,8 +97,14 @@ class ProjectType < ApplicationRecord
 
     @analytics_charts.each do |chart|
 
+
       @items = {}
-      data = Project.where(project_type_id: chart.project_type_id).where("st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+      
+      if @size.blank?
+      data = Project.where(project_type_id: chart.project_type_id)
+  else
+      data = Project.where(project_type_id: chart.project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
+  end
       @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
       @field_select += ", properties->>'" + chart.group_field.key + "' as name "
       @field_group = "properties->>'"+ chart.group_field.key + "'"
@@ -429,11 +463,13 @@ class ProjectType < ApplicationRecord
           @val = val[1]
 
           @i["#{val[0]}"] = val[1].to_s.force_encoding(Encoding::UTF_8)
+        #  @i["#{val[0]}"] = val[1]
         end
 
+	@rec = record
         @geom = record.geometry.as_text
         @projects = Project.create( properties: @i.to_h, project_type_id: self.id, the_geom: @geom )
-        record = file.next
+        #record = file.next
       end
     end
   end
