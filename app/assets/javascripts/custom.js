@@ -235,9 +235,9 @@ function init_chart_doughnut(size_box = null){
 
                 case "horizontalBar":
                   options = {
-                    height: 320 , 
+                    height: 300 , 
                     axisY: {
-                          offset: 105
+                          offset: 102
                         },
                     textAnchor: 'middle',
                     plugins: [
