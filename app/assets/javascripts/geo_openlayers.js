@@ -127,13 +127,13 @@ Navarra.geo_openlayers = function(){
         $('#select').removeClass('active');
         //Borra el ultimo feature
         //features.remove(lastFeature);
-        map.removeInteraction(draw);
+       // map.removeInteraction(draw);
 
       }else{
         $('#select').addClass('active');
         //funciona la seleccion
-        draw = new ol.interaction.Select();
-        map.addInteraction(draw);
+        //draw = new ol.interaction.Select();
+        //map.addInteraction(draw);
         // fin seleccion
         //modificacions features
         // modifyInteraction();
@@ -142,18 +142,23 @@ Navarra.geo_openlayers = function(){
     });
 
     $('#create_multi').on('click', function(event) {
+      
       checked_multi = $('#create_multi').hasClass('active');
       if (checked_multi){
         $('#create_multi').removeClass('active');
         //Borra toda los features
-        removeAll();
+        console.log("Paso");
         map.removeInteraction(draw);
+        removeAll();
+        geometry_container = [];
 
         var extent = pointLayer.getSource().getExtent();
         pointLayer.getSource().forEachFeatureIntersectingExtent(extent, function(feature) {
           feature.setStyle(iconStyle);            
         });
+        
       }else{
+
         $('#create_multi').addClass('active');
         checked_multi = $('#create_multi').hasClass('active');
         addInteraction();
@@ -258,7 +263,7 @@ Navarra.geo_openlayers = function(){
 
     draw.on('drawend',function(evt){
 
-      modifyInteraction();
+   //   modifyInteraction();
       //var selectedFeatures = selectInteraction.getFeatures();
       //selectedFeatures.clear();
       extent = evt.feature.getGeometry().getExtent();
