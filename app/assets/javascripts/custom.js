@@ -121,14 +121,15 @@ function init_kpi(size_box = null){
     data: {data_id: data_id, size_box: size_box, graph: false},
     success: function(data){
       data.forEach(function(element){
-        if ($('.kpi_'+ element['id']).length) {
-          $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ element['data'][0]['count']+'</div>');
-        }else{
           var count_element= element['data'][0]['count'];
-          console.log(count_element);
+        data_cont = (Number(count_element)).format(0, 3, '.', ','); 
+        if ($('.kpi_'+ element['id']).length) {
+          $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ data_cont +'</div>');
+        }else{
+
           html = ' <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">'+
             '<span class="count_top">'+element['title']+'</span>'+
-            '<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ (Number(count_element)).format(0, 3, '.', ','); +'</div>'+
+            '<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ data_cont +'</div>'+
             '</div>'+
             '</div>'
           $('.tile_count').append(html);
