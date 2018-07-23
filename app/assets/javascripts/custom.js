@@ -97,13 +97,20 @@ $(window).resize(function () {
 /** ******  /right_col height flexible  *********************** **/
 
 
+Number.prototype.format = function(n, x, s, c) {
+      var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+            num = this.toFixed(Math.max(0, ~~n));
 
+      return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+};
 
 
 function init_kpi(size_box = null){
   if (size_box== null){
     //var size_box = Navarra.project_types.config.size_box;
   }
+
+
 
   var  data_id =  $('#data_id').val();
   $.ajax({
@@ -121,7 +128,7 @@ function init_kpi(size_box = null){
           console.log(count_element);
           html = ' <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">'+
             '<span class="count_top">'+element['title']+'</span>'+
-            '<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ count_element +'</div>'+
+            '<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ (Number(count_element)).format(0, 3, '.', ','); +'</div>'+
             '</div>'+
             '</div>'
           $('.tile_count').append(html);
