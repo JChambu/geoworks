@@ -228,10 +228,22 @@ function init_chart_doughnut(size_box = null){
                   options = {
                     plugins: [
                             Chartist.plugins.ctBarLabels()
-                          ]
+                          ],
                   }
                 chart =  new Chartist.Bar('.ct-chart_'+title_graph, datt, options)
                   break;
+
+                case "horizontalBar":
+                  options = {
+                    plugins: [
+                            Chartist.plugins.ctBarLabels()
+                          ],
+                    horizontalBars: true,
+                  }
+                chart =  new Chartist.Bar('.ct-chart_'+title_graph, datt, options)
+                  break;
+                
+                
                 case "line":
 
               options = {
