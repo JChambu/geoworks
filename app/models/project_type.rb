@@ -459,6 +459,7 @@ if !@size.blank?
       file.each do |record|
         @prop = {}
         @i = {}
+        @geom = ''
         record.attributes.each do |val|
           @val = val[1]
 
@@ -467,7 +468,7 @@ if !@size.blank?
         end
 
 	@rec = record
-        @geom = record.geometry.as_text
+  @geom = record.geometry.as_text if !record.geometry.nil?
         @projects = Project.create( properties: @i.to_h, project_type_id: self.id, the_geom: @geom )
         #record = file.next
       end
