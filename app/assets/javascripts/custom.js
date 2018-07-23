@@ -236,6 +236,10 @@ function init_chart_doughnut(size_box = null){
                 case "horizontalBar":
                   options = {
                     height: 300 , 
+                    axisY: {
+                          offset: 70
+                        },
+                    textAnchor: 'middle',
                     plugins: [
                             Chartist.plugins.ctBarLabels()
                           ],
