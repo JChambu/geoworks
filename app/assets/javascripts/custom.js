@@ -237,7 +237,7 @@ function init_chart_doughnut(size_box = null){
                   options = {
                     height: 320 , 
                     axisY: {
-                          offset: 120
+                          offset: 105
                         },
                     textAnchor: 'middle',
                     plugins: [
