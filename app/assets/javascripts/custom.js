@@ -201,7 +201,7 @@ function init_chart_doughnut(size_box = null){
               var title_graph = title.replace(" ", "_");
               html =  
                 '<div class="col-md-6 col-sm-6 col-xs-12">' + 
-                '<div class="x_panel tile fixed_height_320 card">' + 
+                '<div class="x_panel tile fixed_height_390 card">' + 
                 '<div class="x_title">'+
                 ' <h2>'+title+'</h2>'+
                 ' <ul class="nav navbar-right panel_toolbox">'+
@@ -235,6 +235,7 @@ function init_chart_doughnut(size_box = null){
 
                 case "horizontalBar":
                   options = {
+                    height: 300 , 
                     plugins: [
                             Chartist.plugins.ctBarLabels()
                           ],
