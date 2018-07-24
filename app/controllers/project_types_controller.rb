@@ -19,9 +19,9 @@ class ProjectTypesController < ApplicationController
     @op_graph = params[:graph]
     @querys = ''
     if @op_graph == 'true'
-      @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box])
+      @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box])
     else
-      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box])
+      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box])
     end
   end
 
@@ -275,7 +275,7 @@ end as color
 
 
   def index
-    @project_types = ProjectType.where(id: [16,23])
+    @project_types = ProjectType.all
     @project_types = @project_types.paginate(:page => params[:page])
     #@project_fulcrum = ProjectType.query_fulcrum
   end

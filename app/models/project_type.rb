@@ -31,12 +31,13 @@ class ProjectType < ApplicationRecord
     end
   end
 
-  def self.kpi_without_graph(project_type_id, option_graph, size_box)
+  def self.kpi_without_graph(project_type_id, option_graph, size_box, type_box)
 
 @arr1 = []
 
 @size = size_box
-if !@size.blank?
+
+if type_box == 'polygon' 
 @size.each do |a,x|
     z = []
     x.each do |b,y|
@@ -44,21 +45,23 @@ if !@size.blank?
     end
     @arr1.push([z])
   end
-  end
-
+  else
     querys=[]
     minx = size_box[0].to_f if !size_box.nil?
     miny = size_box[1].to_f if !size_box.nil?
     maxx = size_box[2].to_f if !size_box.nil?
     maxy = size_box[3].to_f if !size_box.nil?
+  end
+
     @op = option_graph
     @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
 
     @analytics_charts.each do |chart|
 
     
-      if @size.blank?
-      data = Project.where(project_type_id: chart.project_type_id)
+      if type_box == 'extent'
+        data = Project.where(project_type_id: chart.project_type_id).where(" st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+
   else
       data = Project.where(project_type_id: chart.project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
   end
@@ -73,12 +76,12 @@ if !@size.blank?
     querys
   end
 
-  def self.kpi_new(project_type_id, option_graph, size_box)
+  def self.kpi_new(project_type_id, option_graph, size_box, type_box)
 
 @arr1 = []
 
 @size = size_box
-if !@size.blank?
+if type_box == 'polygon'
 @size.each do |a,x|
     z = []
     x.each do |b,y|
@@ -86,12 +89,13 @@ if !@size.blank?
     end
     @arr1.push([z])
   end
-  end
+else
     querys=[]
     minx = size_box[0].to_f if !size_box.nil?
     miny = size_box[1].to_f if !size_box.nil?
     maxx = size_box[2].to_f if !size_box.nil?
     maxy = size_box[3].to_f if !size_box.nil?
+  end
     @op = option_graph
     @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: true, assoc_kpi:false)
 
@@ -100,8 +104,9 @@ if !@size.blank?
 
       @items = {}
       
-      if @size.blank?
-      data = Project.where(project_type_id: chart.project_type_id)
+      if type_box == 'extent'
+      data = Project.where(project_type_id: chart.project_type_id).where(" st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+
   else
       data = Project.where(project_type_id: chart.project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
   end

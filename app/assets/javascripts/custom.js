@@ -106,10 +106,12 @@ Number.prototype.format = function(n, x, s, c) {
 
 
 function init_kpi(size_box = null){
+  var type_box = 'polygon';
+  
   if (size_box== null){
-    //var size_box = Navarra.project_types.config.size_box;
+    var size_box = Navarra.project_types.config.size_box;
+    type_box = 'extent';
   }
-
 
 
   var  data_id =  $('#data_id').val();
@@ -118,7 +120,7 @@ function init_kpi(size_box = null){
     type: 'GET',
     url: '/project_types/kpi.json',
     datatype: 'json',
-    data: {data_id: data_id, size_box: size_box, graph: false},
+    data: {data_id: data_id, size_box: size_box, graph: false, type_box: type_box},
     success: function(data){
       data.forEach(function(element){
           var count_element= element['data'][0]['count'];
@@ -152,16 +154,20 @@ function init_chart_doughnut(size_box = null){
 
   if ($('.graphics').length){
     $('.graphics').empty();
-    if (size_box== null){
-//      var size_box = Navarra.project_types.config.size_box;
-    }
+  var type_box = 'polygon';
+  
+  if (size_box== null){
+    var size_box = Navarra.project_types.config.size_box;
+    type_box = 'extent';
+  }
+
     var  data_id =  $('#data_id').val();
     $.ajax({
 
       type: 'GET',
       url: '/project_types/kpi.json',
       datatype: 'json',
-      data: {data_id: data_id, size_box: size_box, graph: true},
+      data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box},
       success: function(data){
         //        data.forEach(function(element){
         for(var i = 0; i < data.length; i ++){
