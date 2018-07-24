@@ -206,16 +206,15 @@ function init_chart_doughnut(size_box = null){
 
               var div_graph = document.createElement('div');
               var title_graph = title.replace(" ", "_");
-                if (title_graph == 'Luminarias Departamentos'){
-                  fixed_height = '640';
-                  graph_height = '550';
+              console.log(title_graph);
+                if (title_graph == 'Departamntos'){
+                  fixed_height = 'col-md-12 col-sm-12 ';
                 }else{
-                  fixed_height = '320';
-                  graph_height = '290';
+                  fixed_height = 'col-md-6 col-sm-6 ';
                 }
               html =  
-                '<div class="col-md-6 col-sm-6 col-xs-12">' +
-                '<div class="x_panel tile fixed_height_' + fixed_height + ' card">' + 
+                '<div class="'+ fixed_height + ' col-xs-12">' +
+                '<div class="x_panel tile fixed_height_390 card">' + 
                 '<div class="x_title">'+
                 ' <h2>'+title+'</h2>'+
                 ' <ul class="nav navbar-right panel_toolbox">'+
@@ -249,7 +248,7 @@ function init_chart_doughnut(size_box = null){
 
                 case "horizontalBar":
                   options = {
-                    height:  graph_height, 
+                    height:  300, 
                     axisY: {
                           offset: 102
                         },
