@@ -46,13 +46,14 @@ if type_box == 'polygon'
     @arr1.push([z])
   end
   else
-    querys=[]
+
     minx = size_box[0].to_f if !size_box.nil?
     miny = size_box[1].to_f if !size_box.nil?
     maxx = size_box[2].to_f if !size_box.nil?
     maxy = size_box[3].to_f if !size_box.nil?
   end
 
+    querys=[]
     @op = option_graph
     @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
 
@@ -90,12 +91,13 @@ if type_box == 'polygon'
     @arr1.push([z])
   end
 else
-    querys=[]
+
     minx = size_box[0].to_f if !size_box.nil?
     miny = size_box[1].to_f if !size_box.nil?
     maxx = size_box[2].to_f if !size_box.nil?
     maxy = size_box[3].to_f if !size_box.nil?
   end
+    querys=[]
     @op = option_graph
     @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: true, assoc_kpi:false)
 
