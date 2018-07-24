@@ -207,7 +207,7 @@ function init_chart_doughnut(size_box = null){
               var div_graph = document.createElement('div');
               var title_graph = title.replace(" ", "_");
               console.log(title_graph);
-                if (title_graph == 'Departamntos'){
+                if (type_chart == 'bar'){
                   fixed_height = 'col-md-12 col-sm-12 ';
                 }else{
                   fixed_height = 'col-md-6 col-sm-6 ';
@@ -239,6 +239,7 @@ function init_chart_doughnut(size_box = null){
               {
                 case "bar":
                   options = {
+                    height:  300, 
                     plugins: [
                             Chartist.plugins.ctBarLabels()
                           ],
