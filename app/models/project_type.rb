@@ -68,7 +68,7 @@ if type_box == 'polygon'
       field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
       conditions_field = chart.condition_field
       if !conditions_field.blank?
-        data =  data.where(" properties->>'" + chart.project_field.key + "' " + chart.filter_input + "'#{chart.input_value}'")
+        data =  data.where(" properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
       end
       data=   data.select(field_select)
       querys << { "title":"#{chart.title}", "description":"kpi_sin grafico", "data":data, "id": chart.id}
