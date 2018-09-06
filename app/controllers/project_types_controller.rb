@@ -8,7 +8,6 @@ class ProjectTypesController < ApplicationController
     respond_to do |format|
       format.html
       format.js
-
     end
   end
 
@@ -17,22 +16,28 @@ class ProjectTypesController < ApplicationController
 
   def kpi
     @op_graph = params[:graph]
+    @data_conditions = params[:data_conditions]
+
+    filter_condition = []
+    if !@data_conditions.nil?
+
+      project_field = params[:data_conditions][:project_field]
+      filter = params[:data_conditions][:filter]
+      input_value = params[:data_conditions][:input_value]
+      filter_condition = [project_field, filter, input_value]
+    end
+
     @querys = ''
     if @op_graph == 'true'
       @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box])
     else
-      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box])
+      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box], filter_condition)
     end
   end
 
 
-
-def kpi_2
-
-
-      @querys = ProjectType.kpi_new(params[:data_id], params[:graph], params[:size_box])
-
-
+  def kpi_2
+    @querys = ProjectType.kpi_new(params[:data_id], params[:graph], params[:size_box])
     @querys=[]
     #Extend
     #
@@ -42,39 +47,39 @@ def kpi_2
     maxy = params[:size_box][3].to_f if !params[:size_box].nil?
 
     @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], graph: params[:graph])
-   
+
     @analytics_charts.each do |chart|
 
       #tipo de analisis
-       analysis_type = chart.analysis_type.name
+      analysis_type = chart.analysis_type.name
       #condiciones extras
       conditions_field = chart.condition_field
-     
+
 
       @data = Project.where(project_type_id: params[:data_id])
       sql = " st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})" 
-      
+
       if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
 
         field_select = " (choice_lists.color) as color"
         field_select += ", (choice_lists.label) as label"
         field_select += ", #{analysis_type}(properties->>'" + chart.project_field.key + "')"
-       
+
         field_group = "properties->>'"+ chart.project_field.key + "'"
         field_group += ", label, color"
-      
+
       else
         if params[:graph] == true
-        field_select = " #{analysis_type}(properties->>'" + chart.project_field.key + "')"
-        field_select += ", properties->>'" + chart.project_field.key + "' as label "
-        field_group = "properties->>'"+ chart.project_field.key + "'"
+          field_select = " #{analysis_type}(properties->>'" + chart.project_field.key + "')"
+          field_select += ", properties->>'" + chart.project_field.key + "' as label "
+          field_group = "properties->>'"+ chart.project_field.key + "'"
         else
 
-        field_select = " #{analysis_type}(properties->>'" + chart.project_field.key + "') #{chart.const_field} "
-       field_select += ", properties->>'" + chart.project_field.key + "' as label"
-        field_select_without_graph = " properties->>'" + chart.project_field.key + "'"
-        
-        field_group = "properties->>'"+ chart.project_field.key + "'"
+          field_select = " #{analysis_type}(properties->>'" + chart.project_field.key + "') #{chart.const_field} "
+          field_select += ", properties->>'" + chart.project_field.key + "' as label"
+          field_select_without_graph = " properties->>'" + chart.project_field.key + "'"
+
+          field_group = "properties->>'"+ chart.project_field.key + "'"
         end
       end 
 
@@ -88,51 +93,51 @@ def kpi_2
         @querys << { "title":"#{chart.title}", "data":@data_extra[0]['promedio'], "id":"#{chart.id}"}
 
       else
-      if analysis_type == "Participacion"
-        @total_clientes = Project.where("project_type_id": params[:data_id]).count
-        @data_extra_2 = 0 
-        @data_extra_2 = Project.where(sql).select("round((((count(properties->>'05d5')::numeric) /  #{@total_clientes}) * 100 ),0)  as participacion") if @total_clientes > 0 
-        @querys << { "title":"#{chart.title}", "data":@data_extra_2[0]['participacion'], "id":"#{chart.id}"}
-      else
-      
-      if params[:graph] == "true"
-      
-        if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
-        @join = ("join choice_lists  on (properties->>'#{chart.project_field.key}')::integer = choice_lists.id" )
-        @data =   @data.joins(@join).where(sql).select(field_select).group(field_group)
-      else
-
-        @data =   @data.where(sql).select(field_select).group(field_group).order(field_group)
-      end 
-        chart_type = chart.chart.name
-        
-        @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":{"serie1":@d1, "serie2":@d2}}
-      else
-        #@data =   Project.where(sql).sum("(#{field_select})::float") #funciona bien la suma
-        #@data =   Project.where(sql).count("(#{field_select})::float") #funciona bien el contar
-        if chart.const_field.nil?
-        @data =   @data.where(sql).send( analysis_type,"(#{field_select_without_graph}) ")
+        if analysis_type == "Participacion"
+          @total_clientes = Project.where("project_type_id": params[:data_id]).count
+          @data_extra_2 = 0 
+          @data_extra_2 = Project.where(sql).select("round((((count(properties->>'05d5')::numeric) /  #{@total_clientes}) * 100 ),0)  as participacion") if @total_clientes > 0 
+          @querys << { "title":"#{chart.title}", "data":@data_extra_2[0]['participacion'], "id":"#{chart.id}"}
         else
-        @data =   @data.where(sql).send(analysis_type, "(#{field_select_without_graph}))::float  #{chart.const_field} ")
+
+          if params[:graph] == "true"
+
+            if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
+              @join = ("join choice_lists  on (properties->>'#{chart.project_field.key}')::integer = choice_lists.id" )
+              @data =   @data.joins(@join).where(sql).select(field_select).group(field_group)
+            else
+
+              @data =   @data.where(sql).select(field_select).group(field_group).order(field_group)
+            end 
+            chart_type = chart.chart.name
+
+            @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":{"serie1":@d1, "serie2":@d2}}
+          else
+            #@data =   Project.where(sql).sum("(#{field_select})::float") #funciona bien la suma
+            #@data =   Project.where(sql).count("(#{field_select})::float") #funciona bien el contar
+            if chart.const_field.nil?
+              @data =   @data.where(sql).send( analysis_type,"(#{field_select_without_graph}) ")
+            else
+              @data =   @data.where(sql).send(analysis_type, "(#{field_select_without_graph}))::float  #{chart.const_field} ")
+            end
+            @querys << { "title":"#{chart.title}", "data":@data, "id":"#{chart.id}"}
+          end
         end
-        @querys << { "title":"#{chart.title}", "data":@data, "id":"#{chart.id}"}
-      end
-      end
       end
     end
-end
+  end
 
 
   def kpi_anterior
 
     @querys=[]
     ####nuevo"""
-#    @size_box = params[:size_box].split(',') if !params[:size_box].nil?
-#    p minx = @size_box[0].to_f if !params[:size_box].nil?
-#    p miny = @size_box[1].to_f if !params[:size_box].nil?
-#    p maxx = @size_box[2].to_f if !params[:size_box].nil?
-#    p maxy = @size_box[3].to_f if !params[:size_box].nil?
-#########3
+    #    @size_box = params[:size_box].split(',') if !params[:size_box].nil?
+    #    p minx = @size_box[0].to_f if !params[:size_box].nil?
+    #    p miny = @size_box[1].to_f if !params[:size_box].nil?
+    #    p maxx = @size_box[2].to_f if !params[:size_box].nil?
+    #    p maxy = @size_box[3].to_f if !params[:size_box].nil?
+    #########3
     #Extend
     #minx = params[:size_box][0].to_f if !params[:size_box].nil?
     #miny = params[:size_box][1].to_f if !params[:size_box].nil?
@@ -140,53 +145,53 @@ end
     #maxy = params[:size_box][3].to_f if !params[:size_box].nil?
 
     @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], graph: params[:graph])
-   
+
     @analytics_charts.each do |chart|
 
       #tipo de analisis
       analysis_type = chart.analysis_type.name
-      
+
       #condiciones extras
       conditions_field = chart.condition_field 
-     
+
       #Datos para agrupar
       field_group_name = chart.group_field.name 
       @data = Project.where(project_type_id: params[:data_id])
- #     sql = "1=1"
-    #sql += "and  st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})" 
-     
-         field_group = "properties->>'"+ chart.group_field.key + "'"
-         field_select = " #{analysis_type}((properties->>'" + chart.project_field.key + "')::float) as count, "
-         field_select += field_group + " as label"
+      #     sql = "1=1"
+      #sql += "and  st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})" 
 
-        # chart_type = chart.chart.name
-         @data =   @data.where(sql).select(field_select).group(field_group).order(count: :desc).limit(100)
-         @querys<< { "title":"#{chart.title}", "kpi_id":chart.id,  "data":@data, "group": field_group_name, "select":chart.project_field.name}
-    
-      
-       sql = " st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})" 
-      
-       if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
+      field_group = "properties->>'"+ chart.group_field.key + "'"
+      field_select = " #{analysis_type}((properties->>'" + chart.project_field.key + "')::float) as count, "
+      field_select += field_group + " as label"
 
-         field_select = " (choice_lists.color) as color"
-         field_select += ", (choice_lists.label) as label"
-         field_select += ", #{analysis_type}(properties->>'" + chart.project_field.key + "')"
+      # chart_type = chart.chart.name
+      @data =   @data.where(sql).select(field_select).group(field_group).order(count: :desc).limit(100)
+      @querys<< { "title":"#{chart.title}", "kpi_id":chart.id,  "data":@data, "group": field_group_name, "select":chart.project_field.name}
+
+
+      sql = " st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})" 
+
+      if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
+
+        field_select = " (choice_lists.color) as color"
+        field_select += ", (choice_lists.label) as label"
+        field_select += ", #{analysis_type}(properties->>'" + chart.project_field.key + "')"
         field_group = "properties->>'"+ chart.project_field.key + "'"
         field_group += ", label, color"
-      
+
       else
         p params[:graph]
         if params[:graph] == "true"
-        field_select = " #{analysis_type}((properties->>'" + chart.project_field.key + "')::float)"
-        field_select += ", properties->>'" + chart.project_field.key + "' as label "
-        field_group = "properties->>'"+ chart.project_field.key + "'"
+          field_select = " #{analysis_type}((properties->>'" + chart.project_field.key + "')::float)"
+          field_select += ", properties->>'" + chart.project_field.key + "' as label "
+          field_group = "properties->>'"+ chart.project_field.key + "'"
         else
 
-        field_select = " #{analysis_type}(properties->>'" + chart.project_field.key + "')"
-        field_select += ", properties->>'" + chart.project_field.key + "' as label"
-        field_select_without_graph = " properties->>'" + chart.project_field.key + "'"
-        
-        field_group = "properties->>'"+ chart.group_field.name + "'"
+          field_select = " #{analysis_type}(properties->>'" + chart.project_field.key + "')"
+          field_select += ", properties->>'" + chart.project_field.key + "' as label"
+          field_select_without_graph = " properties->>'" + chart.project_field.key + "'"
+
+          field_group = "properties->>'"+ chart.group_field.name + "'"
         end
       end 
 
@@ -200,70 +205,57 @@ end
         @querys << { "title":"#{chart.title}", "data":@data_extra[0]['promedio'], "id":"#{chart.id}"}
 
       else
-      if analysis_type == "Participacion"
-        @total_clientes = Project.where("project_type_id": params[:data_id]).count
-        @data_extra_2 = 0 
-        @data_extra_2 = Project.where(sql).select("round((((count(properties->>'05d5')::numeric) /  #{@total_clientes}) * 100 ),0)  as participacion") if @total_clientes > 0 
-        @querys << { "title":"#{chart.title}", "data":@data_extra_2[0]['participacion'], "id":"#{chart.id}"}
-      else
-      
-      if params[:graph] == "true"
-      
-        if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
-        @join = ("join choice_lists  on (properties->>'#{chart.project_field.key}')::integer = choice_lists.id" )
-        @data =   @data.joins(@join).where(sql).select(field_select).group(field_group)
-      else
+        if analysis_type == "Participacion"
+          @total_clientes = Project.where("project_type_id": params[:data_id]).count
+          @data_extra_2 = 0 
+          @data_extra_2 = Project.where(sql).select("round((((count(properties->>'05d5')::numeric) /  #{@total_clientes}) * 100 ),0)  as participacion") if @total_clientes > 0 
+          @querys << { "title":"#{chart.title}", "data":@data_extra_2[0]['participacion'], "id":"#{chart.id}"}
+        else
 
-        @data =   @data.where(sql).select(field_select).group(field_group).order(count: :desc).limit(10)
-      end 
-        chart_type = chart.chart.name
+          if params[:graph] == "true"
 
-        @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data, "group": chart.group_field.name, "select":chart.input_value}
-      
-      else
-        #@data =   Project.where(sql).sum("(#{field_select})::float") #funciona bien la suma
-        #@data =   Project.where(sql).count("(#{field_select})::float") #funciona bien el contar
-        @data =   @data.where(sql).send(analysis_type, "(#{field_select_without_graph})::float")
-        @querys << { "title":"#{chart.title}", "data":@data, "id":"#{chart.id}"}
+            if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
+              @join = ("join choice_lists  on (properties->>'#{chart.project_field.key}')::integer = choice_lists.id" )
+              @data =   @data.joins(@join).where(sql).select(field_select).group(field_group)
+            else
 
+              @data =   @data.where(sql).select(field_select).group(field_group).order(count: :desc).limit(10)
+            end 
+            chart_type = chart.chart.name
+
+            @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data, "group": chart.group_field.name, "select":chart.input_value}
+
+          else
+            #@data =   Project.where(sql).sum("(#{field_select})::float") #funciona bien la suma
+            #@data =   Project.where(sql).count("(#{field_select})::float") #funciona bien el contar
+            @data =   @data.where(sql).send(analysis_type, "(#{field_select_without_graph})::float")
+            @querys << { "title":"#{chart.title}", "data":@data, "id":"#{chart.id}"}
+
+          end
+        end
       end
-      end
-      end
-     end
-    
+    end
+
 
   end
 
 
   def maps
 
-
     if params[:data_id] == '2'
       @projects = Project.where(project_type_id: params[:data_id]).select("the_geom")
     else
 
-    @projects = Project.joins("left join choice_lists on (projects.properties->>'897d')::integer = choice_lists.id").where(project_type_id: params[:data_id]).select("the_geom,  properties->>'05d5' as client_id, 
-properties->>'f2b1' as razon_social,
-properties->>'9e2f' as ejecutivo, 
-properties->>'00d8' as contratos,
-case (properties->>'status')::integer
-when 1 then 'Excelente'
-when 2 then 'Bueno'
-when 3 then 'Regular'
-when 4 then 'Malo'
-end as label,
-
-case (properties->>'status')::integer
-when 1 then '#A9F5BC'
-when 2 then '#58ACFA'
-when 3 then '#F7FE2E'
-when 4 then '#FE2E2E'
-end as color
-              ")
+      @projects = Project.where(project_type_id: params[:data_id]).select("st_x(the_geom) as x, st_y(the_geom)as y ")
     end                                                                
 
-    if !params[:provincia].blank?
-      @projects = @projects.where("properties->>'7926'=?", params[:provincia])
+
+    if !params[:project_field].blank?
+      project_field = params[:project_field]
+      filter = params[:filter]
+      input_value = params[:input_value]
+
+      @projects = @projects.where("properties->>'" + project_field +  "' " + filter  + " ?", input_value)
     end
 
   end

@@ -64,8 +64,8 @@
             <% @project_types.each do |project_type| %>
               <tr>
                 <td><%= link_to project_type.name, project_type_projects_path(project_type) %></td>
-                <td><%= link_to 'Dashboard', project_types_dashboard_path(project_type.id) %></td>
-                <td><%= link_to "Setting", project_type_analytics_dashboards_path(project_type.id)%></td>
+                <td><%= link_to 'Dashboard', project_type_dashboards_path(project_type.id) %></td>
+
                 <td><%= link_to 'Edit', edit_project_type_path(project_type) %></td>
 
               </tr>

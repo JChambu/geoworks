@@ -1,11 +1,11 @@
 class AnalyticsDashboardsController < ApplicationController
-  before_action :set_project_type
+  before_action :set_dashboard
   before_action :set_analytics_dashboard, only: [:show, :edit, :update, :destroy]
   
   # GET /analytics_dashboards
   # GET /analytics_dashboards.json
   def index
-    @analytics_dashboards = @project_type.analytics_dashboards.all
+    @analytics_dashboards = @dashboard.analytics_dashboards.all
   end
 
   # GET /analytics_dashboards/1
@@ -15,7 +15,8 @@ class AnalyticsDashboardsController < ApplicationController
 
   # GET /analytics_dashboards/new
   def new
-    @analytics_dashboard = AnalyticsDashboard.new
+    @analytics_dashboard = @dashboard.analytics_dashboards.new
+
   end
 
   # GET /analytics_dashboards/1/edit
@@ -25,13 +26,13 @@ class AnalyticsDashboardsController < ApplicationController
   # POST /analytics_dashboards
   # POST /analytics_dashboards.json
   def create
-
-    @analytics_dashboard = @project_type.analytics_dashboards.new(analytics_dashboard_params)
+    
+    @analytics_dashboard = @dashboard.analytics_dashboards.new(analytics_dashboard_params)
 
     respond_to do |format|
       if @analytics_dashboard.save
         format.js 
-        format.html { redirect_to project_type_analytics_dashboards_path(@project_type), notice: 'Analytics dashboard was successfully created.' }
+        format.html { redirect_to project_type_dashboard_analytics_dashboards_path(@project_type, @dashboard), notice: 'Analytics dashboard was successfully created.' }
         format.json { render :show, status: :created, location: @analytics_dashboard }
 
       else
@@ -71,8 +72,9 @@ class AnalyticsDashboardsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
 
-  def set_project_type
+  def set_dashboard
     @project_type = ProjectType.find(params[:project_type_id])
+    @dashboard = Dashboard.find(params[:dashboard_id])
   end
   
   def set_analytics_dashboard

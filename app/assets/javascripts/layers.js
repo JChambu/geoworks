@@ -16,7 +16,8 @@ Navarra.layers.basemaps = function(){
     visible: 'true',
     opacity: 0.9,
     source: new ol.source.OSM({
-     "url": "http://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+     "url": "http://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      crossOrigin: '*'
     } )
   });
   var noneLayer = new ol.layer.Tile({
@@ -96,6 +97,54 @@ var   vectorSource, vectorSource_geoserver_tramos_desfasaje, vectorSource_geoser
 var styleSinInfo,  styleNew,  styleOk, styleRevisar, stylePosibleBarrio, styleDesfasaje   
 
 
+Navarra.layers.surba = function(){
+
+    url = 'http://localhost:8080/geoserver/wms';
+    layers_geoserver_label = 'geoworks:view_luminarias'
+
+  vectorSource_layer_label = new ol.source.TileWMS({
+    url: url,
+    params: { LAYERS: layers_geoserver_label, VERSION: '1.1.0'} 
+  });
+  
+  var label = new ol.layer.Tile({
+    title: 'Etiqueta',
+    opacity: 0.9,
+    source: vectorSource_layer_label 
+  });
+  
+  sourcePoint = 'http://localhost:8080/geoserver/geoworks/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoworks:view_luminarias&maxFeatures=50000&outputFormat=application%2Fjson'
+
+  vectorSourcePoint = new ol.source.Vector({
+    url:  sourcePoint,
+    format: new ol.format.GeoJSON()
+  });
+
+  vectorLayerPoint = new ol.layer.Vector({
+    title:'Gw status Revisar',
+    type: 'overlays',
+    source: vectorSourcePoint,
+  });
+
+  vectorLayerPoint.setVisible(true);
+
+    var label = new ol.layer.Tile({
+      title: 'eti',
+      type: 'overlays',
+      visible: 'true',
+      source: new ol.source.TileWMS({
+        url:'http://localhost:8080/geoserver/wms',
+        PARAMS: {LAYERS: layers_geoserver_label , VERSION: '1.1.0'} 
+      })
+    });
+
+  return [vectorLayerPoint];
+console.log("hola_layers");
+}
+
+
+
+
 Navarra.layers.labels = function(){
 
   subdomain = Navarra.geocoding_ol.load_subdomain();
@@ -125,6 +174,11 @@ var url, layers_geoserver_label ;
   });
 
   label.setVisible(false);
+
+  
+  
+  
+  
   return [label];
 }
 

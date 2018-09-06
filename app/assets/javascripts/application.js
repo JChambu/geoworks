@@ -18,7 +18,6 @@
 //= require progressbar
 //= require moment.min
 //= require chartist
-//= require chart
 //= require custom
 //= require navarra
 //= require common
@@ -34,4 +33,5 @@
 //= require geocoding_ol
 //= require flot/jquery.flot
 //= require flot/jquery.flot.resize
+//= require leaflet/dist/leaflet.markercluster-src.js 
 //= require_tree 

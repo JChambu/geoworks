@@ -43,8 +43,7 @@ module ApplicationHelper
   def pager collection
     will_paginate collection,
       :previous_label => t("pager.previous"),
-      :next_label => t("pager.next"),
-      renderer: BootstrapPagination::Rails
+      :next_label => t("pager.next")
   end
 
   def control_group control, attr = ''

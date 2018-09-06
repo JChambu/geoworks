@@ -8,10 +8,11 @@
       <div class="modal-body">
         <%= form_for :q, :action => '',:remote => true, :method => :get , :html => { :id => "filters-form"} do |f| %>
           <div>
-            <%=select_tag 'q[project_field]',  options_for_select(region_for_select)  %>
+            <%=select_tag 'q[project_field]',  options_for_select(region_for_select) %>
+            <%=select_tag 'q[filters]', options_for_select(ProjectType::FILTERS)%>
+            <%=text_field_tag 'q[input_value]'%>
           </div>
         <% end %>
-
         <%= submit_tag :enviar, id: "enviar" %>
       </div>
     </div>

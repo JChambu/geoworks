@@ -653,5 +653,7 @@ es:
         user: "Usuario"
         phone: "Telefono"
         source: "Fuente"
+      project_type:
+        name: "Nombre"
     errors:
       <<: *errors

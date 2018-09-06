@@ -6,11 +6,9 @@
         <h4 class="modal-title"> </h4>
       </div>
 
-      <%= simple_form_for([@project_type, @analytics_dashboard],  html: {role: :form,  remote: true, class: 'form form-inline'}) do |f| %>
+      <%= simple_form_for([@project_type, @dashboard, @analytics_dashboard],  html: {role: :form,  remote: true, class: 'form form-inline'}) do |f| %>
         <div class="modal-body">
-
           <div id="alert-success">
-            
           </div>
 
           <% if @analytics_dashboard.errors.any? %>

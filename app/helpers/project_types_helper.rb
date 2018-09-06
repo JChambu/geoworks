@@ -1,9 +1,7 @@
 module ProjectTypesHelper
 
-def region_for_select
-
-  Project.where(project_type_id: params["project_type_id"]).select("properties->>'7926'").group("properties->>'7926'").each do |region| p region  
+  def region_for_select
+    ProjectField.where(project_type_id: params["project_type_id"]).select("key").map { |region|  region.key
+    }
   end
-    
-end
 end
