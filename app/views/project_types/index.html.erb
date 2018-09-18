@@ -57,13 +57,17 @@
           <thead>
 
             <th><%= model_class.human_attribute_name(:name) %></th>
+            <th><%= model_class.human_attribute_name(:count) %></th>
             <th colspan="3"></th>
           </thead>
           <tbody>
 
             <% @project_types.each do |project_type| %>
               <tr>
+
                 <td><%= link_to project_type.name, project_type_projects_path(project_type) %></td>
+                <td><%= project_type.projects.count %></td>
+                <td><%= link_to 'Geocoder', project_types_geocoding_path(project_type.id) %></td>
                 <td><%= link_to 'Dashboard', project_type_dashboards_path(project_type.id) %></td>
 
                 <td><%= link_to 'Edit', edit_project_type_path(project_type) %></td>

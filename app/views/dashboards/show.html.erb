@@ -1,6 +1,28 @@
+<%= content_for :head do %>
+    <script type="text/javascript">
+      Navarra.dashboards.config.project_type_id = <%= @project_type.id %>
+    <% @projects.each do |a|%>
+    <%if !a.the_geom.nil?  %>
+      Navarra.dashboards.config.lat.push( <%= a.the_geom.y %>)
+      Navarra.dashboards.config.lon.push( <%= a.the_geom.x %>)
+    <% end %>
+<% end %>
+  </script>  
+<% end %>
 <%= form_for :q, :method => :get  do |f| %>
+
+<div class="row tile_count">
+</div>
+
   <div class="row">
     <%= render 'maps' %>
   </div>
   <br/>
+  <div class="row">
+<div class="row graphics">
+ <div class="clearfix"><br></div>
+</div>
+    <canvas id="canvas"></canvas>
+
+  </div>
 <% end %>

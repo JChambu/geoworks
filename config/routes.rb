@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   get 'project_types/kpi' => 'project_types#kpi'
   get 'project_types/graph3' => 'project_types#graph2'
 
+
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
 
@@ -41,7 +42,9 @@ Rails.application.routes.draw do
     post 'charts/create'
     resources :charts
     resources :analysis_types
+    get 'project_types/:id/geocoding' => 'project_types#geocoding', as: :project_types_geocoding
     get 'project_types/:id/dashboard' => 'project_types#dashboard',  :as => :project_types_dashboard
+    get 'project_types/import_file' => 'project_types#import_file', as: :import_file
 
     get 'panel', to: 'project_types#panel'
     resources :project_types do 
@@ -50,6 +53,7 @@ Rails.application.routes.draw do
       end
       resources :projects
       get 'project_types/filters' => 'project_types#filters', as: :filters
+
     end
     resources :regexp_types
     #  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'

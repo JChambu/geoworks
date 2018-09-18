@@ -1,5 +1,7 @@
 Navarra.namespace("project_types.action_maps");
 Navarra.namespace("project_types.action_dashboard");
+Navarra.namespace("project_types.action_create");
+Navarra.namespace("project_types.action_new");
 
 Navarra.project_types.config = {
   filtrado: '',
@@ -58,7 +60,27 @@ Navarra.project_types.action_dashboard = function(){
   }
 }();
 
+Navarra.project_types.action_create = function(){
+  init = function(){
+   $('.enviar').on('click', function(){
+    console.log("hola");
+   });
+  }
+  return {
+    init: init,
+  }
+}();
 
 
+Navarra.project_types.action_new = function(){
+  init = function(){
+    console.log("aaaa");
+   //e.preventDefault(); 
 
+  };
+  
+  return {
+    init: init,
+  }
+}();
 

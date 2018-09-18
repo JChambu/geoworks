@@ -27,22 +27,35 @@ Navarra.geomaps = function (){
     if (markers !=undefined){
       mymap.removeLayer(markers);
     }
+
+/*    for (i = 0;  i < Navarra.dashboards.config.lon.length; i++) {
+      lon = parseFloat(Navarra.dashboards.config.lon[i]);
+      lat = parseFloat(Navarra.dashboards.config.lat[i]);
+
+      //  console.log(lon);
+
+      marker = L.marker([lat, lon]).addTo(mymap) 
+    }*/
+   
+
     markers = L.markerClusterGroup({
       // disableClusteringAtZoom: true
       maxClusterRadius: 30
     });
     var geoJsonLayer = new L.geoJSON();
-    var owsrootUrl = 'http://45.55.84.16:8080/geoserver/ows';
+    var owsrootUrl = 'http://localhost:8080/geoserver/ows';
     var defaultParameters = {
       service: 'WFS',
       version: '1.0.0',
       request: 'GetFeature',
       //  typeName: 'geoworks:view_luminarias',
-      typeName: 'geoworks:view_luminarias_lanus',
+      typeName: 'geoworks:view_project_geoserver',
       maxFeatures: 1000,
       outputFormat: 'application/json',
     };
+//    console.log(Navarra.dashboards.config.project_type_id);  
 
+        defaultParameters.CQL_FILTER = "project_type_id="+Navarra.dashboards.config.project_type_id  ;
     /* if (FiltrosAcumulados.length > 0 ){
         defaultParameters.CQL_FILTER = "1=1";
         $.each(FiltrosAcumulados, function(a,b){
@@ -50,7 +63,7 @@ Navarra.geomaps = function (){
           defaultParameters.CQL_FILTER += " and "+condition_cql+"='"+b[1]+"'";
         });
       }*/
-    var parameters = L.Util.extend(defaultParameters);
+      var parameters = L.Util.extend(defaultParameters);
     var URL = owsrootUrl + L.Util.getParamString(parameters);
     //Custom radius and icon create function
     $.ajax({
@@ -65,7 +78,11 @@ Navarra.geomaps = function (){
         mymap.addLayer(markers);
       }
     });
+ 
+     size_box = mymap.getBounds();
 
+          Navarra.dashboards.config.size_box = size_box;  
+          init_chart_doughnut();  
     /*
     L.marker([51.5, -0.09]).addTo(mymap)
       .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
@@ -84,19 +101,19 @@ Navarra.geomaps = function (){
 
         // Initialise the draw control and pass it the FeatureGroup of editable layers
 
-            HandlerPolygon = new L.Draw.Polygon(mymap);
-            HandlerPolygon.enable();
+        HandlerPolygon = new L.Draw.Polygon(mymap);
+        HandlerPolygon.enable();
 
-      var OpcionesPoligono={
+        var OpcionesPoligono={
           shapeOptions: {
-                    color: '#F0D33F',
-                  },
-      }
+            color: '#F0D33F',
+          },
+        }
         var editableLayers = new L.FeatureGroup();
         mymap.addLayer(editableLayers);
 
         mymap.on('draw:created', function(e) {
-        console.log(e);
+          console.log(e);
 
         });
 

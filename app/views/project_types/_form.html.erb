@@ -1,41 +1,12 @@
-<%= form_for(project_type) do |f| %>
-  <% if project_type.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(project_type.errors.count, "error") %> prohibited this project_type from being saved:</h2>
-
-      <ul>
-        <% project_type.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </div>
-
-  <%= f.fields_for :fields do |builder| %>
-    <%= render 'field_fields', f: builder %>
-  <% end %>
-  <%= link_to_add_fields "Add Field", f, :fields %>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
-<% end %>
-
 <%= simple_form_for @project_type, html: {multipart: true}  do |f| %>
-
   <div class="field">
     <%= f.label :name %>
     <%= f.text_field :name %>
   </div>
-        <%= f.file_field(:file, multiple: true)  %>
+  <%= f.file_field(:file, multiple: true)  %>
 
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit class: 'enviar' %>
   </div>
 
 <% end %>

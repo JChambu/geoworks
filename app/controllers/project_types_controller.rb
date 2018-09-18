@@ -1,8 +1,20 @@
 class ProjectTypesController < ApplicationController
-  before_action :set_project_type, only: [:show, :edit, :update, :destroy]
+  before_action :set_project_type, only: [:show, :edit, :update, :destroy, :geocoding]
 
   # GET /project_types
   # GET /project_types.json
+
+  def geocoding
+      
+    if params[:q].present?
+      geo = ProjectType.build_geom(params[:q], params[:id])  
+    end
+  end
+  
+  
+  def import_file
+    @csv_load = ProjectType.read_csv(@project_type.file)
+  end
 
   def filters
     respond_to do |format|
@@ -15,6 +27,7 @@ class ProjectTypesController < ApplicationController
   end
 
   def kpi
+    
     @op_graph = params[:graph]
     @data_conditions = params[:data_conditions]
 
@@ -260,12 +273,6 @@ class ProjectTypesController < ApplicationController
 
   end
 
-  def graph2
-    ##  params[:data_id] = 'b4a38670-0fbc-45d6-a162-48517e4198ba'
-    #  @query = ProjectType.graph2(params[:data_id])
-  end
-
-
   def index
     @project_types = ProjectType.all
     @project_types = @project_types.paginate(:page => params[:page])
@@ -291,9 +298,10 @@ class ProjectTypesController < ApplicationController
   # POST /project_types.json
   def create
     @project_type = ProjectType.new(project_type_params)
+
     respond_to do |format|
       if @project_type.save
-        format.html { redirect_to @project_type, notice: 'Project type was successfully created.' }
+        format.html { redirect_to project_types_path(), notice: 'Project type was successfully created.' }
         format.json { render :show, status: :created, location: @project_type }
       else
         format.html { render :new }
@@ -307,7 +315,7 @@ class ProjectTypesController < ApplicationController
   def update
     respond_to do |format|
       if @project_type.update(project_type_params)
-        format.html { redirect_to @project_type, notice: 'Project type was successfully updated.' }
+        format.html { redirect_to project_types_path(), notice: 'Project type was successfully updated.' }
         format.json { render :show, status: :ok, location: @project_type }
       else
         format.html { render :edit }

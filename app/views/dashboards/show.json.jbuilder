@@ -1,1 +1,4 @@
-json.partial! "dashboards/dashboard", dashboard: @dashboard
+json.array! @projects do |item|
+  json.latitude item.y
+  json.longitude item.x
+end

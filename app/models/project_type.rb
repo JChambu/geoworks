@@ -11,11 +11,10 @@ class ProjectType < ApplicationRecord
 
   belongs_to :user
   has_many :fields, class_name: "ProjectField"
-  
+
   has_many :projects
   has_many :dashboards
   accepts_nested_attributes_for :fields, allow_destroy: true
-
 
   FILTERS = %w(= <)
 
@@ -23,14 +22,58 @@ class ProjectType < ApplicationRecord
 
   before_save :save_shp_file, if: :file_exist? 
   after_create :load_file, if: :file_exist? 
+  after_update :load_file, if: :file_exist? 
   #before_save :load_rgeoserver
   #after_save :load_shape,  if: :file_exist?
   #validate :validate_options
+  #validate :is_file_type_valid?
+
+
+  def self.build_geom(q, project_type_id)
+
+   @q = q
+   @project_type_id = project_type_id
+
+    @address = q['address']
+    @department = q['department']
+    @province = q['province']
+    @country = q['country']
+    @extended = Project.where("project_type_id = #{@project_type_id}")
+    @extended.each do |e|
+
+    @e = e
+
+    geom = ''
+    @street = e.properties["#{@address}"]
+    @city = e.properties["#{@department}"] 
+    @province = e.properties["#{@province}"]
+    @country = e.properties["#{@country}"]
+
+    @address_complete = [[@street], @city, @province, @country].join(', ')
+      #Buscar por direccion, ciudad, provicia,etc
+      geocode = Geocoder.coordinates(@address_complete)
+      geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
+      e.update_attribute(:the_geom, geom )
+    end
+  end
+
 
   def file_exist?
     if !self.file.nil?
       return true
     end
+  end
+
+  def is_file_type_valid?
+    begin
+      if (self.file.content_type == "application/x-esri-shape")
+        valid = self.file.content_type 
+      end 
+    rescue
+      valid = false
+    end
+    self.errors.add(:base, :invalid_xls_type) unless valid
+    valid
   end
 
   def self.kpi_without_graph(project_type_id, option_graph, size_box, type_box, filter_condition = nil)
@@ -235,10 +278,8 @@ class ProjectType < ApplicationRecord
   end
 
 
-
-
-
   def load_file
+    a = []
     self.file.each do |f|
       case f.content_type
         #when 'application/dbf', 'application/octet-stream','application/x-anjuta','application/octet-stream','application/x-dbf','application/x-esri-shape'
@@ -248,7 +289,7 @@ class ProjectType < ApplicationRecord
           load_shape()
         end
       when 'text/csv'
-        load_csv()
+      a=  load_csv()
       when 'application/xls', 'application/vnd.ms-excel'
         p 'xls'
       when 'application/json'
@@ -257,17 +298,29 @@ class ProjectType < ApplicationRecord
         load_geojson()
       end
     end
+  a
+  end
 
+  def self.read_csv(file)
+    @fi = file
+    @or = @fi[0].tempfile
+    @elements = []
+    CSV.foreach(@or, headers: true).with_index do |row, i |
+        row.headers.each do |field|
+        @elements << field        
+    end
+    end
+ @elements 
   end
 
   def load_csv 
     file_name = @directory[1].split('.').first
     items = []
     CSV.foreach("#{@directory[0]}/#{file_name}.csv", headers: true).with_index do |row, i |
-
       if i == 0 
         row.headers.each do |field|
-          @new_project_field =  ProjectField.create(name: field, key: field, field_type: 'text_field', project_type_id: self.id)
+          p field
+          @new_project_field =  ProjectField.where(name: field, key: field, field_type: 'text_field', project_type_id: self.id).first_or_create(name: field, key: field, field_type: 'text_field', project_type_id: self.id)
         end
       end
       items = row.to_h

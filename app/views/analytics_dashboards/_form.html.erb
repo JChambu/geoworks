@@ -24,18 +24,18 @@
 
             <%= f.input :title %>
             <%= f.input :description %>
-            <%= f.input :project_field_id, label: "project_field", :collection => fields_for_select %>
+            <%= f.input :project_field_id, label: "project_field", :collection => fields_for_select_a %>
             <%= f.input :analysis_type_id, :collection => analysis_types_for_select %>
             <%= f.input :chart_id, collection: chart_types_for_select %>
             <div>
               <%= f.label :graph, "Graficar" %>
               <%= f.check_box :graph%>
-            <%= f.input :group_field_id, label: "group_field", :collection => fields_for_select %>
+            <%= f.input :group_field_id, label: "group_field", :collection => fields_for_select_a %>
             </div>
 
             <div class="col-md-12">
               <div class="col-md-3">
-                <%= f.input :condition_field_id, collection: fields_for_select, input_html:{class: "col-md-12"} %>
+                <%= f.input :condition_field_id, collection: fields_for_select_a, input_html:{class: "col-md-12"} %>
               </div>
               <div class="col-md-3">
                 <%= f.input :filter_input, collection: ['=','!=', '<', '>', '>=', '<=', 'in', 'ilike', 'is null', 'is not null'] %>

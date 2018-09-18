@@ -1,6 +1,6 @@
 module AnalyticsDashboardsHelper
 
-  def fields_for_select
+  def fields_for_select_a
     ProjectField.where(project_type_id: params["project_type_id"]).map {|field| [field.name, field.id]}
   end
 

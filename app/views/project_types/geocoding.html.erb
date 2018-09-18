@@ -1,0 +1,27 @@
+<%= form_tag(project_types_geocoding_path(@project_type.id), method: :get) do %>
+
+  <h2>Geolocalizacion</h2>
+  
+  <div>
+    Project:
+    <%= @project_type.name%>
+  </div>
+  <div>
+    Direccion: <%=select_tag 'q[address]',  options_for_select(fields_for_select) %>
+</div>
+<div>
+  Departamento: <%=select_tag 'q[department]',  options_for_select(fields_for_select) %>
+</div>
+<div>
+  Provincia: <%=select_tag 'q[province]',  options_for_select(fields_for_select) %>
+</div>
+<div>
+  Pais: <%=select_tag 'q[country]',  options_for_select(fields_for_select) %>
+</div>
+<div class="actions">
+  <%= submit_tag 'Enviar', class: 'enviar' %>
+</div>
+<% end %>
+
+
+
