@@ -27,7 +27,7 @@ class ProjectTypesController < ApplicationController
   end
 
   def kpi
-    
+   
     @op_graph = params[:graph]
     @data_conditions = params[:data_conditions]
 

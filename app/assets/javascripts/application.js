@@ -29,8 +29,6 @@
 //= require ol3/buttoncontrol
 //= require ol3/togglecontrol
 //= require ol3/ol3-popup
-//= require geo_editions
-//= require geocoding_ol
 //= require flot/jquery.flot
 //= require flot/jquery.flot.resize
 //= require leaflet/dist/leaflet.markercluster-src.js 

@@ -2,15 +2,12 @@ Navarra.namespace("geomaps");
 
 Navarra.geomaps = function (){
   //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
-  var mymap;
+  var map, markers, editableLayers;
   var init= function() {
 
-    var xView =-32.933;
-    var yView= -71.543;
-
-    var mymap = L.map('mapid',{
+    mymap = L.map('mapid',{
       zoomControl: false
-    }).setView([xView, yView], 15);
+    }).setView([-63.8167, -33.8833], 15);
 
     var Layerppal=L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
       attribution: '',
@@ -23,23 +20,29 @@ Navarra.geomaps = function (){
       position:'topright'
     }).addTo(mymap);
 
-    var markers;
     if (markers !=undefined){
       mymap.removeLayer(markers);
     }
 
-/*    for (i = 0;  i < Navarra.dashboards.config.lon.length; i++) {
-      lon = parseFloat(Navarra.dashboards.config.lon[i]);
-      lat = parseFloat(Navarra.dashboards.config.lat[i]);
+    mymap.on('zoomend', onMapZoomed);
+    //    mymap.on('moveend', onMapMoveend);
 
-      //  console.log(lon);
+    function onMapZoomed(e) {
+      show_kpis();
+    }
 
-      marker = L.marker([lat, lon]).addTo(mymap) 
-    }*/
-   
+    function onMapMoveend (e) {
+      show_kpis();
+    }
 
+    function show_kpis(){
+
+      size_box = mymap.getBounds();
+      Navarra.dashboards.config.size_box = size_box;  
+      init_chart_doughnut();  
+    }
     markers = L.markerClusterGroup({
-      // disableClusteringAtZoom: true
+      //disableClusteringAtZoom: false,
       maxClusterRadius: 30
     });
     var geoJsonLayer = new L.geoJSON();
@@ -48,14 +51,12 @@ Navarra.geomaps = function (){
       service: 'WFS',
       version: '1.0.0',
       request: 'GetFeature',
-      //  typeName: 'geoworks:view_luminarias',
       typeName: 'geoworks:view_project_geoserver',
       maxFeatures: 1000,
       outputFormat: 'application/json',
     };
-//    console.log(Navarra.dashboards.config.project_type_id);  
 
-        defaultParameters.CQL_FILTER = "project_type_id="+Navarra.dashboards.config.project_type_id  ;
+    defaultParameters.CQL_FILTER = "project_type_id="+Navarra.dashboards.config.project_type_id  ;
     /* if (FiltrosAcumulados.length > 0 ){
         defaultParameters.CQL_FILTER = "1=1";
         $.each(FiltrosAcumulados, function(a,b){
@@ -63,7 +64,7 @@ Navarra.geomaps = function (){
           defaultParameters.CQL_FILTER += " and "+condition_cql+"='"+b[1]+"'";
         });
       }*/
-      var parameters = L.Util.extend(defaultParameters);
+    var parameters = L.Util.extend(defaultParameters);
     var URL = owsrootUrl + L.Util.getParamString(parameters);
     //Custom radius and icon create function
     $.ajax({
@@ -78,55 +79,108 @@ Navarra.geomaps = function (){
         mymap.addLayer(markers);
       }
     });
- 
-     size_box = mymap.getBounds();
 
-          Navarra.dashboards.config.size_box = size_box;  
-          init_chart_doughnut();  
-    /*
-    L.marker([51.5, -0.09]).addTo(mymap)
-      .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-      .openPopup();
-      */
-
+    function poly(){ 
+      HandlerPolygon = new L.Draw.Polygon(mymap, OpcionesPoligono);
+      HandlerPolygon.enable();
+    }
+    var OpcionesPoligono={
+      shapeOptions: {
+        color: '#F0D33F',
+      }
+    }
 
     $('#select').on('click', function(event) {
       checked = $('#select').hasClass('active');
       if (checked){
         $('#select').removeClass('active');
-
+        editableLayers.eachLayer(function (layer) {
+          mymap.removeLayer(layer);
+        });
+        HandlerPolygon.disable();
       }else{
         $('#select').addClass('active');
-
-
         // Initialise the draw control and pass it the FeatureGroup of editable layers
-
-        HandlerPolygon = new L.Draw.Polygon(mymap);
-        HandlerPolygon.enable();
-
-        var OpcionesPoligono={
-          shapeOptions: {
-            color: '#F0D33F',
-          },
-        }
-        var editableLayers = new L.FeatureGroup();
+        editableLayers = new L.FeatureGroup();
         mymap.addLayer(editableLayers);
-
+        mymap.doubleClickZoom.disable(); 
+        poly();
         mymap.on('draw:created', function(e) {
-          console.log(e);
-
-        });
-
-      }  
+          var type = e.layerType,
+            layer = e.layer;
+          console.log(layer.getLatLngs());
+          editableLayers.addLayer(layer);
+        })
+      }
     });
-  }
+    /*
 
+      // center of the map
+        var center = [-33.8650, 151.2094];
 
-  return {
-    init: init
-    //    enableMap: enableMap,
-    //    latitude_ol: latitude_ol,
-    //    longitude_ol: longitude_ol,
-    //    line_ol: line_ol
-  }
+    // Create the map
+        var map = L.map('mapid').setView(center, 6);
+
+// Set up the OSM layer
+        L.tileLayer(
+          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Data © <a href="http://osm.org/copyright">OpenStreetMap</a>',
+            maxZoom: 18
+          }).addTo(map);
+
+// add a marker in the given location
+    L.marker(center).addTo(map);
+
+    // Initialise the FeatureGroup to store editable layers
+    var editableLayers = new L.FeatureGroup();
+    map.addLayer(editableLayers);
+
+    var drawPluginOptions = {
+      position: 'topright',
+      draw: {
+        polygon: {
+          allowIntersection: false, // Restricts shapes to simple polygons
+          drawError: {
+            color: '#e1e100', // Color the shape will turn when intersects
+            message: '<strong>Oh snap!<strong> you can\'t draw that!' // Message that will show when intersect
+          },
+          shapeOptions: {
+            color: '#97009c'
+          }
+        },
+          // disable toolbar item by setting it to false
+        polyline: false,
+        circle: false, // Turns off this drawing tool
+        rectangle: false,
+        marker: false,
+      },
+      edit: {
+        featureGroup: editableLayers, //REQUIRED!!
+        remove: false
+      }
+    };
+
+  // Initialise the draw control and pass it the FeatureGroup of editable layers
+    var drawControl = new L.Control.Draw(drawPluginOptions);
+    map.addControl(drawControl);
+
+    var editableLayers = new L.FeatureGroup();
+    map.addLayer(editableLayers);
+
+    map.on('draw:created', function(e) {
+      var type = e.layerType,
+        layer = e.layer;
+
+      if (type === 'marker') {
+        layer.bindPopup('A popup!');
+      }
+
+      editableLayers.addLayer(layer);
+    });
+    */
+
+}
+return {
+  init: init
+}
 }();

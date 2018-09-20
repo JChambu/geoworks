@@ -31,26 +31,19 @@ class ProjectType < ApplicationRecord
 
   def self.build_geom(q, project_type_id)
 
-   @q = q
-   @project_type_id = project_type_id
-
+    @project_type_id = project_type_id
     @address = q['address']
     @department = q['department']
     @province = q['province']
     @country = q['country']
     @extended = Project.where("project_type_id = #{@project_type_id}")
-    @extended.each do |e|
-
-    @e = e
-
-    geom = ''
-    @street = e.properties["#{@address}"]
-    @city = e.properties["#{@department}"] 
-    @province = e.properties["#{@province}"]
-    @country = e.properties["#{@country}"]
-
-    @address_complete = [[@street], @city, @province, @country].join(', ')
-      #Buscar por direccion, ciudad, provicia,etc
+      @extended.each do |e|
+      geom = ''
+      @street = e.properties["#{@address}"]
+      @city = e.properties["#{@department}"] 
+      @province = e.properties["#{@province}"]
+      @country = e.properties["#{@country}"]
+      @address_complete = [[@street], @city, @province, @country].join(', ')
       geocode = Geocoder.coordinates(@address_complete)
       geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
       e.update_attribute(:the_geom, geom )
@@ -139,7 +132,6 @@ class ProjectType < ApplicationRecord
         @arr1.push([z])
       end
     else
-
       minx = size_box[0].to_f if !size_box.nil?
       miny = size_box[1].to_f if !size_box.nil?
       maxx = size_box[2].to_f if !size_box.nil?
@@ -153,7 +145,6 @@ class ProjectType < ApplicationRecord
       @items = {}
       if type_box == 'extent'
         data = Project.where(project_type_id: chart.project_type_id).where(" st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
-
       else
         data = Project.where(project_type_id: chart.project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
       end
@@ -289,7 +280,7 @@ class ProjectType < ApplicationRecord
           load_shape()
         end
       when 'text/csv'
-      a=  load_csv()
+        a=  load_csv()
       when 'application/xls', 'application/vnd.ms-excel'
         p 'xls'
       when 'application/json'
@@ -298,7 +289,7 @@ class ProjectType < ApplicationRecord
         load_geojson()
       end
     end
-  a
+    a
   end
 
   def self.read_csv(file)
@@ -306,11 +297,11 @@ class ProjectType < ApplicationRecord
     @or = @fi[0].tempfile
     @elements = []
     CSV.foreach(@or, headers: true).with_index do |row, i |
-        row.headers.each do |field|
-        @elements << field        
+      row.headers.each do |field|
+      @elements << field        
     end
     end
- @elements 
+    @elements 
   end
 
   def load_csv 

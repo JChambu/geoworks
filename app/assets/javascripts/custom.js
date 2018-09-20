@@ -109,7 +109,7 @@ function init_kpi(size_box = null){
   var type_box = 'polygon';
   var data_conditions = {} 
   if (size_box== null && Navarra.project_types.config.project_field == '' ){
-    var size_box = Navarra.project_types.config.size_box;
+    var size_box = Navarra.dashboards.config.size_box;
     type_box = 'extent';
   }else{
     type_box = 'filter';
@@ -159,21 +159,25 @@ function capitalize(s){
 };
 
 function init_chart_doughnut(size_box = null){
-
-
+  size_box = [];
   if( typeof (Chart) === 'undefined'){ return; }
 
   if ($('.graphics').length){
     $('.graphics').empty();
   var type_box = 'polygon';
   if (size_box== null){
-    var size_box = Navarra.project_types.config.size_box;
-    type_box = 'extent';
   }
   
-    var  data_id =  $('#data_id').val();
-    $.ajax({
+    type_box = 'extent';
+      size_ext = Navarra.dashboards.config.size_box;
+      size_box[0] = size_ext['_southWest']['lng'];
+      size_box[1] = size_ext['_southWest']['lat'];
+      size_box[2] = size_ext['_northEast']['lng'];
+      size_box[3] = size_ext['_northEast']['lat'];
 
+      
+    var  data_id =  Navarra.dashboards.config.project_type_id;
+    $.ajax({
       type: 'GET',
       url: '/project_types/kpi.json',
       datatype: 'json',
@@ -216,7 +220,6 @@ function init_chart_doughnut(size_box = null){
 
               var div_graph = document.createElement('div');
               var title_graph = title.replace(" ", "_");
-              console.log(title_graph);
                 if (type_chart == 'bar'){
                   fixed_height = 'col-md-12 col-sm-12 ';
                 }else{
