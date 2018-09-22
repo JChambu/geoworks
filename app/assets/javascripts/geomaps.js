@@ -2,7 +2,8 @@ Navarra.namespace("geomaps");
 
 Navarra.geomaps = function (){
   //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
-  var map, markers, editableLayers;
+  var map, markers, editableLayers
+  var size_box = [];
   var init= function() {
 
     mymap = L.map('mapid',{
@@ -28,7 +29,10 @@ Navarra.geomaps = function (){
     //    mymap.on('moveend', onMapMoveend);
 
     function onMapZoomed(e) {
-      show_kpis();
+      checked = $('#select').hasClass('active');
+      if(!checked){
+        show_kpis();
+      }
     }
 
     function onMapMoveend (e) {
@@ -36,9 +40,10 @@ Navarra.geomaps = function (){
     }
 
     function show_kpis(){
-
+      size=[];
       size_box = mymap.getBounds();
       Navarra.dashboards.config.size_box = size_box;  
+      init_kpi();
       init_chart_doughnut();  
     }
     markers = L.markerClusterGroup({
@@ -98,21 +103,56 @@ Navarra.geomaps = function (){
           mymap.removeLayer(layer);
         });
         HandlerPolygon.disable();
+        size_box=[];
+          init_kpi();
+          init_chart_doughnut(); 
+
       }else{
         $('#select').addClass('active');
+        size_box = [];
         // Initialise the draw control and pass it the FeatureGroup of editable layers
         editableLayers = new L.FeatureGroup();
         mymap.addLayer(editableLayers);
         mymap.doubleClickZoom.disable(); 
         poly();
         mymap.on('draw:created', function(e) {
+          var arr1 = []
           var type = e.layerType,
             layer = e.layer;
-          console.log(layer.getLatLngs());
+          polygon = layer.getLatLngs();
           editableLayers.addLayer(layer);
+          arr1 = LatLngsToCoords(polygon[0]);
+          size_box.push(arr1);
+          init_kpi(size_box);
+          init_chart_doughnut(size_box);  
+          poly();
         })
       }
     });
+
+
+    var LatLngToCoords = function (LatLng, reverse) { // (LatLng, Boolean) -> Array
+      var lat = parseFloat(LatLng.lat),
+        lng = parseFloat(LatLng.lng);
+      return [lng,lat];
+    }
+
+    var LatLngsToCoords = function (LatLngs, levelsDeep, reverse) { // (LatLngs, Number, Boolean) -> Array
+  
+     var i, len;
+     var coords=[];
+
+      for (i = 0, len = LatLngs.length; i < len; i++) {
+        coord =  LatLngToCoords(LatLngs[i]);
+        coords.push(coord);
+      }
+      return coords;
+    }
+
+
+
+
+
     /*
 
       // center of the map

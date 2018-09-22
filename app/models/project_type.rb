@@ -77,22 +77,25 @@ class ProjectType < ApplicationRecord
 
     @size = size_box
 
-    if type_box == 'polygon' 
+    @size = size_box
+    if type_box == 'polygon'
       @size.each do |a,x|
         z = []
+        @a = a
+        @x = x
         x.each do |b,y|
+          @b = b
+          @y = y
           z.push(y)
         end
         @arr1.push([z])
       end
     else
-
       minx = size_box[0].to_f if !size_box.nil?
       miny = size_box[1].to_f if !size_box.nil?
       maxx = size_box[2].to_f if !size_box.nil?
       maxy = size_box[3].to_f if !size_box.nil?
     end
-
     querys=[]
     @op = option_graph
     @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
@@ -101,14 +104,15 @@ class ProjectType < ApplicationRecord
       if type_box == 'extent'
         data = Project.where(project_type_id: chart.project_type_id).where(" st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
       end
-      if type_box == 'filter'
-        data = Project.where(project_type_id: chart.project_type_id).where("properties->>'" + @filter_condition[0] +  "' " + @filter_condition[1]  + " ?", @filter_condition[2])
-      end
+#      if type_box == 'filter'
+ #       data = Project.where(project_type_id: chart.project_type_id).where("properties->>'" + @filter_condition[0] +  "' " + @filter_condition[1]  + " ?", @filter_condition[2])
+ #     end
       if type_box == 'polygon'
         data = Project.where(project_type_id: chart.project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
       end
       field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
-      conditions_field = chart.condition_field
+     
+     conditions_field = chart.condition_field
       if !conditions_field.blank?
         data =  data.where(" properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
       end
@@ -121,12 +125,15 @@ class ProjectType < ApplicationRecord
   def self.kpi_new(project_type_id, option_graph, size_box, type_box)
 
     @arr1 = []
-
     @size = size_box
     if type_box == 'polygon'
       @size.each do |a,x|
         z = []
+        @a = a
+        @x = x
         x.each do |b,y|
+          @b = b
+          @y = y
           z.push(y)
         end
         @arr1.push([z])
@@ -180,94 +187,6 @@ class ProjectType < ApplicationRecord
       query = " #{type}((properties->>'" + field+ "'))"
     end
   end
-
-  def kpi
-
-    @querys=[]
-    #Extend
-    minx = params[:size_box][0].to_f
-    miny = params[:size_box][1].to_f
-    maxx = params[:size_box][2].to_f
-    maxy = params[:size_box][3].to_f
-
-    @analytics_charts = AnalyticsDashboard.where(project_type_id: params[:data_id], graph: params[:graph])
-
-    @analytics_charts.each do |chart|
-
-      #tipo de analisis
-      analysis_type = chart.analysis_type.name
-
-      #condiciones extras
-      conditions_field = chart.condition_field
-
-      @data = Project.where(project_type_id: params[:data_id])
-      #sql += " and st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})" 
-
-      if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
-
-        field_select = " (choice_lists.color) as color"
-        field_select += ", (choice_lists.label) as label"
-        field_select += ", #{analysis_type}(properties->>'" + chart.project_field.key + "')"
-
-        field_group = "properties->>'"+ chart.project_field.key + "'"
-        field_group += ", label, color"
-
-      else
-        if params[:graph] == true
-          field_select = " #{analysis_type}(properties->>'" + chart.project_field.key + "')"
-          field_select += ", properties->>'" + chart.project_field.key + "' as label "
-          field_group = "properties->>'"+ chart.project_field.key + "'"
-        else
-
-          field_select = " #{analysis_type}(properties->>'" + chart.project_field.key + "')"
-          field_select += ", properties->>'" + chart.project_field.key + "' as label"
-          field_select_without_graph = " properties->>'" + chart.project_field.key + "'"
-
-          field_group = "properties->>'"+ chart.project_field.key + "'"
-        end
-      end 
-
-      if !conditions_field.blank?
-        sql = " properties->>'" + chart.project_field.key + "' " + chart.filter_input + "'#{chart.input_value}'"
-      end
-
-      if analysis_type == "Promedio"
-
-        @data_extra= Project.where(sql).where("(properties->>'00d8') is not null").select("round((sum((properties->>'00d8')::numeric) / count((properties->>'05d5')::numeric)),2) as promedio")
-        @querys << { "title":"#{chart.title}", "data":@data_extra[0]['promedio'], "id":"#{chart.id}"}
-
-      else
-        if analysis_type == "Participacion"
-          @total_clientes = Project.where("project_type_id": params[:data_id]).count
-          @data_extra_2 = 0 
-          @data_extra_2 = Project.where(sql).select("round((((count(properties->>'05d5')::numeric) /  #{@total_clientes}) * 100 ),0)  as participacion") if @total_clientes > 0 
-          @querys << { "title":"#{chart.title}", "data":@data_extra_2[0]['participacion'], "id":"#{chart.id}"}
-        else
-
-          if params[:graph] == "true"
-
-            if chart.project_field.field_type == 'ChoiceField' and !chart.project_field.choice_list_id.nil?
-              @join = ("join choice_lists  on (properties->>'#{chart.project_field.key}')::integer = choice_lists.id" )
-              @data =   @data.joins(@join).where(sql).select(field_select).group(field_group)
-            else
-
-              @data =   @data.where(sql).select(field_select).group(field_group)
-            end 
-            chart_type = chart.chart.name
-
-            @querys << { "title":"#{chart.title}", "type_chart":[chart_type],"data":@data}
-
-          else
-            #@data =   Project.where(sql).sum("(#{field_select})::float") #funciona bien la suma
-            #@data =   Project.where(sql).count("(#{field_select})::float") #funciona bien el contar
-            @data =   @data.where(sql).send(analysis_type, "(#{field_select_without_graph})::float")
-            @querys << { "title":"#{chart.title}", "data":@data, "id":"#{chart.id}"}
-          end
-        end
-      end
-    end
-  end
-
 
   def load_file
     a = []

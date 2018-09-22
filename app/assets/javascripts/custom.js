@@ -109,23 +109,27 @@ function init_kpi(size_box = null){
   var type_box = 'polygon';
   var data_conditions = {} 
   if (size_box== null && Navarra.project_types.config.project_field == '' ){
-    var size_box = Navarra.dashboards.config.size_box;
-    type_box = 'extent';
-  }else{
-    type_box = 'filter';
 
-      var project_field = Navarra.project_types.config.project_field;
-      var filter = Navarra.project_types.config.filter;
-      var input_value = Navarra.project_types.config.input_value;
-      data_conditions['project_field'] = project_field;  
-      data_conditions['filter'] = filter;  
-      data_conditions['input_value'] = input_value;  
-
+      size_box = [];
+      type_box = 'extent';
+      size_ext = Navarra.dashboards.config.size_box;
+      size_box[0] = size_ext['_southWest']['lng'];
+      size_box[1] = size_ext['_southWest']['lat'];
+      size_box[2] = size_ext['_northEast']['lng'];
+      size_box[3] = size_ext['_northEast']['lat'];
   }
+  //else{
+    // type_box = 'filter';
+    //   var project_field = Navarra.project_types.config.project_field;
+    //   var filter = Navarra.project_types.config.filter;
+    //   var input_value = Navarra.project_types.config.input_value;
+    //   data_conditions['project_field'] = project_field;  
+    //   data_conditions['filter'] = filter;  
+    //   data_conditions['input_value'] = input_value;  
 
+ // }
 
-
-  var  data_id =  $('#data_id').val();
+    var  data_id =  Navarra.dashboards.config.project_type_id;
   $.ajax({
 
     type: 'GET',
@@ -159,23 +163,21 @@ function capitalize(s){
 };
 
 function init_chart_doughnut(size_box = null){
-  size_box = [];
-  if( typeof (Chart) === 'undefined'){ return; }
+
+  if( typeof(Chart) === 'undefined'){ return; }
 
   if ($('.graphics').length){
     $('.graphics').empty();
   var type_box = 'polygon';
-  if (size_box== null){
-  }
-  
-    type_box = 'extent';
+    if (size_box== null){
+      size_box = [];
+      type_box = 'extent';
       size_ext = Navarra.dashboards.config.size_box;
       size_box[0] = size_ext['_southWest']['lng'];
       size_box[1] = size_ext['_southWest']['lat'];
       size_box[2] = size_ext['_northEast']['lng'];
       size_box[3] = size_ext['_northEast']['lat'];
-
-      
+  }
     var  data_id =  Navarra.dashboards.config.project_type_id;
     $.ajax({
       type: 'GET',
