@@ -225,7 +225,7 @@ function init_chart_doughnut(size_box = null){
                 if (type_chart == 'bar'){
                   fixed_height = 'col-md-12 col-sm-12 ';
                 }else{
-                  fixed_height = 'col-md-6 col-sm-6 ';
+                  fixed_height = 'col-md-12 col-sm-12 ';
                 }
               html =  
                 '<div class="'+ fixed_height + ' col-xs-12">' +

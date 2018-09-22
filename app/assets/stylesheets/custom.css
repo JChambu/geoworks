@@ -11,8 +11,14 @@ html , body{
  
  }
 
+.mapid_full{
+
+  height: 20%;
+  width: 100%;
+}
+
 #mapid{
-  height: 100%;
+  height: 400px;
   width: 100%;
 } 
 .st0  {
