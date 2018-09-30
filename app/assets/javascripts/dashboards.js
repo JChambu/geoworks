@@ -22,6 +22,8 @@ $( "#view" ).on( "click", function() {
         $(".graphics").toggleClass( "col-md-3", 500, "easeOutSine" );
       });
 
+
+
   }
   return {
     init: init,

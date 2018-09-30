@@ -1,6 +1,6 @@
 Geocoder.configure(
   # Geocoding options
-   timeout: 10,                 # geocoding service timeout (secs)
+   timeout: 20,                 # geocoding service timeout (secs)
    #lookup: :bing,            # name of geocoding service (symbol)
   # lookup: :here,            # name of geocoding service (symbol)
   # language: :en,              # ISO-639 language code
@@ -26,13 +26,13 @@ Geocoder.configure(
   # distances: :linear          # :spherical or :linear
 
 # #HERE
-#    lookup: :here,            # name of geocoding service (symbol)
-#    use_https: true,           # use HTTPS for lookup requests? (if supported)
-#    api_key: [
-#       "ZTVBhWvg8dw4GhrG9fcL",
-#       "jOEPEj4JkZvbAiv7GP0E2A",
-#    ],                # API key for geocoding service
-#    useCIT: true
+    lookup: :here,            # name of geocoding service (symbol)
+    use_https: true,           # use HTTPS for lookup requests? (if supported)
+    api_key: [
+       "ZTVBhWvg8dw4GhrG9fcL",
+       "jOEPEj4JkZvbAiv7GP0E2A",
+    ],                # API key for geocoding service
+    useCIT: true
    
 =begin
 
@@ -42,13 +42,13 @@ Geocoder.configure(
 
 =end
 #google
-   lookup: :google,
-   #api_key: "AIzaSyA0U3-pdBemLlkXGrFK0rVWZhVCL506kAE"
-  # api_key: "AIzaSyCRcOWYZrmE-uw1k45zaOxM6Ew_--ntfbA"
+#   lookup: :google,
+  #api_key: "AIzaSyA0U3-pdBemLlkXGrFK0rVWZhVCL506kAE"
+ #  api_key: "AIzaSyCRcOWYZrmE-uw1k45zaOxM6Ew_--ntfbA"
   #  api_key: "AIzaSyAZBimR8PR-OWDXb-BCPJkOMh9f0Z15fAw"
 #  api_key: " AIzaSyDc_EcZgnoYZAyo1x9Y5TahSDNSQ-nEjss" #gks2
 #  api_key: "AIzaSyBi81-flX6VLfM5Q7m3dEnN2VyfekfdbSU" #gks3
-  api_key: "AIzaSyDIGJm4yvryaGcRD4oKK1XnbSGbJyoMNbU" #gks4
+#  api_key: "AIzaSyDIGJm4yvryaGcRD4oKK1XnbSGbJyoMNbU" #gks4
  # api_key: "AIzaSyCTAwW8c4mKX0Ow897Q9aLojHZoa3hBlAQ" #gks5
  # api_key: "AIzaSyDBgTkc_XNRYs4zZ_kOeTaa9ydmVERABcw" #gks6 
   

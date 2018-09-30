@@ -14,11 +14,9 @@
     <% @dashboards.each do |dashboard| %>
       <tr>
         <td><%= dashboard.name %></td>
-        <td><%= @project_type.id %></td>
-        <td><%= link_to "Setting", project_type_dashboard_analytics_dashboards_path(@project_type.id,dashboard)%></td>
-        <td><%= link_to 'Show', project_type_dashboard_path(@project_type.id,dashboard) %></td>
-        <td><%= link_to 'Edit', edit_project_type_dashboard_path(@project_type, dashboard) %></td>
-        <td><%= link_to 'Destroy', project_type_dashboard_path(@project_type, dashboard), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to  project_type_dashboard_analytics_dashboards_path(@project_type.id,dashboard) do %><h4><i class="fa fa-cog"></i></h4><% end %> </td>
+        <td><%= link_to  project_type_dashboard_path(@project_type.id,dashboard) do %> <h4><i class="fa fa-eye"></i></h4> <% end %> </td>
+        <td><%= link_to  edit_project_type_dashboard_path(@project_type, dashboard) do %> <h4><i class="fa fa-edit"></i></h4> <% end %></td>
       </tr>
     <% end %>
   </tbody>
@@ -26,4 +24,4 @@
 
 <br>
 
-<%= link_to 'New Dashboard', new_project_type_dashboard_path(@project_type) %>
+<%= link_to 'Nuevo Dashboard', new_project_type_dashboard_path(@project_type) %>

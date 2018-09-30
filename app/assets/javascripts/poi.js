@@ -20,7 +20,6 @@ Navarra.pois.action_index = function() {
     $('#button').on('click', function(){
 
       $(this).text(function(i, old){
-        console.log(old);
         return old=='+ Filtros' ? 'Ocultar Filtros' : '+ Filtros';
       });
     });

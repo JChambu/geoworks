@@ -1,13 +1,11 @@
-<div class="container body">                                                                                                                                                                                       
-  <div class="main_container">                                                                                                                                                                                     
-    <div class="col-md-3 left_col">                                                                                                                                                                                
-      <div class="left_col scroll-view">                                                                                                                                                                           
+<div class="container body">                                                                                                                  
+  <div class="main_container">
+    <div class="col-md-3 left_col">
+      <div class="left_col scroll-view"> 
         <div class="navbar nav_title" style="border: 0;">
           <%= link_to  "#", class: "site_title" do  %> <%= image_tag "logo_geoworks2.png" %> <% end %>
         </div>
-
         <div class="clearfix"></div>
-
         <!-- menu profile quick info -->
         <div class="profile clearfix">
           <div class="profile_pic">
@@ -18,29 +16,15 @@
           </div>
         </div>
         <!-- /menu profile quick info -->
-
         <br />
-
         <!-- sidebar menu -->
         <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
           <div class="menu_section">
             <h3>General</h3>
             <ul class="nav side-menu">
               <li><%= link_to project_types_path() do %><i class="fa fa-folder-open"></i> Proyectos <span class="fa fa-chevron-down"></span><% end %>
-              </li>
-              <li><a><i class="fa fa-clipboard"></i> Servicios <span class="fa fa-chevron-down"></span></a>
-
-                <ul class="nav child_menu" style="display: block">
-                  <% if current_user.name == 'Admin' %>
-                  <li><%= link_to  t('menu.admin.extended_listings'), extended_listings_path() %></li>
-
-                    <li><%=  link_to  t('menu.admin.extended_listings_georeferenced'), georeferenced_extended_listings_path  %></li>
-                  <% end  %>
-                </ul>
-              </li>
-<li><a><i class="fa fa-cogs"></i> Ajustes <span class="fa fa-chevron-down"></span></a>                                                                                                               
-              </li>                                                                                                                                                                                                
-            </ul>                                                                                                                                                                                                  
+            </li>
+            </ul> 
           </div>
         </div>
         <!-- /sidebar menu -->
@@ -51,19 +35,21 @@
       <div class="nav_menu">
         <nav>
           <div class="nav toggle">
-
-          <%if params[:controller] == 'dashboards' && params[:action] == 'show' %>
-          <%= link_to project_type_filters_path(params[:id]) , :remote => true  do  %><i class="fa fa-filter"></i> <%end %> 
-            <a><i class="fa fa-plus-circle"></i></a>
-            <%= link_to "#", id: "view" do %> <%= image_tag "view.png", width: "25px" %> <% end %>
-            <%= link_to "#", id: "select" do %> <%= image_tag "icon-seleccion-poligono.svg", width: "25px" %> <% end %>
-            <%= link_to "#" do %> <%= image_tag "icon-punto-radio.svg", width: "25px" %> <% end %>
-            <%= link_to "#", id: "create_multi"  do %> <%= image_tag "icon-crear-poligono.svg", width: "25px", input_html:{class:"ss"} %> <% end %>
-            <%= link_to "#" do %> <%= image_tag "icon-pintar-punto.svg", width: "25px" %> <% end %>
-          <% end %>
+            <%if params[:controller] == 'analytics_dashboards' && params[:action] == 'index' %>
+              <%= link_to project_type_dashboard_path(@project_type, params[:dashboard_id])   do %> <%= image_tag "layers.png", width: "25px" %> <% end %>
+            <% end %>
+            <%if params[:controller] == 'dashboards' && params[:action] == 'show' %>
+              <%= link_to project_type_filters_path(params[:id]) , :remote => true  do  %><i class="fa fa-filter"></i> <%end %>
+              <%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, params[:id]) do %> <i class="fa fa-plus-circle"></i> <% end %>
+              <%= link_to "#", id: "view" do %> <%= image_tag "view.png", width: "25px" %> <% end %>
+              <%= link_to "#", id: "select" do %> <%= image_tag "icon-seleccion-poligono.svg", width: "25px" %> <% end %>
+              <%= link_to "#" do %> <%= image_tag "icon-punto-radio.svg", width: "25px" %> <% end %>
+              <%= link_to "#", id: "create_multi"  do %> <%= image_tag "icon-crear-poligono.svg", width: "25px", input_html:{class:"ss"} %> <% end %>
+              <%= link_to "#" do %> <%= image_tag "icon-pintar-punto.svg", width: "25px" %> <% end %>
+            <% end %>
           </div>
 
-          <ul class="nav navbar-nav navbar-right">
+          <ul class="nav navbar-nav navbar-right tile_count">
             <li class="">
               <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 <%= current_user.name %>

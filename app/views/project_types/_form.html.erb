@@ -1,4 +1,17 @@
 <%= simple_form_for @project_type, html: {multipart: true}  do |f| %>
+  <% if @project_type.errors.any? %>
+    <div class="panel panel-warning errors">
+      <div class="panel-heading">
+        <h4><span><i class="fa fa-exclamation"><span></i>  Validaciones</h4>
+      </div>
+      <ul class="panel-body">
+        <% @project_type.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <p id="notice"><%= notice %></p>
   <div class="field">
     <%= f.label :name %>
     <%= f.text_field :name %>

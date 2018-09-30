@@ -98,10 +98,10 @@ $(window).resize(function () {
 
 
 Number.prototype.format = function(n, x, s, c) {
-      var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
-            num = this.toFixed(Math.max(0, ~~n));
+  var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+    num = this.toFixed(Math.max(0, ~~n));
 
-      return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+  return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
 };
 
 
@@ -110,26 +110,26 @@ function init_kpi(size_box = null){
   var data_conditions = {} 
   if (size_box== null && Navarra.project_types.config.project_field == '' ){
 
-      size_box = [];
-      type_box = 'extent';
-      size_ext = Navarra.dashboards.config.size_box;
-      size_box[0] = size_ext['_southWest']['lng'];
-      size_box[1] = size_ext['_southWest']['lat'];
-      size_box[2] = size_ext['_northEast']['lng'];
-      size_box[3] = size_ext['_northEast']['lat'];
+    size_box = [];
+    type_box = 'extent';
+    size_ext = Navarra.dashboards.config.size_box;
+    size_box[0] = size_ext['_southWest']['lng'];
+    size_box[1] = size_ext['_southWest']['lat'];
+    size_box[2] = size_ext['_northEast']['lng'];
+    size_box[3] = size_ext['_northEast']['lat'];
   }
   //else{
-    // type_box = 'filter';
-    //   var project_field = Navarra.project_types.config.project_field;
-    //   var filter = Navarra.project_types.config.filter;
-    //   var input_value = Navarra.project_types.config.input_value;
-    //   data_conditions['project_field'] = project_field;  
-    //   data_conditions['filter'] = filter;  
-    //   data_conditions['input_value'] = input_value;  
+  // type_box = 'filter';
+  //   var project_field = Navarra.project_types.config.project_field;
+  //   var filter = Navarra.project_types.config.filter;
+  //   var input_value = Navarra.project_types.config.input_value;
+  //   data_conditions['project_field'] = project_field;  
+  //   data_conditions['filter'] = filter;  
+  //   data_conditions['input_value'] = input_value;  
 
- // }
+  // }
 
-    var  data_id =  Navarra.dashboards.config.project_type_id;
+  var  data_id =  Navarra.dashboards.config.project_type_id;
   $.ajax({
 
     type: 'GET',
@@ -138,7 +138,7 @@ function init_kpi(size_box = null){
     data: {data_id: data_id, size_box: size_box, graph: false, type_box: type_box, data_conditions: data_conditions},
     success: function(data){
       data.forEach(function(element){
-          var count_element= element['data'][0]['count'];
+        var count_element= element['data'][0]['count'];
         data_cont = (Number(count_element)).format(0, 3, '.', ','); 
         if ($('.kpi_'+ element['id']).length) {
           $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ data_cont +'</div>');
@@ -150,10 +150,7 @@ function init_kpi(size_box = null){
             '</div>'+
             '</div>'
           $('.tile_count').append(html);
-
         }
-
-
       }) 
     }});
 }
@@ -168,7 +165,7 @@ function init_chart_doughnut(size_box = null){
 
   if ($('.graphics').length){
     $('.graphics').empty();
-  var type_box = 'polygon';
+    var type_box = 'polygon';
     if (size_box== null){
       size_box = [];
       type_box = 'extent';
@@ -177,7 +174,7 @@ function init_chart_doughnut(size_box = null){
       size_box[1] = size_ext['_southWest']['lat'];
       size_box[2] = size_ext['_northEast']['lng'];
       size_box[3] = size_ext['_northEast']['lat'];
-  }
+    }
     var  data_id =  Navarra.dashboards.config.project_type_id;
     $.ajax({
       type: 'GET',
@@ -222,11 +219,11 @@ function init_chart_doughnut(size_box = null){
 
               var div_graph = document.createElement('div');
               var title_graph = title.replace(" ", "_");
-                if (type_chart == 'bar'){
-                  fixed_height = 'col-md-12 col-sm-12 ';
-                }else{
-                  fixed_height = 'col-md-12 col-sm-12 ';
-                }
+              if (type_chart == 'bar'){
+                fixed_height = 'col-md-6 col-sm-12 ';
+              }else{
+                fixed_height = 'col-md-6 col-sm-12 ';
+              }
               html =  
                 '<div class="'+ fixed_height + ' col-xs-12">' +
                 '<div class="x_panel tile fixed_height_390 card">' + 
@@ -243,8 +240,6 @@ function init_chart_doughnut(size_box = null){
 
               $('.graphics').append(html);
 
-
-
               var datt = {
                 labels: lab,
                 series: series
@@ -254,51 +249,49 @@ function init_chart_doughnut(size_box = null){
               {
                 case "bar":
                   options = {
-                    height:  300, 
+                    height:  200, 
                     plugins: [
-                            Chartist.plugins.ctBarLabels()
-                          ],
+                      Chartist.plugins.ctBarLabels()
+                    ],
                   }
-                chart =  new Chartist.Bar('.ct-chart_'+title_graph, datt, options)
+                  chart =  new Chartist.Bar('.ct-chart_'+title_graph, datt, options)
                   break;
 
                 case "horizontalBar":
                   options = {
-                    height:  300, 
+                    height:  200, 
                     axisY: {
-                          offset: 102
-                        },
-                    textAnchor: 'middle',
-                    plugins: [
-                            Chartist.plugins.ctBarLabels()
-                          ],
-                    horizontalBars: true,
-                  }
-                chart =  new Chartist.Bar('.ct-chart_'+title_graph, datt, options)
-                  break;
-                
-                
-                case "line":
-
-              options = {
-                height: 200 , 
-                plugins: [
-                  Chartist.plugins.ctPointLabels({
-                    labelClass: 'ct-label',
-                    labelOffset: {
-                      x: 0,
-                      y: -10
+                      offset: 102
                     },
                     textAnchor: 'middle',
-                  }),
-                  Chartist.plugins.legend()
-                ]
-              };
-                chart =   new Chartist.Line('.ct-chart_'+title_graph, datt, options)
+                    plugins: [
+                      Chartist.plugins.ctBarLabels()
+                    ],
+                    horizontalBars: true,
+                  }
+                  chart =  new Chartist.Bar('.ct-chart_'+title_graph, datt, options)
+                  break;
+                case "line":
+
+                  options = {
+                    height: 200 , 
+                    plugins: [
+                      Chartist.plugins.ctPointLabels({
+                        labelClass: 'ct-label',
+                        labelOffset: {
+                          x: 0,
+                          y: -10
+                        },
+                        textAnchor: 'middle',
+                      }),
+                      Chartist.plugins.legend()
+                    ]
+                  };
+                  chart =   new Chartist.Line('.ct-chart_'+title_graph, datt, options)
                   break;
                 case "line_area":
                   options = {
-                    height: 250 , 
+                    height: 200 , 
                     showArea: true,
                     showLine: false,
                     showPoint: false,
@@ -307,20 +300,44 @@ function init_chart_doughnut(size_box = null){
                       showLabel: false,
                       showGrid: false
                     }
-
                   }
                   chart =new Chartist.Line('.ct-chart_'+title_graph, datt, options)
                   break;
+                case "chart_pie":
+                  var data = {
+                    labels: datt.labels,
+                    series: datt.series[0].data
+                  };
+                    
+                  var options = {
+                    height: 200 , 
+                    labelInterpolationFnc: function(value) {
+                      return value[0]
+                    },
+                    showLabel: false,
+                        plugins: [
+                                  Chartist.plugins.legend()
+                              ]
+                  };
+
+                  var responsiveOptions = [
+                    ['screen and (min-width: 640px)', {
+                      chartPadding: 30,
+                      labelOffset: 80,
+                      labelDirection: 'explode',
+                      labelInterpolationFnc: function(value) {
+                        return value;
+                      }
+                    }],
+                    ['screen and (min-width: 1024px)', {
+                      labelOffset:10,
+                      chartPadding: 10
+                    }]
+                  ];
+                  chart = new Chartist.Pie('.ct-chart_'+title_graph, data, options, responsiveOptions);
+
+                  break;
               }
-
-/*chart.on('draw', function(data) {
-      inlineCSStoSVG(chart.container.id);
-    });*/
-              /*document.getElementById("rasterCanvas").addEventListener('click', function() {
-                      exportToCanvas(chart.container.id);
-                    });*/
-
-
               close_html = '</div>'+
                 '</div>'+
                 '</div>';

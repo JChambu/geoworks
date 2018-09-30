@@ -9,25 +9,36 @@ class ProjectType < ApplicationRecord
   require 'uri'
   require 'csv'
 
-  belongs_to :user
+  #belongs_to :user
   has_many :fields, class_name: "ProjectField"
-
   has_many :projects
   has_many :dashboards
+  has_many :has_project_types
+  has_many :users, :through=> :has_project_types
+
   accepts_nested_attributes_for :fields, allow_destroy: true
 
   FILTERS = %w(= <)
 
   attr_accessor :file
-
+  validates :name, :file, presence: true
+  #validate :file_exist?
+  validate :is_file_type_valid?, if: :file_exist?
   before_save :save_shp_file, if: :file_exist? 
   after_create :load_file, if: :file_exist? 
+  after_create :new_dashboard
   after_update :load_file, if: :file_exist? 
+
   #before_save :load_rgeoserver
   #after_save :load_shape,  if: :file_exist?
   #validate :validate_options
-  #validate :is_file_type_valid?
 
+
+
+
+  def new_dashboard
+    Dashboard.create(name: "Dashboard_1", project_type_id: self.id )  
+  end
 
   def self.build_geom(q, project_type_id)
 
@@ -52,21 +63,27 @@ class ProjectType < ApplicationRecord
 
 
   def file_exist?
-    if !self.file.nil?
-      return true
+
+    @a = self.file
+    if self.file.nil?
+      return false
     end
+    return true
   end
 
   def is_file_type_valid?
-    begin
-      if (self.file.content_type == "application/x-esri-shape")
-        valid = self.file.content_type 
-      end 
+
+      self.file.each do |f| @f = f.content_type 
+      begin
+        if @f== "text/csv" 
+          valid = f.content_type 
+      end
     rescue
       valid = false
     end
-    self.errors.add(:base, :invalid_xls_type) unless valid
+    self.errors.add(:base, :invalid_type_file) unless valid
     valid
+  end
   end
 
   def self.kpi_without_graph(project_type_id, option_graph, size_box, type_box, filter_condition = nil)

@@ -17,6 +17,7 @@ class ProjectTypesController < ApplicationController
   end
 
   def filters
+
     respond_to do |format|
       format.html
       format.js
@@ -274,7 +275,14 @@ class ProjectTypesController < ApplicationController
   end
 
   def index
-    @project_types = ProjectType.all
+
+    #@has_project_types = HasProjectType.where(user_id: current_user.id )
+    #@project_types = ProjectType.where(id: @has_project_types.project_type_id)
+    if params[:search_project].nil? || params[:search_project].empty?
+      @project_types = ProjectType.all
+    else
+      @project_types = ProjectType.where("name ILIKE :name", name: "%#{params[:search_project]}%")
+    end
     @project_types = @project_types.paginate(:page => params[:page])
     #@project_fulcrum = ProjectType.query_fulcrum
   end
@@ -304,7 +312,7 @@ class ProjectTypesController < ApplicationController
         format.html { redirect_to project_types_path(), notice: 'Project type was successfully created.' }
         format.json { render :show, status: :created, location: @project_type }
       else
-        format.html { render :new }
+        format.html { render :new, status: :no_created}
         format.json { render json: @project_type.errors, status: :unprocessable_entity }
       end
     end
@@ -342,6 +350,6 @@ class ProjectTypesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_type_params
-    params.require(:project_type).permit(:name, {file:[]}, fields_attributes: [:id, :field_type, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id]).merge(user_id: current_user.id)
+    params.require(:project_type).permit(:name, {file:[]}, fields_attributes: [:id, :field_type, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id])
   end
 end

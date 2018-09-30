@@ -6,16 +6,18 @@ Navarra.geomaps = function (){
   var size_box = [];
   var init= function() {
 
-    mymap = L.map('mapid',{
+    mymap = L.map('map',{
       zoomControl: false
     }).setView([-63.8167, -33.8833], 15);
 
     var Layerppal=L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
       attribution: '',
       maxZoom: 18,
-      id: 'mapbox.light',
+      id: 'mapbox.light', 
       accessToken: 'pk.eyJ1IjoiZmxhdmlhYXJpYXMiLCJhIjoiY2ppY2NzMm55MTN6OTNsczZrcGFkNHpoOSJ9.cL-mifEoJa6szBQUGnLmrA'
     }).addTo(mymap);
+
+    
 
     L.control.zoom({
       position:'topright'
@@ -25,18 +27,13 @@ Navarra.geomaps = function (){
       mymap.removeLayer(markers);
     }
 
-    mymap.on('zoomend', onMapZoomed);
-    //    mymap.on('moveend', onMapMoveend);
-
-    function onMapZoomed(e) {
+    //mymap.on('zoomend', onMapZoomedMoved);
+    mymap.on('moveend', onMapZoomedMoved);
+    function onMapZoomedMoved(e) {
       checked = $('#select').hasClass('active');
       if(!checked){
         show_kpis();
       }
-    }
-
-    function onMapMoveend (e) {
-      show_kpis();
     }
 
     function show_kpis(){
@@ -57,7 +54,7 @@ Navarra.geomaps = function (){
       version: '1.0.0',
       request: 'GetFeature',
       typeName: 'geoworks:view_project_geoserver',
-      maxFeatures: 1000,
+      maxFeatures: 50000,
       outputFormat: 'application/json',
     };
 
