@@ -64,7 +64,7 @@ class AnalyticsDashboardsController < ApplicationController
   def destroy
     @analytics_dashboard.destroy
     respond_to do |format|
-      format.html { redirect_to analytics_dashboards_url, notice: 'Analytics dashboard was successfully destroyed.' }
+      format.html {redirect_to project_type_dashboard_analytics_dashboards_path(@project_type, @dashboard) , notice: 'Analytics dashboard was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

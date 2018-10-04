@@ -2,25 +2,55 @@
 
   <h2>Geolocalizacion</h2>
   
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel card">
+      <div class="x_title">
+        <ul class="nav navbar-right panel_toolbox">
+          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#">Settings 1</a>
+              </li>
+              <li><a href="#">Settings 3</a>
+              </li>
+            </ul>
+          </li>
+          <li><a class="close-link"><i class="fa fa-close"></i></a>
+          </li>
+        </ul>
+        <div class="clearfix"></div>
+      </div>
+      <div class="x_content">
+    <div class="form-group row col-md-6">
   <div>
-    Project:
-    <%= @project_type.name%>
+    <h3>Proyecto: <%= @project_type.name%></h3>
   </div>
-  <div>
-    Direccion: <%=select_tag 'q[address]',  options_for_select(fields_for_select) %>
+
+<div>
+  <label> Direccion: </label>
+    <%=select_tag 'q[address]',  options_for_select(fields_for_select), :include_blank => true, required: true, class: "form-control col-md-6 select" %>
 </div>
 <div>
-  Departamento: <%=select_tag 'q[department]',  options_for_select(fields_for_select) %>
+  Departamento: <%=select_tag 'q[department]',  options_for_select(fields_for_select),  :include_blank => true, required: true, class: "form-control col-md-6" %>
 </div>
 <div>
-  Provincia: <%=select_tag 'q[province]',  options_for_select(fields_for_select) %>
+  Provincia: <%=select_tag 'q[province]',  options_for_select(fields_for_select), :include_blank => true, class: "form-control col-md-6" %>
 </div>
 <div>
-  Pais: <%=select_tag 'q[country]',  options_for_select(fields_for_select) %>
+  Pais: <%=select_tag 'q[country]',  options_for_select(fields_for_select), :include_blank => true, required: true, class: "form-control col-md-6" %>
 </div>
 <div class="actions">
-  <%= submit_tag 'Enviar', class: 'enviar' %>
+  <%= submit_tag 'Enviar', class: 'enviar btn btn-primary' %>
 </div>
+</div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
 <% end %>
 
 

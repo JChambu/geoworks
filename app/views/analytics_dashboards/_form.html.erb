@@ -5,12 +5,10 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title"> </h4>
       </div>
-
       <%= simple_form_for([@project_type, @dashboard, @analytics_dashboard],  html: {role: :form,  remote: true, class: 'form form-inline'}) do |f| %>
         <div class="modal-body">
           <div id="alert-success">
           </div>
-
           <% if @analytics_dashboard.errors.any? %>
             <div id="error_explanation">
               <h2><%= pluralize(@analytics_dashboard.errors.count, "error") %> prohibited this analytics_dashboard from being saved:</h2>
@@ -22,35 +20,40 @@
             </div>
           <% end %>
 
-            <%= f.input :title %>
-            <%= f.input :description %>
-            <%= f.input :project_field_id, label: "project_field", :collection => fields_for_select_a %>
-            <%= f.input :analysis_type_id, :collection => analysis_types_for_select %>
-            <%= f.input :chart_id, collection: chart_types_for_select %>
-            <div>
-              <%= f.label :graph, "Graficar" %>
-              <%= f.check_box :graph%>
-            <%= f.input :group_field_id, label: "group_field", :collection => fields_for_select_a %>
+          <div class="form-row">
+            <div class="form-group">
+              <div class="col-md-12">
+                <%= f.input :title, input_html: {class:"form-control col-md-12"} %>
+              </div>
+              <div class="form-group col-md-12">
+                <%= f.input :description, input_html: {class:"form-control col-md-6"} %>
+              </div>
+              <div class="col-md-12">
+                <%= f.input :project_field_id, :collection => fields_for_select_a, input_html: {class:"form-control col-md-6"} %>
+              </div>
+              <div class="form-group col-md-12">
+                <%= f.input :analysis_type_id, :collection => analysis_types_for_select, input_html: {class:"form-control col-md-6"}%>
+              </div>
+              <div class="form-group col-md-12">
+                <%= f.input :chart_id, collection: chart_types_for_select, input_html: {class:"form-control col-md-6"}%>
+              </div>
+              <div class="form-group col-md-12">
+                <div>
+                  <%= f.label :graph, "Graficar" %>
+                  <%= f.check_box :graph%>
+                  <%= f.input :group_field_id, :collection => fields_for_select_a, input_html: {class:"form-control col-md-6"}%>
+                </div>
+              </div>
             </div>
-
-            <div class="col-md-12">
-              <div class="col-md-3">
-                <%= f.input :condition_field_id, collection: fields_for_select_a, input_html:{class: "col-md-12"} %>
-              </div>
-              <div class="col-md-3">
-                <%= f.input :filter_input, collection: ['=','!=', '<', '>', '>=', '<=', 'in', 'ilike', 'is null', 'is not null'] %>
-              </div>
-              <div class="col-md-3">
-              <%= f.input :input_value %>
-              </div>
-            </div>
-        <div class="modal-footer">
-
-          <div class="actions">
-            <%= f.submit %>
           </div>
+          <div class="modal-footer">
+
+            <div class="actions">
+              <%= f.submit class: 'btn btn-primary' %>
+            </div>
+          </div>
+        <% end %>
         </div>
-      <% end %>
     </div>
   </div>
-</div>
+

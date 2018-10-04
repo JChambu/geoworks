@@ -119,6 +119,7 @@ Navarra.geomaps = function (){
           polygon = layer.getLatLngs();
           editableLayers.addLayer(layer);
           arr1 = LatLngsToCoords(polygon[0]);
+          arr1.push(arr1[0])
           size_box.push(arr1);
           init_kpi(size_box);
           init_chart_doughnut(size_box);  

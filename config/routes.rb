@@ -36,7 +36,7 @@ Rails.application.routes.draw do
     post 'project_fields/create'
     post 'analytics_dashboards/create'
     get 'project_fields/:id/show' =>'project_fields#show'
-    get 'project_types/index'
+    #get 'project_types/index'
 
 
     post 'charts/create'
@@ -44,11 +44,13 @@ Rails.application.routes.draw do
     resources :analysis_types
     get 'project_types/:id/geocoding' => 'project_types#geocoding', as: :project_types_geocoding
     get 'project_types/:id/dashboard' => 'project_types#dashboard',  :as => :project_types_dashboard
+
     get 'project_types/import_file' => 'project_types#import_file', as: :import_file
 
     get 'panel', to: 'project_types#panel'
     resources :project_types do 
       resources :dashboards do
+        get 'create_graph'
         resources :analytics_dashboards
       end
       resources :projects

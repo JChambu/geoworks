@@ -471,6 +471,9 @@ es:
       extended_listing:
         one: "Listado"
         other: "Listados"
+      analytics_dashboard:
+        one: "Analitica Dashboard"
+        other: "Analitica Dashboard"
     attributes:
       country:
         name: País
@@ -667,5 +670,9 @@ es:
       analytics_dashboard:
         title: "Titulo"
         description: "Descripcion"
+        project_field_id: "Campo"
+        analysis_type_id: "Tipo de Analisis"
+        chart_id: "Tipo de Grafico"
+        group_field_id: "Agrupar"
     errors:
       <<: *errors

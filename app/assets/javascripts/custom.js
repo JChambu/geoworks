@@ -128,7 +128,7 @@ function init_kpi(size_box = null){
   //   data_conditions['input_value'] = input_value;  
 
   // }
-
+console.log(size_box);
   var  data_id =  Navarra.dashboards.config.project_type_id;
   $.ajax({
 
@@ -219,13 +219,20 @@ function init_chart_doughnut(size_box = null){
 
               var div_graph = document.createElement('div');
               var title_graph = title.replace(" ", "_");
-              if (type_chart == 'bar'){
-                fixed_height = 'col-md-6 col-sm-12 ';
-              }else{
-                fixed_height = 'col-md-6 col-sm-12 ';
-              }
+            status_view = $('#view').hasClass('active');
+              console.log(status_view);
+             if (status_view){
+                card_graph = 'col-md-12 col-sm-12 '
+             }else{
+                card_graph = 'col-md-6'
+             }
+              // if (type_chart == 'bar'){
+                //fixed_height = 'col-md-6 col-sm-12 ';
+            //  }else{
+            //    fixed_height = 'col-md-6 col-sm-12 ';
+            //  }
               html =  
-                '<div class="'+ fixed_height + ' col-xs-12">' +
+                '<div class="'+ card_graph + ' col-xs-12 card_graph">' +
                 '<div class="x_panel tile fixed_height_390 card">' + 
                 '<div class="x_title">'+
                 ' <h2>'+title+'</h2>'+

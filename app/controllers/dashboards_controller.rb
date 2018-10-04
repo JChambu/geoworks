@@ -4,6 +4,16 @@ class DashboardsController < ApplicationController
 
   # GET /dashboards
   # GET /dashboards.json
+  
+  def create_graph
+
+      respond_to do |f|
+        f.js
+  end
+
+  end
+  
+  
   def index
     @dashboards = @project_type.dashboards
   end

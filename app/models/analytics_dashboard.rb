@@ -7,5 +7,6 @@ class AnalyticsDashboard < ApplicationRecord
   belongs_to :group_field, :class_name => "ProjectField", :foreign_key => "group_field_id"
   belongs_to :chart
 
+  validates :title, presence: :true
 
 end

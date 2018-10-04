@@ -20,8 +20,12 @@ class ProjectType < ApplicationRecord
 
   FILTERS = %w(= <)
 
-  attr_accessor :file
-  validates :name, :file, presence: true
+  attr_accessor :file 
+  validates :name,  presence: true
+  validates :name, uniqueness: true 
+  validates :file, presence: true
+
+  # validates :q, presence: true 
   #validate :file_exist?
   validate :is_file_type_valid?, if: :file_exist?
   before_save :save_shp_file, if: :file_exist? 
@@ -42,6 +46,7 @@ class ProjectType < ApplicationRecord
 
   def self.build_geom(q, project_type_id)
 
+    @q = q
     @project_type_id = project_type_id
     @address = q['address']
     @department = q['department']
@@ -55,6 +60,7 @@ class ProjectType < ApplicationRecord
       @province = e.properties["#{@province}"]
       @country = e.properties["#{@country}"]
       @address_complete = [[@street], @city, @province, @country].join(', ')
+      
       geocode = Geocoder.coordinates(@address_complete)
       geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
       e.update_attribute(:the_geom, geom )
@@ -72,10 +78,10 @@ class ProjectType < ApplicationRecord
   end
 
   def is_file_type_valid?
-
+    @fi = self.file
       self.file.each do |f| @f = f.content_type 
       begin
-        if @f== "text/csv" 
+        if @f== "text/csv" ||  @f== "application/x-esri-shape" || @f == "application/octet-stream" || @f == "application/x-esri-crs" || @f=="application/x-dbf"  
           valid = f.content_type 
       end
     rescue
@@ -216,7 +222,8 @@ class ProjectType < ApplicationRecord
           load_shape()
         end
       when 'text/csv'
-        a=  load_csv()
+        #a=  ProjectType.delay.load_csv()
+        load_csv()
       when 'application/xls', 'application/vnd.ms-excel'
         p 'xls'
       when 'application/json'

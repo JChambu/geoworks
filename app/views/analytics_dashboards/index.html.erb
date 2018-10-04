@@ -1,24 +1,60 @@
 <%- model_class = AnalyticsDashboard -%>
-<p id="notice"><%= notice %></p>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
+</div>
 
-<h1>Analytics Dashboards</h1>
+  <div class="col-md-12 col-sm-12 col-xs-12 sub-header">
+    <div class="row">
+      <div class="col-md-9">
+      </div>
+      <div class="col-md-3 text-right">
+<%= link_to t('.new', :default => t("helpers.links.new")),  new_project_type_dashboard_analytics_dashboard_path(@project_type, @dashboard), class:'btn btn-primary', remote: true%>
+      </div>
+    </div>
+  </div>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th><%= model_class.human_attribute_name(:title) %></th>
-      <th><%= model_class.human_attribute_name(:description) %></th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
+<div class="col-md-12 col-sm-12 col-xs-12">
+  <div class="x_panel card">
+    <div class="x_title">
+      <ul class="nav navbar-right panel_toolbox">
+        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">Settings 1</a>
+            </li>
+            <li><a href="#">Settings 3</a>
+            </li>
+          </ul>
+        </li>
+        <li><a class="close-link"><i class="fa fa-close"></i></a>
+        </li>
+      </ul>
+      <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th><%= model_class.human_attribute_name(:title) %></th>
+            <th><%= model_class.human_attribute_name(:description) %></th>
+            <th colspan="3"></th>
+          </tr>
+        </thead>
 
-  <tbody>
-    <% @analytics_dashboards.each do |analytics_dashboard| %>
-      <%= render "row", analytics_dashboard: analytics_dashboard %>
-    <% end %>
-  </tbody>
-</table>
+        <tbody>
+          <% @analytics_dashboards.each do |analytics_dashboard| %>
+            <%= render "row", analytics_dashboard: analytics_dashboard %>
+          <% end %>
+        </tbody>
+      </table>
 
+
+    </div>
+  </div>
+</div>
+</div>
 <br>
 
-<%= link_to 'New Analytics Dashboard', new_project_type_dashboard_analytics_dashboard_path(@project_type, @dashboard), remote: true %>
+
