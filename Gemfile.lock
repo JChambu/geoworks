@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/bokmann/font-awesome-rails.git
+  revision: 8ffeaf32fdcf5402c81ee254874e3a69af50c90d
+  branch: master
+  specs:
+    font-awesome-rails (4.7.0.4)
+      railties (>= 3.2, < 6.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -325,6 +333,7 @@ DEPENDENCIES
   delayed_job_active_record
   devise
   figaro
+  font-awesome-rails!
   foreman
   fulcrum
   geocoder

@@ -23,6 +23,7 @@ gem 'rgeoserver'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'json'
 gem 'figaro'
+gem "font-awesome-rails", github: "bokmann/font-awesome-rails", branch: "master"
 gem 'jbuilder', '~> 2.5'
 gem 'webpack-rails'
 gem 'foreman'
