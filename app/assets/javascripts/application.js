@@ -15,6 +15,7 @@
 //= require bootstrap.min
 //= require switchery/switchery.min
 //= require nicescroll/jquery.nicescroll.min
+//= require jquery.csv
 //= require progressbar
 //= require moment.min
 //= require chartist
