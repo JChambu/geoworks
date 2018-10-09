@@ -1,0 +1,24 @@
+<div>
+  <h3>Latitud - Longitud</h3>
+</div>
+<div class="col-md-12 col-sm-12 col-xs-12">
+  <div class="x_panel card">
+    <div class="x_content">
+      <div class="form-group row col-md-6">
+
+        <div class="form-group">
+          <label>Latitud: </label>
+          <div>
+            <%=f.select :latitude, '' , include_blank: true  %>
+          </div>
+        </div>
+        <div>
+          <label>Longitud</label>
+          <div>
+            <%=f.select :longitude,'' ,:include_blank => true  %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -40,20 +40,15 @@ $(document).on('click', '#enviar', function(event){
 
 });
 
-Navarra.project_types.action_dashboard = function(){
-  init = function(){
-  var  project_id = $("#data_id").val();
+/*if (window.File && window.FileReader && window.FileList && window.Blob) {
+  console.log('Great success! All the File APIs are supported.');
+} else {
+  alert('The File APIs are not fully supported in this browser.');
+}*/
 
-        Navarra.geo_openlayers.init();
-    
-    
 
-   //d3sel(); 
-    /*handleIdProyecto( project_id);
-    window.graphs();*/
-        //init_chart_doughnut();  
-       // init_kpi();
-  }
+Navarra.project_types.action_new = function(){
+
 
   return {
     init: init,
@@ -62,9 +57,34 @@ Navarra.project_types.action_dashboard = function(){
 
 Navarra.project_types.action_create = function(){
   init = function(){
-   $('.enviar').on('click', function(){
-    console.log("hola");
-   });
+
+    console.log("create");
+    $('.project_type_file').on('change', function(e){
+      console.log("change");
+      handleFileSelect(e);
+    });
+    $('#envi').on('click', function(){
+      console.log("hola");
+    });
+  }
+  function handleFileSelect(evt) {
+    var files = evt.target.files[0]; // FileList object
+
+    var data = null;
+    var file = evt.target.files[0];
+    var reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = function(event) {
+      var csvData = event.target.result;
+      data = $.csv.toArrays(csvData);
+      if (data && data.length > 0) {
+        console.log(data[0]);
+      }
+    };
+    reader.onerror = function() {
+      alert('Unable to read ' + file.fileName);
+    };
+
   }
   return {
     init: init,
@@ -74,11 +94,62 @@ Navarra.project_types.action_create = function(){
 
 Navarra.project_types.action_new = function(){
   init = function(){
-    console.log("aaaa");
-   //e.preventDefault(); 
 
-  };
-  
+    $('.boxi').hide();
+    $('#project_type_file').on('change', function(e){
+      handleFileSelect(e);
+    });
+    $('#envi').on('click', function(){
+      console.log("hola");
+    });
+
+
+    $('#option_geo').on('change', function(){
+
+      value = $(this).val();
+      $(this).find("option:selected").each(function(){
+        var optionValue = $(this).attr("value");
+        if(optionValue){
+          $(".boxi").not("." + optionValue).hide();
+          $("." + optionValue).show();
+        } else{
+          $(".boxi").hide();
+        }
+      });
+
+    })
+
+
+
+
+
+
+  }
+  function handleFileSelect(evt) {
+    var files = evt.target.files[0]; // FileList object
+
+    var data = null;
+    var file = evt.target.files[0];
+    var reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = function(event) {
+      var csvData = event.target.result;
+      data = $.csv.toArrays(csvData);
+      if (data && data.length > 0) {
+
+        data[0].forEach(function(item){
+          $('#project_type_latitude, #project_type_longitude, #project_type_address, #project_type_department, #project_type_province, #project_type_country').append('<option value="'+item+'" >'+ item+'</option>');  
+        })
+
+      }
+    };
+    reader.onerror = function() {
+      alert('Unable to read ' + file.fileName);
+    };
+
+  }
+
+
   return {
     init: init,
   }

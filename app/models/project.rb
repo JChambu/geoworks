@@ -2,7 +2,7 @@ class Project < ApplicationRecord
 
   require "json"
   belongs_to :project_type
-  validate :validate_properties
+  #validate :validate_properties
 
   def validate_properties
 
@@ -23,22 +23,20 @@ class Project < ApplicationRecord
     end
   end
 
-
   def self.to_csv
 
     attributes = ProjectField.where(project_type_id: 6).select(:name)
- 
+
     @at = [] 
     attributes.each do |a| 
       @at << a.name
     end
 
     CSV.generate(headers: true) do |csv|
-        csv << @at
+      csv << @at
       @all = all
       all.each do |product|
         p product
-        pry
         csv << @at.map { |attr|  product.send(attr) } 
       end
     end
@@ -49,8 +47,8 @@ class Project < ApplicationRecord
     @fields = ProjectField.where(project_type_id: 31)
     @properties = Project.where(project_type_id: 32).select("properties->>'form_values'")
 
-#   @data = JSON.parse(@properties.to_h)
-        #@properties.each do |row|  
+    #   @data = JSON.parse(@properties.to_h)
+    #@properties.each do |row|  
     #
 
 

@@ -67,7 +67,6 @@
 
                 <td><%= link_to project_type.name, project_type_projects_path(project_type) %></td>
                 <td><%= project_type.projects.count %></td>
-                <td><%= link_to 'Geocoder', project_types_geocoding_path(project_type.id) %></td>
                 <td><%= link_to 'Dashboard', project_type_dashboards_path(project_type.id) %></td>
                 <td><%= link_to 'Edit', edit_project_type_path(project_type) %></td>
 

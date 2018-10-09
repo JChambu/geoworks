@@ -305,6 +305,7 @@ class ProjectTypesController < ApplicationController
   # POST /project_types
   # POST /project_types.json
   def create
+
     @project_type = ProjectType.new(project_type_params)
 
     respond_to do |format|
@@ -350,6 +351,6 @@ class ProjectTypesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_type_params
-    params.require(:project_type).permit(:name, {file:[]}, fields_attributes: [:id, :field_type, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id])
+    params.require(:project_type).permit(:name, :latitude, :longitude, :address, :department, :province, :country, {file:[]}, fields_attributes: [:id, :field_type, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id])
   end
 end

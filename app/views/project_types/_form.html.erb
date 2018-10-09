@@ -16,10 +16,20 @@
     <%= f.label :name %>
     <%= f.text_field :name %>
   </div>
-  <%= f.file_field(:file, multiple: true)  %>
+  <%= f.file_field(:file, multiple: true, class: 'project_typ_file btn btn-primary')  %>
+  
+  <%= select_tag 'option_geo', options_for_select(['latlng', 'geocoding']), {prompt: 'Seleccione tipo georeferenciacion'} %>
+
+  <div id="latlng" class="latlng boxi">
+    <%= render 'latlng', f: f  %>
+  </div>
+<div id="geocoding" class="geocoding boxi">
+    <%= render 'geocoding', f: f  %>
+</div>
+
 
   <div class="actions">
-    <%= f.submit class: 'enviar' %>
+    <%= f.submit id: :envi, class: 'enviar btn btn-primary' %>
   </div>
 
 <% end %>

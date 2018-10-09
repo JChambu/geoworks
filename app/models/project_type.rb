@@ -20,7 +20,8 @@ class ProjectType < ApplicationRecord
 
   FILTERS = %w(= <)
 
-  attr_accessor :file 
+  attr_accessor :file, :latitude, :longitude, :address, :department, :province, :country
+
   validates :name,  presence: true
   validates :name, uniqueness: true 
   validates :file, presence: true
@@ -44,29 +45,35 @@ class ProjectType < ApplicationRecord
     Dashboard.create(name: "Dashboard_1", project_type_id: self.id )  
   end
 
-  def self.build_geom(q, project_type_id)
+  def build_geom(address, department, province, country)
 
-    @q = q
-    @project_type_id = project_type_id
-    @address = q['address']
-    @department = q['department']
-    @province = q['province']
-    @country = q['country']
-    @extended = Project.where("project_type_id = #{@project_type_id}")
-      @extended.each do |e|
-      geom = ''
-      @street = e.properties["#{@address}"]
-      @city = e.properties["#{@department}"] 
-      @province = e.properties["#{@province}"]
-      @country = e.properties["#{@country}"]
-      @address_complete = [[@street], @city, @province, @country].join(', ')
-      
-      geocode = Geocoder.coordinates(@address_complete)
-      geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
-      e.update_attribute(:the_geom, geom )
-    end
+
+    #@q = q
+    #@project_type_id = project_type_id
+    #@address = q['address']
+    #@department = q['department']
+    #@province = q['province']
+    #@country = q['country']
+    #@extended = Project.where("project_type_id = #{@project_type_id}")
+    #  @extended.each do |e|
+    #  geom = ''
+    # @street = e.properties["#{@address}"]
+    # @city = e.properties["#{@department}"] 
+    # @province = e.properties["#{@province}"]
+    # @country = e.properties["#{@country}"]
+    @street = address
+    @city = department  
+    @province = province 
+    @country = country 
+
+    @address_complete = [[@street], @city, @province, @country].join(', ')
+
+    geocode = Geocoder.coordinates(@address_complete)
+    geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
+    return geom
+    #e.update_attribute(:the_geom, geom )
+    #end
   end
-
 
   def file_exist?
 
@@ -79,17 +86,17 @@ class ProjectType < ApplicationRecord
 
   def is_file_type_valid?
     @fi = self.file
-      self.file.each do |f| @f = f.content_type 
-      begin
-        if @f== "text/csv" ||  @f== "application/x-esri-shape" || @f == "application/octet-stream" || @f == "application/x-esri-crs" || @f=="application/x-dbf"  
-          valid = f.content_type 
+    self.file.each do |f| @f = f.content_type 
+    begin
+      if @f== "text/csv" ||  @f== "application/x-esri-shape" || @f == "application/octet-stream" || @f == "application/x-esri-crs" || @f=="application/x-dbf"  
+        valid = f.content_type 
       end
     rescue
       valid = false
     end
     self.errors.add(:base, :invalid_type_file) unless valid
     valid
-  end
+    end
   end
 
   def self.kpi_without_graph(project_type_id, option_graph, size_box, type_box, filter_condition = nil)
@@ -127,15 +134,15 @@ class ProjectType < ApplicationRecord
       if type_box == 'extent'
         data = Project.where(project_type_id: chart.project_type_id).where(" st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
       end
-#      if type_box == 'filter'
- #       data = Project.where(project_type_id: chart.project_type_id).where("properties->>'" + @filter_condition[0] +  "' " + @filter_condition[1]  + " ?", @filter_condition[2])
- #     end
+      #      if type_box == 'filter'
+      #       data = Project.where(project_type_id: chart.project_type_id).where("properties->>'" + @filter_condition[0] +  "' " + @filter_condition[1]  + " ?", @filter_condition[2])
+      #     end
       if type_box == 'polygon'
         data = Project.where(project_type_id: chart.project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
       end
       field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
-     
-     conditions_field = chart.condition_field
+
+      conditions_field = chart.condition_field
       if !conditions_field.blank?
         data =  data.where(" properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
       end
@@ -225,7 +232,7 @@ class ProjectType < ApplicationRecord
         #a=  ProjectType.delay.load_csv()
         load_csv()
       when 'application/xls', 'application/vnd.ms-excel'
-        p 'xls'
+        'xls'
       when 'application/json'
         load_json()
       when  'application/geo+json'
@@ -247,18 +254,32 @@ class ProjectType < ApplicationRecord
     @elements 
   end
 
-  def load_csv 
+  def load_csv
+    @se = self
     file_name = @directory[1].split('.').first
     items = []
     CSV.foreach("#{@directory[0]}/#{file_name}.csv", headers: true).with_index do |row, i |
       if i == 0 
         row.headers.each do |field|
-          p field
           @new_project_field =  ProjectField.where(name: field, key: field, field_type: 'text_field', project_type_id: self.id).first_or_create(name: field, key: field, field_type: 'text_field', project_type_id: self.id)
         end
       end
       items = row.to_h
-      Project.create(properties: items, project_type_id: self.id)
+      geom = ''
+      if (self.latitude.present? && self.longitude.present?)
+        lat = items[self.latitude]
+        lng = items[self.longitude]
+        geom = "POINT(#{lng} #{lat})" 
+      end
+      if(self.address.present? && self.province.present? && self.country.present?)
+        address = items[self.address]
+        department = items[self.department]
+        province = items[self.province]
+        country = items[self.country]
+        geom = build_geom(address, department, province, country)
+      end
+
+      Project.create(properties: items, project_type_id: self.id, the_geom: geom)
     end
   end
 
@@ -491,9 +512,5 @@ class ProjectType < ApplicationRecord
   def  kpi
 
   end
-
-
-
-
 
 end

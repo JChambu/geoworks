@@ -1,0 +1,30 @@
+<div>
+  <h3>Geolocalizacion</h3>
+</div>
+<div class="col-md-12 col-sm-12 col-xs-12">
+  <div class="x_panel card">
+    <div class="x_content">
+      <div class="form-group row col-md-6">
+
+        <div>
+          <label> Direccion: </label>
+          <%=f.select :address, '',  :include_blank => true %>
+        </div>
+        <div>
+          Departamento: <%= f.select :department, '',:include_blank => true %>
+      </div>
+      <div>
+        Provincia: <%=f.select :province, '', :include_blank => true%>
+    </div>
+    <div>
+      Pais: <%= f.select :country, '',  include_blank: true %>
+  </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
