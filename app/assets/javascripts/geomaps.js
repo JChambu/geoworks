@@ -57,6 +57,8 @@ Navarra.geomaps = function (){
       maxFeatures: 50000,
       outputFormat: 'application/json',
     };
+    console.log("gola");
+    console.log(Navarra.dashboards.config.project_type_id);
 
     defaultParameters.CQL_FILTER = "project_type_id="+Navarra.dashboards.config.project_type_id  ;
     /* if (FiltrosAcumulados.length > 0 ){
