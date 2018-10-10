@@ -71,11 +71,13 @@ Navarra.geomaps = function (){
     var parameters = L.Util.extend(defaultParameters);
     var URL = owsrootUrl + L.Util.getParamString(parameters);
     //Custom radius and icon create function
+    console.log(URL);
     $.ajax({
       url: URL,
       dataType: 'json',
       jsonpCallback: 'parseResponse',
       success: function (data) {
+        console.log(data);
         geoJsonLayer.addData(data);         
         markers.addLayer(geoJsonLayer);
         bounds = markers.getBounds();   
