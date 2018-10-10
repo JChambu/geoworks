@@ -79,6 +79,7 @@ Navarra.geomaps = function (){
         geoJsonLayer.addData(data);         
         markers.addLayer(geoJsonLayer);
         bounds = markers.getBounds();   
+        console.log(bounds);
         mymap.fitBounds(bounds);     
         mymap.addLayer(markers);
       }
