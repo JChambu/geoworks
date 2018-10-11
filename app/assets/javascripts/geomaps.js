@@ -58,8 +58,8 @@ Navarra.geomaps = function (){
 
     
     var geoJsonLayer = new L.geoJSON();
-   // var owsrootUrl = 'http://45.55.84.16:8080/geoserver/ows';
-     var owsrootUrl = 'http://localhost:8080/geoserver/ows';
+   var owsrootUrl = 'http://45.55.84.16:8080/geoserver/ows';
+   //  var owsrootUrl = 'http://localhost:8080/geoserver/ows';
 
     
     var defaultParameters = {
