@@ -52,7 +52,7 @@ Navarra.geomaps = function (){
       //init_chart_doughnut();  
     }
     markers = L.markerClusterGroup({
-      disableClusteringAtZoom: 18
+      disableClusteringAtZoom: 17
       //maxClusterRadius: 5
     });
 
