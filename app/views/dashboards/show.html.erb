@@ -4,7 +4,7 @@
 <% @projects.each do |a|%>
     <%if !a.the_geom.nil?  %>
     Navarra.dashboards.config.lat.push( <%= a.the_geom.y %>)
-Navarra.dashboards.config.lon.push( <%= a.the_geom.x %>)
+    Navarra.dashboards.config.lon.push( <%= a.the_geom.x %>)
 <% end %>
 <% end %>
   </script>  
@@ -12,10 +12,8 @@ Navarra.dashboards.config.lon.push( <%= a.the_geom.x %>)
 <%= form_for :q, :method => :get  do |f| %>
   <div class="row">
     <div class="col-md-12">
-      <div id="map" class="col-md-12"></div>
-    <div class=" graphics col-md-12"></div>
+      <div id="map"></div>
+      <div class="graphics"></div>
   </div>
   </div>
-
-
 <% end %>

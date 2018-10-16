@@ -182,8 +182,8 @@ function init_chart_doughnut(size_box = null){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box},
       success: function(data){
-        //        data.forEach(function(element){
-        for(var i = 0; i < data.length; i ++){
+      
+for(var i = 0; i < data.length; i ++){
           var reg = data[i];
           var data_entry = {};
           var type_chart = "";
@@ -204,20 +204,20 @@ function init_chart_doughnut(size_box = null){
 
               var series = [];
               var lab;
+              var da=[];
               $.each(data_general, function(idx, vax){
 
-                var da=[];
-                var colorBackground = []
+              
+                var colorBackground = "#6f98fc";
                 lab = [];
                 $.each(vax, function(i, v ){
                   lab.push(v['name']);
                   da.push(v['count']);
-                  colorBackground.push(v['color'])
+                 // colorBackground.push(v['color'])
                 });
                 series.push({"data":da, "name":title});
               });
 
-              var div_graph = document.createElement('div');
               var title_graph = title.replace(" ", "_");
             status_view = $('#view').hasClass('active');
               console.log(status_view);
@@ -231,129 +231,87 @@ function init_chart_doughnut(size_box = null){
             //  }else{
             //    fixed_height = 'col-md-6 col-sm-12 ';
             //  }
-              html =  
-                '<div class="'+ card_graph + ' col-xs-12 card_graph">' +
-                '<div class="x_panel tile fixed_height_390 card">' + 
-                '<div class="x_title">'+
-                ' <h2>'+title+'</h2>'+
-                ' <ul class="nav navbar-right panel_toolbox">'+
-                '   <li><a class="collapse-link" ><i class="fa fa-chevron-up"></i></a></li>'+
-                '   <li class="dropdown"></li>'+
-                '   <li><a class="close-link"><i class="fa fa-close"></i></a></li>'+
-                ' </ul>'+
-                ' <div class="clearfix"></div>'+
-                '</div>'+
-                '<div class="ct-chart ct-chart_'+title_graph+' ct-chart-line-classname" id="ct-chart_'+title_graph+'">'
+             var div_graph = document.createElement('div');
+              var canvas_graph = document.createElement('canvas');
+              div_graph.id = 'graph'+title;
+              canvas_graph.id = 'canvas'+title;
+              canvas_graph.height = 160;
+              canvas_graph.width = 450;
+              canvas_graph.className = 'canvas'+title ;
+
+
+              html = '<div class="col-md-6 col-sm-6 col-xs-12">' + 
+'  <div class="x_panel tile fixed_height_450 overflow_hidden">'+
+'    <div class="x_title">'+
+'      <h2>'+title+'</h2>'+
+'      <ul class="nav navbar-right panel_toolbox">'+
+'        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>'+
+'        </li>'+
+'        <li class="dropdown">'+
+'        </li>'+
+'        <li><a class="close-link"><i class="fa fa-close"></i></a>'+
+'        </li>'+
+'      </ul>'+
+'    <div class="clearfix"></div>'+
+'    </div>'+
+' <div class="x_content_'+title+'">';
 
               $('.graphics').append(html);
 
-              var datt = {
-                labels: lab,
-                series: series
-              }
+           
+  var option_legend = {
+    legend:{ 
+          display: false
+    } }
 
-              switch (type_chart)
-              {
-                case "bar":
-                  options = {
-                    height:  200, 
-                    plugins: [
-                      Chartist.plugins.ctBarLabels()
-                    ],
-                  }
-                  chart =  new Chartist.Bar('.ct-chart_'+title_graph, datt, options)
-                  break;
+  if (type_chart == 'doughnut'){
 
-                case "horizontalBar":
-                  options = {
-                    height:  200, 
-                    axisY: {
-                      offset: 102
-                    },
-                    textAnchor: 'middle',
-                    plugins: [
-                      Chartist.plugins.ctBarLabels()
-                    ],
-                    horizontalBars: true,
-                  }
-                  chart =  new Chartist.Bar('.ct-chart_'+title_graph, datt, options)
-                  break;
-                case "line":
-
-                  options = {
-                    height: 200 , 
-                    plugins: [
-                      Chartist.plugins.ctPointLabels({
-                        labelClass: 'ct-label',
-                        labelOffset: {
-                          x: 0,
-                          y: -10
-                        },
-                        textAnchor: 'middle',
-                      }),
-                      Chartist.plugins.legend()
-                    ]
-                  };
-                  chart =   new Chartist.Line('.ct-chart_'+title_graph, datt, options)
-                  break;
-                case "line_area":
-                  options = {
-                    height: 200 , 
-                    showArea: true,
-                    showLine: false,
-                    showPoint: false,
-                    fullWidth: true,
-                    axisX: {
-                      showLabel: false,
-                      showGrid: false
+ option_legend = {
+                  legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                      boxWidth: 5,
+                      fullWidth: true,
+                      fontSize: 10
                     }
-                  }
-                  chart =new Chartist.Line('.ct-chart_'+title_graph, datt, options)
-                  break;
-                case "chart_pie":
-                  var data = {
-                    labels: datt.labels,
-                    series: datt.series[0].data
-                  };
-                    
-                  var options = {
-                    height: 200 , 
-                    labelInterpolationFnc: function(value) {
-                      return value[0]
-                    },
-                    showLabel: false,
-                        plugins: [
-                                  Chartist.plugins.legend()
-                              ]
-                  };
-
-                  var responsiveOptions = [
-                    ['screen and (min-width: 640px)', {
-                      chartPadding: 30,
-                      labelOffset: 80,
-                      labelDirection: 'explode',
-                      labelInterpolationFnc: function(value) {
-                        return value;
-                      }
-                    }],
-                    ['screen and (min-width: 1024px)', {
-                      labelOffset:10,
-                      chartPadding: 10
-                    }]
-                  ];
-                  chart = new Chartist.Pie('.ct-chart_'+title_graph, data, options, responsiveOptions);
-
-                  break;
+                  },
+}
+}
+              var chart_doughnut_settings = {
+                type: type_chart,
+                data: {
+                  labels: lab,
+                  datasets: [{
+                    label: title,
+                    data:  da , 
+                   backgroundColor: poolColors(da.length ) 
+                    //backgroundColor: colorBackground 
+                  }]
+                },
+                options:  option_legend
               }
+              $('.x_content_'+title).append(canvas_graph);
+              var cc = '#'+canvas_graph.id;               
+              $(cc).each(function(){
+
+                var chart_element = $(this);
+                var chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
+
+              });
+
               close_html = '</div>'+
                 '</div>'+
-                '</div>';
+'</div>';
+
               $('.graphics').append( close_html);
             }
           })
-        }
+
+          // 
       }
-    })
+    }
+  })
   }
 
 }

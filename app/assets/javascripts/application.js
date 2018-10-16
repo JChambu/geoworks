@@ -33,4 +33,7 @@
 //= require flot/jquery.flot
 //= require flot/jquery.flot.resize
 //= require leaflet/dist/leaflet.markercluster-src.js 
+//= require leaflet/leaflet.layerindex.js
+//= require leaflet/rtree.js 
+//= require leaflet/leaflet.wms.js 
 //= require_tree 

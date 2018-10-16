@@ -12,7 +12,7 @@ body {
   top: 0;
   bottom: 0;
   width: 100%;
-  height: 400px;
+  height: 450px;
 }
 
 .st0  {
@@ -20,6 +20,11 @@ body {
 }
 .full-height{
   height:100%;
+}
+
+.graphics{
+  position: relative;
+  overflow: auto;
 }
 
 .daterangepicker .ranges li {
@@ -537,7 +542,7 @@ body {
   height: 320px
 }
 .fixed_height_390 {
-/*  height: 390px*/
+  /*  height: 390px*/
 }
 .fixed_height_640 {
   height: 640px;
@@ -1717,9 +1722,9 @@ article.media {
   }
   @media (min-width: 992px) {
     .tile_count .tile_stats_count {
-    /*  margin-bottom: 10px;*/
+      /*  margin-bottom: 10px;*/
       border-bottom: 0;
-   /*   padding-bottom: 10px*/
+      /*   padding-bottom: 10px*/
     }
   }
   .tile_count .tile_stats_count:before {

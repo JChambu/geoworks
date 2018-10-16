@@ -55,6 +55,8 @@ Navarra.dashboards.action_show = function(){
         var h = parseInt(window.innerWidth) - 600;
         $("#map").css("height", o+"px"); //map.invalidateSize();
         $("#map").css("width", "75%"); //map.invalidateSize();
+        $(".graphics").css("height", o+"px"); //map.invalidateSize();
+        $(".graphics").css("width", "25%"); //map.invalidateSize();
         $("#clas_map").toggleClass( "col-md-9", 500, "easeOutSine" );
         $(".graphics").removeClass( "col-md-12");
         $(".graphics").toggleClass( "col-md-3", 500, "easeOutSine" );
@@ -65,6 +67,8 @@ Navarra.dashboards.action_show = function(){
         var o = 400;
         $("#map").css("height", o+"px"); //map.invalidateSize();
         $("#map").css("width", "100%"); //map.invalidateSize();
+        $(".graphics").css("height", o+"px"); //map.invalidateSize();
+        $(".graphics").css("width", "100%"); //map.invalidateSize();
         $(".graphics").removeClass( "col-md-3");
         $(".graphics").toggleClass( "col-md-12", 500, "easeOutSine" );
         $("#clas_map").toggleClass( "col-md-12", 500, "easeOutSine" );
