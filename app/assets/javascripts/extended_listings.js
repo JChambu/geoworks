@@ -22,7 +22,7 @@ Navarra.extended_listings.action_edit = function(){
 }();
 
 Navarra.extended_listings.action_new = function(){
-   
+
     loadPoiSubTypesComboEl = function(result) {
       Navarra.common.form.loadComboOptions("#extended_listing_poi_sub_type_id", result, "name");
     },
@@ -94,7 +94,16 @@ Navarra.extended_listings.action_new = function(){
         location_city = $("#extended_listing_city_id option:selected").text();
         options = Navarra.common.form.searchAddress(location_city );
         options["searchTerm"] = searchTerm;
-        Navarra.geocoding_ol.doGeocode(options);
+        console.log(options);
+
+        //provider = new OpenStreetMapProvider();
+        // results = await provider.search({ query: input.value });
+
+       // console.log(results);
+        Navarra.geomaps_extended_listings.geocoding(options);
+
+
+//        Navarra.geocoding_ol.doGeocode(options);
       })
     },
 
@@ -125,10 +134,17 @@ Navarra.extended_listings.action_new = function(){
         }
       });
     }
+    
+  load_map = function(){
+    Navarra.geomaps_extended_listings.init();
+  }
+
 
  init = function(){
 
-    Navarra.poi_search_panel.init();
+  
+   load_map(); 
+   Navarra.poi_search_panel.init();
     initCitiesChosen();
     bindSearchAddress();
     //expresion();
@@ -136,7 +152,6 @@ Navarra.extended_listings.action_new = function(){
     loadLatLonFieldsEl();
     bindPoiTypesComboChangeEl();
     //loadPoiSubTypesComboEl();
-    Navarra.geocoding_ol.init();
   } 
   return {
     init: init

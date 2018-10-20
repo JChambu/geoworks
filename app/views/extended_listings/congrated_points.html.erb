@@ -1,0 +1,23 @@
+<div class="span12">
+  
+
+  <%= render "sidebar" %>
+  <div class="span11">
+    
+
+  <h1>congrated</h1>
+<table>
+    <th>the_geom</th>
+    <th>id</th>
+    <% @congrated.each do |point| %>
+      <tr>
+        
+
+      <td><%= point['the_geom'] %></td>
+      <td><%= point['id'] %></td>
+      <td><%= point['count'] %></td>
+      </tr>
+    <% end %>
+</table>
+</div>
+  </div>

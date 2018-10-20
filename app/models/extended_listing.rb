@@ -23,7 +23,7 @@ class ExtendedListing < ActiveRecord::Base
   delegate :name, :to => :poi_type, :prefix => true, :allow_nil => true
   delegate :name, :to => :poi_sub_type, :prefix => true, :allow_nil => true
   delegate :name, :to => :poi_status, :prefix => true, :allow_nil => true
-  #before_save :create_geom
+  before_save :create_geom
 
   before_save :formated_strings
   validates :city_id, :name, :street,   presence: true
@@ -55,28 +55,50 @@ class ExtendedListing < ActiveRecord::Base
 
 
   def create_geom 
-
     if self.latitude and self.longitude and
         !self.latitude.to_s.empty? and !self.longitude.to_s.empty?
       self.the_geom = "POINT(#{self.longitude} #{self.latitude})"
+      @ge = self.the_geom
     end
   end 
 
   def self.build_geom 
 
-    @extended = ExtendedListing.where("poi_status_id = 2 ")
+    #@extended = ExtendedListing.where("poi_status_id = 2 ")
+    @extended = Project.where("project_type_id = 420")
     @extended.each do |e|
-      geom = ''
-      #city = City.find(e.city_id) 
-      #department = city.department
-      province = e.province_name
-      country = "Chile"
-      #@address = [[e.address, e.number], city.name, department.name, province.name, country.name].join(', ')
-      @address = [[e.street, e.number], province,  country].join(', ')
+
+@e = e
+
+    geom = ''
+    city = e.properties['ciudad'] 
+    street = e.properties['direccion']
+    province = e.properties['provincia']
+
+      country = "Argentina"
+      ##@address = [[e.address, e.number], city.name, department.name, province.name, country.name].join(', ')
+      @address = [[street], city, province, country].join(', ')
+      #Buscar por direccion, ciudad, provicia,etc
       geocode = Geocoder.coordinates(@address)
       geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
       e.update_attribute(:the_geom, geom )
+    
+      ##buscar direccion por latitud y longitud
+      #@latitude = e.properties['latitude']
+      #@longitude = e.properties['longitude']
+      #@geo_address = ''
+      #@geo_address = Geocoder.search([@latitude, @longitude] )
+      #if !@geo_address[0].nil?
+      #e.properties['address'] = @geo_address[0].data["address_components"][0]["long_name"] + " " if  !@geo_address[0].data["address_components"][0].nil?
+      #e.properties['address'] += @geo_address[0].data["address_components"][1]["long_name"] + ", "  if  !@geo_address[0].data["address_components"][1].nil?
+      # e.properties['address'] += @geo_address[0].data["address_components"][2]["long_name"] + ", " if  !@geo_address[0].data["address_components"][2].nil?
+      # e.properties['address'] += @geo_address[0].data["address_components"][3]["long_name"] + ", " if  !@geo_address[0].data["address_components"][3].nil?
+      # e.properties['address'] += @geo_address[0].data["address_components"][4]["long_name"] + ", " if  !@geo_address[0].data["address_components"][4].nil?
+      # e.properties['address'] += @geo_address[0].data["address_components"][5]["long_name"] + ", " if  !@geo_address[0].data["address_components"][5].nil?
+      # e.properties['address'] += @geo_address[0].data["address_components"][6]["long_name"] + ", " if  !@geo_address[0].data["address_components"][6].nil?
 
+      # e.save
+      # end
     end
   end
 

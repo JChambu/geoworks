@@ -35,8 +35,8 @@
             <table class="table table-striped table-condensed">
               <thead>
                 <tr>
-                  <th><%= model_class.human_attribute_name(:name) %></th>
-                  <th><%= model_class.human_attribute_name(:street) %></th>
+                  <th><%= sort_link @search, :name %></th>
+                  <th><%= sort_link @search, :street %></th>
                   <th><%= model_class.human_attribute_name(:city) %></th>
                   <th><%= model_class.human_attribute_name(:user) %></th>
                   <th><%= model_class.human_attribute_name(:status) %></th>
@@ -47,16 +47,15 @@
               </thead>
               <tbody>
                 <% @extended_listings.each do |extended_listing| %>
-                  <tr>
+                  <tr id=<%= extended_listing.id %>>
                     <td><%= extended_listing.name %></td>
                     <td><%= extended_listing.street %></td>
                     <td><%= extended_listing.city_id %></td>
                     <td><%= extended_listing.user_id %> </td>
-                    <td><%= extended_listing.created_at %></td>
                     <td><%= poi_status_label extended_listing %></td>
                     <td><%= link_to  edit_extended_listing_path(extended_listing), class:"btn btn-info btn-xs"  do %> <i class="fa fa-pencil"> Edit </i>  <%  end %> </td>
                     <%if current_user.role  == 'Admin'  %>
-                      <td><%= link_to extended_listing, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger btn-xs" do %> <i class='fa fa-trash-o'> Eliminar</i><% end %> </td>
+                      <td><%= link_to extended_listing_path(extended_listing.id),  method: :delete, data: { confirm: 'Are you sure?' }, remote: true, class: "btn btn-danger btn-xs" do %> <i class='fa fa-trash-o'> Eliminar</i><% end %> </td>
                     <% end %>
                   </tr>
                 <% end %>

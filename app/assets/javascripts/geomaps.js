@@ -1,5 +1,83 @@
-
+Navarra.namespace("geomaps_extended_listings");
 Navarra.namespace("geomaps");
+
+
+Navarra.geomaps_extended_listings = function (){
+  var map, marker, editableLayers
+  var size_box = [];
+
+  var init= function() {
+
+    var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    });
+
+    var grayscale =L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+      attribution: '',
+      id: 'mapbox.light', 
+      accessToken: 'pk.eyJ1IjoiZmxhdmlhYXJpYXMiLCJhIjoiY2ppY2NzMm55MTN6OTNsczZrcGFkNHpoOSJ9.cL-mifEoJa6szBQUGnLmrA'
+    });
+
+    mymap = L.map('map',{
+      crs: L.CRS.EPSG3857,
+      zoom: 7,
+      center: [-33.113399134183744, -69.69339599609376],
+      zoomControl: false,
+      layers: [grayscale,streets]
+    }) ;
+
+    mymap.on('click', function(e){
+
+      if(typeof(marker)!=='undefined'){
+
+        marker.on('dragend', function(event) {
+          console.log("moviendo");
+          var position = marker.getLatLng();
+          console.log(position);
+          $('#extended_listing_longitude').val(position.lng);
+          $('#extended_listing_latitude').val(position.lat);
+        });
+      }
+    });
+
+    var MySource = L.WMS.Source.extend({
+      'showFeatureInfo': function(latlng, info) {
+
+        if (!this._map) {
+          return;
+        }
+        //               do whatever you like with info
+        this._map.openPopup(info, latlng);
+      }
+    });
+  }
+  var geocoding = function(opt){
+
+    address = opt.county + " " +  opt.location +" " +  opt.searchTerm
+    console.log(address);
+    $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + address, function(data){
+      var items = [];
+      $.each(data, function(key, val) {
+        coord = [val.lat, val.lon]
+        $('#extended_listing_longitude').val(val.lon);
+        $('#extended_listing_latitude').val(val.lat);
+
+        marker = L.marker(coord, {
+          draggable: 'true'
+        }).addTo(mymap); 
+        var markerBounds = L.latLngBounds(coord[0], coord[1]);
+        mymap.fitBounds(markerBounds);
+      });
+    });
+
+  }
+
+  return {
+    init: init,
+    geocoding: geocoding
+  }
+}();
+
 
 Navarra.geomaps = function (){
   //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
@@ -89,7 +167,7 @@ Navarra.geomaps = function (){
       Navarra.dashboards.config.size_box = size_box;  
       init_kpi();
       init_chart_doughnut();  
-      
+
     }
     /*  markers = L.markerClusterGroup({
       disableClusteringAtZoom: 17
