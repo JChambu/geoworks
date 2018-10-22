@@ -1,7 +1,6 @@
 Navarra.namespace("geomaps_extended_listings");
 Navarra.namespace("geomaps");
 
-
 Navarra.geomaps_extended_listings = function (){
   var map, marker, editableLayers
   var size_box = [];
@@ -38,6 +37,12 @@ Navarra.geomaps_extended_listings = function (){
       }
     })
 
+      mymap.on('click', function(evt){
+      marker = L.marker(evt.latlng).addTo(mymap);
+        $('#extended_listing_longitude').val(evt.latlng.lng);
+        $('#extended_listing_latitude').val(evt.latlng.lat);
+  });
+    
     var MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
 
@@ -64,7 +69,6 @@ Navarra.geomaps_extended_listings = function (){
         mymap.fitBounds(markerBounds);
       });
     });
-
   }
 
   return {

@@ -39,8 +39,11 @@ Navarra.geocoding_ol.longitude_ol = <%= @extended_listing.the_geom.x %>
       <div class="col-md-3 btn btn-primary">
         <%= link_to t("views.poi.form.buttons.suggest_location"), "#", class:'btn btn-primary', :id => 'suggest-locations-btn-el' %>
       </div>
-      <div class="col-md-3 btn btn-success">
+      <div class="col-md-3 btn btn-warning">
         <%= link_to "Mover", "#", :class => 'btn', id:"move_marker" %>
+      </div>
+      <div class="col-md-3 btn btn-success">
+        <%= link_to "Agregar", "#", :class => 'btn', id:"add_marker" %>
       </div>
     </div>
   </div>
