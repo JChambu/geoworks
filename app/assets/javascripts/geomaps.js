@@ -26,19 +26,17 @@ Navarra.geomaps_extended_listings = function (){
       layers: [grayscale,streets]
     }) ;
 
-    mymap.on('click', function(e){
-
+    $("#move_marker").on('click', function(e){
       if(typeof(marker)!=='undefined'){
-
+       marker.dragging.enable();
         marker.on('dragend', function(event) {
-          console.log("moviendo");
           var position = marker.getLatLng();
-          console.log(position);
           $('#extended_listing_longitude').val(position.lng);
           $('#extended_listing_latitude').val(position.lat);
         });
+
       }
-    });
+    })
 
     var MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
@@ -61,10 +59,7 @@ Navarra.geomaps_extended_listings = function (){
         coord = [val.lat, val.lon]
         $('#extended_listing_longitude').val(val.lon);
         $('#extended_listing_latitude').val(val.lat);
-
-        marker = L.marker(coord, {
-          draggable: 'true'
-        }).addTo(mymap); 
+        marker = L.marker(coord).addTo(mymap); 
         var markerBounds = L.latLngBounds(coord[0], coord[1]);
         mymap.fitBounds(markerBounds);
       });
