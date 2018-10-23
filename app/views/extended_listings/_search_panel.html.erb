@@ -9,8 +9,8 @@
 
     </div>
     <div class="col-md-2">
-      <%= f.label :category_id_eq %>
-      <%= f.select :category_id_eq, categories_for_select, {:include_blank => true}, {class: 'form-control'} %>
+      <%= f.label :poi_type_id_eq %>
+      <%= f.select :poi_type_id_eq, categories_for_select, {:include_blank => true}, {class: 'form-control'} %>
     </div>
     <div class="col-md-2">
       <%= f.label :country_id_eq %>
@@ -19,6 +19,14 @@
     <div class="col-md-2">
       <%= f.label :province_id_eq %>
       <%= f.select :province_id_eq, provinces_for_select(@country_id), {:include_blank => true}, {class: 'form-control'} %>
+    </div>
+    <div class="col-md-2">
+      <%= f.label :department_id_eq %>
+      <%= f.select :department_id_eq, departments_for_select(@province_id), {:include_blank => true}, {class: 'form-control'} %>
+    </div>
+    <div class="col-md-2">
+      <%= f.label :city_id_eq %>
+      <%= f.select :city_id_eq, cities_for_select, {:include_blank => true}, {class: 'form-control'} %>
     </div>
     <div class="col-md-2">
       <%= f.label :poi_status_id_eq %>
