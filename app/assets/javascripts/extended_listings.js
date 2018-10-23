@@ -3,6 +3,14 @@ Navarra.namespace("extended_listings.action_new");
 Navarra.namespace("extended_listings.action_edit");
 
 
+Navarra.extended_listings.config = {
+  "lon": null,
+  "lat": null,
+  "originalLat": null,
+  "originalLot": null,
+  "otherpois" : null
+};
+
 Navarra.extended_listings.action_index = function() {
   var init = function() {
     Navarra.poi_search_panel.init();

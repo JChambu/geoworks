@@ -25,6 +25,19 @@ Navarra.geomaps_extended_listings = function (){
       layers: [grayscale,streets]
     }) ;
 
+    if(Navarra.extended_listings.config.lat != ''){
+      lat = Navarra.extended_listings.config.lat; 
+      lon = Navarra.extended_listings.config.lon; 
+        marker = L.marker([lat, lon]).addTo(mymap);
+        $('#extended_listing_longitude').val(lon);
+        $('#extended_listing_latitude').val(lat);
+    }
+    
+    
+    
+    
+    
+    
     $("#move_marker").on('click', function(e){
       if(typeof(marker)!=='undefined'){
        marker.dragging.enable();
@@ -35,12 +48,26 @@ Navarra.geomaps_extended_listings = function (){
         });
 
       }
+      e.preventDefault();
     })
+    
+    $('#add_marker').on('click', function(event){
+
 
       mymap.on('click', function(evt){
-      marker = L.marker(evt.latlng).addTo(mymap);
+
+      if(typeof(marker)!=='undefined'){
+        mymap.removeLayer(marker);
+      }
+     
+        marker = L.marker(evt.latlng).addTo(mymap);
         $('#extended_listing_longitude').val(evt.latlng.lng);
         $('#extended_listing_latitude').val(evt.latlng.lat);
+
+  });
+
+
+
   });
     
     var MySource = L.WMS.Source.extend({

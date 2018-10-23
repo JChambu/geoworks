@@ -3,8 +3,8 @@
 
     <% if @extended_listing.the_geom %>
 
-    Navarra.geocoding_ol.latitude_ol = <%= @extended_listing.the_geom.y %>
-Navarra.geocoding_ol.longitude_ol = <%= @extended_listing.the_geom.x %>
+Navarra.extended_listings.config.lat = <%= @extended_listing.the_geom.y %>
+Navarra.extended_listings.config.lon = <%= @extended_listing.the_geom.x %>
 <% end %>
 
   </script>
