@@ -25,10 +25,6 @@
       <%= f.select :department_id_eq, departments_for_select(@province_id), {:include_blank => true}, {class: 'form-control'} %>
     </div>
     <div class="col-md-2">
-      <%= f.label :city_id_eq %>
-      <%= f.select :city_id_eq, cities_for_select, {:include_blank => true}, {class: 'form-control'} %>
-    </div>
-    <div class="col-md-2">
       <%= f.label :poi_status_id_eq %>
       <%= f.select :poi_status_id_eq, poi_statuses_for_select, {:include_blank => true}, {class: 'form-control'} %>
     </div>
