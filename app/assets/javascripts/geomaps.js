@@ -25,7 +25,7 @@ Navarra.geomaps_extended_listings = function (){
       layers: [grayscale,streets]
     }) ;
 
-    if(Navarra.extended_listings.config.lat != ''){
+    if(Navarra.extended_listings.config.lat != null){
       lat = Navarra.extended_listings.config.lat; 
       lon = Navarra.extended_listings.config.lon; 
         marker = L.marker([lat, lon]).addTo(mymap);
