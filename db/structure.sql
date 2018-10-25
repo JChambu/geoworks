@@ -243,7 +243,7 @@ CREATE TABLE public.analytics_dashboards (
     const_field character varying,
     group_field_id integer,
     association_id integer,
-    assoc_kpi boolean,
+    assoc_kpi boolean DEFAULT false,
     dashboard_id integer
 );
 
@@ -727,7 +727,6 @@ CREATE TABLE public.extended_listings (
     city_id integer,
     user_id integer,
     category_id integer,
-    the_geom point,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     phone character varying,
@@ -746,7 +745,9 @@ CREATE TABLE public.extended_listings (
     phone_2 character varying,
     phone_2_new character varying,
     street_2 character varying,
-    street_3 character varying
+    street_3 character varying,
+    the_geom public.geometry(Geometry,4326),
+    comments character varying
 );
 
 
@@ -917,6 +918,52 @@ ALTER SEQUENCE public.geo_editions_id_seq OWNED BY public.geo_editions.id;
 
 
 --
+-- Name: has_project_types; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.has_project_types (
+    id bigint NOT NULL,
+    user_id bigint,
+    project_type_id bigint,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: has_project_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.has_project_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: has_project_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.has_project_types_id_seq OWNED BY public.has_project_types.id;
+
+
+--
+-- Name: inventory_items; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.inventory_items (
+    id character varying,
+    name character varying,
+    release_date character varying,
+    manufacturer character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
 -- Name: load_locations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -947,6 +994,19 @@ CREATE SEQUENCE public.load_locations_id_seq
 --
 
 ALTER SEQUENCE public.load_locations_id_seq OWNED BY public.load_locations.id;
+
+
+--
+-- Name: manufacturers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.manufacturers (
+    name character varying,
+    home_page character varying,
+    phone character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
 
 
 --
@@ -1782,7 +1842,9 @@ CREATE TABLE public.users (
     updated_at timestamp without time zone NOT NULL,
     failed_attempts integer DEFAULT 0 NOT NULL,
     unlock_token character varying,
-    locked_at timestamp without time zone
+    locked_at timestamp without time zone,
+    token character varying,
+    authentication_token character varying(30)
 );
 
 
@@ -1803,6 +1865,38 @@ CREATE SEQUENCE public.users_id_seq
 --
 
 ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- Name: users_projects; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users_projects (
+    id bigint NOT NULL,
+    user_id integer,
+    project_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: users_projects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.users_projects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: users_projects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.users_projects_id_seq OWNED BY public.users_projects.id;
 
 
 --
@@ -1882,6 +1976,18 @@ CREATE VIEW public.view_luminarias AS
    FROM public.projects
   WHERE (projects.project_type_id = 9)
  LIMIT 50000;
+
+
+--
+-- Name: view_project_geoserver; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.view_project_geoserver AS
+ SELECT public.st_x(projects.the_geom) AS x,
+    public.st_y(projects.the_geom) AS y,
+    projects.the_geom,
+    projects.project_type_id
+   FROM public.projects;
 
 
 --
@@ -2029,6 +2135,13 @@ ALTER TABLE ONLY public.generate_deliveries ALTER COLUMN id SET DEFAULT nextval(
 --
 
 ALTER TABLE ONLY public.geo_editions ALTER COLUMN id SET DEFAULT nextval('public.geo_editions_id_seq'::regclass);
+
+
+--
+-- Name: has_project_types id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.has_project_types ALTER COLUMN id SET DEFAULT nextval('public.has_project_types_id_seq'::regclass);
 
 
 --
@@ -2183,6 +2296,13 @@ ALTER TABLE ONLY public.terms ALTER COLUMN id SET DEFAULT nextval('public.terms_
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Name: users_projects id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users_projects ALTER COLUMN id SET DEFAULT nextval('public.users_projects_id_seq'::regclass);
 
 
 --
@@ -2365,6 +2485,14 @@ ALTER TABLE ONLY public.generate_deliveries
 
 ALTER TABLE ONLY public.geo_editions
     ADD CONSTRAINT geo_editions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: has_project_types has_project_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.has_project_types
+    ADD CONSTRAINT has_project_types_pkey PRIMARY KEY (id);
 
 
 --
@@ -2552,6 +2680,14 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: users_projects users_projects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users_projects
+    ADD CONSTRAINT users_projects_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: verification_pois verification_pois_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2610,6 +2746,20 @@ CREATE INDEX index_dashboards_on_project_type_id ON public.dashboards USING btre
 
 
 --
+-- Name: index_has_project_types_on_project_type_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_has_project_types_on_project_type_id ON public.has_project_types USING btree (project_type_id);
+
+
+--
+-- Name: index_has_project_types_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_has_project_types_on_user_id ON public.has_project_types USING btree (user_id);
+
+
+--
 -- Name: index_pg_search_documents_on_searchable_type_and_searchable_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2631,10 +2781,24 @@ CREATE INDEX index_project_types_on_user_id ON public.project_types USING btree 
 
 
 --
+-- Name: index_users_on_authentication_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_authentication_token ON public.users USING btree (authentication_token);
+
+
+--
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
+
+
+--
+-- Name: index_users_on_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_token ON public.users USING btree (token);
 
 
 --
@@ -2656,6 +2820,14 @@ CREATE INDEX index_versions_on_item_type_and_item_id ON public.versions USING bt
 --
 
 CREATE INDEX project_type_idx ON public.projects USING btree (project_type_id);
+
+
+--
+-- Name: has_project_types fk_rails_3852bc0f07; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.has_project_types
+    ADD CONSTRAINT fk_rails_3852bc0f07 FOREIGN KEY (project_type_id) REFERENCES public.project_types(id);
 
 
 --
@@ -2707,12 +2879,21 @@ ALTER TABLE ONLY public.project_types
 
 
 --
+-- Name: has_project_types fk_rails_fbff27e15c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.has_project_types
+    ADD CONSTRAINT fk_rails_fbff27e15c FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
 SET search_path TO "public", "postgis";
 
 INSERT INTO "schema_migrations" (version) VALUES
+('0'),
 ('20130712200422'),
 ('20130712202501'),
 ('20130712203244'),
@@ -2840,6 +3021,14 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20180606200023'),
 ('20180823034917'),
 ('20180823135344'),
-('20180824132439');
+('20180824132439'),
+('20180921062715'),
+('20180924022044'),
+('20180928041240'),
+('20180928041601'),
+('20180928145521'),
+('20180928154016'),
+('20180929143018'),
+('20181025220040');
 
 
