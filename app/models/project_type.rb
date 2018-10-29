@@ -29,6 +29,10 @@ class ProjectType < ApplicationRecord
   # validates :q, presence: true 
   #validate :file_exist?
   validate :is_file_type_valid?, if: :file_exist?
+
+  
+  before_create :restart_delayed_job
+  before_destroy :restart_delayed_job
   before_save :save_shp_file, if: :file_exist? 
   after_create :load_file, if: :file_exist? 
   after_create :new_dashboard
@@ -38,29 +42,16 @@ class ProjectType < ApplicationRecord
   #after_save :load_shape,  if: :file_exist?
   #validate :validate_options
 
-
-
-
+  def restart_delayed_job
+    system "cd #{Rails.root}; rake jobs:clear; bin/delayed_job restart;"
+  end
+  
   def new_dashboard
     Dashboard.create(name: "Dashboard_1", project_type_id: self.id )  
   end
 
   def build_geom(address, department, province, country)
 
-
-    #@q = q
-    #@project_type_id = project_type_id
-    #@address = q['address']
-    #@department = q['department']
-    #@province = q['province']
-    #@country = q['country']
-    #@extended = Project.where("project_type_id = #{@project_type_id}")
-    #  @extended.each do |e|
-    #  geom = ''
-    # @street = e.properties["#{@address}"]
-    # @city = e.properties["#{@department}"] 
-    # @province = e.properties["#{@province}"]
-    # @country = e.properties["#{@country}"]
     @street = address
     @city = department  
     @province = province 
@@ -229,8 +220,8 @@ class ProjectType < ApplicationRecord
           load_shape()
         end
       when 'text/csv'
-        #a=  ProjectType.delay.load_csv()
-        load_csv()
+        a= ProjectType.delay.load_csv(self.id, self.latitude, self.longitude)
+        #load_csv()
       when 'application/xls', 'application/vnd.ms-excel'
         'xls'
       when 'application/json'
@@ -254,32 +245,35 @@ class ProjectType < ApplicationRecord
     @elements 
   end
 
-  def load_csv
+  def self.load_csv project_type_id, latitude, longitude
     @se = self
-    file_name = @directory[1].split('.').first
+    #file_name = @directory[1].split('.').first
+    @project_type = JSON.parse(ProjectType.find(project_type_id).directory_name)
+    @source_path = @project_type[0]
+    @file_name = @project_type[1]
     items = []
-    CSV.foreach("#{@directory[0]}/#{file_name}.csv", headers: true).with_index do |row, i |
+    CSV.foreach("#{@source_path}/#{@file_name}", headers: true).with_index do |row, i |
       if i == 0 
         row.headers.each do |field|
-          @new_project_field =  ProjectField.where(name: field, key: field, field_type: 'text_field', project_type_id: self.id).first_or_create(name: field, key: field, field_type: 'text_field', project_type_id: self.id)
+          @new_project_field =  ProjectField.where(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id).first_or_create(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id)
         end
       end
       items = row.to_h
       geom = ''
-      if (self.latitude.present? && self.longitude.present?)
+      if (latitude.present? && longitude.present?)
         lat = items[self.latitude]
         lng = items[self.longitude]
         geom = "POINT(#{lng} #{lat})" 
       end
-      if(self.address.present? && self.province.present? && self.country.present?)
-        address = items[self.address]
-        department = items[self.department]
-        province = items[self.province]
-        country = items[self.country]
-        geom = build_geom(address, department, province, country)
-      end
+      # if(self.address.present? && self.province.present? && self.country.present?)
+      #   address = items[self.address]
+      #   department = items[self.department]
+      #   province = items[self.province]
+      #   country = items[self.country]
+      #   geom = build_geom(address, department, province, country)
+      # end
 
-      Project.create(properties: items, project_type_id: self.id, the_geom: geom)
+      Project.create(properties: items, project_type_id: project_type_id, the_geom: geom)
     end
   end
 
