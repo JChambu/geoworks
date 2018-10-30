@@ -50,7 +50,7 @@ class ProjectType < ApplicationRecord
     Dashboard.create(name: "Dashboard_1", project_type_id: self.id )  
   end
 
-  def build_geom(address, department, province, country)
+  def self.build_geom(address, department, province, country)
 
     @street = address
     @city = department  
@@ -217,11 +217,10 @@ class ProjectType < ApplicationRecord
       when 'application/x-esri-shape'
         ext = f.original_filename.split('.')
         if ext.last == 'shp'
-          load_shape()
+          a = ProjectType.delay.load_shape(self.id)
         end
       when 'text/csv'
-        a= ProjectType.delay.load_csv(self.id, self.latitude, self.longitude)
-        #load_csv()
+        a = ProjectType.delay.load_csv(self.id, self.latitude, self.longitude, self.address, self.department, self.province, self.country)
       when 'application/xls', 'application/vnd.ms-excel'
         'xls'
       when 'application/json'
@@ -245,9 +244,7 @@ class ProjectType < ApplicationRecord
     @elements 
   end
 
-  def self.load_csv project_type_id, latitude, longitude
-    @se = self
-    #file_name = @directory[1].split('.').first
+  def self.load_csv project_type_id, latitude, longitude, address, department, province, country
     @project_type = JSON.parse(ProjectType.find(project_type_id).directory_name)
     @source_path = @project_type[0]
     @file_name = @project_type[1]
@@ -261,17 +258,17 @@ class ProjectType < ApplicationRecord
       items = row.to_h
       geom = ''
       if (latitude.present? && longitude.present?)
-        lat = items[self.latitude]
-        lng = items[self.longitude]
+        lat = items[latitude]
+        lng = items[longitude]
         geom = "POINT(#{lng} #{lat})" 
       end
-      # if(self.address.present? && self.province.present? && self.country.present?)
-      #   address = items[self.address]
-      #   department = items[self.department]
-      #   province = items[self.province]
-      #   country = items[self.country]
-      #   geom = build_geom(address, department, province, country)
-      # end
+       if(address.present? && province.present? && country.present?)
+        address = items[address]
+        department = items[department]
+        province = items[province]
+        country = items[country]
+        geom = build_geom(address, department, province, country)
+      end
 
       Project.create(properties: items, project_type_id: project_type_id, the_geom: geom)
     end
@@ -447,14 +444,17 @@ class ProjectType < ApplicationRecord
 
   end
 
-  def load_shape
-    file_name = @directory[1].split('.').first
-    RGeo::Shapefile::Reader.open("#{@directory[0]}/#{file_name}.shp") do |file|
+  def self.load_shape project_type_id
+    project_type = JSON.parse(ProjectType.find(project_type_id).directory_name)
+    source_path = project_type[0]
+    file_name = project_type[1].split('.').first
+#    file_name = @directory[1].split('.').first
+    RGeo::Shapefile::Reader.open("#{source_path}/#{file_name}.shp") do |file|
       file.each do |record|
         record.index
         if record.index == 1
           record.keys.each do |field|
-            @new_project_field =  ProjectField.create(name: field, field_type: 'text_field', project_type_id: self.id, key: field)
+            @new_project_field =  ProjectField.create(name: field, field_type: 'text_field', project_type_id: project_type_id, key: field)
             @new_project_field.save
           end
         end
@@ -473,7 +473,7 @@ class ProjectType < ApplicationRecord
 
         @rec = record
         @geom = record.geometry.as_text if !record.geometry.nil?
-        @projects = Project.create( properties: @i.to_h, project_type_id: self.id, the_geom: @geom )
+        @projects = Project.create( properties: @i.to_h, project_type_id: project_type_id, the_geom: @geom )
         #record = file.next
       end
     end
