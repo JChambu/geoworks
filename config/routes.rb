@@ -1,9 +1,5 @@
 Rails.application.routes.draw do
 
-
-
-  resources :choice_lists
-
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
   get 'geo_editions/search_blocks' => 'geo_editions#search_blocks'
@@ -15,19 +11,14 @@ Rails.application.routes.draw do
   get 'pois/total_poi_validates' => 'pois#total_poi_validates'
   get 'poi_addresses/total_poi_validates' => 'poi_addresses#total_poi_validates'
   get 'poi_types/:id/sub_types' => 'poi_types#sub_types'
-
   get 'country/:id/provinces' => 'locations#provinces'
   get 'province/:id/departments' => 'locations#departments'
   get 'department/:id/cities' => 'locations#department_cities'
-
   get 'poi_types/:id/chains' => 'poi_types#chains'
   get 'poi_types/:id/food_types' => 'poi_types#food_types'
-
   get 'project_types/maps' => 'project_types#maps'
-
   get 'project_types/kpi' => 'project_types#kpi'
   get 'project_types/graph3' => 'project_types#graph2'
-
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
@@ -38,7 +29,9 @@ Rails.application.routes.draw do
     get 'project_fields/:id/show' =>'project_fields#show'
     #get 'project_types/index'
 
-
+    resources :graphics
+    resources :graphics_properties
+    resources :choice_lists
     post 'charts/create'
     resources :charts
     resources :analysis_types
@@ -63,7 +56,6 @@ Rails.application.routes.draw do
     resources :streets
     resources :geo_editions
     # get "geo_editions/geoeditions_edit" => 'geo_editions#geoeditions_edit' 
-
 
     resources :extended_listings  do
       collection do

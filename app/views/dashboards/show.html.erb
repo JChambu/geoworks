@@ -1,7 +1,9 @@
 <%= content_for :head do %>
   <script type="text/javascript">
     Navarra.dashboards.config.project_type_id = <%= @project_type.id %>
+    Navarra.dashboards.config.dashboard_id = <%= @dashboard_id %>
 <% @projects.each do |a|%>
+
     <%if !a.the_geom.nil?  %>
     Navarra.dashboards.config.lat.push( <%= a.the_geom.y %>)
     Navarra.dashboards.config.lon.push( <%= a.the_geom.x %>)
@@ -10,10 +12,20 @@
   </script>  
 <% end %>
 <%= form_for :q, :method => :get  do |f| %>
-  <div class="row">
+  <div class="well">
+  </div>
+  <div id="modal-window" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+
     <div class="col-md-12">
       <div id="map"></div>
-      <div class="graphics"></div>
+      <div class="graphics">
+
+      </div>
   </div>
-  </div>
+
 <% end %>
+

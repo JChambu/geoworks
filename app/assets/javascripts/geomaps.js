@@ -34,10 +34,6 @@ Navarra.geomaps_extended_listings = function (){
     }
     
     
-    
-    
-    
-    
     $("#move_marker").on('click', function(e){
       if(typeof(marker)!=='undefined'){
        marker.dragging.enable();
@@ -123,7 +119,7 @@ Navarra.geomaps = function (){
 
     mymap = L.map('map',{
       crs: L.CRS.EPSG3857,
-      zoom: 10,
+      zoom: 2,
       center: [-33.113399134183744, -69.69339599609376],
       zoomControl: false,
       layers: [grayscale,streets]

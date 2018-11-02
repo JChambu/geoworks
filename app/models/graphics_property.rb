@@ -1,0 +1,2 @@
+class GraphicsProperty < ApplicationRecord
+end

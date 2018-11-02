@@ -1,0 +1,2 @@
+module GraphicsPropertiesHelper
+end

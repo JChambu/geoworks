@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-rvm use ruby-2.3.4@geoworks --create
-=======
-rvm use ruby-2.3.3@geoworks --create
->>>>>>> fe2dab863cdb4ea7596111096ed3647cd939c26a
+rvm use ruby-2.3.0@geoworks --create

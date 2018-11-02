@@ -5,40 +5,14 @@ Navarra.dashboards.config = {
   "lon": [],
   "lat": [],
   "project_type_id": null,
+  "dashboard_id": null,
   size_box: []
 };
 
-
 Navarra.dashboards.action_create_graph = function(){
 
-  data = {};
-  labels={}
-  options= { 
-    fullWidth: true,
-    chartPadding: {
-      right: 40
-    }
-  };
-
-  var init = function(){
-    new Chartist.Line('.ct-chart', data, options)
-    $("#cambiar").on('click', function(){
-      data= {
-        series: [
-          [100, 110, 120, 130, 140],
-          [160, 170, 180, 190, 200],
-          [50, 60, 70, 80, 90]
-        ],
-        labels: ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes']
-      };
-      new Chartist.Line('.ct-chart', data, options)
-    })
-  }
-
-  return {
-    init: init,
-  }
 }();
+
 Navarra.dashboards.action_show = function(){
 
   var init = function(){
@@ -51,10 +25,10 @@ Navarra.dashboards.action_show = function(){
         $('#view').addClass('active');
         var o = parseInt(window.innerHeight) - 100;
         var w = parseInt(window.innerWidth) - 600;
-        
+
         var h = parseInt(window.innerWidth) - 600;
         $("#map").css("height", o+"px"); //map.invalidateSize();
-        $("#map").css("width", "75%"); //map.invalidateSize();
+        $("#map").css("width", "50%"); //map.invalidateSize();
         $(".graphics").css("height", o+"px"); //map.invalidateSize();
         $(".graphics").css("width", "25%"); //map.invalidateSize();
         $("#clas_map").toggleClass( "col-md-9", 500, "easeOutSine" );
@@ -74,9 +48,25 @@ Navarra.dashboards.action_show = function(){
         $("#clas_map").toggleClass( "col-md-12", 500, "easeOutSine" );
         $(".card_graph").removeClass( "col-md-12");
         $(".card_graph").toggleClass( "col-md-6", 500, "easeOutSine" );
-    }
+      }
     });
+
+    $(".graphics").on('click','canvas',function(){
+      //value_graph = $(this).attr("value");
+        value_graph = $(this).attr("id");
+        canvas_edit = this;
+        console.log(canvas_edit);
+        console.log(canvas_edit.options);
+        //$("#"+value_graph).remove(); //funciona bien
+       //value_graph.options.title.text = "ejemplo";
+       // value_graph.update();
+      
+    
+    
+    });
+
   }
+
   return {
     init: init,
   }

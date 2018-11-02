@@ -4,16 +4,15 @@ class DashboardsController < ApplicationController
 
   # GET /dashboards
   # GET /dashboards.json
-  
+
   def create_graph
 
-      respond_to do |f|
-        f.js
+    respond_to do |f|
+      f.html
+      f.js
+    end
   end
 
-  end
-  
-  
   def index
     @dashboards = @project_type.dashboards
   end
@@ -22,6 +21,7 @@ class DashboardsController < ApplicationController
   # GET /dashboards/1.json
   def show
     @projects = Project.where(project_type_id: params[:project_type_id])
+    @dashboard_id = params[:id]
   end
 
   # GET /dashboards/new
@@ -74,18 +74,18 @@ class DashboardsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+  # Use callbacks to share common setup or constraints between actions.
 
   def set_project_type
     @project_type = ProjectType.find(params[:project_type_id])
   end
-  
+
   def set_dashboard
     @dashboard = Dashboard.find(params[:id])
-    end
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def dashboard_params
-      params.require(:dashboard).permit(:name)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def dashboard_params
+    params.require(:dashboard).permit(:name)
+  end
 end

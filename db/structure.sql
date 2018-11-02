@@ -411,6 +411,41 @@ ALTER SEQUENCE public.chains_id_seq OWNED BY public.chains.id;
 
 
 --
+-- Name: chart_properties; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.chart_properties (
+    id bigint NOT NULL,
+    color character varying,
+    height character varying,
+    width character varying,
+    title character varying,
+    type_chart_id bigint,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: chart_properties_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.chart_properties_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: chart_properties_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.chart_properties_id_seq OWNED BY public.chart_properties.id;
+
+
+--
 -- Name: charts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -915,6 +950,75 @@ CREATE SEQUENCE public.geo_editions_id_seq
 --
 
 ALTER SEQUENCE public.geo_editions_id_seq OWNED BY public.geo_editions.id;
+
+
+--
+-- Name: graphics; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.graphics (
+    id bigint NOT NULL,
+    analytics_dashboard_id bigint,
+    graphics_property_id bigint,
+    dashboard_id bigint,
+    token character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: graphics_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.graphics_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: graphics_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.graphics_id_seq OWNED BY public.graphics.id;
+
+
+--
+-- Name: graphics_properties; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.graphics_properties (
+    id bigint NOT NULL,
+    color character varying,
+    height character varying,
+    width character varying,
+    title character varying,
+    chart_id bigint,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: graphics_properties_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.graphics_properties_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: graphics_properties_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.graphics_properties_id_seq OWNED BY public.graphics_properties.id;
 
 
 --
@@ -2040,6 +2144,13 @@ ALTER TABLE ONLY public.chains ALTER COLUMN id SET DEFAULT nextval('public.chain
 
 
 --
+-- Name: chart_properties id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.chart_properties ALTER COLUMN id SET DEFAULT nextval('public.chart_properties_id_seq'::regclass);
+
+
+--
 -- Name: charts id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2135,6 +2246,20 @@ ALTER TABLE ONLY public.generate_deliveries ALTER COLUMN id SET DEFAULT nextval(
 --
 
 ALTER TABLE ONLY public.geo_editions ALTER COLUMN id SET DEFAULT nextval('public.geo_editions_id_seq'::regclass);
+
+
+--
+-- Name: graphics id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.graphics ALTER COLUMN id SET DEFAULT nextval('public.graphics_id_seq'::regclass);
+
+
+--
+-- Name: graphics_properties id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.graphics_properties ALTER COLUMN id SET DEFAULT nextval('public.graphics_properties_id_seq'::regclass);
 
 
 --
@@ -2384,6 +2509,14 @@ ALTER TABLE ONLY public.chains
 
 
 --
+-- Name: chart_properties chart_properties_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.chart_properties
+    ADD CONSTRAINT chart_properties_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: charts charts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2485,6 +2618,22 @@ ALTER TABLE ONLY public.generate_deliveries
 
 ALTER TABLE ONLY public.geo_editions
     ADD CONSTRAINT geo_editions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: graphics graphics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.graphics
+    ADD CONSTRAINT graphics_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: graphics_properties graphics_properties_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.graphics_properties
+    ADD CONSTRAINT graphics_properties_pkey PRIMARY KEY (id);
 
 
 --
@@ -2739,10 +2888,45 @@ CREATE INDEX index_analytics_dashboards_on_project_type_id ON public.analytics_d
 
 
 --
+-- Name: index_chart_properties_on_type_chart_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_chart_properties_on_type_chart_id ON public.chart_properties USING btree (type_chart_id);
+
+
+--
 -- Name: index_dashboards_on_project_type_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_dashboards_on_project_type_id ON public.dashboards USING btree (project_type_id);
+
+
+--
+-- Name: index_graphics_on_analytics_dashboard_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_graphics_on_analytics_dashboard_id ON public.graphics USING btree (analytics_dashboard_id);
+
+
+--
+-- Name: index_graphics_on_dashboard_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_graphics_on_dashboard_id ON public.graphics USING btree (dashboard_id);
+
+
+--
+-- Name: index_graphics_on_graphics_property_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_graphics_on_graphics_property_id ON public.graphics USING btree (graphics_property_id);
+
+
+--
+-- Name: index_graphics_properties_on_chart_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_graphics_properties_on_chart_id ON public.graphics_properties USING btree (chart_id);
 
 
 --
@@ -2820,6 +3004,22 @@ CREATE INDEX index_versions_on_item_type_and_item_id ON public.versions USING bt
 --
 
 CREATE INDEX project_type_idx ON public.projects USING btree (project_type_id);
+
+
+--
+-- Name: graphics fk_rails_02b756dde5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.graphics
+    ADD CONSTRAINT fk_rails_02b756dde5 FOREIGN KEY (graphics_property_id) REFERENCES public.graphics_properties(id);
+
+
+--
+-- Name: graphics fk_rails_09aa0a7f61; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.graphics
+    ADD CONSTRAINT fk_rails_09aa0a7f61 FOREIGN KEY (analytics_dashboard_id) REFERENCES public.analytics_dashboards(id);
 
 
 --
@@ -3029,6 +3229,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20180928145521'),
 ('20180928154016'),
 ('20180929143018'),
-('20181025220040');
+('20181025220040'),
+('20181101181415'),
+('20181102015157'),
+('20181102015616');
 
 

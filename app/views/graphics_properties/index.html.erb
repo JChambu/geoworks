@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Graphics Properties</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Color</th>
+      <th>Height</th>
+      <th>Width</th>
+      <th>Title</th>
+      <th>Type chart</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @graphics_properties.each do |graphics_property| %>
+      <tr>
+        <td><%= graphics_property.color %></td>
+        <td><%= graphics_property.height %></td>
+        <td><%= graphics_property.width %></td>
+        <td><%= graphics_property.title %></td>
+        <td><%= graphics_property.chart_id %></td>
+        <td><%= link_to 'Show', graphics_property %></td>
+        <td><%= link_to 'Edit', edit_graphics_property_path(graphics_property) %></td>
+        <td><%= link_to 'Destroy', graphics_property, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Graphics Property', new_graphics_property_path %>

@@ -1,0 +1,36 @@
+<%= form_with(model: graphic, local: true) do |form| %>
+  <% if graphic.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(graphic.errors.count, "error") %> prohibited this graphic from being saved:</h2>
+
+      <ul>
+      <% graphic.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :analytics_dashboard_id %>
+    <%= form.text_field :analytics_dashboard_id, id: :graphic_analytics_dashboard_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :graphics_property_id %>
+    <%= form.text_field :graphics_property_id, id: :graphic_graphics_property_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :token %>
+    <%= form.text_field :token, id: :graphic_token %>
+  </div>
+
+  <div class="field">
+    <%= form.label :dashboard_id %>
+    <%= form.text_field :dashboard_id, id: :graphic_dashboard_id %>
+  </div>
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

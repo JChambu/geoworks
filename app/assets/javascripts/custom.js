@@ -128,14 +128,15 @@ function init_kpi(size_box = null){
   //   data_conditions['input_value'] = input_value;  
 
   // }
-console.log(size_box);
   var  data_id =  Navarra.dashboards.config.project_type_id;
+  var  dashboard_id =  Navarra.dashboards.config.dashboard_id;
+
   $.ajax({
 
     type: 'GET',
     url: '/project_types/kpi.json',
     datatype: 'json',
-    data: {data_id: data_id, size_box: size_box, graph: false, type_box: type_box, data_conditions: data_conditions},
+    data: {data_id: data_id, size_box: size_box, graph: false, type_box: type_box, data_conditions: data_conditions}, dashboard_id: dashboard_id,
     success: function(data){
       data.forEach(function(element){
         var count_element= element['data'][0]['count'];
@@ -176,14 +177,17 @@ function init_chart_doughnut(size_box = null){
       size_box[3] = size_ext['_northEast']['lat'];
     }
     var  data_id =  Navarra.dashboards.config.project_type_id;
+    var  dashboard_id =  Navarra.dashboards.config.dashboard_id;
     $.ajax({
       type: 'GET',
       url: '/project_types/kpi.json',
       datatype: 'json',
-      data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box},
+      data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id},
       success: function(data){
-      
-for(var i = 0; i < data.length; i ++){
+
+        console.log(data);
+
+        for(var i = 0; i < data.length; i ++){
           var reg = data[i];
           var data_entry = {};
           var type_chart = "";
@@ -207,31 +211,30 @@ for(var i = 0; i < data.length; i ++){
               var da=[];
               $.each(data_general, function(idx, vax){
 
-              
+
                 var colorBackground = "#6f98fc";
                 lab = [];
                 $.each(vax, function(i, v ){
                   lab.push(v['name']);
                   da.push(v['count']);
-                 // colorBackground.push(v['color'])
+                  // colorBackground.push(v['color'])
                 });
                 series.push({"data":da, "name":title});
               });
 
               var title_graph = title.replace(" ", "_");
-            status_view = $('#view').hasClass('active');
-              console.log(status_view);
-             if (status_view){
+              status_view = $('#view').hasClass('active');
+              if (status_view){
                 card_graph = 'col-md-12 col-sm-12 '
-             }else{
+              }else{
                 card_graph = 'col-md-6'
-             }
+              }
               // if (type_chart == 'bar'){
-                //fixed_height = 'col-md-6 col-sm-12 ';
-            //  }else{
-            //    fixed_height = 'col-md-6 col-sm-12 ';
-            //  }
-             var div_graph = document.createElement('div');
+              //fixed_height = 'col-md-6 col-sm-12 ';
+              //  }else{
+              //    fixed_height = 'col-md-6 col-sm-12 ';
+              //  }
+              var div_graph = document.createElement('div');
               var canvas_graph = document.createElement('canvas');
               div_graph.id = 'graph'+title;
               canvas_graph.id = 'canvas'+title;
@@ -240,33 +243,24 @@ for(var i = 0; i < data.length; i ++){
               canvas_graph.className = 'canvas'+title ;
 
 
-              html = '<div class="col-md-6 col-sm-6 col-xs-12">' + 
-'  <div class="x_panel tile fixed_height_450 overflow_hidden">'+
-'    <div class="x_title">'+
-'      <h2>'+title+'</h2>'+
-'      <ul class="nav navbar-right panel_toolbox">'+
-'        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>'+
-'        </li>'+
-'        <li class="dropdown">'+
-'        </li>'+
-'        <li><a class="close-link"><i class="fa fa-close"></i></a>'+
-'        </li>'+
-'      </ul>'+
-'    <div class="clearfix"></div>'+
-'    </div>'+
-' <div class="x_content_'+title+'">';
+              html = ' <div class="pru x_content_'+title+'" value="'+title+'">';
 
               $('.graphics').append(html);
 
-           
-  var option_legend = {
-    legend:{ 
-          display: false
-    } }
+              chartTittle="Título inicial"; 
+              var option_legend = {
+                title:{
+                  display:true,
+                  text: chartTittle,
+                  fontSize:60
+                },
+                legend:{ 
+                  display: false
+                } }
 
-  if (type_chart == 'doughnut'){
+              if (type_chart == 'doughnut'){
 
- option_legend = {
+                option_legend = {
                   legend: {
                     display: true,
                     position: 'right',
@@ -276,8 +270,8 @@ for(var i = 0; i < data.length; i ++){
                       fontSize: 10
                     }
                   },
-}
-}
+                }
+              }
               var chart_doughnut_settings = {
                 type: type_chart,
                 data: {
@@ -285,7 +279,7 @@ for(var i = 0; i < data.length; i ++){
                   datasets: [{
                     label: title,
                     data:  da , 
-                   backgroundColor: poolColors(da.length ) 
+                    backgroundColor: poolColors(da.length ) 
                     //backgroundColor: colorBackground 
                   }]
                 },
@@ -309,9 +303,9 @@ for(var i = 0; i < data.length; i ++){
           })
 
           // 
+        }
       }
-    }
-  })
+    })
   }
 
 }
@@ -420,8 +414,3 @@ function d3sel(event){
   loader.src = 'data:image/svg+xml,' + encodeURIComponent( svgAsXML );
 
 }
-
-
-/*$(document).ready(function() {
-   d3sel(); 
-})*/

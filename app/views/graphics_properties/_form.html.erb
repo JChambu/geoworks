@@ -1,0 +1,42 @@
+<%= form_with(model: graphics_property, local: true) do |form| %>
+  <% if graphics_property.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(graphics_property.errors.count, "error") %> prohibited this graphics_property from being saved:</h2>
+
+      <ul>
+      <% graphics_property.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :color %>
+    <%= form.text_field :color, id: :graphics_property_color %>
+  </div>
+
+  <div class="field">
+    <%= form.label :height %>
+    <%= form.text_field :height, id: :graphics_property_height %>
+  </div>
+
+  <div class="field">
+    <%= form.label :width %>
+    <%= form.text_field :width, id: :graphics_property_width %>
+  </div>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title, id: :graphics_property_title %>
+  </div>
+
+  <div class="field">
+    <%= form.label :chart_id %>
+    <%= form.text_field :chart_id, id: :graphics_property_type_chart %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

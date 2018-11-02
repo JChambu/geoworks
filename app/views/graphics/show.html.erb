@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Analytics dashboard:</strong>
+  <%= @graphic.analytics_dashboard %>
+</p>
+
+<p>
+  <strong>Graphics property:</strong>
+  <%= @graphic.graphics_property %>
+</p>
+
+<p>
+  <strong>Token:</strong>
+  <%= @graphic.token %>
+</p>
+
+<%= link_to 'Edit', edit_graphic_path(@graphic) %> |
+<%= link_to 'Back', graphics_path %>

@@ -28,10 +28,9 @@ class ProjectTypesController < ApplicationController
   end
 
   def kpi
-   
+
     @op_graph = params[:graph]
     @data_conditions = params[:data_conditions]
-
     filter_condition = []
     if !@data_conditions.nil?
 
@@ -43,10 +42,13 @@ class ProjectTypesController < ApplicationController
 
     @querys = ''
     if @op_graph == 'true'
-      @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box])
+      @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id])
     else
       @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box], filter_condition)
     end
+
+
+
   end
 
 
