@@ -11,21 +11,24 @@
 <% end %>
   </script>  
 <% end %>
-<%= form_for :q, :method => :get  do |f| %>
-  <div class="well">
-  </div>
-  <div id="modal-window" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div id="modal-window" class="modal fade" >
     <div class="modal-dialog" role="document">
       <div class="modal-content"></div>
     </div>
   </div>
+  </div>
+<%= form_for :q, :method => :get  do |f| %>
+  <div class="well">
+  </div>
+
+
 
     <div class="col-md-12">
       <div id="map"></div>
       <div class="graphics">
 
       </div>
-  </div>
+
 
 <% end %>
 

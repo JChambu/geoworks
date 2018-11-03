@@ -958,8 +958,6 @@ ALTER SEQUENCE public.geo_editions_id_seq OWNED BY public.geo_editions.id;
 
 CREATE TABLE public.graphics (
     id bigint NOT NULL,
-    analytics_dashboard_id bigint,
-    graphics_property_id bigint,
     dashboard_id bigint,
     token character varying,
     created_at timestamp without time zone NOT NULL,
@@ -998,7 +996,9 @@ CREATE TABLE public.graphics_properties (
     title character varying,
     chart_id bigint,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    analytics_dashboard_id integer,
+    graphic_id integer
 );
 
 
@@ -2902,24 +2902,10 @@ CREATE INDEX index_dashboards_on_project_type_id ON public.dashboards USING btre
 
 
 --
--- Name: index_graphics_on_analytics_dashboard_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_graphics_on_analytics_dashboard_id ON public.graphics USING btree (analytics_dashboard_id);
-
-
---
 -- Name: index_graphics_on_dashboard_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_graphics_on_dashboard_id ON public.graphics USING btree (dashboard_id);
-
-
---
--- Name: index_graphics_on_graphics_property_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_graphics_on_graphics_property_id ON public.graphics USING btree (graphics_property_id);
 
 
 --
@@ -3004,22 +2990,6 @@ CREATE INDEX index_versions_on_item_type_and_item_id ON public.versions USING bt
 --
 
 CREATE INDEX project_type_idx ON public.projects USING btree (project_type_id);
-
-
---
--- Name: graphics fk_rails_02b756dde5; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.graphics
-    ADD CONSTRAINT fk_rails_02b756dde5 FOREIGN KEY (graphics_property_id) REFERENCES public.graphics_properties(id);
-
-
---
--- Name: graphics fk_rails_09aa0a7f61; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.graphics
-    ADD CONSTRAINT fk_rails_09aa0a7f61 FOREIGN KEY (analytics_dashboard_id) REFERENCES public.analytics_dashboards(id);
 
 
 --
@@ -3232,6 +3202,11 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20181025220040'),
 ('20181101181415'),
 ('20181102015157'),
-('20181102015616');
+('20181102015616'),
+('20181102145900'),
+('20181102150151'),
+('20181102154702'),
+('20181102202047'),
+('20181102204525');
 
 

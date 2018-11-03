@@ -1,5 +1,4 @@
 Navarra.namespace("dashboards.action_show");
-Navarra.namespace("dashboards.action_create_graph");
 
 Navarra.dashboards.config = {
   "lon": [],
@@ -8,10 +7,6 @@ Navarra.dashboards.config = {
   "dashboard_id": null,
   size_box: []
 };
-
-Navarra.dashboards.action_create_graph = function(){
-
-}();
 
 Navarra.dashboards.action_show = function(){
 
@@ -60,9 +55,6 @@ Navarra.dashboards.action_show = function(){
         //$("#"+value_graph).remove(); //funciona bien
        //value_graph.options.title.text = "ejemplo";
        // value_graph.update();
-      
-    
-    
     });
 
   }

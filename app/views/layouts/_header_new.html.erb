@@ -23,10 +23,12 @@
             <h3>General</h3>
             <ul class="nav side-menu">
               <li><%= link_to project_types_path() do %><i class="fa fa-folder-open"></i> Proyectos <span class="fa fa-chevron-down"></span><% end %>
+              <li><%= link_to extended_listings_path() do %><i class="fa fa-folder-open"></i> LED <span class="fa fa-chevron-down"></span><% end %>
             </li>
 
             <%if params[:controller] == 'dashboards' && params[:action] == 'show' %>
-              <li><%= link_to "Grafico", project_type_dashboard_create_graph_path(@project_type.id, params[:id] ), remote:true, "data-toogle": "modal",  "data-target":"#myModal"%></li>
+  <%= link_to 'Add graph', new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window', class: 'btn btn-primary btn-lg'  %>
+
             <% end %>
             </ul> 
           </div>

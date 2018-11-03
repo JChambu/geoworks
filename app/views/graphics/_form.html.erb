@@ -1,36 +1,45 @@
-<%= form_with(model: graphic, local: true) do |form| %>
-  <% if graphic.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(graphic.errors.count, "error") %> prohibited this graphic from being saved:</h2>
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal">x</button>
+  <h4 class="modal-title" id="myModalLabel">Editar</h4>
+</div>
+<div class="modal-body">
 
-      <ul>
-      <% graphic.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+  <%= simple_form_for([@project_type, @dashboard, @graphic], remote: true) do |form| %>
+    <% if @graphic.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@graphic.errors.count, "error") %> prohibited this graphic from being saved:</h2>
+
+        <ul>
+          <% @graphic.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <div class="field">
+      <%= form.label :token %>
+      <%= form.text_field :token, id: :graphic_token %>
+    </div>
+
+    <div class="field">
+      <%= form.label :dashboard_id %>
+      <%= form.text_field :dashboard_id, id: :graphic_dashboard_id %>
+    </div>
+    <h3>Series</h3> 
+
+    <%= link_to_add_fields 'Agregar Series', form, :graphics_properties %>
+    <div class="field">
+
+
+      <%= form.fields_for :graphics_properties do |form_property| %>
+
+        <%= render "graphics_property_fields", f: form_property %>
       <% end %>
-      </ul>
+    </div>
+    <div class="actions">
+      <%= form.submit %>
     </div>
   <% end %>
-
-  <div class="field">
-    <%= form.label :analytics_dashboard_id %>
-    <%= form.text_field :analytics_dashboard_id, id: :graphic_analytics_dashboard_id %>
-  </div>
-
-  <div class="field">
-    <%= form.label :graphics_property_id %>
-    <%= form.text_field :graphics_property_id, id: :graphic_graphics_property_id %>
-  </div>
-
-  <div class="field">
-    <%= form.label :token %>
-    <%= form.text_field :token, id: :graphic_token %>
-  </div>
-
-  <div class="field">
-    <%= form.label :dashboard_id %>
-    <%= form.text_field :dashboard_id, id: :graphic_dashboard_id %>
-  </div>
-  <div class="actions">
-    <%= form.submit %>
-  </div>
-<% end %>
+</div>
+<div class="modal-footer">
+</div>

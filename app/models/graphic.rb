@@ -1,4 +1,6 @@
 class Graphic < ApplicationRecord
-  belongs_to :analytics_dashboard
-  belongs_to :graphics_property
+  has_many :graphics_properties
+  belongs_to :dashboard
+
+  accepts_nested_attributes_for :graphics_properties
 end

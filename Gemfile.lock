@@ -160,6 +160,10 @@ GEM
     minitest (5.11.3)
     multi_json (1.13.1)
     multipart-post (2.0.0)
+    nested_form_fields (0.8.2)
+      coffee-rails (>= 3.2.1)
+      jquery-rails
+      rails (>= 3.2.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (4.2.0)
@@ -343,6 +347,7 @@ DEPENDENCIES
   jquery-ui-rails
   json
   listen (~> 3.0.5)
+  nested_form_fields
   paper_trail
   passenger
   pg (~> 0.18)
@@ -351,6 +356,7 @@ DEPENDENCIES
   puma (~> 3.0)
   rails (~> 5.1.0)
   ransack
+  responders (~> 2.0)
   rgeo (= 0.6.0)
   rgeo-activerecord
   rgeo-geojson

@@ -15,12 +15,9 @@
   <tbody>
     <% @graphics.each do |graphic| %>
       <tr>
-        <td><%= graphic.analytics_dashboard %></td>
-        <td><%= graphic.graphics_property %></td>
         <td><%= graphic.token %></td>
-        <td><%= link_to 'Show', graphic %></td>
-        <td><%= link_to 'Edit', edit_graphic_path(graphic) %></td>
-        <td><%= link_to 'Destroy', graphic, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', project_type_dashboard_graphic_path(@project_type, @dashboard, graphic) %></td>
+        <td><%= link_to 'Edit', edit_project_type_dashboard_graphic_path(@project_type, @dashboard,graphic) %></td>
       </tr>
     <% end %>
   </tbody>
@@ -28,4 +25,4 @@
 
 <br>
 
-<%= link_to 'New Graphic', new_graphic_path %>
+<%= link_to 'New Graphic', new_project_type_dashboard_graphic_path %>

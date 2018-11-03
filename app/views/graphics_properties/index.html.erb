@@ -22,9 +22,8 @@
         <td><%= graphics_property.width %></td>
         <td><%= graphics_property.title %></td>
         <td><%= graphics_property.chart_id %></td>
-        <td><%= link_to 'Show', graphics_property %></td>
-        <td><%= link_to 'Edit', edit_graphics_property_path(graphics_property) %></td>
-        <td><%= link_to 'Destroy', graphics_property, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', project_type_dashboard_graphics_property_path(@project_type, @dashboard, graphics_property.id) %></td>
+        <td><%= link_to 'Edit', edit_project_type_dashboard_graphics_property_path(@project_type, @dashboard,graphics_property) %></td>
       </tr>
     <% end %>
   </tbody>
@@ -32,4 +31,4 @@
 
 <br>
 
-<%= link_to 'New Graphics Property', new_graphics_property_path %>
+<%= link_to 'New Graphics Property', new_project_type_dashboard_graphics_property_path %>

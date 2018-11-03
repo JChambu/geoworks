@@ -29,8 +29,10 @@ Rails.application.routes.draw do
     get 'project_fields/:id/show' =>'project_fields#show'
     #get 'project_types/index'
 
-    resources :graphics
-    resources :graphics_properties
+
+   
+
+        
     resources :choice_lists
     post 'charts/create'
     resources :charts
@@ -44,6 +46,8 @@ Rails.application.routes.draw do
     resources :project_types do 
       resources :dashboards do
         get 'create_graph'
+        resources :graphics 
+        resources :graphics_properties
         resources :analytics_dashboards
       end
       resources :projects

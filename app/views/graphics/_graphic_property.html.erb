@@ -1,0 +1,17 @@
+  <div class="field">
+    <%= f.label :color %>
+    <%= form_property.text_field :color %>
+  </div>
+  <div class="field">
+    <%= form_property.label :analytics_dashboard_id %>
+    <%= form_property.select :analytics_dashboard_id, kpi_for_select, include_blank: true %>
+  </div>
+  <div class="field">
+    <%= form_property.label :height %>
+    <%= form_property.text_field :height %>
+  </div>
+  <div class="field">
+    <%= form_property.label :width %>
+    <%= form_property.text_field :width %>
+
+  </div>

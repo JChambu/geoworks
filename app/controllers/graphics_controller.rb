@@ -1,20 +1,28 @@
 class GraphicsController < ApplicationController
+  before_action :set_dashboard
   before_action :set_graphic, only: [:show, :edit, :update, :destroy]
 
   # GET /graphics
   # GET /graphics.json
   def index
-    @graphics = Graphic.all
+    @graphics = @dashboard.graphics.all
   end
 
   # GET /graphics/1
   # GET /graphics/1.json
   def show
+    p "show"
+    pry
   end
 
   # GET /graphics/new
   def new
-    @graphic = Graphic.new
+    @graphic = @dashboard.graphics.new
+    1.times {@graphic.graphics_properties.build}
+
+    respond_to do |f|
+      f.js
+    end
   end
 
   # GET /graphics/1/edit
@@ -24,8 +32,8 @@ class GraphicsController < ApplicationController
   # POST /graphics
   # POST /graphics.json
   def create
-    @graphic = Graphic.new(graphic_params)
-
+    @graphic = @dashboard.graphics.new(graphic_params)
+pry
     respond_to do |format|
       if @graphic.save
         format.html { redirect_to @graphic, notice: 'Graphic was successfully created.' }
@@ -63,12 +71,17 @@ class GraphicsController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_graphic
+  def set_dashboard
+    @project_type = ProjectType.find(params[:project_type_id])
+    @dashboard = Dashboard.find(params[:dashboard_id])
+  end
+  
+  def set_graphic
       @graphic = Graphic.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def graphic_params
-      params.require(:graphic).permit(:analytics_dashboard_id, :graphics_property_id, :token, :dashboard_id)
+      params.require(:graphic).permit(:token, :dashboard_id, graphics_properties_attributes: [:color, :height, :width, :analytics_dashboard_id, :graphic_id ])
     end
 end

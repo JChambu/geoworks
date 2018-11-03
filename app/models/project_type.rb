@@ -168,8 +168,8 @@ class ProjectType < ApplicationRecord
     @op = option_graph
     @dashboard_id = dashboard_id
 
-    @graphics = Graphic.where(dashboard_id: @dashboard_id)
-
+    @graph = Graphic.where(dashboard_id: @dashboard_id)
+    @graphics = GraphicsProperty.where(graphic_id: @graph.ids)
     @graphics.each do |graph|
 
       @analytics_charts = AnalyticsDashboard.where(id: graph.analytics_dashboard_id)
@@ -201,10 +201,10 @@ class ProjectType < ApplicationRecord
         #    #@items['series2'] = @data2
         #  end
         #end
-        @properties = GraphicsProperty.find(graph.graphics_property_id).to_json
+        #@properties = GraphicsProperty.find(graph.graphics_property_id).to_json
         @option_graph = graph
         chart_type = chart.chart.name
-        querys << { "title":"#{chart.title}", "type_chart":[chart_type],"description":"Holaaaaa description", "group_field":@field_group, "data":@items, "properties":@properties, "options": @option_graph}
+        querys << { "title":"#{chart.title}", "type_chart":[chart_type],"description":"Holaaaaa description", "group_field":@field_group, "data":@items, "options": @option_graph}
       end
       querys
     end
