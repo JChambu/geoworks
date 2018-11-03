@@ -135,7 +135,7 @@ Navarra.geomaps = function (){
       }
     });
 
-    var layerProjects = new MySource("http://45.55.84.16:8080/geoserver/wms", {
+    var layerProjects = new MySource("http://localhost:8080/geoserver/wms", {
       layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
