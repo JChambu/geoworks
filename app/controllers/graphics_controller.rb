@@ -11,8 +11,6 @@ class GraphicsController < ApplicationController
   # GET /graphics/1
   # GET /graphics/1.json
   def show
-    p "show"
-    pry
   end
 
   # GET /graphics/new
@@ -33,10 +31,9 @@ class GraphicsController < ApplicationController
   # POST /graphics.json
   def create
     @graphic = @dashboard.graphics.new(graphic_params)
-pry
     respond_to do |format|
       if @graphic.save
-        format.html { redirect_to @graphic, notice: 'Graphic was successfully created.' }
+        format.html { redirect_to project_type_dashboard_path(@project_type, @dashboard.id), notice: 'Graphic was successfully created.' }
         format.json { render :show, status: :created, location: @graphic }
       else
         format.html { render :new }
