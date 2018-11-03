@@ -1,17 +1,15 @@
   <div class="field">
     <%= f.label :color %>
-    <%= f.text_field :color %>
+    <%= f.text_field :color, as: :color %>
   </div>
   <div class="field">
     <%= f.label :analytics_dashboard_id %>
     <%= f.select :analytics_dashboard_id, kpi_for_select, include_blank: true %>
   </div>
   <div class="field">
-    <%= f.label :height %>
-    <%= f.text_field :height %>
+    <%= f.input :height, as: :range, input_html: {min: "10", max: "20", value: "10" }  %>
   </div>
   <div class="field">
-    <%= f.label :width %>
-    <%= f.text_field :width %>
+    <%= f.input :width, as: :range, input_html: {min: "10", max: "20"} %>
 
   </div>

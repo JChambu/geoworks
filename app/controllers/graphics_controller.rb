@@ -33,6 +33,7 @@ class GraphicsController < ApplicationController
     @graphic = @dashboard.graphics.new(graphic_params)
     respond_to do |format|
       if @graphic.save
+        format.js
         format.html { redirect_to project_type_dashboard_path(@project_type, @dashboard.id), notice: 'Graphic was successfully created.' }
         format.json { render :show, status: :created, location: @graphic }
       else
