@@ -30,7 +30,7 @@ var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],
   $FOOTER = $('footer');
 
 
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -44,7 +44,7 @@ $(function () {
   $('#sidebar-menu li').on('click touchstart', function() {
     var link = $('a', this).attr('href');
 
-    if(link) { 
+    if(link) {
       window.location.href = link;
     } else {
       if ($(this).is('.active')) {
@@ -107,7 +107,7 @@ Number.prototype.format = function(n, x, s, c) {
 
 function init_kpi(size_box = null){
   var type_box = 'polygon';
-  var data_conditions = {} 
+  var data_conditions = {}
   if (size_box== null && Navarra.project_types.config.project_field == '' ){
 
     size_box = [];
@@ -123,9 +123,9 @@ function init_kpi(size_box = null){
   //   var project_field = Navarra.project_types.config.project_field;
   //   var filter = Navarra.project_types.config.filter;
   //   var input_value = Navarra.project_types.config.input_value;
-  //   data_conditions['project_field'] = project_field;  
-  //   data_conditions['filter'] = filter;  
-  //   data_conditions['input_value'] = input_value;  
+  //   data_conditions['project_field'] = project_field;
+  //   data_conditions['filter'] = filter;
+  //   data_conditions['input_value'] = input_value;
 
   // }
   var  data_id =  Navarra.dashboards.config.project_type_id;
@@ -140,7 +140,7 @@ function init_kpi(size_box = null){
     success: function(data){
       data.forEach(function(element){
         var count_element= element['data'][0]['count'];
-        data_cont = (Number(count_element)).format(0, 3, '.', ','); 
+        data_cont = (Number(count_element)).format(0, 3, '.', ',');
         if ($('.kpi_'+ element['id']).length) {
           $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ data_cont +'</div>');
         }else{
@@ -152,7 +152,7 @@ function init_kpi(size_box = null){
             '</div>'
           $('.tile_count').append(html);
         }
-      }) 
+      })
     }});
 }
 
@@ -185,8 +185,6 @@ function init_chart_doughnut(size_box = null){
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id},
       success: function(data){
 
-        console.log(data);
-
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
           var data_entry = {};
@@ -194,10 +192,12 @@ function init_chart_doughnut(size_box = null){
           var title = "";
           var chart;
 
-          $.each(reg, function(index, value){
+          $.each(reg, function(a, b){
+
+          $.each(b, function(index, value){
 
             if (index == 'type_chart'){
-              type_chart = value[0]; 
+              type_chart = value[0];
               type_chart =  type_chart ;
             }
             if (index == 'title'){
@@ -207,13 +207,12 @@ function init_chart_doughnut(size_box = null){
               data_general = value;
 
               var series = [];
-              var lab;
-              var da=[];
+              var lab = [];
+              var da = [];
               $.each(data_general, function(idx, vax){
 
-
                 var colorBackground = "#6f98fc";
-                lab = [];
+
                 $.each(vax, function(i, v ){
                   lab.push(v['name']);
                   da.push(v['count']);
@@ -221,6 +220,7 @@ function init_chart_doughnut(size_box = null){
                 });
                 series.push({"data":da, "name":title});
               });
+
 
               var title_graph = title.replace(" ", "_");
               status_view = $('#view').hasClass('active');
@@ -243,18 +243,19 @@ function init_chart_doughnut(size_box = null){
               canvas_graph.className = 'canvas'+title ;
 
 
-              html = ' <div class="pru x_content_'+title+'" value="'+title+'">';
+              html = ' <div class="pru x_content" value="'+title+'">';
+              htmldiv = ' <div class="chart-container" style="position: relative; margin: auto; height:95vh; width:65vw">';
 
               $('.graphics').append(html);
 
-              chartTittle="Título inicial"; 
+              chartTittle="Título inicial";
               var option_legend = {
                 title:{
                   display:true,
                   text: chartTittle,
                   fontSize:60
                 },
-                legend:{ 
+                legend:{
                   display: false
                 } }
 
@@ -278,15 +279,16 @@ function init_chart_doughnut(size_box = null){
                   labels: lab,
                   datasets: [{
                     label: title,
-                    data:  da , 
-                    backgroundColor: poolColors(da.length ) 
-                    //backgroundColor: colorBackground 
-                  }]
+                    data:  da ,
+                    backgroundColor: poolColors(da.length )
+                    //backgroundColor: colorBackground
+                  },{}]
                 },
                 options:  option_legend
               }
-              $('.x_content_'+title).append(canvas_graph);
-              var cc = '#'+canvas_graph.id;               
+              $('.x_content').append(htmldiv);
+              $('.chart-container').append(canvas_graph);
+              var cc = '#'+canvas_graph.id;
               $(cc).each(function(){
 
                 var chart_element = $(this);
@@ -301,8 +303,9 @@ function init_chart_doughnut(size_box = null){
               $('.graphics').append( close_html);
             }
           })
+          })
 
-          // 
+          //
         }
       }
     })
@@ -404,7 +407,7 @@ function d3sel(event){
 
 
   loader.width  = 300;
-  loader.height = 300; 
+  loader.height = 300;
 
   loader.onload = function() {
     ctx.drawImage( loader, 0, 0, loader.width, loader.height );
