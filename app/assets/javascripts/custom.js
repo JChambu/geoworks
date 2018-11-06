@@ -18,7 +18,6 @@ color7 = '#c8fc6f';
 color8 = '#6ffcfa';
 colorlines = '#eeeeee';
 
-
 var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],
   $BODY = $('body'),
   $MENU_TOGGLE = $('#menu_toggle'),
@@ -104,7 +103,6 @@ Number.prototype.format = function(n, x, s, c) {
   return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
 };
 
-
 function init_kpi(size_box = null){
   var type_box = 'polygon';
   var data_conditions = {}
@@ -161,7 +159,6 @@ function capitalize(s){
 };
 
 function init_chart_doughnut(size_box = null){
-
   if( typeof(Chart) === 'undefined'){ return; }
 
   if ($('.graphics').length){
@@ -184,6 +181,8 @@ function init_chart_doughnut(size_box = null){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id},
       success: function(data){
+  
+          console.log(data);
 
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
@@ -191,121 +190,92 @@ function init_chart_doughnut(size_box = null){
           var type_chart = "";
           var title = "";
           var chart;
+          var canvas_id;
+          var graphic_id;
 
+          var series = [];
           $.each(reg, function(a, b){
+            $.each(b, function(index, value){
+              if(index == 'type_chart'){
+                type_chart = value[0];
+                type_chart =  type_chart ;
+              }
+              if(index == 'title'){
+                title = value ;
+              }
+              
+              if(index == 'options'){
+                  options = value;
+                  graphic_id = value['graphic_id'];
+              }
 
-          $.each(b, function(index, value){
+              if (index == 'data'){
+                data_general = value;
+                $.each(data_general, function(idx, vax){
+                  var lab = [];
+                  var da = [];
+                  var colorBackground = "#6f98fc";
 
-            if (index == 'type_chart'){
-              type_chart = value[0];
-              type_chart =  type_chart ;
-            }
-            if (index == 'title'){
-              title = value ;
-            }
-            if (index == 'data'){
-              data_general = value;
-
-              var series = [];
-              var lab = [];
-              var da = [];
-              $.each(data_general, function(idx, vax){
-
-                var colorBackground = "#6f98fc";
-
-                $.each(vax, function(i, v ){
-                  lab.push(v['name']);
-                  da.push(v['count']);
-                  // colorBackground.push(v['color'])
+                  $.each(vax, function(i, v ){
+                    lab.push(v['name']);
+                    da.push(v['count']);
+                    // colorBackground.push(v['color'])
+                  });
+                  series.push({label: title, data: da, backgroundColor: poolColors(da.length ), type: type_chart});
                 });
-                series.push({"data":da, "name":title});
-              });
+              } 
+            })
+          })
+          var title_graph = title.replace(" ", "_");
+          status_view = $('#view').hasClass('active');
+          if (status_view){
+            card_graph = 'col-md-12 col-sm-12 '
+          }else{
+            card_graph = 'col-md-6'
+          }
+          
+          var div_graph = document.createElement('div');
+          var canvas_graph = document.createElement('canvas');
+          div_graph.id = 'graph'+graphic_id;
+          canvas_id = ('canvas'+graphic_id);
+          console.log(canvas_id);
+          canvas_graph.id = canvas_id;
+          canvas_graph.height = 160;
+          canvas_graph.width = 450;
+          canvas_graph.className = 'canvas'+title ;
+          html = ' <div class="pru x_content" value="'+title+'">';
+          htmldiv = ' <div class="chart-container" style="position: relative; margin: auto; width:65vw">';
 
+          $('.graphics').append(html);
+          chartTittle="Título inicial";
+          var option_legend = {
+            title:{
+              display:true,
+              text: chartTittle,
+              fontSize:60
+            },
+            legend:{
+              display: false
+            }}
 
-              var title_graph = title.replace(" ", "_");
-              status_view = $('#view').hasClass('active');
-              if (status_view){
-                card_graph = 'col-md-12 col-sm-12 '
-              }else{
-                card_graph = 'col-md-6'
-              }
-              // if (type_chart == 'bar'){
-              //fixed_height = 'col-md-6 col-sm-12 ';
-              //  }else{
-              //    fixed_height = 'col-md-6 col-sm-12 ';
-              //  }
-              var div_graph = document.createElement('div');
-              var canvas_graph = document.createElement('canvas');
-              div_graph.id = 'graph'+title;
-              canvas_graph.id = 'canvas'+title;
-              canvas_graph.height = 160;
-              canvas_graph.width = 450;
-              canvas_graph.className = 'canvas'+title ;
-
-
-              html = ' <div class="pru x_content" value="'+title+'">';
-              htmldiv = ' <div class="chart-container" style="position: relative; margin: auto; height:95vh; width:65vw">';
-
-              $('.graphics').append(html);
-
-              chartTittle="Título inicial";
-              var option_legend = {
-                title:{
-                  display:true,
-                  text: chartTittle,
-                  fontSize:60
-                },
-                legend:{
-                  display: false
-                } }
-
-              if (type_chart == 'doughnut'){
-
-                option_legend = {
-                  legend: {
-                    display: true,
-                    position: 'right',
-                    labels: {
-                      boxWidth: 5,
-                      fullWidth: true,
-                      fontSize: 10
-                    }
-                  },
-                }
-              }
-              var chart_doughnut_settings = {
-                type: type_chart,
-                data: {
-                  labels: lab,
-                  datasets: [{
-                    label: title,
-                    data:  da ,
-                    backgroundColor: poolColors(da.length )
-                    //backgroundColor: colorBackground
-                  },{}]
-                },
-                options:  option_legend
-              }
-              $('.x_content').append(htmldiv);
-              $('.chart-container').append(canvas_graph);
-              var cc = '#'+canvas_graph.id;
-              $(cc).each(function(){
-
-                var chart_element = $(this);
-                var chart_doughnut = new Chart( chart_element, chart_doughnut_settings);
-
-              });
-
-              close_html = '</div>'+
-                '</div>'+
+          var chart_doughnut_settings = {
+            type: 'bar',
+            data: {
+              labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+                      datasets: series},
+            options:  option_legend
+          }
+          $('.x_content').append(htmldiv);
+          $('.chart-container').append(canvas_graph);
+          var cc = '#'+canvas_graph.id;
+          $(cc).each(function(){
+            var chart_element = $(this);
+            var chart_doughnut = new Chart(canvas_id, chart_doughnut_settings);
+          });
+          close_html = '</div>'+
+            '</div>'+
 '</div>';
-
-              $('.graphics').append( close_html);
-            }
-          })
-          })
-
-          //
+          $('.graphics').append( close_html);
         }
       }
     })

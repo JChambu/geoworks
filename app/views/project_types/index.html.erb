@@ -68,6 +68,7 @@
               <tr>
                 <!-- Links panel proyectos -->
                 <td><%= project_type.name %></td>
+                <td><%= project_type.projects.count %></td>
                 <td><%= link_to 'Datos', project_type_projects_path(project_type) %></td>
                 <td><%= link_to 'Indicadores' %></td>
                 <td><%= link_to 'Tableros', project_type_dashboards_path(project_type.id) %></td>

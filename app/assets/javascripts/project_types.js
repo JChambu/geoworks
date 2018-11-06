@@ -47,24 +47,14 @@ $(document).on('click', '#enviar', function(event){
 }*/
 
 
-Navarra.project_types.action_new = function(){
-
-
-  return {
-    init: init,
-  }
-}();
-
 Navarra.project_types.action_create = function(){
   init = function(){
 
     console.log("create");
     $('.project_type_file').on('change', function(e){
-      console.log("change");
       handleFileSelect(e);
     });
     $('#envi').on('click', function(){
-      console.log("hola");
     });
   }
   function handleFileSelect(evt) {
@@ -103,31 +93,24 @@ Navarra.project_types.action_new = function(){
       console.log("hola");
     });
 
-
     $('#option_geo').on('change', function(){
 
       value = $(this).val();
       $(this).find("option:selected").each(function(){
         var optionValue = $(this).attr("value");
+        
         if(optionValue){
-          $(".boxi").not("." + optionValue).hide();
-          $("." + optionValue).show();
+          $(".boxi").not("#" + optionValue).hide();
+          $("#" + optionValue).show();
         } else{
           $(".boxi").hide();
         }
       });
-
     })
-
-
-
-
-
-
   }
+
   function handleFileSelect(evt) {
     var files = evt.target.files[0]; // FileList object
-
     var data = null;
     var file = evt.target.files[0];
     var reader = new FileReader();
@@ -146,10 +129,7 @@ Navarra.project_types.action_new = function(){
     reader.onerror = function() {
       alert('Unable to read ' + file.fileName);
     };
-
   }
-
-
   return {
     init: init,
   }

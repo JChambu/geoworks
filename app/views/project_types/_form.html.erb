@@ -19,13 +19,13 @@
   <br>
   <%= f.file_field(:file, multiple: true, class: 'project_typ_file btn btn-primary')  %>
   <br>
-  <%= select_tag 'option_geo', options_for_select(['Latitud & Longitud', 'Georeferenciación']), {prompt: 'Seleccione tipo georeferenciacion'} %>
+  <%= select_tag 'option_geo', options_for_select(['Latitud_Longitud', 'Georeferenciacion']), {prompt: 'Seleccione tipo georeferenciacion'} %>
   <br>
   <br>
-  <div id="latlng" class="latlng boxi">
+  <div id="Latitud_Longitud" class="latlng boxi">
     <%= render 'latlng', f: f  %>
   </div>
-<div id="geocoding" class="geocoding boxi">
+<div id="Georeferenciacion" class="geocoding boxi">
     <%= render 'geocoding', f: f  %>
 </div>
 
