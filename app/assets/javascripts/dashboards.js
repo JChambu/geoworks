@@ -24,8 +24,11 @@ Navarra.dashboards.action_show = function(){
         var h = parseInt(window.innerWidth) - 600;
         $("#map").css("height", o+"px"); //map.invalidateSize();
         $("#map").css("width", "50%"); //map.invalidateSize();
+        $("#map").css("width", "75%"); //map.invalidateSize();
+        $("#map").css("float", "left"); //map.invalidateSize();
         $(".graphics").css("height", o+"px"); //map.invalidateSize();
         $(".graphics").css("width", "25%"); //map.invalidateSize();
+        $(".graphics").css("float", "right"); //map.invalidateSize();
         $("#clas_map").toggleClass( "col-md-9", 500, "easeOutSine" );
         $(".graphics").removeClass( "col-md-12");
         $(".graphics").toggleClass( "col-md-3", 500, "easeOutSine" );
