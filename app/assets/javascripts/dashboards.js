@@ -22,9 +22,9 @@ Navarra.dashboards.action_show = function(){
         //var w = parseInt(window.innerWidth) - 600;
         //var h = parseInt(window.innerWidth) - 600;
         $("#map").css("height", o+"px"); //map.invalidateSize();
-        $("#map").css("width", "50%"); //map.invalidateSize();
         $("#map").css("width", "75%"); //map.invalidateSize();
         $("#map").css("float", "left"); //map.invalidateSize();
+        $(".gridactive").css("width", "auto"); //map.invalidateSize();
         $(".graphics").css("height", o+"px"); //map.invalidateSize();
         $(".graphics").css("width", "25%"); //map.invalidateSize();
         $(".graphics").css("float", "right"); //map.invalidateSize();
@@ -38,6 +38,8 @@ Navarra.dashboards.action_show = function(){
         var o = 400;
         $("#map").css("height", o+"px"); //map.invalidateSize();
         $("#map").css("width", "100%"); //map.invalidateSize();
+        $("#map").css("float", "none");
+        $(".gridactive").css("width", "50%");
         $(".graphics").css("height", o+"px"); //map.invalidateSize();
         $(".graphics").css("width", "100%"); //map.invalidateSize();
         $(".graphics").removeClass( "col-md-3");
