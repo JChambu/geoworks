@@ -49,16 +49,14 @@ Navarra.dashboards.action_show = function(){
     });
 
     $(".graphics").on('click','canvas',function(){
-      //value_graph = $(this).attr("value");
-        value_graph = $(this).attr("id");
-        canvas_edit = this;
-        console.log(canvas_edit);
-        console.log(canvas_edit.options);
-        //$("#"+value_graph).remove(); //funciona bien
-       //value_graph.options.title.text = "ejemplo";
-       // value_graph.update();
-    });
-
+          value_graph = $(this).attr("id");
+          canvas_edit = this;
+          project_type_id = Navarra.dashboards.config.project_type_id;
+          dashboard_id = Navarra.dashboards.config.dashboard_id;
+          graphic_id = value_graph.split('canvas');
+          $.getScript("/project_types/"+ project_type_id+"/dashboards/"+dashboard_id+"/graphics/"+graphic_id[1]+"/edit");
+          console.log(graphic_id);
+        });
   }
 
   return {
