@@ -240,8 +240,6 @@ function init_chart_doughnut(size_box = null){
           canvas_id = ('canvas'+graphic_id);
           console.log(canvas_id);
           canvas_graph.id = canvas_id;
-          canvas_graph.height = 160;
-          canvas_graph.width = 450;
           canvas_graph.className = 'canvas'+title ;
           html = ' <div class="pru x_content" value="'+title+'">';
           htmldiv = ' <div class="chart-container" style="position: relative; margin: auto; width:65vw">';
