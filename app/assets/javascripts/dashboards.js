@@ -19,9 +19,8 @@ Navarra.dashboards.action_show = function(){
       if (!status_view){
         $('#view').addClass('active');
         var o = parseInt(window.innerHeight) - 100;
-        var w = parseInt(window.innerWidth) - 600;
-
-        var h = parseInt(window.innerWidth) - 600;
+        //var w = parseInt(window.innerWidth) - 600;
+        //var h = parseInt(window.innerWidth) - 600;
         $("#map").css("height", o+"px"); //map.invalidateSize();
         $("#map").css("width", "50%"); //map.invalidateSize();
         $("#map").css("width", "75%"); //map.invalidateSize();
