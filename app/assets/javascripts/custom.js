@@ -175,16 +175,14 @@ function init_chart_doughnut(size_box = null){
       size_box[2] = size_ext['_northEast']['lng'];
       size_box[3] = size_ext['_northEast']['lat'];
     }
-    var  data_id =  Navarra.dashboards.config.project_type_id;
-    var  dashboard_id =  Navarra.dashboards.config.dashboard_id;
+    var data_id = Navarra.dashboards.config.project_type_id;
+    var dashboard_id = Navarra.dashboards.config.dashboard_id;
     $.ajax({
       type: 'GET',
       url: '/project_types/kpi.json',
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id},
       success: function(data){
-  
-          console.log(data);
 
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
@@ -192,18 +190,17 @@ function init_chart_doughnut(size_box = null){
           var title = "";
           var canvas_id;
           var graphic_id;
-
           var series = [];
+
           $.each(reg, function(a, b){
             $.each(b, function(index, value){
               if(index == 'type_chart'){
                 type_chart = value[0];
-                type_chart =  type_chart ;
+                type_chart = type_chart;
               }
               if(index == 'title'){
                 title = value ;
               }
-              
               if(index == 'options'){
                   options = value;
                   graphic_id = value['graphic_id'];
@@ -223,22 +220,23 @@ function init_chart_doughnut(size_box = null){
                   });
                   series.push({label: title, data: da, backgroundColor: poolColors(da.length ), type: type_chart});
                 });
-              } 
+              }
             })
           })
+
           var title_graph = title.replace(" ", "_");
+
           status_view = $('#view').hasClass('active');
           if (status_view){
             card_graph = 'col-md-12 col-sm-12 '
           }else{
             card_graph = 'col-md-6'
           }
-          
+
           var div_graph = document.createElement('div');
-          var canvas_graph = document.createElement('canvas');
           div_graph.id = 'graph'+graphic_id;
+          var canvas_graph = document.createElement('canvas');
           canvas_id = ('canvas'+graphic_id);
-          console.log(canvas_id);
           canvas_graph.id = canvas_id;
           canvas_graph.className = 'canvas'+graphic_id;
           htmldiv = ' <div class="chart-container'+graphic_id+'" style="position: relative; margin: auto; width:40vw">';
@@ -263,6 +261,7 @@ function init_chart_doughnut(size_box = null){
                       datasets: series},
             options:  option_legend
           }
+
           var cc = '#'+canvas_graph.id;
           $(cc).each(function(){
             var chart_element = $(this);
