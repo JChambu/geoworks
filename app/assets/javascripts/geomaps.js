@@ -106,7 +106,8 @@ Navarra.geomaps = function (){
   var map, markers, editableLayers
   var size_box = [];
   var init= function() {
-
+    
+    var url = window.location.host;
     var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     });
@@ -135,7 +136,8 @@ Navarra.geomaps = function (){
       }
     });
 
-    var layerProjects = new MySource("http://localhost:8080/geoserver/wms", {
+
+    var layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
       layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
