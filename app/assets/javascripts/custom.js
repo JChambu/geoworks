@@ -188,10 +188,8 @@ function init_chart_doughnut(size_box = null){
 
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
-          var data_entry = {};
           var type_chart = "";
           var title = "";
-          var chart;
           var canvas_id;
           var graphic_id;
 
