@@ -25,6 +25,10 @@ class GraphicsController < ApplicationController
 
   # GET /graphics/1/edit
   def edit
+    @graphic = @dashboard.graphics.find(params[:id])
+    respond_to do |f|
+      f.js
+    end
   end
 
   # POST /graphics
@@ -46,8 +50,10 @@ class GraphicsController < ApplicationController
   # PATCH/PUT /graphics/1
   # PATCH/PUT /graphics/1.json
   def update
+    @graphic = @dashboard.graphics.find(params[:id])
     respond_to do |format|
       if @graphic.update(graphic_params)
+        format.js
         format.html { redirect_to @graphic, notice: 'Graphic was successfully updated.' }
         format.json { render :show, status: :ok, location: @graphic }
       else
@@ -80,6 +86,6 @@ class GraphicsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def graphic_params
-      params.require(:graphic).permit(:token, :dashboard_id, :title, :width, graphics_properties_attributes: [:color, :chart_id, :analytics_dashboard_id, :graphic_id ])
+      params.require(:graphic).permit(:token, :dashboard_id, :title, :width, graphics_properties_attributes: [:id, :color, :chart_id, :analytics_dashboard_id, :graphic_id ])
     end
 end
