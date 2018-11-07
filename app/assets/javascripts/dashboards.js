@@ -19,13 +19,13 @@ Navarra.dashboards.action_show = function(){
       if (!status_view){
         $('#view').addClass('active');
         var o = parseInt(window.innerHeight) - 100;
-        var w = parseInt(window.innerWidth) - 600;
+        //var w = parseInt(window.innerWidth) - 600;
+        //var h = parseInt(window.innerWidth) - 600;
 
-        var h = parseInt(window.innerWidth) - 600;
         $("#map").css("height", o+"px"); //map.invalidateSize();
-        $("#map").css("width", "50%"); //map.invalidateSize();
         $("#map").css("width", "75%"); //map.invalidateSize();
         $("#map").css("float", "left"); //map.invalidateSize();
+        $(".gridactive").css("width", "auto"); //map.invalidateSize();
         $(".graphics").css("height", o+"px"); //map.invalidateSize();
         $(".graphics").css("width", "25%"); //map.invalidateSize();
         $(".graphics").css("float", "right"); //map.invalidateSize();
@@ -34,11 +34,15 @@ Navarra.dashboards.action_show = function(){
         $(".graphics").toggleClass( "col-md-3", 500, "easeOutSine" );
         $(".card_graph").removeClass( "col-md-6");
         $(".card_graph").toggleClass( "col-md-12", 500, "easeOutSine" );
+
       }else{
         status_view = $('#view').removeClass('active');
         var o = 400;
+
         $("#map").css("height", o+"px"); //map.invalidateSize();
         $("#map").css("width", "100%"); //map.invalidateSize();
+        $("#map").css("float", "none");
+        $(".gridactive").css("width", "50%");
         $(".graphics").css("height", o+"px"); //map.invalidateSize();
         $(".graphics").css("width", "100%"); //map.invalidateSize();
         $(".graphics").removeClass( "col-md-3");
@@ -50,20 +54,17 @@ Navarra.dashboards.action_show = function(){
     });
 
     $(".graphics").on('click','canvas',function(){
-      //value_graph = $(this).attr("value");
-        value_graph = $(this).attr("id");
-        canvas_edit = this;
-        console.log(canvas_edit);
-        console.log(canvas_edit.options);
-        //$("#"+value_graph).remove(); //funciona bien
-       //value_graph.options.title.text = "ejemplo";
-       // value_graph.update();
-    });
-
+          value_graph = $(this).attr("id");
+          canvas_edit = this;
+          project_type_id = Navarra.dashboards.config.project_type_id;
+          dashboard_id = Navarra.dashboards.config.dashboard_id;
+          graphic_id = value_graph.split('canvas');
+          $.getScript("/project_types/"+ project_type_id+"/dashboards/"+dashboard_id+"/graphics/"+graphic_id[1]+"/edit");
+          console.log(graphic_id);
+        });
   }
 
   return {
     init: init,
   }
 }();
-
