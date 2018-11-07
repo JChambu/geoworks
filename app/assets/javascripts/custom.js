@@ -238,8 +238,6 @@ function init_chart_doughnut(size_box = null){
             card_graph = 'col-md-6'
           }
 
-          var div_graph = document.createElement('div');
-          div_graph.id = 'graph'+graphic_id;
           var canvas_graph = document.createElement('canvas');
           canvas_id = ('canvas'+graphic_id);
           canvas_graph.id = canvas_id;
