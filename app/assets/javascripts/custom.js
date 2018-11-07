@@ -270,12 +270,12 @@ function init_chart_doughnut(size_box = null){
             var chart_element = $(this);
             var chart_doughnut = new Chart(canvas_id, chart_doughnut_settings);
           });
-        }
-      }
-    })
-  }
 
-}
+        } //cierra for
+      } //function(data)
+    }) //cierra ajax
+  } //cierra if
+} //cierra init_chart_doughnut
 
 //NB: not exhaustive, but it'll do for our usecase.
 function inlineCSStoSVG(id) {
