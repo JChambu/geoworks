@@ -21,6 +21,7 @@ Navarra.dashboards.action_show = function(){
         var o = parseInt(window.innerHeight) - 100;
         //var w = parseInt(window.innerWidth) - 600;
         //var h = parseInt(window.innerWidth) - 600;
+
         $("#map").css("height", o+"px"); //map.invalidateSize();
         $("#map").css("width", "75%"); //map.invalidateSize();
         $("#map").css("float", "left"); //map.invalidateSize();
@@ -33,9 +34,11 @@ Navarra.dashboards.action_show = function(){
         $(".graphics").toggleClass( "col-md-3", 500, "easeOutSine" );
         $(".card_graph").removeClass( "col-md-6");
         $(".card_graph").toggleClass( "col-md-12", 500, "easeOutSine" );
+
       }else{
         status_view = $('#view').removeClass('active');
         var o = 400;
+
         $("#map").css("height", o+"px"); //map.invalidateSize();
         $("#map").css("width", "100%"); //map.invalidateSize();
         $("#map").css("float", "none");
@@ -65,4 +68,3 @@ Navarra.dashboards.action_show = function(){
     init: init,
   }
 }();
-
