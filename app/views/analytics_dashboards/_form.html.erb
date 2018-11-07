@@ -35,9 +35,6 @@
                 <%= f.input :analysis_type_id, :collection => analysis_types_for_select, input_html: {class:"form-control col-md-6"}%>
               </div>
               <div class="form-group col-md-12">
-                <%= f.input :chart_id, collection: chart_types_for_select, input_html: {class:"form-control col-md-6"}%>
-              </div>
-              <div class="form-group col-md-12">
                 <div>
                   <%= f.label :graph, "Graficar" %>
                   <%= f.check_box :graph%>

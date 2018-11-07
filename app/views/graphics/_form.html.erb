@@ -16,15 +16,18 @@
         </ul>
       </div>
     <% end %>
-    <div class="field">
-      <%= form.label :token %>
-      <%= form.text_field :token, id: :graphic_token %>
-    </div>
 
+  <div class="field">
+    <%= form.input :title %>
+
+  </div>
     <div class="field">
-      <%= form.label :dashboard_id %>
-      <%= form.text_field :dashboard_id, id: :graphic_dashboard_id %>
+      <%= form.hidden_field :dashboard_id, id: :graphic_dashboard_id %>
     </div>
+  <div class="field">
+    <%= form.input :width, as: :range, input_html: {min: "20", max: "80"} %>
+
+  </div>
     <h3>Series</h3> 
 
     <%= link_to_add_fields 'Agregar Series', form, :graphics_properties %>

@@ -961,7 +961,10 @@ CREATE TABLE public.graphics (
     dashboard_id bigint,
     token character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    title character varying,
+    width integer,
+    height integer
 );
 
 
@@ -3207,6 +3210,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20181102150151'),
 ('20181102154702'),
 ('20181102202047'),
-('20181102204525');
+('20181102204525'),
+('20181107043828');
 
 

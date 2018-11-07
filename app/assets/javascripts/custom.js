@@ -184,6 +184,7 @@ function init_chart_doughnut(size_box = null){
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id},
       success: function(data){
 
+        console.log(data);
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
           var type_chart = "";
@@ -191,23 +192,21 @@ function init_chart_doughnut(size_box = null){
           var canvas_id;
           var graphic_id;
           var series = [];
-
+          var width;
           $.each(reg, function(a, b){
             $.each(b, function(index, value){
-              if(index == 'type_chart'){
-                type_chart = value[0];
-                type_chart = type_chart;
+              if(index == 'chart_type'){
+                type_chart = value;
               }
-              if(index == 'title'){
-                title = value ;
-              }
-              if(index == 'options'){
+              if(index == 'chart_properties'){
                   options = value;
                   graphic_id = value['graphic_id'];
+                  color = value['color'];
               }
 
               if (index == 'data'){
                 data_general = value;
+                var lab_x = [];
                 $.each(data_general, function(idx, vax){
                   var lab = [];
                   var da = [];
@@ -218,8 +217,14 @@ function init_chart_doughnut(size_box = null){
                     da.push(v['count']);
                     // colorBackground.push(v['color'])
                   });
-                  series.push({label: title, data: da, backgroundColor: poolColors(da.length ), type: type_chart});
+                  series.push({label: title, data: da, backgroundColor: color, type: type_chart});
+                  lab_x = lab
                 });
+              data_gx = {labels: lab_x, datasets: series}
+              }
+              if(index == 'graphics_options'){
+                  title = value['title'];
+                  width = value['width'];
               }
             })
           })
@@ -239,16 +244,16 @@ function init_chart_doughnut(size_box = null){
           canvas_id = ('canvas'+graphic_id);
           canvas_graph.id = canvas_id;
           canvas_graph.className = 'canvas'+graphic_id;
-          htmldiv = ' <div class="chart-container'+graphic_id+'" style="position: relative; margin: auto; width:40vw">';
+          htmldiv = ' <div class="chart-container'+graphic_id+'" style="position: relative; margin: auto; width:'+width+'vw">';
           $('.graphics').append(htmldiv);
           $('.chart-container'+graphic_id).append(canvas_graph);
 
-          chartTittle="Título inicial";
+          chartTittle=title;
           var option_legend = {
             title:{
               display:true,
               text: chartTittle,
-              fontSize:60
+              fontSize:30
             },
             legend:{
               display: false
@@ -256,9 +261,7 @@ function init_chart_doughnut(size_box = null){
 
           var chart_doughnut_settings = {
             type: 'bar',
-            data: {
-              labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-                      datasets: series},
+            data: data_gx,
             options:  option_legend
           }
 

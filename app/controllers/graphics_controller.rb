@@ -80,6 +80,6 @@ class GraphicsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def graphic_params
-      params.require(:graphic).permit(:token, :dashboard_id, graphics_properties_attributes: [:color, :height, :width, :analytics_dashboard_id, :graphic_id ])
+      params.require(:graphic).permit(:token, :dashboard_id, :title, :width, graphics_properties_attributes: [:color, :chart_id, :analytics_dashboard_id, :graphic_id ])
     end
 end

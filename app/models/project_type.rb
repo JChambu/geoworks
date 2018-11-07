@@ -171,10 +171,8 @@ class ProjectType < ApplicationRecord
     @graph = Graphic.where(dashboard_id: @dashboard_id)
     
     @graph.each do |g|
-
       @gr = GraphicsProperty.where(graphic_id: g)
-      
-        ch = {}
+      ch = {}
       @gr.each_with_index do |graph, i|
 
       @analytics_charts = AnalyticsDashboard.where(id: graph.analytics_dashboard_id)
@@ -193,8 +191,8 @@ class ProjectType < ApplicationRecord
 
         @items["serie#{i}"] = data
         @option_graph = graph
-        chart_type = chart.chart.name
-        ch["it#{i}"] = { "title":"#{chart.title}", "type_chart":[chart_type],"description":"Holaaaaa description", "group_field":@field_group,"options": @option_graph, "data":@items}
+        chart_type = graph.chart.name
+        ch["it#{i}"] = { "description":"Holaaaaa description", "chart_type":chart_type, "group_field":@field_group,"chart_properties": @option_graph, "data":@items, "graphics_options": g}
       end
        ch
     end
