@@ -240,11 +240,11 @@ function init_chart_doughnut(size_box = null){
           canvas_id = ('canvas'+graphic_id);
           console.log(canvas_id);
           canvas_graph.id = canvas_id;
-          canvas_graph.className = 'canvas'+title ;
-          html = ' <div class="pru x_content" value="'+title+'">';
-          htmldiv = ' <div class="chart-container" style="position: relative; margin: auto; width:65vw">';
+          canvas_graph.className = 'canvas'+graphic_id;
+          htmldiv = ' <div class="chart-container'+graphic_id+'" style="position: relative; margin: auto; width:40vw">';
+          $('.graphics').append(htmldiv);
+          $('.chart-container'+graphic_id).append(canvas_graph);
 
-          $('.graphics').append(html);
           chartTittle="Título inicial";
           var option_legend = {
             title:{
@@ -263,8 +263,6 @@ function init_chart_doughnut(size_box = null){
                       datasets: series},
             options:  option_legend
           }
-          $('.x_content').append(htmldiv);
-          $('.chart-container').append(canvas_graph);
           var cc = '#'+canvas_graph.id;
           $(cc).each(function(){
             var chart_element = $(this);
