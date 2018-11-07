@@ -270,10 +270,6 @@ function init_chart_doughnut(size_box = null){
             var chart_element = $(this);
             var chart_doughnut = new Chart(canvas_id, chart_doughnut_settings);
           });
-          close_html = '</div>'+
-            '</div>'+
-'</div>';
-          $('.graphics').append( close_html);
         }
       }
     })
