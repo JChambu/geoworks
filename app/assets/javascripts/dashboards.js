@@ -12,7 +12,7 @@ Navarra.dashboards.action_show = function(){
 
   var init = function(){
     var  project_id = $("#data_id").val();
-    Navarra.geomaps.init();
+
 
     $( "#view" ).on( "click", function() {
       status_view = $('#view').hasClass('active');
@@ -42,20 +42,15 @@ Navarra.dashboards.action_show = function(){
         $(".card_graph").toggleClass( "col-md-12", 500, "easeOutSine" );
 
       }else{
+        $(".graphics").removeClass("col-md-3");
+        $(".graphics").removeClass("col-md-3");
+        $(".graphics").css("width", "100%"); //map.invalidateSize();
+        $('div.graphics').replaceWith( $('div.graphics'), init_chart_doughnut());  
         status_view = $('#view').removeClass('active');
         var o = 400;
-
         $("#map").css("height", o+"px"); //map.invalidateSize();
         $("#map").css("width", "100%"); //map.invalidateSize();
         $("#map").css("float", "none");
-        $(".gridactive").css("width", "50%");
-        $(".graphics").css("height", o+"px"); //map.invalidateSize();
-        $(".graphics").css("width", "100%"); //map.invalidateSize();
-        $(".graphics").removeClass( "col-md-3");
-        $(".graphics").toggleClass( "col-md-12", 500, "easeOutSine" );
-        $("#clas_map").toggleClass( "col-md-12", 500, "easeOutSine" );
-        $(".card_graph").removeClass( "col-md-12");
-        $(".card_graph").toggleClass( "col-md-6", 500, "easeOutSine" );
       }
     });
 
@@ -68,6 +63,8 @@ Navarra.dashboards.action_show = function(){
           $.getScript("/project_types/"+ project_type_id+"/dashboards/"+dashboard_id+"/graphics/"+graphic_id[1]+"/edit");
           console.log(graphic_id);
         });
+  
+    Navarra.geomaps.init();
   }
 
   return {

@@ -243,22 +243,28 @@ function init_chart_doughnut(size_box = null){
           canvas_id = ('canvas'+graphic_id);
           canvas_graph.id = canvas_id;
           canvas_graph.className = 'canvas'+graphic_id;
-          htmldiv = ' <div class="chart_container'+graphic_id+'" style="position: relative; margin: auto">';
+          htmldiv = ' <div class="chart_container'+graphic_id+'" style="hiegth:50px;">';
           $('.graphics').append(htmldiv);
           $('.chart_container'+graphic_id).append(canvas_graph);
 
 
-          if (width<35) {
-            $('.chart_container'+graphic_id).addClass('col-md-3');
-          }
-          else if (width>=35 & width<50) {
-            $('.chart_container'+graphic_id).addClass('col-md-6');
-          }
-          else if (width>=50 & width<65) {
-            $('.chart_container'+graphic_id).addClass('col-md-9');
-          }
-          else if (width>=65) {
-            $('.chart_container'+graphic_id).addClass('col-md-12');
+          status_view = $('#view').hasClass('active');
+          
+          if (!status_view){
+            if (width<35) {
+              $('.chart_container'+graphic_id).addClass('col-md-3');
+            }
+            else if (width>=35 & width<50) {
+              $('.chart_container'+graphic_id).addClass('col-md-6');
+            }
+            else if (width>=50 & width<65) {
+              $('.chart_container'+graphic_id).addClass('col-md-9');
+            }
+            else if (width>=65) {
+              $('.chart_container'+graphic_id).addClass('col-md-12');
+            }
+          }else{
+              $('.chart_container'+graphic_id).addClass('col-md-12');
           }
 
 
