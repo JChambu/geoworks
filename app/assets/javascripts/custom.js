@@ -215,7 +215,6 @@ function init_chart_doughnut(size_box = null){
                   $.each(vax, function(i, v ){
                     lab.push(v['name']);
                     da.push(v['count']);
-                    // colorBackground.push(v['color'])
                   });
                   series.push({label: title, data: da, backgroundColor: color, type: type_chart});
                   lab_x = lab
@@ -275,8 +274,9 @@ function init_chart_doughnut(size_box = null){
   } //cierra if
 } //cierra init_chart_doughnut
 
-//NB: not exhaustive, but it'll do for our usecase.
 /* OCULTA FUNCIONES SIN USO
+
+//NB: not exhaustive, but it'll do for our usecase.
 function inlineCSStoSVG(id) {
   var nodes = document.querySelectorAll("#" + id + " *");
   for (var i = 0; i < nodes.length; ++i) {
@@ -341,7 +341,7 @@ function exportToCanvas(id) {
 }
 
 
-*/
+
 var poolColors = function (a) {
   var pool = [];
   for(i=0;i<a;i++){
@@ -360,7 +360,7 @@ var dynamicColors = function(i) {
 
 
 }
-/* OCULTA FUNCIÖN SIN USO
+
 function d3sel(event){
   var mySVG = document.querySelector('#svblock'), // Inline SVG element
     tgtImage = document.querySelector('#diagram_png'),    // Where to draw the result
