@@ -228,6 +228,7 @@ function init_chart_doughnut(size_box = null){
             })
           })
 
+          /*
           var title_graph = title.replace(" ", "_");
 
           status_view = $('#view').hasClass('active');
@@ -236,6 +237,7 @@ function init_chart_doughnut(size_box = null){
           }else{
             card_graph = 'col-md-6'
           }
+          */
 
           var canvas_graph = document.createElement('canvas');
           canvas_id = ('canvas'+graphic_id);
