@@ -241,9 +241,9 @@ function init_chart_doughnut(size_box = null){
           canvas_id = ('canvas'+graphic_id);
           canvas_graph.id = canvas_id;
           canvas_graph.className = 'canvas'+graphic_id;
-          htmldiv = ' <div class="chart-container'+graphic_id+' gridactive" style="position: relative; margin: auto; width:'+width+'vw">';
+          htmldiv = ' <div class="chart_container'+graphic_id+' gridactive" style="position: relative; margin: auto; width:'+width+'vw">';
           $('.graphics').append(htmldiv);
-          $('.chart-container'+graphic_id).append(canvas_graph);
+          $('.chart_container'+graphic_id).append(canvas_graph);
 
           chartTittle=title;
           var option_legend = {
