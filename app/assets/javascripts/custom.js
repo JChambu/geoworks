@@ -267,11 +267,10 @@ function init_chart_doughnut(size_box = null){
           }
 
 
-          chartTittle=title;
           var option_legend = {
             title:{
               display:true,
-              text: chartTittle,
+              text: title,
               fontSize:30
             },
             legend:{
