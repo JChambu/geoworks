@@ -191,7 +191,7 @@ function init_chart_doughnut(size_box = null){
           var title = "";
           var canvas_id;
           var graphic_id;
-          var series = [];
+          var datasets = [];
           var width;
           $.each(reg, function(a, b){
             $.each(b, function(index, value){
@@ -215,10 +215,22 @@ function init_chart_doughnut(size_box = null){
                     lab.push(v['name']);
                     da.push(v['count']);
                   });
-                  series.push({label: title, data: da, backgroundColor: color, type: type_chart});
+                  datasets.push({
+                    label: title,
+                    data: da,
+                    backgroundColor: color,
+                    borderColor: 'rgb(29, 29, 29)',
+                    borderWidth: 2,
+                    //hoverBackgroundColor: '',
+                    hoverBorderColor: 'rgb(0, 0, 0)',
+                    hoverBorderWidth: 4,
+                    type: type_chart
+                  });
                   lab_x = lab
                 });
-              data_gx = {labels: lab_x, datasets: series}
+              data_gx = {
+                labels: lab_x,
+                datasets: datasets}
               }
               if(index == 'graphics_options'){
                   title = value['title'];
