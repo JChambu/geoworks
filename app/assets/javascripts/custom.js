@@ -246,9 +246,8 @@ function init_chart_doughnut(size_box = null){
           $('.graphics').append(htmldiv);
           $('.chart_container'+graphic_id).append(canvas_graph);
 
-
+          // Editar esto en la vista directamente
           status_view = $('#view').hasClass('active');
-          
           if (!status_view){
             if (width<35) {
               $('.chart_container'+graphic_id).addClass('col-md-3');
