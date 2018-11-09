@@ -210,7 +210,6 @@ function init_chart_doughnut(size_box = null){
                 $.each(data_general, function(idx, vax){
                   var lab = [];
                   var da = [];
-                  var colorBackground = "#6f98fc";
 
                   $.each(vax, function(i, v ){
                     lab.push(v['name']);
