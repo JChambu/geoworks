@@ -280,7 +280,7 @@ function init_chart_doughnut(size_box = null){
             }}
 
           var chart_doughnut_settings = {
-            type: 'bar',
+            type: type_chart,
             data: data_gx,
             options:  option_legend
           }
