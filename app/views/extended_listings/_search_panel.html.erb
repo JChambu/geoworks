@@ -1,7 +1,7 @@
 <%= simple_form_for @search, :url =>@search_ext, html: {method: :get} do |f|  %>
 
   <div class="form-group">
-    <div class="col-md-2">
+    <div class="col-md-1">
       <% if current_user.role == 'Admin' %>
         <%= f.label :user_id_eq   %>
         <%= f.select  :user_id_eq,  users_for_select, {include_blank: true},  {class: 'form-control'} %>
@@ -24,12 +24,15 @@
       <%= f.label :department_id_eq %>
       <%= f.select :department_id_eq, departments_for_select(@province_id), {:include_blank => true}, {class: 'form-control'} %>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-1">
       <%= f.label :poi_status_id_eq %>
       <%= f.select :poi_status_id_eq, poi_statuses_for_select, {:include_blank => true}, {class: 'form-control'} %>
     </div>
+    <div class="col-md-1">
+      <%= f.input :id_eq , label:"ID reg."%>
+    </div>
   </div>
-  <div class="form-actions">
+  <div class="form-actions col-md-12">
     <%= f.submit(t("buttons.search"), :class => 'btn btn-success') %>
   </div>
   </div>
