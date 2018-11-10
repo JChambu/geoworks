@@ -1,6 +1,6 @@
 <div class="container body">
   <div class="main_container">
-    <div class="col-md-3 left_col">
+    <div class="col-md-3 left_col side_left ">
       <div class="left_col scroll-view">
         <div class="navbar nav_title" style="border: 0">
           <%= link_to  "#", class: "site_title" do  %> <%= image_tag "logo_geoworks.png" %> <% end %>
@@ -28,7 +28,8 @@
             </li>
 
             <%if params[:controller] == 'dashboards' && params[:action] == 'show' %>
-  <%= link_to 'Add graph', new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window', class: 'btn btn-primary btn-lg'  %>
+              <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do  %><h2><i class="fa fa-bar-chart"></i></h2> <%end %>
+
 
             <% end %>
             </ul>
