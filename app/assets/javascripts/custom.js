@@ -283,7 +283,7 @@ function init_chart_doughnut(size_box = null){
               display:true,
             responsive: true,
               text: title,
-              fontSize:30
+              fontSize: 18
             },
             legend:{
               display: false
