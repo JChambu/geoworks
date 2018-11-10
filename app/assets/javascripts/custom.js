@@ -285,9 +285,16 @@ function init_chart_doughnut(size_box = null){
               text: title,
               fontSize: 18
             },
-            legend:{
-              display: false
-            }}
+            legend: {
+              display: true,
+              position: 'bottom',
+              labels: {
+                boxWidth: 40,
+                padding: 10,
+                usePointStyle: true,
+              }
+            }
+          }
 
           var chart_doughnut_settings = {
             type: type_chart,
