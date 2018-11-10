@@ -11,16 +11,24 @@ Navarra.dashboards.config.lon.push( <%= a.the_geom.x %>)
 <% end %>
   </script>  
 <% end %>
+
+
+
 <div id="modal-window" class="modal fade" >
   <div class="modal-dialog" role="document">
     <div class="modal-content"></div>
   </div>
 </div>
 <%= form_for :q, :method => :get  do |f| %>
-  <div class="well">
+<%= link_to project_type_dashboards_path(@project_type.id) do %>
+  <i class="fa fa-arrow-left fa-2x"></i>
+<% end %>
+  <div id="wait" class="modal fade">
+    <i class="fa fa-bar-chart fa-5x loadingBar"></i>
   </div>
   <div class="col-md-12">
-    <div id="map"></div>
+    <div id="map">
+    </div>
     <div class="graphics">
     </div>
   </div>

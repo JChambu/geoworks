@@ -183,8 +183,8 @@ function init_chart_doughnut(size_box = null){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id},
       success: function(data){
-
-        console.log(data);
+        $("#wait").modal("show"); 
+        var s = 0;
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
           var type_chart = "";
@@ -199,9 +199,9 @@ function init_chart_doughnut(size_box = null){
                 type_chart = value;
               }
               if(index == 'chart_properties'){
-                  options = value;
-                  graphic_id = value['graphic_id'];
-                  color = value['color'];
+                options = value;
+                graphic_id = value['graphic_id'];
+                color = value['color'];
               }
 
               if (index == 'data'){
@@ -228,13 +228,13 @@ function init_chart_doughnut(size_box = null){
                   });
                   lab_x = lab
                 });
-              data_gx = {
-                labels: lab_x,
-                datasets: datasets}
+                data_gx = {
+                  labels: lab_x,
+                  datasets: datasets}
               }
               if(index == 'graphics_options'){
-                  title = value['title'];
-                  width = value['width'];
+                title = value['title'];
+                width = value['width'];
               }
             })
           })
@@ -274,7 +274,7 @@ function init_chart_doughnut(size_box = null){
               $('.chart_container'+graphic_id).addClass('col-md-12');
             }
           }else{
-              $('.chart_container'+graphic_id).addClass('col-md-12');
+            $('.chart_container'+graphic_id).addClass('col-md-12');
           }
 
 
@@ -325,9 +325,16 @@ function init_chart_doughnut(size_box = null){
           });
 
         } //cierra for
+
+        $("#wait").modal("hide"); 
+
+
       } //function(data)
+
+
     }) //cierra ajax
   } //cierra if
+  $('.modal-backdrop').remove() ;
 } //cierra init_chart_doughnut
 
 /* OCULTA FUNCIONES SIN USO
