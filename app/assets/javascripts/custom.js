@@ -239,17 +239,6 @@ function init_chart_doughnut(size_box = null){
             })
           })
 
-          /*
-          var title_graph = title.replace(" ", "_");
-
-          status_view = $('#view').hasClass('active');
-          if (status_view){
-            card_graph = 'col-md-12 col-sm-12 '
-          }else{
-            card_graph = 'col-md-6'
-          }
-          */
-
           var canvas_graph = document.createElement('canvas');
           canvas_id = ('canvas'+graphic_id);
           canvas_graph.id = canvas_id;
