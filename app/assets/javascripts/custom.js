@@ -220,10 +220,10 @@ function init_chart_doughnut(size_box = null){
                     data: da,
                     backgroundColor: color,
                     borderColor: 'rgb(29, 29, 29)',
-                    borderWidth: 2,
+                    borderWidth: 1,
                     //hoverBackgroundColor: '',
                     hoverBorderColor: 'rgb(0, 0, 0)',
-                    hoverBorderWidth: 4,
+                    hoverBorderWidth: 2,
                     type: type_chart
                   });
                   lab_x = lab
