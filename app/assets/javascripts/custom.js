@@ -186,6 +186,7 @@ function init_chart_doughnut(size_box = null){
         $("#wait").modal("show"); 
         var s = 0;
         for(var i = 0; i < data.length; i ++){
+
           var reg = data[i];
           var type_chart = "";
           var title = "";
@@ -193,11 +194,14 @@ function init_chart_doughnut(size_box = null){
           var graphic_id;
           var datasets = [];
           var width;
+
           $.each(reg, function(a, b){
             $.each(b, function(index, value){
+
               if(index == 'chart_type'){
                 type_chart = value;
               }
+
               if(index == 'chart_properties'){
                 options = value;
                 graphic_id = value['graphic_id'];
@@ -207,6 +211,7 @@ function init_chart_doughnut(size_box = null){
               if (index == 'data'){
                 data_general = value;
                 var lab_x = [];
+
                 $.each(data_general, function(idx, vax){
                   var lab = [];
                   var da = [];
@@ -215,19 +220,43 @@ function init_chart_doughnut(size_box = null){
                     lab.push(v['name']);
                     da.push(v['count']);
                   });
-                  datasets.push({
-                    label: title,
-                    data: da,
-                    backgroundColor: color,
-                    borderColor: 'rgb(29, 29, 29)',
-                    borderWidth: 1,
-                    //hoverBackgroundColor: '',
-                    hoverBorderColor: 'rgb(0, 0, 0)',
-                    hoverBorderWidth: 2,
-                    type: type_chart
-                  });
+
+                  if (type_chart == 'bar') {
+                    datasets.push({
+                      label: 'nombre_serie_default',
+                      data: da,
+                      fill: false,
+                      backgroundColor: color,
+                      borderColor: color,
+                      borderWidth: 3,
+                      hoverBackgroundColor: color,
+                      hoverBorderColor: color,
+                      hoverBorderWidth: 2,
+                      type: type_chart
+                    });
+                  }
+
+                  if (type_chart == 'doughnut') {
+                    cantidad = da.length;
+                    rancolor = randomColor({
+                      count: cantidad,
+                      hue: color,
+                      format: 'rgb',
+                      seed: 1,
+                    })
+                    datasets.push({
+                      label: 'nombre_serie_default',
+                      data: da,
+                      backgroundColor: rancolor,
+                      borderColor: 'white',
+                      borderWidth: 2,
+                      type: type_chart
+                    });
+                  }
+
                   lab_x = lab
                 });
+
                 data_gx = {
                   labels: lab_x,
                   datasets: datasets}
@@ -266,40 +295,62 @@ function init_chart_doughnut(size_box = null){
             $('.chart_container'+graphic_id).addClass('col-md-12');
           }
 
-
-          var option_legend = {
-            responsive: true,
-            title: {
-              display: true,
-              text: title,
-              fontSize: 18
-            },
-            legend: {
-              display: true,
-              position: 'bottom',
-              labels: {
-                boxWidth: 40,
-                padding: 10,
-                usePointStyle: true,
-              }
-            },
-            scales: {
-              xAxes: [{
+          if (type_chart == 'bar') {
+            var option_legend = {
+              responsive: true,
+              title: {
                 display: true,
-                scaleLabel: {
-                  display: true,
-                  labelString: 'Año'
-                }
-              }],
-              yAxes: [{
+                text: title,
+                fontSize: 18
+              },
+              legend: {
                 display: true,
-                scaleLabel: {
-                  display: true,
-                  labelString: 'Cantidad'
+                position: 'bottom',
+                labels: {
+                  boxWidth: 40,
+                  padding: 10,
+                  usePointStyle: true,
                 }
-              }]
-            },
+              },
+              scales: {
+                xAxes: [{
+                  display: true,
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'nombre_eje_x_default'
+                  }
+                }],
+                yAxes: [{
+                  display: true,
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'nombre_eje_y_default'
+                  }
+                }]
+              },
+            }
           }
+
+          if (type_chart == 'doughnut') {
+            var option_legend = {
+              responsive: true,
+              title: {
+                display: true,
+                text: title,
+                fontSize: 18
+              },
+              legend: {
+                display: true,
+                position: 'bottom',
+                labels: {
+                  boxWidth: 40,
+                  padding: 10,
+                  usePointStyle: true,
+                }
+              },
+            }
+          }
+
 
           var chart_doughnut_settings = {
             type: type_chart,
