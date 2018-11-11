@@ -183,7 +183,7 @@ function init_chart_doughnut(size_box = null){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id},
       success: function(data){
-        $("#wait").modal("show"); 
+        $("#wait").modal("show");
         var s = 0;
         for(var i = 0; i < data.length; i ++){
 
@@ -221,7 +221,8 @@ function init_chart_doughnut(size_box = null){
                     da.push(v['count']);
                   });
 
-                  if (type_chart == 'bar') {
+                  // BAR datasets
+                  if (type_chart == 'bar' || type_chart == 'line') {
                     datasets.push({
                       label: 'nombre_serie_default',
                       data: da,
@@ -236,6 +237,7 @@ function init_chart_doughnut(size_box = null){
                     });
                   }
 
+                  // DOUGHNUT datasets
                   if (type_chart == 'doughnut') {
                     cantidad = da.length;
                     rancolor = randomColor({
@@ -295,7 +297,8 @@ function init_chart_doughnut(size_box = null){
             $('.chart_container'+graphic_id).addClass('col-md-12');
           }
 
-          if (type_chart == 'bar') {
+          // BAR options
+          if (type_chart == 'bar' || type_chart == 'line') {
             var option_legend = {
               responsive: true,
               title: {
@@ -329,8 +332,14 @@ function init_chart_doughnut(size_box = null){
                 }]
               },
             }
+            var chart_doughnut_settings = {
+              type: 'bar',
+              data: data_gx,
+              options:  option_legend
+            }
           }
 
+          // DOUGHNUT options
           if (type_chart == 'doughnut') {
             var option_legend = {
               responsive: true,
@@ -349,13 +358,11 @@ function init_chart_doughnut(size_box = null){
                 }
               },
             }
-          }
-
-
-          var chart_doughnut_settings = {
-            type: type_chart,
-            data: data_gx,
-            options:  option_legend
+            var chart_doughnut_settings = {
+              type: type_chart,
+              data: data_gx,
+              options:  option_legend
+            }
           }
 
           var cc = '#'+canvas_graph.id;
@@ -366,7 +373,7 @@ function init_chart_doughnut(size_box = null){
 
         } //cierra for
 
-        $("#wait").modal("hide"); 
+        $("#wait").modal("hide");
 
 
       } //function(data)
