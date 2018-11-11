@@ -243,7 +243,7 @@ function init_chart_doughnut(size_box = null){
           canvas_id = ('canvas'+graphic_id);
           canvas_graph.id = canvas_id;
           canvas_graph.className = 'canvas'+graphic_id;
-          htmldiv = ' <div class="chart_container'+graphic_id+'" style="hiegth:50px;">';
+          htmldiv = ' <div class="chart_container'+graphic_id+'">';
           $('.graphics').append(htmldiv);
           $('.chart_container'+graphic_id).append(canvas_graph);
 
