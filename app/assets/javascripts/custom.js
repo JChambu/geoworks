@@ -293,7 +293,23 @@ function init_chart_doughnut(size_box = null){
                 padding: 10,
                 usePointStyle: true,
               }
-            }
+            },
+            scales: {
+              xAxes: [{
+                display: true,
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Año'
+                }
+              }],
+              yAxes: [{
+                display: true,
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Cantidad'
+                }
+              }]
+            },
           }
 
           var chart_doughnut_settings = {
