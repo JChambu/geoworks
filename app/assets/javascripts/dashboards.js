@@ -55,7 +55,7 @@ Navarra.dashboards.action_show = function(){
         $(".graphics").removeClass("col-md-3");
         $(".graphics").removeClass("col-md-3");
         $(".graphics").css("width", "100%"); //map.invalidateSize();
-        $('div.graphics').replaceWith( $('div.graphics'), init_chart_doughnut());  
+        $('div.graphics').replaceWith( $('div.graphics'), init_chart_doughnut());
         status_view = $('#view').removeClass('active');
         var o = 400;
         $("#map").css("height", o+"px"); //map.invalidateSize();
@@ -71,9 +71,8 @@ Navarra.dashboards.action_show = function(){
           dashboard_id = Navarra.dashboards.config.dashboard_id;
           graphic_id = value_graph.split('canvas');
           $.getScript("/project_types/"+ project_type_id+"/dashboards/"+dashboard_id+"/graphics/"+graphic_id[1]+"/edit");
-          console.log(graphic_id);
         });
-  
+
     Navarra.geomaps.init();
   }
 
