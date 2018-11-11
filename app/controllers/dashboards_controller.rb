@@ -21,6 +21,10 @@ class DashboardsController < ApplicationController
   # GET /dashboards/1.json
   def show
     @projects = Project.where(project_type_id: params[:project_type_id])
+    @extent = Project.where(project_type_id: params[:project_type_id]).select("st_xmin(st_extent(the_geom)) as minx,
+                                st_ymin(st_extent(the_geom)) as miny,
+                                  st_xmax(st_extent(the_geom)) as maxx, 
+                                    st_ymax(st_extent(the_geom)) as maxy ")
     @dashboard_id = params[:id]
   end
 

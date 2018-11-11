@@ -5,14 +5,24 @@ Navarra.dashboards.config = {
   "lat": [],
   "project_type_id": null,
   "dashboard_id": null,
+  "minx": null,
+  "miny": null,
+  "maxx": null,
+  "maxy": null,
   size_box: []
 };
 
 Navarra.dashboards.action_show = function(){
 
   var init = function(){
-    var  project_id = $("#data_id").val();
 
+      $("#hide_side").on("click", function(){
+      
+          $(".side_left").slideToggle("slow");
+      })    
+    
+    
+    var  project_id = $("#data_id").val();
 
     $( "#view" ).on( "click", function() {
       status_view = $('#view').hasClass('active');

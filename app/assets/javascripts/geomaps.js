@@ -120,11 +120,12 @@ Navarra.geomaps = function (){
 
     mymap = L.map('map',{
       crs: L.CRS.EPSG3857,
-      zoom: 2,
+      zoom: 12,
       center: [-33.113399134183744, -69.69339599609376],
       zoomControl: false,
       layers: [grayscale,streets]
     }) ;
+
     var MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
 
@@ -132,12 +133,12 @@ Navarra.geomaps = function (){
           return;
         }
         //               do whatever you like with info
-        this._map.openPopup(info, latlng);
+        //this._map.openPopup(info, latlng);
       }
     });
 
 
-    var layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
+    var layerProjects = new MySource("http://localhost:8080/geoserver/wms", {
       layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
@@ -149,6 +150,20 @@ Navarra.geomaps = function (){
     })
 
     projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
+
+    minx = Navarra.dashboards.config.minx;   
+    miny = Navarra.dashboards.config.miny;   
+    maxx = Navarra.dashboards.config.maxx;   
+    maxy = Navarra.dashboards.config.maxy;   
+   
+    console.log(minx);
+    mymap.fitBounds([
+                  [ miny, minx], 
+                  [ maxy ,maxx]
+    
+    ]);
+
+//    mymap.Projects.getBounds());
 
     var baseMaps = {
       "Grayscale": grayscale,
