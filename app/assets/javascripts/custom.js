@@ -289,7 +289,12 @@ function init_chart_doughnut(size_box = null){
           status_view = $('#view').hasClass('active');
           if (!status_view){
             $('.chart_container'+graphic_id).addClass('col-md-'+width);
-            aspectR = "2";
+            if(width == '3'){
+              aspectR = "1";
+            }else{
+              aspectR = "2";
+            }
+
             legend_display = true;
 
           }else{
