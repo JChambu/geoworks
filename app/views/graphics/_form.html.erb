@@ -26,7 +26,12 @@
     </div>
   <div class="field">
     <%= form.input :width, as: :range, input_html: {min: "3", max: "12", step: "3"} %>
-
+  </div>
+  <div class="field">
+    <%= form.input :label_x_axis  %>
+  </div>
+  <div class="field">
+    <%= form.input :label_y_axis_left %>
   </div>
     <h3>Series</h3> 
 
@@ -40,7 +45,7 @@
       <% end %>
     </div>
     <div class="actions">
-      <%= form.submit %>
+      <%= form.submit class: 'btn btn-primary' %>
     </div>
   <% end %>
 </div>

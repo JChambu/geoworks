@@ -10,19 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181107043828) do
+ActiveRecord::Schema.define(version: 20181112130254) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "postgis"
-  enable_extension "hstore"
-  enable_extension "uuid-ossp"
   enable_extension "pg_stat_statements"
   enable_extension "fuzzystrmatch"
+  enable_extension "postgis_topology"
+  enable_extension "hstore"
+  enable_extension "uuid-ossp"
   enable_extension "postgis_tiger_geocoder"
   enable_extension "pg_trgm"
   enable_extension "unaccent"
   enable_extension "address_standardizer"
+  enable_extension "postgis"
 
   create_table "actions", id: :serial, force: :cascade do |t|
     t.string "name"
@@ -212,7 +213,7 @@ ActiveRecord::Schema.define(version: 20181107043828) do
     t.string "phone_2_new"
     t.string "street_2"
     t.string "street_3"
-    t.point "the_geom" 
+    t.point "the_geom"
     t.string "comments"
   end
 
@@ -277,6 +278,9 @@ ActiveRecord::Schema.define(version: 20181107043828) do
     t.string "title"
     t.integer "width"
     t.integer "height"
+    t.string "label_x_axis"
+    t.string "label_y_axis_left"
+    t.string "label_y_axis_right"
     t.index ["dashboard_id"], name: "index_graphics_on_dashboard_id"
   end
 
@@ -290,6 +294,7 @@ ActiveRecord::Schema.define(version: 20181107043828) do
     t.datetime "updated_at", null: false
     t.integer "analytics_dashboard_id"
     t.integer "graphic_id"
+    t.string "label_datasets"
     t.index ["chart_id"], name: "index_graphics_properties_on_chart_id"
   end
 
@@ -583,7 +588,7 @@ ActiveRecord::Schema.define(version: 20181107043828) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "properties_original"
-    t.point "the_geom"
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"st_point"}
     t.index ["project_type_id"], name: "project_type_idx"
     t.index ["the_geom"], name: "idx_geom", using: :gist
   end

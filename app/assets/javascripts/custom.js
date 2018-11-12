@@ -183,6 +183,7 @@ function init_chart_doughnut(size_box = null){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id},
       success: function(data){
+        console.log(data);
         $("#wait").modal("show");
         var s = 0;
         for(var i = 0; i < data.length; i ++){
@@ -196,18 +197,20 @@ function init_chart_doughnut(size_box = null){
           var width;
           var aspectR;
           var legend_display;
+          var label_x_axis;
+          var label_y_axis_left;
+          var label_datasets; 
 
           $.each(reg, function(a, b){
             $.each(b, function(index, value){
-
               if(index == 'chart_type'){
                 type_chart = value;
               }
-
               if(index == 'chart_properties'){
                 options = value;
                 graphic_id = value['graphic_id'];
                 color = value['color'];
+                label_datasets = value['label_datasets'];
               }
 
               if (index == 'data'){
@@ -226,7 +229,7 @@ function init_chart_doughnut(size_box = null){
                   // BAR datasets
                   if (type_chart == 'bar' || type_chart == 'line') {
                     datasets.push({
-                      label: 'nombre_serie_default',
+                      label: label_datasets,
                       data: da,
                       fill: false,
                       backgroundColor: color,
@@ -249,7 +252,7 @@ function init_chart_doughnut(size_box = null){
                       seed: 1,
                     })
                     datasets.push({
-                      label: 'nombre_serie_default',
+                      label: label_datasets,
                       data: da,
                       backgroundColor: rancolor,
                       borderColor: 'white',
@@ -268,6 +271,8 @@ function init_chart_doughnut(size_box = null){
               if(index == 'graphics_options'){
                 title = value['title'];
                 width = value['width'];
+                label_x_axis = value['label_x_axis'];
+                label_y_axis_left = value['label_y_axis_left'];
               }
             })
           })
@@ -317,14 +322,14 @@ function init_chart_doughnut(size_box = null){
                   display: true,
                   scaleLabel: {
                     display: true,
-                    labelString: 'nombre_eje_x_default'
+                    labelString: label_x_axis
                   }
                 }],
                 yAxes: [{
                   display: true,
                   scaleLabel: {
                     display: true,
-                    labelString: 'nombre_eje_y_default'
+                    labelString: label_y_axis_left
                   }
                 }]
               },
