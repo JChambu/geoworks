@@ -194,6 +194,8 @@ function init_chart_doughnut(size_box = null){
           var graphic_id;
           var datasets = [];
           var width;
+          var aspectR;
+          var legend_display;
 
           $.each(reg, function(a, b){
             $.each(b, function(index, value){
@@ -282,21 +284,27 @@ function init_chart_doughnut(size_box = null){
           status_view = $('#view').hasClass('active');
           if (!status_view){
             $('.chart_container'+graphic_id).addClass('col-md-'+width);
+            aspectR = "2";
+            legend_display = true;
+
           }else{
             $('.chart_container'+graphic_id).addClass('col-md-12');
+            aspectR ="1";
+            legend_display = false;
           }
 
           // BAR options
           if (type_chart == 'bar' || type_chart == 'line') {
             var option_legend = {
               responsive: true,
+              aspectRatio: aspectR,
               title: {
                 display: true,
                 text: title,
                 fontSize: 18
               },
               legend: {
-                display: true,
+                display: legend_display,
                 position: 'bottom',
                 labels: {
                   boxWidth: 40,
@@ -327,18 +335,19 @@ function init_chart_doughnut(size_box = null){
               options:  option_legend
             }
           }
-
+        console.log(aspectR);
           // DOUGHNUT options
           if (type_chart == 'doughnut') {
             var option_legend = {
               responsive: true,
+              aspectRatio: aspectR,
               title: {
                 display: true,
                 text: title,
                 fontSize: 18
               },
               legend: {
-                display: true,
+                display: legend_display,
                 position: 'bottom',
                 labels: {
                   boxWidth: 40,

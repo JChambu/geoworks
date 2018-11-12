@@ -51,6 +51,7 @@ Navarra.dashboards.action_show = function(){
         $(".card_graph").removeClass( "col-md-6");
         $(".card_graph").toggleClass( "col-md-12", 500, "easeOutSine" );
 
+        init_chart_doughnut();  
       }else{
         $(".graphics").removeClass("col-md-3");
         $(".graphics").removeClass("col-md-3");
@@ -61,6 +62,7 @@ Navarra.dashboards.action_show = function(){
         $("#map").css("height", o+"px"); //map.invalidateSize();
         $("#map").css("width", "100%"); //map.invalidateSize();
         $("#map").css("float", "none");
+
       }
     });
 
