@@ -281,18 +281,7 @@ function init_chart_doughnut(size_box = null){
           // Editar esto en la vista directamente
           status_view = $('#view').hasClass('active');
           if (!status_view){
-            if (width<35) {
-              $('.chart_container'+graphic_id).addClass('col-md-3');
-            }
-            else if (width>=35 & width<50) {
-              $('.chart_container'+graphic_id).addClass('col-md-6');
-            }
-            else if (width>=50 & width<65) {
-              $('.chart_container'+graphic_id).addClass('col-md-9');
-            }
-            else if (width>=65) {
-              $('.chart_container'+graphic_id).addClass('col-md-12');
-            }
+            $('.chart_container'+graphic_id).addClass('col-md-'+width);
           }else{
             $('.chart_container'+graphic_id).addClass('col-md-12');
           }
