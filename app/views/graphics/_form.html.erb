@@ -2,7 +2,7 @@
   <button type="button" class="close" data-dismiss="modal">x</button>
   <h4 class="modal-title" id="myModalLabel">Editar</h4>
 </div>
-<div class="modal-body">
+<div class="modal-body" style="overflow: scroll; height: 450px">
 
   <%= simple_form_for([@project_type, @dashboard, @graphic], remote: true) do |form| %>
     <% if @graphic.errors.any? %>
@@ -18,22 +18,26 @@
     <% end %>
 
   <div class="field">
-    <%= form.input :title %>
+    <%= form.input :title, label: "Título" %>
 
   </div>
+  <br>
     <div class="field">
       <%= form.hidden_field :dashboard_id, id: :graphic_dashboard_id %>
     </div>
   <div class="field">
-    <%= form.input :width, as: :range, input_html: {min: "3", max: "12", step: "3"} %>
+    <%= form.input :width, as: :range, input_html: {min: "3", max: "12", step: "3"}, label: "Ancho" %>
   </div>
+  <br>
   <div class="field">
-    <%= form.input :label_x_axis  %>
+    <%= form.input :label_x_axis, label: "Nombre Eje X"  %>
   </div>
+  <br>
   <div class="field">
-    <%= form.input :label_y_axis_left %>
+    <%= form.input :label_y_axis_left, label: "Nombre Eje Y" %>
   </div>
-    <h3>Series</h3> 
+  <br>
+    <h3>Series</h3>
 
     <%= link_to_add_fields 'Agregar Series', form, :graphics_properties %>
     <div class="field">
