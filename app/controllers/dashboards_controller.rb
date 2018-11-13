@@ -44,7 +44,7 @@ class DashboardsController < ApplicationController
 
     respond_to do |format|
       if @dashboard.save
-        format.html { redirect_to([@project_type, @dasboard], notice: 'Dashboard was successfully created.') }
+        format.html { redirect_to project_type_dashboards_path(@project_type), notice: 'Dashboard was successfully created.' }
         format.json { render :show, status: :created, location: @dashboard }
       else
         format.html { render :new }
