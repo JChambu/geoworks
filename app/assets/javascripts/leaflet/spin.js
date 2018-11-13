@@ -298,5 +298,3 @@ merge(Spinner.prototype, {
     useCssAnimations = vendor(s, 'animation');
   }
 }();
-
-module.exports = Spinner;
