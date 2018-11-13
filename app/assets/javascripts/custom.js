@@ -183,8 +183,6 @@ function init_chart_doughnut(size_box = null){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id},
       success: function(data){
-        console.log(data);
-        $("#wait").modal("show");
         var s = 0;
         for(var i = 0; i < data.length; i ++){
 
@@ -380,13 +378,7 @@ function init_chart_doughnut(size_box = null){
           });
 
         } //cierra for
-
-        $("#wait").modal("hide");
-
-
       } //function(data)
-
-
     }) //cierra ajax
   } //cierra if
   $('.modal-backdrop').remove() ;
