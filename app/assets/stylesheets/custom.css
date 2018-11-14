@@ -680,8 +680,8 @@ table.no-margin .progress {
   position: relative;
   min-height: 1px;
   float: left;
-  padding-right: 10px;
-  padding-left: 10px
+  padding-right: 0px;
+  padding-left: 0px
 }
 .row {
   margin-right: -10px;
