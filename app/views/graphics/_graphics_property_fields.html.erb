@@ -6,16 +6,13 @@
   </div>
   <br>
   <div class="field">
-    <%= f.input :chart_id, collection: chart_types_for_select, label: "Tipo de Gráfico" %>
+    <%= f.input :chart_id, input_html: {class: 'form-control'}, collection: chart_types_for_select, label: "Tipo de Gráfico" %>
+  </div>
+  <div class="field">
+    <%= f.input :analytics_dashboard_id, label: "Indicador", input_html: {class: 'form-control'},collection: kpi_for_select, include_blank: true %>
   </div>
   <div class="field">
     <br>
-    <%= f.label :analytics_dashboard_id, label: "Indicador" %>
-    <br>
-    <%= f.select :analytics_dashboard_id, kpi_for_select, include_blank: true %>
-  </div>
-  <div class="field">
-    <br>
-    <%=f.input :label_datasets, label: "Leyenda"  %>
+    <%=f.input :label_datasets, label: "Leyenda", input_html: {class:"form-control"}  %>
     <br>
   </div>
