@@ -53,7 +53,7 @@
               <%= link_to project_type_filters_path(params[:id]) , :remote => true  do  %> <i class="fas fa-filter"></i> <%end %>
               <%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, params[:id]) do %> <i class="fas fa-plus-circle"></i> <% end %>
               <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-pie"></i> <% end %>
-              <%= link_to "#", id: "view" do %> <%= image_tag "view.png", width: "25px" %> <% end %>
+              <%= link_to "#", id: "view" do %> <i class="fas fa-table"></i> <% end %>
               <%= link_to "#", id: "select" do %> <%= image_tag "icon-seleccion-poligono.svg", width: "25px" %> <% end %>
               <%= link_to "#" do %> <%= image_tag "icon-punto-radio.svg", width: "25px" %> <% end %>
               <%= link_to "#", id: "create_multi"  do %> <%= image_tag "icon-crear-poligono.svg", width: "25px", input_html:{class:"ss"} %> <% end %>
