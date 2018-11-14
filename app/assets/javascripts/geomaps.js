@@ -110,22 +110,28 @@ Navarra.geomaps = function (){
     var url = window.location.host;
     var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      updateWhenIdle: true,
+      reuseTiles: true
     });
 
     var grayscale =L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
       attribution: '',
       id: 'mapbox.light', 
-      accessToken: 'pk.eyJ1IjoiZmxhdmlhYXJpYXMiLCJhIjoiY2ppY2NzMm55MTN6OTNsczZrcGFkNHpoOSJ9.cL-mifEoJa6szBQUGnLmrA'
+      accessToken: 'pk.eyJ1IjoiZmxhdmlhYXJpYXMiLCJhIjoiY2ppY2NzMm55MTN6OTNsczZrcGFkNHpoOSJ9.cL-mifEoJa6szBQUGnLmrA',
+      updateWhenIdle: true,
+      reuseTiles: true
     });
 
     mymap = L.map('map',{
       crs: L.CRS.EPSG3857,
+      fadeAnimation: false,
+      markerZoomAnimation: false,
       zoom: 12,
       center: [-33.113399134183744, -69.69339599609376],
       zoomControl: false,
       layers: [grayscale,streets]
     }) ;
-
+    mymap.spin(true, {lines: 13, length: 40});
     var MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
 
@@ -138,7 +144,7 @@ Navarra.geomaps = function (){
     });
 
 
-    var layerProjects = new MySource("http://"+ url + ":8080/geoserver/wms", {
+    var layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
       layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
@@ -156,13 +162,12 @@ Navarra.geomaps = function (){
     maxx = Navarra.dashboards.config.maxx;   
     maxy = Navarra.dashboards.config.maxy;   
    
-    console.log(minx);
     mymap.fitBounds([
                   [ miny, minx], 
                   [ maxy ,maxx]
     
     ]);
-
+//    mymap.on('load', onMapLoad);
 //    mymap.Projects.getBounds());
 
     var baseMaps = {
@@ -184,15 +189,27 @@ Navarra.geomaps = function (){
       mymap.removeLayer(markers);
     }
 
+ /*   function onMapLoad() {
+      console.log("paso");
+          alert("Map successfully loaded")
+    };
+*/
+
     show_kpis();
+    mymap.spin(false);
     //mymap.on('zoomend', onMapZoomedMoved);
     mymap.on('moveend', onMapZoomedMoved);
 
     function onMapZoomedMoved(e) {
+        
+    mymap.spin(true, {lines: 13, length: 40});
+      console.log("Pasa");
       checked = $('#select').hasClass('active');
       if(!checked){
+        
         show_kpis();
       }
+    mymap.spin(false);
     }
 
     function BoundingBox(){
