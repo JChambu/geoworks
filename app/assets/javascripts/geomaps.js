@@ -201,7 +201,7 @@ Navarra.geomaps = function (){
     mymap.on('moveend', onMapZoomedMoved);
 
     function onMapZoomedMoved(e) {
-        
+   mymap.invalidateSize();    
     mymap.spin(true, {lines: 13, length: 40});
       console.log("Pasa");
       checked = $('#select').hasClass('active');
