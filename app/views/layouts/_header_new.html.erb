@@ -46,7 +46,7 @@
           </ul>
           <div class="nav toggle" style="border-left: 1px solid #EBEBEB;padding-left: 10px;margin-left: 0px;padding-bottom: 20px;padding-right: 20px;padding-top: 10px;margin-top: 10px;">
             <%if params[:controller] == 'analytics_dashboards' && params[:action] == 'index' %>
-              <%= link_to project_type_dashboard_path(@project_type, params[:dashboard_id])   do %> <%= image_tag "layers.png", width: "25px" %> <% end %>
+              <%= link_to project_type_dashboard_path(@project_type, params[:dashboard_id])   do %> <i class="fas fa-map-marked-alt"></i> <% end %>
             <% end %>
             <%if params[:controller] == 'dashboards' && params[:action] == 'show' %>
               <%= link_to project_type_dashboards_path(@project_type.id) do %> <i class="fas fa-arrow-left"></i> <%end %>
