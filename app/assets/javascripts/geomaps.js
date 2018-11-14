@@ -129,7 +129,7 @@ Navarra.geomaps = function (){
       zoom: 12,
       center: [-33.113399134183744, -69.69339599609376],
       zoomControl: false,
-      layers: [grayscale,streets]
+      layers: [streets, grayscale]
     }) ;
     mymap.spin(true, {lines: 13, length: 40});
     var MySource = L.WMS.Source.extend({
@@ -171,8 +171,8 @@ Navarra.geomaps = function (){
 //    mymap.Projects.getBounds());
 
     var baseMaps = {
-      "Grayscale": grayscale,
-      "Streets": streets
+      "Streets": streets,
+      "Grayscale": grayscale
     };
 
     var overlayMaps = {
