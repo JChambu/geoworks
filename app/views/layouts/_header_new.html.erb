@@ -63,8 +63,7 @@
           <ul class="nav navbar-nav navbar-right tile_count">
             <li class="">
               <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <%= current_user.name %>
-                <span class=" fa fa-angle-down"></span>
+                <i class="fas fa-bars"></i>
               </a>
               <ul class="dropdown-menu dropdown-usermenu pull-right">
                 <li><%= link_to "Editar Usuario", edit_user_path(current_user.id) %></li>
@@ -77,10 +76,10 @@
                 </li>
                 <li><a href="javascript:;">Help</a></li>
                 -->
-                <li><%= link_to destroy_user_session_path, method: :delete  do  %><i class="fa fa-sign-out pull-right"></i>Cerrar Sesión <% end %></li>
+                <li><%= link_to destroy_user_session_path, method: :delete  do  %> Cerrar Sesión <i class="fas fa-sign-out-alt"></i> <% end %></li>
               </ul>
             </li>
-            <li><%= link_to project_types_path() do %><i class="fa fa-folder-open"></i> Proyectos <span class="fa fa-chevron-down"></span><% end %></li>
+          </ul>
         </nav>
       </div>
     </div>
