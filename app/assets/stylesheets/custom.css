@@ -746,6 +746,24 @@ a:focus {
     position: relative
   }
 }
+.navbar-left {
+  margin-left: 0
+}
+.top_nav .navbar-left {
+  margin: 0;
+  width: auto;
+  float: left
+}
+.top_nav .navbar-left li {
+  display: inline-block;
+  float: left;
+  position: static
+}
+@media (min-width: 480px) {
+  .top_nav .navbar-left li {
+    position: relative
+  }
+}
 .top_nav .dropdown-menu li {
   width: 100%
 }
