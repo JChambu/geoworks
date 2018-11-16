@@ -434,6 +434,7 @@ function init_chart_doughnut(size_box = null){
           $(cc).each(function(){
             var chart_element = $(this);
             var chart_doughnut = new Chart(canvas_id, chart_doughnut_settings);
+            Chart.defaults.global.defaultFontFamily = 'Source Sans Pro';
           });
 
         } //cierra for
