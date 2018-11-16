@@ -224,6 +224,22 @@ function init_chart_doughnut(size_box = null){
                     da.push(v['count']);
                   });
 
+                  // HORIZONTAL BAR datasets
+                  if (type_chart == 'horizontalBar') {
+                    datasets.push({
+                      label: label_datasets,
+                      data: da,
+                      fill: false,
+                      backgroundColor: color,
+                      borderColor: color,
+                      borderWidth: 3,
+                      hoverBackgroundColor: color,
+                      hoverBorderColor: color,
+                      hoverBorderWidth: 2,
+                      type: type_chart
+                    });
+                  }
+
                   // BAR datasets
                   if (type_chart == 'bar' || type_chart == 'line') {
                     datasets.push({
@@ -299,6 +315,49 @@ function init_chart_doughnut(size_box = null){
             $('.chart_container'+graphic_id).addClass('col-md-12');
             aspectR ="1";
             legend_display = false;
+          }
+
+          // HORIZONTAL BAR datasets
+          if (type_chart == 'horizontalBar') {
+            var option_legend = {
+              responsive: true,
+              aspectRatio: aspectR,
+              title: {
+                display: true,
+                text: title,
+                fontSize: 18
+              },
+              legend: {
+                display: legend_display,
+                position: 'bottom',
+                labels: {
+                  boxWidth: 40,
+                  padding: 10,
+                  usePointStyle: true,
+                }
+              },
+              scales: {
+                xAxes: [{
+                  display: true,
+                  scaleLabel: {
+                    display: true,
+                    labelString: label_x_axis
+                  }
+                }],
+                yAxes: [{
+                  display: true,
+                  scaleLabel: {
+                    display: true,
+                    labelString: label_y_axis_left
+                  }
+                }]
+              },
+            }
+            var chart_doughnut_settings = {
+              type: 'horizontalBar',
+              data: data_gx,
+              options:  option_legend
+            }
           }
 
           // BAR options
