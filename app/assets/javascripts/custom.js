@@ -343,7 +343,7 @@ function init_chart_doughnut(size_box = null){
               options:  option_legend
             }
           }
-        console.log(aspectR);
+
           // DOUGHNUT options
           if (type_chart == 'doughnut') {
             var option_legend = {
