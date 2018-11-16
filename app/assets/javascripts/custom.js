@@ -224,6 +224,46 @@ function init_chart_doughnut(size_box = null){
                     da.push(v['count']);
                   });
 
+                  // BUBBLE datasets
+                  if (type_chart == 'bubble') {
+                    datasets.push({
+                      label: label_datasets,
+                      data: [{
+                        x: 100,
+                        y: 0,
+                        r: 10
+                      }, {
+                        x: 60,
+                        y: 30,
+                        r: 20
+                      }, {
+                        x: 40,
+                        y: 60,
+                        r: 25
+                      }, {
+                        x: 80,
+                        y: 80,
+                        r: 50
+                      }, {
+                        x: 20,
+                        y: 30,
+                        r: 25
+                      }, {
+                        x: 0,
+                        y: 100,
+                        r: 5
+                      }],
+                      fill: false,
+                      backgroundColor: 'transparent',
+                      borderColor: color,
+                      borderWidth: 3,
+                      hoverBackgroundColor: color,
+                      hoverBorderColor: color,
+                      hoverBorderWidth: 2,
+                      type: type_chart
+                    });
+                  }
+
                   // HORIZONTAL BAR datasets
                   if (type_chart == 'horizontalBar') {
                     datasets.push({
@@ -355,6 +395,49 @@ function init_chart_doughnut(size_box = null){
             }
             var chart_doughnut_settings = {
               type: 'horizontalBar',
+              data: data_gx,
+              options:  option_legend
+            }
+          }
+
+          // BUBBLE options
+          if (type_chart == 'bubble') {
+            var option_legend = {
+              responsive: true,
+              aspectRatio: aspectR,
+              title: {
+                display: true,
+                text: title,
+                fontSize: 18
+              },
+              legend: {
+                display: legend_display,
+                position: 'bottom',
+                labels: {
+                  boxWidth: 40,
+                  padding: 10,
+                  usePointStyle: true,
+                }
+              },
+              scales: {
+                xAxes: [{
+                  display: true,
+                  scaleLabel: {
+                    display: true,
+                    labelString: label_x_axis
+                  }
+                }],
+                yAxes: [{
+                  display: true,
+                  scaleLabel: {
+                    display: true,
+                    labelString: label_y_axis_left
+                  }
+                }]
+              },
+            }
+            var chart_doughnut_settings = {
+              type: 'bubble',
               data: data_gx,
               options:  option_legend
             }
