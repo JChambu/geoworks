@@ -19,7 +19,6 @@ class ProjectTypesController < ApplicationController
   def filters
 
     respond_to do |format|
-      format.html
       format.js
     end
   end
