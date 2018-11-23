@@ -23,7 +23,7 @@
           <% @dashboards.each do |dashboard| %>
             <tr>
               <td><%= dashboard.name %></td>
-              <td><%= link_to  project_type_dashboard_analytics_dashboards_path(@project_type.id,dashboard) do %><h3><i class="fas fa-cog" title="Indicadores" style="font-size: 0.7em; text-align: left"></i></h3><% end %> </td>
+              <td><%= link_to  project_type_dashboard_analytics_dashboards_path(@project_type.id,dashboard) do %><h3><i class="fas fa-database" title="Indicadores" style="font-size: 0.7em; text-align: left"></i></h3><% end %> </td>
               <td><%= link_to  project_type_dashboard_path(@project_type.id,dashboard) do %> <h3><i class="fas fa-eye" title="Ver" style="font-size: 0.7em; text-align: left"></i></h3> <% end %> </td>
               <td><%= link_to  edit_project_type_dashboard_path(@project_type, dashboard) do %> <h3><i class="fas fa-edit" title="Editar" style="font-size: 0.7em; text-align: left"></i></h3> <% end %></td>
               <td><%= link_to do %><h3><i class="fas fa-clone" title="Duplicar" style="font-size: 0.7em; text-align: left"></i></h3><% end %> </td>
