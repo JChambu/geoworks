@@ -30,8 +30,8 @@ class ProjectType < ApplicationRecord
   #validate :file_exist?
   validate :is_file_type_valid?, if: :file_exist?
 
-  before_create :restart_delayed_job
-  before_destroy :restart_delayed_job
+  #before_create :restart_delayed_job
+  #before_destroy :restart_delayed_job
   before_save :save_shp_file, if: :file_exist? 
   after_create :load_file, if: :file_exist? 
   after_create :new_dashboard
