@@ -9,7 +9,7 @@ Navarra.dashboards.config = {
   "miny": null,
   "maxx": null,
   "maxy": null,
-  "current_tenant": null,
+  "current_tenant": '',
   size_box: []
 };
 
@@ -17,12 +17,14 @@ Navarra.dashboards.action_show = function(){
 
   var init = function(){
 
-      $("#hide_side").on("click", function(){
+  $("#filter").on("click", function(){
+  Navarra.geomaps.wms_filter();
+    console.log("presionaste");
+  });
+    $("#hide_side").on("click", function(){
       
           $(".side_left").slideToggle("slow");
       })    
-    
-    
     var  project_id = $("#data_id").val();
 
     $( "#view" ).on( "click", function() {

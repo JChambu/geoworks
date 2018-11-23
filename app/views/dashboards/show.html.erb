@@ -1,6 +1,8 @@
 <%= content_for :head do %>
+
   <script type="text/javascript">
     Navarra.dashboards.config.project_type_id = <%= @project_type.id %>
+    Navarra.dashboards.config.current_tenant = '<%= @current_tenant %>';
     Navarra.dashboards.config.dashboard_id = <%= @dashboard_id %>
     Navarra.dashboards.config.minx = <%= @extent[0].minx %>
     Navarra.dashboards.config.miny = <%= @extent[0].miny  %>
@@ -16,14 +18,13 @@ Navarra.dashboards.config.lon.push( <%= a.the_geom.x %>)
   </script>  
 <% end %>
 
-
-
 <div id="modal-window" class="modal fade" >
   <div class="modal-dialog" role="document">
     <div class="modal-content"></div>
   </div>
 </div>
 <%= form_for :q, :method => :get  do |f| %>
+
   <div id="wait" class="modal fade">
     <i class="fa fa-pie-chart fa-5x loadingBar"></i>
   </div>
