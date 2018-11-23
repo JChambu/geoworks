@@ -6,7 +6,7 @@ working_directory "#{app_dir}/current"
 # Set unicorn options
 worker_processes 2
 preload_app true
-timeout 30
+timeout 3000
 
 # Path for the Unicorn socket
 listen "#{shared_dir}/sockets/unicorn.sock", :backlog => 64

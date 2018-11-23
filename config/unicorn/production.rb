@@ -7,7 +7,7 @@ stderr_path "#{root}/log/unicorn.log"
 stdout_path "#{root}/log/unicorn.log"
 
 worker_processes Integer(ENV['WEB_CONCURRENCY'])
-timeout 30
+timeout 3000
 preload_app true
 
 listen '/tmp/unicorn.spui.sock', backlog: 64
