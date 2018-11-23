@@ -219,7 +219,7 @@ class ProjectType < ApplicationRecord
         when 'application/x-esri-shape'
           ext = f.original_filename.split('.')
           if ext.last == 'shp'
-            a = ProjectType.delay.load_shape(self.id)
+            a = ProjectType.load_shape(self.id)
           end
         when 'text/csv'
           a = ProjectType.delay.load_csv(self.id, self.latitude, self.longitude, self.address, self.department, self.province, self.country)
