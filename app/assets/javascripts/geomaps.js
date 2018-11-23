@@ -103,7 +103,7 @@ Navarra.geomaps_extended_listings = function (){
 
 Navarra.geomaps = function (){
   //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
-  var map, markers, editableLayers
+  var mymap, markers, editableLayers, projects, layerProjects, MySource, CQL_FILTER;
   var size_box = [];
   var init= function() {
     
@@ -131,8 +131,8 @@ Navarra.geomaps = function (){
       zoomControl: false,
       layers: [streets, grayscale]
     }) ;
-    mymap.spin(true, {lines: 13, length: 40});
-    var MySource = L.WMS.Source.extend({
+    mymap.spin(false, {lines: 13, length: 40});
+    MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
 
         if (!this._map) {
@@ -144,8 +144,8 @@ Navarra.geomaps = function (){
     });
 
       current_tenant = Navarra.dashboards.config.current_tenant;
-    var layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
-      layers: current_tenant+"geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
+    layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
+      layers: "view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
@@ -202,7 +202,7 @@ Navarra.geomaps = function (){
 
     function onMapZoomedMoved(e) {
    mymap.invalidateSize();    
-    mymap.spin(true, {lines: 13, length: 40});
+    mymap.spin(false, {lines: 13, length: 40});
       console.log("Pasa");
       checked = $('#select').hasClass('active');
       if(!checked){
@@ -211,6 +211,12 @@ Navarra.geomaps = function (){
       }
     mymap.spin(false);
     }
+
+
+/*    function wms_filter(){
+      mymap.removeLayer(layerprojects);
+      console.log("gola");
+    }*/
 
     function BoundingBox(){
       var bounds = mymap.getBounds().getSouthWest().lng + "," + mymap.getBounds().getSouthWest().lat + "," + mymap.getBounds().getNorthEast().lng + "," + mymap.getBounds().getNorthEast().lat;
@@ -433,7 +439,16 @@ Navarra.geomaps = function (){
     */
 
 }
+
+function wms_filter(){
+      mymap.removeLayer(projects);
+    projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
+}
+
+
+
 return {
-  init: init
+  init: init,
+  wms_filter: wms_filter
 }
 }();
