@@ -155,7 +155,7 @@ Navarra.geomaps = function (){
       CQL_FILTER: 'project_type_id='+Navarra.dashboards.config.project_type_id
     })
 
-    projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
+    projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
 
     minx = Navarra.dashboards.config.minx;   
     miny = Navarra.dashboards.config.miny;   
