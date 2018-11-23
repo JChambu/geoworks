@@ -443,7 +443,9 @@ Navarra.geomaps = function (){
 
 function wms_filter(){
       mymap.removeLayer(projects);
-    projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
+
+  layerProjects.CQL_FILTER += "Luminaria='Brazo'";
+  projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
 }
 
 
