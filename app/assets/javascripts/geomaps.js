@@ -146,7 +146,7 @@ Navarra.geomaps = function (){
       current_tenant = Navarra.dashboards.config.current_tenant;
     console.log(current_tenant);
     layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
-      layers: "surbageowroks:view_project_geoserver_surba",//nombre de la capa (ver get capabilities)
+      layers: "surbageoworks:view_project_geoserver_surba",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
