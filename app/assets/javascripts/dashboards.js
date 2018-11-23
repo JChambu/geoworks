@@ -9,6 +9,7 @@ Navarra.dashboards.config = {
   "miny": null,
   "maxx": null,
   "maxy": null,
+  "current_tenant": null,
   size_box: []
 };
 

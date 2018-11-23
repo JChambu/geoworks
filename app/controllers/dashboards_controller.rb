@@ -20,6 +20,7 @@ class DashboardsController < ApplicationController
   # GET /dashboards/1
   # GET /dashboards/1.json
   def show
+    @current_tenant = Apartment::Tenant.current
     @projects = Project.where(project_type_id: params[:project_type_id])
     # @extent = Project.where(project_type_id: params[:project_type_id]).select("st_xmin(st_extent(the_geom)) as minx,
     #                             st_ymin(st_extent(the_geom)) as miny,
