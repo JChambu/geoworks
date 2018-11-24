@@ -2,7 +2,6 @@ Navarra.namespace("project_types.action_maps");
 Navarra.namespace("project_types.action_dashboard");
 Navarra.namespace("project_types.action_create");
 Navarra.namespace("project_types.action_new");
-Navarra.namespace("project_types.action_filters");
 
 Navarra.project_types.config = {
   filtrado: '',
@@ -50,21 +49,6 @@ $(document).on('click', 'form .add_fields', function(event){
 } else {
   alert('The File APIs are not fully supported in this browser.');
 }*/
-
-Navarra.project_types.action_filters = function(){
-
-  
-  init = function(){
-  console.log("vasd");    
-    $('#filtro').on('click', function(){
-          console.log("llega");
-    })
-
-  }
-  return {
-    init: init,
-  }
-}();
 
 
 Navarra.project_types.action_create = function(){

@@ -144,6 +144,7 @@ Navarra.geomaps = function (){
     });
 
       current_tenant = Navarra.dashboards.config.current_tenant;
+      console.log(current_tenant);
     layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
     //layerProjects = new MySource("http://localhost:8080/geoserver/wms", {
       layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
@@ -448,9 +449,6 @@ function wms_filter(){
 var field =  Navarra.project_types.config.project_field ;    
   Navarra.project_types.config.filter;    
 var ivalue =   Navarra.project_types.config.input_value;    
-  console.log("Paaaa");
-  console.log(field);
-
     MySourcea = L.WMS.Source.extend(
       {
       'showFeatureInfo': function(latlng, info) {

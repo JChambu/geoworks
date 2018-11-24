@@ -17,10 +17,6 @@ Navarra.dashboards.action_show = function(){
 
   var init = function(){
 
-  $("#filter").on("click", function(){
-  Navarra.geomaps.wms_filter();
-    console.log("presionaste");
-  });
     $("#hide_side").on("click", function(){
       
           $(".side_left").slideToggle("slow");
