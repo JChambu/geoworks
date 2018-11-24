@@ -79,7 +79,7 @@ Navarra.geomaps_extended_listings = function (){
   }
   var geocoding = function(opt){
 
-    address = opt.county + " " +  opt.location +" " +  opt.searchTerm
+    address = opt.county + " " +  opt.location +" " +  opt.searchTerm;
     console.log(address);
     $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + address, function(data){
       var items = [];
@@ -145,10 +145,10 @@ Navarra.geomaps = function (){
 
       current_tenant = Navarra.dashboards.config.current_tenant;
       console.log(current_tenant);
-    layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
-    //layerProjects = new MySource("http://localhost:8080/geoserver/wms", {
-      layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
-     // layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
+    //layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
+    layerProjects = new MySource("http://localhost:8080/geoserver/wms", {
+    //  layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+      layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
@@ -158,7 +158,8 @@ Navarra.geomaps = function (){
       CQL_FILTER: 'project_type_id='+Navarra.dashboards.config.project_type_id
     })
 
-   projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
+   //projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
+   projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
 
     minx = Navarra.dashboards.config.minx;   
     miny = Navarra.dashboards.config.miny;   
@@ -465,16 +466,21 @@ var ivalue =   Navarra.project_types.config.input_value;
     //layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
     
     var cql_filter = 'project_type_id='+Navarra.dashboards.config.project_type_id;
-    
-      cql_filter +=" and "+ field +"='"+ ivalue +"'";
+   
+
+  var filter_option = Navarra.project_types.config.filter_option;
+
+        $.each(filter_option, function(a,b){
+           cql_filter +=" and "+ b;
+        });      
 
 
   console.log(cql_filter);
   
-    layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
- // layerProjects = new MySourcea("http://localhost:8080/geoserver/wms", {
-     layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
-     // layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
+   // layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
+  layerProjects = new MySourcea("http://localhost:8080/geoserver/wms", {
+ //    layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+      layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
@@ -483,11 +489,8 @@ var ivalue =   Navarra.project_types.config.input_value;
       style: 'poi_new',
       CQL_FILTER: cql_filter 
     })
-
-   projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
-
-  
-  
+   //projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
+   projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
 }
 
 

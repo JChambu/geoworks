@@ -17,6 +17,18 @@ Navarra.dashboards.action_show = function(){
 
   var init = function(){
 
+    $(".add_filters").on("click", ".message",  function(){
+       var da =  $(this).attr('id');
+      ar = Navarra.project_types.config.filter_option;  
+      b = $.grep(ar, function(value){
+          return value != da;
+      })
+      Navarra.project_types.config.filter_option = b;  
+      $(this).remove();
+      Navarra.geomaps.wms_filter();
+
+    });
+
     $("#hide_side").on("click", function(){
       
           $(".side_left").slideToggle("slow");
@@ -34,12 +46,10 @@ Navarra.dashboards.action_show = function(){
         $("#map").css("height", o+"px"); //map.invalidateSize();
         $("#map").css("width", "75%"); //map.invalidateSize();
         $("#map").css("float", "left"); //map.invalidateSize();
-
         $(".graphics div").removeClass("col-md-3");
         $(".graphics div").removeClass("col-md-6");
         $(".graphics div").removeClass("col-md-9");
         $(".graphics div").removeClass("col-md-12");
-
         $(".gridactive").css("width", "auto"); //map.invalidateSize();
         $(".graphics").css("height", o+"px"); //map.invalidateSize();
         $(".graphics").css("width", "25%"); //map.invalidateSize();
@@ -73,10 +83,8 @@ Navarra.dashboards.action_show = function(){
           graphic_id = value_graph.split('canvas');
           $.getScript("/project_types/"+ project_type_id+"/dashboards/"+dashboard_id+"/graphics/"+graphic_id[1]+"/edit");
         });
-
     Navarra.geomaps.init();
   }
-
   return {
     init: init,
   }

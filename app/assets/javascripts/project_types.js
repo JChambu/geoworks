@@ -8,6 +8,7 @@ Navarra.project_types.config = {
   project_field:'',
   filter:'',
   input_value:'',
+  filter_option: [],
   size_box: []
 }
 
