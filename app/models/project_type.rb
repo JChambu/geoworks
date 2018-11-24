@@ -185,8 +185,8 @@ class ProjectType < ApplicationRecord
           data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
         end
         @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
-        @field_select += ", properties->>'" + chart.group_field.key + "' as name "
-        @field_group = "properties->>'"+ chart.group_field.key + "'"
+        @field_select += ", surba.properties->>'" + chart.group_field.key + "' as name "
+        @field_group = "surba.properties->>'"+ chart.group_field.key + "'"
         data=   data.select(@field_select).group(@field_group).order(@field_group)
 
         @items["serie#{i}"] = data
@@ -207,7 +207,7 @@ class ProjectType < ApplicationRecord
       when 'sum'
         query = " #{type}((properties->>'" + field+ "')::float)"
       when 'count'
-        query = " #{type}((properties->>'" + field+ "'))"
+        query = " #{type}((surba.properties->>'" + field+ "'))"
       end
     end
 
