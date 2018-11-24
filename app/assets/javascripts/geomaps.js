@@ -446,7 +446,7 @@ Navarra.geomaps = function (){
 function wms_filter(){
       mymap.removeLayer(projects);
 
-var field =  Navarra.project_types.config.project_field ;    
+var field =  Navarra.project_types.config.project_field.toLowerCase() ;    
   Navarra.project_types.config.filter;    
 var ivalue =   Navarra.project_types.config.input_value;    
     MySourcea = L.WMS.Source.extend(
