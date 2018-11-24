@@ -145,10 +145,10 @@ Navarra.geomaps = function (){
 
       current_tenant = Navarra.dashboards.config.current_tenant;
       console.log(current_tenant);
-    //layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
-    layerProjects = new MySource("http://localhost:8080/geoserver/wms", {
-    //  layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
-      layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
+    layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
+    //layerProjects = new MySource("http://localhost:8080/geoserver/wms", {
+      layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+    //  layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
@@ -158,8 +158,8 @@ Navarra.geomaps = function (){
       CQL_FILTER: 'project_type_id='+Navarra.dashboards.config.project_type_id
     })
 
-   //projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
-   projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
+   projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
+   //projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
 
     minx = Navarra.dashboards.config.minx;   
     miny = Navarra.dashboards.config.miny;   
@@ -477,9 +477,9 @@ var ivalue =   Navarra.project_types.config.input_value;
 
   console.log(cql_filter);
   
-   // layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
-  layerProjects = new MySourcea("http://localhost:8080/geoserver/wms", {
- //    layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+  layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
+  //layerProjects = new MySourcea("http://localhost:8080/geoserver/wms", {
+  layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
       layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
@@ -489,8 +489,8 @@ var ivalue =   Navarra.project_types.config.input_value;
       style: 'poi_new',
       CQL_FILTER: cql_filter 
     })
-   //projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
-   projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
+  projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
+  // projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
 }
 
 
