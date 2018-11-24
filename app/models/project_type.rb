@@ -181,7 +181,6 @@ class ProjectType < ApplicationRecord
         @items = {}
         if type_box == 'extent'
           data = Project.where(project_type_id: project_type_id).where(" st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
-          ddd = Project.where(project_type_id: project_type_id)
         else
           data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
         end
@@ -193,7 +192,7 @@ class ProjectType < ApplicationRecord
         @items["serie#{i}"] = data
         @option_graph = graph
         chart_type = graph.chart.name
-        ch["it#{i}"] = { "description":"Holaaaaa description", "chart_type":chart_type, "group_field":@field_group,"chart_properties": @option_graph, "data":@items, "graphics_options": g, "que":ddd}
+        ch["it#{i}"] = { "description":"Holaaaaa description", "chart_type":chart_type, "group_field":@field_group,"chart_properties": @option_graph, "data":@items, "graphics_options": g}
       end
        ch
     end
