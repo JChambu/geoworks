@@ -52,6 +52,7 @@ Rails.application.routes.draw do
       end
       resources :projects
       get 'project_types/filters' => 'project_types#filters', as: :filters
+      get 'project_types/create_filters' => 'project_types#create_filters', as: :create_filters
 
     end
     resources :regexp_types
