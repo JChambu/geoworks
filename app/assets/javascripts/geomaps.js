@@ -103,7 +103,7 @@ Navarra.geomaps_extended_listings = function (){
 
 Navarra.geomaps = function (){
   //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
-  var mymap, markers, editableLayers, projects, layerProjects, MySource, CQL_FILTER;
+  var mymap, markers, editableLayers, projects, layerProjects, MySource;
   var size_box = [];
   var init= function() {
     
@@ -144,9 +144,10 @@ Navarra.geomaps = function (){
     });
 
       current_tenant = Navarra.dashboards.config.current_tenant;
-    console.log(current_tenant);
     layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
+    //layerProjects = new MySource("http://localhost:8080/geoserver/wms", {
       layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+     // layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
@@ -156,7 +157,7 @@ Navarra.geomaps = function (){
       CQL_FILTER: 'project_type_id='+Navarra.dashboards.config.project_type_id
     })
 
-    projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
+   projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
 
     minx = Navarra.dashboards.config.minx;   
     miny = Navarra.dashboards.config.miny;   
@@ -176,11 +177,11 @@ Navarra.geomaps = function (){
       "Grayscale": grayscale
     };
 
-    var overlayMaps = {
+    /*var overlayMaps = {
       "projects": projects
-    };
+    };*/
 
-    L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+    L.control.layers(baseMaps).addTo(mymap);
 
     L.control.zoom({
       position:'topleft'
@@ -444,8 +445,50 @@ Navarra.geomaps = function (){
 function wms_filter(){
       mymap.removeLayer(projects);
 
-  layerProjects.CQL_FILTER += "Luminaria='Brazo'";
-  projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
+var field =  Navarra.project_types.config.project_field ;    
+  Navarra.project_types.config.filter;    
+var ivalue =   Navarra.project_types.config.input_value;    
+  console.log("Paaaa");
+  console.log(field);
+
+    MySourcea = L.WMS.Source.extend(
+      {
+      'showFeatureInfo': function(latlng, info) {
+
+        if (!this._map) {
+          return;
+        }
+        //               do whatever you like with info
+        //this._map.openPopup(info, latlng);
+      }
+    });
+
+      current_tenant = Navarra.dashboards.config.current_tenant;
+    //layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
+    
+    var cql_filter = 'project_type_id='+Navarra.dashboards.config.project_type_id;
+    
+      cql_filter +=" and "+ field +"='"+ ivalue +"'";
+
+
+  console.log(cql_filter);
+  
+  layerProjects = new MySourcea("http://localhost:8080/geoserver/wms", {
+      //layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+      layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
+      format: 'image/png',
+      transparent: 'true',
+      opacity: 1,
+      version: '1.0.0',//wms version (ver get capabilities)
+      tiled: true,
+      style: 'poi_new',
+      CQL_FILTER: cql_filter 
+    })
+
+   projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
+
+  
+  
 }
 
 

@@ -17,11 +17,21 @@ class ProjectTypesController < ApplicationController
   end
 
   def filters
-
     respond_to do |format|
       format.js
     end
   end
+  
+  def create_filters
+    @field = "field"
+    respond_to do |format|
+      format.js
+    end
+
+  end
+
+
+
 
   def dashboard
   end

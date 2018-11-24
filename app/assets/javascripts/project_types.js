@@ -2,6 +2,7 @@ Navarra.namespace("project_types.action_maps");
 Navarra.namespace("project_types.action_dashboard");
 Navarra.namespace("project_types.action_create");
 Navarra.namespace("project_types.action_new");
+Navarra.namespace("project_types.action_filters");
 
 Navarra.project_types.config = {
   filtrado: '',
@@ -24,27 +25,46 @@ $(document).on('click', 'form .add_fields', function(event){
   event.preventDefault();
 });
 
-$(document).on('click', '#enviar', function(event){
+//$(document).on('click', '.envf', function(event){
+ // console.log($('.proj_field').val());
+  //console.log($('.proj_value').val());
 
-  var project_field = $('#q_project_field').val();
-  var filter =$('#q_filters').val();
-  var input_value =$('#q_input_value').val();
+   //var project_field = $('.proj_field').val();
+//   var filter =$('#q_filters').val();
+ //  var input_value =$('.proj_value').val();
 
-  Navarra.project_types.config.project_field = project_field;    
-  Navarra.project_types.config.filter = filter;    
-  Navarra.project_types.config.input_value = input_value;    
-  Navarra.geo_openlayers.addMarker_op();
 
-  //  init_chart_doughnut();
-  $("#filters-modal").modal('hide');
-
-});
+//   console.log(input_value);
+   //Navarra.project_types.config.project_field = project_field;    
+//   Navarra.project_types.config.filter = filter;    
+  // Navarra.project_types.config.input_value = input_value;    
+//   Navarra.geomaps.wms_filter();
+//   // Navarra.geo_openlayers.addMarker_op();
+// //  init_kpi();
+//   //  init_chart_doughnut();
+  // $("#filters-modal").modal('hide');
+//});
 
 /*if (window.File && window.FileReader && window.FileList && window.Blob) {
   console.log('Great success! All the File APIs are supported.');
 } else {
   alert('The File APIs are not fully supported in this browser.');
 }*/
+
+Navarra.project_types.action_filters = function(){
+
+  
+  init = function(){
+  console.log("vasd");    
+    $('#filtro').on('click', function(){
+          console.log("llega");
+    })
+
+  }
+  return {
+    init: init,
+  }
+}();
 
 
 Navarra.project_types.action_create = function(){

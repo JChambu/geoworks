@@ -6,14 +6,19 @@
         <h4 class="modal-title"> </h4>
       </div>
       <div class="modal-body">
-        <%= form_for :q, :action => '',:remote => true, :method => :get , :html => { :id => "filters-form"} do |f| %>
+        <%= form_tag project_type_create_filters_path, :remote => true, :method => :get   do |f| %>
           <div>
-            <%=select_tag 'q[project_field]',  options_for_select(region_for_select) %>
+            <%=select_tag 'q[project_field]',  options_for_select(region_for_select), class:'proj_field' %>
             <%=select_tag 'q[filters]', options_for_select(ProjectType::FILTERS)%>
             <%=text_field_tag 'q[input_value]'%>
           </div>
+        
+        
+        <%= submit_tag :enviar, id: "filtro", class: "envf" %>
         <% end %>
-        <%= submit_tag :enviar, id: "enviar" %>
+
+
+
       </div>
     </div>
   </div>
