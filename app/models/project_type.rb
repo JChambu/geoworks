@@ -181,18 +181,19 @@ class ProjectType < ApplicationRecord
         @items = {}
         if type_box == 'extent'
           data = Project.where(project_type_id: project_type_id).where(" st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+          ddd = Project.where(project_type_id: project_type_id)
         else
           data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
         end
         @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
-        @field_select += ", surba.properties->>'" + chart.group_field.key + "' as name "
-        @field_group = "surba.properties->>'"+ chart.group_field.key + "'"
+        @field_select += ", properties->>'" + chart.group_field.key + "' as name "
+        @field_group = "properties->>'"+ chart.group_field.key + "'"
         data=   data.select(@field_select).group(@field_group).order(@field_group)
 
         @items["serie#{i}"] = data
         @option_graph = graph
         chart_type = graph.chart.name
-        ch["it#{i}"] = { "description":"Holaaaaa description", "chart_type":chart_type, "group_field":@field_group,"chart_properties": @option_graph, "data":@items, "graphics_options": g}
+        ch["it#{i}"] = { "description":"Holaaaaa description", "chart_type":chart_type, "group_field":@field_group,"chart_properties": @option_graph, "data":@items, "graphics_options": g, "que":ddd}
       end
        ch
     end
@@ -207,7 +208,7 @@ class ProjectType < ApplicationRecord
       when 'sum'
         query = " #{type}((properties->>'" + field+ "')::float)"
       when 'count'
-        query = " #{type}((surba.properties->>'" + field+ "'))"
+        query = " #{type}((properties->>'" + field+ "'))"
       end
     end
 
