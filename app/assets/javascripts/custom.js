@@ -179,7 +179,7 @@ function init_chart_doughnut(size_box = null){
     var dashboard_id = Navarra.dashboards.config.dashboard_id;
     
      console.log(Navarra.project_types.config.filter_kpi); 
-    var conditions = Navarra.project_types.config.filter_kpi
+    var conditions = Navarra.project_types.config.filter_option
      
     $.ajax({
       type: 'GET',

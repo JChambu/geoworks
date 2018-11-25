@@ -189,9 +189,11 @@ class ProjectType < ApplicationRecord
         @field_group = "properties->>'"+ chart.group_field.key + "'"
 
       if !data_conditions.blank?
-        @dc = data_conditions
-        data_conditions.each do |key, value| 
-          data =  data.where(" properties->>'" + @dc[key][0]+ "'='#{@dc[key][1]}'")
+        data_conditions.each do |key| 
+              @s = key.split('=')
+              @field = @s[0]
+              @value = @s[1]
+          data =  data.where(" properties->>'" + @field+ "'=#{@value}")
       end
       end
         
