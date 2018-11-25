@@ -191,7 +191,7 @@ class ProjectType < ApplicationRecord
       if !data_conditions.blank?
         data_conditions.each do |key| 
               @s = key.split('=')
-              @field = @s[0].downcase
+              @field = @s[0]
               @value = @s[1]
           data =  data.where(" properties->>'" + @field+ "'=#{@value}")
       end
