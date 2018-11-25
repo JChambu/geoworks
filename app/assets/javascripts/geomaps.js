@@ -80,7 +80,6 @@ Navarra.geomaps_extended_listings = function (){
   var geocoding = function(opt){
 
     address = opt.county + " " +  opt.location +" " +  opt.searchTerm;
-    console.log(address);
     $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + address, function(data){
       var items = [];
       $.each(data, function(key, val) {
@@ -144,7 +143,6 @@ Navarra.geomaps = function (){
     });
 
       current_tenant = Navarra.dashboards.config.current_tenant;
-      console.log(current_tenant);
     layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
     //layerProjects = new MySource("http://localhost:8080/geoserver/wms", {
       layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
@@ -207,7 +205,6 @@ Navarra.geomaps = function (){
     function onMapZoomedMoved(e) {
    mymap.invalidateSize();    
     mymap.spin(false, {lines: 13, length: 40});
-      console.log("Pasa");
       checked = $('#select').hasClass('active');
       if(!checked){
         
@@ -474,13 +471,10 @@ var ivalue =   Navarra.project_types.config.input_value;
            cql_filter +=" and "+ b;
         });      
 
-
-  console.log(cql_filter);
-  
   layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
   //layerProjects = new MySourcea("http://localhost:8080/geoserver/wms", {
   layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
-      layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
+  //    layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
@@ -491,6 +485,8 @@ var ivalue =   Navarra.project_types.config.input_value;
     })
   projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
   // projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
+
+      init_chart_doughnut();  
 }
 
 

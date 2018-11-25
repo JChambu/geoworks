@@ -177,13 +177,16 @@ function init_chart_doughnut(size_box = null){
     }
     var data_id = Navarra.dashboards.config.project_type_id;
     var dashboard_id = Navarra.dashboards.config.dashboard_id;
+    
+     console.log(Navarra.project_types.config.filter_kpi); 
+    var conditions = Navarra.project_types.config.filter_kpi
+     
     $.ajax({
       type: 'GET',
       url: '/project_types/kpi.json',
       datatype: 'json',
-      data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id},
+      data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
       success: function(data){
-        console.log(data);
         var s = 0;
         for(var i = 0; i < data.length; i ++){
 

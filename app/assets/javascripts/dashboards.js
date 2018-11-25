@@ -26,7 +26,7 @@ Navarra.dashboards.action_show = function(){
       Navarra.project_types.config.filter_option = b;  
       $(this).remove();
       Navarra.geomaps.wms_filter();
-
+      init_chart_doughnut();  
     });
 
     $("#hide_side").on("click", function(){

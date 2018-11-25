@@ -30,9 +30,6 @@ class ProjectTypesController < ApplicationController
 
   end
 
-
-
-
   def dashboard
   end
 
@@ -40,20 +37,21 @@ class ProjectTypesController < ApplicationController
 
     @op_graph = params[:graph]
     @data_conditions = params[:data_conditions]
-    filter_condition = []
-    if !@data_conditions.nil?
 
-      project_field = params[:data_conditions][:project_field]
-      filter = params[:data_conditions][:filter]
-      input_value = params[:data_conditions][:input_value]
-      filter_condition = [project_field, filter, input_value]
-    end
+     filter_condition = []
+    # if !@data_conditions.nil?
+
+    #   project_field = params[:data_conditions][:project_field]
+    #   filter = params[:data_conditions][:filter]
+    #   input_value = params[:data_conditions][:input_value]
+    #   filter_condition = [project_field, filter, input_value]
+    # end
 
     @querys = ''
     if @op_graph == 'true'
-      @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id])
+      @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id], @data_conditions)
     else
-      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box], filter_condition)
+      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box])
     end
 
 

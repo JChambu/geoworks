@@ -142,7 +142,7 @@ class ProjectType < ApplicationRecord
     querys
   end
 
-  def self.kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id)
+  def self.kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions)
 
     @arr1 = []
     @size = size_box
@@ -187,6 +187,14 @@ class ProjectType < ApplicationRecord
         @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
         @field_select += ", properties->>'" + chart.group_field.key + "' as name "
         @field_group = "properties->>'"+ chart.group_field.key + "'"
+
+      if !data_conditions.blank?
+        @dc = data_conditions
+        data_conditions.each do |key, value| 
+          data =  data.where(" properties->>'" + @dc[key][0]+ "'='#{@dc[key][1]}'")
+      end
+      end
+        
         data=   data.select(@field_select).group(@field_group).order(@field_group)
 
         @items["serie#{i}"] = data
