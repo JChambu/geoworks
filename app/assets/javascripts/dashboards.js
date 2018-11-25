@@ -19,13 +19,14 @@ Navarra.dashboards.action_show = function(){
 
     $(".add_filters").on("click", ".message",  function(){
        var da =  $(this).attr('id');
+       var kpi_value =  $(this).attr('value');
       ar = Navarra.project_types.config.filter_option;  
       option_kpi = Navarra.project_types.config.filter_kpi;  
       b = $.grep(ar, function(value){
           return value != da;
       })
       kpi = $.grep(option_kpi, function(value){
-          return value != da;
+          return value != kpi_value;
       })
       Navarra.project_types.config.filter_option = b;  
       Navarra.project_types.config.filter_kpi = kpi;  
