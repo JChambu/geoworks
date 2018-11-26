@@ -221,6 +221,14 @@ function init_chart_doughnut(size_box = null){
                 label_datasets = value['label_datasets'];
               }
 
+              // Extraemos las opciones del gráfico
+              if(index == 'graphics_options'){
+                title = value['title'];
+                width = value['width'];
+                label_x_axis = value['label_x_axis'];
+                label_y_axis_left = value['label_y_axis_left'];
+              }
+
               // Extraemos el array con los datos de la serie
               if (index == 'data'){
                 data_general = value;
@@ -331,16 +339,11 @@ function init_chart_doughnut(size_box = null){
 
                 data_gx = {
                   labels: lab,
-                  datasets: datasets}
-              }
-              if(index == 'graphics_options'){
-                title = value['title'];
-                width = value['width'];
-                label_x_axis = value['label_x_axis'];
-                label_y_axis_left = value['label_y_axis_left'];
               }
             })
           })
+                  datasets: datasets
+                }
 
           var canvas_graph = document.createElement('canvas');
           canvas_id = ('canvas'+graphic_id);
