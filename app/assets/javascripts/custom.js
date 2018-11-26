@@ -187,7 +187,6 @@ function init_chart_doughnut(size_box = null){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
       success: function(data){
-        var s = 0;
         for(var i = 0; i < data.length; i ++){
 
           var reg = data[i];
