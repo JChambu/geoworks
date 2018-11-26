@@ -339,11 +339,12 @@ function init_chart_doughnut(size_box = null){
 
                 data_gx = {
                   labels: lab,
-              }
-            })
-          })
                   datasets: datasets
                 }
+
+              } //cierra if
+            }) //cierra each
+          }) //cierra each
 
           var canvas_graph = document.createElement('canvas');
           canvas_id = ('canvas'+graphic_id);
@@ -535,7 +536,7 @@ function init_chart_doughnut(size_box = null){
           });
 
         } //cierra for
-      } //function(data)
+      } //cierra function(data)
     }) //cierra ajax
   } //cierra if
   $('.modal-backdrop').remove() ;
