@@ -185,8 +185,9 @@ function init_chart_doughnut(size_box = null){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
       success: function(data){
-        for(var i = 0; i < data.length; i ++){
 
+        // Ordenamos las series por chart
+        for(var i = 0; i < data.length; i ++){
           var reg = data[i];
           var type_chart = "";
           var title = "";
@@ -200,11 +201,18 @@ function init_chart_doughnut(size_box = null){
           var label_y_axis_left;
           var label_datasets; 
 
+          // Separamos las series
           $.each(reg, function(a, b){
+
+            // Extraemos los datos de cada serie
             $.each(b, function(index, value){
+
+              // Extraemos tipo de gráfico
               if(index == 'chart_type'){
                 type_chart = value;
               }
+
+              // Extraemos propiedades del gráfico
               if(index == 'chart_properties'){
                 options = value;
                 graphic_id = value['graphic_id'];
@@ -212,13 +220,16 @@ function init_chart_doughnut(size_box = null){
                 label_datasets = value['label_datasets'];
               }
 
+              // Extraemos el array con los datos de la serie
               if (index == 'data'){
                 data_general = value;
                 var lab = [];
                 var da = [];
 
+                // Extraemos los datos del array de la serie
                 $.each(data_general, function(idx, vax){
 
+                  // Extraemos label y value de los datos
                   $.each(vax, function(i, v ){
                     lab.push(v['name']);
                     da.push(v['count']);
