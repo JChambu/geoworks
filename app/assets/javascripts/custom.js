@@ -335,16 +335,16 @@ function init_chart_doughnut(size_box = null){
                     });
                   }
 
-                });
+                }); //cierra each data_general
 
                 data_gx = {
                   labels: lab,
                   datasets: datasets
                 }
 
-              } //cierra if
-            }) //cierra each
-          }) //cierra each
+              } //cierra if data
+            }) //cierra each b
+          }) //cierra each reg
 
           var canvas_graph = document.createElement('canvas');
           canvas_id = ('canvas'+graphic_id);
@@ -535,12 +535,12 @@ function init_chart_doughnut(size_box = null){
             Chart.defaults.global.defaultFontFamily = 'Source Sans Pro';
           });
 
-        } //cierra for
-      } //cierra function(data)
+        } //cierra for data
+      } //cierra function data
     }) //cierra ajax
-  } //cierra if
+  } //cierra if graphics
   $('.modal-backdrop').remove() ;
-} //cierra init_chart_doughnut
+} //cierra function init_chart_doughnut
 
 /* OCULTA FUNCIONES SIN USO
 
