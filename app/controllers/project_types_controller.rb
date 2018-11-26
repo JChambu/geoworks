@@ -285,13 +285,13 @@ class ProjectTypesController < ApplicationController
 
   def index
 
-    #@has_project_types = HasProjectType.where(user_id: current_user.id )
-    #@project_types = ProjectType.where(id: @has_project_types.project_type_id)
-    if params[:search_project].nil? || params[:search_project].empty?
-      @project_types = ProjectType.all
-    else
-      @project_types = ProjectType.where("name ILIKE :name", name: "%#{params[:search_project]}%")
+    @has_project_types = HasProjectType.where(user_id: current_user.id )
+    @project_types = ProjectType.where(id: @has_project_types.ids)
+    if !params[:search_project].nil? || !params[:search_project].blank?
+      @project_types = @project_types.where("name ILIKE :name", name: "%#{params[:search_project]}%")
     end
+
+    
     @project_types = @project_types.paginate(:page => params[:page])
     #@project_fulcrum = ProjectType.query_fulcrum
   end
