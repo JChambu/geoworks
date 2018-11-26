@@ -177,8 +177,6 @@ function init_chart_doughnut(size_box = null){
     }
     var data_id = Navarra.dashboards.config.project_type_id;
     var dashboard_id = Navarra.dashboards.config.dashboard_id;
-    
-     console.log(Navarra.project_types.config.filter_kpi); 
     var conditions = Navarra.project_types.config.filter_kpi
      
     $.ajax({
