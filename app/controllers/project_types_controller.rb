@@ -285,8 +285,10 @@ class ProjectTypesController < ApplicationController
 
   def index
 
-    @has_project_types = HasProjectType.where(user_id: current_user.id )
-    @project_types = ProjectType.where(id: @has_project_types.ids)
+    @has_project_types = HasProjectType.where(user_id: current_user.id).select(:project_type_id)
+    @p =[]
+    @has_project_types.each do |s| @p.push(s.project_type_id) end 
+    @project_types = ProjectType.where(id: @p)
     if !params[:search_project].nil? || !params[:search_project].blank?
       @project_types = @project_types.where("name ILIKE :name", name: "%#{params[:search_project]}%")
     end
