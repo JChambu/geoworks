@@ -214,11 +214,10 @@ function init_chart_doughnut(size_box = null){
 
               if (index == 'data'){
                 data_general = value;
-                var lab_x = [];
+                var lab = [];
+                var da = [];
 
                 $.each(data_general, function(idx, vax){
-                  var lab = [];
-                  var da = [];
 
                   $.each(vax, function(i, v ){
                     lab.push(v['name']);
@@ -316,11 +315,10 @@ function init_chart_doughnut(size_box = null){
                     });
                   }
 
-                  lab_x = lab
                 });
 
                 data_gx = {
-                  labels: lab_x,
+                  labels: lab,
                   datasets: datasets}
               }
               if(index == 'graphics_options'){
