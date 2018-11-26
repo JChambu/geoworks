@@ -51,7 +51,7 @@ class ProjectTypesController < ApplicationController
     if @op_graph == 'true'
       @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id], @data_conditions)
     else
-      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box])
+      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id],@data_conditions)
     end
 
 

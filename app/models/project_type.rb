@@ -89,9 +89,9 @@ class ProjectType < ApplicationRecord
     end
   end
 
-  def self.kpi_without_graph(project_type_id, option_graph, size_box, type_box, filter_condition = nil)
+  def self.kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions)
 
-    @filter_condition = filter_condition
+    #@filter_condition = filter_condition
     @type_box = type_box
     @arr1 = []
 
@@ -133,9 +133,19 @@ class ProjectType < ApplicationRecord
       field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
 
       conditions_field = chart.condition_field
-      if !conditions_field.blank?
-        data =  data.where(" properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
+    
+      if !data_conditions.blank?
+        data_conditions.each do |key| 
+              @s = key.split('=')
+              @field = @s[0]
+              @value = @s[1]
+          data =  data.where(" properties->>'" + @field+ "'=#{@value}")
       end
+      end
+     @d = data
+       # if !conditions_field.blank?
+       #   data =  data.where(" properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
+       # end
       data=   data.select(field_select)
       querys << { "title":"#{chart.title}", "description":"kpi_sin grafico", "data":data, "id": chart.id}
     end
