@@ -51,7 +51,7 @@ class ProjectTypesController < ApplicationController
     if @op_graph == 'true'
       @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id], @data_conditions)
     else
-      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box])
+      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id],@data_conditions)
     end
 
 
@@ -285,13 +285,15 @@ class ProjectTypesController < ApplicationController
 
   def index
 
-    #@has_project_types = HasProjectType.where(user_id: current_user.id )
-    #@project_types = ProjectType.where(id: @has_project_types.project_type_id)
-    if params[:search_project].nil? || params[:search_project].empty?
-      @project_types = ProjectType.all
-    else
-      @project_types = ProjectType.where("name ILIKE :name", name: "%#{params[:search_project]}%")
+    @has_project_types = HasProjectType.where(user_id: current_user.id).select(:project_type_id)
+    @p =[]
+    @has_project_types.each do |s| @p.push(s.project_type_id) end 
+    @project_types = ProjectType.where(id: @p)
+    if !params[:search_project].nil? || !params[:search_project].blank?
+      @project_types = @project_types.where("name ILIKE :name", name: "%#{params[:search_project]}%")
     end
+
+    
     @project_types = @project_types.paginate(:page => params[:page])
     #@project_fulcrum = ProjectType.query_fulcrum
   end

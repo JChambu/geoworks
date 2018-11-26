@@ -130,13 +130,14 @@ function init_kpi(size_box = null){
   // }
   var  data_id =  Navarra.dashboards.config.project_type_id;
   var  dashboard_id =  Navarra.dashboards.config.dashboard_id;
+  var conditions = Navarra.project_types.config.filter_kpi
 
   $.ajax({
 
     type: 'GET',
     url: '/project_types/kpi.json',
     datatype: 'json',
-    data: {data_id: data_id, size_box: size_box, graph: false, type_box: type_box, data_conditions: data_conditions}, dashboard_id: dashboard_id,
+    data: {data_id: data_id, size_box: size_box, graph: false, type_box: type_box, data_conditions: conditions}, dashboard_id: dashboard_id,
     success: function(data){
       data.forEach(function(element){
         var count_element= element['data'][0]['count'];
@@ -199,7 +200,7 @@ function init_chart_doughnut(size_box = null){
           var legend_display;
           var label_x_axis;
           var label_y_axis_left;
-          var label_datasets; 
+          var label_datasets;
 
           // Separamos las series
           $.each(reg, function(a, b){
