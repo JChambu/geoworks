@@ -1,10 +1,5 @@
-$(".chart-modal").on('click', function(){
-  var graph_id = $(this).attr('id');
-  $('hide-div').hide();
-  $('.'+graph_id).show();
-  console.log(graph_id);
-})
-
 $("#modal-window").find(".modal-content").html("<%= j (render 'form') %>");
-
+$('.hide-div').hide();
+  var graph = Navarra.dashboards.config.graph_id;
+    $('.'+graph).show();
 $("#modal-window").modal();

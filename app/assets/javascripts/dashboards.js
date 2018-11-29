@@ -10,12 +10,18 @@ Navarra.dashboards.config = {
   "maxx": null,
   "maxy": null,
   "current_tenant": '',
+  "graph_id":'',
   size_box: []
 };
 
 Navarra.dashboards.action_show = function(){
 
   var init = function(){
+
+    $(".chart-modal").on('click', function(){
+     var   graph_id =  $(this).attr('id'); 
+     Navarra.dashboards.config.graph_id= graph_id;
+    });
 
     $(".add_filters").on("click", ".message",  function(){
        var da =  $(this).attr('id');
