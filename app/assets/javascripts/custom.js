@@ -221,6 +221,10 @@ function init_chart_doughnut(size_box = null){
                 label_datasets = value['label_datasets'];
                 //position_y_axis = value['position_y_axis'];
                 position_y_axis = 'left-y-axis'; //harcodeado hasta que traiga el dato
+                //stacked = value['stacked'];
+                stacked = false; //harcodeado hasta que traiga el dato
+                //area_fill = value['area_fill'];
+                area_fill = false; //harcodeado hasta que traiga el dato
               }
 
               // Extraemos las opciones del gráfico
@@ -308,7 +312,7 @@ function init_chart_doughnut(size_box = null){
                       label: label_datasets,
                       data: da,
                       yAxisID: position_y_axis,
-                      fill: false,
+                      fill: area_fill,
                       backgroundColor: color,
                       borderColor: color,
                       borderWidth: 3,
@@ -482,6 +486,7 @@ function init_chart_doughnut(size_box = null){
               },
               scales: {
                 xAxes: [{
+                  stacked: stacked,
                   display: true,
                   scaleLabel: {
                     display: true,
