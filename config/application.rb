@@ -19,7 +19,7 @@ Bundler.require(*Rails.groups)
 
 module Geoworks
   class Application < Rails::Application
-    #config.middleware.use Apartment::Elevators::FirstSubdomain
+    config.middleware.use Apartment::Elevators::Subdomain
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -30,6 +30,6 @@ module Geoworks
     config.autoload_paths += %W(#{config.root}/lib)
     PaperTrail.serializer = JSON
     #config.active_job.queue_adapter = :delayed_job
-    config.active_record.schema_format = :sql
+    #config.active_record.schema_format = :sql
   end
 end
