@@ -199,7 +199,7 @@ function init_chart_doughnut(size_box = null){
           var aspectR;
           var legend_display;
           var label_x_axis;
-          var label_y_axis_left;
+          var label_y_axis;
           var label_datasets;
 
           // Separamos las series
@@ -219,6 +219,8 @@ function init_chart_doughnut(size_box = null){
                 graphic_id = value['graphic_id'];
                 color = value['color'];
                 label_datasets = value['label_datasets'];
+                //position_y_axis = value['position_y_axis'];
+                position_y_axis = 'left-y-axis'; //harcodeado hasta que traiga el dato
               }
 
               // Extraemos las opciones del gráfico
@@ -226,7 +228,7 @@ function init_chart_doughnut(size_box = null){
                 title = value['title'];
                 width = value['width'];
                 label_x_axis = value['label_x_axis'];
-                label_y_axis_left = value['label_y_axis_left'];
+                label_y_axis = value['label_y_axis_left'];
               }
 
               // Extraemos el array con los datos de la serie
@@ -305,6 +307,7 @@ function init_chart_doughnut(size_box = null){
                     datasets.push({
                       label: label_datasets,
                       data: da,
+                      yAxisID: position_y_axis,
                       fill: false,
                       backgroundColor: color,
                       borderColor: color,
@@ -403,7 +406,7 @@ function init_chart_doughnut(size_box = null){
                   display: true,
                   scaleLabel: {
                     display: true,
-                    labelString: label_y_axis_left
+                    labelString: label_y_axis
                   }
                 }]
               },
@@ -446,7 +449,7 @@ function init_chart_doughnut(size_box = null){
                   display: true,
                   scaleLabel: {
                     display: true,
-                    labelString: label_y_axis_left
+                    labelString: label_y_axis
                   }
                 }]
               },
@@ -486,10 +489,28 @@ function init_chart_doughnut(size_box = null){
                   }
                 }],
                 yAxes: [{
+                  type: 'linear',
                   display: true,
+                  position: 'right',
+                  id: 'right-y-axis',
+                  gridLines: {
+                    drawOnChartArea: false,
+                  },
                   scaleLabel: {
                     display: true,
-                    labelString: label_y_axis_left
+                    labelString: label_y_axis
+                  }
+                },{
+                  type: 'linear',
+                  display: true,
+                  position: 'left',
+                  id: 'left-y-axis',
+                  gridLines: {
+                    drawOnChartArea: true,
+                  },
+                  scaleLabel: {
+                    display: true,
+                    labelString: label_y_axis
                   }
                 }]
               },
