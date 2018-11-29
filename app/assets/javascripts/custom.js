@@ -221,6 +221,8 @@ function init_chart_doughnut(size_box = null){
                 label_datasets = value['label_datasets'];
                 //position_y_axis = value['position_y_axis'];
                 position_y_axis = 'left-y-axis'; //harcodeado hasta que traiga el dato
+                //stacked = value['stacked'];
+                stacked = false; //harcodeado hasta que traiga el dato
               }
 
               // Extraemos las opciones del gráfico
@@ -482,6 +484,7 @@ function init_chart_doughnut(size_box = null){
               },
               scales: {
                 xAxes: [{
+                  stacked: stacked,
                   display: true,
                   scaleLabel: {
                     display: true,
