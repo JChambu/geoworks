@@ -1,3 +1,10 @@
+$(".chart-modal").on('click', function(){
+  var graph_id = $(this).attr('id');
+  $('hide-div').hide();
+  $('.'+graph_id).show();
+  console.log(graph_id);
+})
+
 $("#modal-window").find(".modal-content").html("<%= j (render 'form') %>");
 
 $("#modal-window").modal();
