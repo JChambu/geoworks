@@ -3,7 +3,7 @@
     <span aria-hidden="true">&times;</span></button>
   <h4 class="modal-title" id="myModalLabel"> Gráficos </h4>
 </div>
-<div class="modal-body" style="overflow: scroll; height: 450px">
+<div class="modal-body">
 
   <%= simple_form_for([@project_type, @dashboard, @graphic], remote: true) do |form| %>
     <% if @graphic.errors.any? %>
@@ -18,32 +18,45 @@
       </div>
     <% end %>
 
-    <div class="form-group">
-      <%= form.input :title, label: "Título", input_html: {class: 'form-control'} %>
-      <%= form.hidden_field :dashboard_id, id: :graphic_dashboard_id %>
-    </div>
-    <div class="form-group">
-      <%= form.input :width, as: :range, input_html: {min: "3", max: "12", step: "3"}, label: "Ancho" %>
-    </div>
-    <div class="form-group hide-div bar horizontal bubble">
-      <%= form.input :label_x_axis, label: "Nombre Eje X", input_html: {class: 'form-control'} %>
-    </div>
-    <div class="form-group hide-div bar horizontal bubble">
-      <%= form.input :label_y_axis_left, label: "Nombre Eje Y", input_html: {class: 'form-control'} %>
-    </div>
-    <div class="form-group">
-      <h3>Series</h3>
-      <%= link_to_add_fields 'Agregar Series', form, :graphics_properties %>
-    </div>
-    <div class="form-group">
-      <%= form.fields_for :graphics_properties do |form_property| %>
-        <%= render "graphics_property_fields", f: form_property %>
-      <% end %>
-    </div>
-  <div class="actions">
-    <%= form.submit class: 'btn btn-primary' %>
-  </div>
+    <form>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <%= form.input :title, label: "Título", input_html: {class: 'form-control'} %>
+          <%= form.hidden_field :dashboard_id, id: :graphic_dashboard_id %>
+        </div>
+        <div class="form-group col-md-6">
+          <%= form.input :width, as: :range, input_html: {min: "3", max: "12", step: "3"}, label: "Ancho" %>
+        </div>
+      </div>
+      <br><br><br><br>
+      <fieldset>
+        <legend>Series</legend>
+        <div class="form-row">
+          <div class="form-group">
+            <%= link_to_add_fields 'Agregar', form, :graphics_properties %>
+          </div>
+          <div class="form-group">
+            <%= form.fields_for :graphics_properties do |form_property| %>
+              <%= render "graphics_property_fields", f: form_property %>
+            <% end %>
+          </div>
+        </div>
+      </fieldset>
+      <div class="form-row">
+        <div class="form-group hide-div bar horizontal bubble col-md-6">
+          <%= form.input :label_x_axis, label: "Nombre Eje X", input_html: {class: 'form-control'} %>
+        </div>
+        <div class="form-group hide-div bar horizontal bubble col-md-6">
+          <%= form.input :label_y_axis_left, label: "Nombre Eje Y", input_html: {class: 'form-control'} %>
+        </div>
+      </div>
+
+      <div class="actions text-right">
+        <%= form.submit class: 'btn btn-primary', value: "Crear" %>
+      </div>
   <% end %>
 </div>
+<!--
 <div class="modal-footer">
 </div>
+-->

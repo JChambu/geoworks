@@ -1,18 +1,17 @@
-  <br>
-  <div class="field">
-    <%= f.label :color %>
-    <%= f.color_field :color, as: :color %>
-    <br>
-  </div>
-  <br>
-  <div class="field">
+<div class="form-row">
+  <div class="form-group col-md-4">
     <%= f.input :chart_id, input_html: {class: 'form-control'}, collection: chart_types_for_select, label: "Tipo de Gráfico" %>
   </div>
-  <div class="field">
+  <div class="form-group col-md-4">
     <%= f.input :analytics_dashboard_id, label: "Indicador", input_html: {class: 'form-control'},collection: kpi_for_select, include_blank: true %>
   </div>
-  <div class="field">
-    <br>
+  <div class="form-group col-md-2">
     <%=f.input :label_datasets, label: "Leyenda", input_html: {class:"form-control"}  %>
-    <br>
   </div>
+  <div class="form-group col-md-2">
+    <%= f.label :color %>
+    <br>
+    <%= f.color_field :color, as: :color %>
+    <br><br>
+  </div>
+</div>
