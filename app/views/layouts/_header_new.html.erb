@@ -45,9 +45,28 @@
             <li><%= link_to project_types_path(), class: "site_title" do  %> <%= image_tag "geoworks_h.png" %> <% end %></li>
           </ul>
           <div class="nav toggle" style="border-left: 1px solid #EBEBEB;padding-left: 10px;margin-left: 0px;padding-bottom: 20px;padding-right: 20px;padding-top: 10px;margin-top: 10px;">
+
+            <%if params[:controller] == 'projects' && params[:action] == 'index' %>
+            <%= link_to project_types_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
+            <% end %>
+
+            <%if params[:controller] == 'project_types' && params[:action] == 'new' %>
+            <%= link_to project_types_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
+            <% end %>
+
+            <%if params[:controller] == 'dashboards' && params[:action] == 'index' %>
+            <%= link_to project_types_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
+            <% end %>
+
+            <%if params[:controller] == 'project_types' && params[:action] == 'edit' %>
+            <%= link_to project_types_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
+            <% end %>
+
             <%if params[:controller] == 'analytics_dashboards' && params[:action] == 'index' %>
+              <%= link_to project_type_dashboards_path(@project_type.id) do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
               <%= link_to project_type_dashboard_path(@project_type, params[:dashboard_id])   do %> <i class="fas fa-map-marked-alt"></i> <% end %>
             <% end %>
+
             <%if params[:controller] == 'dashboards' && params[:action] == 'show' %>
               <%= link_to project_type_dashboards_path(@project_type.id) do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
               <%= link_to project_type_filters_path(@project_type.id) , id: "filter",:remote => true  do  %> <i class="fas fa-filter" title="Filtrar"></i> <%end %>
