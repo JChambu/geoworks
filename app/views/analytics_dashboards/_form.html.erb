@@ -2,55 +2,55 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title"> </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"></h4>
       </div>
-      <%= simple_form_for([@project_type, @dashboard, @analytics_dashboard],  html: {role: :form,  remote: true, class: 'form form-inline'}) do |f| %>
-        <div class="modal-body">
-          <div id="alert-success">
-          </div>
-          <% if @analytics_dashboard.errors.any? %>
-            <div id="error_explanation">
-              <h2><%= pluralize(@analytics_dashboard.errors.count, "error") %> prohibited this analytics_dashboard from being saved:</h2>
-              <ul>
-                <% @analytics_dashboard.errors.full_messages.each do |message| %>
-                  <li><%= message %></li>
-                <% end %>
-              </ul>
-            </div>
-          <% end %>
-
-          <div class="form-row">
-            <div class="form-group">
-              <div class="col-md-12">
-                <%= f.input :title, input_html: {class:"form-control col-md-12"} %>
-              </div>
-              <div class="form-group col-md-12">
-                <%= f.input :description, input_html: {class:"form-control col-md-6"} %>
-              </div>
-              <div class="col-md-12">
-                <%= f.input :project_field_id, :collection => fields_for_select_a, input_html: {class:"form-control col-md-6"} %>
-              </div>
-              <div class="form-group col-md-12">
-                <%= f.input :analysis_type_id, :collection => analysis_types_for_select, input_html: {class:"form-control col-md-6"}%>
-              </div>
-              <div class="form-group col-md-12">
-                <div>
-                  <%= f.label :graph, "Graficar" %>
-                  <%= f.check_box :graph%>
-                  <%= f.input :group_field_id, :collection => fields_for_select_a, input_html: {class:"form-control col-md-6"}%>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-
-            <div class="actions">
-              <%= f.submit class: 'btn btn-primary' %>
-            </div>
+      <%= simple_form_for([@project_type, @dashboard, @analytics_dashboard], html: {role: :form, remote: true, class: 'form form-inline'}) do |f| %>
+      <div class="modal-body">
+        <div id="alert-success"></div>
+        <% if @analytics_dashboard.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@analytics_dashboard.errors.count, "error") %>
+              prohibited this analytics_dashboard from being saved:</h2>
+            <ul>
+              <% @analytics_dashboard.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
           </div>
         <% end %>
+
+        <div class="form-row">
+          <div class="form-group">
+            <div class="col-md-12">
+              <%= f.input :title, input_html: {class:"form-control col-md-12"} %>
+            </div>
+            <div class="form-group col-md-12">
+              <%= f.input :description, input_html: {class:"form-control col-md-6"} %>
+            </div>
+            <div class="col-md-12">
+              <%= f.input :project_field_id, :collection => fields_for_select_a, input_html: {class:"form-control col-md-6"} %>
+            </div>
+            <div class="form-group col-md-12">
+              <%= f.input :analysis_type_id, :collection => analysis_types_for_select, input_html: {class:"form-control col-md-6"}%>
+            </div>
+            <div class="form-group col-md-12">
+              <div>
+                <%= f.label :graph, "Graficar" %>
+                <%= f.check_box :graph%>
+                <%= f.input :group_field_id, :collection => fields_for_select_a, input_html: {class:"form-control col-md-6"}%>
+              </div>
+            </div>
+          </div>
         </div>
+        <div class="modal-footer">
+
+          <div class="actions">
+            <%= f.submit class: 'btn btn-primary' %>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
-
+</div>
