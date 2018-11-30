@@ -38,6 +38,14 @@ html body {
     color: #999
 }
 
+.fas:hover {
+  color: #d3d800 !important;
+}
+
+.fas {
+  color: #9b9b9b !important;
+}
+
 .login {
     background: url("bg-login.jpg") repeat center center
 }
