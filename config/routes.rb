@@ -1,12 +1,6 @@
-class SubdomainConstraint   
-    
-    def self.matches?(request)     
-          request.subdomain.present? && request.subdomain != 'www'   
-            end 
-end 
-
 Rails.application.routes.draw do
 
+  resources :field_types
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
   get 'geo_editions/search_blocks' => 'geo_editions#search_blocks'
@@ -29,17 +23,12 @@ Rails.application.routes.draw do
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
-
     get 'project_fields/index'
     post 'project_fields/create'
     post 'analytics_dashboards/create'
     get 'project_fields/:id/show' =>'project_fields#show'
     #get 'project_types/index'
-
-
-   
-
-        
+       
     resources :choice_lists
     post 'charts/create'
     resources :charts

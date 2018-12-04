@@ -10,19 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181112130254) do
+ActiveRecord::Schema.define(version: 20181203220722) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_stat_statements"
-  enable_extension "fuzzystrmatch"
-  enable_extension "postgis_topology"
-  enable_extension "hstore"
-  enable_extension "uuid-ossp"
-  enable_extension "postgis_tiger_geocoder"
-  enable_extension "pg_trgm"
-  enable_extension "unaccent"
-  enable_extension "address_standardizer"
   enable_extension "postgis"
 
   create_table "actions", id: :serial, force: :cascade do |t|
@@ -94,23 +85,20 @@ ActiveRecord::Schema.define(version: 20181112130254) do
     t.string "alias"
   end
 
-  create_table "chart_properties", force: :cascade do |t|
-    t.string "color"
-    t.string "height"
-    t.string "width"
-    t.string "title"
-    t.bigint "type_chart_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["type_chart_id"], name: "index_chart_properties_on_type_chart_id"
-  end
-
   create_table "charts", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "project_type_id"
     t.jsonb "properties"
+  end
+
+  create_table "choice_list_items", force: :cascade do |t|
+    t.string "name"
+    t.bigint "choice_list_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["choice_list_id"], name: "index_choice_list_items_on_choice_list_id"
   end
 
   create_table "choice_lists", id: :serial, force: :cascade do |t|
@@ -194,6 +182,7 @@ ActiveRecord::Schema.define(version: 20181112130254) do
     t.integer "city_id"
     t.integer "user_id"
     t.integer "category_id"
+    t.point "the_geom"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "phone"
@@ -213,8 +202,13 @@ ActiveRecord::Schema.define(version: 20181112130254) do
     t.string "phone_2_new"
     t.string "street_2"
     t.string "street_3"
-    t.point "the_geom"
     t.string "comments"
+  end
+
+  create_table "field_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "food_types", id: :serial, force: :cascade do |t|
@@ -307,29 +301,12 @@ ActiveRecord::Schema.define(version: 20181112130254) do
     t.index ["user_id"], name: "index_has_project_types_on_user_id"
   end
 
-  create_table "inventory_items", id: false, force: :cascade do |t|
-    t.string "id"
-    t.string "name"
-    t.string "release_date"
-    t.string "manufacturer"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "load_locations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status"
     t.string "directory_name"
-  end
-
-  create_table "manufacturers", id: false, force: :cascade do |t|
-    t.string "name"
-    t.string "home_page"
-    t.string "phone"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "p_actions", id: :serial, force: :cascade do |t|
@@ -346,9 +323,9 @@ ActiveRecord::Schema.define(version: 20181112130254) do
     t.integer "facility_type_id"
     t.integer "levels"
     t.integer "city_id"
-    t.point "the_geom"
-    t.point "the_geom_entrance"
-    t.point "the_geom_exit"
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.geometry "the_geom_entrance", limit: {:srid=>4326, :type=>"st_point"}
+    t.geometry "the_geom_exit", limit: {:srid=>4326, :type=>"st_point"}
     t.string "phone"
     t.string "website"
     t.string "detailed_pricing_model"
@@ -357,7 +334,7 @@ ActiveRecord::Schema.define(version: 20181112130254) do
     t.string "available_payment_methods"
     t.string "regular_openning_hours"
     t.string "exceptions_opening"
-    t.polygon "the_geom_area"
+    t.geometry "the_geom_area", limit: {:srid=>4326, :type=>"st_polygon"}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "number"
@@ -545,7 +522,7 @@ ActiveRecord::Schema.define(version: 20181112130254) do
     t.integer "duplicated_identifier"
     t.integer "identifier"
     t.date "control_date"
-    t.point "the_geom"
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"st_point"}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "poi_load_id"
@@ -569,7 +546,9 @@ ActiveRecord::Schema.define(version: 20181112130254) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "key"
-    t.string "choice_list_id"
+    t.string "choice_list_key"
+    t.integer "choice_list_id"
+    t.integer "field_type_id"
     t.index ["project_type_id"], name: "index_project_fields_on_project_type_id"
   end
 
@@ -588,9 +567,8 @@ ActiveRecord::Schema.define(version: 20181112130254) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "properties_original"
-    t.point "the_geom"
-    t.index ["project_type_id"], name: "project_type_idx"
-    t.index ["the_geom"], name: "idx_geom", using: :gist
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
+    t.index ["project_type_id"], name: "index_projects_on_project_type_id"
   end
 
   create_table "provinces", id: :serial, force: :cascade do |t|
@@ -665,13 +643,6 @@ ActiveRecord::Schema.define(version: 20181112130254) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
-  create_table "users_projects", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "project_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "verification_pois", id: :serial, force: :cascade do |t|
     t.integer "poi_id"
     t.integer "user_id"
@@ -689,10 +660,7 @@ ActiveRecord::Schema.define(version: 20181112130254) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
-  add_foreign_key "analytics_dashboards", "analysis_types"
   add_foreign_key "analytics_dashboards", "charts"
-  add_foreign_key "analytics_dashboards", "project_types"
-  add_foreign_key "has_project_types", "project_types"
   add_foreign_key "has_project_types", "users"
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_types", "users"
