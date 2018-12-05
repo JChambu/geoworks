@@ -179,7 +179,7 @@ function init_chart_doughnut(size_box = null){
     var data_id = Navarra.dashboards.config.project_type_id;
     var dashboard_id = Navarra.dashboards.config.dashboard_id;
     var conditions = Navarra.project_types.config.filter_kpi
-     
+
     $.ajax({
       type: 'GET',
       url: '/project_types/kpi.json',
@@ -532,7 +532,7 @@ function init_chart_doughnut(size_box = null){
                 }],
                 yAxes: [{
                   type: 'linear',
-                  display: true,
+                  display: false,
                   position: 'right',
                   id: 'right-y-axis',
                   gridLines: {
