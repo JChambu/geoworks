@@ -306,7 +306,7 @@ function init_chart_doughnut(size_box = null){
                     });
                   }
 
-                  // BAR datasets
+                  // BAR & LINE datasets
                   if (type_chart == 'bar' || type_chart == 'line') {
                     datasets.push({
                       label: label_datasets,
@@ -320,6 +320,43 @@ function init_chart_doughnut(size_box = null){
                       hoverBorderColor: color,
                       hoverBorderWidth: 2,
                       type: type_chart
+                    });
+                  }
+
+                  //AREA datasets
+                  if (type_chart == 'area') {
+                    datasets.push({
+                      label: label_datasets,
+                      data: da,
+                      yAxisID: position_y_axis,
+                      fill: true,
+                      backgroundColor: color,
+                      borderColor: color,
+                      borderWidth: 3,
+                      hoverBackgroundColor: color,
+                      hoverBorderColor: color,
+                      hoverBorderWidth: 2,
+                      type: 'line'
+                    });
+                  }
+
+                  // POINT datasets
+                  if (type_chart == 'point') {
+                    datasets.push({
+                      label: label_datasets,
+                      data: da,
+                      yAxisID: position_y_axis,
+                      fill: true,
+                      backgroundColor: color,
+                      borderColor: color,
+                      borderWidth: 3,
+                      hoverBackgroundColor: color,
+                      hoverBorderColor: color,
+                      hoverBorderWidth: 2,
+                      pointRadius: 8,
+                      pointHoverRadius: 10,
+                      showLine: false,
+                      type: 'line'
                     });
                   }
 
@@ -466,7 +503,7 @@ function init_chart_doughnut(size_box = null){
           }
 
           // BAR options
-          if (type_chart == 'bar' || type_chart == 'line') {
+          if (type_chart == 'bar' || type_chart == 'line' || type_chart == 'area' || type_chart == 'point') {
             var option_legend = {
               responsive: true,
               aspectRatio: aspectR,
