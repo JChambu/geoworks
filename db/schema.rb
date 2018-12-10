@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181210175325) do
+ActiveRecord::Schema.define(version: 20181210231401) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -276,6 +276,14 @@ ActiveRecord::Schema.define(version: 20181210175325) do
     t.string "label_x_axis"
     t.string "label_y_axis_left"
     t.string "label_y_axis_right"
+    t.boolean "stack", default: false
+    t.decimal "tick_x_min"
+    t.decimal "tick_x_max"
+    t.decimal "tick_y_min"
+    t.decimal "tick_y_max"
+    t.decimal "step_x"
+    t.decimal "substep_x"
+    t.decimal "data_labelling"
     t.index ["dashboard_id"], name: "index_graphics_on_dashboard_id"
   end
 
@@ -290,6 +298,8 @@ ActiveRecord::Schema.define(version: 20181210175325) do
     t.integer "analytics_dashboard_id"
     t.integer "graphic_id"
     t.string "label_datasets"
+    t.boolean "left_y_axis"
+    t.string "point_type"
     t.index ["chart_id"], name: "index_graphics_properties_on_chart_id"
   end
 
