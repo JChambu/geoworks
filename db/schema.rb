@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181203220722) do
+ActiveRecord::Schema.define(version: 20181210175325) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -133,6 +133,7 @@ ActiveRecord::Schema.define(version: 20181203220722) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "supplier_map", default: "osm"
+    t.string "url"
   end
 
   create_table "dashboards", force: :cascade do |t|
@@ -617,6 +618,15 @@ ActiveRecord::Schema.define(version: 20181203220722) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "user_customers", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "customer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_user_customers_on_customer_id"
+    t.index ["user_id"], name: "index_user_customers_on_user_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|

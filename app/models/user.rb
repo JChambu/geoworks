@@ -2,15 +2,17 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   has_many :pois
-  has_many :users
   has_many :verification_poi
   has_many :extended_listings
-
+  has_many :has_project_types
+  has_many :project_types, through: :has_project_types 
+  has_many :user_customers 
+  has_many :customers, through: :user_customers
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
-  # :lockable, :timeoutable, :omniauthable,
+  #  :timeoutable, :omniauthable,
   # :recoverable, :registerable, 
-  devise :database_authenticatable, :rememberable, :trackable
+  devise :database_authenticatable, :rememberable, :trackable, :lockable
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
