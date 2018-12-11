@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181210231401) do
+ActiveRecord::Schema.define(version: 20181211132606) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -334,9 +334,9 @@ ActiveRecord::Schema.define(version: 20181210231401) do
     t.integer "facility_type_id"
     t.integer "levels"
     t.integer "city_id"
-    t.point "the_geom"
-    t.point "the_geom_entrance"
-    t.point "the_geom_exit"
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.geometry "the_geom_entrance", limit: {:srid=>4326, :type=>"st_point"}
+    t.geometry "the_geom_exit", limit: {:srid=>4326, :type=>"st_point"}
     t.string "phone"
     t.string "website"
     t.string "detailed_pricing_model"
@@ -345,7 +345,7 @@ ActiveRecord::Schema.define(version: 20181210231401) do
     t.string "available_payment_methods"
     t.string "regular_openning_hours"
     t.string "exceptions_opening"
-    t.polygon "the_geom_area"
+    t.geometry "the_geom_area", limit: {:srid=>4326, :type=>"st_polygon"}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "number"
@@ -419,6 +419,14 @@ ActiveRecord::Schema.define(version: 20181210231401) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable_type_and_searchable_id"
+  end
+
+  create_table "photos", force: :cascade do |t|
+    t.string "name"
+    t.text "image"
+    t.integer "project_type_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "poi_address_loads", id: :serial, force: :cascade do |t|
@@ -533,7 +541,7 @@ ActiveRecord::Schema.define(version: 20181210231401) do
     t.integer "duplicated_identifier"
     t.integer "identifier"
     t.date "control_date"
-    t.point "the_geom"
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"st_point"}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "poi_load_id"
@@ -578,7 +586,7 @@ ActiveRecord::Schema.define(version: 20181210231401) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "properties_original"
-    t.point "the_geom"
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
   end
 
