@@ -424,7 +424,7 @@ ActiveRecord::Schema.define(version: 20181211132606) do
   create_table "photos", force: :cascade do |t|
     t.string "name"
     t.text "image"
-    t.integer "project_type_id"
+    t.integer "project_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
