@@ -321,6 +321,8 @@ class ProjectTypesController < ApplicationController
 
     respond_to do |format|
       if @project_type.save
+
+        HasProjectType.create(user_id: current_user.id, project_type_id: @project_type.id)
         format.html { redirect_to project_types_path(), notice: 'Project type was successfully created.' }
         format.json { render :show, status: :created, location: @project_type }
       else

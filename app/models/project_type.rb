@@ -37,6 +37,7 @@ class ProjectType < ApplicationRecord
   after_create :new_dashboard
   after_update :load_file, if: :file_exist? 
 
+
   #before_save :load_rgeoserver
   #after_save :load_shape,  if: :file_exist?
   #validate :validate_options
@@ -91,6 +92,7 @@ class ProjectType < ApplicationRecord
 
   def self.kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions)
 
+    @ct = Apartment::Tenant.current
     #@filter_condition = filter_condition
     @type_box = type_box
     @arr1 = []
@@ -119,10 +121,10 @@ class ProjectType < ApplicationRecord
     querys=[]
     @op = option_graph
     @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
-
+    
     @analytics_charts.each do |chart|
       if type_box == 'extent'
-        data = Project.where(project_type_id: chart.project_type_id).where(" st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+        data = Project.where(project_type_id: chart.project_type_id).where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
       end
       #      if type_box == 'filter'
       #       data = Project.where(project_type_id: chart.project_type_id).where("properties->>'" + @filter_condition[0] +  "' " + @filter_condition[1]  + " ?", @filter_condition[2])
@@ -178,6 +180,7 @@ class ProjectType < ApplicationRecord
     @op = option_graph
     @dashboard_id = dashboard_id
 
+    @ct = Apartment::Tenant.current
     @graph = Graphic.where(dashboard_id: @dashboard_id)
     
     @graph.each do |g|
@@ -190,7 +193,7 @@ class ProjectType < ApplicationRecord
       @analytics_charts.each do |chart|
         @items = {}
         if type_box == 'extent'
-          data = Project.where(project_type_id: project_type_id).where(" st_contains(st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+          data = Project.where(project_type_id: project_type_id).where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
         else
           data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
         end
