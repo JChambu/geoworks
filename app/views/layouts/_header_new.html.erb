@@ -71,15 +71,36 @@
               <%= link_to project_type_dashboards_path(@project_type.id) do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
               <%= link_to "#", id: "view" do %> <i class="fas fa-table" title="Cambiar Vista"></i> <% end %>
               <%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, params[:id]) do %> <i class="fas fa-database" title="Crear Indicador"></i> <% end %>
-              <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-pie chart-modal" id="doughnut" title="DOUGHNUT"></i> <% end %>
-              <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-bar chart-modal" id="bar" title="BAR"></i> <% end %>
-              <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-align-left chart-modal" id="horizontal" title="HORIZONTAL"></i> <% end %>
-              <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-ellipsis-h chart-modal" id="bubble" title="BUBBLE"></i> <% end %>
               <%= link_to "#", id: "create_multi"  do %> <%= image_tag "icon-crear-poligono.svg", width: "25px", title: "Editar Polígono", input_html:{class:"ss"} %> <% end %>
               <%= link_to "#" do %> <%= image_tag "icon-pintar-punto.svg", width: "25px", title: "Puntos Graduados" %> <% end %>
               <%= link_to "#" do %> <%= image_tag "icon-punto-radio.svg", width: "25px", title: "Dibujar Radio" %> <% end %>
               <%= link_to "#", id: "select" do %> <%= image_tag "icon-seleccion-poligono.svg", width: "25px", title: "Dibujar Polígono" %> <% end %>
               <%= link_to project_type_filters_path(@project_type.id) , id: "filter",:remote => true  do  %> <i class="fas fa-filter" title="Filtrar"></i> <%end %>
+              <li class="dropdown" style="padding: 0px 5px; display: inline-block; vertical-align: top">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                  <i class="fas fa-chart-pie chart-modal" style="font-size: 26px"></i>
+                  <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu" style="min-width: 60px">
+                  <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-pie chart-modal" style="font-size: 26px" id="doughnut" title="Dona"></i> <% end %> </a></li>
+                  <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-bar chart-modal" style="font-size: 26px" id="bar" title="Barra"></i> <% end %> </a></li>
+                  <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-align-left chart-modal" style="font-size: 26px" id="horizontal" title="Barra Horizontal"></i> <% end %> </a></li>
+                  <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-ellipsis-h chart-modal" style="font-size: 26px" id="bubble" title="Burbuja"></i> <% end %> </a></li>
+                </ul>
+              </li>
+              <!--
+              <div class="dropdown">
+                  <i class="fas fa-chart-pie chart-modal dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" >
+                    <span class="caret"></span>
+                  </i>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-pie chart-modal" id="doughnut" title="DOUGHNUT"></i> <% end %> </a></li>
+                    <li><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-bar chart-modal" id="bar" title="BAR"></i> <% end %> </a></li>
+                    <li><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-align-left chart-modal" id="horizontal" title="HORIZONTAL"></i> <% end %> </a></li>
+                    <li><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-ellipsis-h chart-modal" id="bubble" title="BUBBLE"></i> <% end %> </a></li>
+                  </ul>
+              </div>
+              -->
             <% end %>
           </div>
 
