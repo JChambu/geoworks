@@ -97,6 +97,97 @@
                 </div>
               </form>
             </div>
+            <div role="tabpanel" class="tab-pane" id="calculos">
+              <br>
+              <form>
+                <div class="form-row">
+                  <div class="form-group col-md-12">
+                    <div class="control-group string required ">
+                      <label class="string required control-label" for="">Nombre</label>
+                      <div class="controls">
+                        <input type="text" class="string required form-control col-md-12" id="" placeholder="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-3">
+                    <div class="control-group string required ">
+                      <label class="string required control-label" for="">Campo</label>
+                      <div class="controls">
+                        <input type="text" class="string required form-control col-md-12" id="campoavanzado" onchange="Resultado(event)" placeholder="">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <div class="control-group string required ">
+                      <label class="string required control-label" for="">Constante</label>
+                      <div class="controls">
+                        <input type="text" class="string required form-control col-md-12" id="k" onchange="Resultado(event)" placeholder="">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <div class="control-group select optional">
+                      <label class="select optional control-label" for="">Operador</label>
+                      <div class="controls">
+                        <select class="select optional form-control" id="operador" onchange="Resultado(event)">
+                          <option value=""> </option>
+                          <option value="="> + </option>
+                          <option value="!=" - =</option>
+                          <option value=">"> * </option>
+                          <option value=">="> / </option>
+                          <option value="<"> concatenar </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-1">
+                    <div class="control-group string required ">
+                      <br>
+                      <div class="controls">
+                        <div class="string required form-control" style="cursor: pointer;" onclick="Resultado(event)" id="(">(</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-1">
+                    <div class="control-group string required ">
+                      <br>
+                      <div class="controls">
+                        <div class="string required form-control" style="cursor: pointer;" onclick="Resultado(event)" id=")">)</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-1">
+                    <div class="control-group string required ">
+                      <br>
+                      <div class="controls">
+                        <span class="fa-layers fa-fw" style="font-size: 2em; display: inline-block; vertical-align: middle" onclick="Resultado(event)" id="diffechas" title="Diferencia de Fechas">
+                          <i class="fas fa-calendar-minus" id="diffechas1"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-1">
+                    <div class="control-group string required ">
+                      <br>
+                      <div class="controls">
+                        <span class="fa-layers fa-fw" style="font-size: 2em; display: inline-block; vertical-align: middle; " onclick="Backspace()" title="Borrar">
+                          <i class="fas fa-backspace"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-1">
+                      <div id="resultado" style="width: 80%; vertical-align: middle; height: 60px; padding: 20px">
+                        <div id="1resultado"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
 
         <div class="actions text-right" style="">
