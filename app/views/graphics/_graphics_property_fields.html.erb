@@ -2,7 +2,7 @@
   <div class="form-group col-md-3">
     <%= f.input :chart_id, input_html: {class: 'form-control'}, collection: chart_types_for_select, label: "Tipo de Gráfico" %>
   </div>
-  <div class="form-group col-md-4">
+  <div class="form-group col-md-3">
     <%= f.input :analytics_dashboard_id, label: "Indicador", input_html: {class: 'form-control'},collection: kpi_for_select, include_blank: true %>
   </div>
   <div class="form-group col-md-4">
@@ -13,5 +13,9 @@
     <br>
     <%= f.color_field :color, as: :color %>
     <br><br>
+  </div>
+  <div class="form-group hide-div bar col-md-1">
+    <%= f.label :left_y_axis, "Izq." %>
+    <%= f.check_box :left_y_axis, input_html: {class:"form-check"}%>
   </div>
 </div>
