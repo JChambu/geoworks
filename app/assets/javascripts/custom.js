@@ -255,6 +255,7 @@ function init_chart_doughnut(size_box = null){
                       label: label_datasets,
                       data: da,
                       yAxisID: position_y_axis,
+                      fill: false,
                       backgroundColor: color,
                       borderColor: color,
                       borderWidth: 3,
