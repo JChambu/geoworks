@@ -231,6 +231,15 @@ class ProjectType < ApplicationRecord
         query = " #{type}((properties->>'" + field+ "')::float)"
       when 'count'
         query = " #{type}((properties->>'" + field+ "'))"
+      when 'avg'
+        query = " #{type}((properties->>'" + field+ "'))"
+      when 'min'
+        query = " #{type}((properties->>'" + field+ "'))"
+      when 'max'
+        query = " #{type}((properties->>'" + field+ "'))"
+      when 'weighted_average'
+        
+        query = "sum(((properties->>'" + field+ "')/sum(properties->>'"+ field +"'::numeric)) * properties->>'" + field + "')"
       end
     end
 
