@@ -29,12 +29,6 @@ var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],
   $FOOTER = $('footer');
 
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /** ******  left menu  *********************** **/
 $(function () {
   $('#sidebar-menu li ul').slideUp();
@@ -86,16 +80,7 @@ $(function () {
     return this.href == url;
   }).parent('li').addClass('current-page').parent('ul').slideDown().parent().addClass('active');
 });
-
 /** ******  /left menu  *********************** **/
-/** ******  right_col height flexible  *********************** **/
-/*
-$(".right_col").css("min-height", $(window).height());
-$(window).resize(function () {
-  $(".right_col").css("min-height", $(window).height());
-});
-*/
-/** ******  /right_col height flexible  *********************** **/
 
 
 Number.prototype.format = function(n, x, s, c) {
@@ -603,111 +588,3 @@ function init_chart_doughnut(size_box = null){
   } //cierra if graphics
   $('.modal-backdrop').remove() ;
 } //cierra function init_chart_doughnut
-
-/* OCULTA FUNCIONES SIN USO
-
-//NB: not exhaustive, but it'll do for our usecase.
-function inlineCSStoSVG(id) {
-  var nodes = document.querySelectorAll("#" + id + " *");
-  for (var i = 0; i < nodes.length; ++i) {
-    var elemCSS = window.getComputedStyle(nodes[i], null);
-
-    nodes[i].removeAttribute('xmlns');
-    nodes[i].style.fill = elemCSS.fill;
-    nodes[i].style.fillOpacity = elemCSS.fillOpacity;
-    nodes[i].style.stroke = elemCSS.stroke;
-    nodes[i].style.strokeLinecap = elemCSS.strokeLinecap;
-    nodes[i].style.strokeDasharray = elemCSS.strokeDasharray;
-    nodes[i].style.strokeWidth = elemCSS.strokeWidth;
-    nodes[i].style.fontSize = "13";
-    nodes[i].style.fontFamily = elemCSS.fontFamily;
-    nodes[i].style.backgroundColor= elemCSS.backgroundColor;
-    //Finally, solution to embbed HTML in foreignObject https://stackoverflow.com/a/37124551
-    if (nodes[i].nodeName === "SPAN") {
-      nodes[i].setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-    }
-  }
-}
-
-function exportToCanvas(id) {
-
-  var svgElem = document.querySelector("#" + id + " svg");
-  svgElem.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-
-  var canvas = document.getElementById('canvas');
-  var ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.canvas.height = svgElem.clientHeight;
-  ctx.canvas.width = svgElem.clientWidth;
-
-  var DOMURL = window.URL || window.webkitURL || window;
-  var img = new Image();
-  img.crossOrigin = "Anonymous";
-  var blob = undefined;
-  //IEsupport : As per https://gist.github.com/Prinzhorn/5a9d7db4e4fb9372b2e6#gistcomment-2075344
-  try {
-    blob = new Blob([svgElem.outerHTML], {
-      type: "image/svg+xml;charset=utf-8"
-    });
-  }
-  catch (e) {
-    if (e.name == "InvalidStateError") {
-      var bb = new MSBlobBuilder();
-      bb.append(svgElem.outerHTML);
-      blob = bb.getBlob("image/svg+xml;charset=utf-8");
-    }
-    else {
-      throw e; //Fallthrough exception, if it wasn't for IE corner-case
-    }
-  }
-  var url = DOMURL.createObjectURL(blob);
-  img.onload = function() {
-    ctx.drawImage(img, 0, 0);
-    DOMURL.revokeObjectURL(url);
-  }
-  img.src = url;
-
-}
-
-
-
-var poolColors = function (a) {
-  var pool = [];
-  for(i=0;i<a;i++){
-    pool.push(dynamicColors(i));
-  }
-  return pool;
-}
-
-var dynamicColors = function(i) {
-  var r = Math.floor(Math.random() * 255);
-  var g = Math.floor(Math.random() * 255);
-  var b = Math.floor(Math.random() * 255);
-  return "rgb(" + r + "," + g + "," + b + ")";
-  //colors = ['rgb(128, 0, 128)', 'rgb(255, 0, 255)' ]
-  //return colors[i];
-
-
-}
-
-function d3sel(event){
-  var mySVG = document.querySelector('#svblock'), // Inline SVG element
-    tgtImage = document.querySelector('#diagram_png'),    // Where to draw the result
-    can = document.createElement('canvas'), // Not shown on page
-    ctx = can.getContext('2d'),
-    loader = new Image; // Not shown on page
-
-
-  loader.width  = 300;
-  loader.height = 300;
-
-  loader.onload = function() {
-    ctx.drawImage( loader, 0, 0, loader.width, loader.height );
-    tgtImage.src = can.toDataURL();
-  };
-  var svgAsXML = (new XMLSerializer).serializeToString( mySVG );
-  loader.src = 'data:image/svg+xml,' + encodeURIComponent( svgAsXML );
-
-}
-*/
