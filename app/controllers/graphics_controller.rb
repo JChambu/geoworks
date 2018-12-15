@@ -68,6 +68,7 @@ class GraphicsController < ApplicationController
   def destroy
     @graphic.destroy
     respond_to do |format|
+      format.js
       format.html { redirect_to graphics_url, notice: 'Graphic was successfully destroyed.' }
       format.json { head :no_content }
     end

@@ -75,7 +75,13 @@
           <br>
         </div>
       </div>
+ <% if params[:action] == 'edit' %>
+      <div class="actions text-right">
 
+   <%= link_to "delete", project_type_dashboard_graphic_path(@project_type.id,@dashboard, @graphic ), method: :delete, data: { confirm: 'Are you sure?'}, remote: :true  %>
+
+      </div>
+ <% end %>
       <div class="actions text-right">
         <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
       </div>
