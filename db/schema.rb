@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181211132606) do
+ActiveRecord::Schema.define(version: 20181215222923) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -283,7 +283,7 @@ ActiveRecord::Schema.define(version: 20181211132606) do
     t.decimal "tick_y_max"
     t.decimal "step_x"
     t.decimal "substep_x"
-    t.decimal "data_labelling"
+    t.boolean "data_labelling", default: false
     t.index ["dashboard_id"], name: "index_graphics_on_dashboard_id"
   end
 
