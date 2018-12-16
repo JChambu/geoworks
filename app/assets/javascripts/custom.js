@@ -208,6 +208,7 @@ function init_chart_doughnut(size_box = null){
                 position_y_axis = 'left-y-axis'; //harcodeado hasta que traiga el dato
                 //area_fill = value['area_fill'];
                 area_fill = false; //harcodeado hasta que traiga el dato
+                point_style = value['point_type']
               }
 
               // Extraemos las opciones del gráfico
@@ -243,6 +244,7 @@ function init_chart_doughnut(size_box = null){
                       yAxisID: position_y_axis,
                       fill: false,
                       lineTension: 0,
+                      pointStyle: point_style,
                       backgroundColor: color,
                       borderColor: color,
                       borderWidth: 3,
@@ -260,6 +262,7 @@ function init_chart_doughnut(size_box = null){
                       data: da,
                       yAxisID: position_y_axis,
                       fill: true,
+                      pointStyle: point_style,
                       backgroundColor: color,
                       borderColor: color,
                       borderWidth: 3,
@@ -277,6 +280,7 @@ function init_chart_doughnut(size_box = null){
                       data: da,
                       yAxisID: position_y_axis,
                       fill: true,
+                      pointStyle: point_style,
                       backgroundColor: color,
                       borderColor: color,
                       borderWidth: 3,
