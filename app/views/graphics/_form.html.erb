@@ -42,21 +42,29 @@
           </div>
         </div>
       </fieldset>
+
+      <!-- Eje X -->
       <div class="form-row">
-        <div class="form-group hide-div bar horizontal bubble col-md-6">
+        <div class="form-group hide-div bar horizontal bubble col-md-7">
           <%= form.input :label_x_axis, label: "Nombre Eje X", input_html: {class: 'form-control'} %>
         </div>
-        <div class="form-group hide-div bar horizontal col-md-5">
-          <%= form.input :data_labelling, label: "Mostrar val desde", input_html: {class: 'form-control'} %>
+
+        <div class="form-group hide-div bar col-md-3">
+          <%= form.label :data_labelling, "Mostrar valores" %>
+          <br>
+          <%= form.check_box :data_labelling, input_html: {class:"form-check"}%>
+          <br><br>
         </div>
-        <div class="form-group hide-div bar col-md-1">
+
+        <div class="form-group hide-div bar col-md-2">
           <%= form.label :stack, "Apilar" %>
           <br>
           <%= form.check_box :stack, input_html: {class:"form-check"}%>
+          <br><br>
         </div>
       </div>
 
-
+      <!-- Eje Y -->
       <div class="form-row">
         <div class="form-group hide-div bar horizontal bubble col-md-4">
           <%= form.input :label_y_axis_left, label: "Nombre Eje Y", input_html: {class: 'form-control'} %>
