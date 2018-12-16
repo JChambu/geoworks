@@ -560,6 +560,30 @@ function init_chart_doughnut(size_box = null){
                   usePointStyle: true,
                 }
               },
+              plugins: {
+                datalabels: {
+                  display: data_labelling,
+                  font: {
+                    size: 16,
+                    weight: 'bold'
+                  },
+                  color: 'white',
+                  textStrokeColor: '#1B2631',
+                  textStrokeWidth: 1,
+                  textShadowColor: '#000000',
+                  textShadowBlur: 5,
+                  anchor: 'end',
+                  //align: 'end',
+                  //offset: -5,
+                  backgroundColor: function(context) {
+      							return context.dataset.backgroundColor;
+      						},
+                  borderColor: 'white',
+                  borderRadius: 25,
+                  borderWidth: 2,
+                  formatter: Math.round
+                }
+              },
             }
             var chart_doughnut_settings = {
               type: type_chart,
