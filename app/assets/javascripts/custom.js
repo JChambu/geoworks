@@ -242,6 +242,7 @@ function init_chart_doughnut(size_box = null){
                       data: da,
                       yAxisID: position_y_axis,
                       fill: false,
+                      lineTension: 0,
                       backgroundColor: color,
                       borderColor: color,
                       borderWidth: 3,
