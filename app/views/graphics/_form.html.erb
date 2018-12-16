@@ -83,16 +83,12 @@
           <br>
         </div>
       </div>
- <% if params[:action] == 'edit' %>
-      <div class="actions text-right">
-
-   <%= link_to "delete", project_type_dashboard_graphic_path(@project_type.id,@dashboard, @graphic ), method: :delete, data: { confirm: 'Are you sure?'}, remote: :true  %>
-
-      </div>
- <% end %>
       <div class="actions text-right">
         <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
+        <% if params[:action] == 'edit' %>
+          <%= link_to project_type_dashboard_graphic_path(@project_type.id,@dashboard, @graphic ), method: :delete, data: { confirm: 'Are you sure?'}, :remote => true do  %> <i class="fas fa-trash-alt" title="Eliminar" style="font-size: 2em"></i> <%end %>
       </div>
+        <% end %>
     </form>
   <% end %>
 </div>
