@@ -184,7 +184,8 @@ function init_chart_doughnut(size_box = null){
           var aspectR;
           var legend_display;
           var label_x_axis;
-          var label_y_axis;
+          var label_y_axis_left;
+          var label_y_axis_right;
           var label_datasets;
           var position_y_axis;
           var right_y_axis;
@@ -223,7 +224,8 @@ function init_chart_doughnut(size_box = null){
                 title = value['title'];
                 width = value['width'];
                 label_x_axis = value['label_x_axis'];
-                label_y_axis = value['label_y_axis_left'];
+                label_y_axis_left = value['label_y_axis_left'];
+                label_y_axis_right = value['label_y_axis_right'];
                 stacked = value['stack'];
                 data_labelling = value['data_labelling'];
               }
@@ -455,7 +457,7 @@ function init_chart_doughnut(size_box = null){
                   stacked: stacked,
                   scaleLabel: {
                     display: true,
-                    labelString: label_y_axis
+                    labelString: label_y_axis_left
                   },
                   gridLines: {
                     drawOnChartArea: true,
@@ -471,7 +473,7 @@ function init_chart_doughnut(size_box = null){
                   stacked: stacked,
                   scaleLabel: {
                     display: true,
-                    labelString: label_y_axis,
+                    labelString: label_y_axis_right,
                   },
                   gridLines: {
                     drawOnChartArea: false,
@@ -538,7 +540,7 @@ function init_chart_doughnut(size_box = null){
                   display: true,
                   scaleLabel: {
                     display: true,
-                    labelString: label_y_axis
+                    labelString: label_y_axis_left
                   }
                 }]
               },
@@ -649,7 +651,7 @@ function init_chart_doughnut(size_box = null){
                   display: true,
                   scaleLabel: {
                     display: true,
-                    labelString: label_y_axis
+                    labelString: label_y_axis_left
                   }
                 }]
               },
