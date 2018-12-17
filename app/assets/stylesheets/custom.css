@@ -3895,6 +3895,11 @@ fieldset {
 .cropper .docs-diagram .modal-dialog {
   max-width: 352px
 }
+
+#graphics_modal{
+  width: 60% !important;
+}
+
 .cropper .docs-cropped canvas {
   max-width: 100%
 }
