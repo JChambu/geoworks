@@ -206,8 +206,6 @@ function init_chart_doughnut(size_box = null){
                 label_datasets = value['label_datasets'];
                 //position_y_axis = value['position_y_axis'];
                 position_y_axis = 'left-y-axis'; //harcodeado hasta que traiga el dato
-                //area_fill = value['area_fill'];
-                area_fill = false; //harcodeado hasta que traiga el dato
                 point_style = value['point_type']
               }
 
