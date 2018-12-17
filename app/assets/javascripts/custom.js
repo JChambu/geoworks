@@ -442,6 +442,9 @@ function init_chart_doughnut(size_box = null){
                   gridLines: {
                     drawOnChartArea: false,
                   },
+                  ticks: {
+                    beginAtZero: true
+                  },
                   scaleLabel: {
                     display: true,
                     labelString: label_y_axis
@@ -453,6 +456,9 @@ function init_chart_doughnut(size_box = null){
                   id: 'left-y-axis',
                   gridLines: {
                     drawOnChartArea: true,
+                  },
+                  ticks: {
+                    beginAtZero: true,
                   },
                   scaleLabel: {
                     display: true,
@@ -508,6 +514,9 @@ function init_chart_doughnut(size_box = null){
               scales: {
                 xAxes: [{
                   display: true,
+                  ticks: {
+                    beginAtZero: true,
+                  },
                   scaleLabel: {
                     display: true,
                     labelString: label_x_axis
