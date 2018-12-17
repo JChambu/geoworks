@@ -382,29 +382,29 @@ function init_chart_doughnut(size_box = null){
                     datasets.push({
                       label: label_datasets,
                       data: [{
-                        x: 100,
-                        y: 0,
-                        r: 10
+                        x: 50,
+                        y: 2,
+                        r: 42
                       }, {
-                        x: 60,
-                        y: 30,
-                        r: 20
+                        x: 27,
+                        y: 32,
+                        r: 58
                       }, {
-                        x: 40,
-                        y: 60,
-                        r: 25
+                        x: 69,
+                        y: 23,
+                        r: 15
                       }, {
-                        x: 80,
-                        y: 80,
-                        r: 50
+                        x: 5,
+                        y: 68,
+                        r: 7
                       }, {
-                        x: 20,
-                        y: 30,
-                        r: 25
+                        x: 57,
+                        y: 24,
+                        r: 7
                       }, {
-                        x: 0,
-                        y: 100,
-                        r: 5
+                        x: 12,
+                        y: 8,
+                        r: 35
                       }],
                       fill: false,
                       backgroundColor: 'transparent',
@@ -658,7 +658,7 @@ function init_chart_doughnut(size_box = null){
               options:  option_legend
             }
           }
-          
+
           // BUBBLE options
           if (type_chart == 'bubble') {
             var option_legend = {
