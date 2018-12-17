@@ -234,12 +234,36 @@ function init_chart_doughnut(size_box = null){
                 label_y_axis_right = value['label_y_axis_right'];
                 stacked = value['stack'];
                 data_labelling = value['data_labelling'];
+
                 tick_min_left = value['tick_x_min'];
+                if (tick_min_left == null) {
+                  tick_min_left = 0;
+                }
+
                 tick_max_left = value['tick_x_max'];
+                if (tick_max_left == null) {
+                  tick_max_left = 0;
+                }
+
                 tick_step_left = value['step_x'];
+                if (tick_step_left == null) {
+                  tick_step_left = 0;
+                }
+
                 tick_substep_left = value['substep_x'];
+                if (tick_substep_left == null) {
+                  tick_substep_left = 0;
+                }
+
                 tick_min_right = value['tick_y_min'];
+                if (tick_min_right == null) {
+                  tick_min_right = 0;
+                }
+
                 tick_max_right = value['tick_y_max'];
+                if (tick_max_right == null) {
+                  tick_max_right = 0;
+                }
               }
 
               // Extraemos el array con los datos de la serie
