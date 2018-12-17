@@ -228,18 +228,17 @@ class ProjectType < ApplicationRecord
     def self.analysis_type(type, field)
       case type
       when 'sum'
-        query = " #{type}((properties->>'" + field+ "')::float)"
+        query = " #{type}((properties->>'" + field+ "')::numeric)"
       when 'count'
-        query = " #{type}((properties->>'" + field+ "'))"
+        query = " #{type}((properties->>'" + field+ "')::numeric)"
       when 'avg'
-        query = " #{type}((properties->>'" + field+ "'))"
+        query = " #{type}((properties->>'" + field+ "')::numeric)"
       when 'min'
-        query = " #{type}((properties->>'" + field+ "'))"
+        query = " #{type}((properties->>'" + field+ "')::numeric)"
       when 'max'
-        query = " #{type}((properties->>'" + field+ "'))"
+        query = " #{type}((properties->>'" + field+ "')::numeric)"
       when 'weighted_average'
-        
-        query = "sum(((properties->>'" + field+ "')/sum(properties->>'"+ field +"'::numeric)) * properties->>'" + field + "')"
+        query = "case  sum((properties->>'oferta')::numeric) when 0 then 0 else  sum((properties->>'" + field+ "')::numeric * (properties->>'oferta')::numeric) / sum((properties->>'oferta')::numeric) end "
       end
     end
 
