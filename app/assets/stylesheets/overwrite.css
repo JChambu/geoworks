@@ -46,6 +46,10 @@ html body {
   color: #9b9b9b !important;
 }
 
+.fa-trash-alt:hover{
+  color: #F44336 !important;
+}
+
 .login {
     background: url("bg-login.jpg") repeat center center
 }
