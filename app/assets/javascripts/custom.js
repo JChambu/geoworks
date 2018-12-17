@@ -186,6 +186,9 @@ function init_chart_doughnut(size_box = null){
           var label_x_axis;
           var label_y_axis;
           var label_datasets;
+          var position_y_axis;
+          var right_y_axis;
+          var display_right_y_axis = false;
 
           // Separamos las series
           $.each(reg, function(a, b){
@@ -204,8 +207,14 @@ function init_chart_doughnut(size_box = null){
                 graphic_id = value['graphic_id'];
                 color = value['color'];
                 label_datasets = value['label_datasets'];
-                //position_y_axis = value['position_y_axis'];
-                position_y_axis = 'left-y-axis'; //harcodeado hasta que traiga el dato
+                // el campo está mal cargado en la db ARREGLAR
+                right_y_axis = value['left_y_axis'];
+                if (right_y_axis == true) {
+                  display_right_y_axis = true;
+                  position_y_axis = 'right-y-axis';
+                } else {
+                  position_y_axis = 'left-y-axis';
+                };
                 point_style = value['point_type']
               }
 
@@ -436,35 +445,35 @@ function init_chart_doughnut(size_box = null){
                   }
                 }],
                 yAxes: [{
-                  type: 'linear',
-                  display: false,
-                  position: 'right',
-                  id: 'right-y-axis',
-                  gridLines: {
-                    drawOnChartArea: false,
-                  },
-                  ticks: {
-                    beginAtZero: true
-                  },
-                  scaleLabel: {
-                    display: true,
-                    labelString: label_y_axis
-                  }
-                },{
-                  type: 'linear',
-                  display: true,
-                  position: 'left',
                   id: 'left-y-axis',
-                  gridLines: {
-                    drawOnChartArea: true,
-                  },
+                  position: 'left',
+                  display: 'true',
+                  type: 'linear',
                   ticks: {
                     beginAtZero: true,
                   },
                   scaleLabel: {
                     display: true,
                     labelString: label_y_axis
-                  }
+                  },
+                  gridLines: {
+                    drawOnChartArea: true,
+                  },
+                },{
+                  id: 'right-y-axis',
+                  position: 'right',
+                  display: display_right_y_axis,
+                  type: 'linear',
+                  ticks: {
+                    beginAtZero: true
+                  },
+                  scaleLabel: {
+                    display: true,
+                    labelString: label_y_axis,
+                  },
+                  gridLines: {
+                    drawOnChartArea: false,
+                  },
                 }]
               },
               plugins: {
