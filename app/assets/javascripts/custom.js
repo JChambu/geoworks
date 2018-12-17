@@ -452,6 +452,7 @@ function init_chart_doughnut(size_box = null){
                   ticks: {
                     beginAtZero: true,
                   },
+                  stacked: stacked,
                   scaleLabel: {
                     display: true,
                     labelString: label_y_axis
@@ -467,6 +468,7 @@ function init_chart_doughnut(size_box = null){
                   ticks: {
                     beginAtZero: true
                   },
+                  stacked: stacked,
                   scaleLabel: {
                     display: true,
                     labelString: label_y_axis,
