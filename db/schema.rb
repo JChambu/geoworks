@@ -15,6 +15,8 @@ ActiveRecord::Schema.define(version: 20181215222923) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
+  enable_extension "hstore"
+  enable_extension "uuid-ossp"
 
   create_table "actions", id: :serial, force: :cascade do |t|
     t.string "name"
@@ -663,11 +665,7 @@ ActiveRecord::Schema.define(version: 20181215222923) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
-    t.string "token"
-    t.string "authentication_token", limit: 30
-    t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["token"], name: "index_users_on_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
@@ -688,7 +686,10 @@ ActiveRecord::Schema.define(version: 20181215222923) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  add_foreign_key "analytics_dashboards", "analysis_types"
   add_foreign_key "analytics_dashboards", "charts"
+  add_foreign_key "analytics_dashboards", "project_types"
+  add_foreign_key "has_project_types", "project_types"
   add_foreign_key "has_project_types", "users"
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_types", "users"
