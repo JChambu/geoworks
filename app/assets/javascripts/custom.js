@@ -190,6 +190,12 @@ function init_chart_doughnut(size_box = null){
           var position_y_axis;
           var right_y_axis;
           var display_right_y_axis = false;
+          var tick_min_left
+          var tick_max_left
+          var tick_step_left
+          var tick_substep_left
+          var tick_min_right
+          var tick_max_right
 
           // Separamos las series
           $.each(reg, function(a, b){
@@ -228,6 +234,12 @@ function init_chart_doughnut(size_box = null){
                 label_y_axis_right = value['label_y_axis_right'];
                 stacked = value['stack'];
                 data_labelling = value['data_labelling'];
+                tick_min_left = value['tick_x_min'];
+                tick_max_left = value['tick_x_max'];
+                tick_step_left = value['step_x'];
+                tick_substep_left = value['substep_x'];
+                tick_min_right = value['tick_y_min'];
+                tick_max_right = value['tick_y_max'];
               }
 
               // Extraemos el array con los datos de la serie
@@ -452,7 +464,9 @@ function init_chart_doughnut(size_box = null){
                   display: 'true',
                   type: 'linear',
                   ticks: {
-                    beginAtZero: true,
+                    suggestedMin: parseInt(tick_min_left),
+                    suggestedMax: parseInt(tick_max_left),
+                    stepSize: parseInt(tick_step_left),
                   },
                   stacked: stacked,
                   scaleLabel: {
@@ -468,7 +482,8 @@ function init_chart_doughnut(size_box = null){
                   display: display_right_y_axis,
                   type: 'linear',
                   ticks: {
-                    beginAtZero: true
+                    suggestedMin: parseInt(tick_min_right),
+                    suggestedMax: parseInt(tick_max_right),
                   },
                   stacked: stacked,
                   scaleLabel: {
