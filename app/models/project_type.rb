@@ -230,7 +230,7 @@ class ProjectType < ApplicationRecord
       when 'sum'
         query = " #{type}((properties->>'" + field+ "')::numeric)"
       when 'count'
-        query = " #{type}((properties->>'" + field+ "')::numeric)"
+        query = " #{type}((properties->>'" + field+ "'))"
       when 'avg'
         query = " #{type}((properties->>'" + field+ "')::numeric)"
       when 'min'
