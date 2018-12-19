@@ -32,7 +32,6 @@
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="indicadores">
               <br>
-              <form>
                 <div class="form-row">
                   <div class="form-group col-md-4">
                     <%= f.input :title, label: "Nombre", input_html: {class:"form-control col-md-12"} %>
@@ -95,11 +94,9 @@
                     </div>
                   </div>
                 </div>
-              </form>
             </div>
             <div role="tabpanel" class="tab-pane" id="calculos">
               <br>
-              <form>
                 <div class="form-row">
                   <div class="form-group col-md-12">
                     <div class="control-group string required ">
@@ -186,11 +183,9 @@
                     </div>
                   </div>
                 </div>
-              </form>
             </div>
             <div role="tabpanel" class="tab-pane" id="sql">
               <br>
-              <form>
                 <div class="form-row">
                   <div class="form-group col-md-3">
                     <div class="control-group string required ">
@@ -202,17 +197,14 @@
                   </div>
                   <div class="form-group col-md-9">
                     <div class="control-group string required ">
-                      <label class="string required control-label" for="">Sentencia SQL</label>
                       <div class="controls">
-                        <input type="text" class="string required form-control col-md-12" id="" placeholder="">
+                        <%=f.input :sql_sentence, input_html: {class: "string required form-control col-md-12"}  %>
                       </div>
                     </div>
                   </div>
                 </div>
-              </form>
             </div>
           </div>
-
         <div class="actions text-right" style="">
           <br>
           <%= f.submit class: 'btn btn-primary', value: "Guardar" %>

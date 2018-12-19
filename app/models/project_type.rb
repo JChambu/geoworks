@@ -197,20 +197,27 @@ class ProjectType < ApplicationRecord
         else
           data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
         end
-        @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
-        @field_select += ", properties->>'" + chart.group_field.key + "' as name "
-        @field_group = "properties->>'"+ chart.group_field.key + "'"
 
-      if !data_conditions.blank?
-        data_conditions.each do |key| 
+        if !chart.sql_sentence.nil?
+
+          @field_group = "properties->>'"+ chart.group_field.key + "'"
+          data = data.select(chart.sql_sentence).group(@field_group).order(@field_group)
+        else
+          @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
+          @field_select += ", properties->>'" + chart.group_field.key + "' as name "
+          @field_group = "properties->>'"+ chart.group_field.key + "'"
+
+          if !data_conditions.blank?
+            data_conditions.each do |key| 
               @s = key.split('=')
               @field = @s[0]
               @value = @s[1]
           data =  data.where(" properties->>'" + @field+ "'=#{@value}")
-      end
+         end
       end
         
         data=   data.select(@field_select).group(@field_group).order(@field_group)
+        end
 
         @items["serie#{i}"] = data
         @option_graph = graph
@@ -230,7 +237,7 @@ class ProjectType < ApplicationRecord
       when 'sum'
         query = " #{type}((properties->>'" + field+ "')::numeric)"
       when 'count'
-        query = " #{type}((properties->>'" + field+ "'))"
+        query = " #{type}((properties->>'" + field + "'))"
       when 'avg'
         query = " #{type}((properties->>'" + field+ "')::numeric)"
       when 'min'
@@ -253,7 +260,7 @@ class ProjectType < ApplicationRecord
             a = ProjectType.load_shape(self.id)
           end
         when 'text/csv'
-          a = ProjectType.delay.load_csv(self.id, self.latitude, self.longitude, self.address, self.department, self.province, self.country)
+          a = ProjectType.load_csv(self.id, self.latitude, self.longitude, self.address, self.department, self.province, self.country)
         when 'application/xls', 'application/vnd.ms-excel'
           'xls'
         when 'application/json'
