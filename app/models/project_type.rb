@@ -292,7 +292,7 @@ class ProjectType < ApplicationRecord
       CSV.foreach("#{@source_path}/#{@file_name}", headers: true).with_index do |row, i |
         if i == 0 
           row.headers.each do |field|
-            @new_project_field =  ProjectField.where(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id).first_or_create(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id)
+            @new_project_field =  ProjectField.where(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id, required: false, field_type_id: 1).first_or_create(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id, required: false, field_type_id: 1)
           end
         end
         items = row.to_h
