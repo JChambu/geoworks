@@ -45,11 +45,14 @@
 
       <!-- Eje X -->
       <div class="form-row col-md-12">
-        <div class="form-group hide-div bar horizontal bubble col-md-7">
-          <%= form.input :label_x_axis, label: "Nombre Eje X", input_html: {class: 'form-control'} %>
+        <div class="form-group hide-div bar horizontal bubble col-md-1">
+          <br><center><b>Eje X:</b></center>
+        </div>
+        <div class="form-group hide-div bar horizontal bubble col-md-3">
+          <%= form.input :label_x_axis, label: "Nombre", input_html: {class: 'form-control'} %>
         </div>
 
-        <div class="form-group hide-div bar col-md-3">
+        <div class="form-group hide-div bar col-md-2">
           <%= form.label :data_labelling, "Mostrar valores" %>
           <br>
           <%= form.check_box :data_labelling, input_html: {class:"form-check"}%>
@@ -66,14 +69,17 @@
 
       <!-- Eje Y Izquierdo -->
       <div class="form-row col-md-12">
-        <div class="form-group hide-div bar horizontal bubble col-md-4">
-          <%= form.input :label_y_axis_left, label: "Nombre Eje Y (izquierdo)", input_html: {class: 'form-control'} %>
+        <div class="form-group hide-div bar horizontal bubble col-md-1">
+          <br><center><b>Eje Y:</b><br>(Izquierdo)</center>
+        </div>
+        <div class="form-group hide-div bar horizontal bubble col-md-3">
+          <%= form.input :label_y_axis_left, label: "Nombre", input_html: {class: 'form-control'} %>
         </div>
         <div class="form-group hide-div bar horizontal col-md-2">
-          <%= form.input :tick_x_min, label: "Eje Y Mínimo", input_html: {class: 'form-control'} %>
+          <%= form.input :tick_x_min, label: "Mínimo", input_html: {class: 'form-control'} %>
         </div>
         <div class="form-group hide-div bar horizontal col-md-2">
-          <%= form.input :tick_x_max, label: "Eje Y Máximo", input_html: {class: 'form-control'} %>
+          <%= form.input :tick_x_max, label: "Máximo", input_html: {class: 'form-control'} %>
         </div>
         <div class="form-group hide-div bar horizontal col-md-2">
           <%= form.input :step_x, label: "Espacio", input_html: {class: 'form-control'} %>
@@ -86,14 +92,17 @@
 
       <!-- Eje Y Derecho -->
       <div class="form-row col-md-12">
-        <div class="form-group hide-div bar horizontal bubble col-md-4">
-          <%= form.input :label_y_axis_right, label: "Nombre Eje Y (derecho)", input_html: {class: 'form-control'} %>
+        <div class="form-group hide-div bar horizontal bubble col-md-1">
+          <br><center><b>Eje Y:</b><br>(Derecho)</center>
         </div>
-        <div class="form-group hide-div bar horizontal col-md-4">
-          <%= form.input :tick_y_min, label: "Eje Y Mínimo (D)", input_html: {class: 'form-control'} %>
+        <div class="form-group hide-div bar horizontal bubble col-md-3">
+          <%= form.input :label_y_axis_right, label: "Nombre", input_html: {class: 'form-control'} %>
         </div>
-        <div class="form-group hide-div bar horizontal col-md-4">
-          <%= form.input :tick_y_max, label: "Eje Y Máximo (D)", input_html: {class: 'form-control'} %>
+        <div class="form-group hide-div bar horizontal col-md-2">
+          <%= form.input :tick_y_min, label: "Mínimo", input_html: {class: 'form-control'} %>
+        </div>
+        <div class="form-group hide-div bar horizontal col-md-2">
+          <%= form.input :tick_y_max, label: "Máximo", input_html: {class: 'form-control'} %>
         <br>
         </div>
       </div>
