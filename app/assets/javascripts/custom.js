@@ -568,13 +568,18 @@ function init_chart_doughnut(size_box = null){
                 xAxes: [{
                   display: true,
                   ticks: {
-                    beginAtZero: true,
+                    suggestedMin: parseInt(tick_min_left),
+                    suggestedMax: parseInt(tick_max_left),
+                    stepSize: parseInt(tick_step_left),
                   },
                   stacked: stacked,
                   scaleLabel: {
                     display: true,
                     labelString: label_x_axis
-                  }
+                  },
+                  gridLines: {
+                    drawOnChartArea: true,
+                  },
                 }],
                 yAxes: [{
                   display: true,
