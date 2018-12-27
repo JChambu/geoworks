@@ -1,2 +1,5 @@
 $("#modal-window").find(".modal-content").html("<%= j (render 'form') %>");
+$('.hide-div').hide();
+  var graph = Navarra.dashboards.config.graph_id;
+    $('.'+graph).show();
 $("#modal-window").modal();
