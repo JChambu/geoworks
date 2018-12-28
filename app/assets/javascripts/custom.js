@@ -196,7 +196,10 @@ function init_chart_doughnut(size_box = null){
           var tick_substep_left
           var tick_min_right
           var tick_max_right
-
+          var count_series = 0;
+          var bubble_dataset = [];
+          var bubble_dataset_x = [];
+          var bubble_dataset_y = [];
           // Separamos las series
           $.each(reg, function(a, b){
 
@@ -267,19 +270,41 @@ function init_chart_doughnut(size_box = null){
               }
 
               // Extraemos el array con los datos de la serie
+
               if (index == 'data'){
                 data_general = value;
                 var lab = [];
                 var da = [];
 
+
                 // Extraemos los datos del array de la serie
                 $.each(data_general, function(idx, vax){
 
                   // Extraemos label y value de los datos
+                  
+                  if (type_chart == 'bubble') {
+                    $.each(vax, function(i, v ){
+                  if(count_series == 0){
+                    bubble_dataset_x.push(v['count']);
+                  }else{
+                    bubble_dataset_y.push(v['count']);
+                  }
+                  })
+                    
+                  if(count_series == 1){
+                    for(var b = 0; b < vax.length; b ++){
+                     r = parseFloat(bubble_dataset_y[b]) * parseFloat(bubble_dataset_x) ;
+                    bubble_dataset.push({"x":bubble_dataset_x[b], "y":bubble_dataset_y[b], "r": r });
+                  }
+                  }
+                    count_series = 1 ;
+                    console.log(bubble_dataset);
+                }else{
                   $.each(vax, function(i, v ){
                     lab.push(v['name']);
                     da.push(v['count']);
-                  });
+                  })
+                }
 
                   // BAR & LINE datasets
                   if (type_chart == 'bar' || type_chart == 'line') {
@@ -378,34 +403,11 @@ function init_chart_doughnut(size_box = null){
                   }
 
                   // BUBBLE datasets
-                  if (type_chart == 'bubble') {
+                  if (type_chart == 'bubble' && count_series==1) {
+                 
                     datasets.push({
                       label: label_datasets,
-                      data: [{
-                        x: 50,
-                        y: 2,
-                        r: 42
-                      }, {
-                        x: 27,
-                        y: 32,
-                        r: 58
-                      }, {
-                        x: 69,
-                        y: 23,
-                        r: 15
-                      }, {
-                        x: 5,
-                        y: 68,
-                        r: 7
-                      }, {
-                        x: 57,
-                        y: 24,
-                        r: 7
-                      }, {
-                        x: 12,
-                        y: 8,
-                        r: 35
-                      }],
+                      data: bubble_dataset, 
                       fill: false,
                       backgroundColor: 'transparent',
                       borderColor: color,

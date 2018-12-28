@@ -10,13 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181218154442) do
+ActiveRecord::Schema.define(version: 20181228152751) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
-  enable_extension "hstore"
-  enable_extension "uuid-ossp"
 
   create_table "actions", id: :serial, force: :cascade do |t|
     t.string "name"
@@ -280,13 +278,14 @@ ActiveRecord::Schema.define(version: 20181218154442) do
     t.string "label_y_axis_left"
     t.string "label_y_axis_right"
     t.boolean "stack", default: false
-    t.decimal "tick_x_min", default: "0.0"
+    t.decimal "tick_x_min"
     t.decimal "tick_x_max"
     t.decimal "tick_y_min"
     t.decimal "tick_y_max"
     t.decimal "step_x"
     t.decimal "substep_x"
     t.boolean "data_labelling", default: false
+    t.integer "chart_id"
     t.index ["dashboard_id"], name: "index_graphics_on_dashboard_id"
   end
 
@@ -641,6 +640,133 @@ ActiveRecord::Schema.define(version: 20181218154442) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "tmp_tomtom_cuba", id: false, force: :cascade do |t|
+    t.serial "id", null: false
+    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_point"}
+    t.bigint "poi_id"
+    t.string "poi_name", limit: 254
+    t.string "address_1", limit: 254
+    t.bigint "hsnr"
+    t.string "complement", limit: 254
+    t.string "postal_cod", limit: 254
+    t.string "neighborho", limit: 254
+    t.string "city", limit: 254
+    t.string "state", limit: 254
+    t.string "country", limit: 254
+    t.string "phone_numb", limit: 254
+    t.string "phone_nu_1", limit: 254
+    t.string "email", limit: 254
+    t.string "web", limit: 254
+    t.bigint "gdf_featco"
+    t.string "gdf_featur", limit: 254
+    t.bigint "gdf_subcat"
+    t.string "gdf_subc_1", limit: 254
+    t.float "longitude"
+    t.float "latitude"
+    t.string "type", limit: 254
+    t.float "x_utm"
+    t.float "y_utm"
+  end
+
+  create_table "tmp_tomtom_cuba_1", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_point"}
+    t.bigint "poi_id"
+    t.string "poi_name", limit: 254
+    t.string "address_1", limit: 254
+    t.bigint "hsnr"
+    t.string "complement", limit: 254
+    t.string "postal_cod", limit: 254
+    t.string "neighborho", limit: 254
+    t.string "city", limit: 254
+    t.string "state", limit: 254
+    t.string "country", limit: 254
+    t.string "phone_numb", limit: 254
+    t.string "phone_nu_1", limit: 254
+    t.string "email", limit: 254
+    t.string "web", limit: 254
+    t.bigint "gdf_featco"
+    t.string "gdf_featur", limit: 254
+    t.bigint "gdf_subcat"
+    t.string "gdf_subc_1", limit: 254
+    t.float "longitude"
+    t.float "latitude"
+  end
+
+  create_table "tmp_tomtom_dom", id: false, force: :cascade do |t|
+    t.serial "id", null: false
+    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_point"}
+    t.float "poi_id"
+    t.string "poi_name", limit: 254
+    t.string "address_1", limit: 254
+    t.float "hsnr"
+    t.string "complement", limit: 254
+    t.string "postal_cod", limit: 254
+    t.string "neighborho", limit: 254
+    t.string "city", limit: 254
+    t.string "state", limit: 254
+    t.string "country", limit: 254
+    t.string "phone_numb", limit: 254
+    t.string "phone_nu_1", limit: 254
+    t.string "email", limit: 254
+    t.string "web", limit: 254
+    t.float "gdf_featco"
+    t.string "gdf_featur", limit: 254
+    t.float "gdf_subcat"
+    t.string "gdf_subc_1", limit: 254
+    t.float "longitude"
+    t.float "latitude"
+  end
+
+  create_table "tmp_tomtom_dom_1", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_point"}
+    t.float "poi_id"
+    t.string "poi_name", limit: 254
+    t.string "address_1", limit: 254
+    t.float "hsnr"
+    t.string "complement", limit: 254
+    t.string "postal_cod", limit: 254
+    t.string "neighborho", limit: 254
+    t.string "city", limit: 254
+    t.string "state", limit: 254
+    t.string "country", limit: 254
+    t.string "phone_numb", limit: 254
+    t.string "phone_nu_1", limit: 254
+    t.string "email", limit: 254
+    t.string "web", limit: 254
+    t.float "gdf_featco"
+    t.string "gdf_featur", limit: 254
+    t.float "gdf_subcat"
+    t.string "gdf_subc_1", limit: 254
+    t.float "longitude"
+    t.float "latitude"
+  end
+
+  create_table "tmp_tomtom_jamaica", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_point"}
+    t.string "poi_id", limit: 254
+    t.string "poi_name", limit: 254
+    t.string "address", limit: 254
+    t.string "hsnr", limit: 254
+    t.string "complement", limit: 254
+    t.string "postal_cod", limit: 254
+    t.string "neighborho", limit: 254
+    t.string "city", limit: 254
+    t.string "state", limit: 254
+    t.string "country", limit: 254
+    t.string "phone_numb", limit: 254
+    t.string "phone_nu_1", limit: 254
+    t.string "web", limit: 254
+    t.string "email", limit: 254
+    t.string "gdf_featco", limit: 254
+    t.string "gdf_featur", limit: 254
+    t.string "gdf_subcat", limit: 254
+    t.string "gdf_subc_1", limit: 254
+    t.float "longitude"
+    t.float "latitude"
+    t.string "x_utm", limit: 254
+    t.string "y_utm", limit: 254
+  end
+
   create_table "user_customers", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "customer_id"
@@ -666,7 +792,11 @@ ActiveRecord::Schema.define(version: 20181218154442) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
+    t.string "token"
+    t.string "authentication_token", limit: 30
+    t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["token"], name: "index_users_on_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
@@ -687,10 +817,7 @@ ActiveRecord::Schema.define(version: 20181218154442) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
-  add_foreign_key "analytics_dashboards", "analysis_types"
   add_foreign_key "analytics_dashboards", "charts"
-  add_foreign_key "analytics_dashboards", "project_types"
-  add_foreign_key "has_project_types", "project_types"
   add_foreign_key "has_project_types", "users"
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_types", "users"

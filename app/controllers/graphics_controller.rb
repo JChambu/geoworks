@@ -26,6 +26,7 @@ class GraphicsController < ApplicationController
   # GET /graphics/1/edit
   def edit
     @graphic = @dashboard.graphics.find(params[:id])
+    @chart_type = Chart.find(@graphic.chart_id)
     respond_to do |f|
       f.js
     end
@@ -41,6 +42,7 @@ class GraphicsController < ApplicationController
         format.html { redirect_to project_type_dashboard_path(@project_type, @dashboard.id), notice: 'Graphic was successfully created.' }
         format.json { render :show, status: :created, location: @graphic }
       else
+        format.js {render json: @graphic.errors}
         format.html { render :new }
         format.json { render json: @graphic.errors, status: :unprocessable_entity }
       end
