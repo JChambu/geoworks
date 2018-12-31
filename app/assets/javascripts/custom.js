@@ -239,8 +239,8 @@ function init_chart_doughnut(size_box = null){
                 label_y_axis_right = value['label_y_axis_right'];
                 stacked = value['stack'];
                 data_labelling = value['data_labelling'];
-                //scale = value['scale'];
-                scale = 0.0003
+                scale = value['scale'];
+                console.log(data);
 
                 tick_min_left = value['tick_x_min'];
                 if (tick_min_left == null) {
