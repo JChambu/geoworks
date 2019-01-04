@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181231181700) do
+ActiveRecord::Schema.define(version: 20190103130919) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -572,6 +572,22 @@ ActiveRecord::Schema.define(version: 20181231181700) do
     t.integer "choice_list_id"
     t.integer "field_type_id"
     t.index ["project_type_id"], name: "index_project_fields_on_project_type_id"
+  end
+
+  create_table "project_subfields", force: :cascade do |t|
+    t.string "name"
+    t.string "required"
+    t.bigint "project_field_id"
+    t.bigint "regexp_type_id"
+    t.string "key"
+    t.bigint "choice_list_id"
+    t.bigint "field_type_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["choice_list_id"], name: "index_project_subfields_on_choice_list_id"
+    t.index ["field_type_id"], name: "index_project_subfields_on_field_type_id"
+    t.index ["project_field_id"], name: "index_project_subfields_on_project_field_id"
+    t.index ["regexp_type_id"], name: "index_project_subfields_on_regexp_type_id"
   end
 
   create_table "project_types", id: :serial, force: :cascade do |t|
