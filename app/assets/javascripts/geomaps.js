@@ -42,7 +42,6 @@ Navarra.geomaps_extended_listings = function (){
           $('#extended_listing_longitude').val(position.lng);
           $('#extended_listing_latitude').val(position.lat);
         });
-
       }
       e.preventDefault();
     })
@@ -102,7 +101,7 @@ Navarra.geomaps_extended_listings = function (){
 
 Navarra.geomaps = function (){
   //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
-  var mymap, markers, editableLayers, projects, layerProjects, MySource;
+  var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer;
   var size_box = [];
   var init= function() {
     
@@ -121,6 +120,28 @@ Navarra.geomaps = function (){
       reuseTiles: true
     });
 
+ cfg = {
+   // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+   // if scaleRadius is false it will be the constant radius used in pixels
+  "radius": 0.007,
+  "maxOpacity": .8,
+  // scales the radius based on map zoom
+  "scaleRadius": true, 
+  // if set to false the heatmap uses the global maximum for colorization
+  // if activated: uses the data maximum within the current map boundaries 
+  //   (there will always be a red spot with useLocalExtremas true)
+  "useLocalExtrema": true,
+  // which field name in your data represents the latitude - default "lat"
+  latField: 'lat',
+  // which field name in your data represents the longitude - default "lng"
+  lngField: 'lng',
+  // which field name in your data represents the data value - default "value"
+  valueField: 'count'
+  };
+  
+
+
+    
     mymap = L.map('map',{
       crs: L.CRS.EPSG3857,
       fadeAnimation: false,
@@ -130,6 +151,7 @@ Navarra.geomaps = function (){
       zoomControl: false,
       layers: [streets, grayscale]
     }) ;
+
     mymap.spin(false, {lines: 13, length: 40});
     MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
@@ -143,9 +165,9 @@ Navarra.geomaps = function (){
     });
 
       current_tenant = Navarra.dashboards.config.current_tenant;
-    layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
-    //layerProjects = new MySource("http://localhost:8080/geoserver/wms", {
-    layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+   // layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
+    layerProjects = new MySource("http://localhost:8080/geoserver/wms", {
+    //layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
       layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
@@ -156,8 +178,9 @@ Navarra.geomaps = function (){
       CQL_FILTER: 'project_type_id='+Navarra.dashboards.config.project_type_id
     })
 
-   projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
-   //projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
+
+  // projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
+       projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
 
     minx = Navarra.dashboards.config.minx;   
     miny = Navarra.dashboards.config.miny;   
@@ -174,14 +197,14 @@ Navarra.geomaps = function (){
 
     var baseMaps = {
       "Streets": streets,
-      "Grayscale": grayscale
+      "Grayscale": grayscale,
     };
 
-    /*var overlayMaps = {
+    var overlayMaps = {
       "projects": projects
-    };*/
+    };
 
-    L.control.layers(baseMaps).addTo(mymap);
+    L.control.layers(baseMaps, overlayMaps).addTo(mymap);
 
     L.control.zoom({
       position:'topleft'
@@ -198,6 +221,7 @@ Navarra.geomaps = function (){
 */
 
     show_kpis();
+    //heatmap_data();
     mymap.spin(false);
     //mymap.on('zoomend', onMapZoomedMoved);
     mymap.on('moveend', onMapZoomedMoved);
@@ -232,6 +256,7 @@ Navarra.geomaps = function (){
       init_chart_doughnut();  
 
     }
+
     /*  markers = L.markerClusterGroup({
       disableClusteringAtZoom: 17
       //maxClusterRadius: 5
@@ -471,10 +496,10 @@ var ivalue =   Navarra.project_types.config.input_value;
            cql_filter +=" and "+ b;
         });      
 
-  layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
- // layerProjects = new MySourcea("http://localhost:8080/geoserver/wms", {
-  layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
-  //layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
+ // layerProjects = new MySource("http://www.geoworks.com.ar:8080/geoserver/wms", {
+  layerProjects = new MySourcea("http://localhost:8080/geoserver/wms", {
+  //layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+  layers: "geoworks:view_project_geoserver",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
@@ -483,17 +508,30 @@ var ivalue =   Navarra.project_types.config.input_value;
       style: 'poi_new',
       CQL_FILTER: cql_filter 
     })
-  projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
-  // projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
-
+ // projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
+  projects = layerProjects.getLayer("view_project_geoserver").addTo(mymap);
       init_kpi();
       init_chart_doughnut();  
 }
+function heatmap_data(data){
+  var testData;
+        testData = {
+          max: 8,
+          data: data}
+      
 
+      if(typeof(heatmapLayer)!=='undefined'){
+        mymap.removeLayer(heatmapLayer);
+      }
+  heatmapLayer = new HeatmapOverlay(cfg);
 
+        heatmapLayer.setData(testData);
+        mymap.addLayer(heatmapLayer);
+}
 
 return {
   init: init,
-  wms_filter: wms_filter
+  wms_filter: wms_filter,
+  heatmap_data: heatmap_data
 }
 }();

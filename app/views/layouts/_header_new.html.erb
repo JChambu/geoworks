@@ -76,6 +76,7 @@
               <%= link_to "#" do %> <%= image_tag "icon-punto-radio.svg", width: "25px", title: "Dibujar Radio" %> <% end %>
               <%= link_to "#", id: "select" do %> <%= image_tag "icon-seleccion-poligono.svg", width: "25px", title: "Dibujar Polígono" %> <% end %>
               <%= link_to project_type_filters_path(@project_type.id) , id: "filter",:remote => true  do  %> <i class="fas fa-filter" title="Filtrar"></i> <%end %>
+              <%= link_to project_type_heatmap_path(@project_type.id) , id: "heatmap", :remote=> true  do  %> <i class="fas fa-fire" title="Mapa de Calor"></i> <%end %>
               <li class="dropdown" style="padding: 0px 5px; display: inline-block; vertical-align: top">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                   <i class="fas fa-chart-pie chart-modal" style="font-size: 26px"></i>
