@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   get 'poi_types/:id/food_types' => 'poi_types#food_types'
   get 'project_types/maps' => 'project_types#maps'
   get 'project_types/kpi' => 'project_types#kpi'
+  get 'project_types/heatmap' => 'project_types#heatmap'
   get 'project_types/graph3' => 'project_types#graph2'
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
@@ -49,6 +50,8 @@ Rails.application.routes.draw do
       resources :projects
       get 'project_types/filters' => 'project_types#filters', as: :filters
       get 'project_types/create_filters' => 'project_types#create_filters', as: :create_filters
+      get 'project_types/heatmap' => 'project_types#heatmap', as: :heatmap
+      get 'project_types/create_heatmap' => 'project_types#create_heatmap', as: :create_heatmap
 
     end
     resources :regexp_types
