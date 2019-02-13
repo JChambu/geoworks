@@ -92,7 +92,7 @@ Navarra.geomaps_extended_listings = function (){
 
 Navarra.geomaps = function (){
   //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
-  var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant ;
+  var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div;
   var size_box = [];
   var init= function() {
 
@@ -142,25 +142,46 @@ Navarra.geomaps = function (){
 
     mymap.spin(false, {lines: 13, length: 40});
     MySource = L.WMS.Source.extend({
+
+      'ajax': function(url, callback) {
+        $.ajax(url, {
+          'context': this,
+          'dataType': 'jsonp',
+          'jsonpCallback': 'getJson',
+          'success': function(data){
+            prop = data.features[0].properties['properties'];
+            callback.call(this, prop);
+          }
+        });
+      },
+
       'showFeatureInfo': function(latlng, info) {
 
         if (!this._map) {
           return;
         }
-        //               do whatever you like with info
-        //this._map.openPopup(info, latlng);
+        checked = $('#select').hasClass('active');
+        if (!checked){
+          var a = JSON.parse(info);
+          L.popup()
+            .setLatLng(latlng)
+            .setContent(info)
+            .openOn(mymap);
+        }
       }
     });
 
     current_tenant = Navarra.dashboards.config.current_tenant;
     layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
-    layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+      layers: current_tenant+"geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
       version: '1.0.0',//wms version (ver get capabilities)
       tiled: true,
       style: 'poi_new',
+      INFO_FORMAT: 'text/javascript',
+      format_options: 'callback:getJson',
       CQL_FILTER: 'project_type_id='+Navarra.dashboards.config.project_type_id
     })
 
