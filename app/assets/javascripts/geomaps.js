@@ -143,7 +143,7 @@ Navarra.geomaps = function (){
     mymap.spin(false, {lines: 13, length: 40});
     MySource = L.WMS.Source.extend({
 
-      'ajax': function(url, callback) {
+ /*     'ajax': function(url, callback) {
         $.ajax(url, {
           'context': this,
           'dataType': 'json',
@@ -153,7 +153,7 @@ Navarra.geomaps = function (){
             callback.call(this, prop);
           }
         });
-      },
+      },*/
 
       'showFeatureInfo': function(latlng, info) {
 
