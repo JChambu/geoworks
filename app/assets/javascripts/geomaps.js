@@ -146,7 +146,7 @@ Navarra.geomaps = function (){
       'ajax': function(url, callback) {
         $.ajax(url, {
           'context': this,
-          'dataType': 'jsonp',
+          'dataType': 'json',
           'jsonpCallback': 'getJson',
           'success': function(data){
             prop = data.features[0].properties['properties'];
@@ -180,7 +180,7 @@ Navarra.geomaps = function (){
       version: '1.0.0',//wms version (ver get capabilities)
       tiled: true,
       style: 'poi_new',
-      INFO_FORMAT: 'text/javascript',
+      INFO_FORMAT: 'application/json',
       format_options: 'callback:getJson',
       CQL_FILTER: 'project_type_id='+Navarra.dashboards.config.project_type_id
     })
