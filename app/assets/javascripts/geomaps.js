@@ -149,7 +149,7 @@ Navarra.geomaps = function (){
           'dataType': 'json',
           'jsonpCallback': 'getJson',
           'success': function(data){
-            prop = data.features[0].properties['properties'];
+            prop = data;
             callback.call(this, prop);
           }
         });
@@ -162,7 +162,7 @@ Navarra.geomaps = function (){
         }
         checked = $('#select').hasClass('active');
         if (!checked){
-          var a = JSON.parse(info);
+          //var a = JSON.parse(info);
           L.popup()
             .setLatLng(latlng)
             .setContent(info)
