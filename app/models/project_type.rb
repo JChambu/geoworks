@@ -182,7 +182,6 @@ class ProjectType < ApplicationRecord
 
     @ct = Apartment::Tenant.current
     @graph = Graphic.where(dashboard_id: @dashboard_id)
-    
     @graph.each do |g|
       @gr = GraphicsProperty.where(graphic_id: g)
       ch = {}
@@ -191,18 +190,19 @@ class ProjectType < ApplicationRecord
       @analytics_charts = AnalyticsDashboard.where(id: graph.analytics_dashboard_id)
 
       @analytics_charts.each do |chart|
-        @items = {}
+       
+      @items = {}
         if type_box == 'extent'
           data = Project.where(project_type_id: project_type_id).where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
         else
           data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
         end
-
-        if !chart.sql_sentence.nil?
+        if !chart.sql_sentence.blank?
 
           @field_group = "properties->>'"+ chart.group_field.key + "'"
           data = data.select(chart.sql_sentence).group(@field_group).order(@field_group)
         else
+
           @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
           @field_select += ", properties->>'" + chart.group_field.key + "' as name "
           @field_group = "properties->>'"+ chart.group_field.key + "'"
@@ -522,7 +522,7 @@ class ProjectType < ApplicationRecord
     def self.load_rgeoserver
       #   curl -u admin:geoserver -XGET http://localhost:8080/geoserver/rest/layers.json
 
-      uri = URI.parse("http://localhost:8080/geoserver/rest/layers.xml")
+      uri = URI.parse("http://localhost:8080/geoserver/rest/layers/geoworks:view_project_geoserver.json")
       request = Net::HTTP::Get.new(uri)
       request.basic_auth("admin", "geoserver")
       #    request.content_type = "text/xml"
