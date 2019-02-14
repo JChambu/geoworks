@@ -92,7 +92,7 @@ Navarra.geomaps_extended_listings = function (){
 
 Navarra.geomaps = function (){
   //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
-  var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div;
+  var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl;
   var size_box = [];
   var init= function() {
 
@@ -114,7 +114,7 @@ Navarra.geomaps = function (){
     cfg = {
       // radius should be small ONLY if scaleRadius is true (or small radius is intended)
       // if scaleRadius is false it will be the constant radius used in pixels
-      "radius": 0.007,
+      "radius": 0.003,
       "maxOpacity": .8,
       // scales the radius based on map zoom
       "scaleRadius": true, 
@@ -209,7 +209,7 @@ Navarra.geomaps = function (){
       "projects": projects
     };
 
-    L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+    layerControl = L.control.layers(baseMaps, overlayMaps).addTo(mymap);
 
     L.control.zoom({
       position:'topleft'
@@ -519,17 +519,20 @@ function wms_filter(){
 function heatmap_data(data){
   var testData;
   testData = {
-    max: 8,
+    max: 5,
     data: data}
 
 
   if(typeof(heatmapLayer)!=='undefined'){
+    layerControl.removeLayer(heatmapLayer);
     mymap.removeLayer(heatmapLayer);
   }
   heatmapLayer = new HeatmapOverlay(cfg);
-
   heatmapLayer.setData(testData);
+  
+  layerControl.addOverlay(heatmapLayer, "heatmap");
   mymap.addLayer(heatmapLayer);
+
 }
 
 return {
