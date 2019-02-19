@@ -7,14 +7,15 @@
       </div>
       <div class="modal-body">
         <%= form_tag project_type_create_point_colors_path, :remote => true, :method => :get   do |f| %>
-          <div>
-            <%=select_tag 'q[project_field]',  options_for_select(region_for_select), class:'proj_field' %>
+        <div class="form-row col-md-12">
+          <div class="form-group col-md-10">
+            <%=select_tag 'q[project_field]',  options_for_select(region_for_select), class:'proj_field form-control' %>
           </div>
-        <%= submit_tag :enviar, id: "filtro", class: "envf" %>
+          <div class="form-group col-md-2">
+        <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary" %>
+          </div>
         <% end %>
-
-
-
+        </div>
       </div>
     </div>
   </div>
