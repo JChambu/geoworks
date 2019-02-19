@@ -13,6 +13,7 @@
 //= require jquery.min
 //= require jquery_ujs
 //= require bootstrap.min
+//= require bootstrap-filestyle.min
 //= require switchery/switchery.min
 //= require nicescroll/jquery.nicescroll.min
 //= require jquery.csv
