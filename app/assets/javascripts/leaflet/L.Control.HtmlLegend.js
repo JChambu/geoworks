@@ -27,7 +27,7 @@ L.Control.HtmlLegend = L.Control.extend({
 
     onAdd(map) {
         this._map = map;
-        this._container = L.DomUtil.create('div', 'leaflet-control leaflet-bar leaflet-html-legend');
+        this._container = L.DomUtil.create('div', 'leaflet-html-legend');
         this._lastId = 0;
         this._entries = {};
 
@@ -194,10 +194,12 @@ L.Control.HtmlLegend = L.Control.extend({
                     this._updateOpacity(layer, 0);
                 }
             });
+//disable option transparency
 
+          /*
             const opacityController = L.DomUtil.create('span', 'opacity-slider', container);
 
-            L.DomUtil.create('span', 'slider-label', opacityController).innerHTML = 'Transparency:';
+           L.DomUtil.create('span', 'slider-label', opacityController).innerHTML = 'Transparency:';
 
             L.DomUtil.create('i', this.options.visibleIcon, opacityController);
 
@@ -214,7 +216,7 @@ L.Control.HtmlLegend = L.Control.extend({
             });
             opacitySlider.value = 1 - (opacity);
 
-            L.DomUtil.create('i', this.options.hiddenIcon, opacityController);
+            L.DomUtil.create('i', this.options.hiddenIcon, opacityController);*/
         };
 
 

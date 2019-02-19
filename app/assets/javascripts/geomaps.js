@@ -89,7 +89,6 @@ Navarra.geomaps_extended_listings = function (){
   }
 }();
 
-
 Navarra.geomaps = function (){
   //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
   var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl, url;
@@ -131,11 +130,6 @@ Navarra.geomaps = function (){
       zoomControl: false,
       layers: [streets, grayscale]
     }) ;
-
-
-
-
-
 
     MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
@@ -191,8 +185,6 @@ Navarra.geomaps = function (){
 
     layerControl = L.control.layers(baseMaps, overlayMaps).addTo(mymap);
 
-
-
     L.control.zoom({
       position:'topleft'
     }).addTo(mymap);
@@ -241,6 +233,7 @@ Navarra.geomaps = function (){
           init_chart_doughnut(size_box);  
           poly();
         })
+      
       }
     });
 
@@ -351,29 +344,22 @@ Navarra.geomaps = function (){
   }
 
   function point_colors_data(data, field){
-
-
     mymap.removeLayer(projects);
-
+    
     var color1 = '#6f98fc';
     var color2 = '#fce36f';
     var color5 = '#fb3027';
-
-
     var cql_project_type = 'project_type_id='+Navarra.dashboards.config.project_type_id;
-
     $.each(data, function(a,b){
       var cql_name= b['name'];
-      
-        var col;
+      var col;
       var value_filter = cql_project_type + " and " + field + "='"+ cql_name + "'";
       
                  col = randomColor({
                       format: 'hex'
                     });
 
-        var env_f = "color:" + col ;
-
+      var env_f = "color:" + col ;
       var options = {
 
         layers: "geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
@@ -387,7 +373,7 @@ Navarra.geomaps = function (){
         CQL_FILTER: value_filter
       };
       source =  new L.tileLayer.betterWms("http://"+url+":8080/geoserver/wms", options);
-      layerControl.addOverlay(source, cql_name);
+      /*layerControl.addOverlay(source, cql_name);*/
 
     var htmlLegend1and2 = L.control.htmllegend({
       position: 'bottomleft',
@@ -405,9 +391,9 @@ Navarra.geomaps = function (){
         }]
       }],
       collapseSimple: true,
-      detectStretched: true,
-      collapsedOnInit: true,
-      defaultOpacity: 0.7,
+      detectStretched: false,
+      collapsedOnInit: false,
+      defaultOpacity: 0.9,
       visibleIcon: 'icon icon-eye',
       hiddenIcon: 'icon icon-eye-slash'
     })
@@ -417,6 +403,7 @@ Navarra.geomaps = function (){
 }
 
 function heatmap_data(data){
+
   var testData;
   testData = {
     max: 5,

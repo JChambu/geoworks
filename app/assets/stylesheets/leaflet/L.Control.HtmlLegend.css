@@ -29,12 +29,13 @@
 
 .leaflet-html-legend {
     background: #FFF;
-    border: 2px solid #FFF;
+    border: 0px solid #FFF;
     padding: 6px;
     max-height: 250px;
     overflow-y: auto;
     line-height: 1.2;
     width: 250px;
+    margin-bottom: 0px;
 
 }
 
