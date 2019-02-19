@@ -155,7 +155,7 @@ Navarra.geomaps = function (){
       version: '1.0.0',//wms version (ver get capabilities)
       tiled: true,
       styles: 'scale2',
-      env: "color:#87CEEB",
+      env: "color:#d22e2e",
       INFO_FORMAT: 'text/html',
       format_options: 'callback:getJson',
       CQL_FILTER: "project_type_id="+Navarra.dashboards.config.project_type_id
