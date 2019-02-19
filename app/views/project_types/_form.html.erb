@@ -12,26 +12,33 @@
     </div>
   <% end %>
   <p id="notice"><%= notice %></p>
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
+  <div class="form-row col-md-12">
+    <div class="form-group col-md-3">
+      <%= f.label :name %>
+      <%= f.text_field :name, class: 'form-control' %>
+    </div>
   </div>
-  <br>
-  <%= f.file_field(:file, multiple: true, class: 'project_typ_file btn btn-primary')  %>
-  <br>
-  <%= select_tag 'option_geo', options_for_select(['Latitud_Longitud', 'Georeferenciacion']), {prompt: 'Seleccione tipo georeferenciacion'} %>
-  <br>
-  <br>
-  <div id="Latitud_Longitud" class="latlng boxi">
-    <%= render 'latlng', f: f  %>
+  <div class="form-row col-md-12">
+    <div class="form-group col-md-3">
+      <%= f.file_field(:file, multiple: true, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': 'Cargar archivos')  %>
+    </div>
   </div>
-<div id="Georeferenciacion" class="geocoding boxi">
-    <%= render 'geocoding', f: f  %>
-</div>
+  <div class="form-row col-md-12">
+    <div class="form-group col-md-3">
+      <%= select_tag 'option_geo', options_for_select(['Latitud_Longitud', 'Georeferenciacion']), {prompt: 'Seleccione tipo georeferenciación', class: 'form-control'} %>
+
+      <div id="Latitud_Longitud" class="latlng boxi">
+        <%= render 'latlng', f: f  %>
+      </div>
+      <div id="Georeferenciacion" class="geocoding boxi">
+        <%= render 'geocoding', f: f  %>
+      </div>
+    </div>
+  </div>
 
 
   <div class="actions">
-    <%= f.submit id: :envi, class: 'enviar btn btn-primary' %>
+    <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Crear" %>
   </div>
 
 <% end %>
