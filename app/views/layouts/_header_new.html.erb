@@ -72,7 +72,7 @@
               <%= link_to "#", id: "view" do %> <i class="fas fa-table" title="Cambiar Vista"></i> <% end %>
               <%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, params[:id]) do %> <i class="fas fa-database" title="Crear Indicador"></i> <% end %>
               <%= link_to "#", id: "create_multi"  do %> <%= image_tag "icon-crear-poligono.svg", width: "25px", title: "Editar Polígono", input_html:{class:"ss"} %> <% end %>
-              <%= link_to "#" do %> <%= image_tag "icon-pintar-punto.svg", width: "25px", title: "Puntos Graduados" %> <% end %>
+              <%= link_to project_type_point_colors_path, id: "point_colors", :remote=> true do %>  <i class="fas fa-spinner" title="Puntos de Colores"></i> <%end %>
               <%= link_to "#" do %> <%= image_tag "icon-punto-radio.svg", width: "25px", title: "Dibujar Radio" %> <% end %>
               <%= link_to "#", id: "select" do %> <%= image_tag "icon-seleccion-poligono.svg", width: "25px", title: "Dibujar Polígono" %> <% end %>
               <%= link_to project_type_filters_path(@project_type.id) , id: "filter",:remote => true  do  %> <i class="fas fa-filter" title="Filtrar"></i> <%end %>

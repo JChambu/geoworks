@@ -1,0 +1,4 @@
+d = <%= raw  @query_point.to_json%>;
+field = <%= raw params[:q][:project_field].to_json %>
+Navarra.geomaps.point_colors_data(d, field);
+$("#point_colors-modal").modal('hide');

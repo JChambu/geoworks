@@ -57,6 +57,19 @@ class ProjectTypesController < ApplicationController
   def heatmap
   end
 
+
+  def point_colors
+  end
+
+
+  def create_point_colors
+    @query_point = Project.where(project_type_id: params[:project_type_id]).select("properties->>'#{params[:q][:project_field]}' as name").group("properties->>'#{params[:q][:project_field]}'")
+    respond_to do |format|
+      format.js
+    end
+  end
+  
+  
   def create_heatmap
     @query_h = Project.where(project_type_id: params[:project_type_id]).select("st_x(the_geom) as lng, st_y(the_geom) as lat, count(id) as count").group("properties->>'#{params[:q][:project_field]}', the_geom")
     respond_to do |format|
