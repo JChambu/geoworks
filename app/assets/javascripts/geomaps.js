@@ -92,7 +92,8 @@ Navarra.geomaps_extended_listings = function (){
 Navarra.geomaps = function (){
   //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
   var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl, url;
-  var layerColor, source,  baseMaps, overlayMaps ;
+  var layerColor, source, baseMaps, overlayMaps;
+  var ss = [];
   var size_box = [];
   var init= function() {
 
@@ -174,12 +175,12 @@ Navarra.geomaps = function (){
 
     ]);
 
-     baseMaps = {
+    baseMaps = {
       "Streets": streets,
       "Grayscale": grayscale,
     };
 
-     overlayMaps = {
+    overlayMaps = {
       "Datos": projects
     };
 
@@ -345,14 +346,18 @@ Navarra.geomaps = function (){
 
   function point_colors_data(data, field){
     mymap.removeLayer(projects);
-   
-        if(typeof(source)!=='undefined'){
-          mymap.removeLayer(source);
+        if(ss.length > 0){
+        $.each(ss, function (id, layer) {
+          mymap.removeLayer(layer);
+        });
           mymap.removeControl(layerControl);
-          layerControl = L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+          layerControl =  L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+          ss = [];
         }
+      
     var cql_project_type = 'project_type_id='+Navarra.dashboards.config.project_type_id;
     $.each(data, function(a,b){
+
       var cql_name= b['name'];
       var col;
       var value_filter = cql_project_type + " and " + field + "='"+ cql_name + "'";
@@ -373,7 +378,9 @@ Navarra.geomaps = function (){
         env: env_f,
         CQL_FILTER: value_filter
       };
-      source =  new L.tileLayer.betterWms("http://"+url+":8080/geoserver/wms", options);
+      source = new L.tileLayer.betterWms("http://"+url+":8080/geoserver/wms", options);
+      ss.push(source);
+      /*layerControl.addOverlay(source, cql_name);*/
 
     var htmlLegend1and2 = L.control.htmllegend({
       position: 'bottomleft',
