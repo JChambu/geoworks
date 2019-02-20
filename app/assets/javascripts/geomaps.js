@@ -246,7 +246,7 @@ Navarra.geomaps = function (){
           label: '',
           html: '',
           style: {
-            'background-color': '#87CEEB',
+            'background-color': '#d22e2e',
             'width': '10px',
             'height': '10px'
           }
@@ -391,14 +391,15 @@ Navarra.geomaps = function (){
         }]
       }],
       collapseSimple: true,
-      detectStretched: false,
-      collapsedOnInit: false,
-      defaultOpacity: 0.9,
+      detectStretched: true,
+      collapsedOnInit: true,
+      defaultOpacity: 1,
       visibleIcon: 'icon icon-eye',
       hiddenIcon: 'icon icon-eye-slash'
     })
     mymap.addControl(htmlLegend1and2)
-      source.addTo(mymap);
+    layerControl.addOverlay(source, cql_name);
+    source.addTo(mymap);
     })
 }
 
