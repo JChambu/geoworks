@@ -63,7 +63,7 @@ class ProjectTypesController < ApplicationController
 
 
   def create_point_colors
-    @query_point = Project.where(project_type_id: params[:project_type_id]).select("properties->>'#{params[:q][:project_field]}' as name").group("properties->>'#{params[:q][:project_field]}'")
+    @query_point = Project.where(project_type_id: params[:project_type_id]).select("properties->>'#{params[:q][:project_field]}' as name").group("properties->>'#{params[:q][:project_field]}'").limit(10)
     respond_to do |format|
       format.js
     end
