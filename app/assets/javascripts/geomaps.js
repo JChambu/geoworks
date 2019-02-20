@@ -344,8 +344,9 @@ Navarra.geomaps = function (){
 
 
 
-    layerProjects = new MySourceb("http://localhost:8080/geoserver/wms", {
-      layers: "geoworks:view_project_geoserver_public",//nombre de la capa (ver get capabilities)
+    current_tenant = Navarra.dashboards.config.current_tenant;
+    layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
+      layers: "geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
@@ -354,7 +355,7 @@ Navarra.geomaps = function (){
       styles: 'poi_new',
       CQL_FILTER: cql_filter 
     })
-    projects = layerProjects.getLayer("view_project_geoserver_public").addTo(mymap);
+    projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
     init_kpi();
     init_chart_doughnut();  
   }
