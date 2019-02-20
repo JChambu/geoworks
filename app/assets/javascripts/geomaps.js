@@ -315,6 +315,19 @@ Navarra.geomaps = function (){
   }
 
   function wms_filter(){
+   
+    
+    var MySourceb = L.WMS.Source.extend({
+      'showFeatureInfo': function(latlng, info) {
+
+        if (!this._map) {
+          return;
+        }
+        //               do whatever you like with info
+        this._map.openPopup(info, latlng);
+      }
+    });
+    
     mymap.removeLayer(projects);
 
     var field =  Navarra.project_types.config.project_field.toLowerCase() ;    
@@ -329,7 +342,9 @@ Navarra.geomaps = function (){
       cql_filter +=" and "+ b;
     });      
 
-    layerProjects = new MySource("http://localhost:8080/geoserver/wms", {
+
+
+    layerProjects = new MySourceb("http://localhost:8080/geoserver/wms", {
       layers: "geoworks:view_project_geoserver_public",//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
