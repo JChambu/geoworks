@@ -92,7 +92,7 @@ Navarra.geomaps_extended_listings = function (){
 Navarra.geomaps = function (){
   //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
   var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl, url;
-  var layerColor, source, baseMaps, overlayMaps;
+  var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss;
   var ss = [];
   var size_box = [];
   var init= function() {
@@ -234,7 +234,7 @@ Navarra.geomaps = function (){
           init_chart_doughnut(size_box);  
           poly();
         })
-      
+
       }
     });
 
@@ -315,11 +315,9 @@ Navarra.geomaps = function (){
   }
 
   function wms_filter(){
-   
-    
+
     var MySourceb = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
-
         if (!this._map) {
           return;
         }
@@ -327,60 +325,71 @@ Navarra.geomaps = function (){
         this._map.openPopup(info, latlng);
       }
     });
-    
-    mymap.removeLayer(projects);
-
-    var field =  Navarra.project_types.config.project_field.toLowerCase() ;    
-    Navarra.project_types.config.filter;    
-    var ivalue =   Navarra.project_types.config.input_value;    
 
     current_tenant = Navarra.dashboards.config.current_tenant;
     var cql_filter = 'project_type_id='+Navarra.dashboards.config.project_type_id;
     var filter_option = Navarra.project_types.config.filter_option;
 
-    $.each(filter_option, function(a,b){
-      cql_filter +=" and "+ b;
-    });      
+    if (filter_option.length > 0){
+      $.each(filter_option, function(a,b){
+        cql_filter +=" and "+ b;
+      });      
 
-
-
-    current_tenant = Navarra.dashboards.config.current_tenant;
-    layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
-      layers: "geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
-      format: 'image/png',
-      transparent: 'true',
-      opacity: 1,
-      version: '1.0.0',//wms version (ver get capabilities)
-      tiled: true,
-      styles: 'poi_new',
-      CQL_FILTER: cql_filter 
-    })
-    projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
+      mymap.removeLayer(projects);
+      current_tenant = Navarra.dashboards.config.current_tenant;
+      projectFilterLayer = new MySourceb("http://"+url+":8080/geoserver/wms", {
+        layers: "geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+        format: 'image/png',
+        transparent: 'true',
+        opacity: 1,
+        version: '1.0.0',//wms version (ver get capabilities)
+        tiled: true,
+        styles: 'poi_new',
+        CQL_FILTER: cql_filter 
+      })
+       projectss = projectFilterLayer.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
+    }else{
+      if(typeof(projectss)!=='undefined'){
+        mymap.removeLayer(projectss);
+      }
+      projects.addTo(mymap);
+    }
     init_kpi();
     init_chart_doughnut();  
   }
 
-  function point_colors_data(data, field){
+  function point_colors_data(){
+   
+    field_point = Navarra.project_types.config.field_point_colors;
+    data_point = Navarra.project_types.config.data_point_colors;
+    console.log(field_point); 
+    if (field_point != ''){
+    
     mymap.removeLayer(projects);
-        if(ss.length > 0){
-        $.each(ss, function (id, layer) {
-          mymap.removeLayer(layer);
-        });
-          mymap.removeControl(layerControl);
-          layerControl =  L.control.layers(baseMaps, overlayMaps).addTo(mymap);
-          ss = [];
-        }
-      
+    if(ss.length > 0){
+      $.each(ss, function (id, layer) {
+        mymap.removeLayer(layer);
+      });
+      mymap.removeControl(layerControl);
+      layerControl =  L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+      ss = [];
+    }
     var cql_project_type = 'project_type_id='+Navarra.dashboards.config.project_type_id;
-    $.each(data, function(a,b){
+    $.each(data_point, function(a,b){
 
       var cql_name= b['name'];
       var col;
-      var value_filter = cql_project_type + " and " + field + "='"+ cql_name + "'";
-                 col = randomColor({
-                      format: 'hex'
-                    });
+      var value_filter = cql_project_type + " and " + field_point + "='"+ cql_name + "' ";
+      col = randomColor({
+        format: 'hex'
+      });
+      var filter_option = Navarra.project_types.config.filter_option;
 
+      if (filter_option != ''){
+        $.each(filter_option, function(a,b){
+          value_filter +=" and "+ b;
+        });      
+      }
       var env_f = "color:" + col ;
       var options = {
 
@@ -396,58 +405,69 @@ Navarra.geomaps = function (){
       };
       source = new L.tileLayer.betterWms("http://"+url+":8080/geoserver/wms", options);
       ss.push(source);
-      /*layerControl.addOverlay(source, cql_name);*/
 
-    var htmlLegend1and2 = L.control.htmllegend({
-      position: 'bottomleft',
-      legends: [{
-        name: cql_name,
-        layer: source,
-        elements: [{
-          label: '',
-          html: '',
-          style: {
-            'background-color': col,
-            'width': '10px',
-            'height': '10px'
-          }
-        }]
-      }],
-      collapseSimple: true,
-      detectStretched: true,
-      collapsedOnInit: true,
-      defaultOpacity: 1,
-      visibleIcon: 'icon icon-eye',
-      hiddenIcon: 'icon icon-eye-slash'
+      var htmlLegend1and2 = L.control.htmllegend({
+        position: 'bottomleft',
+        legends: [{
+          name: cql_name,
+          layer: source,
+          elements: [{
+            label: '',
+            html: '',
+            style: {
+              'background-color': col,
+              'width': '10px',
+              'height': '10px'
+            }
+          }]
+        }],
+        collapseSimple: true,
+        detectStretched: true,
+        collapsedOnInit: true,
+        defaultOpacity: 1,
+        visibleIcon: 'icon icon-eye',
+        hiddenIcon: 'icon icon-eye-slash'
+      })
+      mymap.addControl(htmlLegend1and2)
+      layerControl.addOverlay(source, cql_name);
+      source.addTo(mymap);
     })
-    mymap.addControl(htmlLegend1and2)
-    layerControl.addOverlay(source, cql_name);
-    source.addTo(mymap);
-    })
-}
-
-function heatmap_data(data){
-
-  var testData;
-  testData = {
-    max: 5,
-    data: data}
-
-  if(typeof(heatmapLayer)!=='undefined'){
-    layerControl.removeLayer(heatmapLayer);
-    mymap.removeLayer(heatmapLayer);
+  }else{
+  
+    if(ss.length > 0){
+      $.each(ss, function (id, layer) {
+        mymap.removeLayer(layer);
+      });
+      mymap.removeControl(layerControl);
+      layerControl =  L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+      projects.addTo(mymap);
+      ss = [];
+    }
   }
-  heatmapLayer = new HeatmapOverlay(cfg);
-  heatmapLayer.setData(testData);
+  }
 
-  layerControl.addOverlay(heatmapLayer, "heatmap");
-  mymap.addLayer(heatmapLayer);
-}
+  function heatmap_data(data){
 
-return {
-  init: init,
-  wms_filter: wms_filter,
-  heatmap_data: heatmap_data,
-  point_colors_data: point_colors_data
-}
+    var testData;
+    testData = {
+      max: 5,
+      data: data}
+
+    if(typeof(heatmapLayer)!=='undefined'){
+      layerControl.removeLayer(heatmapLayer);
+      mymap.removeLayer(heatmapLayer);
+    }
+    heatmapLayer = new HeatmapOverlay(cfg);
+    heatmapLayer.setData(testData);
+
+    layerControl.addOverlay(heatmapLayer, "heatmap");
+    mymap.addLayer(heatmapLayer);
+  }
+
+  return {
+    init: init,
+    wms_filter: wms_filter,
+    heatmap_data: heatmap_data,
+    point_colors_data: point_colors_data
+  }
 }();

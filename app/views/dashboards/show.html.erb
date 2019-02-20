@@ -12,17 +12,17 @@
 
     <%if !a.the_geom.nil?  %>
     Navarra.dashboards.config.lat.push( <%= a.the_geom.y %>)
-Navarra.dashboards.config.lon.push( <%= a.the_geom.x %>)
+    Navarra.dashboards.config.lon.push( <%= a.the_geom.x %>)
 <% end %>
 <% end %>
   </script>  
 <% end %>
-<div class="add_filters">
+<div class="add_filters"></div>
+<div class="add_field_point_color"></div>
+
+<div id="firewall-content"></div>
+
   
-</div>
-
-
-
 <div id="modal-window" class="modal fade" >
   <div class="modal-dialog" id="graphics_modal" role="document">
     <div class="modal-content"></div>

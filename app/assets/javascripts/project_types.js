@@ -10,7 +10,9 @@ Navarra.project_types.config = {
   input_value:'',
   filter_option: [],
   size_box: [],
-  filter_kpi:[] 
+  filter_kpi:[],
+  field_point_colors:'',
+  data_point_colors:[]
 }
 
 $(document).on('click', 'form .remove_fields', function(event){

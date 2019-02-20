@@ -1,4 +1,8 @@
 d = <%= raw  @query_point.to_json%>;
 field = <%= raw params[:q][:project_field].to_json %>
-Navarra.geomaps.point_colors_data(d, field);
+Navarra.project_types.config.field_point_colors = field;
+Navarra.project_types.config.data_point_colors = d;
+Navarra.geomaps.point_colors_data();
+$(".add_field_point_color").empty();
+$(".add_field_point_color").append('<div class="mes" id="point_color">'+ field+'</div>');
 $("#point_colors-modal").modal('hide');

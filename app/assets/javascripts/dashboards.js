@@ -23,21 +23,39 @@ Navarra.dashboards.action_show = function(){
      Navarra.dashboards.config.graph_id= graph_id;
     });
 
-    $(".add_filters").on("click", ".message",  function(){
-       var da =  $(this).attr('id');
-       var kpi_value =  $(this).attr('value');
+    $(".add_field_point_color").on("click", ".mes",  function(){
+      var da =  $(this).attr('id');
+      console.log(da);
+        Navarra.project_types.config.field_point_colors = ''; 
+        $(this).remove();
+      Navarra.geomaps.wms_filter();
+      Navarra.geomaps.point_colors_data();
+
+    });
+      
+      $(".add_filters").on("click", ".message",  function(){
+      var da =  $(this).attr('id');
+      
+        Navarra.project_types.config.field_point_colors = ''; 
+        $(this).remove();
+      
+      var kpi_value =  $(this).attr('value');
       ar = Navarra.project_types.config.filter_option;  
       option_kpi = Navarra.project_types.config.filter_kpi;  
+      field_point = Navarra.project_types.config.field_point_colors;
+      
       b = $.grep(ar, function(value){
           return value != da;
       })
       kpi = $.grep(option_kpi, function(value){
           return value != kpi_value;
       })
+
       Navarra.project_types.config.filter_option = b;  
-      Navarra.project_types.config.filter_kpi = kpi;  
+      Navarra.project_types.config.filter_kpi = kpi; 
       $(this).remove();
       Navarra.geomaps.wms_filter();
+      Navarra.geomaps.point_colors_data();
       //init_chart_doughnut();  
     });
 
