@@ -92,7 +92,7 @@ Navarra.geomaps_extended_listings = function (){
 Navarra.geomaps = function (){
   //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
   var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl, url;
-  var layerColor, source;
+  var layerColor, source,  baseMaps, overlayMaps ;
   var size_box = [];
   var init= function() {
 
@@ -174,12 +174,12 @@ Navarra.geomaps = function (){
 
     ]);
 
-    var baseMaps = {
+     baseMaps = {
       "Streets": streets,
       "Grayscale": grayscale,
     };
 
-    var overlayMaps = {
+     overlayMaps = {
       "Datos": projects
     };
 
@@ -345,16 +345,17 @@ Navarra.geomaps = function (){
 
   function point_colors_data(data, field){
     mymap.removeLayer(projects);
-    
-    var color1 = '#6f98fc';
-    var color2 = '#fce36f';
-    var color5 = '#fb3027';
+   
+        if(typeof(source)!=='undefined'){
+          mymap.removeLayer(source);
+          mymap.removeControl(layerControl);
+          layerControl = L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+        }
     var cql_project_type = 'project_type_id='+Navarra.dashboards.config.project_type_id;
     $.each(data, function(a,b){
       var cql_name= b['name'];
       var col;
       var value_filter = cql_project_type + " and " + field + "='"+ cql_name + "'";
-      
                  col = randomColor({
                       format: 'hex'
                     });
@@ -373,7 +374,6 @@ Navarra.geomaps = function (){
         CQL_FILTER: value_filter
       };
       source =  new L.tileLayer.betterWms("http://"+url+":8080/geoserver/wms", options);
-      /*layerControl.addOverlay(source, cql_name);*/
 
     var htmlLegend1and2 = L.control.htmllegend({
       position: 'bottomleft',
