@@ -3,7 +3,7 @@
 field = '<%= params[:q][:project_field] %>';    
 value = '<%= params[:q][:input_value] %>';    
 var filter_option = '<%= params[:q][:project_field].downcase %>' +'='+ "'<%= params[:q][:input_value] %>'";
-var filter_kpi = '<%= params[:q][:project_field]%>' +' = '+ "'<%= params[:q][:input_value] %>'";
+var filter_kpi = '<%= params[:q][:project_field]%>' +'='+ "'<%= params[:q][:input_value] %>'";
 Navarra.project_types.config.filter_option.push(filter_option);
 Navarra.project_types.config.filter_kpi.push(filter_kpi);
 $(".add_filters").append('<div class="message success form-control" id="'+filter_option+'"value="'+filter_kpi+'"> <b>Filtrado por:</b> '+ filter_kpi+'</div>')
