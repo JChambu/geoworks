@@ -334,137 +334,138 @@ Navarra.geomaps = function (){
         cql_filter +=" and "+ b;
       });      
 
-       mymap.removeLayer(projects);
+      mymap.removeLayer(projects);
       if(typeof(projectss)!=='undefined'){
         mymap.removeLayer(projectss);
       }
-      
-var point_color = Navarra.project_types.config.field_point_colors;
 
-if(point_color != ''){
-      if(typeof(projectss)!=='undefined'){
-        mymap.removeLayer(projectss);
+      var point_color = Navarra.project_types.config.field_point_colors;
+
+      if(point_color != ''){
+        if(typeof(projectss)!=='undefined'){
+          mymap.removeLayer(projectss);
+        }
+        Navarra.geomaps.point_colors_data();
+      }else{  
+
+        current_tenant = Navarra.dashboards.config.current_tenant;
+        projectFilterLayer = new MySourceb("http://"+url+":8080/geoserver/wms", {
+          layers: "geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+          format: 'image/png',
+          transparent: 'true',
+          opacity: 1,
+          version: '1.0.0',//wms version (ver get capabilities)
+          tiled: true,
+          styles: 'poi_new',
+          CQL_FILTER: cql_filter 
+        })
+        projectss = projectFilterLayer.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
+      } }else{
+        if(typeof(projectss)!=='undefined'){
+          mymap.removeLayer(projectss);
+        }
+        projects.addTo(mymap);
       }
-    Navarra.geomaps.point_colors_data();
-}else{  
-      
-      current_tenant = Navarra.dashboards.config.current_tenant;
-      projectFilterLayer = new MySourceb("http://"+url+":8080/geoserver/wms", {
-        layers: "geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
-        format: 'image/png',
-        transparent: 'true',
-        opacity: 1,
-        version: '1.0.0',//wms version (ver get capabilities)
-        tiled: true,
-        styles: 'poi_new',
-        CQL_FILTER: cql_filter 
-      })
-       projectss = projectFilterLayer.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
-} }else{
-      console.log("projectss");
-      if(typeof(projectss)!=='undefined'){
-        mymap.removeLayer(projectss);
-      }
-      projects.addTo(mymap);
-    }
     init_kpi();
     init_chart_doughnut();  
   }
 
   function point_colors_data(){
-   
+
     field_point = Navarra.project_types.config.field_point_colors;
     data_point = Navarra.project_types.config.data_point_colors;
     var filter_option = Navarra.project_types.config.filter_option;
     if (field_point != ''){
-    
-    mymap.removeLayer(projects);
-    if(ss.length > 0){
-      $.each(ss, function (id, layer) {
-        mymap.removeLayer(layer);
-      });
-      mymap.removeControl(layerControl);
-      layerControl =  L.control.layers(baseMaps, overlayMaps).addTo(mymap);
-      ss = [];
-    }
+
+      mymap.removeLayer(projects);
+      if(ss.length > 0){
+        $.each(ss, function (id, layer) {
+          mymap.removeLayer(layer);
+        });
+        mymap.removeControl(layerControl);
+        layerControl =  L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+        ss = [];
+      }
 
       if(typeof(projectss)!=='undefined'){
         mymap.removeLayer(projectss);
       }
-      
+
       var cql_project_type = 'project_type_id='+Navarra.dashboards.config.project_type_id;
-    $.each(data_point, function(a,b){
+      $.each(data_point, function(a,b){
 
-      var cql_name= b['name'];
-      var col;
-      var value_filter = cql_project_type + " and " + field_point + "='"+ cql_name + "' ";
-      col = randomColor({
-        format: 'hex'
-      });
+        var cql_name= b['name'];
+        var col;
+        var value_filter = cql_project_type + " and " + field_point + "='"+ cql_name + "' ";
+        col = randomColor({
+          format: 'hex'
+        });
 
 
-      if (filter_option != ''){
-        $.each(filter_option, function(a,b){
-          value_filter +=" and "+ b;
-        });      
-      }
-      var env_f = "color:" + col ;
-      var options = {
+        if (filter_option != ''){
+          $.each(filter_option, function(a,b){
+            value_filter +=" and "+ b;
+          });      
+        }
+        var env_f = "color:" + col ;
+        var options = {
 
-        layers: "geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
-        format: 'image/png',
-        transparent: 'true',
-        opacity: 1,
-        version: '1.0.0',//wms version (ver get capabilities)
-        tiled: true,
-        styles: 'scale2',
-        env: env_f,
-        CQL_FILTER: value_filter
-      };
-      source = new L.tileLayer.betterWms("http://"+url+":8080/geoserver/wms", options);
-      ss.push(source);
+          layers: "geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+          format: 'image/png',
+          transparent: 'true',
+          opacity: 1,
+          version: '1.0.0',//wms version (ver get capabilities)
+          tiled: true,
+          styles: 'scale2',
+          env: env_f,
+          CQL_FILTER: value_filter
+        };
+        source = new L.tileLayer.betterWms("http://"+url+":8080/geoserver/wms", options);
+        ss.push(source);
 
-      var htmlLegend1and2 = L.control.htmllegend({
-        position: 'bottomleft',
-        legends: [{
-          name: cql_name,
-          layer: source,
-          elements: [{
-            label: '',
-            html: '',
-            style: {
-              'background-color': col,
-              'width': '10px',
-              'height': '10px'
-            }
-          }]
-        }],
-        collapseSimple: true,
-        detectStretched: true,
-        collapsedOnInit: true,
-        defaultOpacity: 1,
-        visibleIcon: 'icon icon-eye',
-        hiddenIcon: 'icon icon-eye-slash'
+        var htmlLegend1and2 = L.control.htmllegend({
+          position: 'bottomleft',
+          legends: [{
+            name: cql_name,
+            layer: source,
+            elements: [{
+              label: '',
+              html: '',
+              style: {
+                'background-color': col,
+                'width': '10px',
+                'height': '10px'
+              }
+            }]
+          }],
+          collapseSimple: true,
+          detectStretched: true,
+          collapsedOnInit: true,
+          defaultOpacity: 1,
+          visibleIcon: 'icon icon-eye',
+          hiddenIcon: 'icon icon-eye-slash'
+        })
+        mymap.addControl(htmlLegend1and2)
+        layerControl.addOverlay(source, cql_name);
+        source.addTo(mymap);
+
+        init_kpi();
+        init_chart_doughnut();  
       })
-      mymap.addControl(htmlLegend1and2)
-      layerControl.addOverlay(source, cql_name);
-      source.addTo(mymap);
-    })
-  }else{
+    }else{
+      if(ss.length > 0){
+        $.each(ss, function (id, layer) {
+          mymap.removeLayer(layer);
+        });
+        mymap.removeControl(layerControl);
+        layerControl =  L.control.layers(baseMaps, overlayMaps).addTo(mymap);
 
-    if(ss.length > 0){
-      $.each(ss, function (id, layer) {
-        mymap.removeLayer(layer);
-      });
-      mymap.removeControl(layerControl);
-      layerControl =  L.control.layers(baseMaps, overlayMaps).addTo(mymap);
-      
-     if(filter_option.length == 0){ 
-      projects.addTo(mymap);
+        if(filter_option.length == 0){ 
+          projects.addTo(mymap);
+        }
+        ss = [];
       }
-      ss = [];
     }
-  }
   }
 
   function heatmap_data(data){
