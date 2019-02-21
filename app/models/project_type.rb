@@ -206,6 +206,9 @@ class ProjectType < ApplicationRecord
           @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
           @field_select += ", properties->>'" + chart.group_field.key + "' as name "
           @field_group = "properties->>'"+ chart.group_field.key + "'"
+        
+        data =  data.select(@field_select).group(@field_group).order(@field_group)
+        end
 
           if !data_conditions.blank?
             data_conditions.each do |key| 
@@ -215,10 +218,6 @@ class ProjectType < ApplicationRecord
           data =  data.where(" properties->>'" + @field+ "'=#{@value}")
          end
       end
-        
-        data=   data.select(@field_select).group(@field_group).order(@field_group)
-        end
-
         @items["serie#{i}"] = data
         @option_graph = graph
         chart_type = graph.chart.name
