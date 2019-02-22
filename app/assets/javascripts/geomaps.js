@@ -133,15 +133,34 @@ Navarra.geomaps = function (){
     }) ;
 
     MySource = L.WMS.Source.extend({
+      
+      
+      
+      
       'showFeatureInfo': function(latlng, info) {
         if (!this._map) {
           return;
         }
+        var ii;
+        var cc = JSON.parse(info);
+        var prop = cc['features'][0]['properties'];
+        var z = document.createElement('p'); // is a node
+        var x = []
+        $.each(prop, function(a,b){
+        
+      x.push('<b>' + a + ': </b> ' + b + '</br>');
+        })
+
+        z.innerHTML = x;
+       inn = document.body.appendChild(z);
+
+
+
         checked = $('#select').hasClass('active');
         if (!checked){
           L.popup()
             .setLatLng(latlng)
-            .setContent(info)
+            .setContent(inn)
             .openOn(mymap);
         }
       }
@@ -157,7 +176,7 @@ Navarra.geomaps = function (){
       tiled: true,
       styles: 'scale2',
       env: "color:#d22e2e",
-      INFO_FORMAT: 'text/html',
+      INFO_FORMAT: 'application/json',
       format_options: 'callback:getJson',
       CQL_FILTER: "project_type_id="+Navarra.dashboards.config.project_type_id
     })
