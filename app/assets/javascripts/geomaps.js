@@ -177,7 +177,7 @@ Navarra.geomaps = function (){
       styles: 'scale2',
       env: "color:#d22e2e",
       INFO_FORMAT: 'application/json',
-      format_options: 'callback:getJson'
+      format_options: 'callback:getJson',
       CQL_FILTER: "project_type_id="+Navarra.dashboards.config.project_type_id
     })
 
