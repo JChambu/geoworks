@@ -19,31 +19,31 @@ Navarra.dashboards.action_show = function(){
   var init = function(){
 
     $(".chart-modal").on('click', function(){
-     var   graph_id =  $(this).attr('id'); 
+     var   graph_id =  $(this).attr('id');
      Navarra.dashboards.config.graph_id= graph_id;
     });
 
     $(".add_field_point_color").on("click", ".mes",  function(){
       var da =  $(this).attr('id');
       console.log(da);
-        Navarra.project_types.config.field_point_colors = ''; 
+        Navarra.project_types.config.field_point_colors = '';
         $(this).remove();
       Navarra.geomaps.wms_filter();
       Navarra.geomaps.point_colors_data();
 
     });
-      
+
       $(".add_filters").on("click", ".message",  function(){
       var da =  $(this).attr('id');
-      
-        Navarra.project_types.config.field_point_colors = ''; 
+
+        Navarra.project_types.config.field_point_colors = '';
         $(this).remove();
-      
+
       var kpi_value =  $(this).attr('value');
-      ar = Navarra.project_types.config.filter_option;  
-      option_kpi = Navarra.project_types.config.filter_kpi;  
+      ar = Navarra.project_types.config.filter_option;
+      option_kpi = Navarra.project_types.config.filter_kpi;
       field_point = Navarra.project_types.config.field_point_colors;
-      
+
       b = $.grep(ar, function(value){
           return value != da;
       })
@@ -51,18 +51,18 @@ Navarra.dashboards.action_show = function(){
           return value != kpi_value;
       })
 
-      Navarra.project_types.config.filter_option = b;  
-      Navarra.project_types.config.filter_kpi = kpi; 
+      Navarra.project_types.config.filter_option = b;
+      Navarra.project_types.config.filter_kpi = kpi;
       $(this).remove();
       Navarra.geomaps.wms_filter();
       Navarra.geomaps.point_colors_data();
-      //init_chart_doughnut();  
+      //init_chart_doughnut();
     });
 
     $("#hide_side").on("click", function(){
-      
+
           $(".side_left").slideToggle("slow");
-      })    
+      })
     var  project_id = $("#data_id").val();
 
     $( "#view" ).on( "click", function() {
@@ -70,31 +70,29 @@ Navarra.dashboards.action_show = function(){
       if (!status_view){
         $('#view').addClass('active');
         var o = parseInt(window.innerHeight) - 100;
-        //var w = parseInt(window.innerWidth) - 600;
-        //var h = parseInt(window.innerWidth) - 600;
 
-        $("#map").css("height", o+"px"); //map.invalidateSize();
-        $("#map").css("width", "75%"); //map.invalidateSize();
-        $("#map").css("float", "left"); //map.invalidateSize();
+        $("#map").css("height", o+"px");
+        $("#map").css("width", "75%");
+        $("#map").css("float", "left");
         $(".graphics div").removeClass("col-md-3");
         $(".graphics div").removeClass("col-md-6");
         $(".graphics div").removeClass("col-md-9");
         $(".graphics div").removeClass("col-md-12");
-        $(".gridactive").css("width", "auto"); //map.invalidateSize();
-        $(".graphics").css("height", o+"px"); //map.invalidateSize();
-        $(".graphics").css("width", "25%"); //map.invalidateSize();
-        $(".graphics").css("float", "right"); //map.invalidateSize();
+        $(".gridactive").css("width", "auto");
+        $(".graphics").css("height", o+"px");
+        $(".graphics").css("width", "25%");
+        $(".graphics").css("float", "right");
         $("#clas_map").toggleClass( "col-md-9", 500, "easeOutSine" );
         $(".graphics").removeClass( "col-md-12");
         $(".graphics").toggleClass( "col-md-3", 500, "easeOutSine" );
         $(".card_graph").removeClass( "col-md-6");
         $(".card_graph").toggleClass( "col-md-12", 500, "easeOutSine" );
 
-        init_chart_doughnut();  
+        init_chart_doughnut();
       }else{
         $(".graphics").removeClass("col-md-3");
         $(".graphics").removeClass("col-md-3");
-        $(".graphics").css("width", "100%"); //map.invalidateSize();
+        $(".graphics").css("width", "100%");
         $('div.graphics').replaceWith( $('div.graphics'), init_chart_doughnut());
         status_view = $('#view').removeClass('active');
         var o = 400;
