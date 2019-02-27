@@ -92,7 +92,7 @@ Navarra.geomaps_extended_listings = function (){
 Navarra.geomaps = function (){
   //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
   var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl, url;
-  var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss;
+  var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld;
   var ss = [];
   var size_box = [];
   var init= function() {
@@ -123,7 +123,6 @@ Navarra.geomaps = function (){
     };
 
     mymap = L.map('map',{
-      crs: L.CRS.EPSG3857,
       fadeAnimation: false,
       markerZoomAnimation: false,
       zoom: 12,
@@ -167,6 +166,9 @@ Navarra.geomaps = function (){
     });
 
     current_tenant = Navarra.dashboards.config.current_tenant;
+ sld = '<?xml version="1.0" encoding="UTF-8"?><StyledLayerDescriptor version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd" xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc"  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">  <NamedLayer><Name>view_project_geoserver_public</Name>  <UserStyle><Title>Default Point</Title> <Abstract>A sample style that draws a point</Abstract>  <FeatureTypeStyle>  <Rule>  <Name>rule1</Name> <Title>Red Square</Title> <Abstract>A 6 pixel square with a red fill and no stroke</Abstract> <PointSymbolizer> <Graphic> <Mark> <WellKnownName>square</WellKnownName>  <Fill> <CssParameter name="fill-opacity">0.6</CssParameter> </Fill> </Mark> <Size>20</Size> </Graphic> </PointSymbolizer></Rule> </FeatureTypeStyle> </UserStyle> </NamedLayer> </StyledLayerDescriptor>';
+
+
     layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
       layers: "geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
       format: 'image/png',
@@ -174,8 +176,7 @@ Navarra.geomaps = function (){
       opacity: 1,
       version: '1.0.0',//wms version (ver get capabilities)
       tiled: true,
-      styles: 'scale2',
-      env: "color:#d22e2e",
+      SLD_BODY: sld,
       INFO_FORMAT: 'application/json',
       format_options: 'callback:getJson',
       CQL_FILTER: "project_type_id="+Navarra.dashboards.config.project_type_id
@@ -435,7 +436,7 @@ Navarra.geomaps = function (){
           opacity: 1,
           version: '1.0.0',//wms version (ver get capabilities)
           tiled: true,
-          styles: 'scale2',
+          sld_body: sld,
           env: env_f,
           CQL_FILTER: value_filter
         };
