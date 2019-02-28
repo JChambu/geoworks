@@ -90,9 +90,8 @@ Navarra.geomaps_extended_listings = function (){
 }();
 
 Navarra.geomaps = function (){
-  //var map,  featureOverlay, selectCtrl, mainbar, editbar, vector, iconStyle, popup, container, content, highlight;
   var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl, url;
-  var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld;
+  var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer;
   var ss = [];
   var size_box = [];
   var init= function() {
@@ -133,29 +132,22 @@ Navarra.geomaps = function (){
 
     MySource = L.WMS.Source.extend({
       
-      
-      
-      
       'showFeatureInfo': function(latlng, info) {
         if (!this._map) {
           return;
         }
-        var ii;
         var cc = JSON.parse(info);
         var prop = cc['features'][0]['properties'];
         var z = document.createElement('p'); // is a node
         var x = []
         $.each(prop, function(a,b){
-        
-      x.push('<b>' + a + ': </b> ' + b + '</br>');
+          x.push('<b>' + a + ': </b> ' + b + '</br>');
         })
 
         z.innerHTML = x;
-       inn = document.body.appendChild(z);
-
-
-
+        inn = document.body.appendChild(z);
         checked = $('#select').hasClass('active');
+        
         if (!checked){
           L.popup()
             .setLatLng(latlng)
@@ -166,23 +158,20 @@ Navarra.geomaps = function (){
     });
 
     current_tenant = Navarra.dashboards.config.current_tenant;
- sld = '<?xml version="1.0" encoding="UTF-8"?><StyledLayerDescriptor version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd" xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc"  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">  <NamedLayer><Name>view_project_geoserver_public</Name>  <UserStyle><Title>Default Point</Title> <Abstract>A sample style that draws a point</Abstract>  <FeatureTypeStyle>  <Rule>  <Name>rule1</Name> <Title>Red Square</Title> <Abstract>A 6 pixel square with a red fill and no stroke</Abstract> <PointSymbolizer> <Graphic> <Mark> <WellKnownName>square</WellKnownName>  <Fill> <CssParameter name="fill-opacity">0.6</CssParameter> </Fill> </Mark> <Size>20</Size> </Graphic> </PointSymbolizer></Rule> </FeatureTypeStyle> </UserStyle> </NamedLayer> </StyledLayerDescriptor>';
-
-
+    name_layer = Navarra.dashboards.config.name_layer;
     layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
-      layers: "geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+      layers: "geoworks:" + name_layer,//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
       version: '1.0.0',//wms version (ver get capabilities)
       tiled: true,
-      SLD_BODY: sld,
+      styles: 'poi_new',
       INFO_FORMAT: 'application/json',
-      format_options: 'callback:getJson',
-      CQL_FILTER: "project_type_id="+Navarra.dashboards.config.project_type_id
+      format_options: 'callback:getJson'
     })
 
-    projects = layerProjects.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
+    projects = layerProjects.getLayer(name_layer).addTo(mymap);
 
     minx = Navarra.dashboards.config.minx;   
     miny = Navarra.dashboards.config.miny;   
@@ -345,7 +334,6 @@ Navarra.geomaps = function (){
       }
     });
 
-    current_tenant = Navarra.dashboards.config.current_tenant;
     var cql_filter = 'project_type_id='+Navarra.dashboards.config.project_type_id;
     var filter_option = Navarra.project_types.config.filter_option;
 
@@ -368,9 +356,8 @@ Navarra.geomaps = function (){
         Navarra.geomaps.point_colors_data();
       }else{  
 
-        current_tenant = Navarra.dashboards.config.current_tenant;
         projectFilterLayer = new MySourceb("http://"+url+":8080/geoserver/wms", {
-          layers: "geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+          layers: "geoworks:"+name_layer,//nombre de la capa (ver get capabilities)
           format: 'image/png',
           transparent: 'true',
           opacity: 1,
@@ -379,7 +366,7 @@ Navarra.geomaps = function (){
           styles: 'poi_new',
           CQL_FILTER: cql_filter 
         })
-        projectss = projectFilterLayer.getLayer("view_project_geoserver_"+current_tenant).addTo(mymap);
+        projectss = projectFilterLayer.getLayer(name_layer).addTo(mymap);
       } }else{
         if(typeof(projectss)!=='undefined'){
           mymap.removeLayer(projectss);
@@ -430,13 +417,13 @@ Navarra.geomaps = function (){
         var env_f = "color:" + col ;
         var options = {
 
-          layers: "geoworks:view_project_geoserver_"+current_tenant,//nombre de la capa (ver get capabilities)
+          layers: "geoworks:"+name_layer,//nombre de la capa (ver get capabilities)
           format: 'image/png',
           transparent: 'true',
           opacity: 1,
           version: '1.0.0',//wms version (ver get capabilities)
           tiled: true,
-          sld_body: sld,
+          styles: 'scale2',
           env: env_f,
           CQL_FILTER: value_filter
         };

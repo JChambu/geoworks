@@ -24,7 +24,7 @@ class ProjectType < ApplicationRecord
 
   validates :name,  presence: true
   validates :name, uniqueness: true 
-  validates :file, presence: true
+  validates :file, presence: true, on: :create
 
   # validates :q, presence: true 
   #validate :file_exist?
@@ -221,7 +221,7 @@ class ProjectType < ApplicationRecord
         @items["serie#{i}"] = data
         @option_graph = graph
         chart_type = graph.chart.name
-        ch["it#{i}"] = { "description":"Holaaaaa description", "chart_type":chart_type, "group_field":@field_group,"chart_properties": @option_graph, "data":@items, "graphics_options": g}
+        ch["it#{i}"] = { "description":data.to_sql, "chart_type":chart_type, "group_field":@field_group,"chart_properties": @option_graph, "data":@items, "graphics_options": g}
       end
        ch
     end
@@ -259,7 +259,7 @@ class ProjectType < ApplicationRecord
             a = ProjectType.load_shape(self.id)
           end
         when 'text/csv'
-          a = ProjectType.load_csv(self.id, self.latitude, self.longitude, self.address, self.department, self.province, self.country)
+          a = ProjectType.load_csv(self.id, self.latitude, self.longitude, self.address, self.department, self.province, self.country, self.name_layer)
         when 'application/xls', 'application/vnd.ms-excel'
           'xls'
         when 'application/json'
@@ -283,17 +283,23 @@ class ProjectType < ApplicationRecord
       @elements 
     end
 
-    def self.load_csv project_type_id, latitude, longitude, address, department, province, country
+    def self.load_csv project_type_id, latitude, longitude, address, department, province, country, name_layer
       @project_type = JSON.parse(ProjectType.find(project_type_id).directory_name)
       @source_path = @project_type[0]
       @file_name = @project_type[1]
       items = []
+      fields = []
       CSV.foreach("#{@source_path}/#{@file_name}", headers: true).with_index do |row, i |
         if i == 0 
+          
           row.headers.each do |field|
+            fields << field
             @new_project_field =  ProjectField.where(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id, required: false, field_type_id: 1).first_or_create(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id, required: false, field_type_id: 1)
           end
         end
+       ct = Apartment::Tenant.current
+       create_view(fields, ct, project_type_id, name_layer) 
+        
         items = row.to_h
         geom = ''
         if (latitude.present? && longitude.present?)
@@ -520,23 +526,81 @@ class ProjectType < ApplicationRecord
 
     def self.load_rgeoserver
       #   curl -u admin:geoserver -XGET http://localhost:8080/geoserver/rest/layers.json
+    require 'net/http'
+    require 'uri'
 
-      uri = URI.parse("http://localhost:8080/geoserver/rest/layers/geoworks:view_project_geoserver.json")
-      request = Net::HTTP::Get.new(uri)
-      request.basic_auth("admin", "geoserver")
-      #    request.content_type = "text/xml"
-      #    request.body = "<workspace><name>acme_ruby_23</name></workspace>"
+    uri = URI.parse("http://localhost:8080/geoserver/rest/workspaces")
+    request = Net::HTTP::Post.new(uri)
+    request.basic_auth("admin", "geoserver")
+    request.content_type = "text/xml"
+    request.body = "<workspace><name>earthws</name></workspace>"
 
-      req_options = {
+    req_options = {
         use_ssl: uri.scheme == "https",
-      }
+    }
 
-      response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
         http.request(request)
-      end
-      response.code
-      response.body
+        end
+
+        # response.code
+        # # response.body
+    
     end
+
+  def self.ds_rgeoserver
+require 'net/http'
+require 'uri'
+
+uri = URI.parse("http://localhost:8080/geoserver/rest/workspaces/earthws/datastores")
+request = Net::HTTP::Post.new(uri)
+request.basic_auth("admin", "geoserver")
+request.content_type = "text/xml"
+request.body = "
+<dataStore>
+<name>earthds</name>
+<connectionParameters>
+     <host>localhost</host>
+          <port>5432</port>
+               <database>earth</database>
+                    <schema>public</schema>
+                         <user>postgres</user>
+                              <passwd>postgres</passwd>
+                                   <dbtype>postgis</dbtype>
+                                   </connectionParameters>
+                                   </dataStore>"
+
+req_options = {
+    use_ssl: uri.scheme == "https",
+}
+
+response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+    http.request(request)
+end
+  end
+
+  def self.get_layer_rgeoserver
+
+    require 'net/http'
+    require 'uri'
+
+    uri = URI.parse("http://localhost:8080/geoserver/rest/layers.json")
+    request = Net::HTTP::Get.new(uri)
+    request.basic_auth("admin", "geoserver")
+
+    req_options = {
+        use_ssl: uri.scheme == "https",
+    }
+
+    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+        http.request(request)
+    end
+
+    # response.code
+    response.body
+  end
+
+
 
     def self.counters(id)
       count = Project.where(project_type_id: id).count
@@ -546,4 +610,18 @@ class ProjectType < ApplicationRecord
 
     end
 
+    def self.create_view(fields, current_tenant, project_type_id, name_layer)
+
+      vv = "CREATE OR REPLACE VIEW #{current_tenant}.#{name_layer} AS "
+      vv += " select "
+      fields.each do |field|
+
+        vv += " properties->>'#{field}' as #{field}, "
+      end
+      vv += " st_y(the_geom),  "
+      vv += " st_x(the_geom) "
+      vv += "FROM #{current_tenant}.projects where project_type_id =#{project_type_id} ; "
+      view = ActiveRecord::Base.connection.execute(vv)
+    return
+  end
   end

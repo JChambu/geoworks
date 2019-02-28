@@ -11,7 +11,8 @@ Navarra.dashboards.config = {
   "maxy": null,
   "current_tenant": '',
   "graph_id":'',
-  size_box: []
+  size_box: [],
+  name_layer: ''
 };
 
 Navarra.dashboards.action_show = function(){
@@ -25,7 +26,6 @@ Navarra.dashboards.action_show = function(){
 
     $(".add_field_point_color").on("click", ".mes",  function(){
       var da =  $(this).attr('id');
-      console.log(da);
         Navarra.project_types.config.field_point_colors = '';
         $(this).remove();
       Navarra.geomaps.wms_filter();
