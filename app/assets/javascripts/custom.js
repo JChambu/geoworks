@@ -273,18 +273,15 @@ function init_chart_doughnut(size_box = null){
               }
 
               // Extraemos el array con los datos de la serie
-
               if (index == 'data'){
                 data_general = value;
                 var lab = [];
                 var da = [];
 
-
                 // Extraemos los datos del array de la serie
                 $.each(data_general, function(idx, vax){
 
                   // Extraemos label y value de los datos
-                  
                   if (type_chart == 'bubble') {
                     $.each(vax, function(i, v ){
                   if(count_series == 0){
@@ -293,7 +290,7 @@ function init_chart_doughnut(size_box = null){
                     bubble_dataset_y.push(v['count']);
                   }
                   })
-                    
+
                   if(count_series == 1){
                     for(var b = 0; b < vax.length; b ++){
                      r = (parseFloat(bubble_dataset_y[b]) * parseFloat(bubble_dataset_x)) * scale;
@@ -406,10 +403,10 @@ function init_chart_doughnut(size_box = null){
 
                   // BUBBLE datasets
                   if (type_chart == 'bubble' && count_series==1) {
-                 
+
                     datasets.push({
                       label: label_datasets,
-                      data: bubble_dataset, 
+                      data: bubble_dataset,
                       fill: false,
                       backgroundColor: 'transparent',
                       borderColor: color,
@@ -442,20 +439,23 @@ function init_chart_doughnut(size_box = null){
 
           // Editar esto en la vista directamente
           status_view = $('#view').hasClass('active');
+
           if (!status_view){
+
             $('.chart_container'+graphic_id).addClass('col-md-'+width);
             if(width == '3'){
               aspectR = "1";
             }else{
               aspectR = "2";
             }
-
             legend_display = true;
 
           }else{
+
             $('.chart_container'+graphic_id).addClass('col-md-12');
             aspectR ="1";
             legend_display = false;
+
           }
 
           // BAR options
