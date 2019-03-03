@@ -101,8 +101,8 @@ Navarra.dashboards.action_show = function(){
         $('div.graphics').replaceWith( $('div.graphics'), init_chart_doughnut());
         status_view = $('#view').removeClass('active');
         var o = 400;
-        $("#map").css("height", o+"px"); //map.invalidateSize();
-        $("#map").css("width", "100%"); //map.invalidateSize();
+        $("#map").css("height", o+"px");
+        $("#map").css("width", "100%");
         $("#map").css("float", "none");
 
       }
