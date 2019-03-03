@@ -442,6 +442,12 @@ function init_chart_doughnut(size_box = null){
 
           if (!status_view){ //Default
 
+            $('.chart_container'+graphic_id).addClass('col-md-12');
+            aspectR ="1";
+            legend_display = false;
+
+          }else{ //Active
+
             $('.chart_container'+graphic_id).addClass('col-md-'+width);
             if(width == '3'){
               aspectR = "1";
@@ -449,12 +455,6 @@ function init_chart_doughnut(size_box = null){
               aspectR = "2";
             }
             legend_display = true;
-
-          }else{ //Active
-
-            $('.chart_container'+graphic_id).addClass('col-md-12');
-            aspectR ="1";
-            legend_display = false;
 
           }
 
