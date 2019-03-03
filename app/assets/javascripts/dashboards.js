@@ -25,6 +25,8 @@ Navarra.dashboards.action_show = function(){
     });
 
     $(".add_field_point_color").on("click", ".mes",  function(){
+
+      $(".fa-spinner").css("color", "#9b9b9b");
       var da =  $(this).attr('id');
         Navarra.project_types.config.field_point_colors = '';
         $(this).remove();
@@ -34,6 +36,8 @@ Navarra.dashboards.action_show = function(){
     });
 
     $(".add_filters").on("click", ".message",  function(){
+
+      $(".fa-filter").css("color", "#9b9b9b");
       var da =  $(this).attr('id');
 
         Navarra.project_types.config.field_point_colors = '';
@@ -67,6 +71,8 @@ Navarra.dashboards.action_show = function(){
 
     $( "#view" ).on( "click", function() {
 
+      $(".fa-table").css("color", "#d3d800");
+
       //Chequeamos el estado de view
       status_view = $('#view').hasClass('active');
 
@@ -97,6 +103,8 @@ Navarra.dashboards.action_show = function(){
         init_chart_doughnut();
 
       }else{ //Default
+
+        $(".fa-table").css("color", "#9b9b9b");
 
         $(".graphics").css("height", "85vh");
         $(".graphics").css("width", "25%");
