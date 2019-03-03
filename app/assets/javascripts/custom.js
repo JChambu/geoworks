@@ -240,7 +240,6 @@ function init_chart_doughnut(size_box = null){
                 stacked = value['stack'];
                 data_labelling = value['data_labelling'];
                 scale = value['scale'];
-                console.log(data);
 
                 tick_min_left = value['tick_x_min'];
                 if (tick_min_left == null) {
@@ -298,12 +297,10 @@ function init_chart_doughnut(size_box = null){
                   if(count_series == 1){
                     for(var b = 0; b < vax.length; b ++){
                      r = (parseFloat(bubble_dataset_y[b]) * parseFloat(bubble_dataset_x)) * scale;
-                     console.log(r);
                     bubble_dataset.push({"x":bubble_dataset_x[b], "y":bubble_dataset_y[b], "r": r });
                   }
                   }
                     count_series = 1 ;
-                    console.log(bubble_dataset);
                 }else{
                   $.each(vax, function(i, v ){
                     lab.push(v['name']);
