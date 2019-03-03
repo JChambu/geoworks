@@ -24,6 +24,11 @@
     </div>
   </div>
   <div class="form-row col-md-12">
+    <div class="form-group col-md-2">
+      <input multiple="multiple" class="filestyle" data-input="false" data-buttonbefore="true" data-iconname="fas fa-box" data-buttontext="Importar desde API" type="file" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);">
+    </div>
+  </div>
+  <div class="form-row col-md-12">
     <div class="form-group col-md-3">
       <%= select_tag 'option_geo', options_for_select(['Latitud_Longitud', 'Georeferenciacion']), {prompt: 'Seleccione tipo georeferenciación', class: 'form-control'} %>
 
