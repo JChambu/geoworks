@@ -67,9 +67,10 @@ Navarra.dashboards.action_show = function(){
 
     $( "#view" ).on( "click", function() {
 
+      //Chequeamos el estado de view
       status_view = $('#view').hasClass('active');
 
-      if (!status_view){
+      if (!status_view){ //Active
 
         $('#view').addClass('active');
         var o = parseInt(window.innerHeight) - 100;
@@ -93,7 +94,7 @@ Navarra.dashboards.action_show = function(){
 
         init_chart_doughnut();
 
-      }else{
+      }else{ //Default
 
         $(".graphics").removeClass("col-md-3");
         $(".graphics").removeClass("col-md-3");

@@ -437,10 +437,10 @@ function init_chart_doughnut(size_box = null){
           $('.graphics').append(htmldiv);
           $('.chart_container'+graphic_id).append(canvas_graph);
 
-          // Editar esto en la vista directamente
+          //Chequeamos el estado de view
           status_view = $('#view').hasClass('active');
 
-          if (!status_view){
+          if (!status_view){ //Default
 
             $('.chart_container'+graphic_id).addClass('col-md-'+width);
             if(width == '3'){
@@ -450,7 +450,7 @@ function init_chart_doughnut(size_box = null){
             }
             legend_display = true;
 
-          }else{
+          }else{ //Active
 
             $('.chart_container'+graphic_id).addClass('col-md-12');
             aspectR ="1";
