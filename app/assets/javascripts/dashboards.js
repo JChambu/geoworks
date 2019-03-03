@@ -1,3 +1,10 @@
+$(document).ready(function () {
+    $.fakeLoader({
+        bgColor: 'rgba(0, 0, 0, 0.5)',
+        spinner:"spinner2",
+    });
+});
+
 Navarra.namespace("dashboards.action_show");
 
 Navarra.dashboards.config = {
