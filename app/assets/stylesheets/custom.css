@@ -733,7 +733,7 @@ a:focus {
 }
 .top_nav .navbar-right {
   margin: 0;
-  width: 50%;
+  width: 60vw;
   float: right
 }
 .top_nav .navbar-right li {
