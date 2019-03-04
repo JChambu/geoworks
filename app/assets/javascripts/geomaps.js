@@ -247,31 +247,6 @@ Navarra.geomaps = function (){
       }
     });
 
-    var htmlLegend1and2 = L.control.htmllegend({
-      position: 'bottomright',
-      legends: [{
-        name: 'Datos',
-        layer: projects,
-        elements: [{
-          label: '',
-          html: '',
-          style: {
-            'background-color': '#d22e2e',
-            'width': '10px',
-            'height': '10px'
-          }
-        } ]
-      }],
-      collapseSimple: true,
-      detectStretched: true,
-      collapsedOnInit: true,
-      defaultOpacity: 0.7,
-      visibleIcon: 'icon icon-eye',
-      hiddenIcon: 'icon icon-eye-slash'
-    })
-    mymap.addControl(htmlLegend1and2)
-
-
   }//end function init
 
   function BoundingBox(){
