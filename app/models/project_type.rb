@@ -37,7 +37,6 @@ class ProjectType < ApplicationRecord
   after_create :new_dashboard
   after_update :load_file, if: :file_exist? 
 
-
   #before_save :load_rgeoserver
   #after_save :load_shape,  if: :file_exist?
   #validate :validate_options
@@ -287,6 +286,7 @@ class ProjectType < ApplicationRecord
       @project_type = JSON.parse(ProjectType.find(project_type_id).directory_name)
       @source_path = @project_type[0]
       @file_name = @project_type[1]
+      ct = Apartment::Tenant.current
       items = []
       fields = []
       CSV.foreach("#{@source_path}/#{@file_name}", headers: true).with_index do |row, i |
@@ -295,11 +295,11 @@ class ProjectType < ApplicationRecord
           row.headers.each do |field|
             fields << field
             @new_project_field =  ProjectField.where(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id, required: false, field_type_id: 1).first_or_create(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id, required: false, field_type_id: 1)
+
           end
+       create_view(fields, ct, project_type_id, name_layer)
+
         end
-       ct = Apartment::Tenant.current
-       create_view(fields, ct, project_type_id, name_layer) 
-        
         items = row.to_h
         geom = ''
         if (latitude.present? && longitude.present?)
@@ -600,7 +600,28 @@ end
     response.body
   end
 
+  def self.add_layer_geoserver(name_layer)
+    require 'net/http'
+    require 'uri'
 
+    ct = Apartment::Tenant.current
+    uri = URI.parse("http://localhost:8080/geoserver/rest/workspaces/geoworks/datastores/#{ct}/featuretypes")
+
+    request = Net::HTTP::Post.new(uri)
+    request.basic_auth("admin", "geoserver")
+    request.content_type = "text/xml"
+    request.body = "<featureType><name>#{name_layer}</name></featureType>"
+
+    req_options = {
+        use_ssl: uri.scheme == "https",
+    }
+
+    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+        http.request(request)
+    end
+   response.body
+    return
+  end
 
     def self.counters(id)
       count = Project.where(project_type_id: id).count
@@ -618,8 +639,10 @@ end
 
         vv += " properties->>'#{field}' as #{field}, "
       end
+      vv += " project_type_id, "
       vv += " st_y(the_geom),  "
-      vv += " st_x(the_geom) "
+      vv += " st_x(the_geom), "
+      vv += " the_geom "
       vv += "FROM #{current_tenant}.projects where project_type_id =#{project_type_id} ; "
       view = ActiveRecord::Base.connection.execute(vv)
     return

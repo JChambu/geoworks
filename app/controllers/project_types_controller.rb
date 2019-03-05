@@ -130,13 +130,13 @@ class ProjectTypesController < ApplicationController
   # POST /project_types
   # POST /project_types.json
   def create
-
+    params[:project_type][:name_layer] = params[:project_type][:name].gsub(/\s+/, '_').downcase
     @project_type = ProjectType.new(project_type_params)
-
     respond_to do |format|
       if @project_type.save
 
         HasProjectType.create(user_id: current_user.id, project_type_id: @project_type.id)
+        ProjectType.add_layer_geoserver(params[:project_type][:name_layer])
         format.html { redirect_to project_types_path(), notice: 'Project type was successfully created.' }
         format.json { render :show, status: :created, location: @project_type }
       else
@@ -178,6 +178,6 @@ class ProjectTypesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_type_params
-    params.require(:project_type).permit(:name, :latitude, :longitude, :address, :department, :province, :country, {file:[]}, fields_attributes: [:id, :field_type, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id])
+    params.require(:project_type).permit(:name, :latitude, :longitude, :name_layer, :address, :department, :province, :country, {file:[]}, fields_attributes: [:id, :field_type, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id])
   end
 end
