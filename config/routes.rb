@@ -53,7 +53,7 @@ Rails.application.routes.draw do
       get 'project_types/create_filters' => 'project_types#create_filters', as: :create_filters
       get 'project_types/heatmap' => 'project_types#heatmap', as: :heatmap
       get 'project_types/create_heatmap' => 'project_types#create_heatmap', as: :create_heatmap
-      get 'project_types/point_colors' => 'project_types#point_colors', as: :point_color, as: :point_colors
+      get 'project_types/point_colors' => 'project_types#point_colors', as: :point_colors
       get 'project_types/create_point_colors' => 'project_types#create_point_colors', as: :create_point_colors
 
     end
