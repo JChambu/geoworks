@@ -215,7 +215,7 @@ Navarra.geomaps = function (){
         editableLayers.eachLayer(function (layer) {
           mymap.removeLayer(layer);
         });
-        mymap.on('click', source.getFeatureInfo, source);
+        //mymap.on('click', source.getFeatureInfo, source);
         HandlerPolygon.disable();
         size_box=[];
         init_kpi();
@@ -241,7 +241,7 @@ Navarra.geomaps = function (){
           size_box.push(arr1);
           init_kpi(size_box);
           init_chart_doughnut(size_box);  
-          poly();
+         // poly();
         })
 
       }
