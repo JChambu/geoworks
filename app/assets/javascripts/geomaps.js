@@ -467,11 +467,19 @@ Navarra.geomaps = function (){
     //layerControl.addOverlay(heatmapLayer, "heatmap");
     mymap.addLayer(heatmapLayer);
   }
+  
+  function remove_heatmap(){
+    if(typeof(heatmapLayer)!=='undefined'){
+      mymap.removeLayer(heatmapLayer);
+    }
+  
+  }
 
   return {
     init: init,
     wms_filter: wms_filter,
     heatmap_data: heatmap_data,
+    remove_heatmap: remove_heatmap,
     point_colors_data: point_colors_data
   }
 }();

@@ -1,4 +1,7 @@
 d = <%= raw  @query_h.to_json%>;
+field = <%= raw params[:q][:project_field].to_json %>
 Navarra.geomaps.heatmap_data(d);
 $("#heatmap-modal").modal('hide');
+$(".add_heatmap").empty();
+$(".add_heatmap").append('<div class="mes form-control" id="point_color"> <b>Heatmap por:</b> '+ field+'</div>');
 $(".fa-fire").css("color", "#d3d800");
