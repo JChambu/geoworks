@@ -78,7 +78,7 @@ class ProjectType < ApplicationRecord
     @fi = self.file
     self.file.each do |f| @f = f.content_type 
     begin
-      if @f== "text/csv" ||  @f== "application/x-esri-shape" || @f == "application/octet-stream" || @f == "application/x-esri-crs" || @f=="application/x-dbf"  
+      if @f== "text/csv" ||  @f== "application/x-esri-shape"  || @f == "application/x-esri-crs" || @f=="application/x-dbf" || @f=="text/plain"  
         valid = f.content_type 
       end
     rescue
@@ -257,7 +257,7 @@ class ProjectType < ApplicationRecord
           if ext.last == 'shp'
             a = ProjectType.load_shape(self.id)
           end
-        when 'text/csv'
+        when 'text/csv', 'text/plain'
           a = ProjectType.load_csv(self.id, self.latitude, self.longitude, self.address, self.department, self.province, self.country, self.name_layer)
         when 'application/xls', 'application/vnd.ms-excel'
           'xls'
@@ -287,7 +287,7 @@ class ProjectType < ApplicationRecord
       @source_path = @project_type[0]
       @file_name = @project_type[1]
       ct = Apartment::Tenant.current
-      items = []
+      items = {}
       fields = []
       CSV.foreach("#{@source_path}/#{@file_name}", headers: true).with_index do |row, i |
         if i == 0 
@@ -301,7 +301,10 @@ class ProjectType < ApplicationRecord
        create_view(fields, ct, project_type_id, name_layer)
 
         end
-        items = row.to_h
+        row.to_hash.each_pair do |k,v|
+             items.merge!({k.downcase => v}) 
+               end
+        #items = row.to_h
         geom = ''
         if (latitude.present? && longitude.present?)
           lat = items[latitude]
