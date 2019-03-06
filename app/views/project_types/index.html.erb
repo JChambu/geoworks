@@ -73,6 +73,7 @@
                 <td><%= link_to 'Datos', project_type_projects_path(project_type) %></td>
                 <td><%= link_to 'Tableros', project_type_dashboards_path(project_type.id) %></td>
                 <td><%= link_to 'Editar', edit_project_type_path(project_type) %></td>
+                <td><%= link_to project_type_path(project_type), method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
 
               </tr>
             <% end %>
