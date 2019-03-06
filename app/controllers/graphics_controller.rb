@@ -26,7 +26,6 @@ class GraphicsController < ApplicationController
   # GET /graphics/1/edit
   def edit
     @graphic = @dashboard.graphics.find(params[:id])
-    @chart_type = Chart.find(@graphic.chart_id)
     respond_to do |f|
       f.js
     end
