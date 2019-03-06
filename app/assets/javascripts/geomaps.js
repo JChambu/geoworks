@@ -112,9 +112,9 @@ Navarra.geomaps = function (){
     });
 
     cfg = {
-      "radius": 0.003,
+      "radius": 30,
       "maxOpacity": .8,
-      "scaleRadius": true, 
+      "scaleRadius": false, 
       "useLocalExtrema": true,
       latField: 'lat',
       lngField: 'lng',
@@ -464,7 +464,7 @@ Navarra.geomaps = function (){
     heatmapLayer = new HeatmapOverlay(cfg);
     heatmapLayer.setData(testData);
 
-    layerControl.addOverlay(heatmapLayer, "heatmap");
+    //layerControl.addOverlay(heatmapLayer, "heatmap");
     mymap.addLayer(heatmapLayer);
   }
 
