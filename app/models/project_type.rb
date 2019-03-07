@@ -18,7 +18,7 @@ class ProjectType < ApplicationRecord
 
   accepts_nested_attributes_for :fields, allow_destroy: true
 
-  FILTERS = %w(= <)
+  FILTERS = %w(= < > <= >= != ilike )
 
   attr_accessor :file, :latitude, :longitude, :address, :department, :province, :country
 
@@ -120,27 +120,28 @@ class ProjectType < ApplicationRecord
     querys=[]
     @op = option_graph
     @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
-    
     @analytics_charts.each do |chart|
       if type_box == 'extent'
         data = Project.where(project_type_id: chart.project_type_id).where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
       end
-      #      if type_box == 'filter'
-      #       data = Project.where(project_type_id: chart.project_type_id).where("properties->>'" + @filter_condition[0] +  "' " + @filter_condition[1]  + " ?", @filter_condition[2])
-      #     end
+      
+    #  if type_box == 'filter'
+     #        data = Project.where(project_type_id: chart.project_type_id).where("properties->>'" + @filter_condition[0] +  "' " + @filter_condition[1]  + " ?", @filter_condition[2])
+     #      end
       if type_box == 'polygon'
         data = Project.where(project_type_id: chart.project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
       end
       field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
 
       conditions_field = chart.condition_field
-    
+   
       if !data_conditions.blank?
         data_conditions.each do |key| 
-              @s = key.split('=')
+              @s = key.split('|')
               @field = @s[0]
-              @value = @s[1]
-          data =  data.where(" properties->>'" + @field+ "'=#{@value}")
+              @filter = @s[1]
+              @value = @s[2]
+          data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
       end
       end
      @d = data
@@ -209,13 +210,14 @@ class ProjectType < ApplicationRecord
         data =  data.select(@field_select).group(@field_group).order(@field_group)
         end
 
-          if !data_conditions.blank?
-            data_conditions.each do |key| 
-              @s = key.split('=')
+      if !data_conditions.blank?
+        data_conditions.each do |key| 
+              @s = key.split('|')
               @field = @s[0]
-              @value = @s[1]
-          data =  data.where(" properties->>'" + @field+ "'=#{@value}")
-         end
+              @filter = @s[1]
+              @value = @s[2]
+          data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
+      end
       end
         @items["serie#{i}"] = data
         @option_graph = graph

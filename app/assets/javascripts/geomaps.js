@@ -313,9 +313,11 @@ Navarra.geomaps = function (){
     var filter_option = Navarra.project_types.config.filter_option;
 
     if (filter_option.length > 0){
-      $.each(filter_option, function(a,b){
-        cql_filter +=" and "+ b;
-      });      
+          $.each(filter_option, function(a,b){
+            data_filter = b.split('|');
+            cql_filter +=" and "+ data_filter[0]+ " " + data_filter[1] + " " +  data_filter[2];
+            console.log(cql_filter);
+          });      
 
       mymap.removeLayer(projects);
       if(typeof(projectss)!=='undefined'){
@@ -386,7 +388,9 @@ Navarra.geomaps = function (){
 
         if (filter_option != ''){
           $.each(filter_option, function(a,b){
-            value_filter +=" and "+ b;
+            data_filter = b.split('|');
+            value_filter +=" and "+ data_filter[0] + data_filter[1] + data_filter[2];
+            console.log(value_filter)
           });      
         }
         var env_f = "color:" + col ;

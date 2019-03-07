@@ -11,8 +11,11 @@ Navarra.project_types.config = {
   filter_option: [],
   size_box: [],
   filter_kpi:[],
+  kpi_field:'',
+  kpi_filter: '',
+  kpi_value: '',
   field_point_colors:'',
-  data_point_colors:[]
+  data_point_colors:[],
 }
 
 $(document).on('click', 'form .remove_fields', function(event){
