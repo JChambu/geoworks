@@ -136,6 +136,10 @@ Navarra.geomaps = function (){
         if (!this._map) {
           return;
         }
+
+      checked = $('#select').hasClass('active');
+      if (!checked){
+
         var cc = JSON.parse(info);
         var prop = cc['features'][0]['properties'];
         var z = document.createElement('p'); // is a node
@@ -154,6 +158,7 @@ Navarra.geomaps = function (){
             .setContent(inn)
             .openOn(mymap);
         }
+      }
       }
     });
 
@@ -211,15 +216,17 @@ Navarra.geomaps = function (){
       checked = $('#select').hasClass('active');
       if (checked){
 
+
         $('#select').removeClass('active');
         editableLayers.eachLayer(function (layer) {
           mymap.removeLayer(layer);
         });
-        //mymap.on('click', source.getFeatureInfo, source);
+
         HandlerPolygon.disable();
         size_box=[];
         init_kpi();
         init_chart_doughnut(); 
+       // mymap.on('click', source.getFeatureInfo, source);
 
       }else{
         $('#select').addClass('active');
@@ -227,7 +234,7 @@ Navarra.geomaps = function (){
         // Initialise the draw control and pass it the FeatureGroup of editable layers
         editableLayers = new L.FeatureGroup();
         mymap.addLayer(editableLayers);
-        mymap.off('click', editableLayers.getFeatureInfo, editableLayers);
+        //mymap.off('click', editableLayers.getFeatureInfo, editableLayers);
         mymap.doubleClickZoom.disable(); 
         poly();
         mymap.on('draw:created', function(e) {
