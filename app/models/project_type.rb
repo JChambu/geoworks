@@ -61,8 +61,6 @@ class ProjectType < ApplicationRecord
     geocode = Geocoder.coordinates(@address_complete)
     geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
     return geom
-    #e.update_attribute(:the_geom, geom )
-    #end
   end
 
   def file_exist?
