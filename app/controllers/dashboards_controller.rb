@@ -66,7 +66,7 @@ class DashboardsController < ApplicationController
   def update
     respond_to do |format|
       if @dashboard.update(dashboard_params)
-        format.html { redirect_to([@project_type, @dasboard], notice: 'Dashboard was successfully updated.') }
+        format.html { redirect_to project_type_dashboards_path(@project_type), notice: 'Dashboard was successfully created.' }
         format.json { render :show, status: :ok, location: @dashboard }
       else
         format.html { render :edit }
