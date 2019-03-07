@@ -116,19 +116,32 @@ class ProjectType < ApplicationRecord
       maxy = size_box[3].to_f if !size_box.nil?
     end
     querys=[]
+    @data_fixed = ''
     @op = option_graph
     @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
-    @analytics_charts.each do |chart|
+
       if type_box == 'extent'
-        data = Project.where(project_type_id: chart.project_type_id).where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+        data = Project.where(project_type_id: project_type_id).where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+        @data_fixed = data
       end
       
     #  if type_box == 'filter'
      #        data = Project.where(project_type_id: chart.project_type_id).where("properties->>'" + @filter_condition[0] +  "' " + @filter_condition[1]  + " ?", @filter_condition[2])
      #      end
       if type_box == 'polygon'
-        data = Project.where(project_type_id: chart.project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
+        data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
+        @data_fixed = data
       end
+    
+    @total_row = Project.where(project_type_id: project_type_id).count
+    @row_selected = @data_fixed.count 
+    @avg_selected = [{ "count": (@row_selected.to_f / @total_row.to_f) * 100} ]
+
+    querys << { "title":"Total", "description":"Total", "data":[{"count":@total_row}], "id": 0}
+    querys << { "title":"Selec", "description":"select", "data":[{"count":@row_selected}], "id": 1}
+    querys << { "title":"AVG", "description":"AVG", "data":@avg_selected, "id": 2}
+    @analytics_charts.each do |chart|
+
       field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
 
       conditions_field = chart.condition_field
@@ -149,6 +162,8 @@ class ProjectType < ApplicationRecord
       data=   data.select(field_select)
       querys << { "title":"#{chart.title}", "description":"kpi_sin grafico", "data":data, "id": chart.id}
     end
+
+
     querys
   end
 
