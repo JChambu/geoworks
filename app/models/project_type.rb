@@ -76,7 +76,7 @@ class ProjectType < ApplicationRecord
     @fi = self.file
     self.file.each do |f| @f = f.content_type 
     begin
-      if @f== "text/csv" ||  @f== "application/x-esri-shape"  || @f == "application/x-esri-crs" || @f=="application/x-dbf" || @f=="text/plain"  
+      if @f== "text/csv" ||  @f== "application/x-esri-shape"  || @f == "application/x-esri-crs" || @f=="application/x-dbf" || @f=="text/plain" || @f =="application/vnd.ms-excel" 
         valid = f.content_type 
       end
     rescue
@@ -257,10 +257,10 @@ class ProjectType < ApplicationRecord
           if ext.last == 'shp'
             a = ProjectType.load_shape(self.id)
           end
-        when 'text/csv', 'text/plain'
+        when 'text/csv', 'text/plain', 'application/vnd.ms-excel'
           a = ProjectType.load_csv(self.id, self.latitude, self.longitude, self.address, self.department, self.province, self.country, self.name_layer)
-        when 'application/xls', 'application/vnd.ms-excel'
-          'xls'
+        #when 'application/xls', 'application/vnd.ms-excel'
+        #  'xls'
         when 'application/json'
           load_json()
         when  'application/geo+json'
