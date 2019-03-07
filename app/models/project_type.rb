@@ -152,7 +152,11 @@ class ProjectType < ApplicationRecord
               @field = @s[0]
               @filter = @s[1]
               @value = @s[2]
-          data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
+              if (@filter == '<' || @filter == '>' || @filter == '>=' || @filter == '<=' )
+                  data =  data.where(" (properties->>'" + @field +"')::numeric" +  @filter +"#{@value}")
+              else
+                  data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
+              end 
       end
       end
      @d = data
