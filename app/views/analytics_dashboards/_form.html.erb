@@ -38,25 +38,14 @@
         <div class="form-row">
           <div class="form-group col-md-5">
             <div class="control-group string required ">
-              <label class="string required control-label" for="">Condición</label>
-              <div class="controls">
-                <input type="text" class="string required form-control col-md-12" id="" placeholder="">
+              <%= f.input :condition_field_id, :collection => fields_for_select_a, label: "Campo", input_html: {class:"form-control"} %>
               </div>
             </div>
-          </div>
           <div class="form-group col-md-2">
             <div class="control-group select optional">
               <label class="select optional control-label" for="">Operador</label>
               <div class="controls">
-                <select class="select optional form-control">
-                  <option value=""> </option>
-                  <option value="="> = </option>
-                  <option value="!=" >! =</option>
-                  <option value=">"> > </option>
-                  <option value=">="> >= </option>
-                  <option value="<"> < </option>
-                  <option value="<="> <= </option>
-                </select>
+                <%= f.input :filter_input, label: false, collection: ProjectType::FILTERS, input_html: {class: 'form-control'} %>
               </div>
             </div>
           </div>
@@ -64,7 +53,7 @@
             <div class="control-group string required ">
               <label class="string required control-label" for="">Valor</label>
               <div class="controls">
-                <input type="text" class="string required form-control col-md-12" id="" placeholder="">
+                <%= f.input :input_value, label: false, input_html: {class: 'form-control'} %>
               </div>
             </div>
           </div>
