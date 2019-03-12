@@ -139,7 +139,7 @@ class ProjectType < ApplicationRecord
 
     querys << { "title":"Total", "description":"Total", "data":[{"count":@total_row}], "id": 1000}
     querys << { "title":"Selecionado", "description":"select", "data":[{"count":@row_selected}], "id": 1001}
-    querys << { "title":"% Total", "description":"AVG", "data":@avg_selected, "id": 1002}
+    querys << { "title":"% del Total", "description":"AVG", "data":@avg_selected, "id": 1002}
     @analytics_charts.each do |chart|
 
       field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
