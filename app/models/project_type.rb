@@ -137,9 +137,9 @@ class ProjectType < ApplicationRecord
     @row_selected = @data_fixed.count 
     @avg_selected = [{ "count": (@row_selected.to_f / @total_row.to_f) * 100} ]
 
-    querys << { "title":"Total", "description":"Total", "data":[{"count":@total_row}], "id": 0}
-    querys << { "title":"Selecionado", "description":"select", "data":[{"count":@row_selected}], "id": 1}
-    querys << { "title":"% Total", "description":"AVG", "data":@avg_selected, "id": 2}
+    querys << { "title":"Total", "description":"Total", "data":[{"count":@total_row}], "id": 1000}
+    querys << { "title":"Selecionado", "description":"select", "data":[{"count":@row_selected}], "id": 1001}
+    querys << { "title":"% Total", "description":"AVG", "data":@avg_selected, "id": 1002}
     @analytics_charts.each do |chart|
 
       field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
@@ -522,16 +522,24 @@ class ProjectType < ApplicationRecord
     source_path = project_type[0]
     file_name = project_type[1].split('.').first
     #    file_name = @directory[1].split('.').first
+
+    fields = []
     RGeo::Shapefile::Reader.open("#{source_path}/#{file_name}.shp") do |file|
       file.each do |record|
         record.index
         if record.index == 1
-          record.keys.each do |field|
+          record.keys.each do |f|
+
+            field = f.parameterize(separator: '_')
+            fields << field
             @new_project_field =  ProjectField.create(name: field, field_type: 'text_field', project_type_id: project_type_id, key: field)
             @new_project_field.save
           end
         end
       end
+
+      create_view(fields, ct, project_type_id, name_layer)
+     
       file.rewind
       file.each do |record|
         @prop = {}
