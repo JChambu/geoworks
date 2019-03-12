@@ -442,8 +442,7 @@ Navarra.geomaps = function (){
         layerControl.addOverlay(source, cql_name);
         source.addTo(mymap);
 
-        init_kpi();
-        init_chart_doughnut();  
+
       })
     }else{
       if(ss.length > 0){
@@ -459,6 +458,8 @@ Navarra.geomaps = function (){
         ss = [];
       }
     }
+        init_kpi();
+        init_chart_doughnut();  
   }
 
   function heatmap_data(data){
