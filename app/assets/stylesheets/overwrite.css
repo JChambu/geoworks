@@ -310,8 +310,8 @@ body .container.body .right_col {
 }
 
 .tile_count .tile_stats_count .count_top {
-    font: 12px "Source Sans Pro", sans-serif;
-    color: #000
+    font: 14px "Source Sans Pro", sans-serif;
+    color: #263238
 }
 
 .tile_count .tile_stats_count .count {
