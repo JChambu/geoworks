@@ -98,14 +98,12 @@ Navarra.dashboards.action_show = function(){
 
         $('#view').addClass('active');
 
-        $("#map").css("height", "85vh");
         $("#map").css("width", "50%");
 
         $(".gridactive").css("width", "auto");
 
         $(".graphics").addClass("col-md-6").removeClass("col-md-3");
         $(".graphics").css("width", "50%");
-        $(".graphics").css("height", "85vh");
 
         init_chart_doughnut();
 
@@ -113,15 +111,12 @@ Navarra.dashboards.action_show = function(){
 
         $(".fa-table").css("color", "#9b9b9b");
 
-        $(".graphics").css("height", "85vh");
         $(".graphics").css("width", "25%");
         $(".graphics").css("float", "right");
 
         $('div.graphics').replaceWith( $('div.graphics'), init_chart_doughnut());
         status_view = $('#view').removeClass('active');
 
-        var o = parseInt(window.innerHeight) - 100;
-        $("#map").css("height", o+"px");
         $("#map").css("width", "75%");
         $("#map").css("float", "left");
 
