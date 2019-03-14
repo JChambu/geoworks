@@ -149,10 +149,11 @@ function capitalize(s){
 
 function init_chart_doughnut(size_box = null){
 
+  // Seteamos el alto de los gráficos y del mapa
   var o = parseInt(window.innerHeight) - 100;
   $(".graphics").css("height", o+"px");
   $("#map").css("height", o+"px");
-  
+
   if( typeof(Chart) === 'undefined'){ return; }
 
   if ($('.graphics').length){
