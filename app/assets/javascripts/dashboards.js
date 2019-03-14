@@ -103,10 +103,6 @@ Navarra.dashboards.action_show = function(){
 
         $(".gridactive").css("width", "auto");
 
-
-        $("#clas_map").toggleClass( "col-md-9", 500, "easeOutSine" );
-        $(".card_graph").removeClass( "col-md-6");
-        $(".card_graph").toggleClass( "col-md-12", 500, "easeOutSine" );
         $(".graphics").addClass("col-md-6").removeClass("col-md-3");
         $(".graphics").css("width", "50%");
         $(".graphics").css("height", "85vh");
