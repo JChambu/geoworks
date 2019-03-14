@@ -89,20 +89,16 @@ Navarra.dashboards.action_show = function(){
 
     $( "#view" ).on( "click", function() {
 
-      $(".fa-table").css("color", "#d3d800");
-
       //Chequeamos el estado de view
       status_view = $('#view').hasClass('active');
 
       if (!status_view){ //Active
 
+        $(".fa-table").css("color", "#d3d800");
+
         $('#view').addClass('active');
 
         $("#map").css("width", "50%");
-
-        $(".gridactive").css("width", "auto");
-
-        $(".graphics").addClass("col-md-6").removeClass("col-md-3");
         $(".graphics").css("width", "50%");
 
         init_chart_doughnut();
@@ -111,14 +107,11 @@ Navarra.dashboards.action_show = function(){
 
         $(".fa-table").css("color", "#9b9b9b");
 
+        $("#map").css("width", "75%");
         $(".graphics").css("width", "25%");
-        $(".graphics").css("float", "right");
 
         $('div.graphics').replaceWith( $('div.graphics'), init_chart_doughnut());
         status_view = $('#view').removeClass('active');
-
-        $("#map").css("width", "75%");
-        $("#map").css("float", "left");
 
       }
     });
