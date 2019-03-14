@@ -450,7 +450,7 @@ function init_chart_doughnut(size_box = null){
           }else{ //Active
 
             $('.chart_container'+graphic_id).addClass('col-md-'+width);
-            if(width == '3'){
+            if(width == '6'){
               aspectR = "1";
             }else{
               aspectR = "2";
