@@ -8,7 +8,7 @@ var filter_view = '<%= params[:q][:project_field]%>' +' <%= params[:q][:filters]
 
 Navarra.project_types.config.filter_option.push(filter_option);
 Navarra.project_types.config.filter_kpi.push(filter_kpi);
-$(".add_filters").append('<div class="message success form-control" id="'+filter_option+'"value="'+filter_kpi+'"> <b>Filtrado por:</b> '+ filter_view+'</div>')
+$(".add_filters").append('<div class="message success form-control" id="'+filter_option+'"value="'+filter_kpi+'" style="text-align: center;"> <b>Filtrado por:</b> '+ filter_view+'</div>')
 $("#filters-modal").modal('hide');
 $("#filters-modal").remove();
 $(".fa-filter").css("color", "#d3d800");

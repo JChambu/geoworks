@@ -98,6 +98,7 @@ Navarra.dashboards.action_show = function(){
 
         $('#view').addClass('active');
 
+        $("#active-filters").removeClass('col-md-3').addClass('col-md-6');
         $("#map").css("width", "50%");
         $(".graphics").css("width", "50%");
 
@@ -107,6 +108,7 @@ Navarra.dashboards.action_show = function(){
 
         $(".fa-table").css("color", "#9b9b9b");
 
+        $("#active-filters").removeClass('col-md-6').addClass('col-md-3');
         $("#map").css("width", "75%");
         $(".graphics").css("width", "25%");
 
