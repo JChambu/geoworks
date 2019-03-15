@@ -1,3 +1,9 @@
 $("#modal-window").find(".modal-content").html("<%= j (render 'form') %>");
+
+var graph = '<%= @chart_type%>'
+if (graph == 'line' || graph == 'area' || graph == 'point') {
+    graph = 'bar'
+}
 $('.hide-div').hide();
+$('.'+graph).show();
 $("#modal-window").modal();
