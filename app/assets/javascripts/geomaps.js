@@ -216,8 +216,9 @@ Navarra.geomaps = function (){
       checked = $('#select').hasClass('active');
       if (checked){
 
-
         $('#select').removeClass('active');
+        $(".fa-draw-polygon").css("color", "#9b9b9b");
+
         editableLayers.eachLayer(function (layer) {
           mymap.removeLayer(layer);
         });
@@ -229,7 +230,10 @@ Navarra.geomaps = function (){
        // mymap.on('click', source.getFeatureInfo, source);
 
       }else{
+        
         $('#select').addClass('active');
+        $(".fa-draw-polygon").css("color", "#d3d800");
+
         size_box = [];
         // Initialise the draw control and pass it the FeatureGroup of editable layers
         editableLayers = new L.FeatureGroup();
