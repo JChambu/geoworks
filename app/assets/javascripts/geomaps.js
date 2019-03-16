@@ -131,34 +131,34 @@ Navarra.geomaps = function (){
     }) ;
 
     MySource = L.WMS.Source.extend({
-      
+
       'showFeatureInfo': function(latlng, info) {
         if (!this._map) {
           return;
         }
 
-      checked = $('#select').hasClass('active');
-      if (!checked){
-
-        var cc = JSON.parse(info);
-        var prop = cc['features'][0]['properties'];
-        var z = document.createElement('p'); // is a node
-        var x = []
-        $.each(prop, function(a,b){
-          x.push('<b>' + a + ': </b> ' + b + '</br>');
-        })
-
-        z.innerHTML = x;
-        inn = document.body.appendChild(z);
         checked = $('#select').hasClass('active');
-        
         if (!checked){
-          L.popup()
-            .setLatLng(latlng)
-            .setContent(inn)
-            .openOn(mymap);
+
+          var cc = JSON.parse(info);
+          var prop = cc['features'][0]['properties'];
+          var z = document.createElement('p'); // is a node
+          var x = []
+          $.each(prop, function(a,b){
+            x.push('<b>' + a + ': </b> ' + b + '</br>');
+          })
+
+          z.innerHTML = x;
+          inn = document.body.appendChild(z);
+          checked = $('#select').hasClass('active');
+
+          if (!checked){
+            L.popup()
+              .setLatLng(latlng)
+              .setContent(inn)
+              .openOn(mymap);
+          }
         }
-      }
       }
     });
 
@@ -215,8 +215,6 @@ Navarra.geomaps = function (){
     $('#select').on('click', function(event) {
       checked = $('#select').hasClass('active');
       if (checked){
-
-
         $('#select').removeClass('active');
         editableLayers.eachLayer(function (layer) {
           mymap.removeLayer(layer);
@@ -225,8 +223,13 @@ Navarra.geomaps = function (){
         HandlerPolygon.disable();
         size_box=[];
         init_kpi();
-        init_chart_doughnut(); 
-       // mymap.on('click', source.getFeatureInfo, source);
+        init_chart_doughnut();
+      var heatmap_actived = Navarra.project_types.config.heatmap_field;
+        console.log(heatmap_actived);
+      if (heatmap_actived != ''){
+        Navarra.geomaps.heatmap_data();
+      }
+          // mymap.on('click', source.getFeatureInfo, source);
 
       }else{
         $('#select').addClass('active');
@@ -248,7 +251,12 @@ Navarra.geomaps = function (){
           size_box.push(arr1);
           init_kpi(size_box);
           init_chart_doughnut(size_box);  
-         // poly();
+          // poly();
+        
+      var heatmap_actived = Navarra.project_types.config.heatmap_field;
+      if (heatmap_actived != ''){
+        Navarra.geomaps.heatmap_data();
+      }
         })
 
       }
@@ -320,17 +328,21 @@ Navarra.geomaps = function (){
     var filter_option = Navarra.project_types.config.filter_option;
 
     if (filter_option.length > 0){
-          $.each(filter_option, function(a,b){
-            data_filter = b.split('|');
-            cql_filter +=" and "+ data_filter[0]+ " " + data_filter[1] + " " +  data_filter[2];
-            console.log(cql_filter);
-          });      
+      $.each(filter_option, function(a,b){
+        data_filter = b.split('|');
+        cql_filter +=" and "+ data_filter[0]+ " " + data_filter[1] + " " +  data_filter[2];
+      });      
 
       mymap.removeLayer(projects);
       if(typeof(projectss)!=='undefined'){
         mymap.removeLayer(projectss);
       }
 
+      var heatmap_actived = Navarra.project_types.config.heatmap_field;
+      if (heatmap_actived != ''){
+        Navarra.geomaps.heatmap_data();
+      }
+      
       var point_color = Navarra.project_types.config.field_point_colors;
 
       if(point_color != ''){
@@ -339,8 +351,7 @@ Navarra.geomaps = function (){
         }
         Navarra.geomaps.point_colors_data();
       }else{  
-
-        projectFilterLayer = new MySourceb("http://"+url+":8080/geoserver/wms", {
+          projectFilterLayer = new MySourceb("http://"+url+":8080/geoserver/wms", {
           layers: "geoworks:"+name_layer,//nombre de la capa (ver get capabilities)
           format: 'image/png',
           transparent: 'true',
@@ -397,7 +408,6 @@ Navarra.geomaps = function (){
           $.each(filter_option, function(a,b){
             data_filter = b.split('|');
             value_filter +=" and "+ data_filter[0] + data_filter[1] + data_filter[2];
-            console.log(value_filter)
           });      
         }
         var env_f = "color:" + col ;
@@ -458,13 +468,58 @@ Navarra.geomaps = function (){
         ss = [];
       }
     }
-        init_kpi();
-        init_chart_doughnut();  
+    init_kpi();
+    init_chart_doughnut();  
   }
 
-  function heatmap_data(data){
+  function heatmap_data(){
 
-    var testData;
+  /*  var legendCanvas = document.createElement('canvas');
+    legendCanvas.width = 100;
+    legendCanvas.height = 10;
+    var min = document.querySelector('#min');
+    var max = document.querySelector('#max');
+    var gradientImg = document.querySelector('#gradient');
+    var legendCtx = legendCanvas.getContext('2d');
+    var gradientCfg = {};
+    console.log("paso");
+    //        the onExtremaChange callback gives us min, max, and the gradientConfig
+    // so we can update the legend
+    min.innerHTML = 10; 
+    max.innerHTML = 1000; //data.max;
+    // regenerate gradient image
+    if (data.gradient != gradientCfg) {
+      gradientCfg = data.gradient;
+      var gradient = legendCtx.createLinearGradient(0, 0, 100, 1);
+      for (var key in gradientCfg) {
+        gradient.addColorStop(key, gradientCfg[key]);
+      }
+      legendCtx.fillStyle = gradient;
+      legendCtx.fillRect(0, 0, 100, 10);
+      gradientImg.src = legendCanvas.toDataURL();
+    }*/
+
+
+  var type_box = 'extent';
+  var data_conditions = {}
+  if (size_box.length > 0 ){
+    var type_box = 'polygon';
+  }else{
+    size_box = [];
+  }
+
+  var conditions = Navarra.project_types.config.filter_kpi
+  var  data_id =  Navarra.dashboards.config.project_type_id;
+  var  heatmap_field =  Navarra.project_types.config.heatmap_field;
+
+  $.ajax({
+    type: 'GET',
+    url: '/project_types/filter_heatmap.json',
+    datatype: 'json',
+    data: {project_type_id: data_id, conditions: conditions, heatmap_field: heatmap_field, size_box: size_box, type_box: type_box},
+    success: function(data){
+    
+      var testData;
     testData = {
       max: 5,
       data: data}
@@ -479,12 +534,14 @@ Navarra.geomaps = function (){
     //layerControl.addOverlay(heatmapLayer, "heatmap");
     mymap.addLayer(heatmapLayer);
   }
-  
+    })
+  }
+
   function remove_heatmap(){
     if(typeof(heatmapLayer)!=='undefined'){
       mymap.removeLayer(heatmapLayer);
     }
-  
+
   }
 
   return {

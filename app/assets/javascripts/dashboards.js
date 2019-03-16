@@ -39,6 +39,7 @@ Navarra.dashboards.action_show = function(){
         $(this).remove();
       Navarra.geomaps.wms_filter();
       Navarra.geomaps.point_colors_data();
+      Navarra.geomaps.heatmap_data();
 
     });
 
@@ -48,6 +49,7 @@ Navarra.dashboards.action_show = function(){
       $(".fa-spinner").css("color", "#9b9b9b");
       var da =  $(this).attr('id');
         Navarra.project_types.config.field_point_colors = '';
+        Navarra.project_types.config.heatmap_field = '';
         $(this).remove();
       Navarra.geomaps.remove_heatmap();
 
@@ -78,6 +80,7 @@ Navarra.dashboards.action_show = function(){
       $(this).remove();
       Navarra.geomaps.wms_filter();
       Navarra.geomaps.point_colors_data();
+      Navarra.geomaps.heatmap_data();
       //init_chart_doughnut();
     });
 
