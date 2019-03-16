@@ -1,8 +1,8 @@
-d = <%= raw  @query_h.to_json%>;
-field = <%= raw params[:q][:project_field].to_json %>
-Navarra.geomaps.heatmap_data(d);
+field =  '<%= params[:q][:project_field] %>';
+Navarra.project_types.config.heatmap_field = field;
 $("#heatmap-modal").modal('hide');
 $("#heatmap-modal").remove();
 $(".add_heatmap").empty();
 $(".add_heatmap").append('<div class="mes form-control" id="point_color" style="text-align: center;"> <b>Heatmap por:</b> '+ field+'</div>');
 $(".fa-fire").css("color", "#d3d800");
+Navarra.geomaps.heatmap_data();

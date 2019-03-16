@@ -63,7 +63,6 @@ class ProjectTypesController < ApplicationController
 
 
   def create_point_colors
-    @query_point = Project.where(project_type_id: params[:project_type_id]).select("properties->>'#{params[:q][:project_field]}' as name").group("properties->>'#{params[:q][:project_field]}'").limit(10)
     respond_to do |format|
       format.js
     end
@@ -71,11 +70,59 @@ class ProjectTypesController < ApplicationController
   
   
   def create_heatmap
-    @query_h = Project.where(project_type_id: params[:project_type_id]).select("st_x(the_geom) as lng, st_y(the_geom) as lat, count(id) as count").group("properties->>'#{params[:q][:project_field]}', the_geom")
-    respond_to do |format|
-      format.js
-    end
   end
+
+
+  def filter_heatmap
+
+    project_type_id = params[:project_type_id]
+    type_box = params[:type_box]
+    size_box = params[:size_box]
+    @ct = Apartment::Tenant.current
+
+    @arr1 = [] 
+    if type_box == 'polygon'
+      size_box.each do |a,x|
+        z = []
+        @a = a
+        @x = x
+        x.each do |b,y|
+          @b = b
+          @y = y
+          z.push(y)
+        end
+        @arr1.push([z])
+      end
+   
+      data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
+    
+    else
+      data = Project.where(project_type_id: project_type_id)
+    end
+
+    condition = params[:conditions]
+      if !condition.blank?
+        condition.each do |key| 
+          @s = key.split('|')
+          @field = @s[0]
+          @filter = @s[1]
+          @value = @s[2]
+          if (@filter == '<' || @filter == '>' || @filter == '>=' || @filter == '<=' )
+            data =  data.where(" (properties->>'" + @field +"')::numeric" +  @filter +"#{@value}")
+          else
+            data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
+          end 
+        end
+      end
+
+
+      @query_h = data.select("st_x(the_geom) as lng, st_y(the_geom) as lat, count(id) as count").group("properties->>'#{params[:heatmap_field]}', the_geom")
+    
+      #@query_h = Project.where(project_type_id: params[:project_type_id]).select("st_x(the_geom) as lng, st_y(the_geom) as lat, count(id) as count").group("properties->>'#{params[:heatmap_field]}', the_geom")
+
+
+  end
+
 
   def maps
 

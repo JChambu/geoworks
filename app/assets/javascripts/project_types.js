@@ -16,6 +16,7 @@ Navarra.project_types.config = {
   kpi_value: '',
   field_point_colors:'',
   data_point_colors:[],
+  heatmap_field: ''
 }
 
 $(document).on('click', 'form .remove_fields', function(event){
@@ -61,7 +62,6 @@ $(document).on('click', 'form .add_fields', function(event){
 Navarra.project_types.action_create = function(){
   init = function(){
 
-    console.log("create");
     $('.project_type_file').on('change', function(e){
       handleFileSelect(e);
     });
@@ -101,7 +101,6 @@ Navarra.project_types.action_new = function(){
       handleFileSelect(e);
     });
     $('#envi').on('click', function(){
-      console.log("hola");
     });
 
     $('#option_geo').on('change', function(){
