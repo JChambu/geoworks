@@ -1,41 +1,5 @@
 <div class="container body">
   <div class="main_container">
-    <!-- OCULTAMOS BARRA IZQUIERDA
-    <div class="col-md-3 left_col side_left ">
-      <div class="left_col scroll-view">
-        <div class="navbar nav_title" style="border: 0">
-          <%= link_to  "#", class: "site_title" do  %> <%= image_tag "logo_geoworks.png" %> <% end %>
-        </div>
-        <div class="clearfix"></div>
-        <!-- menu profile quick info -_->
-        <div class="profile clearfix">
-          <div class="profile_pic">
-          </div>
-          <div class="profile_info">
-            <span>Welcome,</span>
-            <h2><%= current_user.name %></h2>
-          </div>
-        </div>
-        <!-- /menu profile quick info -_->
-        <br />
-        <!-- sidebar menu -_->
-        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-          <div class="menu_section">
-            <h3>General</h3>
-            <ul class="nav side-menu">
-              <li><%= link_to project_types_path() do %><i class="fa fa-folder-open"></i> Proyectos <span class="fa fa-chevron-down"></span><% end %></li>
-              <li><% link_to extended_listings_path() do %><i class="fa fa-folder-open"></i> LED <span class="fa fa-chevron-down"></span><% end %></li>
-            <%if params[:controller] == 'dashboards' && params[:action] == 'show' %>
-              <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, params[:id]), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do  %><h2><i class="fa fa-bar-chart"></i></h2> <%end %>
-
-            <% end %>
-            </ul>
-          </div>
-        </div>
-        <!-- /sidebar menu -_->
-      </div>
-    </div>
-    -->
     <!-- top navigation -->
     <div class="top_nav" style= "margin-left: 0px;">
       <div class="nav_menu" style="height: 60px;"> <!-- El height original está en 64 pero no muestra el border-bottom, revisar-->
@@ -98,15 +62,6 @@
               </a>
               <ul class="dropdown-menu dropdown-usermenu pull-right">
                 <li><%= link_to "Editar Usuario", edit_user_path(current_user.id) %></li>
-                <!-- BOTONES SETTING Y HELP SIN USO
-                <li>
-                  <a href="javascript:;">
-                    <span class="badge bg-red pull-right">50%</span>
-                    <span>Settings</span>
-                  </a>
-                </li>
-                <li><a href="javascript:;">Help</a></li>
-                -->
                 <li><%= link_to destroy_user_session_path, method: :delete  do  %> Cerrar Sesión <i class="fas fa-sign-out-alt"></i> <% end %></li>
               </ul>
             </li>
