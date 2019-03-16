@@ -215,7 +215,13 @@ Navarra.geomaps = function (){
     $('#select').on('click', function(event) {
       checked = $('#select').hasClass('active');
       if (checked){
+<<<<<<< HEAD
+=======
+
+>>>>>>> e0fa66b93d42459501cee2d55bc8b39c6f85545f
         $('#select').removeClass('active');
+        $(".fa-draw-polygon").css("color", "#9b9b9b");
+
         editableLayers.eachLayer(function (layer) {
           mymap.removeLayer(layer);
         });
@@ -232,7 +238,10 @@ Navarra.geomaps = function (){
           // mymap.on('click', source.getFeatureInfo, source);
 
       }else{
+        
         $('#select').addClass('active');
+        $(".fa-draw-polygon").css("color", "#d3d800");
+
         size_box = [];
         // Initialise the draw control and pass it the FeatureGroup of editable layers
         editableLayers = new L.FeatureGroup();

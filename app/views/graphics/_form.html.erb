@@ -45,10 +45,10 @@
 
       <!-- Eje X -->
       <div class="form-row col-md-12">
-        <div class="form-group hide-div bar horizontal bubble col-md-1">
+        <div class="form-group hide-div bar horizontalBar bubble col-md-1">
           <br><center><b>Eje X:</b></center>
         </div>
-        <div class="form-group hide-div bar horizontal bubble col-md-3">
+        <div class="form-group hide-div bar horizontalBar bubble col-md-3">
           <%= form.input :label_x_axis, label: "Nombre", input_html: {class: 'form-control'} %>
         </div>
 
@@ -59,7 +59,7 @@
           <br><br>
         </div>
 
-        <div class="form-group hide-div bar horizontal col-md-2">
+        <div class="form-group hide-div bar horizontalBar col-md-2">
           <%= form.label :stack, "Apilar" %>
           <br>
           <%= form.check_box :stack, input_html: {class:"form-check"}%>
@@ -72,22 +72,22 @@
 
       <!-- Eje Y Izquierdo -->
       <div class="form-row col-md-12">
-        <div class="form-group hide-div bar horizontal bubble col-md-1">
+        <div class="form-group hide-div bar horizontalBar bubble col-md-1">
           <br><center><b>Eje Y:</b><br>(Izquierdo)</center>
         </div>
-        <div class="form-group hide-div bar horizontal bubble col-md-3">
+        <div class="form-group hide-div bar horizontalBar bubble col-md-3">
           <%= form.input :label_y_axis_left, label: "Nombre", input_html: {class: 'form-control'} %>
         </div>
-        <div class="form-group hide-div bar bubble horizontal col-md-2">
+        <div class="form-group hide-div bar bubble horizontalBar col-md-2">
           <%= form.input :tick_x_min, label: "Mínimo", input_html: {class: 'form-control'} %>
         </div>
-        <div class="form-group hide-div bar bubble horizontal col-md-2">
+        <div class="form-group hide-div bar bubble horizontalBar col-md-2">
           <%= form.input :tick_x_max, label: "Máximo", input_html: {class: 'form-control'} %>
         </div>
-        <div class="form-group hide-div bar horizontal col-md-2">
+        <div class="form-group hide-div bar horizontalBar col-md-2">
           <%= form.input :step_x, label: "Espacio", input_html: {class: 'form-control'} %>
         </div>
-        <div class="form-group hide-div bar horizontal col-md-2">
+        <div class="form-group hide-div bar horizontalBar col-md-2">
           <%= form.input :substep_x, label: "SubEspacio", input_html: {class: 'form-control'} %>
           <br>
         </div>
