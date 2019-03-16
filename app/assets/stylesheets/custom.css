@@ -54,7 +54,9 @@ animation-timing-function: ease-out;
 .full-height{
   height:100%;
 }
-
+.right-column{
+  padding-right: 0px;
+}
 .graphics{
   position: relative;
   overflow: auto;

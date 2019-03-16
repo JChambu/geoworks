@@ -103,7 +103,7 @@ Navarra.dashboards.action_show = function(){
 
         $("#active-filters").removeClass('col-md-3').addClass('col-md-6');
         $("#map").css("width", "50%");
-        $(".graphics").css("width", "50%");
+        $(".right-column").css("width", "50%");
 
         init_chart_doughnut();
 
@@ -113,7 +113,7 @@ Navarra.dashboards.action_show = function(){
 
         $("#active-filters").removeClass('col-md-6').addClass('col-md-3');
         $("#map").css("width", "75%");
-        $(".graphics").css("width", "25%");
+        $(".right-column").css("width", "25%");
 
         $('div.graphics').replaceWith( $('div.graphics'), init_chart_doughnut());
         status_view = $('#view').removeClass('active');
