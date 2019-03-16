@@ -46,7 +46,6 @@ animation-timing-function: ease-out;
   top: 0;
   bottom: 0;
   width: 75%;
-  height: 85vh;
 }
 
 .st0  {
@@ -59,7 +58,6 @@ animation-timing-function: ease-out;
 .graphics{
   position: relative;
   overflow: auto;
-  height: 85vh;
 }
 
 .daterangepicker .ranges li {
