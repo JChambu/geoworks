@@ -215,10 +215,6 @@ Navarra.geomaps = function (){
     $('#select').on('click', function(event) {
       checked = $('#select').hasClass('active');
       if (checked){
-<<<<<<< HEAD
-=======
-
->>>>>>> e0fa66b93d42459501cee2d55bc8b39c6f85545f
         $('#select').removeClass('active');
         $(".fa-draw-polygon").css("color", "#9b9b9b");
 
@@ -231,7 +227,6 @@ Navarra.geomaps = function (){
         init_kpi();
         init_chart_doughnut();
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
-        console.log(heatmap_actived);
       if (heatmap_actived != ''){
         Navarra.geomaps.heatmap_data();
       }
