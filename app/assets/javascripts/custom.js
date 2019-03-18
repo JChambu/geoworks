@@ -440,7 +440,7 @@ function init_chart_doughnut(size_box = null){
           canvas_id = ('canvas'+graphic_id);
           canvas_graph.id = canvas_id;
           canvas_graph.className = 'canvas'+graphic_id;
-          htmldiv = ' <div class="chart_container'+graphic_id+'">';
+          htmldiv = '<div class="panel panel-default chart_container'+graphic_id+'" style="margin-bottom: 5px">';
           $('.graphics').append(htmldiv);
           $('.chart_container'+graphic_id).append(canvas_graph);
 
