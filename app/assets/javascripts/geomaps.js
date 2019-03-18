@@ -197,7 +197,7 @@ Navarra.geomaps = function (){
   }
   var OpcionesPoligono={
     shapeOptions: {
-      color: '#F0D33F',
+      color: '#d3d800',
     }
   }
   var LatLngToCoords = function (LatLng, reverse) { // (LatLng, Boolean) -> Array
