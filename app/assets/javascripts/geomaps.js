@@ -506,30 +506,7 @@ Navarra.geomaps = function (){
 
   function heatmap_data(){
 
-  /*  var legendCanvas = document.createElement('canvas');
-    legendCanvas.width = 100;
-    legendCanvas.height = 10;
-    var min = document.querySelector('#min');
-    var max = document.querySelector('#max');
-    var gradientImg = document.querySelector('#gradient');
-    var legendCtx = legendCanvas.getContext('2d');
-    var gradientCfg = {};
-    console.log("paso");
-    //        the onExtremaChange callback gives us min, max, and the gradientConfig
-    // so we can update the legend
-    min.innerHTML = 10; 
-    max.innerHTML = 1000; //data.max;
-    // regenerate gradient image
-    if (data.gradient != gradientCfg) {
-      gradientCfg = data.gradient;
-      var gradient = legendCtx.createLinearGradient(0, 0, 100, 1);
-      for (var key in gradientCfg) {
-        gradient.addColorStop(key, gradientCfg[key]);
-      }
-      legendCtx.fillStyle = gradient;
-      legendCtx.fillRect(0, 0, 100, 10);
-      gradientImg.src = legendCanvas.toDataURL();
-    }*/
+
 
 
   var type_box = 'extent';
@@ -550,7 +527,39 @@ Navarra.geomaps = function (){
     datatype: 'json',
     data: {project_type_id: data_id, conditions: conditions, heatmap_field: heatmap_field, size_box: size_box, type_box: type_box},
     success: function(data){
-    
+   
+    var min = data[0]['count'];
+    last_element = data.length - 1;
+      console.log(last_element);
+    var max = data[last_element]['count'];
+console.log(max);
+console.log(data);
+
+    var legendCanvas = document.createElement('canvas');
+    legendCanvas.width = 100;
+    legendCanvas.height = 10;
+    var legendCtx = legendCanvas.getContext('2d');
+    var gradientCfg = {};
+    var gradient = legendCtx.createLinearGradient(0, 0, 100, 1);
+
+      gradient.addColorStop(0.25, "rgb(0,0,255)");
+      gradient.addColorStop(0.55, "rgb(0,255,0)");
+      gradient.addColorStop(0.85, "yellow");
+      gradient.addColorStop(1, "rgb(255,0,0)");
+      legendCtx.fillStyle = gradient;
+      legendCtx.fillRect(0, 0, 100, 10);
+   // }
+
+      var populationLegend = L.control({position: 'bottomleft'});
+      populationLegend.onAdd = function (mymap) {
+     var div = L.DomUtil.create('div', 'info legend');
+
+         div.innerHTML += '<div>'+ min + '  ' +   max +'  </div>';
+          div.innerHTML +=
+ '<img src="' + legendCanvas.toDataURL() +'" alt="legend" width="125" height="25">';
+     return div;
+   };
+populationLegend.addTo(mymap);
       var testData;
     testData = {
       max: 5,

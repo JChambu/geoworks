@@ -117,7 +117,7 @@ class ProjectTypesController < ApplicationController
       end
 
 
-      @query_h = data.select("st_x(the_geom) as lng, st_y(the_geom) as lat, count(id) as count").group("properties->>'#{params[:heatmap_field]}', the_geom")
+      @query_h = data.select("st_x(the_geom) as lng, st_y(the_geom) as lat, properties->>'#{params[:heatmap_field]}' as count").group("properties->>'#{params[:heatmap_field]}', the_geom").order('count')
     
       #@query_h = Project.where(project_type_id: params[:project_type_id]).select("st_x(the_geom) as lng, st_y(the_geom) as lat, count(id) as count").group("properties->>'#{params[:heatmap_field]}', the_geom")
 
