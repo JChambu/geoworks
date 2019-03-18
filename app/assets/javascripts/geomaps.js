@@ -306,8 +306,12 @@ Navarra.geomaps = function (){
         }
         projects.addTo(mymap);
       }
-    init_kpi();
-    init_chart_doughnut();
+
+      checked = $('#select').hasClass('active');
+      if (!checked){
+          init_kpi();
+          init_chart_doughnut();
+     }
   }
 
   function point_colors_data(){
