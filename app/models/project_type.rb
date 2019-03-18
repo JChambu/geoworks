@@ -124,13 +124,28 @@ class ProjectType < ApplicationRecord
       @data_fixed = data
     end
 
-    #  if type_box == 'filter'
-    #        data = Project.where(project_type_id: chart.project_type_id).where("properties->>'" + @filter_condition[0] +  "' " + @filter_condition[1]  + " ?", @filter_condition[2])
-    #      end
     if type_box == 'polygon'
       data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
       @data_fixed = data
     end
+      if !data_conditions.blank?
+        data_conditions.each do |key| 
+          @s = key.split('|')
+          @field = @s[0]
+          @filter = @s[1]
+          @value = @s[2]
+          if (@filter == '<' || @filter == '>' || @filter == '>=' || @filter == '<=' )
+            data =  data.where(" (properties->>'" + @field +"')::numeric" +  @filter +"#{@value}")
+          else
+            data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
+          end 
+        end
+      @data_fixed = data
+      end
+    #  if type_box == 'filter'
+    #        data = Project.where(project_type_id: chart.project_type_id).where("properties->>'" + @filter_condition[0] +  "' " + @filter_condition[1]  + " ?", @filter_condition[2])
+    #      end
+
 
     @total_row = Project.where(project_type_id: project_type_id).count
     @row_selected = @data_fixed.count 
