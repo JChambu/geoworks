@@ -48,7 +48,8 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
         width: size.x,
         layers: this.wmsParams.layers,
         query_layers: this.wmsParams.layers,
-        info_format: 'text/html'
+        INFO_FORMAT: 'application/json',
+        format_options: 'callback:getJson'
       };
 
     params[params.version === '1.3.0' ? 'i' : 'x'] = point.x;
@@ -86,15 +87,37 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
 
   },
 
-  showGetFeatureInfo: function (err, latlng, content) {
-    if (err) { console.log(err); return; } // do nothing if there's an error
+  showGetFeatureInfo: function (err, latlng, info) {
+    
+//    if (err) { console.log(err); return; } // do nothing if there's an error
 
+        checked = $('#select').hasClass('active');
+        if (!checked){
+          var cc = info;
+          var prop = cc['features'][0]['properties'];
+          var z = document.createElement('p'); // is a node
+          var x = []
+          $.each(prop, function(a,b){
+            x.push('<b>' + a + ': </b> ' + b + '</br>');
+          })
+
+          z.innerHTML = x;
+          inn = document.body.appendChild(z);
+
+          if (!checked){
+              L.popup()
+              .setLatLng(latlng)
+              .setContent(inn)
+              .openOn(this._map);
     // Otherwise show the content in a popup, or something.
-    L.popup({ maxWidth: 800})
+/*    L.popup({ maxWidth: 800})
       .setLatLng(latlng)
       .setContent(content)
-      .openOn(this._map);
+      .openOn(this._map);*/
   }
+  }
+  }
+  
 });
 
 L.tileLayer.betterWms = function (url, options) {

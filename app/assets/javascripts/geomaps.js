@@ -320,12 +320,36 @@ Navarra.geomaps = function (){
   function wms_filter(){
 
     var MySourceb = L.WMS.Source.extend({
+  
+      
       'showFeatureInfo': function(latlng, info) {
         if (!this._map) {
           return;
         }
-        this._map.openPopup(info, latlng);
+  
+        checked = $('#select').hasClass('active');
+        if (!checked){
+          var cc = JSON.parse(info);
+          var prop = cc['features'][0]['properties'];
+          var z = document.createElement('p'); // is a node
+          var x = []
+          $.each(prop, function(a,b){
+            x.push('<b>' + a + ': </b> ' + b + '</br>');
+          })
+
+          z.innerHTML = x;
+          inn = document.body.appendChild(z);
+          checked = $('#select').hasClass('active');
+
+          if (!checked){
+            L.popup()
+              .setLatLng(latlng)
+              .setContent(inn)
+              .openOn(mymap);
+          }
+        }
       }
+      
     });
 
     var cql_filter = 'project_type_id='+Navarra.dashboards.config.project_type_id;
@@ -363,6 +387,8 @@ Navarra.geomaps = function (){
           version: '1.0.0',//wms version (ver get capabilities)
           tiled: true,
           styles: 'poi_new',
+          INFO_FORMAT: 'application/json',
+          format_options: 'callback:getJson',
           CQL_FILTER: cql_filter 
         })
         projectss = projectFilterLayer.getLayer(name_layer).addTo(mymap);
@@ -425,6 +451,8 @@ Navarra.geomaps = function (){
           tiled: true,
           styles: 'scale2',
           env: env_f,
+          INFO_FORMAT: 'application/json',
+          format_options: 'callback:getJson',
           CQL_FILTER: value_filter
         };
         source = new L.tileLayer.betterWms("http://"+url+":8080/geoserver/wms", options);
