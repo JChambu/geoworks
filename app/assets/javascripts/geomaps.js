@@ -1,93 +1,4 @@
-Navarra.namespace("geomaps_extended_listings");
 Navarra.namespace("geomaps");
-Navarra.geomaps_extended_listings = function (){
-  var map, marker, editableLayers
-  var size_box = [];
-
-  var init= function() {
-
-    var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    });
-
-    var grayscale =L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-      attribution: '',
-      id: 'mapbox.light', 
-      accessToken: 'pk.eyJ1IjoiZmxhdmlhYXJpYXMiLCJhIjoiY2ppY2NzMm55MTN6OTNsczZrcGFkNHpoOSJ9.cL-mifEoJa6szBQUGnLmrA'
-    });
-
-    mymap = L.map('map',{
-      crs: L.CRS.EPSG3857,
-      zoom: 7,
-      center: [-33.113399134183744, -69.69339599609376],
-      zoomControl: false,
-      layers: [grayscale,streets]
-    }) ;
-
-    if(Navarra.extended_listings.config.lat != null){
-      lat = Navarra.extended_listings.config.lat; 
-      lon = Navarra.extended_listings.config.lon; 
-      marker = L.marker([lat, lon]).addTo(mymap);
-      $('#extended_listing_longitude').val(lon);
-      $('#extended_listing_latitude').val(lat);
-    }
-
-    $("#move_marker").on('click', function(e){
-      if(typeof(marker)!=='undefined'){
-        marker.dragging.enable();
-        marker.on('dragend', function(event) {
-          var position = marker.getLatLng();
-          $('#extended_listing_longitude').val(position.lng);
-          $('#extended_listing_latitude').val(position.lat);
-        });
-      }
-      e.preventDefault();
-    })
-
-    $('#add_marker').on('click', function(event){
-      mymap.on('click', function(evt){
-        if(typeof(marker)!=='undefined'){
-          mymap.removeLayer(marker);
-        }
-
-        marker = L.marker(evt.latlng).addTo(mymap);
-        $('#extended_listing_longitude').val(evt.latlng.lng);
-        $('#extended_listing_latitude').val(evt.latlng.lat);
-      });
-    });
-
-    var MySource = L.WMS.Source.extend({
-      'showFeatureInfo': function(latlng, info) {
-
-        if (!this._map) {
-          return;
-        }
-        //               do whatever you like with info
-        this._map.openPopup(info, latlng);
-      }
-    });
-  }
-  var geocoding = function(opt){
-
-    address = opt.county + " " +  opt.location +" " +  opt.searchTerm;
-    $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + address, function(data){
-      var items = [];
-      $.each(data, function(key, val) {
-        coord = [val.lat, val.lon]
-        $('#extended_listing_longitude').val(val.lon);
-        $('#extended_listing_latitude').val(val.lat);
-        marker = L.marker(coord).addTo(mymap); 
-        var markerBounds = L.latLngBounds(coord[0], coord[1]);
-        mymap.fitBounds(markerBounds);
-      });
-    });
-  }
-
-  return {
-    init: init,
-    geocoding: geocoding
-  }
-}();
 
 Navarra.geomaps = function (){
   var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl, url;
@@ -127,6 +38,7 @@ Navarra.geomaps = function (){
       zoom: 12,
       center: [-33.113399134183744, -69.69339599609376],
       zoomControl: false,
+      zoomAnimation: false,
       layers: [streets, grayscale]
     }) ;
 
@@ -209,7 +121,6 @@ Navarra.geomaps = function (){
     }
 
     show_kpis();
-    mymap.spin(false);
     mymap.on('moveend', onMapZoomedMoved);
 
     $('#select').on('click', function(event) {
@@ -307,14 +218,11 @@ Navarra.geomaps = function (){
     return coords;
   }
   function onMapZoomedMoved(e) {
-    mymap.invalidateSize();    
-    mymap.spin(false, {lines: 13, length: 40});
+    console.log(e);
     checked = $('#select').hasClass('active');
     if(!checked){
-
       show_kpis();
     }
-    mymap.spin(false);
   }
 
   function wms_filter(){
@@ -506,9 +414,6 @@ Navarra.geomaps = function (){
 
   function heatmap_data(){
 
-
-
-
   var type_box = 'extent';
   var data_conditions = {}
   if (size_box.length > 0 ){
@@ -532,8 +437,6 @@ Navarra.geomaps = function (){
     last_element = data.length - 1;
       console.log(last_element);
     var max = data[last_element]['count'];
-console.log(max);
-console.log(data);
 
     var legendCanvas = document.createElement('canvas');
     legendCanvas.width = 100;
