@@ -1,6 +1,6 @@
 /**
- *  * Resize function without multiple trigger
- *   *
+*  * Resize function without multiple trigger
+*   *
  *    * Usage:
  *     * $(window).smartresize(function(){
  *      *     // code here
@@ -127,7 +127,11 @@ function init_kpi(size_box = null){
     success: function(data){
       data.forEach(function(element){
         var count_element= element['data'][0]['count'];
-        data_cont = (Number(count_element)).format(0, 3, '.', ',');
+        if (element['title'] == '% del Total' ){
+          data_cont = (Number(count_element)).format(2, 3, '.', ',');
+        }else{
+          data_cont = (Number(count_element)).format(0, 3, '.', ',');
+        }
         if ($('.kpi_'+ element['id']).length) {
           $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ data_cont +'</div>');
         }else{
