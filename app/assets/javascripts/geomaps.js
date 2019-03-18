@@ -451,12 +451,13 @@ Navarra.geomaps = function (){
       gradient.addColorStop(1, "rgb(255,0,0)");
       legendCtx.fillStyle = gradient;
       legendCtx.fillRect(0, 0, 100, 10);
-   // }
 
       var populationLegend = L.control({position: 'bottomleft'});
       populationLegend.onAdd = function (mymap) {
-     var div = L.DomUtil.create('div', 'info legend');
-
+        if ($('.info_legend').length){
+          $('.info_legend').remove();
+        }
+          var div = L.DomUtil.create('div', 'info_legend');
          div.innerHTML += '<div>'+ min + '  ' +   max +'  </div>';
           div.innerHTML +=
  '<img src="' + legendCanvas.toDataURL() +'" alt="legend" width="125" height="25">';
@@ -484,6 +485,10 @@ populationLegend.addTo(mymap);
   function remove_heatmap(){
     if(typeof(heatmapLayer)!=='undefined'){
       mymap.removeLayer(heatmapLayer);
+
+        if ($('.info_legend').length){
+          $('.info_legend').remove();
+        }
     }
 
   }
