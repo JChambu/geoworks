@@ -462,7 +462,7 @@ Navarra.geomaps = function (){
           $('.info_legend').remove();
         }
           var div = L.DomUtil.create('div', 'info_legend');
-         div.innerHTML += '<div>'+ min + '  ' +   max +'  </div>';
+         div.innerHTML += '<div><span style="float: right">'+ min + '</span><span style="float: left ">  ' + max +'</span>  </div>';
           div.innerHTML +=
  '<img src="' + legendCanvas.toDataURL() +'" alt="legend" width="125" height="25">';
      return div;
