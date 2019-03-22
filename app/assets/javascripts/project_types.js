@@ -2,6 +2,8 @@ Navarra.namespace("project_types.action_maps");
 Navarra.namespace("project_types.action_dashboard");
 Navarra.namespace("project_types.action_create");
 Navarra.namespace("project_types.action_new");
+Navarra.namespace("project_types.action_edit");
+Navarra.namespace("project_types.action_update");
 
 Navarra.project_types.config = {
   filtrado: '',
@@ -89,6 +91,17 @@ Navarra.project_types.action_create = function(){
   }
   return {
     init: init,
+  }
+}();
+
+
+Navarra.project_types.action_edit = function(){
+
+  init = function(){
+    Navarra.project_types.action_new.init();
+  }
+  return{
+    init:init
   }
 }();
 
