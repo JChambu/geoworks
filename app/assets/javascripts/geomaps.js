@@ -218,7 +218,6 @@ Navarra.geomaps = function (){
     return coords;
   }
   function onMapZoomedMoved(e) {
-    console.log(e);
     checked = $('#select').hasClass('active');
     if(!checked){
       show_kpis();
@@ -439,7 +438,6 @@ Navarra.geomaps = function (){
 
     var min = data[0]['count'];
     last_element = data.length - 1;
-      console.log(last_element);
     var max = data[last_element]['count'];
 
     var legendCanvas = document.createElement('canvas');
