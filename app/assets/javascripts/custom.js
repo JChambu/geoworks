@@ -153,6 +153,9 @@ function capitalize(s){
 
 function init_chart_doughnut(size_box = null){
 
+  // Guardamos la posición del scroll
+  var scroll = $('.graphics').scrollTop();
+
   // Seteamos el alto de los gráficos y del mapa
   var o = parseInt(window.innerHeight) - 100;
   $(".graphics").css("height", o+"px");
@@ -750,6 +753,10 @@ function init_chart_doughnut(size_box = null){
           });
 
         } //cierra for data
+
+        // Aplicamos la posición del scroll
+        $('.graphics').scrollTop(scroll);
+
       } //cierra function data
     }) //cierra ajax
   } //cierra if graphics
