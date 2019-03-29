@@ -333,14 +333,25 @@ class ProjectType < ApplicationRecord
         row.headers.each do |f|
           field = f.parameterize(separator: '_')
           fields << field
-          @new_project_field =  ProjectField.where(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id, required: false, field_type_id: 1).first_or_create(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id, required: false, field_type_id: 1)
-
+          @new_project_field =  ProjectField.where(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id, required: false).first_or_create(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id, required: false, field_type_id: 1)
         end
         create_view(fields, ct, project_type_id, name_layer)
 
       end
       row.to_hash.each_pair do |k,v|
-        items.merge!({k.downcase => v}) 
+        
+        field_custom = k.parameterize(separator: '_')
+       # field_type = ProjectField.where(name:k, project_type_id: project_type_id)
+       # if !field_type.nil?
+       #   if (field_type[0].field_type_id == 7)
+       #     value_parse = JSON.parse(v)
+       #     items.merge!({k.downcase => value_parse}) 
+       #   else
+       #     items.merge!({k.downcase => v}) 
+       #   end
+       # else
+            items.merge!({field_custom.downcase => v}) 
+      #end
       end
       #items = row.to_h
       geom = ''
