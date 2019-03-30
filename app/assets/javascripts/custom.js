@@ -443,315 +443,318 @@ function init_chart_doughnut(size_box = null){
             }) //cierra each b
           }) //cierra each reg
 
-          $(".chart_container"+graphic_id).empty();
-          var canvas_graph = document.createElement('canvas');
-          canvas_id = ('canvas'+graphic_id);
-          canvas_graph.id = canvas_id;
-          canvas_graph.className = 'canvas'+graphic_id;
-          htmldiv = '<div class="panel panel-default chart_container'+graphic_id+'" style="margin-bottom: 5px">';
-          $('.graphics').append(htmldiv);
-          $('.chart_container'+graphic_id).append(canvas_graph);
+          //Valida si el chart_container no existe para entonces crearlo (Fix temporal, averiguar porque duplican los charts)
+          if($(".chart_container"+graphic_id).length == 0) {
 
-          //Chequeamos el estado de view
-          status_view = $('#view').hasClass('active');
+            var canvas_graph = document.createElement('canvas');
+            canvas_id = ('canvas'+graphic_id);
+            console.log(canvas_id);
+            canvas_graph.id = canvas_id;
+            canvas_graph.className = 'canvas'+graphic_id;
+            htmldiv = '<div class="panel panel-default chart_container'+graphic_id+'" style="margin-bottom: 5px">';
+            $('.graphics').append(htmldiv);
+            $('.chart_container'+graphic_id).append(canvas_graph);
 
-          if (!status_view){ //Default
+            //Chequeamos el estado de view
+            status_view = $('#view').hasClass('active');
 
-            $('.chart_container'+graphic_id).addClass('col-md-12');
-            aspectR ="1";
-            legend_display = false;
+            if (!status_view){ //Default
 
-          }else{ //Active
+              $('.chart_container'+graphic_id).addClass('col-md-12');
+              aspectR ="1";
+              legend_display = false;
 
-            $('.chart_container'+graphic_id).addClass('col-md-'+width);
-            if(width == '6'){
-              aspectR = "1";
-            }else{
-              aspectR = "2";
+            }else{ //Active
+
+              $('.chart_container'+graphic_id).addClass('col-md-'+width);
+              if(width == '6'){
+                aspectR = "1";
+              }else{
+                aspectR = "2";
+              }
+              legend_display = true;
+
             }
-            legend_display = true;
 
-          }
-
-          // BAR options
-          if (type_chart == 'bar' || type_chart == 'line' || type_chart == 'area' || type_chart == 'point') {
-            var option_legend = {
-              responsive: true,
-              aspectRatio: aspectR,
-              title: {
-                display: true,
-                text: title,
-                fontSize: 18
-              },
-              legend: {
-                display: legend_display,
-                position: 'bottom',
-                labels: {
-                  boxWidth: 40,
-                  padding: 10,
-                  usePointStyle: true,
-                }
-              },
-              scales: {
-                xAxes: [{
-                  stacked: stacked,
+            // BAR options
+            if (type_chart == 'bar' || type_chart == 'line' || type_chart == 'area' || type_chart == 'point') {
+              var option_legend = {
+                responsive: true,
+                aspectRatio: aspectR,
+                title: {
                   display: true,
-                  scaleLabel: {
-                    display: true,
-                    labelString: label_x_axis
+                  text: title,
+                  fontSize: 18
+                },
+                legend: {
+                  display: legend_display,
+                  position: 'bottom',
+                  labels: {
+                    boxWidth: 40,
+                    padding: 10,
+                    usePointStyle: true,
                   }
-                }],
-                yAxes: [{
-                  id: 'left-y-axis',
-                  position: 'left',
-                  display: 'true',
-                  type: 'linear',
-                  ticks: {
-                    suggestedMin: parseInt(tick_min_left),
-                    suggestedMax: parseInt(tick_max_left),
-                    stepSize: parseInt(tick_step_left),
-                  },
-                  stacked: stacked,
-                  scaleLabel: {
+                },
+                scales: {
+                  xAxes: [{
+                    stacked: stacked,
                     display: true,
-                    labelString: label_y_axis_left
-                  },
-                  gridLines: {
-                    drawOnChartArea: true,
-                  },
-                },{
-                  id: 'right-y-axis',
-                  position: 'right',
-                  display: display_right_y_axis,
-                  type: 'linear',
-                  ticks: {
-                    suggestedMin: parseInt(tick_min_right),
-                    suggestedMax: parseInt(tick_max_right),
-                  },
-                  stacked: stacked,
-                  scaleLabel: {
-                    display: true,
-                    labelString: label_y_axis_right,
-                  },
-                  gridLines: {
-                    drawOnChartArea: false,
-                  },
-                }]
-              },
-              plugins: {
-                datalabels: {
-                  display: data_labelling,
-                  font: {
-                    size: 16,
-                    weight: 'bold'
-                  },
-                  color: 'white',
-                  textStrokeColor: '#1B2631',
-                  textStrokeWidth: 1,
-                  textShadowColor: '#000000',
-                  textShadowBlur: 5,
-                  anchor: 'end',
-                  align: 'end',
-                  offset: -5,
-                  formatter: Math.round
-                }
-              },
-            }
-            var chart_doughnut_settings = {
-              type: 'bar',
-              data: data_gx,
-              options:  option_legend
-            }
-          }
-
-          // HORIZONTAL BAR datasets
-          if (type_chart == 'horizontalBar') {
-            var option_legend = {
-              responsive: true,
-              aspectRatio: aspectR,
-              title: {
-                display: true,
-                text: title,
-                fontSize: 18
-              },
-              legend: {
-                display: legend_display,
-                position: 'bottom',
-                labels: {
-                  boxWidth: 40,
-                  padding: 10,
-                  usePointStyle: true,
-                }
-              },
-              scales: {
-                xAxes: [{
-                  display: true,
-                  ticks: {
-                    suggestedMin: parseInt(tick_min_left),
-                    suggestedMax: parseInt(tick_max_left),
-                    stepSize: parseInt(tick_step_left),
-                  },
-                  stacked: stacked,
-                  scaleLabel: {
-                    display: true,
-                    labelString: label_x_axis
-                  },
-                  gridLines: {
-                    drawOnChartArea: true,
-                  },
-                }],
-                yAxes: [{
-                  display: true,
-                  stacked: stacked,
-                  scaleLabel: {
-                    display: true,
-                    labelString: label_y_axis_left
+                    scaleLabel: {
+                      display: true,
+                      labelString: label_x_axis
+                    }
+                  }],
+                  yAxes: [{
+                    id: 'left-y-axis',
+                    position: 'left',
+                    display: 'true',
+                    type: 'linear',
+                    ticks: {
+                      suggestedMin: parseInt(tick_min_left),
+                      suggestedMax: parseInt(tick_max_left),
+                      stepSize: parseInt(tick_step_left),
+                    },
+                    stacked: stacked,
+                    scaleLabel: {
+                      display: true,
+                      labelString: label_y_axis_left
+                    },
+                    gridLines: {
+                      drawOnChartArea: true,
+                    },
+                  },{
+                    id: 'right-y-axis',
+                    position: 'right',
+                    display: display_right_y_axis,
+                    type: 'linear',
+                    ticks: {
+                      suggestedMin: parseInt(tick_min_right),
+                      suggestedMax: parseInt(tick_max_right),
+                    },
+                    stacked: stacked,
+                    scaleLabel: {
+                      display: true,
+                      labelString: label_y_axis_right,
+                    },
+                    gridLines: {
+                      drawOnChartArea: false,
+                    },
+                  }]
+                },
+                plugins: {
+                  datalabels: {
+                    display: data_labelling,
+                    font: {
+                      size: 16,
+                      weight: 'bold'
+                    },
+                    color: 'white',
+                    textStrokeColor: '#1B2631',
+                    textStrokeWidth: 1,
+                    textShadowColor: '#000000',
+                    textShadowBlur: 5,
+                    anchor: 'end',
+                    align: 'end',
+                    offset: -5,
+                    formatter: Math.round
                   }
-                }]
-              },
-              plugins: {
-                datalabels: {
-                  display: data_labelling,
-                  font: {
-                    size: 16,
-                    weight: 'bold'
-                  },
-                  color: 'white',
-                  textStrokeColor: '#1B2631',
-                  textStrokeWidth: 1,
-                  textShadowColor: '#000000',
-                  textShadowBlur: 5,
-                  anchor: 'end',
-                  align: 'end',
-                  formatter: Math.round
-                }
-              },
+                },
+              }
+              var chart_doughnut_settings = {
+                type: 'bar',
+                data: data_gx,
+                options:  option_legend
+              }
             }
-            var chart_doughnut_settings = {
-              type: 'horizontalBar',
-              data: data_gx,
-              options:  option_legend
-            }
-          }
 
-          // DOUGHNUT options
-          if (type_chart == 'doughnut') {
-            var option_legend = {
-              responsive: true,
-              aspectRatio: aspectR,
-              title: {
-                display: true,
-                text: title,
-                fontSize: 18
-              },
-              legend: {
-                display: legend_display,
-                position: 'bottom',
-                labels: {
-                  boxWidth: 40,
-                  padding: 10,
-                  usePointStyle: true,
-                }
-              },
-              plugins: {
-                datalabels: {
-                  display: data_labelling,
-                  font: {
-                    size: 16,
-                    weight: 'bold'
-                  },
-                  color: 'white',
-                  textStrokeColor: '#1B2631',
-                  textStrokeWidth: 1,
-                  textShadowColor: '#000000',
-                  textShadowBlur: 5,
-                  anchor: 'end',
-                  //align: 'end',
-                  //offset: -5,
-                  backgroundColor: function(context) {
-      							return context.dataset.backgroundColor;
-      						},
-                  borderColor: 'white',
-                  borderRadius: 25,
-                  borderWidth: 2,
-                  formatter: Math.round
-                }
-              },
-            }
-            var chart_doughnut_settings = {
-              type: type_chart,
-              data: data_gx,
-              options:  option_legend
-            }
-          }
-
-          // BUBBLE options
-          if (type_chart == 'bubble') {
-            var option_legend = {
-              responsive: true,
-              aspectRatio: aspectR,
-              title: {
-                display: true,
-                text: title,
-                fontSize: 18
-              },
-              legend: {
-                display: legend_display,
-                position: 'bottom',
-                labels: {
-                  boxWidth: 40,
-                  padding: 10,
-                  usePointStyle: true,
-                }
-              },
-              scales: {
-                xAxes: [{
+            // HORIZONTAL BAR datasets
+            if (type_chart == 'horizontalBar') {
+              var option_legend = {
+                responsive: true,
+                aspectRatio: aspectR,
+                title: {
                   display: true,
-                  scaleLabel: {
-                    display: true,
-                    labelString: label_x_axis
+                  text: title,
+                  fontSize: 18
+                },
+                legend: {
+                  display: legend_display,
+                  position: 'bottom',
+                  labels: {
+                    boxWidth: 40,
+                    padding: 10,
+                    usePointStyle: true,
                   }
-                }],
-                yAxes: [{
+                },
+                scales: {
+                  xAxes: [{
+                    display: true,
+                    ticks: {
+                      suggestedMin: parseInt(tick_min_left),
+                      suggestedMax: parseInt(tick_max_left),
+                      stepSize: parseInt(tick_step_left),
+                    },
+                    stacked: stacked,
+                    scaleLabel: {
+                      display: true,
+                      labelString: label_x_axis
+                    },
+                    gridLines: {
+                      drawOnChartArea: true,
+                    },
+                  }],
+                  yAxes: [{
+                    display: true,
+                    stacked: stacked,
+                    scaleLabel: {
+                      display: true,
+                      labelString: label_y_axis_left
+                    }
+                  }]
+                },
+                plugins: {
+                  datalabels: {
+                    display: data_labelling,
+                    font: {
+                      size: 16,
+                      weight: 'bold'
+                    },
+                    color: 'white',
+                    textStrokeColor: '#1B2631',
+                    textStrokeWidth: 1,
+                    textShadowColor: '#000000',
+                    textShadowBlur: 5,
+                    anchor: 'end',
+                    align: 'end',
+                    formatter: Math.round
+                  }
+                },
+              }
+              var chart_doughnut_settings = {
+                type: 'horizontalBar',
+                data: data_gx,
+                options:  option_legend
+              }
+            }
+
+            // DOUGHNUT options
+            if (type_chart == 'doughnut') {
+              var option_legend = {
+                responsive: true,
+                aspectRatio: aspectR,
+                title: {
                   display: true,
-                  scaleLabel: {
-                    display: true,
-                    labelString: label_y_axis_left
+                  text: title,
+                  fontSize: 18
+                },
+                legend: {
+                  display: legend_display,
+                  position: 'bottom',
+                  labels: {
+                    boxWidth: 40,
+                    padding: 10,
+                    usePointStyle: true,
                   }
-                }]
-              },
-              plugins: {
-                datalabels: {
-                  display: data_labelling,
-                  font: {
-                    size: 16,
-                    weight: 'bold'
-                  },
-                  color: 'white',
-                  textStrokeColor: '#1B2631',
-                  textStrokeWidth: 1,
-                  textShadowColor: '#000000',
-                  textShadowBlur: 5,
-                  anchor: 'end',
-                  align: 'end',
-                  formatter: Math.round
-                }
-              },
+                },
+                plugins: {
+                  datalabels: {
+                    display: data_labelling,
+                    font: {
+                      size: 16,
+                      weight: 'bold'
+                    },
+                    color: 'white',
+                    textStrokeColor: '#1B2631',
+                    textStrokeWidth: 1,
+                    textShadowColor: '#000000',
+                    textShadowBlur: 5,
+                    anchor: 'end',
+                    //align: 'end',
+                    //offset: -5,
+                    backgroundColor: function(context) {
+        							return context.dataset.backgroundColor;
+        						},
+                    borderColor: 'white',
+                    borderRadius: 25,
+                    borderWidth: 2,
+                    formatter: Math.round
+                  }
+                },
+              }
+              var chart_doughnut_settings = {
+                type: type_chart,
+                data: data_gx,
+                options:  option_legend
+              }
             }
-            var chart_doughnut_settings = {
-              type: 'bubble',
-              data: data_gx,
-              options:  option_legend
+
+            // BUBBLE options
+            if (type_chart == 'bubble') {
+              var option_legend = {
+                responsive: true,
+                aspectRatio: aspectR,
+                title: {
+                  display: true,
+                  text: title,
+                  fontSize: 18
+                },
+                legend: {
+                  display: legend_display,
+                  position: 'bottom',
+                  labels: {
+                    boxWidth: 40,
+                    padding: 10,
+                    usePointStyle: true,
+                  }
+                },
+                scales: {
+                  xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                      display: true,
+                      labelString: label_x_axis
+                    }
+                  }],
+                  yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                      display: true,
+                      labelString: label_y_axis_left
+                    }
+                  }]
+                },
+                plugins: {
+                  datalabels: {
+                    display: data_labelling,
+                    font: {
+                      size: 16,
+                      weight: 'bold'
+                    },
+                    color: 'white',
+                    textStrokeColor: '#1B2631',
+                    textStrokeWidth: 1,
+                    textShadowColor: '#000000',
+                    textShadowBlur: 5,
+                    anchor: 'end',
+                    align: 'end',
+                    formatter: Math.round
+                  }
+                },
+              }
+              var chart_doughnut_settings = {
+                type: 'bubble',
+                data: data_gx,
+                options:  option_legend
+              }
             }
-          }
 
-          var cc = '#'+canvas_graph.id;
-          $(cc).each(function(){
-            var chart_element = $(this);
-            var chart_doughnut = new Chart(canvas_id, chart_doughnut_settings);
-            Chart.defaults.global.defaultFontFamily = 'Source Sans Pro';
-          });
-
+            var cc = '#'+canvas_graph.id;
+            $(cc).each(function(){
+              var chart_element = $(this);
+              var chart_doughnut = new Chart(canvas_id, chart_doughnut_settings);
+              Chart.defaults.global.defaultFontFamily = 'Source Sans Pro';
+            });
+          }; //cierra if .chart_container"+graphic_id
         } //cierra for data
 
         // Aplicamos la posición del scroll
