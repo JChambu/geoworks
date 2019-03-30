@@ -448,7 +448,6 @@ function init_chart_doughnut(size_box = null){
 
             var canvas_graph = document.createElement('canvas');
             canvas_id = ('canvas'+graphic_id);
-            console.log(canvas_id);
             canvas_graph.id = canvas_id;
             canvas_graph.className = 'canvas'+graphic_id;
             htmldiv = '<div class="panel panel-default chart_container'+graphic_id+'" style="margin-bottom: 5px">';
