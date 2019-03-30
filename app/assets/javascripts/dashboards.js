@@ -48,7 +48,6 @@ Navarra.dashboards.action_show = function(){
     $(".add_heatmap").on("click", ".mes",  function(){
 
       $(".fa-fire").css("color", "#9b9b9b");
-      $(".fa-spinner").css("color", "#9b9b9b");
       var da =  $(this).attr('id');
         Navarra.project_types.config.field_point_colors = '';
         Navarra.project_types.config.heatmap_field = '';
