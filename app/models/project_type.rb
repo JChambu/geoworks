@@ -341,17 +341,17 @@ class ProjectType < ApplicationRecord
       row.to_hash.each_pair do |k,v|
         
         field_custom = k.parameterize(separator: '_')
-       # field_type = ProjectField.where(name:k, project_type_id: project_type_id)
-       # if !field_type.nil?
-       #   if (field_type[0].field_type_id == 7)
-       #     value_parse = JSON.parse(v)
-       #     items.merge!({k.downcase => value_parse}) 
-       #   else
-       #     items.merge!({k.downcase => v}) 
-       #   end
-       # else
+        field_type = ProjectField.where(name:field_custom, project_type_id: project_type_id)
+        if !field_type.nil?
+          if (field_type[0].field_type_id == 7)
+            value_parse = JSON.parse(v)
+            items.merge!({field_custom.downcase => value_parse}) 
+          else
             items.merge!({field_custom.downcase => v}) 
-      #end
+          end
+        else
+            items.merge!({field_custom.downcase => v}) 
+      end
       end
       #items = row.to_h
       geom = ''
