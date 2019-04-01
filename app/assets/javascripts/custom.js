@@ -757,7 +757,9 @@ function init_chart_doughnut(size_box = null){
         } //cierra for data
 
         // Aplicamos la posición del scroll
-        $('.graphics').scrollTop(scroll);
+        if (scroll > 0) {
+          $('.graphics').scrollTop(scroll);
+        }
 
       } //cierra function data
     }) //cierra ajax
