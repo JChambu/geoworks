@@ -157,9 +157,13 @@ class ProjectType < ApplicationRecord
     @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
     @analytics_charts.each do |chart|
 
-      field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
-      conditions_field = chart.condition_field
+          if !chart.sql_sentence.blank?
 
+             field_select = chart.sql_sentence
+          else
+            field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
+            conditions_field = chart.condition_field
+          end
       if !data_conditions.blank?
         data_conditions.each do |key| 
           @s = key.split('|')
