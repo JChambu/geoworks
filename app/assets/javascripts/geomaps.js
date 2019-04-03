@@ -56,8 +56,14 @@ Navarra.geomaps = function (){
           var prop = cc['features'][0]['properties'];
           var z = document.createElement('p'); // is a node
           var x = []
+          var count = 1;
           $.each(prop, function(a,b){
-            x.push('<b>' + a + ': </b> ' + b + '</br>');
+            if (count < 10 ){
+              x.push('<b>' + a + ': </b> ' + b + '</br>');
+              count = count + 1
+            }else{
+            return false
+            }
           })
 
           z.innerHTML = x;
@@ -426,14 +432,15 @@ Navarra.geomaps = function (){
   }
 
   var conditions = Navarra.project_types.config.filter_kpi
-  var  data_id =  Navarra.dashboards.config.project_type_id;
-  var  heatmap_field =  Navarra.project_types.config.heatmap_field;
+  var data_id =  Navarra.dashboards.config.project_type_id;
+  var heatmap_field =  Navarra.project_types.config.heatmap_field;
+  var heatmap_indicator = Navarra.project_types.config.heatmap_indicator;
 
   $.ajax({
     type: 'GET',
     url: '/project_types/filter_heatmap.json',
     datatype: 'json',
-    data: {project_type_id: data_id, conditions: conditions, heatmap_field: heatmap_field, size_box: size_box, type_box: type_box},
+    data: {project_type_id: data_id, conditions: conditions, heatmap_field: heatmap_field, size_box: size_box, type_box: type_box, heatmap_indicator: heatmap_indicator},
     success: function(data){
 
     var min = data[0]['count'];

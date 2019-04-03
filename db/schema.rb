@@ -10,13 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190227144928) do
+ActiveRecord::Schema.define(version: 20190402203746) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
-  enable_extension "hstore"
-  enable_extension "uuid-ossp"
 
   create_table "actions", id: :serial, force: :cascade do |t|
     t.string "name"
@@ -52,6 +50,8 @@ ActiveRecord::Schema.define(version: 20190227144928) do
     t.boolean "assoc_kpi", default: false
     t.integer "dashboard_id"
     t.text "sql_sentence"
+    t.integer "order"
+    t.string "order_sql"
     t.index ["analysis_type_id"], name: "index_analytics_dashboards_on_analysis_type_id"
     t.index ["chart_id"], name: "index_analytics_dashboards_on_chart_id"
     t.index ["project_type_id"], name: "index_analytics_dashboards_on_project_type_id"
@@ -67,6 +67,179 @@ ActiveRecord::Schema.define(version: 20190227144928) do
     t.integer "manzana"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "carpo0104219", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.float "latitud"
+    t.float "longitud"
+    t.string "activa"
+    t.string "apellido_nombre"
+    t.string "email"
+    t.string "programa"
+    t.string "numero_trampa"
+    t.string "propietario"
+    t.string "direccion"
+    t.string "telefono"
+    t.string "fecha_creacion"
+    t.string "tipo_trampa"
+    t.string "tipo_cebo"
+    t.string "delegacion"
+    t.string "oasis"
+    t.string "red"
+    t.integer "ruta"
+    t.string "urbano"
+    t.string "hospedero"
+    t.string "variedades"
+    t.string "conduccion"
+    t.string "hospedero_grupo"
+    t.string "otros_hospederos"
+    t.string "centro_trampeo"
+    t.string "estado_trampa"
+    t.string "fecha_revision"
+    t.integer "semana"
+    t.integer "periodo"
+    t.string "temporada"
+    t.string "inspector"
+    t.integer "capturas"
+    t.string "re_captura"
+    t.string "fenenologia_hospedero"
+    t.string "fenologia_hospedero_sec"
+    t.string "codigo_fenologia"
+    t.string "isca_rep_piso"
+    t.string "isca_rep_cebo"
+    t.string "isca_rep_cuerpo"
+    t.string "observaciones_reg_trampeo"
+    t.string "reposicion_senasa"
+    t.string "cod_re_senasa_isca"
+    t.string "plaga"
+  end
+
+  create_table "carpo160319", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.float "latitude"
+    t.float "longitude"
+    t.string "activa"
+    t.string "encargado"
+    t.string "email"
+    t.string "programa"
+    t.string "trampa_numero"
+    t.string "propietario"
+    t.string "direccion"
+    t.string "telefono"
+    t.string "fechacreacion"
+    t.string "tipotrampa"
+    t.string "cebo"
+    t.string "delegacion"
+    t.string "oasis"
+    t.string "red"
+    t.integer "ruta"
+    t.string "urbano"
+    t.string "hospederotrampa"
+    t.string "variedad"
+    t.string "sistema_de_conduccion"
+    t.string "hospedero_grupo"
+    t.string "hospederotrampa_other"
+    t.string "centro_de_trampeo"
+    t.string "est_trampa"
+    t.string "fecha_rev"
+    t.integer "semana"
+    t.integer "periodo"
+    t.string "temporada"
+    t.string "inspector"
+    t.integer "cant_plaga_monitoreo"
+    t.string "fenologia_hospedero"
+    t.string "fen_hosp_sec"
+    t.string "codigo"
+    t.string "isca_rep_piso"
+    t.string "isca_rep_cebo"
+    t.string "isca_rep_cuerpo"
+    t.string "observaciones_reg_trampeo"
+    t.string "reposicion_senasa"
+    t.string "cod_re_senasa_isca"
+    t.string "plaga"
+  end
+
+  create_table "carpo_g_alvear", id: :integer, default: -> { "nextval('\"carpo_G_Alvear_id_seq\"'::regclass)" }, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.float "A_Latitud"
+    t.float "A_Longitud"
+    t.string "A_Activa"
+    t.string "A_Apellido_Nombre"
+    t.string "A_Email"
+    t.string "1_Programa"
+    t.string "2_Plaga"
+    t.string "3_Trampa"
+    t.string "4_Propietario"
+    t.string "5_Direccion"
+    t.string "6_Telefono"
+    t.string "7_Fecha_Creacion"
+    t.string "8_Tipo_Trampa"
+    t.string "9_Tipo_Cebo"
+    t.string "10_Delegacion"
+    t.string "11_Oasis"
+    t.string "12_Red"
+    t.integer "13_Ruta"
+    t.string "14_Urbano"
+    t.string "15_Hospedero"
+    t.string "16_Variedades"
+    t.string "17_Conduccion"
+    t.string "18_Hosp_Gr"
+    t.string "19_Otros_Hosp"
+    t.string "20_Ctro_Trampeo"
+    t.string "21_Est_Trampa"
+    t.string "22_Fecha_Rev"
+    t.integer "23_Semana"
+    t.integer "24_Periodo"
+    t.string "25_Temporada"
+    t.string "26_Inspector"
+    t.integer "27_Cant_Plaga_Monitoreo"
+    t.string "28_Fen_Hosp_PPAL"
+    t.string "29_Fen_Hosp_SEC"
+    t.string "30_Cod_Fen"
+    t.string "31_ISCA_Rep_Piso"
+    t.string "32_ISCA_Rep_Cebo"
+    t.string "33_ISCA_Rep_Cuerpo"
+    t.string "34_Observaciones_Reg_Trampeo"
+    t.string "35_Reposicion_SENASA"
+    t.string "36-Cod_Re_SENASA_ISCA"
+  end
+
+  create_table "carpo_sm_sr", id: :integer, default: -> { "nextval('\"carpo_SM_SR_id_seq\"'::regclass)" }, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.float "latitude"
+    t.float "longitude"
+    t.string "activa"
+    t.string "encargado"
+    t.string "email"
+    t.string "programa"
+    t.string "trampa_numero"
+    t.string "propietario"
+    t.string "direccion"
+    t.string "telefono"
+    t.string "fechacreacion"
+    t.string "tipotrampa"
+    t.string "cebo"
+    t.string "delegacion"
+    t.string "oasis"
+    t.string "red"
+    t.integer "ruta"
+    t.string "urbano"
+    t.string "hospederotrampa"
+    t.string "variedad"
+    t.string "sistema_de_conduccion"
+    t.string "hospedero_grupo"
+    t.string "hospederotrampa_other"
+    t.string "centro_de_trampeo"
+    t.string "estado_trampa"
+    t.string "fecha_rev"
+    t.integer "semana"
+    t.integer "periodo"
+    t.string "temporada"
+    t.string "inspector"
+    t.string "fenologia_hospedero"
+    t.string "codigo"
+    t.string "plaga"
   end
 
   create_table "categories", id: :serial, force: :cascade do |t|
@@ -280,7 +453,7 @@ ActiveRecord::Schema.define(version: 20190227144928) do
     t.string "label_y_axis_left"
     t.string "label_y_axis_right"
     t.boolean "stack", default: false
-    t.decimal "tick_x_min", default: "0.0"
+    t.decimal "tick_x_min"
     t.decimal "tick_x_max"
     t.decimal "tick_y_min"
     t.decimal "tick_y_max"
@@ -317,12 +490,162 @@ ActiveRecord::Schema.define(version: 20190227144928) do
     t.index ["user_id"], name: "index_has_project_types_on_user_id"
   end
 
+  create_table "l_keys", id: false, force: :cascade do |t|
+    t.string "name"
+  end
+
   create_table "load_locations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status"
     t.string "directory_name"
+  end
+
+  create_table "lobesia_010419", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.float "latitud"
+    t.float "longitud"
+    t.string "activa"
+    t.string "apellido_nombre"
+    t.string "email"
+    t.string "programa"
+    t.string "numero_trampa"
+    t.string "propietario"
+    t.string "direccion"
+    t.string "telefono"
+    t.string "fecha_creacion"
+    t.string "tipo_trampa"
+    t.string "tipo_cebo"
+    t.string "delegacion"
+    t.string "oasis"
+    t.string "red"
+    t.integer "ruta"
+    t.string "urbano"
+    t.string "hospedero"
+    t.string "variedades"
+    t.string "conduccion"
+    t.string "hospedero_grupo"
+    t.string "otros_hospederos"
+    t.string "centro_trampeo"
+    t.string "estado_trampa"
+    t.string "fecha_revision"
+    t.integer "semana"
+    t.integer "periodo"
+    t.string "temporada"
+    t.string "inspector"
+    t.integer "capturas"
+    t.string "re_captura"
+    t.string "fenologia_hospedero"
+    t.string "fenologia_hospedero_sec"
+    t.integer "codigo_fenologia"
+    t.string "isca_rep_piso"
+    t.string "isca_rep_cebo"
+    t.string "isca_rep_cuerpo"
+    t.string "observaciones_reg_trampeo"
+    t.string "reposicion_senasa"
+    t.integer "cod_re_senasa_isca"
+    t.string "plaga"
+  end
+
+  create_table "lobesia_170318", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.float "latitude"
+    t.float "longitude"
+    t.string "encargado"
+    t.string "A_Email"
+    t.string "programa"
+    t.string "trampa_numero"
+    t.string "4_Propietario"
+    t.string "direccion"
+    t.string "telefono"
+    t.string "fechacreacion"
+    t.string "tipotrampa"
+    t.string "cebo"
+    t.string "delegacion"
+    t.string "oasis"
+    t.string "red"
+    t.integer "ruta"
+    t.string "urbano"
+    t.string "hospederotrampa"
+    t.string "variedad"
+    t.string "sistema_de_conduccion"
+    t.string "hospedero_grupo"
+    t.string "hospederotrampa_other"
+    t.string "centro_de_trampeo"
+    t.string "estado_trampa"
+    t.string "fecha_inspeccion"
+    t.integer "semana"
+    t.integer "periodo"
+    t.string "temporada"
+    t.string "inspector"
+    t.string "fenologia_hospedero"
+    t.integer "codigo"
+    t.string "plaga"
+  end
+
+  create_table "lobesia_sm_al_sr", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.float "latitude"
+    t.float "longitude"
+    t.string "encargado"
+    t.string "email"
+    t.string "programa"
+    t.string "trampa_numero"
+    t.string "propietario"
+    t.string "direccion"
+    t.string "telefono"
+    t.string "fechacreacion"
+    t.string "tipotrampa"
+    t.string "cebo"
+    t.string "delegacion"
+    t.string "oasis"
+    t.string "red"
+    t.integer "ruta"
+    t.string "urbano"
+    t.string "hospederotrampa"
+    t.string "variedad"
+    t.string "sistema_de_conduccion"
+    t.string "hospedero_grupo"
+    t.string "hospederotrampa_other"
+    t.string "centro_de_trampeo"
+    t.string "estado_trampa"
+    t.string "fecha_inspeccion"
+    t.integer "semana"
+    t.integer "periodo"
+    t.string "temporada"
+    t.string "inspector"
+    t.string "fenologia_hospedero"
+    t.integer "codigo"
+    t.string "plaga"
+  end
+
+  create_table "muestreo_nuevo", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.string "fulcrum_id"
+    t.string "created_at"
+    t.string "updated_at"
+    t.string "created_by"
+    t.string "updated_by"
+    t.string "system_created_at"
+    t.string "system_updated_at"
+    t.integer "version"
+    t.string "status"
+    t.string "project"
+    t.string "assigned_to"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "geometry"
+    t.integer "numeromuestreo"
+    t.string "muestreador"
+    t.string "muestreador_other"
+    t.string "fecha_de_muestreo"
+    t.string "direccion"
+    t.string "trampareferencia"
+    t.string "comercial"
+    t.string "foto"
+    t.string "foto_caption"
+    t.string "foto_url"
   end
 
   create_table "p_actions", id: :serial, force: :cascade do |t|
@@ -559,6 +882,141 @@ ActiveRecord::Schema.define(version: 20190227144928) do
     t.date "last_update"
   end
 
+  create_table "procem_muestreo", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.string "fulcrum_id"
+    t.string "created_at"
+    t.string "updated_at"
+    t.string "created_by"
+    t.string "updated_by"
+    t.string "system_created_at"
+    t.string "system_updated_at"
+    t.integer "version"
+    t.integer "status"
+    t.string "project"
+    t.string "assigned_to"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "geometry"
+    t.string "muestreador"
+    t.string "fecha_de_recoleccin"
+    t.string "direccin"
+    t.string "departamento"
+    t.string "direccin_automtica_sub_thoroughfare"
+    t.string "direccin_automtica_thoroughfare"
+    t.string "direccin_automtica_suite"
+    t.string "direccin_automtica_locality"
+    t.string "direccin_automtica_sub_admin_area"
+    t.string "direccin_automtica_admin_area"
+    t.string "direccin_automtica_postal_code"
+    t.string "direccin_automtica_country"
+    t.string "direccin_automtica_full"
+    t.string "hospedero_01"
+    t.string "hospedero_01_other"
+    t.string "cantidad_01"
+    t.float "n_de_muestra_01"
+    t.string "hospedero_02"
+    t.string "hospedero_02_other"
+    t.string "cantidad_02"
+    t.float "n_de_muestra_02"
+    t.string "hospedero_03"
+    t.string "hospedero_03_other"
+    t.string "cantidad_03"
+    t.float "n_de_muestra_03"
+    t.string "hospedero_04"
+    t.string "hospedero_04_other"
+    t.integer "cantidad_04"
+    t.float "n_de_muestra_04"
+    t.string "hospedero_05"
+    t.string "hospedero_05_other"
+    t.integer "cantidad_05"
+    t.float "n_de_muestra_05"
+    t.string "hospedero_06"
+    t.string "hospedero_06_other"
+    t.integer "cantidad_06"
+    t.integer "n_de_muestra_06"
+    t.string "hospedero_07"
+    t.string "hospedero_07_other"
+    t.integer "cantidad_07"
+    t.string "n_de_muestra_07"
+    t.string "hospedero_08"
+    t.string "hospedero_08_other"
+    t.integer "cantidad_08"
+    t.string "n_de_muestra_08"
+    t.string "cultivo"
+    t.string "observaciones"
+    t.string "trampa_de_referencia"
+    t.string "oasis"
+    t.string "fecha"
+    t.string "visita"
+    t.string "suelo"
+    t.integer "cantidad_l_de_caldo_de_clorpiriphos"
+    t.string "volteo"
+    t.integer "cantidad_l_de_caldo_de_cipermetrina"
+    t.string "cebocortina"
+    t.integer "cantidad_l_de_caldo"
+    t.string "bauveria_bassiana"
+    t.string "cantidad_l_de_caldo_de_bauveria"
+    t.string "cosecha"
+    t.integer "cantidad_kg"
+    t.string "sin_frutos"
+    t.string "trampas_cebo"
+    t.integer "cantidad_de_trampas"
+  end
+
+  create_table "procem_trampeo", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.string "fulcrum_id"
+    t.string "created_at"
+    t.string "updated_at"
+    t.string "created_by"
+    t.string "updated_by"
+    t.string "system_created_at"
+    t.string "system_updated_at"
+    t.integer "version"
+    t.integer "status"
+    t.string "project"
+    t.string "assigned_to"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "geometry"
+    t.string "trampa"
+    t.string "fecha_de_creacin"
+    t.string "oasis"
+    t.string "red"
+    t.integer "ruta"
+    t.string "tipo"
+    t.string "tipo_de_zona"
+    t.string "hospederos"
+    t.string "hospederos_other"
+    t.string "hospedero_actual"
+    t.string "fecha_de_cambio"
+    t.string "ubicacin"
+    t.string "ubicacin_caption"
+    t.string "ubicacin_url"
+    t.string "video"
+    t.string "video_caption"
+    t.string "video_url"
+    t.string "centro_de_trampeo"
+    t.string "me"
+    t.string "cu"
+    t.string "ubicacin_me"
+    t.string "ubicacin_me_caption"
+    t.string "ubicacin_me_url"
+    t.string "ubicacin_cu"
+    t.string "ubicacin_cu_caption"
+    t.string "ubicacin_cu_url"
+    t.string "direccin"
+    t.string "n"
+    t.string "barrio"
+    t.string "distrito"
+    t.string "departamento"
+    t.string "propietario"
+    t.string "encargado"
+    t.string "observaciones"
+    t.string "grupo_hospedero"
+  end
+
   create_table "project_fields", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "field_type"
@@ -661,6 +1119,188 @@ ActiveRecord::Schema.define(version: 20190227144928) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "tmp_tomtom_cuba", id: false, force: :cascade do |t|
+    t.serial "id", null: false
+    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_point"}
+    t.bigint "poi_id"
+    t.string "poi_name", limit: 254
+    t.string "address_1", limit: 254
+    t.bigint "hsnr"
+    t.string "complement", limit: 254
+    t.string "postal_cod", limit: 254
+    t.string "neighborho", limit: 254
+    t.string "city", limit: 254
+    t.string "state", limit: 254
+    t.string "country", limit: 254
+    t.string "phone_numb", limit: 254
+    t.string "phone_nu_1", limit: 254
+    t.string "email", limit: 254
+    t.string "web", limit: 254
+    t.bigint "gdf_featco"
+    t.string "gdf_featur", limit: 254
+    t.bigint "gdf_subcat"
+    t.string "gdf_subc_1", limit: 254
+    t.float "longitude"
+    t.float "latitude"
+    t.string "type", limit: 254
+    t.float "x_utm"
+    t.float "y_utm"
+  end
+
+  create_table "tmp_tomtom_cuba_1", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_point"}
+    t.bigint "poi_id"
+    t.string "poi_name", limit: 254
+    t.string "address_1", limit: 254
+    t.bigint "hsnr"
+    t.string "complement", limit: 254
+    t.string "postal_cod", limit: 254
+    t.string "neighborho", limit: 254
+    t.string "city", limit: 254
+    t.string "state", limit: 254
+    t.string "country", limit: 254
+    t.string "phone_numb", limit: 254
+    t.string "phone_nu_1", limit: 254
+    t.string "email", limit: 254
+    t.string "web", limit: 254
+    t.bigint "gdf_featco"
+    t.string "gdf_featur", limit: 254
+    t.bigint "gdf_subcat"
+    t.string "gdf_subc_1", limit: 254
+    t.float "longitude"
+    t.float "latitude"
+  end
+
+  create_table "tmp_tomtom_dom", id: false, force: :cascade do |t|
+    t.serial "id", null: false
+    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_point"}
+    t.float "poi_id"
+    t.string "poi_name", limit: 254
+    t.string "address_1", limit: 254
+    t.float "hsnr"
+    t.string "complement", limit: 254
+    t.string "postal_cod", limit: 254
+    t.string "neighborho", limit: 254
+    t.string "city", limit: 254
+    t.string "state", limit: 254
+    t.string "country", limit: 254
+    t.string "phone_numb", limit: 254
+    t.string "phone_nu_1", limit: 254
+    t.string "email", limit: 254
+    t.string "web", limit: 254
+    t.float "gdf_featco"
+    t.string "gdf_featur", limit: 254
+    t.float "gdf_subcat"
+    t.string "gdf_subc_1", limit: 254
+    t.float "longitude"
+    t.float "latitude"
+  end
+
+  create_table "tmp_tomtom_dom_1", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_point"}
+    t.float "poi_id"
+    t.string "poi_name", limit: 254
+    t.string "address_1", limit: 254
+    t.float "hsnr"
+    t.string "complement", limit: 254
+    t.string "postal_cod", limit: 254
+    t.string "neighborho", limit: 254
+    t.string "city", limit: 254
+    t.string "state", limit: 254
+    t.string "country", limit: 254
+    t.string "phone_numb", limit: 254
+    t.string "phone_nu_1", limit: 254
+    t.string "email", limit: 254
+    t.string "web", limit: 254
+    t.float "gdf_featco"
+    t.string "gdf_featur", limit: 254
+    t.float "gdf_subcat"
+    t.string "gdf_subc_1", limit: 254
+    t.float "longitude"
+    t.float "latitude"
+  end
+
+  create_table "tmp_tomtom_jamaica", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_point"}
+    t.string "poi_id", limit: 254
+    t.string "poi_name", limit: 254
+    t.string "address", limit: 254
+    t.string "hsnr", limit: 254
+    t.string "complement", limit: 254
+    t.string "postal_cod", limit: 254
+    t.string "neighborho", limit: 254
+    t.string "city", limit: 254
+    t.string "state", limit: 254
+    t.string "country", limit: 254
+    t.string "phone_numb", limit: 254
+    t.string "phone_nu_1", limit: 254
+    t.string "web", limit: 254
+    t.string "email", limit: 254
+    t.string "gdf_featco", limit: 254
+    t.string "gdf_featur", limit: 254
+    t.string "gdf_subcat", limit: 254
+    t.string "gdf_subc_1", limit: 254
+    t.float "longitude"
+    t.float "latitude"
+    t.string "x_utm", limit: 254
+    t.string "y_utm", limit: 254
+  end
+
+  create_table "trampa2_inspecciontrampa", id: :serial, force: :cascade do |t|
+    t.string "fulcrum_id"
+    t.string "fulcrum_parent_id"
+    t.string "fulcrum_record_id"
+    t.integer "version"
+    t.string "latitude"
+    t.string "longitude"
+    t.string "geometry"
+    t.string "created_at"
+    t.string "updated_at"
+    t.string "created_by"
+    t.string "updated_by"
+    t.string "estado_de_trampa"
+    t.string "fecha_inspeccion"
+    t.string "semana"
+    t.string "periodo"
+    t.string "temporada"
+    t.string "inspector"
+    t.string "inspector_other"
+    t.string "fenologia_hospedero"
+    t.string "codigo"
+    t.string "plaga"
+    t.string "plaga_other"
+  end
+
+  create_table "trampeo130919", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.integer "ID"
+    t.string "fulcrum_id"
+    t.string "status"
+    t.string "project"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "programa"
+    t.string "trampa_numero"
+    t.string "encargado"
+    t.string "direccion"
+    t.string "telefono"
+    t.string "fechacreacion"
+    t.string "tipotrampa"
+    t.string "cebo"
+    t.string "delegacion"
+    t.string "oasis"
+    t.string "red"
+    t.integer "ruta"
+    t.string "urbano"
+    t.string "hospederotrampa"
+    t.string "hospederotrampa_other"
+    t.string "variedad"
+    t.string "sistema_de_conduccion"
+    t.string "hospedero_grupo"
+    t.string "otros_hospederos"
+    t.string "centro_de_trampeo"
+  end
+
   create_table "user_customers", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "customer_id"
@@ -686,7 +1326,11 @@ ActiveRecord::Schema.define(version: 20190227144928) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
+    t.string "token"
+    t.string "authentication_token", limit: 30
+    t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["token"], name: "index_users_on_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
@@ -707,10 +1351,7 @@ ActiveRecord::Schema.define(version: 20190227144928) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
-  add_foreign_key "analytics_dashboards", "analysis_types"
   add_foreign_key "analytics_dashboards", "charts"
-  add_foreign_key "analytics_dashboards", "project_types"
-  add_foreign_key "has_project_types", "project_types"
   add_foreign_key "has_project_types", "users"
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_types", "users"

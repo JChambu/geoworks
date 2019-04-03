@@ -82,6 +82,16 @@
           </div>
         </div>
 
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <div class="control-group string required ">
+              <div class="controls">
+                <%=f.input :order_sql, input_html: {class: "string required form-control col-md-12"}  %>
+                <br><br><br><br>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="actions text-right" style="">
           <br>
           <%= f.submit class: 'btn btn-primary', value: "Guardar" %>

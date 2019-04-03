@@ -1,5 +1,7 @@
+heatmap_indicator = '<%= params[:q][:project_kpi] %>';
 field =  '<%= params[:q][:project_field] %>';
 Navarra.project_types.config.heatmap_field = field;
+Navarra.project_types.config.heatmap_indicator = heatmap_indicator;
 $("#heatmap-modal").modal('hide');
 $("#heatmap-modal").remove();
 $(".add_heatmap").empty();

@@ -234,7 +234,12 @@ class ProjectType < ApplicationRecord
           if !chart.sql_sentence.blank?
 
             @field_group = "properties->>'"+ chart.group_field.key + "'"
-            data = data.select(chart.sql_sentence).group(@field_group).order(@field_group)
+            if chart.order_sql.blank?
+             data = data.select(chart.sql_sentence).group(@field_group).order(@field_group)
+            else
+              @order_sql = chart.order_sql
+             data = data.select(chart.sql_sentence).group(@field_group).order(@order_sql)
+            end
           else
 
             @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'

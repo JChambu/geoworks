@@ -18,7 +18,8 @@ Navarra.project_types.config = {
   kpi_value: '',
   field_point_colors:'',
   data_point_colors:[],
-  heatmap_field: ''
+  heatmap_field: '',
+  heatmap_indicator: ''
 }
 
 $(document).on('click', 'form .remove_fields', function(event){
