@@ -73,9 +73,43 @@
                 <td><%= link_to 'Datos', project_type_projects_path(project_type) %></td>
                 <td><%= link_to 'Tableros', project_type_dashboards_path(project_type.id) %></td>
                 <td><%= link_to 'Editar', edit_project_type_path(project_type) %></td>
+                <td><i class="fas fa-share-alt" data-toggle="modal" data-target="#share-project-modal"></i></td>
                 <td><%= link_to project_type_path(project_type), method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
-
               </tr>
+
+              <div id="share-project-modal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <h4 class="modal-title"> Compartir Proyecto </h4>
+                    </div>
+                    <div class="modal-body">
+                      <div class="form-row col-md-12">
+                        <div class="col-md-2">
+                          Seleccionar usuario:
+                        </div>
+                        <div class="col-md-7">
+                          <select name="cars" multiple size="3" class="form-control">
+                            <option value="volvo"> Juan Pérez </option>
+                            <option value="saab"> Pablo Martínez </option>
+                            <option value="fiat"> José Estévez </option>
+                            <option value="audi"> Fabián Rodríguez </option>
+                            <option value="audi"> Fernando García </option>
+                            <option value="audi"> Esteban Suárez </option>
+                            <option value="audi"> Leonardo Pirlo </option>
+                          </select>
+                        </div>
+                        <div class="col-md-3">
+                          <button type="button" class="btn btn-primary" data-dismiss="modal"> Compartir </button>
+                        </div>
+                      </div>
+                      <br><br><br><br><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             <% end %>
           </tbody>
         </table>
