@@ -196,7 +196,7 @@ function init_chart_doughnut(size_box = null){
           var datasets = [];
           var width;
           var aspectR;
-          var legend_display;
+          var legend_display = false; // desactivadas momentaneamente por ocultar los gráficos al haber muchas leyendas
           var label_x_axis;
           var label_y_axis_left;
           var label_y_axis_right;
@@ -461,7 +461,7 @@ function init_chart_doughnut(size_box = null){
 
               $('.chart_container'+graphic_id).addClass('col-md-12');
               aspectR ="1";
-              legend_display = false;
+              //legend_display = false; // desactivadas momentaneamente por ocultar los gráficos al haber muchas leyendas
 
             }else{ //Active
 
@@ -471,7 +471,7 @@ function init_chart_doughnut(size_box = null){
               }else{
                 aspectR = "2";
               }
-              legend_display = true;
+              //legend_display = true; // desactivadas momentaneamente por ocultar los gráficos al haber muchas leyendas
 
             }
 
