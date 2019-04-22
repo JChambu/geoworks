@@ -17,6 +17,9 @@ module ProjectTypesHelper
     ProjectType.all.map { |region| [region.name, region.id]   }
   end
 
+  def user_for_projects
+    @users = User.joins("LEFT OUTER JOIN has_project_type on users.id = ")
+  end
 
 
 end
