@@ -282,7 +282,7 @@ ActiveRecord::Schema.define(version: 20190402203746) do
     t.string "label_y_axis_left"
     t.string "label_y_axis_right"
     t.boolean "stack", default: false
-    t.decimal "tick_x_min", default: "0.0"
+    t.decimal "tick_x_min"
     t.decimal "tick_x_max"
     t.decimal "tick_y_min"
     t.decimal "tick_y_max"
@@ -610,8 +610,8 @@ ActiveRecord::Schema.define(version: 20190402203746) do
     t.integer "project_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.point "the_geom"
     t.jsonb "properties_original"
-    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
   end
 
