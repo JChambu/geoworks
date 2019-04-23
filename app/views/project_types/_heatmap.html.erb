@@ -6,22 +6,34 @@
         <h4 class="modal-title"> Mapa de Calor </h4>
       </div>
       <div class="modal-body">
+
         <%= form_tag project_type_create_heatmap_path, :remote => true, :method => :get   do |f| %>
-          <div class="form-row col-md-12">
-            <div class="form-group col-md-10">
-              <label for="">Campos</label>
-              <%=select_tag 'q[project_field]',  options_for_select(region_for_select), include_blank: true, class:'proj_field form-control' %>
+
+          <div class="form-row">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs">
+              <li class="active"><a data-toggle="tab" href="#menu1">Campos</a></li>
+              <li><a data-toggle="tab" href="#menu2">KPI</a></li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+              <div id="menu1" class="tab-pane fade in active">
+                <br>
+                <%=select_tag 'q[project_field]',  options_for_select(region_for_select), include_blank: true, class:'proj_field form-control' %>
+              </div>
+              <div id="menu2" class="tab-pane fade">
+                <br>
+                <%=select_tag 'q[project_kpi]',  options_for_select(kpi_for_select), include_blank: true, class:'proj_field form-control' %>
+              </div>
             </div>
-            <div class="form-group col-md-10">
-              <label for="">Kpi</label>
-            <%=select_tag 'q[project_kpi]',  options_for_select(kpi_for_select), include_blank: true, class:'proj_field form-control' %>
-            </div>
-            <div class="form-group col-md-2">
-        <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary" %>
-            </div>
-        <% end %>
           </div>
-      </div>
+
+          <br>
+          <div class="actions text-right">
+            <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary text-right" %>
+          </div>
+        <% end %>
+
     </div>
   </div>
 </div>
