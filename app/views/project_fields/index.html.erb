@@ -1,2 +1,31 @@
 <h1>ProjectFields#index</h1>
-<p>Find me in app/views/project_fields/index.html.erb</p>
+
+<%= form_tag edit_multiple_project_type_project_fields_path(@project_type_id), method: :get  do %>
+
+  <%= submit_tag "editar" %>
+<% end%>
+
+<table class="table">
+  <tr>
+  <th>#</th>
+  <th>name</th>
+  <th>required</th>
+  <th>field_type</th>
+  <th>hidden</th>
+  </tr>
+
+    
+<%@project_fields.each do |field|  %>
+  <tr>
+  <td><%= field.id %></td>
+  <td><%= field.name %></td>
+  <td><%= field.required %></td>
+  <td><%= field.field_type.name%></td>
+  <td><%= field.hidden %></td>
+  </tr>
+
+<% end %>
+</table>
+
+
+

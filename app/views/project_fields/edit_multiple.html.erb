@@ -1,0 +1,28 @@
+<div>
+  <%= form_tag update_multiple_project_type_project_fields_path(@project_type_id), method: :put do %>
+    <%= @project_type_id %>
+  <table class="table">
+  <tr>
+    <th>name</th>
+    <th>required</th>
+    <th>hidden</th>
+    <th>Field type</th>
+  </tr>
+  <% @projectFields.each do |field| %>
+    <%= fields_for "Fields[]", field do |f| %>
+  <tr>
+    <td><%=f.text_field :name %></td>
+    <td><%= f.check_box :required %></td>
+    <td><%= f.check_box :hidden %></td>
+    <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name %></td>
+  </tr>
+
+<% end %>
+<% end %>
+
+</table>
+<%= submit_tag :enviar %>
+
+<% end %>
+</div>
+

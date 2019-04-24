@@ -1,7 +1,8 @@
 class ProjectFieldsController < ApplicationController
 
   def index
-      @projectFields = ProjectField.where(project_type_id: params[:id])
+      @project_type_id = params[:project_type_id]
+      @project_fields = ProjectField.where(project_type_id: @project_type_id)
 
   end
 
@@ -15,6 +16,18 @@ class ProjectFieldsController < ApplicationController
   def show
 
       @projectFields = ProjectField.where(project_type_id: params[:id])
+  end
+
+
+  def  edit_multiple
+      @project_type_id = params[:project_type_id]
+      @projectFields = ProjectField.where(project_type_id: @project_type_id)
+  end
+
+  def update_multiple
+  @project_type_id = params[:project_type_id]
+    ProjectField.update(params[:Fields].keys, params[:Fields].values)
+    redirect_to project_type_project_fields_path(@project_type_id)
   end
 
 end

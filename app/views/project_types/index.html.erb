@@ -74,6 +74,7 @@
                 <td><%= link_to 'Tableros', project_type_dashboards_path(project_type.id) %></td>
                 <td><%= link_to 'Editar', edit_project_type_path(project_type) %></td>
                 <td><%= link_to project_type_share_path(project_type.id) , id: "share", :remote=> true  do  %> <i class="fas fa-share-alt" title="Compartir"></i> <%end %></td>
+                <td><%= link_to project_type_project_fields_path(project_type.id) , id: "field" do  %> <i class="fab fa-wpforms" title="Project Field"></i> <%end %></td>
                 <td><%= link_to project_type_path(project_type), method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
               </tr>
 

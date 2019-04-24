@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  resources :field_types
+
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
   get 'geo_editions/search_blocks' => 'geo_editions#search_blocks'
@@ -24,11 +24,12 @@ Rails.application.routes.draw do
 
       get 'project_types/create_share' => 'project_types#create_share', as: :create_share
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
+  resources :field_types
 
-    get 'project_fields/index'
+    #get 'project_fields/index'
     post 'project_fields/create'
     post 'analytics_dashboards/create'
-    get 'project_fields/:id/show' =>'project_fields#show'
+    #get 'project_fields/:id/show' =>'project_fields#show'
     #get 'project_types/index'
 
     resources :choice_lists
@@ -49,6 +50,12 @@ Rails.application.routes.draw do
         resources :analytics_dashboards
       end
       resources :projects
+      resources :project_fields do
+        collection do
+          get :edit_multiple
+          put :update_multiple
+        end
+      end
       get 'project_types/filters' => 'project_types#filters', as: :filters
       get 'project_types/create_filters' => 'project_types#create_filters', as: :create_filters
       get 'project_types/share' => 'project_types#share', as: :share
