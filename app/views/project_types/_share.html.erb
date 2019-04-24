@@ -9,15 +9,17 @@
 
         <%= form_tag create_share_path(project_type_id: @project_type), :remote => true, :method => :get   do |f| %>
           <div class="form-row col-md-12">
-            <div class="col-md-5">
-            <%= select_tag :user_ids, options_for_select(users_for_select_share_projects), include_blank: true, multiple: true, class: 'form-control', :style => 'width: 100%; min-height: 200px;' %>
+            <div class="form-group col-md-6">
+              Usuarios a agregar:
+              <%= select_tag :user_ids, options_for_select(users_for_select_share_projects), include_blank: true, multiple: true, class: 'form-control', :style => 'width: 100%; min-height: 200px;' %>
             </div>
-            <div class="col-md-5">
-            <%= select_tag :unshare_user_ids, options_for_select(users_for_select_unshare_projects), include_blank: true, multiple: true, class: 'form-control', :style => 'width: 100%; min-height: 200px;' %>
+            <div class="form-group col-md-6">
+              Usuarios a quitar:
+              <%= select_tag :unshare_user_ids, options_for_select(users_for_select_unshare_projects), include_blank: true, multiple: true, class: 'form-control', :style => 'width: 100%; min-height: 200px;' %>
             </div>
-            <div class="col-md-2">
-              <%= submit_tag :share, class:"btn btn-primary", value: "Enviar" %>
-            </div>
+          </div>
+          <div class="actions col-md-12 text-right">
+            <%= submit_tag :share, class:"btn btn-primary", value: "Enviar" %>
           </div>
         <% end %>
 
