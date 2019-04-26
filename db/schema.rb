@@ -10,13 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190402203746) do
+ActiveRecord::Schema.define(version: 20190425154755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
-  enable_extension "hstore"
-  enable_extension "uuid-ossp"
 
   create_table "actions", id: :serial, force: :cascade do |t|
     t.string "name"
@@ -576,6 +574,7 @@ ActiveRecord::Schema.define(version: 20190402203746) do
     t.integer "choice_list_id"
     t.integer "field_type_id"
     t.boolean "hidden", default: false
+    t.integer "sort"
     t.index ["project_type_id"], name: "index_project_fields_on_project_type_id"
   end
 
