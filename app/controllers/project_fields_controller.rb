@@ -21,7 +21,7 @@ class ProjectFieldsController < ApplicationController
 
   def  edit_multiple
       @project_type_id = params[:project_type_id]
-      @projectFields = ProjectField.where(project_type_id: @project_type_id)
+      @projectFields = ProjectField.where(project_type_id: @project_type_id).order(:sort)
   end
 
   def update_multiple
