@@ -342,7 +342,7 @@ class ProjectType < ApplicationRecord
         row.headers.each do |f|
           field = f.parameterize(separator: '_')
           fields << field
-          @new_project_field =  ProjectField.where(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id, required: false).first_or_create(name: field, key: field, field_type: 'text_field', project_type_id: project_type_id, required: false, field_type_id: 1)
+          @new_project_field =  ProjectField.where(name: field, key: field, project_type_id: project_type_id, required: false).first_or_create(name: field, key: field, project_type_id: project_type_id, required: false, field_type_id: 1)
         end
         create_view(fields, ct, project_type_id, name_layer)
 
