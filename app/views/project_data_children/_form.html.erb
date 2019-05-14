@@ -1,0 +1,32 @@
+<%= form_with(model: project_data_child, local: true) do |form| %>
+  <% if project_data_child.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(project_data_child.errors.count, "error") %> prohibited this project_data_child from being saved:</h2>
+
+      <ul>
+      <% project_data_child.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :properties %>
+    <%= form.text_field :properties, id: :project_data_child_properties %>
+  </div>
+
+  <div class="field">
+    <%= form.label :project_id %>
+    <%= form.number_field :project_id, id: :project_data_child_project_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :project_field_id %>
+    <%= form.number_field :project_field_id, id: :project_data_child_project_field_id %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

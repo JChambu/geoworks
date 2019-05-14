@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Properties:</strong>
+  <%= @project_data_child.properties %>
+</p>
+
+<p>
+  <strong>Project:</strong>
+  <%= @project_data_child.project_id %>
+</p>
+
+<p>
+  <strong>Project field:</strong>
+  <%= @project_data_child.project_field_id %>
+</p>
+
+<%= link_to 'Edit', edit_project_data_child_path(@project_data_child) %> |
+<%= link_to 'Back', project_data_children_path %>
