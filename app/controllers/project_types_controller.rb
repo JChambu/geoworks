@@ -4,6 +4,13 @@ class ProjectTypesController < ApplicationController
   # GET /project_types
   # GET /project_types.json
 
+
+  def project_type_layers
+    @projects = ProjectType.where.not(name:params[:name_projects])
+  render json: {"data": @projects}
+  end
+
+
   def share
     @project_type = ProjectType.find(params[:project_type_id])
     respond_to do |format|

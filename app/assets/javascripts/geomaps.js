@@ -62,7 +62,7 @@ Navarra.geomaps = function (){
               x.push('<b>' + a + ': </b> ' + b + '</br>');
               count = count + 1
             }else{
-            return false
+              return false
             }
           })
 
@@ -82,6 +82,36 @@ Navarra.geomaps = function (){
 
     current_tenant = Navarra.dashboards.config.current_tenant;
     name_layer = Navarra.dashboards.config.name_layer;
+    $.ajax({
+      type: 'GET',
+      url: '/project_types/project_type_layers.json',
+      datatype: 'json',
+      data: {name_projects: name_layer },
+      success: function(data){
+        $.each(data, function(c,v){
+
+          $.each(v, function(x,y){
+            let sub_layer = y.name_layer
+            layerSubProjects = new MySource("http://"+url+":8080/geoserver/wms", {
+              layers: "geoworks:" + sub_layer,//nombre de la capa (ver get capabilities)
+              format: 'image/png',
+              transparent: 'true',
+              opacity: 1,
+              version: '1.0.0',//wms version (ver get capabilities)
+              tiled: true,
+              styles: 'type_layers',
+              INFO_FORMAT: 'application/json',
+              format_options: 'callback:getJson'
+            })
+
+            projectsa = layerSubProjects.getLayer(sub_layer).addTo(mymap);
+      layerControl.addOverlay(projectsa , sub_layer);
+          })
+        })
+      }
+    })
+
+
     layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
       layers: "geoworks:" + name_layer,//nombre de la capa (ver get capabilities)
       format: 'image/png',
@@ -143,11 +173,11 @@ Navarra.geomaps = function (){
         size_box=[];
         init_kpi();
         init_chart_doughnut();
-      var heatmap_actived = Navarra.project_types.config.heatmap_field;
-      if (heatmap_actived != ''){
-        Navarra.geomaps.heatmap_data();
-      }
-          // mymap.on('click', source.getFeatureInfo, source);
+        var heatmap_actived = Navarra.project_types.config.heatmap_field;
+        if (heatmap_actived != ''){
+          Navarra.geomaps.heatmap_data();
+        }
+        // mymap.on('click', source.getFeatureInfo, source);
 
       }else{
 
@@ -174,10 +204,10 @@ Navarra.geomaps = function (){
           init_chart_doughnut(size_box);
           // poly();
 
-      var heatmap_actived = Navarra.project_types.config.heatmap_field;
-      if (heatmap_actived != ''){
-        Navarra.geomaps.heatmap_data();
-      }
+          var heatmap_actived = Navarra.project_types.config.heatmap_field;
+          if (heatmap_actived != ''){
+            Navarra.geomaps.heatmap_data();
+          }
         })
 
       }
@@ -292,7 +322,7 @@ Navarra.geomaps = function (){
         }
         Navarra.geomaps.point_colors_data();
       }else{
-          projectFilterLayer = new MySourceb("http://"+url+":8080/geoserver/wms", {
+        projectFilterLayer = new MySourceb("http://"+url+":8080/geoserver/wms", {
           layers: "geoworks:"+name_layer,//nombre de la capa (ver get capabilities)
           format: 'image/png',
           transparent: 'true',
@@ -312,11 +342,11 @@ Navarra.geomaps = function (){
         projects.addTo(mymap);
       }
 
-      checked = $('#select').hasClass('active');
-      if (!checked){
-          init_kpi();
-          init_chart_doughnut();
-     }
+    checked = $('#select').hasClass('active');
+    if (!checked){
+      init_kpi();
+      init_chart_doughnut();
+    }
   }
 
   function point_colors_data(){
@@ -423,71 +453,71 @@ Navarra.geomaps = function (){
 
   function heatmap_data(){
 
-  var type_box = 'extent';
-  var data_conditions = {}
-  if (size_box.length > 0 ){
-    var type_box = 'polygon';
-  }else{
-    size_box = [];
-  }
-
-  var conditions = Navarra.project_types.config.filter_kpi
-  var data_id =  Navarra.dashboards.config.project_type_id;
-  var heatmap_field =  Navarra.project_types.config.heatmap_field;
-  var heatmap_indicator = Navarra.project_types.config.heatmap_indicator;
-
-  $.ajax({
-    type: 'GET',
-    url: '/project_types/filter_heatmap.json',
-    datatype: 'json',
-    data: {project_type_id: data_id, conditions: conditions, heatmap_field: heatmap_field, size_box: size_box, type_box: type_box, heatmap_indicator: heatmap_indicator},
-    success: function(data){
-
-    var min = data[0]['count'];
-    last_element = data.length - 1;
-    var max = data[last_element]['count'];
-
-    var legendCanvas = document.createElement('canvas');
-    legendCanvas.width = 100;
-    legendCanvas.height = 10;
-    var legendCtx = legendCanvas.getContext('2d');
-    var gradientCfg = {};
-    var gradient = legendCtx.createLinearGradient(0, 0, 100, 1);
-
-      gradient.addColorStop(0.25, "rgb(0,0,255)");
-      gradient.addColorStop(0.55, "rgb(0,255,0)");
-      gradient.addColorStop(0.85, "yellow");
-      gradient.addColorStop(1, "rgb(255,0,0)");
-      legendCtx.fillStyle = gradient;
-      legendCtx.fillRect(0, 0, 100, 10);
-
-      var populationLegend = L.control({position: 'bottomleft'});
-      populationLegend.onAdd = function (mymap) {
-        if ($('.info_legend').length){
-          $('.info_legend').remove();
-        }
-          var div = L.DomUtil.create('div', 'info_legend');
-         div.innerHTML += '<div><span style="float: right">'+ min + '</span><span style="float: left ">  ' + max +'</span>  </div>';
-          div.innerHTML +=
- '<img src="' + legendCanvas.toDataURL() +'" alt="legend" width="125" height="25">';
-     return div;
-   };
-populationLegend.addTo(mymap);
-      var testData;
-    testData = {
-      max: 5,
-      data: data}
-
-    if(typeof(heatmapLayer)!=='undefined'){
-      layerControl.removeLayer(heatmapLayer);
-      mymap.removeLayer(heatmapLayer);
+    var type_box = 'extent';
+    var data_conditions = {}
+    if (size_box.length > 0 ){
+      var type_box = 'polygon';
+    }else{
+      size_box = [];
     }
-    heatmapLayer = new HeatmapOverlay(cfg);
-    heatmapLayer.setData(testData);
 
-    //layerControl.addOverlay(heatmapLayer, "heatmap");
-    mymap.addLayer(heatmapLayer);
-  }
+    var conditions = Navarra.project_types.config.filter_kpi
+    var data_id =  Navarra.dashboards.config.project_type_id;
+    var heatmap_field =  Navarra.project_types.config.heatmap_field;
+    var heatmap_indicator = Navarra.project_types.config.heatmap_indicator;
+
+    $.ajax({
+      type: 'GET',
+      url: '/project_types/filter_heatmap.json',
+      datatype: 'json',
+      data: {project_type_id: data_id, conditions: conditions, heatmap_field: heatmap_field, size_box: size_box, type_box: type_box, heatmap_indicator: heatmap_indicator},
+      success: function(data){
+
+        var min = data[0]['count'];
+        last_element = data.length - 1;
+        var max = data[last_element]['count'];
+
+        var legendCanvas = document.createElement('canvas');
+        legendCanvas.width = 100;
+        legendCanvas.height = 10;
+        var legendCtx = legendCanvas.getContext('2d');
+        var gradientCfg = {};
+        var gradient = legendCtx.createLinearGradient(0, 0, 100, 1);
+
+        gradient.addColorStop(0.25, "rgb(0,0,255)");
+        gradient.addColorStop(0.55, "rgb(0,255,0)");
+        gradient.addColorStop(0.85, "yellow");
+        gradient.addColorStop(1, "rgb(255,0,0)");
+        legendCtx.fillStyle = gradient;
+        legendCtx.fillRect(0, 0, 100, 10);
+
+        var populationLegend = L.control({position: 'bottomleft'});
+        populationLegend.onAdd = function (mymap) {
+          if ($('.info_legend').length){
+            $('.info_legend').remove();
+          }
+          var div = L.DomUtil.create('div', 'info_legend');
+          div.innerHTML += '<div><span style="float: right">'+ min + '</span><span style="float: left ">  ' + max +'</span>  </div>';
+          div.innerHTML +=
+            '<img src="' + legendCanvas.toDataURL() +'" alt="legend" width="125" height="25">';
+          return div;
+        };
+        populationLegend.addTo(mymap);
+        var testData;
+        testData = {
+          max: 5,
+          data: data}
+
+        if(typeof(heatmapLayer)!=='undefined'){
+          layerControl.removeLayer(heatmapLayer);
+          mymap.removeLayer(heatmapLayer);
+        }
+        heatmapLayer = new HeatmapOverlay(cfg);
+        heatmapLayer.setData(testData);
+
+        //layerControl.addOverlay(heatmapLayer, "heatmap");
+        mymap.addLayer(heatmapLayer);
+      }
     })
   }
 
@@ -495,9 +525,9 @@ populationLegend.addTo(mymap);
     if(typeof(heatmapLayer)!=='undefined'){
       mymap.removeLayer(heatmapLayer);
 
-        if ($('.info_legend').length){
-          $('.info_legend').remove();
-        }
+      if ($('.info_legend').length){
+        $('.info_legend').remove();
+      }
     }
 
   }
