@@ -264,7 +264,7 @@ ActiveRecord::Schema.define(version: 20190605132741) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "properties_original"
-    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
+    t.point "the_geom"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
   end
 
