@@ -8,10 +8,13 @@
 <table class="table">
   <tr>
   <th>#</th>
-  <th>name</th>
-  <th>required</th>
-  <th>field_type</th>
-  <th>hidden</th>
+  <th>Nombre</th>
+  <th>Requerido</th>
+  <th>Oculto</th>
+  <th>Solo Lectura</th>
+  <th>Popup</th>
+  <th>Calculo</th>
+  <th>Tipo Campo</th>
   </tr>
 
     
@@ -20,8 +23,11 @@
   <td><%= field.id %></td>
   <td><%= field.name %></td>
   <td><%= field.required %></td>
-  <td><%= field.field_type.name%></td>
   <td><%= field.hidden %></td>
+  <td><%= field.read_only %></td>
+  <td><%= field.popup %></td>
+  <td><%= field.calculated_field %></td>
+  <td><%= field.field_type.name%></td>
   </tr>
 
 <% end %>

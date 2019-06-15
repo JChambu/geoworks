@@ -2,7 +2,7 @@ class ProjectFieldsController < ApplicationController
 
   def index
       @project_type_id = params[:project_type_id]
-      @project_fields = ProjectField.where(project_type_id: @project_type_id)
+      @project_fields = ProjectField.where(project_type_id: @project_type_id).order(:sort)
 
   end
 

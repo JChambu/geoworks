@@ -15,10 +15,13 @@
   <%= form_tag update_multiple_project_type_project_fields_path(@project_type_id), method: :put do %>
     <table class="table">
       <tr>
-        <th>name</th>
-        <th>required</th>
-        <th>hidden</th>
-        <th>Field type</th>
+        <th>Nombre</th>
+        <th>Requerido</th>
+        <th>Oculto</th>
+        <th>Solo Lectura</th>
+        <th>Popup</th>
+        <th>Calculo</th>
+        <th>Tipo de Campo</th>
       </tr>
       <tbody class="sortable">
         <% @projectFields.each_with_sortable_id do |field, sortable_id| %>
@@ -28,6 +31,9 @@
               <td><%=f.text_field :name, readonly: true %></td>
               <td><%= f.check_box :required %></td>
               <td><%= f.check_box :hidden %></td>
+              <td><%= f.check_box :read_only %></td>
+              <td><%= f.check_box :popup %></td>
+              <td><%= f.text_field :calculated_field %></td>
               <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name %></td>
               <td><%= f.text_field :sort, class: 'current_position', readonly: true %></td>
             </tr>
