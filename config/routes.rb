@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
 
+  resources :roles
   resources :project_data_children
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
