@@ -5,10 +5,10 @@ class ProjectTypesController < ApplicationController
   # GET /project_types.json
 
 
-  def project_type_layers
-    @projects = ProjectType.where.not(name:params[:name_projects])
-  render json: {"data": @projects}
-  end
+   def project_type_layers
+     @projects = ProjectType.where.not(name:params[:name_projects])
+   render json: {"data": @projects}
+   end
 
 
   def share
