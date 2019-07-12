@@ -22,6 +22,8 @@
         <th>Popup</th>
         <th>Calculo</th>
         <th>Tipo de Campo</th>
+        <th>Role</th>
+        <th>Order</th>
       </tr>
       <tbody class="sortable">
         <% @projectFields.each_with_sortable_id do |field, sortable_id| %>
@@ -35,6 +37,7 @@
               <td><%= f.check_box :popup %></td>
               <td><%= f.text_field :calculated_field %></td>
               <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name %></td>
+              <td><%= f.collection_select :role, Role.order(:name), :id, :name, include_blank: true %></td>
               <td><%= f.text_field :sort, class: 'current_position', readonly: true %></td>
             </tr>
           <% end %>
