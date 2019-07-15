@@ -19,7 +19,8 @@ class User < ApplicationRecord
   validates :email, :email_format => {:message => I18n.t("activerecord.errors.messages.invalid_email")}
   validates :role, presence: true
   validates :password, length: { minimum: 6 }, unless: "self.password.empty?"
-  validate :is_role_valid?
+  validates :password, confirmation: {case_sensitive: true}
+  #validate :is_role_valid?
   before_destroy :has_related_pois?
 
   ROLES = %w[User Admin Moderator]
