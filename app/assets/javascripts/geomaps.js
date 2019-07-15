@@ -80,36 +80,6 @@ Navarra.geomaps = function (){
       }
     });
 
-    current_tenant = Navarra.dashboards.config.current_tenant;
-    name_layer = Navarra.dashboards.config.name_layer;
-    $.ajax({
-      type: 'GET',
-      url: '/project_types/project_type_layers.json',
-      datatype: 'json',
-      data: {name_projects: name_layer },
-      success: function(data){
-        $.each(data, function(c,v){
-
-          $.each(v, function(x,y){
-            let sub_layer = y.name_layer
-            layerSubProjects = new MySource("http://"+url+":8080/geoserver/wms", {
-              layers: "geoworks:" + sub_layer,//nombre de la capa (ver get capabilities)
-              format: 'image/png',
-              transparent: 'true',
-              opacity: 1,
-              version: '1.0.0',//wms version (ver get capabilities)
-              tiled: true,
-              styles: 'type_layers',
-              INFO_FORMAT: 'application/json',
-              format_options: 'callback:getJson'
-            })
-
-            projectsa = layerSubProjects.getLayer(sub_layer).addTo(mymap);
-      layerControl.addOverlay(projectsa , sub_layer);
-          })
-        })
-      }
-    })
 
 
     layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
@@ -156,6 +126,60 @@ Navarra.geomaps = function (){
       mymap.removeLayer(markers);
     }
 
+    current_tenant = Navarra.dashboards.config.current_tenant;
+    name_layer = Navarra.dashboards.config.name_layer;
+    $.ajax({
+      type: 'GET',
+      url: '/project_types/project_type_layers.json',
+      datatype: 'json',
+      data: {name_projects: name_layer },
+      success: function(data){
+        $.each(data, function(c,v){
+          $.each(v, function(x,y){
+            let sub_layer = y.name_layer
+            layerSubProjects = new MySource("http://"+url+":8080/geoserver/wms", {
+              layers: "geoworks:" + sub_layer,//nombre de la capa (ver get capabilities)
+              format: 'image/png',
+              transparent: 'true',
+              opacity: 1,
+              version: '1.0.0',//wms version (ver get capabilities)
+              tiled: true,
+              styles: 'type_layers',
+              INFO_FORMAT: 'application/json',
+              format_options: 'callback:getJson'
+            })
+
+            projectsa = layerSubProjects.getLayer(sub_layer).addTo(mymap);
+      layerControl.addOverlay(projectsa , sub_layer);
+          })
+        })
+      }
+    })
+    //Layer outer 
+    $.ajax({
+      type: 'GET',
+      url: '/layers/find.json',
+      datatype: 'json',
+      success: function(data){
+        console.log(data)
+        $.each(data, function(c,v){
+           let sub_layer = v.layer
+            layerSubProjects = new MySource(v.url, {
+              layers: v.layer,//nombre de la capa (ver get capabilities)
+              format: 'image/png',
+              transparent: 'true',
+              opacity: 1,
+              version: '1.0.0',//wms version (ver get capabilities)
+              tiled: true,
+              INFO_FORMAT: 'application/json',
+              format_options: 'callback:getJson'
+            })
+
+            layer_outer = layerSubProjects.getLayer(sub_layer).addTo(mymap);
+      layerControl.addOverlay(layer_outer , v.name);
+        })
+      }
+    })
     show_kpis();
     mymap.on('moveend', onMapZoomedMoved);
 
