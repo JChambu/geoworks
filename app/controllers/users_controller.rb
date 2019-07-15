@@ -25,8 +25,16 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
+
     respond_to do |format|
-      if @user.save        
+      if @user.save       
+       @user_customers =  UserCustomer.new
+       @user_customers[:user_id] = @user.id
+        @current_tenant = Apartment::Tenant.current
+        @customer = Customer.where(subdomain: current_tenant).first
+        @user_customers[:customer_id] = @customer.id
+        @user_customers[:role_id] = params[:user][:role].to_i
+       @user_customers.save!
         format.html { redirect_to @user, flashman.create_success }
         format.json { render action: 'show', status: :created, location: @user }
       else
@@ -35,7 +43,7 @@ class UsersController < ApplicationController
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
-  end
+  end 
 
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
@@ -66,6 +74,10 @@ class UsersController < ApplicationController
       format.json { head :no_content }
     end
   end
+    
+  def build_token
+       authentication_token = SecureRandom.base64(64)
+  end
 
   private
     def set_user
@@ -77,6 +89,6 @@ class UsersController < ApplicationController
     end
 
     def user_params
-      params.require(:user).permit(:email, :password, :name, :role)
+      params.require(:user).permit(:email, :password, :name, :role, :password_confirmation).merge(token: build_token)
     end
 end
