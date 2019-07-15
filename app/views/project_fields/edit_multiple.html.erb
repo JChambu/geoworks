@@ -2,7 +2,6 @@
   $(function() {
     $('.sortable').sortable({
       update: function( event, ui ) {
-
         $(this).children().each(function(index) {
           //$(this).find('td').last().html(index + 1)
           $(this).find('.current_position').val(index+1);
@@ -22,6 +21,7 @@
         <th>Popup</th>
         <th>Calculo</th>
         <th>Tipo de Campo</th>
+        <th>Listado</th>
         <th>Role</th>
         <th>Order</th>
       </tr>
@@ -36,7 +36,8 @@
               <td><%= f.check_box :read_only %></td>
               <td><%= f.check_box :popup %></td>
               <td><%= f.text_field :calculated_field %></td>
-              <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name %></td>
+              <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef' } %></td>
+              <td><%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name,{}, {  disable: true} %></td>
               <td><%= f.collection_select :role, Role.order(:name), :id, :name, include_blank: true %></td>
               <td><%= f.text_field :sort, class: 'current_position', readonly: true %></td>
             </tr>
