@@ -2,18 +2,14 @@ class LayersController < ApplicationController
   before_action :set_layer, only: [:show, :edit, :update, :destroy]
 
   def  find
-
     @layers = Layer.all
     render json: @layers 
   end
-
-
 
   # GET /layers
   # GET /layers.json
   def index
     @layers = Layer.all
-    render json: @layers 
   end
 
   # GET /layers/1
