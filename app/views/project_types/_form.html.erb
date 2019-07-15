@@ -41,6 +41,19 @@
     </div>
   </div>
 
+  <div class="form-row col-md-12">
+    <div class="form-group col-md-3">
+      <%= f.label :enabled_as_layer %>
+      <%= f.check_box :enabled_as_layer, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-row col-md-12">
+    <div class="form-group col-md-3">
+      <%= f.label :layer_color %>
+      <%= f.text_field :layer_color, class: 'form-control' %>
+    </div>
+  </div>
 
   <div class="actions">
     <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Crear" %>

@@ -6,7 +6,7 @@ class ProjectTypesController < ApplicationController
 
 
    def project_type_layers
-     @projects = ProjectType.where.not(name:params[:name_projects])
+     @projects = ProjectType.where.not(name:params[:name_projects]).where(enabled_as_layer: true)
    render json: {"data": @projects}
    end
 
@@ -296,6 +296,6 @@ class ProjectTypesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_type_params
-    params.require(:project_type).permit(:name, :latitude, :longitude, :name_layer, :address, :department, :province, :country, {file:[]}, fields_attributes: [:id, :field_type, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id])
+    params.require(:project_type).permit(:name, :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color, {file:[]}, fields_attributes: [:id, :field_type, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id])
   end
 end
