@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @layer.name %>
+</p>
+
+<p>
+  <strong>Layer:</strong>
+  <%= @layer.layer %>
+</p>
+
+<p>
+  <strong>Url:</strong>
+  <%= @layer.url %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @layer.description %>
+</p>
+
+<p>
+  <strong>Type layer:</strong>
+  <%= @layer.type_layer %>
+</p>
+
+<%= link_to 'Edit', edit_layer_path(@layer) %> |
+<%= link_to 'Back', layers_path %>

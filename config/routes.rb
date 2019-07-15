@@ -24,11 +24,12 @@ Rails.application.routes.draw do
   get 'project_types/filter_heatmap' => 'project_types#filter_heatmap'
   get 'project_types/graph3' => 'project_types#graph2'
   get 'project_types/project_type_layers' => 'project_types#project_type_layers'
-
+  get 'layers/find' => 'layers#find' 
       get 'project_types/create_share' => 'project_types#create_share', as: :create_share
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
   resources :field_types
 
+  resources :layers
     #get 'project_fields/index'
     post 'project_fields/create'
     post 'analytics_dashboards/create'

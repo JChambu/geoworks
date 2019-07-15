@@ -1,0 +1,42 @@
+<%= form_with(model: layer, local: true) do |form| %>
+  <% if layer.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(layer.errors.count, "error") %> prohibited this layer from being saved:</h2>
+
+      <ul>
+      <% layer.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name, id: :layer_name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :layer %>
+    <%= form.text_field :layer, id: :layer_layer %>
+  </div>
+
+  <div class="field">
+    <%= form.label :url %>
+    <%= form.text_field :url, id: :layer_url %>
+  </div>
+
+  <div class="field">
+    <%= form.label :description %>
+    <%= form.text_area :description, id: :layer_description %>
+  </div>
+
+  <div class="field">
+    <%= form.label :type_layer %>
+    <%= form.text_field :type_layer, id: :layer_type_layer %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
