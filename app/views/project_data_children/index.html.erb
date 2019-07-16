@@ -5,27 +5,25 @@
 <table>
   <thead>
     <tr>
-      <th>Properties</th>
-      <th>Project</th>
-      <th>Project field</th>
-      <th colspan="3"></th>
+      <th>#</th>
+      <% @sub_fields.each do |field|  %>
+        <th><%=  field.name%></th>
+      <% end %>
     </tr>
   </thead>
 
   <tbody>
     <% @project_data_children.each do |project_data_child| %>
       <tr>
-        <td><%= project_data_child.properties %></td>
-        <td><%= project_data_child.project_id %></td>
-        <td><%= project_data_child.project_field_id %></td>
-        <td><%= link_to 'Show', project_data_child %></td>
-        <td><%= link_to 'Edit', edit_project_data_child_path(project_data_child) %></td>
-        <td><%= link_to 'Destroy', project_data_child, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= project_data_child.id %></td>
+        <% project_data_child.properties.each do |child| %>
+          <% @sub_fields.each do |field|  %>
+            <td><%= child[field.id.to_s] %></td>
+          <% end %>
+        <% end %>
       </tr>
     <% end %>
   </tbody>
 </table>
 
 <br>
-
-<%= link_to 'New Project Data Child', new_project_data_child_path %>

@@ -2,7 +2,7 @@ Rails.application.routes.draw do
 
 
   resources :roles
-  resources :project_data_children
+
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
   get 'geo_editions/search_blocks' => 'geo_editions#search_blocks'
@@ -55,6 +55,7 @@ Rails.application.routes.draw do
       end
       resources :projects
       resources :project_fields do
+        resources :project_data_children
         collection do
           get :edit_multiple
           put :update_multiple

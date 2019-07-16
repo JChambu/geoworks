@@ -2,6 +2,7 @@ class Project < ApplicationRecord
 
   require "json"
   belongs_to :project_type
+  has_many :project_data_child
   #validate :validate_properties
 
   def validate_properties

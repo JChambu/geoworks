@@ -18,13 +18,17 @@
 
           </tr>
         </thead>
-        <tbody>
+        <tbody
           <% @projects.each do |project | %>
             <tr>
             <td><%= project.id %></td>
-              <% @fields.each do |field|  %>
-                <td>
-                    <%= project.properties[field.key] if !project.properties[field.key].blank?%>
+            <% @fields.each do |field|  %>
+              <td>
+                <% if field.field_type_id == 7  %>
+                  <%= link_to field.name, project_type_project_field_project_data_children_path(project.project_type_id, field) %>
+                <% else %>
+                  <%= project.properties[field.key] if !project.properties[field.key].blank?%>
+                <% end %>
                 </td>
               <% end %>
                 <td><%= project.the_geom %></td>

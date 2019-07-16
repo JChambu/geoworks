@@ -1,10 +1,13 @@
 class ProjectDataChildrenController < ApplicationController
+  before_action :set_project_field, only: [:show, :edit, :update, :destroy]
   before_action :set_project_data_child, only: [:show, :edit, :update, :destroy]
+
 
   # GET /project_data_children
   # GET /project_data_children.json
   def index
-    @project_data_children = ProjectDataChild.all
+    @project_data_children = ProjectDataChild.where(project_field_id:params[:project_field_id])
+    @sub_fields = ProjectSubfield.where(project_field_id: params[:project_field_id]).order(:id)
   end
 
   # GET /project_data_children/1
@@ -62,6 +65,10 @@ class ProjectDataChildrenController < ApplicationController
   end
 
   private
+    def set_project_field
+      @project_field = ProjectField.find(params[:project_field_id])
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_project_data_child
       @project_data_child = ProjectDataChild.find(params[:id])
