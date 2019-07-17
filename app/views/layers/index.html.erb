@@ -1,35 +1,40 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Layers</h1>
+<div class="col-md-12">
+  <h1>Capas</h1>
+</div>
+<div class="x_panel card">
+  <div class="x_content">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Capa</th>
+            <th>Url</th>
+            <th>Descripción</th>
+            <th>Tipo de Capa</th>
+            <th colspan="3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @layers.each do |layer| %>
+            <tr>
+              <td><%= layer.name %></td>
+              <td><%= layer.layer %></td>
+              <td><%= layer.url %></td>
+              <td><%= layer.description %></td>
+              <td><%= layer.type_layer %></td>
+              <td><%= link_to edit_layer_path(layer) do %> <i class="fas fa-edit"></i><%end%></td>
+              <td><%= link_to layer, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Layer</th>
-      <th>Url</th>
-      <th>Description</th>
-      <th>Type layer</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @layers.each do |layer| %>
-      <tr>
-        <td><%= layer.name %></td>
-        <td><%= layer.layer %></td>
-        <td><%= layer.url %></td>
-        <td><%= layer.description %></td>
-        <td><%= layer.type_layer %></td>
-        <td><%= link_to 'Show', layer %></td>
-        <td><%= link_to 'Edit', edit_layer_path(layer) %></td>
-        <td><%= link_to 'Destroy', layer, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Layer', new_layer_path %>
+<div class="col-md-12 text-right">
+  <%= link_to 'Nueva Capa', new_layer_path, class: "btn btn-primary" %>
+</div>
