@@ -32,7 +32,7 @@
             <th>Tipo de Campo</th>
             <th>Listado</th>
             <th>Rol</th>
-            <th>Orden</th>
+            <th class="ocultar">Orden</th>
           </tr>
           <tbody class="sortable">
             <% @projectFields.each_with_sortable_id do |field, sortable_id| %>
@@ -48,7 +48,7 @@
                   <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control' } %></td>
                   <td><%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control'} %></td>
                   <td><%= f.collection_select :role, Role.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control'} %></td>
-                  <td><%= f.text_field :sort, class: 'current_position', readonly: true, class: "form-control" %></td>
+                  <td class="ocultar"><%= f.text_field :sort, class: 'current_position', readonly: true, class: "form-control" %></td>
                 </tr>
               <% end %>
             <% end %>
@@ -62,3 +62,6 @@
   </div>
   <% end %>
 </div>
+<script>
+  $('.ocultar').hide();
+</script>
