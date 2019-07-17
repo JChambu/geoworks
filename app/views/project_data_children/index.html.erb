@@ -1,29 +1,35 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Project Data Children</h1>
+<div class="col-md-12">
+  <h1>Datos del Proyecto - Hijos</h1>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>#</th>
-      <% @sub_fields.each do |field|  %>
-        <th><%=  field.name%></th>
-      <% end %>
-    </tr>
-  </thead>
+<div class="x_panel card">
+  <div class="x_content">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>#</th>
+            <% @sub_fields.each do |field|  %>
+              <th><%=  field.name%></th>
+            <% end %>
+          </tr>
+        </thead>
 
-  <tbody>
-    <% @project_data_children.each do |project_data_child| %>
-      <tr>
-        <td><%= project_data_child.id %></td>
-        <% project_data_child.properties.each do |child| %>
-          <% @sub_fields.each do |field|  %>
-            <td><%= child[field.id.to_s] %></td>
+        <tbody>
+          <% @project_data_children.each do |project_data_child| %>
+            <tr>
+              <td><%= project_data_child.id %></td>
+              <% project_data_child.properties.each do |child| %>
+                <% @sub_fields.each do |field|  %>
+                  <td><%= child[field.id.to_s] %></td>
+                <% end %>
+              <% end %>
+            </tr>
           <% end %>
-        <% end %>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
