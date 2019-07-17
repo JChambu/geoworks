@@ -1,37 +1,41 @@
-<h1>ProjectFields#index</h1>
+<div class="col-md-12">
+  <h1>Campos del Proyecto</h1>
+</div>
 
 <%= form_tag edit_multiple_project_type_project_fields_path(@project_type_id), method: :get  do %>
-
-  <%= submit_tag "editar" %>
+  <div class="col-md-12 sub-header text-right">
+    <%= submit_tag "Editar Campos", class: "btn btn-primary" %>
+  </div>
 <% end%>
 
-<table class="table">
-  <tr>
-  <th>#</th>
-  <th>Nombre</th>
-  <th>Requerido</th>
-  <th>Oculto</th>
-  <th>Solo Lectura</th>
-  <th>Popup</th>
-  <th>Calculo</th>
-  <th>Tipo Campo</th>
-  </tr>
+<div class="x_panel card">
+  <div class="x_content">
+    <div class="table-responsive" style="height: 65vh">
+      <table class="table table-hover">
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Requerido</th>
+          <th>Oculto</th>
+          <th>Solo Lectura</th>
+          <th>Popup</th>
+          <th>Calculo</th>
+          <th>Tipo Campo</th>
+        </tr>
 
-    
-<%@project_fields.each do |field|  %>
-  <tr>
-  <td><%= field.id %></td>
-  <td><%= field.name %></td>
-  <td><%= field.required %></td>
-  <td><%= field.hidden %></td>
-  <td><%= field.read_only %></td>
-  <td><%= field.popup %></td>
-  <td><%= field.calculated_field %></td>
-  <td><%= field.field_type.name%></td>
-  </tr>
-
-<% end %>
-</table>
-
-
-
+        <%@project_fields.each do |field|  %>
+          <tr>
+            <td><%= field.id %></td>
+            <td><%= field.name %></td>
+            <td><%= field.required %></td>
+            <td><%= field.hidden %></td>
+            <td><%= field.read_only %></td>
+            <td><%= field.popup %></td>
+            <td><%= field.calculated_field %></td>
+            <td><%= field.field_type.name%></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+</div>
