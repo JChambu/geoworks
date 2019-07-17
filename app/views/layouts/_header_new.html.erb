@@ -61,6 +61,8 @@
                 <i class="fas fa-bars"></i>
               </a>
               <ul class="dropdown-menu dropdown-usermenu pull-right">
+                <li><%= link_to 'Capas', layers_path %></li>
+                <li><%= link_to 'Roles', roles_path %></li>
                 <li><%= link_to "Editar Usuario", edit_user_path(current_user.id) %></li>
                 <li><%= link_to destroy_user_session_path, method: :delete  do  %> Cerrar Sesión <i class="fas fa-sign-out-alt"></i> <% end %></li>
               </ul>
