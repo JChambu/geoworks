@@ -48,7 +48,7 @@
                   <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control' } %></td>
                   <td><%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control'} %></td>
                   <td><%= f.collection_select :role, Role.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control'} %></td>
-                  <td class="ocultar"><%= f.text_field :sort, class: 'current_position', readonly: true, class: "form-control" %></td>
+                  <td class="ocultar"><%= f.text_field :sort, class: 'current_position form-control', readonly: true %></td>
                 </tr>
               <% end %>
             <% end %>
