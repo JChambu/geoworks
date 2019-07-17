@@ -15,6 +15,8 @@ ActiveRecord::Schema.define(version: 20190715200601) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
+  enable_extension "hstore"
+  enable_extension "uuid-ossp"
 
   create_table "actions", id: :serial, force: :cascade do |t|
     t.string "name"
@@ -137,6 +139,7 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.datetime "updated_at", null: false
     t.string "supplier_map", default: "osm"
     t.string "url"
+    t.integer "role_id"
   end
 
   create_table "dashboards", force: :cascade do |t|
@@ -243,6 +246,9 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.string "number_door_end_original"
     t.string "number_door_end"
     t.string "code"
+    t.point "the_geom"
+    t.line "the_geom_segment"
+    t.line "the_geom_segment_original"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "poi_status_id"
@@ -310,7 +316,6 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.bigint "project_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "is_admin?"
     t.index ["project_type_id"], name: "index_has_project_types_on_project_type_id"
     t.index ["user_id"], name: "index_has_project_types_on_user_id"
   end
@@ -347,6 +352,9 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.integer "facility_type_id"
     t.integer "levels"
     t.integer "city_id"
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.geometry "the_geom_entrance", limit: {:srid=>4326, :type=>"st_point"}
+    t.geometry "the_geom_exit", limit: {:srid=>4326, :type=>"st_point"}
     t.string "phone"
     t.string "website"
     t.string "detailed_pricing_model"
@@ -355,6 +363,7 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.string "available_payment_methods"
     t.string "regular_openning_hours"
     t.string "exceptions_opening"
+    t.geometry "the_geom_area", limit: {:srid=>4326, :type=>"st_polygon"}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "number"
@@ -550,6 +559,7 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.integer "duplicated_identifier"
     t.integer "identifier"
     t.date "control_date"
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"st_point"}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "poi_load_id"
@@ -586,7 +596,7 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.integer "field_type_id"
     t.boolean "hidden", default: false
     t.integer "sort"
-    t.boolean "read_only", default: false
+    t.boolean "readonly", default: false
     t.boolean "popup", default: false
     t.string "calculated_field"
     t.string "role"
@@ -621,6 +631,8 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.datetime "updated_at", null: false
     t.string "directory_name"
     t.string "name_layer"
+    t.boolean "enabled_as_layer"
+    t.string "layer_color"
     t.index ["user_id"], name: "index_project_types_on_user_id"
   end
 
@@ -629,8 +641,8 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.integer "project_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.point "the_geom"
     t.jsonb "properties_original"
-    t.point "the_geom" 
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
   end
 
@@ -693,7 +705,6 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.bigint "customer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "role_id"
     t.index ["customer_id"], name: "index_user_customers_on_customer_id"
     t.index ["user_id"], name: "index_user_customers_on_user_id"
   end
@@ -714,11 +725,7 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
-    t.string "token"
-    t.string "authentication_token", limit: 30
-    t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["token"], name: "index_users_on_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
@@ -739,7 +746,10 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  add_foreign_key "analytics_dashboards", "analysis_types"
   add_foreign_key "analytics_dashboards", "charts"
+  add_foreign_key "analytics_dashboards", "project_types"
+  add_foreign_key "has_project_types", "project_types"
   add_foreign_key "has_project_types", "users"
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_types", "users"
