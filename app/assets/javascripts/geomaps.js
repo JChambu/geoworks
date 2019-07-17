@@ -82,6 +82,7 @@ Navarra.geomaps = function (){
 
 
 
+    name_layer = Navarra.dashboards.config.name_layer;
     layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
       layers: "geoworks:" + name_layer,//nombre de la capa (ver get capabilities)
       format: 'image/png',
@@ -161,7 +162,6 @@ Navarra.geomaps = function (){
       url: '/layers/find.json',
       datatype: 'json',
       success: function(data){
-        console.log(data)
         $.each(data, function(c,v){
            let sub_layer = v.layer
             layerSubProjects = new MySource(v.url, {
