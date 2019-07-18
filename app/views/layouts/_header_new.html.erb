@@ -64,7 +64,7 @@
                 <li><%= link_to 'Capas', layers_path %></li>
                 <li><%= link_to 'Roles', roles_path %></li>
                 <li><%= link_to "Editar Usuario", edit_user_path(current_user.id) %></li>
-                <li><%= link_to destroy_user_session_path, method: :delete  do  %> Cerrar Sesión <i class="fas fa-sign-out-alt"></i> <% end %></li>
+                <li><%= link_to 'Cerrar Sesión', destroy_user_session_path, method: :delete %> </li>
               </ul>
             </li>
           </ul>
