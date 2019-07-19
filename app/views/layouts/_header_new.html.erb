@@ -36,8 +36,13 @@
             <% end %>
 
             <!-- Capas -->
-            <%if params[:controller] == 'layers' %>
+            <%if params[:controller] == 'layers' && params[:action] == 'index' %>
             <%= link_to project_types_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
+            <% end %>
+
+            <!-- Nueva Capa y Editar Capas a Capas -->
+            <%if params[:controller] == 'layers' && params[:action] == 'edit' || params[:controller] == 'layers' && params[:action] == 'new' %>
+            <%= link_to layers_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
             <% end %>
 
             <!-- Roles -->
