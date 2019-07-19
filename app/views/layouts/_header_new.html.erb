@@ -46,8 +46,13 @@
             <% end %>
 
             <!-- Roles -->
-            <%if params[:controller] == 'roles' %>
+            <%if params[:controller] == 'roles' && params[:action] == 'index' %>
             <%= link_to project_types_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
+            <% end %>
+
+            <!-- Nuevo Rol y Editar Rol a Roles -->
+            <%if params[:controller] == 'roles' && params[:action] == 'edit' || params[:controller] == 'roles' && params[:action] == 'new' %>
+            <%= link_to roles_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
             <% end %>
 
             <!-- Editar Usuario -->
