@@ -1,62 +1,68 @@
-<%= simple_form_for @project_type, html: {multipart: true}  do |f| %>
-  <% if @project_type.errors.any? %>
-    <div class="panel panel-warning errors">
-      <div class="panel-heading">
-        <h4><span><i class="fa fa-exclamation"><span></i>  Validaciones</h4>
-      </div>
-      <ul class="panel-body">
-        <% @project_type.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
+<div class="col-md-12">
+  <div class="x_panel card">
+    <div class="x_content">
+      <%= simple_form_for @project_type, html: {multipart: true}  do |f| %>
+        <% if @project_type.errors.any? %>
+          <div class="panel panel-warning errors">
+            <div class="panel-heading">
+              <h4><span><i class="fa fa-exclamation"><span></i>  Validaciones</h4>
+            </div>
+            <ul class="panel-body">
+              <% @project_type.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
         <% end %>
-      </ul>
-    </div>
-  <% end %>
-  <p id="notice"><%= notice %></p>
-  <div class="form-row col-md-12">
-    <div class="form-group col-md-3">
-      <%= f.label :name %>
-      <%= f.text_field :name, class: 'form-control' %>
-    </div>
-  </div>
-  <div class="form-row col-md-12">
-    <div class="form-group col-md-3">
-      <%= f.file_field(:file, multiple: true, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': 'Cargar archivos')  %>
-    </div>
-  </div>
-  <div class="form-row col-md-12">
-    <div class="form-group col-md-2">
-      <input multiple="multiple" class="filestyle" data-input="false" data-buttonbefore="true" data-iconname="fas fa-box" data-buttontext="Importar desde API" type="file" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);">
-    </div>
-  </div>
-  <div class="form-row col-md-12">
-    <div class="form-group col-md-3">
-      <%= select_tag 'option_geo', options_for_select(['Latitud_Longitud', 'Georeferenciacion']), {prompt: 'Seleccione tipo georeferenciación', class: 'form-control'} %>
+        <p id="notice"><%= notice %></p>
+        <div class="form-row col-md-12">
+          <div class="form-group col-md-3">
+            <%= f.label :name %>
+            <%= f.text_field :name, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="form-row col-md-12">
+          <div class="form-group col-md-3">
+            <%= f.file_field(:file, multiple: true, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': 'Cargar archivos')  %>
+          </div>
+        </div>
+        <div class="form-row col-md-12">
+          <div class="form-group col-md-2">
+            <input multiple="multiple" class="filestyle" data-input="false" data-buttonbefore="true" data-iconname="fas fa-box" data-buttontext="Importar desde API" type="file" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);">
+          </div>
+        </div>
+        <div class="form-row col-md-12">
+          <div class="form-group col-md-3">
+            <%= select_tag 'option_geo', options_for_select(['Latitud_Longitud', 'Georeferenciacion']), {prompt: 'Seleccione tipo georeferenciación', class: 'form-control'} %>
 
-      <div id="Latitud_Longitud" class="latlng boxi">
-        <%= render 'latlng', f: f  %>
-      </div>
-      <div id="Georeferenciacion" class="geocoding boxi">
-        <%= render 'geocoding', f: f  %>
-      </div>
+            <div id="Latitud_Longitud" class="latlng boxi">
+              <%= render 'latlng', f: f  %>
+            </div>
+            <div id="Georeferenciacion" class="geocoding boxi">
+              <%= render 'geocoding', f: f  %>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row col-md-12">
+          <div class="form-group col-md-3">
+            <%= f.label :enabled_as_layer, "Habilitar como Capa" %>
+            <%= f.check_box :enabled_as_layer %>
+          </div>
+        </div>
+
+        <div class="form-row col-md-12">
+          <div class="form-group col-md-3">
+            <%= f.label :layer_color %>
+            <%= f.text_field :layer_color, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="actions">
+          <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Crear" %>
+        </div>
+
+      <% end %>
     </div>
   </div>
-
-  <div class="form-row col-md-12">
-    <div class="form-group col-md-3">
-      <%= f.label :enabled_as_layer, "Habilitar como Capa" %>
-      <%= f.check_box :enabled_as_layer %>
-    </div>
-  </div>
-
-  <div class="form-row col-md-12">
-    <div class="form-group col-md-3">
-      <%= f.label :layer_color %>
-      <%= f.text_field :layer_color, class: 'form-control' %>
-    </div>
-  </div>
-
-  <div class="actions">
-    <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Crear" %>
-  </div>
-
-<% end %>
+</div>
