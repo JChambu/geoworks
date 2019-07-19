@@ -48,7 +48,7 @@
                   <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control' } %></td>
                   <td><%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control'} %></td>
                   <td><%= f.collection_select :role, Role.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control'} %></td>
-                  <td class="ocultar"><%= f.text_field :sort, class: 'current_position form-control', readonly: true %></td>
+                  <td style="display: none"><%= f.text_field :sort, class: 'current_position form-control', readonly: true %></td>
                 </tr>
               <% end %>
             <% end %>
@@ -58,10 +58,7 @@
     </div>
   </div>
   <div class="col-md-12 text-right">
-    <%= submit_tag :enviar, class: "btn btn-primary" %>
+    <%= submit_tag :enviar, class: "btn btn-primary", value: 'Guardar' %>
   </div>
   <% end %>
 </div>
-<script>
-  $('.ocultar').hide();
-</script>
