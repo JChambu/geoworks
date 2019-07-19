@@ -59,9 +59,9 @@
       </div>
     </div>
 
-    <div class="form-group col-md-12">
-      <div class="col-md-1 text-right"></div>
-      <div class="col-md-3">
+    <div class="form-group col-md-12 form-actions">
+      <div class="col-md-4 text-right">
+        <%= link_to t('.cancel', :default => t("helpers.links.cancel")), layers_path, :class => 'btn btn-default' %>
         <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
       </div>
     </div>
