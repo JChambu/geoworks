@@ -1,30 +1,32 @@
-<div>
-  <h3>Geolocalizacion</h3>
-</div>
-<div class="col-md-12 col-sm-12 col-xs-12">
-  <div class="x_panel card">
-    <div class="x_content">
-      <div class="form-group row col-md-6">
-
-        <div>
-          <label> Direccion: </label>
-          <%=f.select :address, '',  :include_blank => true %>
-        </div>
-        <div>
-          Departamento: <%= f.select :department, '',:include_blank => true %>
-      </div>
-      <div>
-        Provincia: <%=f.select :province, '', :include_blank => true%>
-    </div>
-    <div>
-      Pais: <%= f.select :country, '',  include_blank: true %>
+<div class="form-group col-md-12">
+  <div class="col-md-2 text-right">
+    <label>Dirección:</label>
   </div>
-      </div>
-
-    </div>
+  <div class="col-md-3">
+    <%=f.select :address, '', {include_blank: ''}, {class: 'form-control'} %>
   </div>
 </div>
-
-
-
-
+<div class="form-group col-md-12">
+  <div class="col-md-2 text-right">
+    <label>Departamento:</label>
+  </div>
+  <div class="col-md-3">
+    <%= f.select :department, '', {include_blank: ''}, {class: 'form-control'} %>
+  </div>
+</div>
+<div class="form-group col-md-12">
+  <div class="col-md-2 text-right">
+    <label>Provincia:</label>
+  </div>
+  <div class="col-md-3">
+    <%=f.select :province, '', {include_blank: ''}, {class: 'form-control'} %>
+  </div>
+</div>
+<div class="form-group col-md-12">
+  <div class="col-md-2 text-right">
+    <label>País:</label>
+  </div>
+  <div class="col-md-3">
+    <%= f.select :country, '', {include_blank: ''}, {class: 'form-control'} %>
+  </div>
+</div>
