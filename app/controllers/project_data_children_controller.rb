@@ -1,4 +1,5 @@
 class ProjectDataChildrenController < ApplicationController
+  before_action :set_project, only: [:index]
   before_action :set_project_data_child, only: [:show, :edit, :update, :destroy]
 
 
@@ -65,8 +66,8 @@ class ProjectDataChildrenController < ApplicationController
   end
 
   private
-    def set_project_field
-      @project_field = ProjectField.find(params[:project_field_id])
+    def set_project
+      @project = Project.find(params[:project_id])
     end
 
     # Use callbacks to share common setup or constraints between actions.
