@@ -20,7 +20,7 @@ class ProjectType < ApplicationRecord
 
   FILTERS = %w(= < > <= >= != ilike )
 
-  attr_accessor :file, :latitude, :longitude, :address, :department, :province, :country
+  attr_accessor :file, :latitude, :longitude, :address, :department, :province, :country, :data
 
   validates :name,  presence: true
   validates :name, uniqueness: true 
@@ -74,9 +74,9 @@ class ProjectType < ApplicationRecord
 
   def is_file_type_valid?
     @fi = self.file
-    self.file.each do |f| @f = f.content_type 
+    self.file.each do |f| @f = f.content_type
     begin
-      if @f== "text/csv" ||  @f== "application/x-esri-shape"  || @f == "application/x-esri-crs" || @f=="application/x-dbf" || @f=="text/plain" || @f =="application/vnd.ms-excel" 
+      if @f== "text/csv" ||  @f== "application/x-esri-shape"  || @f == "application/x-esri-crs" || @f=="application/x-dbf" || @f=="text/plain" || @f =="application/vnd.ms-excel" || @f == "application/octet-stream" 
         valid = f.content_type 
       end
     rescue
@@ -298,11 +298,10 @@ class ProjectType < ApplicationRecord
     a = []
     self.file.each do |f|
       case f.content_type
-        #when 'application/dbf', 'application/octet-stream','application/x-anjuta','application/octet-stream','application/x-dbf','application/x-esri-shape'
-      when 'application/x-esri-shape'
+       when 'application/dbf', 'application/octet-stream','application/x-anjuta','application/octet-stream','application/x-dbf','application/x-esri-shape'
         ext = f.original_filename.split('.')
         if ext.last == 'shp'
-          a = ProjectType.load_shape(self.id)
+          a = ProjectType.load_shape(self.id, self.name_layer)
         end
       when 'text/csv', 'text/plain', 'application/vnd.ms-excel'
         a = ProjectType.load_csv(self.id, self.latitude, self.longitude, self.address, self.department, self.province, self.country, self.name_layer)
@@ -551,12 +550,13 @@ class ProjectType < ApplicationRecord
 
   end
 
-  def self.load_shape project_type_id
+  def self.load_shape project_type_id, name_layer
     project_type = JSON.parse(ProjectType.find(project_type_id).directory_name)
     source_path = project_type[0]
     file_name = project_type[1].split('.').first
     #    file_name = @directory[1].split('.').first
 
+    ct = Apartment::Tenant.current
     fields = []
     RGeo::Shapefile::Reader.open("#{source_path}/#{file_name}.shp") do |file|
       file.each do |record|
@@ -566,8 +566,7 @@ class ProjectType < ApplicationRecord
 
             field = f.parameterize(separator: '_')
             fields << field
-            @new_project_field =  ProjectField.create(name: field, field_type: 'text_field', project_type_id: project_type_id, key: field)
-            @new_project_field.save
+            @new_project_field =  ProjectField.where(name: field, key: field, project_type_id: project_type_id, required: false).first_or_create(name: field, key: field, project_type_id: project_type_id, required: false, field_type_id: 1)
           end
         end
       end
