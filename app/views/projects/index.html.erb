@@ -25,7 +25,7 @@
             <% @fields.each do |field|  %>
               <td>
                 <% if field.field_type_id == 7  %>
-                  <%= link_to field.name, project_type_project_field_project_data_children_path(project.project_type_id, field) %>
+                  <%= link_to field.name, project_type_project_project_data_children_path(project_id: project.id, project_field_id: field.id) %>
                 <% else %>
                   <%= project.properties[field.key] if !project.properties[field.key].blank?%>
                 <% end %>
