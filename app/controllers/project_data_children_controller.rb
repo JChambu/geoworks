@@ -1,13 +1,13 @@
 class ProjectDataChildrenController < ApplicationController
-  before_action :set_project_field, only: [:show, :edit, :update, :destroy]
   before_action :set_project_data_child, only: [:show, :edit, :update, :destroy]
 
 
   # GET /project_data_children
   # GET /project_data_children.json
   def index
-    @project_data_children = ProjectDataChild.where(project_field_id:params[:project_field_id])
-    @sub_fields = ProjectSubfield.where(project_field_id: params[:project_field_id]).order(:id)
+      @project_data_children = @project.project_data_child.where(project_id:params[:project_id])
+      @sub_fields = ProjectSubfield.where(project_field_id: params[:project_field_id]).order(:id)
+      @title = ProjectField.find(params[:project_field_id])
   end
 
   # GET /project_data_children/1
