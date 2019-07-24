@@ -1,4 +1,4 @@
-<%= form_for(choice_list) do |f| %>
+<%= simple_form_for(choice_list) do |f| %>
   <% if choice_list.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(choice_list.errors.count, "error") %> prohibited this choice_list from being saved:</h2>
@@ -15,22 +15,15 @@
     <%= f.label :name %>
     <%= f.text_field :name %>
   </div>
+<div id="field_items", class= "field_items">
+  
 
-  <div class="field">
-    <%= f.label :key %>
-    <%= f.text_field :key %>
-  </div>
+  <%= f.fields_for :choice_list_items do |i| %>
+        <%= render "choice_list_item_fields", f: i %>
+      <% end %>
 
-  <div class="field">
-    <%= f.label :value %>
-    <%= f.text_field :value %>
-  </div>
-
-  <div class="field">
-    <%= f.label :label %>
-    <%= f.text_field :label %>
-  </div>
-
+</div>
+      <%= link_to_add_fields "Add Items", f, :choice_list_items %></p>
   <div class="actions">
     <%= f.submit %>
   </div>

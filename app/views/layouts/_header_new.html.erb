@@ -97,6 +97,7 @@
                 <i class="fas fa-bars"></i>
               </a>
               <ul class="dropdown-menu dropdown-usermenu pull-right">
+                <li><%= link_to 'Listado', choice_lists_path %></li>
                 <li><%= link_to 'Capas Externas', layers_path %></li>
                 <li><%= link_to 'Roles', roles_path %></li>
                 <li><%= link_to "Editar Usuario", edit_user_path(current_user.id) %></li>

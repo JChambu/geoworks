@@ -15,6 +15,7 @@ class ChoiceListsController < ApplicationController
   # GET /choice_lists/new
   def new
     @choice_list = ChoiceList.new
+    @choice_list_item = @choice_list.choice_list_items.build 
   end
 
   # GET /choice_lists/1/edit
@@ -28,7 +29,7 @@ class ChoiceListsController < ApplicationController
 
     respond_to do |format|
       if @choice_list.save
-        format.html { redirect_to @choice_list, notice: 'Choice list was successfully created.' }
+        format.html { redirect_to choice_lists_path, notice: 'Choice list was successfully created.' }
         format.json { render :show, status: :created, location: @choice_list }
       else
         format.html { render :new }
@@ -42,7 +43,7 @@ class ChoiceListsController < ApplicationController
   def update
     respond_to do |format|
       if @choice_list.update(choice_list_params)
-        format.html { redirect_to @choice_list, notice: 'Choice list was successfully updated.' }
+        format.html { redirect_to choice_lists_path, notice: 'Choice list was successfully updated.' }
         format.json { render :show, status: :ok, location: @choice_list }
       else
         format.html { render :edit }
@@ -69,6 +70,6 @@ class ChoiceListsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def choice_list_params
-      params.require(:choice_list).permit(:name, :key, :value, :label)
+      params.require(:choice_list).permit(:name, :key, :value, :label, choice_list_items_attributes: [:id,:name])
     end
 end
