@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
 
-  resources :roles
+
 
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       get 'project_types/create_share' => 'project_types#create_share', as: :create_share
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
   resources :field_types
+  resources :roles
 
   resources :layers
     #get 'project_fields/index'
@@ -42,7 +43,6 @@ Rails.application.routes.draw do
     resources :analysis_types
     get 'project_types/:id/geocoding' => 'project_types#geocoding', as: :project_types_geocoding
     get 'project_types/:id/dashboard' => 'project_types#dashboard',  :as => :project_types_dashboard
-
     get 'project_types/import_file' => 'project_types#import_file', as: :import_file
 
     get 'panel', to: 'project_types#panel'
@@ -53,9 +53,10 @@ Rails.application.routes.draw do
         resources :graphics_properties
         resources :analytics_dashboards
       end
-      resources :projects
-      resources :project_fields do
+      resources :projects do
         resources :project_data_children
+      end
+      resources :project_fields do
         collection do
           get :edit_multiple
           put :update_multiple
@@ -64,8 +65,6 @@ Rails.application.routes.draw do
       get 'project_types/filters' => 'project_types#filters', as: :filters
       get 'project_types/create_filters' => 'project_types#create_filters', as: :create_filters
       get 'project_types/share' => 'project_types#share', as: :share
-
-
       get 'project_types/heatmap' => 'project_types#heatmap', as: :heatmap
       get 'project_types/create_heatmap' => 'project_types#create_heatmap', as: :create_heatmap
       get 'project_types/point_colors' => 'project_types#point_colors', as: :point_colors
