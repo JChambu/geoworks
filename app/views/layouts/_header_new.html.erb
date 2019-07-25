@@ -20,7 +20,7 @@
             <%= link_to project_types_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
             <% end %>
 
-            <%if params[:controller] == 'dashboards' && params[:action] == 'edit' %>
+            <%if params[:controller] == 'dashboards' && params[:action] == 'edit' || params[:controller] == 'dashboards' && params[:action] == 'new' %>
             <%= link_to project_type_dashboards_path(@project_type.id) do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
             <% end %>
 
