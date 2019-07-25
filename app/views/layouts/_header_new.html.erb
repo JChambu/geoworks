@@ -20,6 +20,14 @@
             <%= link_to project_types_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
             <% end %>
 
+            <%if params[:controller] == 'project_fields' && params[:action] == 'edit_multiple' %>
+              <%= link_to project_type_project_fields_path(params[:project_type_id]) do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
+            <% end %>
+
+            <%if params[:controller] == 'project_data_children' && params[:action] == 'index' %>
+              <%= link_to project_type_projects_path(params[:project_type_id]) do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
+            <% end %>
+
             <!-- Campos del Proyecto -->
             <%if params[:controller] == 'project_fields' && params[:action] == 'index' %>
             <%= link_to project_types_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
