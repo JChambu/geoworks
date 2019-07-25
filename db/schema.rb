@@ -10,13 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190715200601) do
+ActiveRecord::Schema.define(version: 20190725003539) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
-  enable_extension "hstore"
-  enable_extension "uuid-ossp"
 
   create_table "actions", id: :serial, force: :cascade do |t|
     t.string "name"
@@ -139,7 +137,6 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.datetime "updated_at", null: false
     t.string "supplier_map", default: "osm"
     t.string "url"
-    t.integer "role_id"
   end
 
   create_table "dashboards", force: :cascade do |t|
@@ -316,6 +313,7 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.bigint "project_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_admin?"
     t.index ["project_type_id"], name: "index_has_project_types_on_project_type_id"
     t.index ["user_id"], name: "index_has_project_types_on_user_id"
   end
@@ -572,6 +570,141 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.date "last_update"
   end
 
+  create_table "procem_muestreo", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.string "fulcrum_id"
+    t.string "created_at"
+    t.string "updated_at"
+    t.string "created_by"
+    t.string "updated_by"
+    t.string "system_created_at"
+    t.string "system_updated_at"
+    t.integer "version"
+    t.integer "status"
+    t.string "project"
+    t.string "assigned_to"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "geometry"
+    t.string "muestreador"
+    t.string "fecha_de_recoleccin"
+    t.string "direccin"
+    t.string "departamento"
+    t.string "direccin_automtica_sub_thoroughfare"
+    t.string "direccin_automtica_thoroughfare"
+    t.string "direccin_automtica_suite"
+    t.string "direccin_automtica_locality"
+    t.string "direccin_automtica_sub_admin_area"
+    t.string "direccin_automtica_admin_area"
+    t.string "direccin_automtica_postal_code"
+    t.string "direccin_automtica_country"
+    t.string "direccin_automtica_full"
+    t.string "hospedero_01"
+    t.string "hospedero_01_other"
+    t.string "cantidad_01"
+    t.float "n_de_muestra_01"
+    t.string "hospedero_02"
+    t.string "hospedero_02_other"
+    t.string "cantidad_02"
+    t.float "n_de_muestra_02"
+    t.string "hospedero_03"
+    t.string "hospedero_03_other"
+    t.string "cantidad_03"
+    t.float "n_de_muestra_03"
+    t.string "hospedero_04"
+    t.string "hospedero_04_other"
+    t.integer "cantidad_04"
+    t.float "n_de_muestra_04"
+    t.string "hospedero_05"
+    t.string "hospedero_05_other"
+    t.integer "cantidad_05"
+    t.float "n_de_muestra_05"
+    t.string "hospedero_06"
+    t.string "hospedero_06_other"
+    t.integer "cantidad_06"
+    t.integer "n_de_muestra_06"
+    t.string "hospedero_07"
+    t.string "hospedero_07_other"
+    t.integer "cantidad_07"
+    t.string "n_de_muestra_07"
+    t.string "hospedero_08"
+    t.string "hospedero_08_other"
+    t.integer "cantidad_08"
+    t.string "n_de_muestra_08"
+    t.string "cultivo"
+    t.string "observaciones"
+    t.string "trampa_de_referencia"
+    t.string "oasis"
+    t.string "fecha"
+    t.string "visita"
+    t.string "suelo"
+    t.integer "cantidad_l_de_caldo_de_clorpiriphos"
+    t.string "volteo"
+    t.integer "cantidad_l_de_caldo_de_cipermetrina"
+    t.string "cebocortina"
+    t.integer "cantidad_l_de_caldo"
+    t.string "bauveria_bassiana"
+    t.string "cantidad_l_de_caldo_de_bauveria"
+    t.string "cosecha"
+    t.integer "cantidad_kg"
+    t.string "sin_frutos"
+    t.string "trampas_cebo"
+    t.integer "cantidad_de_trampas"
+  end
+
+  create_table "procem_trampeo", id: :serial, force: :cascade do |t|
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.string "fulcrum_id"
+    t.string "created_at"
+    t.string "updated_at"
+    t.string "created_by"
+    t.string "updated_by"
+    t.string "system_created_at"
+    t.string "system_updated_at"
+    t.integer "version"
+    t.integer "status"
+    t.string "project"
+    t.string "assigned_to"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "geometry"
+    t.string "trampa"
+    t.string "fecha_de_creacin"
+    t.string "oasis"
+    t.string "red"
+    t.integer "ruta"
+    t.string "tipo"
+    t.string "tipo_de_zona"
+    t.string "hospederos"
+    t.string "hospederos_other"
+    t.string "hospedero_actual"
+    t.string "fecha_de_cambio"
+    t.string "ubicacin"
+    t.string "ubicacin_caption"
+    t.string "ubicacin_url"
+    t.string "video"
+    t.string "video_caption"
+    t.string "video_url"
+    t.string "centro_de_trampeo"
+    t.string "me"
+    t.string "cu"
+    t.string "ubicacin_me"
+    t.string "ubicacin_me_caption"
+    t.string "ubicacin_me_url"
+    t.string "ubicacin_cu"
+    t.string "ubicacin_cu_caption"
+    t.string "ubicacin_cu_url"
+    t.string "direccin"
+    t.string "n"
+    t.string "barrio"
+    t.string "distrito"
+    t.string "departamento"
+    t.string "propietario"
+    t.string "encargado"
+    t.string "observaciones"
+    t.string "grupo_hospedero"
+  end
+
   create_table "project_data_children", force: :cascade do |t|
     t.jsonb "properties"
     t.integer "project_id"
@@ -596,7 +729,7 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.integer "field_type_id"
     t.boolean "hidden", default: false
     t.integer "sort"
-    t.boolean "readonly", default: false
+    t.boolean "read_only", default: false
     t.boolean "popup", default: false
     t.string "calculated_field"
     t.string "role"
@@ -618,6 +751,7 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.boolean "popup", default: false
     t.string "calculated_field"
     t.string "role"
+    t.integer "sort"
     t.index ["choice_list_id"], name: "index_project_subfields_on_choice_list_id"
     t.index ["field_type_id"], name: "index_project_subfields_on_field_type_id"
     t.index ["project_field_id"], name: "index_project_subfields_on_project_field_id"
@@ -633,6 +767,7 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.string "name_layer"
     t.boolean "enabled_as_layer"
     t.string "layer_color"
+    t.string "add_rows"
     t.index ["user_id"], name: "index_project_types_on_user_id"
   end
 
@@ -641,8 +776,8 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.integer "project_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.point "the_geom"
     t.jsonb "properties_original"
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
   end
 
@@ -705,6 +840,7 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.bigint "customer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "role_id"
     t.index ["customer_id"], name: "index_user_customers_on_customer_id"
     t.index ["user_id"], name: "index_user_customers_on_user_id"
   end
@@ -725,7 +861,11 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
+    t.string "token"
+    t.string "authentication_token", limit: 30
+    t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["token"], name: "index_users_on_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
@@ -746,10 +886,7 @@ ActiveRecord::Schema.define(version: 20190715200601) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
-  add_foreign_key "analytics_dashboards", "analysis_types"
   add_foreign_key "analytics_dashboards", "charts"
-  add_foreign_key "analytics_dashboards", "project_types"
-  add_foreign_key "has_project_types", "project_types"
   add_foreign_key "has_project_types", "users"
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_types", "users"
