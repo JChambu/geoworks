@@ -57,6 +57,12 @@ Rails.application.routes.draw do
         resources :project_data_children
       end
       resources :project_fields do
+        resource :project_subfields do
+          collection do
+            get :edit_multiple
+            put :update_multiple
+          end
+        end
         collection do
           get :edit_multiple
           put :update_multiple

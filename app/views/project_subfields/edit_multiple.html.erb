@@ -16,7 +16,7 @@
 </div>
 
 <div>
-  <%= form_tag update_multiple_project_type_project_fields_path(@project_type_id), method: :put do %>
+  <%= form_tag update_multiple_project_type_project_field_project_subfields_path(@project_type_id), method: :put do %>
 
   <div class="x_panel card">
     <div class="x_content">
@@ -35,7 +35,7 @@
             <th style="display: none">Orden</th>
           </tr>
           <tbody class="sortable">
-            <% @projectFields.each_with_sortable_id do |field, sortable_id| %>
+            <% @projectSubfields.each_with_sortable_id do |field, sortable_id| %>
               <%= fields_for "Fields[]", field do |f| %>
 
                 <tr id="<%= field.id %>" >
@@ -48,7 +48,6 @@
                   <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control' } %></td>
                   <td><%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control'} %></td>
                   <td><%= f.collection_select :role, Role.order(:name), :id, :name, {include_blank: ''}, {multiple: true, size: 2, class: 'form-control'} %></td>
-                  <td><%= link_to "hij", edit_multiple_project_type_project_field_project_subfields_path(@project_type_id, field.id)  %></td>
                   <td style="display: none"><%= f.text_field :sort, class: 'current_position form-control', readonly: true %></td>
                 </tr>
               <% end %>
