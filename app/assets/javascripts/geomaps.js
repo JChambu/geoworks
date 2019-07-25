@@ -137,7 +137,11 @@ Navarra.geomaps = function (){
       success: function(data){
         $.each(data, function(c,v){
           $.each(v, function(x,y){
-            let sub_layer = y.name_layer
+            let sub_layer = y.name_layer;
+            let color_layer = y.layer_color;
+            if (color_layer == '' ){
+              color_layer = "#00ff55";
+            }
             layerSubProjects = new MySource("http://"+url+":8080/geoserver/wms", {
               layers: "geoworks:" + sub_layer,//nombre de la capa (ver get capabilities)
               format: 'image/png',
@@ -146,6 +150,7 @@ Navarra.geomaps = function (){
               version: '1.0.0',//wms version (ver get capabilities)
               tiled: true,
               styles: 'type_layers',
+              env: 'color:' + color_layer,
               INFO_FORMAT: 'application/json',
               format_options: 'callback:getJson'
             })
