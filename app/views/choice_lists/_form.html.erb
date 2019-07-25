@@ -1,30 +1,39 @@
-<%= simple_form_for(choice_list) do |f| %>
-  <% if choice_list.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(choice_list.errors.count, "error") %> prohibited this choice_list from being saved:</h2>
+<div class="x_panel card">
+  <div class="x_content">
 
-      <ul>
-      <% choice_list.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+    <%= simple_form_for(choice_list) do |f| %>
+      <% if choice_list.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(choice_list.errors.count, "error") %> prohibited this choice_list from being saved:</h2>
+          <ul><% choice_list.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
+        </div>
       <% end %>
-      </ul>
-    </div>
-  <% end %>
 
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
+      <div class="form-group col-md-12">
+        <div class="col-md-1 text-right">
+          <%= f.label :name, 'Nombre' %>
+        </div>
+        <div class="col-md-3">
+          <%= f.text_field :name, class: "form-control" %>
+        </div>
+      </div>
+
+      <%= link_to_add_fields "Agregar Items", f, :choice_list_items %>
+
+      <div id="field_items" ,="," class="field_items">
+        <%= f.fields_for :choice_list_items do |i| %>
+          <%= render "choice_list_item_fields", f: i %>
+        <% end %>
+      </div>
+
+      <div class="form-group col-md-12 form-actions">
+        <div class="col-md-4 text-right">
+          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), choice_lists_path, :class => 'btn btn-default' %>
+          <%= f.submit class: 'btn btn-primary', value: "Guardar"%>
+        </div>
+      </div>
+
+    <% end %>
+
   </div>
-<div id="field_items", class= "field_items">
-  
-
-  <%= f.fields_for :choice_list_items do |i| %>
-        <%= render "choice_list_item_fields", f: i %>
-      <% end %>
-
 </div>
-      <%= link_to_add_fields "Add Items", f, :choice_list_items %></p>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
-<% end %>

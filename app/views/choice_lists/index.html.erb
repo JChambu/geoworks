@@ -1,33 +1,34 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Choice Lists</h1>
+<div class="col-md-12">
+  <h1>Listados</h1>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Key</th>
-      <th>Value</th>
-      <th>Label</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
+<div class="col-md-12 text-right sub-header">
+  <%= link_to 'Nuevo Listado', new_choice_list_path, class: "btn btn-primary" %>
+</div>
 
-  <tbody>
-    <% @choice_lists.each do |choice_list| %>
-      <tr>
-        <td><%= choice_list.name %></td>
-        <td><%= choice_list.key %></td>
-        <td><%= choice_list.value %></td>
-        <td><%= choice_list.label %></td>
-        <td><%= link_to 'Show', choice_list %></td>
-        <td><%= link_to 'Edit', edit_choice_list_path(choice_list) %></td>
-        <td><%= link_to 'Destroy', choice_list, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div class="x_panel card">
+  <div class="x_content">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th colspan="2"></th>
+          </tr>
+        </thead>
 
-<br>
-
-<%= link_to 'New Choice List', new_choice_list_path %>
+        <tbody>
+          <% @choice_lists.each do |choice_list| %>
+            <tr>
+              <td><%= choice_list.name %></td>
+              <td><%= link_to edit_choice_list_path(choice_list) do %> <i class="fas fa-edit"></i><%end%></td>
+              <td><%= link_to choice_list, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
