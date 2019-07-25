@@ -67,6 +67,11 @@
             <%= link_to roles_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
             <% end %>
 
+            <!-- Nuevo Listado y Editar Listado a Listados -->
+            <%if params[:controller] == 'choice_lists' && params[:action] == 'edit' || params[:controller] == 'choice_lists' && params[:action] == 'new' %>
+            <%= link_to choice_lists_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
+            <% end %>
+
             <!-- Editar Usuario -->
             <%if params[:controller] == 'users' && params[:action] == 'edit' %>
             <%= link_to project_types_path() do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
