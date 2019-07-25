@@ -21,6 +21,14 @@ Navarra.geomaps = function (){
       updateWhenIdle: true,
       reuseTiles: true
     });
+      var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+});
+    var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+    });
 
     cfg = {
       "radius": 30,
@@ -42,6 +50,29 @@ Navarra.geomaps = function (){
       layers: [streets, grayscale]
     }) ;
 
+    minx = Navarra.dashboards.config.minx;
+    miny = Navarra.dashboards.config.miny;
+    maxx = Navarra.dashboards.config.maxx;
+    maxy = Navarra.dashboards.config.maxy;
+
+    mymap.fitBounds([
+      [ miny, minx],
+      [ maxy ,maxx]
+
+    ]);
+
+    baseMaps = {
+      "Streets": streets,
+      "Grayscale": grayscale,
+      "Satelital": satellite,
+      "Dark": CartoDB_DarkMatter 
+    };
+
+    layerControl = L.control.layers(baseMaps).addTo(mymap);
+
+    L.control.zoom({
+      position:'topleft'
+    }).addTo(mymap);
     MySource = L.WMS.Source.extend({
 
       'showFeatureInfo': function(latlng, info) {
@@ -96,32 +127,9 @@ Navarra.geomaps = function (){
     })
 
     projects = layerProjects.getLayer(name_layer).addTo(mymap);
+    layerControl.addOverlay(projects , name_layer, null, {sortLayers: true});
 
-    minx = Navarra.dashboards.config.minx;
-    miny = Navarra.dashboards.config.miny;
-    maxx = Navarra.dashboards.config.maxx;
-    maxy = Navarra.dashboards.config.maxy;
 
-    mymap.fitBounds([
-      [ miny, minx],
-      [ maxy ,maxx]
-
-    ]);
-
-    baseMaps = {
-      "Streets": streets,
-      "Grayscale": grayscale,
-    };
-
-    overlayMaps = {
-      "Datos": projects
-    };
-
-    layerControl = L.control.layers(baseMaps, overlayMaps).addTo(mymap);
-
-    L.control.zoom({
-      position:'topleft'
-    }).addTo(mymap);
 
     if (markers !=undefined){
       mymap.removeLayer(markers);
@@ -155,8 +163,8 @@ Navarra.geomaps = function (){
               format_options: 'callback:getJson'
             })
 
-            projectsa = layerSubProjects.getLayer(sub_layer).addTo(mymap);
-      layerControl.addOverlay(projectsa , sub_layer);
+            projectsa = layerSubProjects.getLayer(sub_layer);
+            layerControl.addOverlay(projectsa , sub_layer, null, {sortLayers: true});
           })
         })
       }
@@ -180,8 +188,8 @@ Navarra.geomaps = function (){
               format_options: 'callback:getJson'
             })
 
-            layer_outer = layerSubProjects.getLayer(sub_layer).addTo(mymap);
-      layerControl.addOverlay(layer_outer , v.name);
+            layer_outer = layerSubProjects.getLayer(sub_layer);
+            layerControl.addOverlay(layer_outer , v.name, null, {sortLayers: true});
         })
       }
     })
