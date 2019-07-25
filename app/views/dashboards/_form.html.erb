@@ -1,27 +1,37 @@
 <div class="x_panel card">
   <div class="x_content">
 
-<%= simple_form_for([@project_type, @dashboard]) do |form| %>
-  <% if dashboard.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(dashboard.errors.count, "error") %> prohibited this dashboard from being saved:</h2>
+    <%= simple_form_for([@project_type, @dashboard]) do |form| %>
+      <% if dashboard.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(dashboard.errors.count, "error") %>
+            prohibited this dashboard from being saved:</h2>
 
-      <ul>
-      <% dashboard.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+          <ul>
+            <% dashboard.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
       <% end %>
-      </ul>
-    </div>
-  <% end %>
 
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name, id: :dashboard_name %>
-  </div>
+      <div class="form-group col-md-12">
+        <div class="col-md-1 text-right">
+          <%= form.label :name, 'Nombre' %>
+        </div>
+        <div class="col-md-3">
+          <%= form.text_field :name, id: :dashboard_name, class: "form-control" %>
+        </div>
+      </div>
 
-  <div class="actions">
-    <%= form.submit %>
+      <div class="form-group col-md-12 form-actions">
+        <div class="col-md-4 text-right">
+          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), project_type_dashboards_path(@project_type.id), :class => 'btn btn-default' %>
+          <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
+        </div>
+      </div>
+
+    <% end %>
+
   </div>
-<% end %>
-  </div>
-    </div>
+</div>
