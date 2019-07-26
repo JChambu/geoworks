@@ -1,41 +1,40 @@
 <div id="heatmap-modal" class="modal fade">
   <div class="modal-dialog">
     <div class="modal-content">
+
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title"> Mapa de Calor </h4>
       </div>
-      <div class="modal-body">
 
-        <%= form_tag project_type_create_heatmap_path, :remote => true, :method => :get   do |f| %>
+      <%= form_tag project_type_create_heatmap_path, :remote => true, :method => :get   do |f| %>
 
-          <div class="form-row">
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs">
-              <li class="active"><a data-toggle="tab" href="#menu1">Campos</a></li>
-              <li><a data-toggle="tab" href="#menu2">KPI</a></li>
-            </ul>
-            <!-- Tab panes -->
-            <div class="tab-content">
-              <div id="menu1" class="tab-pane fade in active">
-                <br>
-                <%=select_tag 'q[project_field]',  options_for_select(region_for_select), include_blank: true, class:'proj_field form-control' %>
-              </div>
-              <div id="menu2" class="tab-pane fade">
-                <br>
-                <%=select_tag 'q[project_kpi]',  options_for_select(kpi_for_select), include_blank: true, class:'proj_field form-control' %>
-              </div>
+        <div class="modal-body">
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#menu1">Campos</a></li>
+            <li><a data-toggle="tab" href="#menu2">KPI</a></li>
+          </ul>
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div id="menu1" class="tab-pane fade in active">
+              <br>
+              <%=select_tag 'q[project_field]',  options_for_select(region_for_select), include_blank: true, class:'proj_field form-control' %>
+            </div>
+            <div id="menu2" class="tab-pane fade">
+              <br>
+              <%=select_tag 'q[project_kpi]',  options_for_select(kpi_for_select), include_blank: true, class:'proj_field form-control' %>
             </div>
           </div>
+        </div>
 
-          <br>
-          <div class="actions text-right">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-            <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary text-right", value: 'Guardar' %>
-          </div>
-        <% end %>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary text-right", value: 'Guardar' %>
+        </div>
 
-    </div>
+      <% end %>
+
   </div>
 </div>
 <script>
