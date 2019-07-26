@@ -111,6 +111,7 @@
       </div>
 
       <div class="actions text-right">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
         <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
         <% if params[:action] == 'edit' %>
           <%= link_to project_type_dashboard_graphic_path(@project_type.id,@dashboard, @graphic ), method: :delete, data: { confirm: '¿Está seguro?'}, :remote => true do  %> <i class="fas fa-trash-alt" title="Eliminar Gráfico" style="font-size: 2em"></i> <%end %>
