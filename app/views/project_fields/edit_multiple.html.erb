@@ -30,7 +30,8 @@
             <th>Pop-up</th>
             <th>Cálculo</th>
             <th>Tipo de Campo</th>
-            <th>Listado</th>
+            <th>Listados</th>
+            <th>Hijos</th>
             <th>Rol</th>
             <th style="display: none">Orden</th>
           </tr>
@@ -47,8 +48,8 @@
                   <td><%= f.text_field :calculated_field, class: "form-control" %></td>
                   <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control' } %></td>
                   <td><%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control'} %></td>
+                  <td><%= link_to edit_multiple_project_type_project_field_project_subfields_path(@project_type_id, field.id) do %> <i class="fas fa-plus"></i> <% end %></td>
                   <td><%= f.collection_select :role, Role.order(:name), :id, :name, {include_blank: ''}, {multiple: true, size: 2, class: 'form-control'} %></td>
-                  <td><%= link_to "hij", edit_multiple_project_type_project_field_project_subfields_path(@project_type_id, field.id)  %></td>
                   <td style="display: none"><%= f.text_field :sort, class: 'current_position form-control', readonly: true %></td>
                 </tr>
               <% end %>
