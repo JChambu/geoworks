@@ -60,6 +60,7 @@
     </div>
   </div>
   <div class="col-md-12 text-right">
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")), project_type_project_fields_path, :class => 'btn btn-default' %>
     <%= submit_tag :enviar, class: "btn btn-primary", value: 'Guardar' %>
   </div>
   <% end %>
