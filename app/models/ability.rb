@@ -4,10 +4,6 @@ class Ability
   def initialize(user)
     user ||= User.new # guest user (not logged in)
 
-  #  if user.is? "SuperAdmin"
-  #    can :manage, :all
-  #  end
-
     if user.is? "Admin"
       can :manage, :all
     end
@@ -16,34 +12,7 @@ class Ability
       can :manage, :all
     end
     
-    
-    if user.is? "User"
-      #Poi
-      can :manage, ExtendedListing
-      can :manage, Poi
-      can :visualize, :duplicated
-      can :visualize, :possible_duplicates
-      can :search, :pois
-      can :manage, Parking
-      #Poi sub types
-      can :manage, :poi_type_sub_types
-      can :visualize, :poi_type_chains
-      can :visualize, :poi_type_food_types
-      can :edit, User do |u|
-        u.id == user.id
-      end
-      can :update, User do |u|
-        u.id == user.id
-      end
-      #Administation
-    end
-
-    
-
-
-
-
-    # Define abilities for the passed in user here. For example:
+   # Define abilities for the passed in user here. For example:
     #
     #   user ||= User.new # guest user (not logged in)
     #   if user.admin?

@@ -19,13 +19,10 @@
 //= require jquery.csv
 //= require progressbar
 //= require moment.min
-//= require chartist
 //= require custom
 //= require navarra
-//= require common
 //= require layers
 //= require chosen
-//= require ajax_chosen
 //= require flot/jquery.flot
 //= require flot/jquery.flot.resize
 //= require leaflet/dist/leaflet.markercluster-src.js 

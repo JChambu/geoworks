@@ -1,9 +1,0 @@
-<%= simple_form_for @poi_load, :html => { :class => 'form-horizontal', :multipart => true } do |f| %>
-  <%= f.input :name %>
-  <%= control_group f.file_field(:file) %>
-  <div class="form-actions">
-    <%= f.button :submit, :class => 'btn-primary' %>
-    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
-                poi_loads_path, :class => 'btn' %>
-  </div>
-<% end %>

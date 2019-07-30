@@ -1,9 +1,0 @@
-<%= simple_form_for @food_type, :html => { :class => 'form-horizontal' } do |f| %>
-  <%= f.input :name %>
-  <%= f.input :poi_type_id, :collection => poi_types_for_select %>
-  <div class="form-actions">
-    <%= f.button :submit, :class => 'btn-primary' %>
-    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
-                food_types_path, :class => 'btn' %>
-  </div>
-<% end %>
