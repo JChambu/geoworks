@@ -43,6 +43,10 @@ Navarra.dashboards.action_show = function(){
       if (heatmap_actived != ''){
         Navarra.geomaps.heatmap_data();
       }
+      Navarra.geomaps.current_layer();
+      Navarra.geomaps.layers_external();
+      Navarra.geomaps.layers_internal();
+
     });
 
     $(".add_heatmap").on("click", ".mes",  function(){
