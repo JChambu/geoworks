@@ -227,13 +227,18 @@ class ProjectType < ApplicationRecord
 
           @items = {}
           if type_box == 'extent'
-            data = Project.where(project_type_id: project_type_id).where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+            data = Project.joins("left outer join project_data_children on projects.id = project_data_children.project_id").where(project_type_id: project_type_id).where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
           else
-            data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
+            data = Project.joins("left outer join project_data_children on projects.id = project_data_children.project_id").where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
           end
-          if !chart.sql_sentence.blank?
+          data.joins(:project_data_child)
 
-            @field_group = "properties->>'"+ chart.group_field.key + "'"
+          if !chart.sql_sentence.blank?
+            if chart.group_sql.blank?
+              @field_group = "projects.properties->>'"+ chart.group_field.key + "'"
+            else
+              @field_group = chart.group_sql
+            end
             if chart.order_sql.blank?
              data = data.select(chart.sql_sentence).group(@field_group).order(@field_group)
             else
@@ -243,8 +248,8 @@ class ProjectType < ApplicationRecord
           else
 
             @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
-            @field_select += ", properties->>'" + chart.group_field.key + "' as name "
-            @field_group = "properties->>'"+ chart.group_field.key + "'"
+            @field_select += ", projects.properties->>'" + chart.group_field.key + "' as name "
+            @field_group = "projects.properties->>'"+ chart.group_field.key + "'"
 
             data =  data.select(@field_select).group(@field_group).order(@field_group)
           end
@@ -255,14 +260,14 @@ class ProjectType < ApplicationRecord
               @field = @s[0]
               @filter = @s[1]
               @value = @s[2]
-              data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
+              data =  data.where(" projects.properties->>'" + @field +"'" +  @filter +"#{@value}")
             end
           end
             conditions_field = chart.condition_field
             @ch = chart
             @cf = conditions_field
           if !conditions_field.blank?
-            data =  data.where(" properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
+            data =  data.where("projets.properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
           end
           @items["serie#{i}"] = data
           @option_graph = graph
@@ -280,15 +285,15 @@ class ProjectType < ApplicationRecord
   def self.analysis_type(type, field)
     case type
     when 'sum'
-      query = " #{type}((properties->>'" + field+ "')::numeric)"
+      query = " #{type}((projects.properties->>'" + field+ "')::numeric)"
     when 'count'
-      query = " #{type}((properties->>'" + field + "'))"
+      query = " #{type}((projects.properties->>'" + field + "'))"
     when 'avg'
-      query = " #{type}((properties->>'" + field+ "')::numeric)"
+      query = " #{type}((projects.properties->>'" + field+ "')::numeric)"
     when 'min'
-      query = " #{type}((properties->>'" + field+ "')::numeric)"
+      query = " #{type}((projects.properties->>'" + field+ "')::numeric)"
     when 'max'
-      query = " #{type}((properties->>'" + field+ "')::numeric)"
+      query = " #{type}((projects.properties->>'" + field+ "')::numeric)"
     when 'weighted_average'
       query = "case  sum((properties->>'oferta')::numeric) when 0 then 0 else  sum((properties->>'" + field+ "')::numeric * (properties->>'oferta')::numeric) / sum((properties->>'oferta')::numeric) end "
     end
