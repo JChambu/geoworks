@@ -35,7 +35,7 @@ gem 'apartment'
 gem 'apartment-activejob'
 gem 'cancancan'
 gem 'pry'
-gem 'rgeo', '0.6.0'
+gem 'rgeo', '~>2.0.1'
 gem 'rgeo-activerecord'
 gem 'rgeo-shapefile'
 gem 'rgeo-geojson'
@@ -74,6 +74,7 @@ group :development, :test do
   gem 'capistrano-rvm'
   gem 'capistrano-bundler'
   gem 'capistrano3-unicorn'
+  gem 'letter_opener'
 
 end
 gem 'unicorn'

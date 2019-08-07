@@ -76,7 +76,7 @@ class ProjectType < ApplicationRecord
     @fi = self.file
     self.file.each do |f| @f = f.content_type
     begin
-      if @f== "text/csv" ||  @f== "application/x-esri-shape"  || @f == "application/x-esri-crs" || @f=="application/x-dbf" || @f=="text/plain" || @f =="application/vnd.ms-excel" || @f == "application/octet-stream" 
+      if @f== "text/csv" ||  @f== "application/x-esri-shape"  || @f == "application/x-esri-crs" || @f=="application/x-dbf" || @f=="text/plain" || @f =="application/vnd.ms-excel" || @f == "application/octet-stream" || @f == "application/geo+json" 
         valid = f.content_type 
       end
     rescue
@@ -315,7 +315,7 @@ class ProjectType < ApplicationRecord
       when 'application/json'
         load_json()
       when  'application/geo+json'
-        load_geojson()
+        load_geojson(self.id, self.name_layer)
       end
     end
     a
@@ -385,29 +385,38 @@ class ProjectType < ApplicationRecord
     end
   end
 
-  def load_json
+  def load_geojson project_type_id, name_layer
+ require 'rgeo/geo_json'
     file_name = @directory[1].split('.').first
     items = []
-    data = Rgeo::GeoJSON.decode("#{@directory[0]}/#{file_name}.json", json_parser: :json )
+    fields = []
+    ct = Apartment::Tenant.current
+    items = {}
+    st1 = JSON.parse(File.read("#{@directory[0]}/#{file_name}.geojson"))
+    data = RGeo::GeoJSON.decode(st1, :json_parser => :json)
 
-    @d = data
-    @d.each do |item|
-      p item
-      @it = item
-      #     items =  item
+    data.each do |a|
+      properties = a.properties
+      properties.each do |value|
+        field = value[0].parameterize(separator: '_').downcase
+        field_type = ProjectField.find_or_create_by(name: field, project_type_id: project_type_id)
+        fields << field if fields.include?(field)
+  end
+    
+    the_geom = a.geometry.as_text
+    Project.create(properties: properties, project_type_id: project_type_id, the_geom:the_geom)
+  end
+    create_view(fields, ct, project_type_id, name_layer)
 
-      #    Project.create(properties: items, project_type_id: self.id)
-    end
   end
 
-  def load_geojson
+  def load_geojson_json
     file_name = @directory[1].split('.').first
     items = []
     data = JSON.parse(File.read("#{@directory[0]}/#{file_name}.geojson"))
-    @d = data
     data.each do |item|
-
       @item = item 
+      
 
       # Project.create(properties: items, project_type_id: self.id)
     end
