@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190725003539) do
+ActiveRecord::Schema.define(version: 20190731123114) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,8 @@ ActiveRecord::Schema.define(version: 20190725003539) do
     t.text "sql_sentence"
     t.integer "order"
     t.string "order_sql"
+    t.text "group_sql"
+    t.boolean "children", default: false
     t.index ["analysis_type_id"], name: "index_analytics_dashboards_on_analysis_type_id"
     t.index ["chart_id"], name: "index_analytics_dashboards_on_chart_id"
     t.index ["project_type_id"], name: "index_analytics_dashboards_on_project_type_id"
@@ -733,6 +735,7 @@ ActiveRecord::Schema.define(version: 20190725003539) do
     t.boolean "popup", default: false
     t.string "calculated_field"
     t.string "role"
+    t.text "data_script"
     t.index ["project_type_id"], name: "index_project_fields_on_project_type_id"
   end
 
@@ -752,6 +755,7 @@ ActiveRecord::Schema.define(version: 20190725003539) do
     t.string "calculated_field"
     t.string "role"
     t.integer "sort"
+    t.text "data_script"
     t.index ["choice_list_id"], name: "index_project_subfields_on_choice_list_id"
     t.index ["field_type_id"], name: "index_project_subfields_on_field_type_id"
     t.index ["project_field_id"], name: "index_project_subfields_on_project_field_id"
