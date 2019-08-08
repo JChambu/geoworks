@@ -1,7 +1,7 @@
 Navarra.namespace("geomaps");
 
 Navarra.geomaps = function (){
-  var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl, url;
+  var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl, url, type_geometry;
   var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer;
   var ss = [];
   var size_box = [];
@@ -52,6 +52,8 @@ Navarra.geomaps = function (){
       layers: [streets, grayscale]
     }) ;
 
+    type_geometry = Navarra.dashboards.config.type_geometry;
+    if (type_geometry != 'Polygon'){
     minx = Navarra.dashboards.config.minx;
     miny = Navarra.dashboards.config.miny;
     maxx = Navarra.dashboards.config.maxx;
@@ -62,7 +64,7 @@ Navarra.geomaps = function (){
       [ maxy ,maxx]
 
     ]);
-
+    }
     baseMaps = {
       "Streets": streets,
       "Grayscale": grayscale,
@@ -500,6 +502,20 @@ Navarra.geomaps = function (){
   function current_layer(){
 
     name_layer = Navarra.dashboards.config.name_layer;
+    switch (type_geometry) {
+      case 'Point':
+        style = 'poi_new';
+        break;
+      case 'LineString':
+        style = 'line';
+        break;
+      case 'Polygon':
+        style = 'polygon';
+        break;
+      default:
+        style = 'poi_new';
+    }
+    
     layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
       layers: "geoworks:" + name_layer,//nombre de la capa (ver get capabilities)
       format: 'image/png',
@@ -507,7 +523,7 @@ Navarra.geomaps = function (){
       opacity: 1,
       version: '1.0.0',//wms version (ver get capabilities)
       tiled: true,
-      styles: 'poi_new',
+      styles: style,
       INFO_FORMAT: 'application/json',
       format_options: 'callback:getJson'
     })

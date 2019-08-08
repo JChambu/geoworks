@@ -315,7 +315,7 @@ class ProjectType < ApplicationRecord
       when 'application/json'
         load_json()
       when  'application/geo+json'
-        load_geojson(self.id, self.name_layer)
+        load_geojson(self.id, self.name_layer, self.type_geometry)
       end
     end
     a
@@ -385,7 +385,7 @@ class ProjectType < ApplicationRecord
     end
   end
 
-  def load_geojson project_type_id, name_layer
+  def load_geojson project_type_id, name_layer, type_geometry
  require 'rgeo/geo_json'
     file_name = @directory[1].split('.').first
     items = []
@@ -394,7 +394,6 @@ class ProjectType < ApplicationRecord
     items = {}
     st1 = JSON.parse(File.read("#{@directory[0]}/#{file_name}.geojson"))
     data = RGeo::GeoJSON.decode(st1, :json_parser => :json)
-
     data.each do |a|
       properties = a.properties
       properties.each do |value|
@@ -404,9 +403,10 @@ class ProjectType < ApplicationRecord
   end
     
     the_geom = a.geometry.as_text
+    
     Project.create(properties: properties, project_type_id: project_type_id, the_geom:the_geom)
   end
-    create_view(fields, ct, project_type_id, name_layer)
+    ProjectType.create_view(fields, ct, project_type_id, name_layer, type_geometry)
 
   end
 
@@ -585,7 +585,7 @@ class ProjectType < ApplicationRecord
         end
       end
 
-      create_view(fields, ct, project_type_id, name_layer)
+      #create_view(fields, ct, project_type_id, name_layer)
      
       file.rewind
       file.each do |record|
@@ -714,17 +714,17 @@ class ProjectType < ApplicationRecord
 
   end
 
-  def self.create_view(fields, current_tenant, project_type_id, name_layer)
+  def self.create_view(fields, current_tenant, project_type_id, name_layer, type_geometry = nil)
 
     vv = "CREATE OR REPLACE VIEW #{current_tenant}.#{name_layer} AS "
     vv += " select "
     fields.each do |field|
-
-      vv += " properties->>'#{field}' as #{field}, "
+    vv += " properties->>'#{field}' as #{field}, "
     end
     vv += " project_type_id, "
-    vv += " st_y(the_geom),  "
-    vv += " st_x(the_geom), "
+    vv += " st_y(the_geom),  " if type_geometry != 'Polygon'
+    vv += " st_x(the_geom), "if type_geometry != 'Polygon'
+
     vv += " the_geom "
     vv += "FROM #{current_tenant}.projects where project_type_id =#{project_type_id} ; "
     view = ActiveRecord::Base.connection.execute(vv)
