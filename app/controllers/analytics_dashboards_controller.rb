@@ -85,6 +85,6 @@ class AnalyticsDashboardsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def analytics_dashboard_params
-      params.require(:analytics_dashboard).permit(:title, :description, :project_field_id, :analysis_type_id, :chart_id, :graph, :card, :group_field_id, :condition_field_id, :filter_input, :input_value, :const_field, :project_type_id, :sql_sentence, :order_sql, :group_sql, :children)
+      params.require(:analytics_dashboard).permit(:title, :description, :project_field_id, :analysis_type_id, :chart_id, :graph, :card, :group_field_id, :condition_field_id, :filter_input, :input_value, :const_field, :project_type_id, :sql_sentence, :order_sql, :group_sql, :children, :conditions_sql)
     end
 end
