@@ -269,7 +269,7 @@ class ProjectType < ApplicationRecord
           if !conditions_field.blank?
             data =  data.where("projets.properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
           else
-            data = data.where(chart.conditions_sql) if !chart.conditions.sql.blank? 
+            data = data.where(chart.conditions_sql) if !chart.conditions_sql.blank? 
           end
           @items["serie#{i}"] = data
           @option_graph = graph
