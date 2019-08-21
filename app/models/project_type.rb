@@ -17,6 +17,7 @@ class ProjectType < ApplicationRecord
   has_many :users, :through=> :has_project_types
 
   accepts_nested_attributes_for :fields, allow_destroy: true
+  accepts_nested_attributes_for :projects, allow_destroy: true
 
   FILTERS = %w(= < > <= >= != ilike )
 
@@ -267,7 +268,7 @@ class ProjectType < ApplicationRecord
             @ch = chart
             @cf = conditions_field
           if !conditions_field.blank?
-            data =  data.where("projets.properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
+            data =  data.where("projects.properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
           else
             data = data.where(chart.conditions_sql) if !chart.conditions_sql.blank? 
           end
