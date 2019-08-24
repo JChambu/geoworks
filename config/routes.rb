@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
 
 
+  resources :project_statuses
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
   get 'geo_editions/search_blocks' => 'geo_editions#search_blocks'
