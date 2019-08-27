@@ -196,7 +196,7 @@ function init_chart_doughnut(size_box = null){
           var datasets = [];
           var width;
           var aspectR;
-          var legend_display = true;
+          var legend_display = false;
           var label_x_axis;
           var label_y_axis_left;
           var label_y_axis_right;
