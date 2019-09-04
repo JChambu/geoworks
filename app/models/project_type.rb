@@ -748,11 +748,11 @@ class ProjectType < ApplicationRecord
     if !row.nil?
       child_data = ProjectDataChild.new()
       project_field_id = 661
-      project = Project.where("properties->> 'numero_trampa' = '#{row['trampa']}' and project_type_id = #{project_type_id}").select(:id).first
+      project = Project.where("properties->>'numero_trampa' = '#{row['trampa']}' and project_type_id = #{project_type_id}").select(:id).first
       child_data[:project_id] = project.id
       value_name = {}
       row.each do |data |
-        field = ProjectSubfield.where(key: data[0]).first
+        field = ProjectSubfield.where(key: data[0], project_field_id: project_field_id).first
         if !field.nil?
           value_name.merge!("#{field.id}": data[1] ) 
         end
