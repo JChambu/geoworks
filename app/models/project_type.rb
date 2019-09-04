@@ -21,7 +21,7 @@ class ProjectType < ApplicationRecord
 
   FILTERS = %w(= < > <= >= != ilike )
 
-  attr_accessor :file, :latitude, :longitude, :address, :department, :province, :country, :data
+  attr_accessor :file, :latitude, :longitude, :address, :department, :province, :country, :data, :type_file
 
   validates :name,  presence: true
   validates :name, uniqueness: true 
@@ -33,6 +33,7 @@ class ProjectType < ApplicationRecord
 
   #before_create :restart_delayed_job
   #before_destroy :restart_delayed_job
+  after_destroy :destroy_view
   before_save :save_shp_file, if: :file_exist? 
   after_create :load_file, if: :file_exist? 
   after_create :new_dashboard
@@ -74,7 +75,6 @@ class ProjectType < ApplicationRecord
   end
 
   def is_file_type_valid?
-    @fi = self.file
     self.file.each do |f| @f = f.content_type
     begin
       if @f== "text/csv" ||  @f== "application/x-esri-shape"  || @f == "application/x-esri-crs" || @f=="application/x-dbf" || @f=="text/plain" || @f =="application/vnd.ms-excel" || @f == "application/octet-stream" || @f == "application/geo+json" 
@@ -312,7 +312,7 @@ class ProjectType < ApplicationRecord
           a = ProjectType.load_shape(self.id, self.name_layer)
         end
       when 'text/csv', 'text/plain', 'application/vnd.ms-excel'
-        a = ProjectType.load_csv(self.id, self.latitude, self.longitude, self.address, self.department, self.province, self.country, self.name_layer)
+        a = ProjectType.load_csv(self.id, self.latitude, self.longitude, self.address, self.department, self.province, self.country, self.name_layer, self.type_file)
         #when 'application/xls', 'application/vnd.ms-excel'
         #  'xls'
       when 'application/json'
@@ -336,7 +336,7 @@ class ProjectType < ApplicationRecord
     @elements 
   end
 
-  def self.load_csv project_type_id, latitude, longitude, address, department, province, country, name_layer
+  def self.load_csv project_type_id, latitude, longitude, address, department, province, country, name_layer, type_file
     @project_type = JSON.parse(ProjectType.find(project_type_id).directory_name)
     @source_path = @project_type[0]
     @file_name = @project_type[1]
@@ -344,48 +344,53 @@ class ProjectType < ApplicationRecord
     items = {}
     fields = []
     CSV.foreach("#{@source_path}/#{@file_name}", headers: true).with_index do |row, i |
-      if i == 0 
+      if type_file == 'Children'
+            save_rows_project_data_childs row, i , project_type_id 
+      else
+        if i == 0 
 
-        row.headers.each do |f|
-          field = f.parameterize(separator: '_')
-          fields << field
-          @new_project_field =  ProjectField.where(name: field, key: field, project_type_id: project_type_id, required: false).first_or_create(name: field, key: field, project_type_id: project_type_id, required: false, field_type_id: 1)
+          row.headers.each do |f|
+            field = f.parameterize(separator: '_')
+            fields << field
+            @new_project_field =  ProjectField.where(name: field, key: field, project_type_id: project_type_id, required: false).first_or_create(name: field, key: field, project_type_id: project_type_id, required: false, field_type_id: 1)
+          end
+          create_view(fields, ct, project_type_id, name_layer)
+
         end
-        create_view(fields, ct, project_type_id, name_layer)
+        row.to_hash.each_pair do |k,v|
 
-      end
-      row.to_hash.each_pair do |k,v|
-        
-        field_custom = k.parameterize(separator: '_')
-        field_type = ProjectField.where(name:field_custom, project_type_id: project_type_id)
-        if !field_type.nil?
-          if (field_type[0].field_type_id == 7)
-            value_parse = JSON.parse(v)
-            items.merge!({field_custom.downcase => value_parse}) 
+          field_custom = k.parameterize(separator: '_')
+          field_type = ProjectField.where(name:field_custom, project_type_id: project_type_id)
+          if !field_type.nil?
+            if (field_type[0].field_type_id == 7)
+              value_parse = JSON.parse(v)
+              items.merge!({field_custom.downcase => value_parse}) 
+            else
+              items.merge!({field_custom.downcase => v}) 
+            end
           else
             items.merge!({field_custom.downcase => v}) 
           end
-        else
-            items.merge!({field_custom.downcase => v}) 
-      end
-      end
-      #items = row.to_h
-      geom = ''
-      if (latitude.present? && longitude.present?)
-        lat = items[latitude]
-        lng = items[longitude]
-        geom = "POINT(#{lng} #{lat})" 
-      end
-      if(address.present? && province.present? && country.present?)
-        address = items[address]
-        department = items[department]
-        province = items[province]
-        country = items[country]
-        geom = build_geom(address, department, province, country)
-      end
+        end
+        #items = row.to_h
+        geom = ''
+        if (latitude.present? && longitude.present?)
+          lat = items[latitude]
+          lng = items[longitude]
+          geom = "POINT(#{lng} #{lat})" 
+        end
+        if(address.present? && province.present? && country.present?)
+          address = items[address]
+          department = items[department]
+          province = items[province]
+          country = items[country]
+          geom = build_geom(address, department, province, country)
+        end
 
-      Project.create(properties: items, project_type_id: project_type_id, the_geom: geom)
+        Project.create(properties: items, project_type_id: project_type_id, the_geom: geom)
+      end
     end
+
   end
 
   def load_geojson project_type_id, name_layer, type_geometry
@@ -713,10 +718,6 @@ class ProjectType < ApplicationRecord
     count = Project.where(project_type_id: id).count
   end
 
-  def  kpi
-
-  end
-
   def self.create_view(fields, current_tenant, project_type_id, name_layer, type_geometry = nil)
 
     vv = "CREATE OR REPLACE VIEW #{current_tenant}.#{name_layer} AS "
@@ -732,5 +733,34 @@ class ProjectType < ApplicationRecord
     vv += "FROM #{current_tenant}.projects where project_type_id =#{project_type_id} ; "
     view = ActiveRecord::Base.connection.execute(vv)
     return
+  end
+
+  def destroy_view
+    query = "DROP VIEW IF EXISTS #{self.name_layer}"
+      ActiveRecord::Base.connection.execute(query)
+  end
+
+
+
+  def self.save_rows_project_data_childs row, i, project_type_id 
+    result_hash = {}
+
+    if !row.nil?
+      child_data = ProjectDataChild.new()
+      project_field_id = 661
+      project = Project.where("properties->> 'numero_trampa' = '#{row['trampa']}' and project_type_id = #{project_type_id}").select(:id).first
+      child_data[:project_id] = project.id
+      value_name = {}
+      row.each do |data |
+        field = ProjectSubfield.where(key: data[0]).first
+        if !field.nil?
+          value_name.merge!("#{field.id}": data[1] ) 
+        end
+      end
+
+      child_data[:properties] = [value_name]
+      child_data[:project_field_id] = project_field_id
+      child_data.save
+    end
   end
 end

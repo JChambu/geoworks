@@ -49,6 +49,11 @@
         <%= f.select :type_geometry,  options_for_select(['Point', 'LineString', 'Polygon']), {prompt: '', class: 'form-control'} %>
       </div>
 
+          <div>
+        <%= f.select :type_file,  options_for_select(['Father', 'Children']), {prompt: '', class: 'form-control'} %>
+          </div>
+
+
       <div class="form-group col-md-12">
         <div class="col-md-2 text-right">
           <label>Importar desde API:</label>
