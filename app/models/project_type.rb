@@ -749,6 +749,7 @@ class ProjectType < ApplicationRecord
       child_data = ProjectDataChild.new()
       project_field_id = 661
       project = Project.where("properties->>'numero_trampa' = '#{row['trampa']}' and project_type_id = #{project_type_id}").select(:id).first
+      if !project.nil?
       child_data[:project_id] = project.id
       value_name = {}
       row.each do |data |
@@ -761,6 +762,7 @@ class ProjectType < ApplicationRecord
       child_data[:properties] = [value_name]
       child_data[:project_field_id] = project_field_id
       child_data.save
+    end
     end
   end
 end
