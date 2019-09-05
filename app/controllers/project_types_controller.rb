@@ -134,9 +134,9 @@ class ProjectTypesController < ApplicationController
         @arr1.push([z])
       end
 
-      data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
+      data = Project.joins("left outer join project_data_children on projects.id = project_data_children.project_id").where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
     else
-      data = Project.where(project_type_id: project_type_id)
+      data = Project.joins("left outer join project_data_children on projects.id = project_data_children.project_id").where(project_type_id: project_type_id)
     end
     condition = params[:conditions]
     if !condition.blank?
@@ -160,7 +160,11 @@ class ProjectTypesController < ApplicationController
       @analytics.each do |f|
         if !f.sql_sentence.blank?
 
-          @field_group = "properties->>'"+ f.group_field.key + "'"
+            if f.group_sql.blank?
+              @field_group = "projects.properties->>'"+ f.group_field.key + "'"
+            else
+              @field_group = f.group_sql
+            end
           if f.order_sql.blank?
             data = data.select(f.sql_sentence, "st_x(the_geom) as lng, st_y(the_geom) as lat").group(@field_group, :the_geom).order(@field_group)
           else
