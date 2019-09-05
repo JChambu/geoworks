@@ -174,14 +174,14 @@ class ProjectTypesController < ApplicationController
         else
 
           @field_select = analysis_type(f.analysis_type.name, f.project_field.key) + ' as count'
-          @field_select += ", properties->>'" + f.group_field.key + "' as name "
-          @field_group = "properties->>'"+ f.group_field.key + "'"
+          @field_select += ", projects.properties->>'" + f.group_field.key + "' as name "
+          @field_group = "projects.properties->>'"+ f.group_field.key + "'"
 
           data =  data.select(@field_select).group(@field_group).order(@field_group)
         end
         conditions_field = f.condition_field
         if !conditions_field.blank?
-          data =  data.where(" properties->>'" + conditions_field.name + "' " + f.filter_input + "'#{f.input_value}'")
+          data =  data.where(" projects.properties->>'" + conditions_field.name + "' " + f.filter_input + "'#{f.input_value}'")
         end
 
         @query_h = data
@@ -189,7 +189,7 @@ class ProjectTypesController < ApplicationController
     else
 
 
-      @query_h = data.select("st_x(the_geom) as lng, st_y(the_geom) as lat, properties->>'#{params[:heatmap_field]}' as count").group("properties->>'#{params[:heatmap_field]}', the_geom").order('count')
+      @query_h = data.select("st_x(the_geom) as lng, st_y(the_geom) as lat, projects.properties->>'#{params[:heatmap_field]}' as count").group("projects.properties->>'#{params[:heatmap_field]}', the_geom").order('count')
 
     end
 
