@@ -19,7 +19,8 @@ Navarra.dashboards.config = {
   "current_tenant": '',
   "graph_id":'',
   size_box: [],
-  name_layer: ''
+  name_layer: '',
+  type_geometry: ''
 };
 
 Navarra.dashboards.action_show = function(){
@@ -37,13 +38,13 @@ Navarra.dashboards.action_show = function(){
       var da =  $(this).attr('id');
         Navarra.project_types.config.field_point_colors = '';
         $(this).remove();
-      Navarra.geomaps.wms_filter();
-      Navarra.geomaps.point_colors_data();
+        Navarra.geomaps.wms_filter();
+        Navarra.geomaps.point_colors_data();
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
       if (heatmap_actived != ''){
         Navarra.geomaps.heatmap_data();
       }
-      Navarra.geomaps.current_layer();
+      //Navarra.geomaps.current_layer();
       Navarra.geomaps.layers_external();
       Navarra.geomaps.layers_internal();
 
@@ -61,10 +62,8 @@ Navarra.dashboards.action_show = function(){
     });
 
     $(".add_filters").on("click", ".message",  function(){
-
       $(".fa-filter").css("color", "#9b9b9b");
       var da =  $(this).attr('id');
-
         Navarra.project_types.config.field_point_colors = '';
         $(this).remove();
 

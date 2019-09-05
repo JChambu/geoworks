@@ -2,7 +2,7 @@ Navarra.namespace("geomaps");
 
 Navarra.geomaps = function (){
   var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl, url, type_geometry;
-  var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer;
+  var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current;
   var ss = [];
   var size_box = [];
   var init= function() {
@@ -229,8 +229,6 @@ Navarra.geomaps = function (){
   function wms_filter(){
 
     var MySourceb = L.WMS.Source.extend({
-
-
       'showFeatureInfo': function(latlng, info) {
         if (!this._map) {
           return;
@@ -270,7 +268,7 @@ Navarra.geomaps = function (){
         cql_filter +=" and "+ data_filter[0]+ " " + data_filter[1] + " " +  data_filter[2];
       });
 
-      mymap.removeLayer(projects);
+      mymap.removeLayer(project_current);
       if(typeof(projectss)!=='undefined'){
         mymap.removeLayer(projectss);
       }
@@ -281,7 +279,6 @@ Navarra.geomaps = function (){
       }
 
       var point_color = Navarra.project_types.config.field_point_colors;
-
       if(point_color != ''){
         if(typeof(projectss)!=='undefined'){
           mymap.removeLayer(projectss);
@@ -305,7 +302,7 @@ Navarra.geomaps = function (){
         if(typeof(projectss)!=='undefined'){
           mymap.removeLayer(projectss);
         }
-        projects.addTo(mymap);
+        project_current.addTo(mymap);
       }
 
     checked = $('#select').hasClass('active');
@@ -317,12 +314,14 @@ Navarra.geomaps = function (){
 
   function point_colors_data(){
 
+
     field_point = Navarra.project_types.config.field_point_colors;
     data_point = Navarra.project_types.config.data_point_colors;
     var filter_option = Navarra.project_types.config.filter_option;
+    
     if (field_point != ''){
+      mymap.removeLayer(project_current);
 
-      mymap.removeLayer(projects);
       if(ss.length > 0){
         $.each(ss, function (id, layer) {
           mymap.removeLayer(layer);
@@ -345,7 +344,6 @@ Navarra.geomaps = function (){
         col = randomColor({
           format: 'hex'
         });
-
 
         if (filter_option != ''){
           $.each(filter_option, function(a,b){
@@ -396,8 +394,6 @@ Navarra.geomaps = function (){
         mymap.addControl(htmlLegend1and2)
         layerControl.addOverlay(source, cql_name);
         source.addTo(mymap);
-
-
       })
     }else{
       if(ss.length > 0){
@@ -408,7 +404,7 @@ Navarra.geomaps = function (){
         layerControl =  L.control.layers(baseMaps, overlayMaps).addTo(mymap);
 
         if(filter_option.length == 0){
-          projects.addTo(mymap);
+          current_layer();
         }
         ss = [];
       }
@@ -528,8 +524,8 @@ Navarra.geomaps = function (){
       format_options: 'callback:getJson'
     })
 
-    projects = layerProjects.getLayer(name_layer).addTo(mymap);
-    layerControl.addOverlay(projects , name_layer, null, {sortLayers: true});
+    project_current = layerProjects.getLayer(name_layer).addTo(mymap);
+    layerControl.addOverlay(project_current , name_layer, null, {sortLayers: false});
 
   }
 
