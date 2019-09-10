@@ -4,7 +4,7 @@
 lock "3.11.0"
 
 set :application, "geoworks"
-set :repo_url, "git@bitbucket.org:asergiop21/geoworks.git"
+set :repo_url, "https://github.com/JChambu/geoworks.git"
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
