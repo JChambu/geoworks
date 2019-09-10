@@ -39,7 +39,7 @@
               <%= fields_for "Fields[]", field do |f| %>
 
                 <tr id="<%= field.id %>" >
-                  <td><%=f.text_field :name, readonly: true, class: "form-control" %></td>
+                  <td><%=f.text_field :name, class: "form-control" %></td>
                   <td><%= f.check_box :required %></td>
                   <td><%= f.check_box :hidden %></td>
                   <td><%= f.check_box :read_only %></td>
