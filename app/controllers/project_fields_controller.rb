@@ -30,4 +30,10 @@ class ProjectFieldsController < ApplicationController
     redirect_to project_type_project_fields_path(@project_type_id)
   end
 
+  def field_popup
+    @fields = ProjectField.where(project_type_id: params[:project_type_id]).where(popup: true).pluck(:key) 
+    render json: @fields
+  end
+
+
 end

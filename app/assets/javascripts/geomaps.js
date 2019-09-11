@@ -92,25 +92,31 @@ Navarra.geomaps = function (){
           var z = document.createElement('p'); // is a node
           var x = []
           var count = 1;
-          $.each(prop, function(a,b){
-            if (count < 10 ){
-              x.push('<b>' + a + ': </b> ' + b + '</br>');
-              count = count + 1
-            }else{
-              return false
-            }
-          })
 
+        
+    var data_id =  Navarra.dashboards.config.project_type_id;
+    $.ajax({
+      type: 'GET',
+      url: '/project_fields/field_popup.json',
+      datatype: 'json',
+      data: {project_type_id: data_id},
+      success: function(data){
+        $.each(data, function(i, value){
+              x.push('<b>' + value + ': </b> ' + prop[value] + '</br>');
+        });
           z.innerHTML = x;
           inn = document.body.appendChild(z);
           checked = $('#select').hasClass('active');
-
           if (!checked){
             L.popup()
               .setLatLng(latlng)
               .setContent(inn)
               .openOn(mymap);
           }
+      }
+    });
+
+
         }
       }
     });
