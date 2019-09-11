@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190731123114) do
+ActiveRecord::Schema.define(version: 20190826124752) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,6 +54,7 @@ ActiveRecord::Schema.define(version: 20190731123114) do
     t.string "order_sql"
     t.text "group_sql"
     t.boolean "children", default: false
+    t.string "conditions_sql"
     t.index ["analysis_type_id"], name: "index_analytics_dashboards_on_analysis_type_id"
     t.index ["chart_id"], name: "index_analytics_dashboards_on_chart_id"
     t.index ["project_type_id"], name: "index_analytics_dashboards_on_project_type_id"
@@ -739,6 +740,15 @@ ActiveRecord::Schema.define(version: 20190731123114) do
     t.index ["project_type_id"], name: "index_project_fields_on_project_type_id"
   end
 
+  create_table "project_statuses", force: :cascade do |t|
+    t.string "name"
+    t.bigint "project_type_id"
+    t.string "color"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_type_id"], name: "index_project_statuses_on_project_type_id"
+  end
+
   create_table "project_subfields", force: :cascade do |t|
     t.string "name"
     t.bigint "project_field_id"
@@ -772,6 +782,9 @@ ActiveRecord::Schema.define(version: 20190731123114) do
     t.boolean "enabled_as_layer"
     t.string "layer_color"
     t.string "add_rows"
+    t.string "type_geometry"
+    t.boolean "syncronization_data", default: true
+    t.boolean "tracking", default: false
     t.index ["user_id"], name: "index_project_types_on_user_id"
   end
 
@@ -782,6 +795,9 @@ ActiveRecord::Schema.define(version: 20190731123114) do
     t.datetime "updated_at", null: false
     t.jsonb "properties_original"
     t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
+    t.bigint "project_status_id"
+    t.datetime "status_update_at", default: "2019-09-10 20:29:04"
+    t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
   end
 
@@ -893,6 +909,8 @@ ActiveRecord::Schema.define(version: 20190731123114) do
   add_foreign_key "analytics_dashboards", "charts"
   add_foreign_key "has_project_types", "users"
   add_foreign_key "project_fields", "project_types"
+  add_foreign_key "project_statuses", "project_types"
   add_foreign_key "project_types", "users"
+  add_foreign_key "projects", "project_statuses"
   add_foreign_key "projects", "project_types"
 end

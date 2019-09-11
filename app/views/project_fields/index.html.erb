@@ -4,9 +4,49 @@
 
 <%= form_tag edit_multiple_project_type_project_fields_path(@project_type_id), method: :get  do %>
   <div class="col-md-12 sub-header text-right">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Estados</button>
     <%= submit_tag "Editar Atributos", class: "btn btn-primary" %>
   </div>
 <% end%>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Estados</h4>
+      </div>
+
+      <div class="modal-body">
+        <button type="button" class="btn btn-primary">Agregar</button>
+        <br><br>
+        <div class="row">
+          <div class="col-md-5">
+            <input type="text" class="form-control" placeholder="Label">
+          </div>
+          <div class="col-md-5">
+            <input type="text" class="form-control" placeholder="Value">
+          </div>
+          <div class="col-md-1 ">
+            <div class="text-center">
+              <input type="color" value="#ff0000">
+            </div>
+          </div>
+          <div class="col-md-1 text-center">
+            <a href="#"><i class="fas fa-trash-alt" title="Eliminar Serie" style="font-size: 1.5em"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary">Guardar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <div class="x_panel card">
   <div class="x_content">
