@@ -21,5 +21,8 @@ module ProjectTypesHelper
     @users = User.joins("LEFT OUTER JOIN has_project_type on users.id = ")
   end
 
+  def project_name
+    ProjectType.find(params[:project_type_id]) 
+  end
 
 end
