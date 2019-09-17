@@ -42,6 +42,7 @@ Navarra.geomaps = function (){
       valueField: 'count'
     };
 
+
     mymap = L.map('map',{
       fadeAnimation: false,
       markerZoomAnimation: false,
@@ -52,6 +53,7 @@ Navarra.geomaps = function (){
       layers: [streets, grayscale]
     }) ;
 
+    
     type_geometry = Navarra.dashboards.config.type_geometry;
     if (type_geometry != 'Polygon'){
     minx = Navarra.dashboards.config.minx;
@@ -512,7 +514,7 @@ Navarra.geomaps = function (){
         style = 'line';
         break;
       case 'Polygon':
-        style = 'polygon';
+        style = 'polygon_new';
         break;
       default:
         style = 'poi_new';
@@ -550,6 +552,21 @@ Navarra.geomaps = function (){
           $.each(v, function(x,y){
             let sub_layer = y.name_layer;
             let color_layer = y.layer_color;
+            let type_geometry = y.type_geometry
+            let style;
+            switch (y.type_geometry) {
+              case 'Point':
+                style = 'poi_new';
+                break;
+              case 'LineString':
+                style = 'line';
+                break;
+              case 'Polygon':
+                style = 'polygon_new';
+                break;
+              default:
+                style = 'poi_new';
+            }
             if (color_layer == '' ){
               color_layer = "#00ff55";
             }
@@ -560,7 +577,7 @@ Navarra.geomaps = function (){
               opacity: 1,
               version: '1.0.0',//wms version (ver get capabilities)
               tiled: true,
-              styles: 'type_layers',
+              styles: style,
               env: 'color:' + color_layer,
               INFO_FORMAT: 'application/json',
               format_options: 'callback:getJson'
