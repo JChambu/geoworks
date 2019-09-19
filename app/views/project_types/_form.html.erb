@@ -1,5 +1,14 @@
 <script>
   $(function () {
+    $('.sortable').sortable({
+      update: function( event, ui ) {
+
+          console.log($(this).children());
+        $(this).find('tr').each(function(index) {
+          $(this).find('.project_fields_current_position').val(index + 1);
+        });
+      }
+    });
     $("#project_type_enabled_as_layer").click(function () {
       if ($(this).is(":checked")) {
         $("#layer_color").show();
@@ -46,12 +55,12 @@
         <div class="col-md-3">
           <%= f.file_field(:file, multiple: true, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '')  %>
         </div>
-        <%= f.select :type_geometry,  options_for_select(['Point', 'LineString', 'Polygon']), {prompt: '', class: 'form-control'} %>
+        <%= f.select :type_geometry,  options_for_select(['Point', 'LineString', 'Polygon'], selected: @project_type.type_geometry), {prompt: '', class: 'form-control'} %>
       </div>
 
-          <div>
+      <div>
         <%= f.select :type_file,  options_for_select(['Father', 'Children']), {prompt: '', class: 'form-control'} %>
-          </div>
+      </div>
 
 
       <div class="form-group col-md-12">
@@ -101,6 +110,34 @@
         <div class="col-md-1">
           <%= f.color_field :layer_color, class: 'form-control' %>
         </div>
+      </div>
+
+      <div>
+
+        <%= link_to_add_fields "Agregar Items", f, :project_fields %>
+        <table class="table table-hover">
+          <tr>
+            <th>Nombre</th>
+            <th>Requerido</th>
+            <th>Oculto</th>
+            <th>Solo Lectura</th>
+            <th>Pop-up</th>
+            <th>Cálculo</th>
+            <th>Tipo de Campo</th>
+            <th>Listados</th>
+            <th>Hijos</th>
+            <th>Rol</th>
+            <th></th>
+            <th style="display: none">Orden</th>
+          </tr>
+          <tbody class="sortable">
+            <%= f.fields_for :project_fields, @project_fields do |a| %>
+              <tr id="<%= a.object.id %>">
+                <%= render 'project_field_fields', f: a %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
       </div>
 
       <div class="form-group col-md-12 form-actions">

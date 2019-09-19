@@ -10,13 +10,13 @@ class ProjectType < ApplicationRecord
   require 'csv'
 
   #belongs_to :user
-  has_many :fields, class_name: "ProjectField", dependent: :destroy
+  has_many :project_fields,  dependent: :destroy
   has_many :projects, dependent: :destroy
   has_many :dashboards, dependent: :destroy
   has_many :has_project_types, dependent: :destroy
   has_many :users, :through=> :has_project_types
 
-  accepts_nested_attributes_for :fields, allow_destroy: true
+  accepts_nested_attributes_for :project_fields, allow_destroy: true
   accepts_nested_attributes_for :projects, allow_destroy: true
 
   FILTERS = %w(= < > <= >= != ilike )
@@ -25,7 +25,7 @@ class ProjectType < ApplicationRecord
 
   validates :name,  presence: true
   validates :name, uniqueness: true 
-  validates :file, presence: true, on: :create
+#  validates :file, presence: true, on: :create
 
   # validates :q, presence: true 
   #validate :file_exist?

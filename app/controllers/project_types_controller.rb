@@ -242,6 +242,7 @@ class ProjectTypesController < ApplicationController
   # GET /project_types/new
   def new
     @project_type = ProjectType.new
+    @project_field = @project_type.project_fields.build
   end
 
   # GET /project_types/1/edit
@@ -296,10 +297,11 @@ class ProjectTypesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_project_type
     @project_type = ProjectType.find(params[:id])
+    @project_fields = @project_type.project_fields.order(:sort)
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_type_params
-    params.require(:project_type).permit(:name, :type_file,  :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color, :type_geometry, {file:[]}, fields_attributes: [:id, :field_type, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id])
+    params.require(:project_type).permit(:name, :type_file,  :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color, :type_geometry, {file:[]}, project_fields_attributes: [:id, :field_type_id, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id, :sort, :id])
   end
 end
