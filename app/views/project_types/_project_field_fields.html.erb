@@ -7,7 +7,7 @@
 <td><%= f.text_field :calculated_field, class: "form-control" %></td>
 <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control' } %></td>
 <td><%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control'} %></td>
-<td><%= f.collection_select :role, Role.order(:name), :id, :name, {include_blank: ''}, {multiple: true, size: 2, class: 'form-control'} %></td>
+<td><%= f.collection_select :role, Role.order(:name), :id, :name, {include_blank: ''}, {multiple: true, size: 1, class: 'form-control'} %></td>
 <td style="display: none"><%= f.text_field :sort, class: 'project_fields_current_position form-control', readonly: true %></td>
 
 <td><%= link_to '#', class: "remove_fields" do  %> <i class="fas fa-trash-alt" title="Eliminar"></i> <%end %></td>
