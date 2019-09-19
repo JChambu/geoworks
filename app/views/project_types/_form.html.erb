@@ -66,7 +66,6 @@
             <div class="col-md-3">
               <%= f.file_field(:file, multiple: true, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '')  %>
             </div>
-            <%= f.select :type_geometry,  options_for_select(['Point', 'LineString', 'Polygon'], selected: @project_type.type_geometry), {prompt: '', class: 'form-control'} %>
           </div>
 
           <!--
@@ -81,6 +80,15 @@
             </div>
             <div class="col-md-3 text-right">
               <input multiple="multiple" class="filestyle" data-input="false" data-buttonbefore="true" data-iconname="fas fa-box" data-buttontext="" type="file" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);">
+            </div>
+          </div>
+
+          <div class="form-group col-md-12">
+            <div class="col-md-2 text-right">
+              <label>Tipo de Geometría:</label>
+            </div>
+            <div class="col-md-3 text-right">
+              <%= f.select :type_geometry,  options_for_select(['Point', 'LineString', 'Polygon'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control'} %>
             </div>
           </div>
 
