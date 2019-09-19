@@ -134,6 +134,9 @@
             <%= f.fields_for :project_fields, @project_fields do |a| %>
               <tr id="<%= a.object.id %>">
                 <%= render 'project_field_fields', f: a %>
+                <% if params[:action] == 'edit' || params[:action] == 'update' %>
+                  <td><%= link_to edit_multiple_project_type_project_field_project_subfields_path(@project_type.id, f.object.id) do %> <i class="fas fa-plus"></i> <% end %></td>
+                <% end %>
               </tr>
             <% end %>
           </tbody>

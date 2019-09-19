@@ -9,8 +9,6 @@
 <td><%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control'} %></td>
 <td><%= f.collection_select :role, Role.order(:name), :id, :name, {include_blank: ''}, {multiple: true, size: 2, class: 'form-control'} %></td>
 <td><%= f.text_field :sort, class: 'project_fields_current_position form-control', readonly: true %></td>
-<% if params[:action] == 'edit' || params[:action] == 'update' %>
-  <td><%= link_to edit_multiple_project_type_project_field_project_subfields_path(@project_type.id, f.object.id) do %> <i class="fas fa-plus"></i> <% end %></td>
-<% end %>
+
 <td><%= link_to "remove", '#', class: "remove_fields" %></td>
 
