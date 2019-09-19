@@ -39,112 +39,130 @@
 
       <p id="notice"><%= notice %></p>
 
-      <div class="form-group col-md-12">
-        <div class="col-md-2 text-right">
-          <%= f.label 'Nombre:' %>
-        </div>
-        <div class="col-md-3">
-          <%= f.text_field :name, class: 'form-control' %>
-        </div>
-      </div>
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs nav-justified">
+        <li class="active"><a data-toggle="tab" href="#menu1">Subir Proyecto</a></li>
+        <li><a data-toggle="tab" href="#menu2">Crear Proyecto</a></li>
+      </ul>
 
-      <div class="form-group col-md-12">
-        <div class="col-md-2 text-right">
-          <label>Cargar Archivos:</label>
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div id="menu1" class="tab-pane fade in active">
+          <br><br>
+
+          <div class="form-group col-md-12">
+            <div class="col-md-2 text-right">
+              <%= f.label 'Nombre:' %>
+            </div>
+            <div class="col-md-3">
+              <%= f.text_field :name, class: 'form-control' %>
+            </div>
+          </div>
+
+          <div class="form-group col-md-12">
+            <div class="col-md-2 text-right">
+              <label>Cargar Archivos:</label>
+            </div>
+            <div class="col-md-3">
+              <%= f.file_field(:file, multiple: true, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '')  %>
+            </div>
+            <%= f.select :type_geometry,  options_for_select(['Point', 'LineString', 'Polygon'], selected: @project_type.type_geometry), {prompt: '', class: 'form-control'} %>
+          </div>
+
+          <!--
+          <div>
+            <%= f.select :type_file,  options_for_select(['Father', 'Children']), {prompt: '', class: 'form-control'} %>
+          </div>
+          -->
+
+          <div class="form-group col-md-12">
+            <div class="col-md-2 text-right">
+              <label>Importar desde API:</label>
+            </div>
+            <div class="col-md-3 text-right">
+              <input multiple="multiple" class="filestyle" data-input="false" data-buttonbefore="true" data-iconname="fas fa-box" data-buttontext="" type="file" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);">
+            </div>
+          </div>
+
+          <div class="form-group col-md-12">
+            <div class="col-md-2 text-right">
+              <label>Tipo de Georeferenciación:</label>
+            </div>
+            <div class="col-md-3 text-right">
+              <%= select_tag 'option_geo', options_for_select(['Latitud_Longitud', 'Georeferenciacion']), {prompt: '', class: 'form-control'} %>
+            </div>
+          </div>
+
+          <div id="Latitud_Longitud" class="latlng boxi">
+            <%= render 'latlng', f: f  %>
+          </div>
+
+          <div id="Georeferenciacion" class="geocoding boxi">
+            <%= render 'geocoding', f: f  %>
+          </div>
+
+          <div class="form-group col-md-12">
+            <div class="col-md-1"></div>
+            <div class="col-md-4"><hr></div>
+          </div>
+
+          <div class="form-group col-md-12">
+            <div class="col-md-2 text-right">
+              <%= f.label :enabled_as_layer, "Habilitar como Capa:" %>
+            </div>
+            <div class="col-md-3">
+              <%= f.check_box :enabled_as_layer %>
+            </div>
+          </div>
+
+          <div class="form-group col-md-12" id="layer_color" style="display: none">
+            <div class="col-md-2 text-right">
+              <%= f.label :layer_color, 'Color de la Capa:' %>
+            </div>
+            <div class="col-md-1">
+              <%= f.color_field :layer_color, class: 'form-control' %>
+            </div>
+          </div>
+
         </div>
-        <div class="col-md-3">
-          <%= f.file_field(:file, multiple: true, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '')  %>
-        </div>
-        <%= f.select :type_geometry,  options_for_select(['Point', 'LineString', 'Polygon'], selected: @project_type.type_geometry), {prompt: '', class: 'form-control'} %>
-      </div>
 
-      <div>
-        <%= f.select :type_file,  options_for_select(['Father', 'Children']), {prompt: '', class: 'form-control'} %>
-      </div>
+        <div id="menu2" class="tab-pane fade"><br><br>
 
-
-      <div class="form-group col-md-12">
-        <div class="col-md-2 text-right">
-          <label>Importar desde API:</label>
-        </div>
-        <div class="col-md-3 text-right">
-          <input multiple="multiple" class="filestyle" data-input="false" data-buttonbefore="true" data-iconname="fas fa-box" data-buttontext="" type="file" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);">
-        </div>
-      </div>
-
-      <div class="form-group col-md-12">
-        <div class="col-md-2 text-right">
-          <label>Tipo de Georeferenciación:</label>
-        </div>
-        <div class="col-md-3 text-right">
-          <%= select_tag 'option_geo', options_for_select(['Latitud_Longitud', 'Georeferenciacion']), {prompt: '', class: 'form-control'} %>
-        </div>
-      </div>
-
-      <div id="Latitud_Longitud" class="latlng boxi">
-        <%= render 'latlng', f: f  %>
-      </div>
-
-      <div id="Georeferenciacion" class="geocoding boxi">
-        <%= render 'geocoding', f: f  %>
-      </div>
-
-      <div class="form-group col-md-12">
-        <div class="col-md-1"></div>
-        <div class="col-md-4"><hr></div>
-      </div>
-
-      <div class="form-group col-md-12">
-        <div class="col-md-2 text-right">
-          <%= f.label :enabled_as_layer, "Habilitar como Capa:" %>
-        </div>
-        <div class="col-md-3">
-          <%= f.check_box :enabled_as_layer %>
-        </div>
-      </div>
-
-      <div class="form-group col-md-12" id="layer_color" style="display: none">
-        <div class="col-md-2 text-right">
-          <%= f.label :layer_color, 'Color de la Capa:' %>
-        </div>
-        <div class="col-md-1">
-          <%= f.color_field :layer_color, class: 'form-control' %>
-        </div>
-      </div>
-
-      <div>
-
-        <%= link_to_add_fields "Agregar Items", f, :project_fields %>
-        <table class="table table-hover">
-          <tr>
-            <th>Nombre</th>
-            <th>Requerido</th>
-            <th>Oculto</th>
-            <th>Solo Lectura</th>
-            <th>Pop-up</th>
-            <th>Cálculo</th>
-            <th>Tipo de Campo</th>
-            <th>Listados</th>
-            <th>Hijos</th>
-            <th>Rol</th>
-            <th></th>
-            <th style="display: none">Orden</th>
-          </tr>
-          <tbody class="sortable">
-            <%= f.fields_for :project_fields, @project_fields do |a| %>
-              <tr id="<%= a.object.id %>">
-                <%= render 'project_field_fields', f: a %>
-                <% if params[:action] == 'edit' || params[:action] == 'update' %>
-                  <td><%= link_to edit_multiple_project_type_project_field_project_subfields_path(@project_type.id, f.object.id) do %> <i class="fas fa-plus"></i> <% end %></td>
-                <% end %>
+          <div>
+            <%= link_to_add_fields "Agregar Items", f, :project_fields %>
+            <table class="table table-hover">
+              <tr>
+                <th>Nombre</th>
+                <th>Requerido</th>
+                <th>Oculto</th>
+                <th>Solo Lectura</th>
+                <th>Pop-up</th>
+                <th>Cálculo</th>
+                <th>Tipo de Campo</th>
+                <th>Listados</th>
+                <th>Hijos</th>
+                <th>Rol</th>
+                <th></th>
+                <th style="display: none">Orden</th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
+              <tbody class="sortable">
+                <%= f.fields_for :project_fields, @project_fields do |a| %>
+                  <tr id="<%= a.object.id %>">
+                    <%= render 'project_field_fields', f: a %>
+                    <% if params[:action] == 'edit' || params[:action] == 'update' %>
+                      <td><%= link_to edit_multiple_project_type_project_field_project_subfields_path(@project_type.id, f.object.id) do %> <i class="fas fa-plus"></i> <% end %></td>
+                    <% end %>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
       </div>
 
-      <div class="form-group col-md-12 form-actions">
-        <div class="col-md-5 text-right">
+      <div class="form-group">
+        <div class="col-md-12 text-center">
           <%= link_to t('.cancel', :default => t("helpers.links.cancel")), project_types_path, :class => 'btn btn-default' %>
           <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Guardar" %>
         </div>
