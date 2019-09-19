@@ -128,35 +128,34 @@
 
         <div id="menu2" class="tab-pane fade"><br><br>
 
-          <div>
-            <%= link_to_add_fields "Agregar Items", f, :project_fields %>
-            <table class="table table-hover">
-              <tr>
-                <th>Nombre</th>
-                <th>Requerido</th>
-                <th>Oculto</th>
-                <th>Solo Lectura</th>
-                <th>Pop-up</th>
-                <th>Cálculo</th>
-                <th>Tipo de Campo</th>
-                <th>Listados</th>
-                <th>Hijos</th>
-                <th>Rol</th>
-                <th></th>
-                <th style="display: none">Orden</th>
-              </tr>
-              <tbody class="sortable">
-                <%= f.fields_for :project_fields, @project_fields do |a| %>
-                  <tr id="<%= a.object.id %>">
-                    <%= render 'project_field_fields', f: a %>
-                    <% if params[:action] == 'edit' || params[:action] == 'update' %>
-                      <td><%= link_to edit_multiple_project_type_project_field_project_subfields_path(@project_type.id, f.object.id) do %> <i class="fas fa-plus"></i> <% end %></td>
-                    <% end %>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
+          <%= link_to_add_fields "Agregar Items", f, :project_fields %>
+
+          <table class="table table-hover">
+            <tr>
+              <th>Nombre</th>
+              <th>Requerido</th>
+              <th>Oculto</th>
+              <th>Solo Lectura</th>
+              <th>Pop-up</th>
+              <th>Cálculo</th>
+              <th>Tipo de Campo</th>
+              <th>Listados</th>
+              <th>Hijos</th>
+              <th>Rol</th>
+              <th></th>
+              <th style="display: none">Orden</th>
+            </tr>
+            <tbody class="sortable">
+              <%= f.fields_for :project_fields, @project_fields do |a| %>
+                <tr id="<%= a.object.id %>">
+                  <%= render 'project_field_fields', f: a %>
+                  <% if params[:action] == 'edit' || params[:action] == 'update' %>
+                    <td><%= link_to edit_multiple_project_type_project_field_project_subfields_path(@project_type.id, f.object.id) do %> <i class="fas fa-plus"></i> <% end %></td>
+                  <% end %>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
 
         </div>
       </div>
