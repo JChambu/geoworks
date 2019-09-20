@@ -298,10 +298,12 @@ class ProjectTypesController < ApplicationController
   def set_project_type
     @project_type = ProjectType.find(params[:id])
     @project_fields = @project_type.project_fields.order(:sort)
+
+
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_type_params
-    params.require(:project_type).permit(:name, :type_file,  :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color, :type_geometry, {file:[]}, project_fields_attributes: [:id, :field_type_id, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id, :sort, :id])
+    params.require(:project_type).permit(:name, :type_file,  :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color, :type_geometry, {file:[]}, project_fields_attributes: [:id, :field_type_id, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id, :sort, :id,  :_destroy,  project_subfields_attributes: [:id, :field_type_id, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id, :sort, :_destroy]])
   end
 end

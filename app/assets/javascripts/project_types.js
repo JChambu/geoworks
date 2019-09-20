@@ -22,10 +22,9 @@ Navarra.project_types.config = {
   heatmap_indicator: ''
 }
 
-$(document).on('click', 'form .remove_fields', function(event){
-
-  $(this).prev('input[type=hidden]').val('1')
-  $(this).closest('fieldset').hide()
+$(document).on('click', 'form .remove_fields_2', function(event){
+  $(this).closest('tr').find('input[type=hidden]').val('1');  
+  $(this).closest('tr').hide();
   event.preventDefault()
 });     
 $(document).on('click', 'form .add_fields', function(event){

@@ -1,8 +1,8 @@
+  <fieldset class="btn btn-success">
 <td><%= f.text_field :name, class: "form-control" %></td>
 <td><%= f.check_box :required %></td>
 <td><%= f.check_box :hidden %></td>
 <td><%= f.check_box :read_only %></td>
-<td><%= f.check_box :popup %></td>
 <td><%= f.text_field :calculated_field, class: "form-control" %></td>
 <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control' } %></td>
 <td><%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control'} %></td>
@@ -10,9 +10,4 @@
 <td style="display: none"><%= f.text_field :sort, class: 'project_fields_current_position form-control', readonly: true %></td>
 <td><%= f.hidden_field :_destroy%></td>
 <td> <%= link_to '#', class: "remove_fields_2" do  %> <i class="fas fa-trash-alt" title="Eliminar"></i> <%end %></td>
-<td><%= link_to_add_fields "Agregar Items", f, :project_subfields %></td>
-<%= f.fields_for :project_subfields, @project_subfields do |a| %>
-  <tr>
-    <%= render 'project_subfield_fields', f: a  %>
-  </tr>
-<% end %>
+  </fieldset>

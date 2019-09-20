@@ -2,7 +2,10 @@ class ProjectField < ApplicationRecord
  include RailsSortable::Model
    set_sortable :sort
 
-  belongs_to :project_type
+  has_many :project_subfields,  dependent: :destroy
   has_many :analytics_dashboards
+  belongs_to :project_type
   belongs_to :field_type
+  
+  accepts_nested_attributes_for :project_subfields, allow_destroy: true
 end
