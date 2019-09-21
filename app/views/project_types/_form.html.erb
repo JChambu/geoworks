@@ -136,33 +136,29 @@
 
         <div id="menu2" class="tab-pane fade"><br><br>
 
-          <%= link_to_add_fields "Agregar Items", f, :project_fields %>
+        <%= link_to_add_fields "<i class='fas fa-plus'></i>".html_safe, f, :project_fields %>
 
-          <table class="table table-hover">
-            <tr>
-              <th>Nombre</th>
-              <th>Requerido</th>
-              <th>Oculto</th>
-              <th>Solo Lectura</th>
-              <th>Pop-up</th>
-              <th>Cálculo</th>
-              <th>Tipo de Campo</th>
-              <th>Listados</th>
-              <th>Rol</th>
-              <th></th>
-              <th></th>
-              <th style="display: none">Orden</th>
-            </tr>
+          <table class="table table-hover" id="user_assignments">
+            <thead>
+              <tr>
+                <th colspan="2">Nombre</th>
+                <th>Requerido</th>
+                <th>Oculto</th>
+                <th>Solo Lectura</th>
+                <th>Pop-up</th>
+                <th>Cálculo</th>
+                <th>Tipo de Campo</th>
+                <th>Listados</th>
+                <th>Rol</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th style="display: none">Orden</th>
+              </tr>
+             </thead>
             <tbody class="sortable">
               <%= f.fields_for :project_fields, @project_fields do |a| %>
-                <fieldset>    
-                  <tr>
-                    <%= render 'project_field_fields', f: a %>
-                    <% if params[:action] == 'edit' || params[:action] == 'update' %>
-                      <td><%= link_to edit_project_type_project_field_project_subfields_path(@project_type.id, f.object.id) do %> <i class="fas fa-plus"></i> <% end %></td>
-                    <% end %>
-                  </tr>
-                </fieldset>    
+                <%= render 'project_field_fields', f: a %>
               <% end %>
             </tbody>
           </table>
