@@ -136,12 +136,11 @@
 
         <div id="menu2" class="tab-pane fade"><br><br>
 
-        <%= link_to_add_fields "<i class='fas fa-plus'></i>".html_safe, f, :project_fields %>
-
           <table class="table table-hover" id="user_assignments">
             <thead>
               <tr>
-                <th colspan="2">Nombre</th>
+                <th><%= link_to_add_fields "<i class='fas fa-plus' title='Agregar atributo'></i>".html_safe, f, :project_fields %></th>
+                <th>Nombre</th>
                 <th>Requerido</th>
                 <th>Oculto</th>
                 <th>Solo Lectura</th>
