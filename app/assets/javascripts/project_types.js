@@ -23,10 +23,10 @@ Navarra.project_types.config = {
 }
 
 $(document).on('click', 'form .remove_fields_2', function(event){
-  $(this).closest('tr').find('input[type=hidden]').val('1');  
+  $(this).closest('tr').find('input[type=hidden]').val('1');
   $(this).closest('tr').hide();
   event.preventDefault()
-});     
+});
 $(document).on('click', 'form .add_fields', function(event){
   time = new Date().getTime()
   regexp = new RegExp($(this).data('id'), 'g')
@@ -44,9 +44,9 @@ $(document).on('click', 'form .add_fields', function(event){
 
 
 //   console.log(input_value);
-   //Navarra.project_types.config.project_field = project_field;    
-//   Navarra.project_types.config.filter = filter;    
-  // Navarra.project_types.config.input_value = input_value;    
+   //Navarra.project_types.config.project_field = project_field;
+//   Navarra.project_types.config.filter = filter;
+  // Navarra.project_types.config.input_value = input_value;
 //   Navarra.geomaps.wms_filter();
 //   // Navarra.geo_openlayers.addMarker_op();
 // //  init_kpi();
@@ -121,7 +121,7 @@ Navarra.project_types.action_new = function(){
       value = $(this).val();
       $(this).find("option:selected").each(function(){
         var optionValue = $(this).attr("value");
-        
+
         if(optionValue){
           $(".boxi").not("#" + optionValue).hide();
           $("#" + optionValue).show();
@@ -144,7 +144,7 @@ Navarra.project_types.action_new = function(){
       if (data && data.length > 0) {
 
         data[0].forEach(function(item){
-          $('#project_type_latitude, #project_type_longitude, #project_type_address, #project_type_department, #project_type_province, #project_type_country').append('<option value="'+item+'" >'+ item+'</option>');  
+          $('#project_type_latitude, #project_type_longitude, #project_type_address, #project_type_department, #project_type_province, #project_type_country').append('<option value="'+item+'" >'+ item+'</option>');
         })
 
       }
@@ -157,4 +157,3 @@ Navarra.project_types.action_new = function(){
     init: init,
   }
 }();
-
