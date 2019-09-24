@@ -733,7 +733,7 @@ class ProjectType < ApplicationRecord
     vv = "CREATE OR REPLACE VIEW #{current_tenant}.#{name_layer} AS "
     vv += " select "
     fields.each do |field|
-      vv += " properties->>'#{field.name}' as #{field.name}, "
+      vv += " properties->>'#{field.key}' as #{field.key}, "
     end
     vv += " projects.project_type_id, "
     vv += " st_y(the_geom),  " if type_geometry != 'Polygon'
