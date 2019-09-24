@@ -38,11 +38,14 @@ class ProjectType < ApplicationRecord
   after_create :load_file, if: :file_exist? 
   after_create :new_dashboard
   after_update :load_file, if: :file_exist? 
-
+  after_create :create_project_statuses
   #before_save :load_rgeoserver
   #after_save :load_shape,  if: :file_exist?
   #validate :validate_options
 
+  def create_project_statuses
+    ProjectStatus.create(name: 'default', color:"#ff00ee", project_type_id: self.id)
+  end
   def restart_delayed_job
     system "cd #{Rails.root}; rake jobs:clear; bin/delayed_job restart;"
   end
