@@ -16,7 +16,13 @@
   </td>
   <td style="display: none"><%= f.text_field :sort, class: 'project_fields_current_position form-control', readonly: true %></td>
   <%= f.hidden_field :_destroy%>
-  <td><%= link_to_add_fields "<i class='fas fa-plus' title='Agregar sub-atributo'></i>".html_safe, f, :project_subfields %></td>
+  <td>
+    <% if f.object.field_type_id == 7 %>
+      <%= link_to_add_fields "<i class='fas fa-plus sub_form' title='Agregar sub-atributo style='visibility: visible'></i>".html_safe, f, :project_subfields %>
+    <% else %>
+      <%= link_to_add_fields "<i class='fas fa-plus sub_form' title='Agregar sub-atributo' style='visibility: hidden'></i>".html_safe, f, :project_subfields %>
+    <% end %>
+  </td>
   <td><%= f.collection_select :role, Role.order(:name), :id, :name, {include_blank: ''}, {multiple: true, size: 1, class: 'form-control'} %></td>
   <td><%= link_to '#', class: "remove_fields_2" do  %> <i class="fas fa-trash-alt" title="Eliminar atributo"></i> <%end %></td>
   <%= f.fields_for :project_subfields, @project_subfields do |a| %>
