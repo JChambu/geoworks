@@ -3,14 +3,21 @@ $(document).on('click', '.typef', function(event) {
   var tr = $(this).closest('tr');
   var option = $(this).val();
 
-  // Listado
-  if (option == 2 || option == 10) {
-    tr.find('.choice_list').attr('disabled', false);
+  if (option == 2 || option == 10) { // Listado
+
+    tr.find('.choice_list').css("display", "block");
+    tr.find('.sub_form').css("display", "none");
+
+  } else if (option == 7) { // Sub-formulario
+
+    tr.find('.sub_form').css("display", "block");
+    tr.find('.choice_list').css("display", "none");
+
+  } else {
+
+    tr.find('.sub_form').css("display", "none");
+    tr.find('.choice_list').css("display", "none");
+
   }
 
-  // Sub-formulario
-  if (option == 7) {
-    tr.find('.sub_form').css("visibility", "visible");
-  }
-  
 })
