@@ -33,12 +33,14 @@ class ProjectType < ApplicationRecord
 
   #before_create :restart_delayed_job
   #before_destroy :restart_delayed_job
+
   after_destroy :destroy_view
   before_save :save_shp_file, if: :file_exist? 
   after_create :load_file, if: :file_exist? 
   after_create :new_dashboard
   after_update :load_file, if: :file_exist? 
   after_create :create_project_statuses
+  after_create :create_view
   #before_save :load_rgeoserver
   #after_save :load_shape,  if: :file_exist?
   #validate :validate_options
@@ -721,19 +723,30 @@ class ProjectType < ApplicationRecord
     count = Project.where(project_type_id: id).count
   end
 
-  def self.create_view(fields, current_tenant, project_type_id, name_layer, type_geometry = nil)
+  def create_view
+
+
+    fields = self.project_fields
+    current_tenant = Apartment::Tenant.current
+    project_type_id = self.id
+    name_layer = self.name_layer
+    type_geometry = self.type_geometry
+
+
 
     vv = "CREATE OR REPLACE VIEW #{current_tenant}.#{name_layer} AS "
     vv += " select "
     fields.each do |field|
-    vv += " properties->>'#{field}' as #{field}, "
+      vv += " properties->>'#{field.name}' as #{field.name}, "
     end
-    vv += " project_type_id, "
+    vv += " projects.project_type_id, "
     vv += " st_y(the_geom),  " if type_geometry != 'Polygon'
     vv += " st_x(the_geom), "if type_geometry != 'Polygon'
-
+    vv += " project_statuses.color, "
     vv += " the_geom "
-    vv += "FROM #{current_tenant}.projects where project_type_id =#{project_type_id} ; "
+    vv += "FROM #{current_tenant}.projects "
+    vv += "LEFT OUTER JOIN #{current_tenant}.project_statuses ON projects.project_status_id = project_statuses.id
+    where projects.project_type_id =#{project_type_id} ; "
     view = ActiveRecord::Base.connection.execute(vv)
     return
   end
