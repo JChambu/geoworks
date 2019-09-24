@@ -706,12 +706,10 @@ class ProjectType < ApplicationRecord
     request = Net::HTTP::Post.new(uri)
     request.basic_auth("admin", "geoserver")
     request.content_type = "text/xml"
-    request.body = "<featureType><name>#{name_layer}</name></featureType>"
-
+    request.body = "<featureType><name>#{name_layer}</name><latLonBoundingBox><minx>-180</minx><maxx>180</maxx><miny>-90</miny><maxy>90</maxy><crs>EPSG:4326</crs></latLonBoundingBox></featureType>"
     req_options = {
       use_ssl: uri.scheme == "https",
     }
-
     response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
       http.request(request)
     end
