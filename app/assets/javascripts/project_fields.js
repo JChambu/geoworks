@@ -1,14 +1,10 @@
-$(document).on('click', '.typef', function(event){
+$(document).on('click', '.typef', function(event) {
 
-    console.log($(this).val());
+  var tr = $(this).closest('tr');
   var option = $(this).val();
-      $('.choice_l').prop('disable', false);
-  if (option == 2){
-      $('.choice_l').prop("disable", false);
 
-  }else{
-
+  // Listado
+  if (option == 2 || option == 10) {
+    tr.find('.choice_list').attr('disabled', false);
   }
-
-
 })

@@ -1,3 +1,4 @@
+<!-- Hijos -->
 <tr>
   <td><i class="fas fa-long-arrow-alt-right"></i></td>
   <td><%= f.text_field :name, class: "form-control" %></td>
@@ -7,7 +8,13 @@
   <td></td>
   <td><%= f.text_field :calculated_field, class: "form-control" %></td>
   <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control' } %></td>
-  <td><%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control'} %></td>
+  <td>
+    <% if f.object.field_type_id == 2 || f.object.field_type_id == 10 %>
+      <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control choice_list'} %>
+    <% else %>
+      <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control choice_list', :disabled => "disabled"} %>
+    <% end %>
+  </td>
   <td><%= f.collection_select :role, Role.order(:name), :id, :name, {include_blank: ''}, {multiple: true, size: 1, class: 'form-control'} %></td>
   <td style="display: none"><%= f.text_field :sort, class: 'project_fields_current_position form-control', readonly: true %></td>
   <%= f.hidden_field :_destroy%>
