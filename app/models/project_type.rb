@@ -417,8 +417,6 @@ class ProjectType < ApplicationRecord
     
     Project.create(properties: properties, project_type_id: project_type_id, the_geom:the_geom)
   end
-    ProjectType.create_view(fields, ct, project_type_id, name_layer, type_geometry)
-
   end
 
   def load_geojson_json
@@ -733,7 +731,9 @@ class ProjectType < ApplicationRecord
     vv = "CREATE OR REPLACE VIEW #{current_tenant}.#{name_layer} AS "
     vv += " select "
     fields.each do |field|
+      if field.key != ''
       vv += " properties->>'#{field.key}' as #{field.key}, "
+      end
     end
     vv += " projects.project_type_id, "
     vv += " st_y(the_geom),  " if type_geometry != 'Polygon'
