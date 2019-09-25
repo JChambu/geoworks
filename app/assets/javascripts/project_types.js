@@ -30,7 +30,15 @@ $(document).on('click', 'form .remove_fields_2', function(event){
 $(document).on('click', 'form .add_fields', function(event){
   time = new Date().getTime()
   regexp = new RegExp($(this).data('id'), 'g')
-  $(this).closest('tr').after($(this).data('fields').replace(regexp, time))
+
+  if ($(this).hasClass('table')) {
+    console.log('Click en proyectos');
+    $(this).closest('tr').after($(this).data('fields').replace(regexp, time))
+  } else {
+    console.log('Click en listado');
+    $(this).after($(this).data('fields').replace(regexp, time))
+  }
+  
   event.preventDefault();
 });
 
