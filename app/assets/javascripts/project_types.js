@@ -31,14 +31,13 @@ $(document).on('click', 'form .add_fields', function(event){
   time = new Date().getTime()
   regexp = new RegExp($(this).data('id'), 'g')
 
+  // Si contiene la clase table agrega el nuevo item en una tabla, sino los agrega debajo del link
   if ($(this).hasClass('table')) {
-    console.log('Click en proyectos');
     $(this).closest('tr').after($(this).data('fields').replace(regexp, time))
   } else {
-    console.log('Click en listado');
     $(this).after($(this).data('fields').replace(regexp, time))
   }
-  
+
   event.preventDefault();
 });
 
