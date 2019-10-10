@@ -4,7 +4,7 @@ class ChoiceListsController < ApplicationController
   # GET /choice_lists
   # GET /choice_lists.json
   def index
-    @choice_lists = ChoiceList.all
+    @choice_lists = ChoiceList.order(:name)
   end
 
   # GET /choice_lists/1
