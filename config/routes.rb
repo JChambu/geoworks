@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
 
 
-  resources :project_statuses
+
   get 'locations/cities' => 'locations#cities'
   get 'streets/search' => 'streets#search'
   get 'geo_editions/search_blocks' => 'geo_editions#search_blocks'
@@ -55,6 +55,7 @@ Rails.application.routes.draw do
         resources :graphics_properties
         resources :analytics_dashboards
       end
+      resources :project_statuses
       resources :projects do
         resources :project_data_children
       end
