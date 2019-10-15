@@ -27,6 +27,11 @@ $(document).on('click', 'form .remove_fields_2', function(event){
   $(this).closest('tr').hide();
   event.preventDefault()
 });
+$(document).on('click', 'form .remove', function(event){
+  $(this).closest('fieldset').find('input[type=hidden]').val('1');
+  $(this).closest('fieldset').hide();
+  event.preventDefault()
+});
 $(document).on('click', 'form .add_fields', function(event){
   time = new Date().getTime()
   regexp = new RegExp($(this).data('id'), 'g')

@@ -70,6 +70,6 @@ class ChoiceListsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def choice_list_params
-      params.require(:choice_list).permit(:name, :key, :value, :label, choice_list_items_attributes: [:id,:name])
+      params.require(:choice_list).permit(:name, :key, :value, :label, :_destroy, choice_list_items_attributes: [:id,:name, :_destroy])
     end
 end
