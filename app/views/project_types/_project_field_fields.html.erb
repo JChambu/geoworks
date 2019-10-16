@@ -6,7 +6,7 @@
   <td><%= f.check_box :read_only %></td>
   <td><%= f.check_box :popup %></td>
   <td><%= f.text_field :calculated_field, class: "form-control" %></td>
-  <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control' } %></td>
+  <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {include_blank: ''}, {class: 'typef form-control' } %></td>
   <td>
     <% if f.object.field_type_id == 2 || f.object.field_type_id == 10 %>
       <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control choice_list'} %>
