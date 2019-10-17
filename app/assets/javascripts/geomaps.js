@@ -605,7 +605,7 @@ Navarra.geomaps = function (){
             format: 'image/png',
             transparent: 'true',
             opacity: 1,
-            version: '1.0.0',//wms version (ver get capabilities)
+            version: '1.1.1',//wms version (ver get capabilities)
             tiled: true,
             INFO_FORMAT: 'application/json',
             format_options: 'callback:getJson'
