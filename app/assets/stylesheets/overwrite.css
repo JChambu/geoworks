@@ -138,13 +138,9 @@ html body {
     width: 100%
 }
 
-.btn {
-    border-radius: 0 !important;
-    text-shadow: none;
-    border: none
-}
-
 .btn.btn-primary {
+    border-radius: 0 !important;
+    border: none;
     background-color: #9b9b9b;
     text-transform: uppercase;
     font: 500 16px "Source Sans Pro", sans-serif;

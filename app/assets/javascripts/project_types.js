@@ -22,6 +22,24 @@ Navarra.project_types.config = {
   heatmap_indicator: ''
 }
 
+// Select para roles
+$(document).ready(function() {
+  $('.rol_select').multiselect({
+    maxHeight: 500,
+    buttonClass: 'form-control',
+    buttonWidth: '200px',
+    nonSelectedText: 'Seleccione una opción',
+    allSelectedText: 'Todos',
+    numberDisplayed: 1,
+    nSelectedText: 'seleccionados',
+    enableFiltering: true,
+    enableCaseInsensitiveFiltering: true,
+    filterPlaceholder: 'Buscar',
+    includeSelectAllOption: true,
+    selectAllText: 'Seleccionar todos',
+  });
+});
+
 $(document).on('click', 'form .remove_fields_2', function(event){
   $(this).closest('tr').find('input[type=hidden]').val('1');
   $(this).closest('tr').hide();
