@@ -11,7 +11,7 @@
     <% if f.object.field_type_id == 2 || f.object.field_type_id == 10 %>
       <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control choice_list'} %>
     <% elsif f.object.field_type_id == 7 %>
-      <%= link_to_add_fields "<i class='fas fa-plus sub_form' title='Agregar sub-atributo'></i>".html_safe, f, :project_subfields, class: 'table' %>
+      <%= link_to_add_fields "<i class='fas fa-plus sub_form' title='Agregar sub-atributo'></i>".html_safe, f, :project_subfields, class: 'table_children' %>
     <% else %>
       <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control choice_list', :style => 'display: none'} %>
       <%= link_to_add_fields "<i class='fas fa-plus sub_form' title='Agregar sub-atributo' style='display: none'></i>".html_safe, f, :project_subfields, class: 'table' %>

@@ -50,14 +50,17 @@ $(document).on('click', 'form .remove', function(event){
   $(this).closest('fieldset').hide();
   event.preventDefault()
 });
+
 $(document).on('click', 'form .add_fields', function(event){
   time = new Date().getTime()
   regexp = new RegExp($(this).data('id'), 'g')
 
-  // Si contiene la clase table agrega el nuevo item en una tabla, sino los agrega debajo del link
-  if ($(this).hasClass('table')) {
+  // Agrega el nuevo item
+  if ($(this).hasClass('table_father')) { // Atributo padre
+    $(this).parents('table').children('tbody').prepend($(this).data('fields').replace(regexp, time))
+  } else if ($(this).hasClass('table_children')) { // Atributo hijo
     $(this).closest('tr').after($(this).data('fields').replace(regexp, time))
-  } else {
+  } else { // Resto 
     $(this).after($(this).data('fields').replace(regexp, time))
   }
 
