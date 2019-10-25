@@ -23,7 +23,7 @@
           <% @project_statuses.each do |project_status| %>
             <tr>
               <td><%= project_status.name %></td>
-              <td><div class="col-md-6" style="background-color: <%= project_status.color %>">|</div></td>
+              <td><div class="col-md-3" style="border-style: outset; background-color: <%= project_status.color %>">|</div></td>
               <td><%= link_to edit_project_type_project_status_path(project_status.project_type_id, project_status) do %><i class="fas fa-edit"></i><%end%></td>
             </tr>
           <% end %>
