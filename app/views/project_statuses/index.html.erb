@@ -1,27 +1,34 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Project Statuses</h1>
+<div class="col-md-12">
+  <h1>Estados</h1>
+</div>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Color</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
+<div class="col-md-12 text-right sub-header">
+  <%= link_to 'Nuevo Estado', new_project_type_project_status_path(@project_type), class: "btn btn-primary" %>
+</div>
 
-  <tbody>
-    <% @project_statuses.each do |project_status| %>
-      <tr>
-        <td><%= project_status.name %></td>
-        <td><%= project_status.color %></td>
-        <td><%= link_to 'Edit', edit_project_type_project_status_path(project_status.project_type_id, project_status) %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Project Status', new_project_type_project_status_path(@project_type) %>
+<div class="x_panel card">
+  <div class="x_content">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Color</th>
+            <th colspan="3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @project_statuses.each do |project_status| %>
+            <tr>
+              <td><%= project_status.name %></td>
+              <td><div class="col-md-6" style="background-color: <%= project_status.color %>">|</div></td>
+              <td><%= link_to edit_project_type_project_status_path(project_status.project_type_id, project_status) do %><i class="fas fa-edit"></i><%end%></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

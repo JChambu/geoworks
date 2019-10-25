@@ -11,17 +11,34 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name, id: :project_status_name %>
-  </div>
+  <div class="x_panel card">
+    <div class="x_content">
 
-  <div class="field">
-    <%= form.label :color %>
-    <%= form.color_field :color, id: :project_status_color %>
-  </div>
+      <div class="form-group col-md-12">
+        <div class="col-md-1 text-right">
+          <%= form.label :name, 'Nombre' %>
+        </div>
+        <div class="col-md-3">
+          <%= form.text_field :name, id: :project_status_name, class: "form-control" %>
+        </div>
+      </div>
 
-  <div class="actions">
-    <%= form.submit %>
+      <div class="form-group col-md-12">
+        <div class="col-md-1 text-right">
+          <%= form.label :color %>
+        </div>
+        <div class="col-md-1">
+          <%= form.color_field :color, id: :project_status_color, class: "form-control" %>
+        </div>
+      </div>
+
+      <div class="form-group col-md-12 form-actions">
+        <div class="col-md-4 text-right">
+          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), project_type_project_statuses_path(@project_type), :class => 'btn btn-default' %>
+          <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
+        </div>
+      </div>
+
+    </div>
   </div>
 <% end %>
