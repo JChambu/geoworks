@@ -1,0 +1,62 @@
+<div class="x_panel card">
+  <div class="x_content">
+
+    <%= simple_form_for([:admin, @user]) do |f| %>
+
+      <div class="form-group col-md-12">
+        <div class="col-md-2 text-right">
+          <%= f.label :name %>
+        </div>
+        <div class="col-md-3">
+          <%= f.input :name, label: false, input_html: {class: 'form-control'} %>
+        </div>
+      </div>
+
+      <div class="form-group col-md-12">
+        <div class="col-md-2 text-right">
+          <%= f.label :email %>
+        </div>
+        <div class="col-md-3">
+          <%= f.input :email, label: false, input_html: {class: 'form-control'} %>
+        </div>
+      </div>
+
+      <div class="form-group col-md-12">
+        <div class="col-md-2 text-right">
+          <%= f.label :role %>
+        </div>
+        <div class="col-md-3">
+          <%= f.input :role, :required => true, :collection => roles_for_select, :prompt => t('simple_form.select_item_prompt'), label: false, input_html: {class: 'form-control'}  %>
+        </div>
+      </div>
+
+      <%if params[:action] != 'new' && params[:action] != 'create'  %>
+        <div class="form-group col-md-12">
+          <div class="col-md-2 text-right">
+            <%= f.label :password %>
+          </div>
+          <div class="col-md-3">
+            <%= f.input :password, label: false, input_html: {class: 'form-control'} %>
+          </div>
+        </div>
+
+        <div class="form-group col-md-12">
+          <div class="col-md-2 text-right">
+            <%= f.label :password_confirmation, 'Confirmar contraseña' %>
+          </div>
+          <div class="col-md-3">
+            <%= f.input :password_confirmation, label: false, input_html: {class: 'form-control'} %>
+          </div>
+        </div>
+      <% end %>
+      <div class="form-group col-md-12 form-actions">
+        <div class="col-md-5 text-right">
+          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), users_path, :class => 'btn btn-default' %>
+          <%= f.button :submit, :class => 'btn btn-primary', value: 'Guardar' %>
+        </div>
+      </div>
+
+    <% end %>
+
+  </div>
+</div>

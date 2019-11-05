@@ -1,11 +1,17 @@
 <%- model_class = User -%>
+
+    <div>
+      <%= render :partial=> 'search'  %>
+    </div>
 <div class="col-md-12">
   <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
 </div>
 
 <div class="col-md-12 text-right sub-header">
-  <%= link_to t('.new', :default => t("helpers.links.new")), new_user_path,:class => 'btn btn-primary' %>
+  <%= link_to t('.new', :default => t("helpers.links.new")), new_admin_user_path,:class => 'btn btn-primary' %>
 </div>
+
+
 
 <div class="x_panel card">
   <div class="x_content">

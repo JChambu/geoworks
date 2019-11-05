@@ -12,7 +12,7 @@ Rails.application.configure do
   # and those relying on copy on write to perform better.
   # Rake tasks automatically ignore this option for performance.
   config.eager_load = true
-
+ config.log_level = debug
   #config.react.variant = :production
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local       = false
@@ -79,6 +79,21 @@ Rails.application.configure do
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
+
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  #config.action_mailer.delivery_method = :letter_opener
+  config.action_mailer.default_url_options = { host: ENV['domain'] }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+      address:              'smtp.gmail.com',
+      port:                 587,
+      domain:               ENV['domain'],
+      user_name:            ENV['mail'],
+      password:             ENV['passworkd'],
+      authentication:       'plain',
+      enable_starttls_auto: true }
+  config.action_mailer.perform_caching = false
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
     logger           = ActiveSupport::Logger.new(STDOUT)

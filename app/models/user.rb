@@ -12,18 +12,45 @@ class User < ApplicationRecord
   # :token_authenticatable, :confirmable,
   #  :timeoutable, :omniauthable,
   # :recoverable, :registerable, 
-  devise :database_authenticatable, :rememberable, :trackable, :lockable
+  devise :database_authenticatable, :rememberable, :trackable, :lockable, :confirmable
 
+  before_create :generate_password, on: :create
+  after_create :send_mail_confirmable
+  
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
   validates :email, :email_format => {:message => I18n.t("activerecord.errors.messages.invalid_email")}
   validates :role, presence: true
-  validates :password, length: { minimum: 6 }, unless: "self.password.empty?"
+  validates :password, length: { minimum: 6 }, unless: -> { !:password.blank? } 
   validates :password, confirmation: {case_sensitive: true}
   #validate :is_role_valid?
-  before_destroy :has_related_pois?
+  #before_destroy :has_related_pois?
+
 
   ROLES = %w[User Admin Moderator]
+
+  def generate_password
+    self.password = Devise.friendly_token.first(8)
+  end
+
+  def send_mail_confirmable
+    UserMailer.new_user(self).deliver_now
+  end
+
+ def active_for_authentication?
+   super && is_validated?
+ end
+
+  
+ def is_validated?
+       
+   current_tenant = Apartment::Tenant.current
+   @customer_id = Customer.where(subdomain: current_tenant)
+    @user = UserCustomer.where(user_id: self.id, customer_id: @customer_id )
+      return true if @user.present?
+      return false
+  end
+
 
   def self.user_role
     index = ROLES.find_index "User"
@@ -42,13 +69,6 @@ class User < ApplicationRecord
   def some_identifier
     return self.name if self.name
     self.email
-  end
-
-  def has_related_pois?
-    unless Poi.where(:user_id => self.id).count.zero?
-      self.errors.add(:base, :related_pois)
-      return false
-    end
   end
 
   def is_role_valid?
