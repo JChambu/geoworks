@@ -37,10 +37,18 @@ class User < ApplicationRecord
     UserMailer.new_user(self).deliver_now
   end
 
- def active_for_authentication?
-   super && is_validated?
- end
+   def is_active?
+     return User.find(self.id).active
+   end
 
+
+  def active_for_authentication?
+   super && is_active?
+   super && is_validated? 
+ end
+def inactive_message
+    is_active? ? :is_locked :  super
+end
   
  def is_validated?
        

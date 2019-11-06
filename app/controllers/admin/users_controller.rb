@@ -54,10 +54,9 @@ class Admin::UsersController < ApplicationController
     respond_to do |format|
       if @user.update(user_params)      
         UserMailer.new_user(@user).deliver_now
-        format.html { redirect_to @user, flashman.update_success }
+        format.html { redirect_to admin_users_path() }
         format.json { head :no_content }
       else
-        flashman.update_fail
         format.html { render action: 'edit' }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
@@ -97,6 +96,6 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :name, :role, :password_confirmation).merge(token: build_token)
+    params.require(:user).permit(:email, :password, :name, :role, :password_confirmation, :active).merge(token: build_token)
   end
 end

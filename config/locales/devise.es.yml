@@ -6,7 +6,7 @@ es:
       send_paranoid_instructions: "Si tu correo electrónico existe en nuestra base de datos, recibirás un correo electrónico en unos minutos con instrucciones sobre cómo reiniciar tu contraseña."
     failure:
       already_authenticated: "Ya estás identificado."
-      inactive: "Tu cuenta aún no ha sido activada."
+      inactive: "Tu cuenta esta inactiva."
       invalid: "Correo o contraseña inválidos."
       invalid_token: "Cadena de autenticación invalida."
       locked: "Tu cuenta está bloqueada."
