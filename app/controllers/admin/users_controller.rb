@@ -9,7 +9,7 @@ class Admin::UsersController < ApplicationController
     @users = User.all
     if params[:email].present? || params[:name].present?
       @users = @users.where(email: params[:email]) unless params[:email].blank?
-      @users = @users.where(name: params[:name]) unless params[:name].blank?
+      @users = @users.where("name ilike ?",  "%#{params[:name]}%") unless params[:name].blank?
     end
       @users = @users.paginate(:page => params[:page])
   end
