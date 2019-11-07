@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190826124752) do
+ActiveRecord::Schema.define(version: 20191107141922) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -714,6 +714,8 @@ ActiveRecord::Schema.define(version: 20190826124752) do
     t.integer "project_field_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_project_data_children_on_user_id"
   end
 
   create_table "project_fields", id: :serial, force: :cascade do |t|
@@ -797,8 +799,10 @@ ActiveRecord::Schema.define(version: 20190826124752) do
     t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
     t.bigint "project_status_id"
     t.datetime "status_update_at", default: "2019-09-10 20:29:04"
+    t.bigint "user_id"
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
+    t.index ["user_id"], name: "index_projects_on_user_id"
   end
 
   create_table "provinces", id: :serial, force: :cascade do |t|
@@ -883,6 +887,11 @@ ActiveRecord::Schema.define(version: 20190826124752) do
     t.datetime "locked_at"
     t.string "token"
     t.string "authentication_token", limit: 30
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
+    t.boolean "active"
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["token"], name: "index_users_on_token", unique: true
