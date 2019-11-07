@@ -1,17 +1,19 @@
 <%- model_class = User -%>
 
-    <div>
-      <%= render :partial=> 'search'  %>
-    </div>
-<div class="col-md-12">
-  <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
+<div class="form-row">
+  <div class="col-md-12">
+    <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
+  </div>
 </div>
-
-<div class="col-md-12 text-right sub-header">
-  <%= link_to t('.new', :default => t("helpers.links.new")), new_admin_user_path,:class => 'btn btn-primary' %>
+<div class="form-row">
+  <div class="col-md-3"></div>
+  <div class="col-md-6 text-center">
+    <%= render :partial=> 'search' %>
+  </div>
+  <div class="col-md-3 text-right">
+    <%= link_to t('.new', :default => t("helpers.links.new")), new_admin_user_path,:class => 'btn btn-primary' %>
+  </div>
 </div>
-
-
 
 <div class="x_panel card">
   <div class="x_content">
@@ -23,7 +25,7 @@
             <th><%= model_class.human_attribute_name(:email) %></th>
             <th><%= model_class.human_attribute_name(:name) %></th>
             <th><%= model_class.human_attribute_name(:role) %></th>
-            <th></th>
+            <th class="text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -33,7 +35,7 @@
               <td><%= user.email %></td>
               <td><%= user.name %></td>
               <td><%= user.human_role %></td>
-              <td><%= link_to edit_admin_user_path(user) do %> <i class="fas fa-edit"></i><%end%></td>
+              <td class="text-center"><%= link_to edit_admin_user_path(user) do %> <i class="fas fa-edit"></i><%end%></td>
             </tr>
           <% end %>
         </tbody>

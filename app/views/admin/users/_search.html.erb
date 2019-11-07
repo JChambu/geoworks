@@ -1,8 +1,15 @@
 <%= form_tag admin_users_path, method: :get do |f| %>
 
-  <%= text_field_tag :email %>
-  <%= text_field_tag :name %>
-
-  <%= submit_tag %>
+  <div class="form-row">
+    <div class="form-group col-md-5">
+      <%= text_field_tag :email, '', class: 'form-control', placeholder: 'E-mail' %>
+    </div>
+    <div class="form-group col-md-5">
+      <%= text_field_tag :name, '', class: 'form-control', placeholder: 'Nombre' %>
+    </div>
+    <div class="form-group col-md-2">
+      <%= submit_tag 'Filtrar' , :class => "btn btn-primary" %>
+    </div>
+  </div>
 
 <% end %>
