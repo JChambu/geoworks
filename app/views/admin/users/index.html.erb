@@ -30,7 +30,7 @@
           <% @users.each do |user| %>
             <tr>
               <td><%= user.id %></td>
-              <td><%= link_to user.email, user_path(user) %></td>
+              <td><%= user.email %></td>
               <td><%= user.name %></td>
               <td><%= user.human_role %></td>
               <td><%= link_to edit_admin_user_path(user) do %> <i class="fas fa-edit"></i><%end%></td>
