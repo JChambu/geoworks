@@ -11,7 +11,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user.update(user_params)      
         UserMailer.edit_user(@user).deliver_now
-        format.html { redirect_to edit_user_path(@user)}
+        format.html { redirect_to project_types_path}
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
