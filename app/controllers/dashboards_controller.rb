@@ -22,12 +22,7 @@ class DashboardsController < ApplicationController
   def show
 
     @projects = Project.where(project_type_id: params[:project_type_id])
-    if @project_type.type_geometry != 'Polygon'
-    @extent = Project.where(project_type_id: params[:project_type_id]).select("min(st_x(the_geom)) as minx, 
-                                                                               min(st_y(the_geom)) as miny, 
-                                                                               max(st_x(the_geom)) as maxx, 
-                                                                               max(st_y(the_geom)) as maxy").group(:project_type_id)
-    end 
+    @extent = Project.geometry_bounds(params[:project_type_id])
     @dashboard_id = params[:id]
     @current_tenant = Apartment::Tenant.current
   end

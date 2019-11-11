@@ -5,6 +5,18 @@ class Project < ApplicationRecord
   has_many :project_data_child
   #validate :validate_properties
 
+  def self.geometry_bounds project_type_id
+
+    Project.
+      where(project_type_id: project_type_id).
+      select("st_Xmin(st_collect(the_geom)) as minx, 
+                        st_Ymin(st_collect(the_geom)) as miny,
+                        st_Xmax(st_collect(the_geom)) as maxx,
+                        st_Ymax(st_collect(the_geom)) as maxy").
+      group(:project_type_id)
+
+  end
+
   def validate_properties
 
     if !project_type.fields.nil?

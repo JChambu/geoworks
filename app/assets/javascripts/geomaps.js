@@ -55,7 +55,6 @@ Navarra.geomaps = function (){
 
     
     type_geometry = Navarra.dashboards.config.type_geometry;
-    if (type_geometry != 'Polygon'){
     minx = Navarra.dashboards.config.minx;
     miny = Navarra.dashboards.config.miny;
     maxx = Navarra.dashboards.config.maxx;
@@ -66,7 +65,6 @@ Navarra.geomaps = function (){
       [ maxy ,maxx]
 
     ]);
-    }
     baseMaps = {
       "Streets": streets,
       "Grayscale": grayscale,
