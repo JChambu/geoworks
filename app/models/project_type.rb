@@ -9,7 +9,6 @@ class ProjectType < ApplicationRecord
   require 'uri'
   require 'csv'
 
-  #belongs_to :user
   has_many :project_fields,  dependent: :destroy
   has_many :projects, dependent: :destroy
   has_many :dashboards, dependent: :destroy
@@ -23,17 +22,6 @@ class ProjectType < ApplicationRecord
 
   attr_accessor :file, :latitude, :longitude, :address, :department, :province, :country, :data, :type_file
 
-  validates :name,  presence: true
-  validates :name, uniqueness: true 
-#  validates :file, presence: true, on: :create
-
-  # validates :q, presence: true 
-  #validate :file_exist?
-  validate :is_file_type_valid?, if: :file_exist?
-
-  #before_create :restart_delayed_job
-  #before_destroy :restart_delayed_job
-
   after_destroy :destroy_view
   before_save :save_shp_file, if: :file_exist? 
   after_create :load_file, if: :file_exist? 
@@ -41,13 +29,17 @@ class ProjectType < ApplicationRecord
   after_update :load_file, if: :file_exist? 
   after_create :create_project_statuses
   after_create :create_view
-  #before_save :load_rgeoserver
-  #after_save :load_shape,  if: :file_exist?
-  #validate :validate_options
+  #before_create :restart_delayed_job
+  #before_destroy :restart_delayed_job
+
+  validates :name,  presence: true
+  validates :name, uniqueness: true 
+  validate :is_file_type_valid?, if: :file_exist?
 
   def create_project_statuses
     ProjectStatus.create(name: 'default', color:"#ff00ee", project_type_id: self.id)
   end
+
   def restart_delayed_job
     system "cd #{Rails.root}; rake jobs:clear; bin/delayed_job restart;"
   end
@@ -62,17 +54,13 @@ class ProjectType < ApplicationRecord
     @city = department  
     @province = province 
     @country = country 
-
     @address_complete = [[@street], @city, @province, @country].join(', ')
-
     geocode = Geocoder.coordinates(@address_complete)
     geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
-    return geom
+    geom
   end
 
   def file_exist?
-
-    @a = self.file
     if self.file.nil?
       return false
     end
@@ -96,7 +84,6 @@ class ProjectType < ApplicationRecord
   def self.kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions)
 
     @ct = Apartment::Tenant.current
-    #@filter_condition = filter_condition
     @type_box = type_box
     @arr1 = []
 
@@ -134,24 +121,20 @@ class ProjectType < ApplicationRecord
       data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
       @data_fixed = data
     end
-      if !data_conditions.blank?
-        data_conditions.each do |key| 
-          @s = key.split('|')
-          @field = @s[0]
-          @filter = @s[1]
-          @value = @s[2]
-          if (@filter == '<' || @filter == '>' || @filter == '>=' || @filter == '<=' )
-            data =  data.where(" (properties->>'" + @field +"')::numeric" +  @filter +"#{@value}")
-          else
-            data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
-          end 
-        end
-      @data_fixed = data
+    if !data_conditions.blank?
+      data_conditions.each do |key| 
+        @s = key.split('|')
+        @field = @s[0]
+        @filter = @s[1]
+        @value = @s[2]
+        if (@filter == '<' || @filter == '>' || @filter == '>=' || @filter == '<=' )
+          data =  data.where(" (properties->>'" + @field +"')::numeric" +  @filter +"#{@value}")
+        else
+          data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
+        end 
       end
-    #  if type_box == 'filter'
-    #        data = Project.where(project_type_id: chart.project_type_id).where("properties->>'" + @filter_condition[0] +  "' " + @filter_condition[1]  + " ?", @filter_condition[2])
-    #      end
-
+      @data_fixed = data
+    end
 
     @total_row = Project.where(project_type_id: project_type_id).count
     @row_selected = @data_fixed.count 
@@ -159,17 +142,17 @@ class ProjectType < ApplicationRecord
     querys << { "title":"Total", "description":"Total", "data":[{"count":@total_row}], "id": 1000}
     querys << { "title":"Selecionado", "description":"select", "data":[{"count":@row_selected}], "id": 1001}
     querys << { "title":"% del Total", "description":"AVG", "data":@avg_selected, "id": 1002}
-    
+
     @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
     @analytics_charts.each do |chart|
 
-          if !chart.sql_sentence.blank?
+      if !chart.sql_sentence.blank?
 
-             field_select = chart.sql_sentence
-          else
-            field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
-            conditions_field = chart.condition_field
-          end
+        field_select = chart.sql_sentence
+      else
+        field_select = analysis_type(chart.analysis_type.name, chart.project_field.key)
+        conditions_field = chart.condition_field
+      end
       if !data_conditions.blank?
         data_conditions.each do |key| 
           @s = key.split('|')
@@ -189,8 +172,6 @@ class ProjectType < ApplicationRecord
       data=   data.select(field_select)
       querys << { "title":"#{chart.title}", "description":"kpi_sin grafico", "data":data, "id": chart.id}
     end
-
-
     querys
   end
 
@@ -246,20 +227,18 @@ class ProjectType < ApplicationRecord
               @field_group = chart.group_sql
             end
             if chart.order_sql.blank?
-             data = data.select(chart.sql_sentence).group(@field_group).order(@field_group)
+              data = data.select(chart.sql_sentence).group(@field_group).order(@field_group)
             else
               @order_sql = chart.order_sql
-             data = data.select(chart.sql_sentence).group(@field_group).order(@order_sql)
+              data = data.select(chart.sql_sentence).group(@field_group).order(@order_sql)
             end
           else
-
             @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key) + ' as count'
             @field_select += ", projects.properties->>'" + chart.group_field.key + "' as name "
             @field_group = "projects.properties->>'"+ chart.group_field.key + "'"
 
             data =  data.select(@field_select).group(@field_group).order(@field_group)
           end
-
           if !data_conditions.blank?
             data_conditions.each do |key| 
               @s = key.split('|')
@@ -269,9 +248,9 @@ class ProjectType < ApplicationRecord
               data =  data.where(" projects.properties->>'" + @field +"'" +  @filter +"#{@value}")
             end
           end
-            conditions_field = chart.condition_field
-            @ch = chart
-            @cf = conditions_field
+          conditions_field = chart.condition_field
+          @ch = chart
+          @cf = conditions_field
           if !conditions_field.blank?
             data =  data.where("projects.properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
           else
@@ -311,15 +290,13 @@ class ProjectType < ApplicationRecord
     a = []
     self.file.each do |f|
       case f.content_type
-       when 'application/dbf', 'application/octet-stream','application/x-anjuta','application/octet-stream','application/x-dbf','application/x-esri-shape'
+      when 'application/dbf', 'application/octet-stream','application/x-anjuta','application/octet-stream','application/x-dbf','application/x-esri-shape'
         ext = f.original_filename.split('.')
         if ext.last == 'shp'
           a = ProjectType.load_shape(self.id, self.name_layer)
         end
       when 'text/csv', 'text/plain', 'application/vnd.ms-excel'
         a = ProjectType.load_csv(self.id, self.latitude, self.longitude, self.address, self.department, self.province, self.country, self.name_layer, self.type_file)
-        #when 'application/xls', 'application/vnd.ms-excel'
-        #  'xls'
       when 'application/json'
         load_json()
       when  'application/geo+json'
@@ -350,10 +327,9 @@ class ProjectType < ApplicationRecord
     fields = []
     CSV.foreach("#{@source_path}/#{@file_name}", headers: true).with_index do |row, i |
       if type_file == 'Children'
-            save_rows_project_data_childs row, i , project_type_id 
+        save_rows_project_data_childs row, i , project_type_id 
       else
         if i == 0 
-
           row.headers.each do |f|
             field = f.parameterize(separator: '_')
             fields << field
@@ -375,7 +351,6 @@ class ProjectType < ApplicationRecord
             items.merge!({field_custom.downcase => v}) 
           end
         end
-        #items = row.to_h
         geom = ''
         if (latitude.present? && longitude.present?)
           lat = items[latitude]
@@ -389,7 +364,6 @@ class ProjectType < ApplicationRecord
           country = items[country]
           geom = build_geom(address, department, province, country)
         end
-
         Project.create(properties: items, project_type_id: project_type_id, the_geom: geom)
       end
     end
@@ -397,7 +371,7 @@ class ProjectType < ApplicationRecord
   end
 
   def load_geojson project_type_id, name_layer, type_geometry
- require 'rgeo/geo_json'
+    require 'rgeo/geo_json'
     file_name = @directory[1].split('.').first
     items = []
     fields = []
@@ -411,26 +385,11 @@ class ProjectType < ApplicationRecord
         field = value[0].parameterize(separator: '_').downcase
         field_type = ProjectField.find_or_create_by(name: field, project_type_id: project_type_id)
         fields << field if fields.include?(field)
-  end
-    
-    the_geom = a.geometry.as_text
-    
-    Project.create(properties: properties, project_type_id: project_type_id, the_geom:the_geom)
-  end
-  end
-
-  def load_geojson_json
-    file_name = @directory[1].split('.').first
-    items = []
-    data = JSON.parse(File.read("#{@directory[0]}/#{file_name}.geojson"))
-    data.each do |item|
-      @item = item 
-      
-
-      # Project.create(properties: items, project_type_id: self.id)
+      end
+      the_geom = a.geometry.as_text
+      Project.create(properties: properties, project_type_id: project_type_id, the_geom:the_geom)
     end
   end
-
 
   def validate_options
     if !self.fields.nil?
@@ -444,141 +403,15 @@ class ProjectType < ApplicationRecord
     end
   end
 
-
-  def self.migration
-
-
-    @choice_lists = fulcrum_choice_lists    
-
-    @choice_lists.objects.each do |list|
-
-      list['choices'].each do |choice|
-
-
-        choise_list = ChoiceList.where(name: list['name'], key: list['id'], value: choice['value'], label: choice['label']).first_or_create(name: list['name'], key: list['id'], value: choice['value'], label: choice['label']).update_attributes!(name: list['name'], key: list['id'], value: choice['value'], label: choice['label'])
-      end
-    end
-
-    @forms = query_fulcrum
-
-    @forms.objects.each do |form|
-      if form['name'] == 'Nextel'
-
-        @form = form
-
-        @project_type = ProjectType.where(name: form['name'], user_id: 1).first_or_create
-        item_statics = ["latitude", "longitude","status"]
-
-        item_statics.each do |is|
-          @new_project_field =  ProjectField.where(key: is, project_type_id: @project_type.id).first_or_create(name: is, field_type: 'text_field', project_type_id: @project_type.id, key: is).update_attributes!(name: is, field_type: 'text_field', project_type_id: @project_type.id, key: is)
-        end 
-
-        form['elements'].each do |e|
-
-          @new_project_field =  ProjectField.where(key:e['key']).first_or_create(name: e['label'], field_type: e['type'], project_type_id: @project_type.id, key: e['key'], choice_list_id: e['choice_list_id']).update_attributes!(name: e['label'], field_type: e['type'], project_type_id: @project_type.id, key: e['key'], choice_list_id: e['choice_list_id'])
-
-          if !e['elements'].nil?
-            e['elements'].each do |element|
-              @new_project_field =  ProjectField.where(key:element['key']).first_or_create(name: element['label'], field_type: 'text_field', project_type_id: @project_type.id, key: element['key'], choice_list_id: element['choice_list_id']).update_attributes!(name: element['label'], field_type: element['type'], project_type_id: @project_type.id, key: element['key'],choice_list_id: element['choice_list_id'] )
-            end
-          end
-        end
-
-        @record = records_fulcrum(form['id'] )
-        @record.objects.each do |val|
-
-          @geom = "POINT(#{val['longitude']} #{val['latitude']})" 
-          @val = val['form_values']
-          items = {
-            "longitude"=> val['longitude'],
-            "latitude" => val['latitude'],
-            "status"=>    val['status'],
-            "created_at"=>  val['created_at']
-          }
-          if  val['form_values'] 
-            i = {}  
-            val['form_values'].each do |item|
-
-              properties = ProjectField.where(key: item[0])
-
-              if properties[0][:field_type] == 'ChoiceField' and !properties[0][:choice_list_id].nil?
-                ch_list = ChoiceList.where(key:properties[0][:choice_list_id], value: item[1]["choice_values"] )  
-                @ch_l = ch_list
-                if !ch_list[0].nil?
-                  i["#{item[0]}"] = ch_list[0].id
-                  #     else
-                  #     i["#{item[0]}"] = item[1]
-                end
-              else
-
-                if properties[0][:field_type] == 'ChoiceField' 
-
-                  if !item[1]['other_values'].empty?
-                    i["#{item[0]}"] = item[1]['other_values'][0]
-                  else
-                    i["#{item[0]}"] = item[1]['choice_values'][0]
-                  end
-                else
-                  i["#{item[0]}"] = item[1]
-                end
-              end
-            end
-            @it = items.merge(i)
-            @projects = Project.where("properties_original->>'id' ='#{val['id']}'").first_or_create( properties: @it,  properties_original: val, project_type_id: @project_type.id, the_geom: @geom).update_attributes( properties: @it,  properties_original: val, project_type_id: @project_type.id, the_geom: @geom)
-          end
-        end
-      end
-    end
-  end
-
-
-
-  def self.conect_fulcrum
-    client = Fulcrum::Client.new('c6abd6bd9e786cecd7a105395126352bde51d99e054c44256f1652ae0a4fbe4ef4bbf4f2022d84af')
-  end
-
-  def self.fulcrum_choice_lists
-    client = conect_fulcrum
-    choice_lists = client.choice_lists.all()
-  end
-
-  def self.query_fulcrum
-    client = conect_fulcrum
-    #      forms = client.forms.find('10e64be4-f9c5-4f32-8505-523628c52d46')
-    forms = client.forms.all()
-
-  end
-
-
-  def self.records_fulcrum(id)
-    client = conect_fulcrum
-    @records = client.records.all(form_id: id, per_page: 100000)
-  end
-
-
-  def self.records_maps(id)
-    client = Fulcrum::Client.new('c6abd6bd9e786cecd7a105395126352bde51d99e054c44256f1652ae0a4fbe4ef4bbf4f2022d84af')
-    @records = client.records.all(form_id: id )
-  end
-
-  def self.graph2(id)
-
-    client = Fulcrum::Client.new('c6abd6bd9e786cecd7a105395126352bde51d99e054c44256f1652ae0a4fbe4ef4bbf4f2022d84af')
-    @records = client.records.all(form_id: id )
-  end
-
   def save_shp_file
     @directory = Geoworks::Shp.save(self.file, "shape")
     self.directory_name = @directory.split("/").last
-
   end
 
   def self.load_shape project_type_id, name_layer
     project_type = JSON.parse(ProjectType.find(project_type_id).directory_name)
     source_path = project_type[0]
     file_name = project_type[1].split('.').first
-    #    file_name = @directory[1].split('.').first
-
     ct = Apartment::Tenant.current
     fields = []
     RGeo::Shapefile::Reader.open("#{source_path}/#{file_name}.shp") do |file|
@@ -586,7 +419,6 @@ class ProjectType < ApplicationRecord
         record.index
         if record.index == 1
           record.keys.each do |f|
-
             field = f.parameterize(separator: '_')
             fields << field
             @new_project_field =  ProjectField.where(name: field, key: field, project_type_id: project_type_id, required: false).first_or_create(name: field, key: field, project_type_id: project_type_id, required: false, field_type_id: 1)
@@ -594,8 +426,6 @@ class ProjectType < ApplicationRecord
         end
       end
 
-      #create_view(fields, ct, project_type_id, name_layer)
-     
       file.rewind
       file.each do |record|
         @prop = {}
@@ -603,21 +433,17 @@ class ProjectType < ApplicationRecord
         @geom = ''
         record.attributes.each do |val|
           @val = val[1]
-
           @i["#{val[0]}"] = val[1].to_s.force_encoding(Encoding::UTF_8)
-          #  @i["#{val[0]}"] = val[1]
         end
 
         @rec = record
         @geom = record.geometry.as_text if !record.geometry.nil?
         @projects = Project.create( properties: @i.to_h, project_type_id: project_type_id, the_geom: @geom )
-        #record = file.next
       end
     end
   end
 
   def self.load_rgeoserver
-    #   curl -u admin:geoserver -XGET http://localhost:8080/geoserver/rest/layers.json
     require 'net/http'
     require 'uri'
 
@@ -626,22 +452,15 @@ class ProjectType < ApplicationRecord
     request.basic_auth("admin", "geoserver")
     request.content_type = "text/xml"
     request.body = "<workspace><name>earthws</name></workspace>"
-
     req_options = {
       use_ssl: uri.scheme == "https",
     }
-
     response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
       http.request(request)
     end
-
-    # response.code
-    # # response.body
-
   end
-  
+
   def self.reload_rgeoserver
-    #   curl -u admin:geoserver -XGET http://localhost:8080/geoserver/rest/layers.json
     require 'net/http'
     require 'uri'
 
@@ -652,38 +471,6 @@ class ProjectType < ApplicationRecord
     req_options = {
       use_ssl: uri.scheme == "https",
     }
-
-    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
-      http.request(request)
-    end
-  end
-
-  def self.ds_rgeoserver
-    require 'net/http'
-    require 'uri'
-
-    uri = URI.parse("http://localhost:8080/geoserver/rest/workspaces/earthws/datastores")
-    request = Net::HTTP::Post.new(uri)
-    request.basic_auth("admin", "geoserver")
-    request.content_type = "text/xml"
-    request.body = "
-<dataStore>
-<name>earthds</name>
-<connectionParameters>
-     <host>localhost</host>
-          <port>5432</port>
-               <database>earth</database>
-                    <schema>public</schema>
-                         <user>postgres</user>
-                              <passwd>postgres</passwd>
-                                   <dbtype>postgis</dbtype>
-                                   </connectionParameters>
-                                   </dataStore>"
-
-    req_options = {
-      use_ssl: uri.scheme == "https",
-    }
-
     response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
       http.request(request)
     end
@@ -697,16 +484,12 @@ class ProjectType < ApplicationRecord
     uri = URI.parse("http://localhost:8080/geoserver/rest/layers.json")
     request = Net::HTTP::Get.new(uri)
     request.basic_auth("admin", "geoserver")
-
     req_options = {
       use_ssl: uri.scheme == "https",
     }
-
     response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
       http.request(request)
     end
-
-    # response.code
     response.body
   end
 
@@ -716,7 +499,6 @@ class ProjectType < ApplicationRecord
 
     ct = Apartment::Tenant.current
     uri = URI.parse("http://localhost:8080/geoserver/rest/workspaces/geoworks/datastores/#{ct}/featuretypes")
-
     request = Net::HTTP::Post.new(uri)
     request.basic_auth("admin", "geoserver")
     request.content_type = "text/xml"
@@ -737,20 +519,17 @@ class ProjectType < ApplicationRecord
 
   def create_view
 
-
     fields = self.project_fields
     current_tenant = Apartment::Tenant.current
     project_type_id = self.id
     name_layer = self.name_layer
     type_geometry = self.type_geometry
 
-
-
     vv = "CREATE OR REPLACE VIEW #{current_tenant}.#{name_layer} AS "
     vv += " select "
     fields.each do |field|
       if field.key != ''
-      vv += " properties->>'#{field.key}' as #{field.key}, "
+        vv += " properties->>'#{field.key}' as #{field.key}, "
       end
     end
     vv += " projects.project_type_id, "

@@ -4,12 +4,10 @@ class ProjectTypesController < ApplicationController
   # GET /project_types
   # GET /project_types.json
 
-
-   def project_type_layers
-     @projects = ProjectType.where.not(name:params[:name_projects]).where(enabled_as_layer: true)
-   render json: {"data": @projects}
-   end
-
+  def project_type_layers
+    @projects = ProjectType.where.not(name:params[:name_projects]).where(enabled_as_layer: true)
+    render json: {"data": @projects}
+  end
 
   def share
     @project_type = ProjectType.find(params[:project_type_id])
@@ -19,7 +17,6 @@ class ProjectTypesController < ApplicationController
   end
 
   def create_share
-
     user_share = params[:user_ids]
     user_unshare =params[:unshare_user_ids]
     project_type_id = params[:project_type_id]
@@ -29,20 +26,16 @@ class ProjectTypesController < ApplicationController
         HasProjectType.create(user_id: u, project_type_id: project_type_id)
       end
     end
-
     if !user_unshare.nil?
       user_unshare.each do |uu|
         @user = HasProjectType.where(user_id: uu).where(project_type_id: project_type_id).select(:id).first
         @user.destroy
       end
     end
-
     respond_to do |format|
       format.js
     end
-
   end
-
 
   def geocoding
 
@@ -76,16 +69,7 @@ class ProjectTypesController < ApplicationController
 
     @op_graph = params[:graph]
     @data_conditions = params[:data_conditions]
-
     filter_condition = []
-    # if !@data_conditions.nil?
-
-    #   project_field = params[:data_conditions][:project_field]
-    #   filter = params[:data_conditions][:filter]
-    #   input_value = params[:data_conditions][:input_value]
-    #   filter_condition = [project_field, filter, input_value]
-    # end
-
     @querys = ''
     if @op_graph == 'true'
       @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id], @data_conditions)
@@ -101,7 +85,6 @@ class ProjectTypesController < ApplicationController
   def point_colors
   end
 
-
   def create_point_colors
     @query_point = Project.where(project_type_id: params[:project_type_id]).select("properties->>'#{params[:q][:project_field]}' as name").group("properties->>'#{params[:q][:project_field]}'").limit(10)
     respond_to do |format|
@@ -109,10 +92,8 @@ class ProjectTypesController < ApplicationController
     end
   end
 
-
   def create_heatmap
   end
-
 
   def filter_heatmap
 
@@ -160,11 +141,11 @@ class ProjectTypesController < ApplicationController
       @analytics.each do |f|
         if !f.sql_sentence.blank?
 
-            if f.group_sql.blank?
-              @field_group = "projects.properties->>'"+ f.group_field.key + "'"
-            else
-              @field_group = f.group_sql
-            end
+          if f.group_sql.blank?
+            @field_group = "projects.properties->>'"+ f.group_field.key + "'"
+          else
+            @field_group = f.group_sql
+          end
           if f.order_sql.blank?
             data = data.select(f.sql_sentence, "st_x(the_geom) as lng, st_y(the_geom) as lat").group(@field_group, :the_geom).order(@field_group)
           else
@@ -187,17 +168,10 @@ class ProjectTypesController < ApplicationController
         @query_h = data
       end
     else
-
-
       @query_h = data.select("st_x(the_geom) as lng, st_y(the_geom) as lat, projects.properties->>'#{params[:heatmap_field]}' as count").group("projects.properties->>'#{params[:heatmap_field]}', the_geom").order('count')
 
     end
-
-    #@query_h = Project.where(project_type_id: params[:project_type_id]).select("st_x(the_geom) as lng, st_y(the_geom) as lat, count(id) as count").group("properties->>'#{params[:heatmap_field]}', the_geom")
-
-
   end
-
 
   def maps
 
@@ -208,7 +182,6 @@ class ProjectTypesController < ApplicationController
       @projects = Project.where(project_type_id: params[:data_id]).select("st_x(the_geom) as x, st_y(the_geom)as y ")
     end                                                                
 
-
     if !params[:project_field].blank?
       project_field = params[:project_field]
       filter = params[:filter]
@@ -216,11 +189,10 @@ class ProjectTypesController < ApplicationController
 
       @projects = @projects.where("properties->>'" + project_field +  "' " + filter  + " ?", input_value)
     end
-
   end
 
   def index
-
+    
     @has_project_types = HasProjectType.where(user_id: current_user.id).select(:project_type_id)
     @p =[]
     @has_project_types.each do |s| @p.push(s.project_type_id) end 
@@ -231,7 +203,6 @@ class ProjectTypesController < ApplicationController
 
 
     @project_types = @project_types.paginate(:page => params[:page])
-    #@project_fulcrum = ProjectType.query_fulcrum
   end
 
   # GET /project_types/1
@@ -247,7 +218,6 @@ class ProjectTypesController < ApplicationController
 
   # GET /project_types/1/edit
   def edit
-
   end
 
   # POST /project_types
@@ -274,6 +244,7 @@ class ProjectTypesController < ApplicationController
   def update
     respond_to do |format|
       if @project_type.update(project_type_params)
+
         format.html { redirect_to edit_project_type_path(@project_type), notice: 'Project type was successfully updated.' }
         format.json { render :show, status: :ok, location: @project_type }
       else
@@ -298,7 +269,6 @@ class ProjectTypesController < ApplicationController
   def set_project_type
     @project_type = ProjectType.find(params[:id])
     @project_fields = @project_type.project_fields.order(:sort)
-
 
   end
 
