@@ -443,23 +443,6 @@ class ProjectType < ApplicationRecord
     end
   end
 
-  def self.load_rgeoserver
-    require 'net/http'
-    require 'uri'
-
-    uri = URI.parse("http://localhost:8080/geoserver/rest/workspaces")
-    request = Net::HTTP::Post.new(uri)
-    request.basic_auth("admin", "geoserver")
-    request.content_type = "text/xml"
-    request.body = "<workspace><name>earthws</name></workspace>"
-    req_options = {
-      use_ssl: uri.scheme == "https",
-    }
-    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
-      http.request(request)
-    end
-  end
-
   def self.reload_rgeoserver
     require 'net/http'
     require 'uri'
@@ -474,14 +457,31 @@ class ProjectType < ApplicationRecord
     response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
       http.request(request)
     end
+    [response.body, response.code]
   end
 
-  def self.get_layer_rgeoserver
+  def self.exist_layer_rgeoserver( name, current_tenant = Apartment::Tenant.current  )
+
+    return false if name.nil?
+    layer = ProjectType.get_layer_rgeoserver( name, current_tenant )
+    request = [false, "400"]
+    if layer[0] 
+      request = ProjectType.reload_rgeoserver
+    else
+      name_layer = ProjectType.where(name_layer: name)
+      if name_layer
+        request = ProjectType.add_layer_geoserver(name, current_tenant)
+      end
+    end
+    request
+  end
+
+  def self.get_layer_rgeoserver( name, current_tenant = Apartment::Tenant.current )
 
     require 'net/http'
     require 'uri'
 
-    uri = URI.parse("http://localhost:8080/geoserver/rest/layers.json")
+    uri = URI.parse("http://localhost:8080/geoserver/rest/workspaces/geoworks/datastores/#{current_tenant}/featuretypes.json")
     request = Net::HTTP::Get.new(uri)
     request.basic_auth("admin", "geoserver")
     req_options = {
@@ -490,15 +490,20 @@ class ProjectType < ApplicationRecord
     response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
       http.request(request)
     end
-    response.body
+    @layers = JSON.parse(response.body)
+    @layers['featureTypes']['featureType'].each do |layer_name|
+      if name == layer_name['name']
+        return [true, response.code] 
+      end
+    end
+    return [false, response.code]
   end
 
-  def self.add_layer_geoserver(name_layer)
+  def self.add_layer_geoserver( name_layer, current_tenant = Apartment::Tenant.current )
     require 'net/http'
     require 'uri'
-
-    ct = Apartment::Tenant.current
-    uri = URI.parse("http://localhost:8080/geoserver/rest/workspaces/geoworks/datastores/#{ct}/featuretypes")
+    
+    uri = URI.parse("http://localhost:8080/geoserver/rest/workspaces/geoworks/datastores/#{current_tenant}/featuretypes")
     request = Net::HTTP::Post.new(uri)
     request.basic_auth("admin", "geoserver")
     request.content_type = "text/xml"
@@ -509,8 +514,7 @@ class ProjectType < ApplicationRecord
     response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
       http.request(request)
     end
-    response.body
-    return
+    return [response.body, response.code]
   end
 
   def self.counters(id)
