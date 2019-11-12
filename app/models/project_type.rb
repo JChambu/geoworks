@@ -639,6 +639,24 @@ class ProjectType < ApplicationRecord
     # # response.body
 
   end
+  
+  def self.reload_rgeoserver
+    #   curl -u admin:geoserver -XGET http://localhost:8080/geoserver/rest/layers.json
+    require 'net/http'
+    require 'uri'
+
+    uri = URI.parse("http://localhost:8080/geoserver/rest/reload")
+    request = Net::HTTP::Post.new(uri)
+    request.basic_auth("admin", "geoserver")
+    request.content_type = "text/xml"
+    req_options = {
+      use_ssl: uri.scheme == "https",
+    }
+
+    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      http.request(request)
+    end
+  end
 
   def self.ds_rgeoserver
     require 'net/http'
