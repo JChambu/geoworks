@@ -102,9 +102,9 @@ Navarra.geomaps = function (){
       data: {project_type_id: data_id},
       success: function(data){
         $.each(data, function(i, value){
-              x.push('<b>' + value + ': </b> ' + prop[value] + '</br>');
+              x.push('<b>' + value + ': </b> ' + prop[value]);
         });
-          z.innerHTML = x;
+          z.innerHTML = x.join(" <br>");
           inn = document.body.appendChild(z);
           checked = $('#select').hasClass('active');
           if (!checked){
