@@ -6,7 +6,7 @@ Navarra.geomaps = function (){
   var ss = [];
   var size_box = [];
   var init= function() {
-    
+
   url = window.location.hostname;
   var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -21,11 +21,11 @@ Navarra.geomaps = function (){
       updateWhenIdle: true,
       reuseTiles: true
     });
-  
+
   var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     });
-  
+
   var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
@@ -53,7 +53,7 @@ Navarra.geomaps = function (){
       layers: [streets, grayscale]
     }) ;
 
-    
+
     type_geometry = Navarra.dashboards.config.type_geometry;
     minx = Navarra.dashboards.config.minx;
     miny = Navarra.dashboards.config.miny;
@@ -69,7 +69,7 @@ Navarra.geomaps = function (){
       "Streets": streets,
       "Grayscale": grayscale,
       "Satelital": satellite,
-      "Dark": CartoDB_DarkMatter 
+      "Dark": CartoDB_DarkMatter
     };
 
     layerControl = L.control.layers(baseMaps).addTo(mymap);
@@ -77,49 +77,50 @@ Navarra.geomaps = function (){
     L.control.zoom({
       position:'topleft'
     }).addTo(mymap);
-    MySource = L.WMS.Source.extend({
 
+    MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
         if (!this._map) {
           return;
         }
 
         checked = $('#select').hasClass('active');
-        if (!checked){
+
+        if (!checked) {
 
           var cc = JSON.parse(info);
           var prop = cc['features'][0]['properties'];
           var z = document.createElement('p'); // is a node
           var x = []
           var count = 1;
+          var data_id = Navarra.dashboards.config.project_type_id;
 
-        
-    var data_id =  Navarra.dashboards.config.project_type_id;
-    $.ajax({
-      type: 'GET',
-      url: '/project_fields/field_popup.json',
-      datatype: 'json',
-      data: {project_type_id: data_id},
-      success: function(data){
-        $.each(data, function(i, value){
-              x.push('<b>' + value + ': </b> ' + prop[value]);
-        });
-          z.innerHTML = x.join(" <br>");
-          inn = document.body.appendChild(z);
-          checked = $('#select').hasClass('active');
-          if (!checked){
-            L.popup()
-              .setLatLng(latlng)
-              .setContent(inn)
-              .openOn(mymap);
-          }
-      }
-    });
+          $.ajax({
+            type: 'GET',
+            url: '/project_fields/field_popup.json',
+            datatype: 'json',
+            data: {
+              project_type_id: data_id
+            },
+            success: function(data) {
+              $.each(data, function(i, value) {
+                x.push('<b>' + value + ': </b> ' + prop[value]);
+              });
+              z.innerHTML = x.join(" <br>");
+              inn = document.body.appendChild(z);
+              checked = $('#select').hasClass('active');
 
-
-        }
-      }
-    });
+              if (!checked) {
+                L.popup()
+                  .setLatLng(latlng)
+                  .setContent(inn)
+                  .openOn(mymap);
+              }
+            } // Cierra success
+          }); // Cierra ajax
+        } // Cierra if
+      } // Cierra showFeatureInfo
+    }); // Cierra L.WMS.Source.extend
 
     current_tenant = Navarra.dashboards.config.current_tenant;
     current_layer();
@@ -324,7 +325,7 @@ Navarra.geomaps = function (){
     field_point = Navarra.project_types.config.field_point_colors;
     data_point = Navarra.project_types.config.data_point_colors;
     var filter_option = Navarra.project_types.config.filter_option;
-    
+
     if (field_point != ''){
       mymap.removeLayer(project_current);
 
@@ -517,7 +518,7 @@ Navarra.geomaps = function (){
       default:
         style = 'poi_new';
     }
-    
+
     layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
       layers: "geoworks:" + name_layer,//nombre de la capa (ver get capabilities)
       format: 'image/png',
@@ -590,7 +591,7 @@ Navarra.geomaps = function (){
   }
 
   function layers_external(){
-    //Layer outer 
+    //Layer outer
     $.ajax({
       type: 'GET',
       url: '/layers/find.json',
