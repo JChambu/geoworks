@@ -29,6 +29,9 @@ class ProjectType < ApplicationRecord
   after_update :load_file, if: :file_exist? 
   after_create :create_project_statuses
   after_create :create_view
+  after_update :destroy_view
+  after_update :create_view
+
   #before_create :restart_delayed_job
   #before_destroy :restart_delayed_job
 
@@ -481,6 +484,7 @@ class ProjectType < ApplicationRecord
     require 'net/http'
     require 'uri'
 
+    current_tenant = 'geoworks' if current_tenant.empty? || current_tenant == 'public' 
     uri = URI.parse("http://localhost:8080/geoserver/rest/workspaces/geoworks/datastores/#{current_tenant}/featuretypes.json")
     request = Net::HTTP::Get.new(uri)
     request.basic_auth("admin", "geoserver")
@@ -502,7 +506,7 @@ class ProjectType < ApplicationRecord
   def self.add_layer_geoserver( name_layer, current_tenant = Apartment::Tenant.current )
     require 'net/http'
     require 'uri'
-    
+    current_tenant = 'geoworks' if current_tenant.empty? || current_tenant == 'public' 
     uri = URI.parse("http://localhost:8080/geoserver/rest/workspaces/geoworks/datastores/#{current_tenant}/featuretypes")
     request = Net::HTTP::Post.new(uri)
     request.basic_auth("admin", "geoserver")
@@ -524,7 +528,7 @@ class ProjectType < ApplicationRecord
   def create_view
 
     fields = self.project_fields
-    current_tenant = Apartment::Tenant.current
+    current_tenant = Apartment::Tenant.current 
     project_type_id = self.id
     name_layer = self.name_layer
     type_geometry = self.type_geometry
