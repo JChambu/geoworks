@@ -107,6 +107,9 @@ Navarra.geomaps = function (){
 
                 // Reemplaza los guiones bajos del label por espacios
                 var label = value.split('_').join(' ')
+                // Pone la primer letra en mayúscula
+                label = label.charAt(0).toUpperCase() + label.slice(1)
+
                 x.push('<b>' + label + ': </b> ' + prop[value]);
               });
               z.innerHTML = x.join(" <br>");
