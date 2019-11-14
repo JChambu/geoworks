@@ -33,13 +33,11 @@
         <legend>Series</legend>
         <div class="form-row col-md-12">
           <div class="form-group">
-            <%= link_to_add_fields 'Agregar', form, :graphics_properties %>
-          </div>
-          <div class="form-group">
             <%= form.fields_for :graphics_properties do |form_property| %>
               <%= render "graphics_property_fields", f: form_property %>
             <% end %>
           </div>
+          <%= link_to_add_fields 'Agregar Serie', form, :graphics_properties, class: 'chart_serie' %>
         </div>
       </fieldset>
 
