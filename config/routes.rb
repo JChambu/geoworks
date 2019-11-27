@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  resources :events
+  resources :model_types
   get 'project_types/maps' => 'project_types#maps'
   get 'project_types/kpi' => 'project_types#kpi'
   get 'project_types/filter_heatmap' => 'project_types#filter_heatmap'
