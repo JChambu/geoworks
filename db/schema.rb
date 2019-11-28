@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191107141922) do
+ActiveRecord::Schema.define(version: 20191125212139) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -168,6 +168,12 @@ ActiveRecord::Schema.define(version: 20191107141922) do
   create_table "departments", id: :serial, force: :cascade do |t|
     t.string "name"
     t.integer "province_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -339,6 +345,12 @@ ActiveRecord::Schema.define(version: 20191107141922) do
     t.string "directory_name"
   end
 
+  create_table "model_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "p_actions", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -429,6 +441,17 @@ ActiveRecord::Schema.define(version: 20191107141922) do
     t.boolean "commercial_vehicles_only"
     t.string "side_street"
     t.string "max_duration_parking_disc"
+  end
+
+  create_table "permissions", force: :cascade do |t|
+    t.bigint "role_id"
+    t.bigint "event_id"
+    t.bigint "model_type_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_permissions_on_event_id"
+    t.index ["model_type_id"], name: "index_permissions_on_model_type_id"
+    t.index ["role_id"], name: "index_permissions_on_role_id"
   end
 
   create_table "pg_search_documents", id: :serial, force: :cascade do |t|
@@ -917,6 +940,9 @@ ActiveRecord::Schema.define(version: 20191107141922) do
 
   add_foreign_key "analytics_dashboards", "charts"
   add_foreign_key "has_project_types", "users"
+  add_foreign_key "permissions", "events"
+  add_foreign_key "permissions", "model_types"
+  add_foreign_key "permissions", "roles"
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_statuses", "project_types"
   add_foreign_key "project_types", "users"
