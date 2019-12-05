@@ -1,13 +1,12 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  has_many :pois
-  has_many :verification_poi
-  has_many :extended_listings
   has_many :has_project_types
   has_many :project_types, through: :has_project_types 
   has_many :user_customers 
   has_many :customers, through: :user_customers
+
+  belongs_to :role
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
   #  :timeoutable, :omniauthable,
@@ -20,7 +19,7 @@ class User < ApplicationRecord
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
   validates :email, :email_format => {:message => I18n.t("activerecord.errors.messages.invalid_email")}
-  validates :role, presence: true
+  #validates :role, presence: true
   validates :password, length: { minimum: 6 }, unless: -> { !:password.blank? } 
   validates :password, confirmation: {case_sensitive: true}
   #validate :is_role_valid?
@@ -60,18 +59,18 @@ end
   end
 
 
-  def self.user_role
-    index = ROLES.find_index "User"
-    return nil unless index
-    ROLES[index]
-  end
+  # def self.user_role
+  #   index = ROLES.find_index "User"
+  #   return nil unless index
+  #   ROLES[index]
+  # end
 
-  def is? role
-    role == self.role
-  end
+  # def is? role
+  #   role == self.role
+  # end
 
   def human_role
-    I18n.t("roles.#{self.role.downcase}")
+    #I18n.t("roles.#{self.role.downcase}")
   end
 
   def some_identifier
