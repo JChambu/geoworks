@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191125212139) do
+ActiveRecord::Schema.define(version: 20191205121119) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -738,6 +738,7 @@ ActiveRecord::Schema.define(version: 20191125212139) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.serial "update_sequence", null: false
     t.index ["user_id"], name: "index_project_data_children_on_user_id"
   end
 
@@ -823,6 +824,7 @@ ActiveRecord::Schema.define(version: 20191125212139) do
     t.bigint "project_status_id"
     t.datetime "status_update_at", default: "2019-09-10 20:29:04"
     t.bigint "user_id"
+    t.serial "update_sequence", null: false
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["user_id"], name: "index_projects_on_user_id"
@@ -915,8 +917,10 @@ ActiveRecord::Schema.define(version: 20191125212139) do
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
     t.boolean "active"
+    t.bigint "role_id"
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["role_id"], name: "index_users_on_role_id"
     t.index ["token"], name: "index_users_on_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
@@ -948,4 +952,5 @@ ActiveRecord::Schema.define(version: 20191125212139) do
   add_foreign_key "project_types", "users"
   add_foreign_key "projects", "project_statuses"
   add_foreign_key "projects", "project_types"
+  add_foreign_key "users", "roles"
 end
