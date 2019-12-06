@@ -51,6 +51,10 @@ class Admin::UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
+      @current_tenant = Apartment::Tenant.current
+      customer_id = Customer.where(name: @current_tenant)
+      user_id = current_user.id
+      user_customer = UserCustomer.where(customer_id: customer_id).where(user_id: user_id)
     respond_to do |format|
       if @user.update(user_params)      
         UserMailer.new_user(@user).deliver_now
@@ -96,6 +100,6 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :name, :role, :password_confirmation, :active).merge(token: build_token)
+    params.require(:user).permit(:email, :password, :name, :password_confirmation, :active, :role_id).merge(token: build_token)
   end
 end
