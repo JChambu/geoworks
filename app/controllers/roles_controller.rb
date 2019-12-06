@@ -60,7 +60,7 @@ class RolesController < ApplicationController
       #       @a.save!
       #     end 
       #   end 
-         format.html { redirect_to @role, notice: 'Role was successfully updated.' }
+         format.html { redirect_to roles_path, notice: 'Role was successfully updated.' }
          format.json { render :show, status: :ok, location: @role }
        else
          format.html { render :edit }
