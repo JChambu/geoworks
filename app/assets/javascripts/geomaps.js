@@ -66,10 +66,10 @@ Navarra.geomaps = function (){
 
     ]);
     baseMaps = {
-      "Streets": streets,
-      "Grayscale": grayscale,
+      "Calles": streets,
       "Satelital": satellite,
-      "Dark": CartoDB_DarkMatter
+      "Claro": grayscale,
+      "Oscuro": CartoDB_DarkMatter
     };
 
     layerControl = L.control.layers(baseMaps).addTo(mymap);
