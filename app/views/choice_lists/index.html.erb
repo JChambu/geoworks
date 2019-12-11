@@ -1,34 +1,40 @@
 <p id="notice"><%= notice %></p>
 
-<div class="col-md-12">
-  <h1>Listados</h1>
+<div class="card m-2 shadow">
+  <div class="card-body">
+     <div class="row">
+       <div class="col-md-6">
+         <h1 class="m-0">Listados</h1>
+       </div>
+       <div class="col-md-6 text-right">
+         <%= link_to 'Nuevo', new_choice_list_path, class: "btn btn-primary" %>
+       </div>
+     </div>
+  </div>
 </div>
 
-<div class="col-md-12 text-right sub-header">
-  <%= link_to 'Nuevo Listado', new_choice_list_path, class: "btn btn-primary" %>
-</div>
-
-<div class="x_panel card">
-  <div class="x_content">
-    <div class="table-responsive">
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th colspan="2"></th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <% @choice_lists.each do |choice_list| %>
+<div class="offset-md-2 col-md-8">
+  <div class="card m-2 shadow">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover table-striped table-bordered m-0">
+          <thead>
             <tr>
-              <td><%= choice_list.name %></td>
-              <td><%= link_to edit_choice_list_path(choice_list) do %> <i class="fas fa-edit"></i><%end%></td>
-              <td><%= link_to choice_list, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
+              <th>Nombre</th>
+              <th colspan="2" class="text-center">Acciones</th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <% @choice_lists.each do |choice_list| %>
+              <tr>
+                <td><%= choice_list.name %></td>
+                <td class="text-center"><%= link_to edit_choice_list_path(choice_list) do %> <i class="fas fa-edit"></i><%end%></td>
+                <td class="text-center"><%= link_to choice_list, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
