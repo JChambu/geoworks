@@ -115,7 +115,14 @@ Navarra.geomaps = function (){
                 // Pone la primer letra en mayúscula
                 label = label.charAt(0).toUpperCase() + label.slice(1)
 
-                x.push('<b>' + label + ': </b> ' + prop[value]);
+                // Elimina los corchetes y comillas del valor (en caso que contenga)
+                var val = prop[value]
+                var val = val.split('[').join('')
+                var val = val.split(']').join('')
+                var val = val.split('"').join('')
+
+                x.push('<b>' + label + ': </b> ' + val);
+
               });
               z.innerHTML = x.join(" <br>");
               inn = document.body.appendChild(z);

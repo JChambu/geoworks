@@ -11,25 +11,47 @@
     </div>
   <% end %>
 
-<div class="x_panel card">
-  <div class="x_content">
+  <div class="x_panel card">
+    <div class="x_content">
 
-    <div class="form-group col-md-12">
-      <div class="col-md-1 text-right">
-        <%= form.label 'Nombre' %>
+      <div class="form-group col-md-12">
+        <div class="col-md-5 text-right">
+          <%= form.label 'Nombre' %>
+        </div>
+        <div class="col-md-3">
+          <%= form.text_field :name, id: :role_name, class: "form-control" %>
+        </div>
       </div>
-      <div class="col-md-3">
-        <%= form.text_field :name, id: :role_name, class: "form-control" %>
+
+      <br><br><br>
+      <center><h2>Permisos</h2></center>
+      <br>
+
+      <div class="col-md-12">
+        <% ModelType.all.each do |mt| %>
+          <div class="col-md-2">
+            <h3><%= mt.name %></h3>
+            <br>
+            <% Event.all.each do |e| %>
+              <div class="form-group form-check">
+                <%= check_box_tag "permissions[#{mt.id}][#{e.id}]" %>
+                <label class="form-check-label" for=""><%=e.name %></label>
+              </div>
+            <% end %>
+            <br>
+          </div>
+        <% end %>
       </div>
+
+      <br><br><br><br><br><br><br><br><br><br>
+
+      <div class="form-group col-md-12 form-actions">
+        <div class="col-md-7 text-right">
+          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), roles_path, :class => 'btn btn-default' %>
+          <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
+        </div>
+      </div>
+
     </div>
-
-    <div class="form-group col-md-12 form-actions">
-      <div class="col-md-4 text-right">
-        <%= link_to t('.cancel', :default => t("helpers.links.cancel")), roles_path, :class => 'btn btn-default' %>
-        <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
-      </div>
-    </div>
-
   </div>
-</div>
 <% end %>

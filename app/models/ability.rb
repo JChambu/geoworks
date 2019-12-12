@@ -2,17 +2,19 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    user ||= User.new # guest user (not logged in)
+    #user ||= User.new # guest user (not logged in)
+    user.role.permissions.each do |permission|
+      can permission.model_type.name.to_sym, permission.event.name.to_sym 
+    end
+    if user.role.name == "superadmin"
+      can :manage, :all
+    end
 
-    if user.is? "Admin"
-      can :manage, :all
-    end
-   
-    if user.is? "Moderator"
-      can :manage, :all
-    end
-    
-   # Define abilities for the passed in user here. For example:
+    # if user.is? "Moderator"
+    #   can :manage, :all
+    # end
+
+    # Define abilities for the passed in user here. For example:
     #
     #   user ||= User.new # guest user (not logged in)
     #   if user.admin?
