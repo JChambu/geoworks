@@ -27,7 +27,9 @@
         </ul>
       </div>
       <div class="col-md-3 text-right">
+  <% if can? :project_types, :new %>
         <%= link_to 'Nuevo Proyecto', new_project_type_path, class: "btn btn-primary" %>
+  <% end %>
       </div>
     </div>
   </div>
@@ -47,12 +49,25 @@
               <tr>
                 <td><%= project_type.name %></td>
                 <td><%= project_type.projects.count %></td>
-                <td><%= link_to 'Datos', project_type_projects_path(project_type) %></td>
+
+                <% if can? :projects, :visualizer %>
+                  <td><%= link_to 'Datos', project_type_projects_path(project_type) %></td>
+                <% end %>
+                <% if can? :dashboards, :visualizer %>
                 <td><%= link_to 'Tableros', project_type_dashboards_path(project_type.id) %></td>
-                <td><%= link_to 'Estados', project_type_project_statuses_path(project_type) %></td>
-                <td><%= link_to project_type_share_path(project_type.id) , id: "share", :remote=> true  do  %> <i class="fas fa-share-alt" title="Compartir"></i> <%end %></td>
-                <td><%= link_to edit_project_type_path(project_type) do  %> <i class="fas fa-edit" title="Editar"></i> <%end %></td>
+                <% end %>
+                <% if can? :statuses, :visualizer %>
+                  <td><%= link_to 'Estados', project_type_project_statuses_path(project_type) %></td>
+                <% end %>
+                <% if can? :project_types, :share %>
+                  <td><%= link_to project_type_share_path(project_type.id) , id: "share", :remote=> true  do  %> <i class="fas fa-share-alt" title="Compartir"></i> <%end %></td>
+                <% end %>
+                <% if can? :project_types, :edit %>
+                  <td><%= link_to edit_project_type_path(project_type) do  %> <i class="fas fa-edit" title="Editar"></i> <%end %></td>
+                <% end %>
+                <% if can? :project_types, :destroy %>
                 <td><%= link_to project_type_path(project_type), method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
+                <% end %>
               </tr>
               <%= render "share" %>
             <% end %>

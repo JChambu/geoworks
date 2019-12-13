@@ -1,5 +1,5 @@
 class ModelType < ApplicationRecord
 
-  has_many :permission
+  has_many :permissions
 
 end

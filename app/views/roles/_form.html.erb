@@ -1,12 +1,12 @@
-<%= form_with(model: role, local: true) do |form| %>
+<%= form_for(@role) do |form| %>
   <% if role.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(role.errors.count, "error") %> prohibited this role from being saved:</h2>
 
       <ul>
-      <% role.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
+        <% role.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
       </ul>
     </div>
   <% end %>
@@ -34,24 +34,27 @@
             <br>
             <% Event.all.each do |e| %>
               <div class="form-group form-check">
-                <%= check_box_tag "permissions[#{mt.id}][#{e.id}]" %>
-                <label class="form-check-label" for=""><%=e.name %></label>
+                <% if params[:action] == 'new' %>
+                  <%= check_box_tag "permissions[#{mt.id}][#{e.id}]" %>
+                <% else %>
+                  <%= check_box_tag "permissions[#{mt.id}][#{e.id}]",e.id , @permissions.any? {|c| c.event_id == e.id && c.model_type_id == mt.id} %>
+                <% end %>
+              <% end %>
+              <br>
               </div>
             <% end %>
-            <br>
+
+
+
+            <br><br><br><br><br><br><br><br><br><br>
+
+            <div class="form-group col-md-12 form-actions">
+              <div class="col-md-7 text-right">
+                <%= link_to t('.cancel', :default => t("helpers.links.cancel")), roles_path, :class => 'btn btn-default' %>
+                <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
+              </div>
+            </div>
+
           </div>
-        <% end %>
       </div>
-
-      <br><br><br><br><br><br><br><br><br><br>
-
-      <div class="form-group col-md-12 form-actions">
-        <div class="col-md-7 text-right">
-          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), roles_path, :class => 'btn btn-default' %>
-          <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
-        </div>
-      </div>
-
-    </div>
-  </div>
-<% end %>
+    <% end %>
