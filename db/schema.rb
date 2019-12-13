@@ -10,17 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191205121119) do
+ActiveRecord::Schema.define(version: 20191210145319) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
-
-  create_table "actions", id: :serial, force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
 
   create_table "analysis_types", id: :serial, force: :cascade do |t|
     t.string "name"
@@ -463,12 +457,23 @@ ActiveRecord::Schema.define(version: 20191205121119) do
     t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable_type_and_searchable_id"
   end
 
+  create_table "photo_children", force: :cascade do |t|
+    t.string "name"
+    t.text "image"
+    t.bigint "project_data_child_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "row_active", default: true
+    t.index ["project_data_child_id"], name: "index_photo_children_on_project_data_child_id"
+  end
+
   create_table "photos", force: :cascade do |t|
     t.string "name"
     t.text "image"
     t.integer "project_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "row_active", default: true
   end
 
   create_table "poi_address_loads", id: :serial, force: :cascade do |t|
@@ -739,6 +744,7 @@ ActiveRecord::Schema.define(version: 20191205121119) do
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.serial "update_sequence", null: false
+    t.boolean "row_active", default: true
     t.index ["user_id"], name: "index_project_data_children_on_user_id"
   end
 
@@ -822,9 +828,10 @@ ActiveRecord::Schema.define(version: 20191205121119) do
     t.jsonb "properties_original"
     t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
     t.bigint "project_status_id"
-    t.datetime "status_update_at", default: "2019-09-10 20:29:04"
+    t.datetime "status_update_at", default: "2019-08-26 13:31:30"
     t.bigint "user_id"
     t.serial "update_sequence", null: false
+    t.boolean "row_active", default: true
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["user_id"], name: "index_projects_on_user_id"
@@ -884,6 +891,13 @@ ActiveRecord::Schema.define(version: 20191205121119) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "test_des", id: false, force: :cascade do |t|
+    t.serial "id", null: false
+    t.integer "capturas"
+    t.string "trampas"
+    t.integer "semanas"
+  end
+
   create_table "user_customers", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "customer_id"
@@ -917,10 +931,8 @@ ActiveRecord::Schema.define(version: 20191205121119) do
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
     t.boolean "active"
-    t.bigint "role_id"
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["role_id"], name: "index_users_on_role_id"
     t.index ["token"], name: "index_users_on_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
@@ -947,10 +959,10 @@ ActiveRecord::Schema.define(version: 20191205121119) do
   add_foreign_key "permissions", "events"
   add_foreign_key "permissions", "model_types"
   add_foreign_key "permissions", "roles"
+  add_foreign_key "photo_children", "project_data_children"
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_statuses", "project_types"
   add_foreign_key "project_types", "users"
   add_foreign_key "projects", "project_statuses"
   add_foreign_key "projects", "project_types"
-  add_foreign_key "users", "roles"
 end
