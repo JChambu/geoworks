@@ -97,34 +97,23 @@ Navarra.dashboards.action_show = function(){
       })
     var  project_id = $("#data_id").val();
 
-    $( "#view" ).on( "click", function() {
+    $("#view").on("click", function() {
 
-      //Chequeamos el estado de view
+      // Chequeamos el estado de view
       status_view = $('#view').hasClass('active');
 
-      if (!status_view){ //Active
-
-        $(".fa-table").css("color", "#d3d800");
-
+      if (!status_view) { // Active
         $('#view').addClass('active');
-
+        $(".fa-table").css("color", "#d3d800");
+        $(".graphics").css("width", "50%");
         $("#active-filters").removeClass('col-md-3').addClass('col-md-6');
-        $("#map").css("width", "50%");
-        $(".right-column").css("width", "50%");
-
         init_chart_doughnut();
-
-      }else{ //Default
-
+      } else { // Default
+        $('#view').removeClass('active');
         $(".fa-table").css("color", "#9b9b9b");
-
+        $(".graphics").css("width", "25%");
         $("#active-filters").removeClass('col-md-6').addClass('col-md-3');
-        $("#map").css("width", "75%");
-        $(".right-column").css("width", "25%");
-
-        $('div.graphics').replaceWith( $('div.graphics'), init_chart_doughnut());
-        status_view = $('#view').removeClass('active');
-
+        init_chart_doughnut();
       }
     });
 

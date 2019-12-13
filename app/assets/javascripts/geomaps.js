@@ -66,13 +66,18 @@ Navarra.geomaps = function (){
 
     ]);
     baseMaps = {
-      "Streets": streets,
-      "Grayscale": grayscale,
+      "Calles": streets,
       "Satelital": satellite,
-      "Dark": CartoDB_DarkMatter
+      "Claro": grayscale,
+      "Oscuro": CartoDB_DarkMatter
     };
 
-    layerControl = L.control.layers(baseMaps).addTo(mymap);
+    var overlays =  {
+    };
+    layerControl = L.control.layers(baseMaps, overlays, {
+      position: 'topleft',
+      collapsed: true
+    }).addTo(mymap);
 
     L.control.zoom({
       position:'topleft'
@@ -140,7 +145,6 @@ Navarra.geomaps = function (){
     layers_internal();
     layers_external();
     show_kpis();
-
 
     mymap.on('moveend', onMapZoomedMoved);
     if (markers !=undefined){
