@@ -1,42 +1,49 @@
 <p id="notice"><%= notice %></p>
-<div class="col-md-12">
-  <h1>Datos de <%= project_name.name %></h1>
+
+<div class="card m-2 shadow">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-12">
+        <h1 class="m-0">Datos de <%= project_name.name %></h1>
+      </div>
+    </div>
+  </div>
 </div>
-<div>
-  <%= pager @projects %>
-</div>
-<div class="x_panel card">
-  <div class="x_content">
+
+<div class="card m-2 shadow">
+  <div class="card-body">
     <div class="table-responsive" style="height: 57vh">
-      <table class="table table-hover">
+      <table class="table table-hover table-striped table-bordered m-0">
         <thead>
           <tr>
             <th>#</th>
             <% @fields.each do |field|  %>
-              <th><%=  field.name%></th>
+              <th><%= field.name %></th>
             <% end %>
-
+            <th>Geom</th>
           </tr>
         </thead>
-        <tbody
+        <tbody>
           <% @projects.each do |project | %>
             <tr>
-            <td><%= project.id %></td>
-            <% @fields.each do |field|  %>
-              <td>
-                <% if field.field_type_id == 7  %>
-                  <%= link_to field.name, project_type_project_project_data_children_path(project_id: project.id, project_field_id: field.id) %>
-                <% else %>
-                  <%= project.properties[field.key] if !project.properties[field.key].blank?%>
+              <td><%= project.id %></td>
+                <% @fields.each do |field|  %>
+                  <td>
+                    <% if field.field_type_id == 7  %>
+                      <%= link_to field.name, project_type_project_project_data_children_path(project_id: project.id, project_field_id: field.id) %>
+                    <% else %>
+                      <%= project.properties[field.key] if !project.properties[field.key].blank?%>
+                    <% end %>
+                  </td>
                 <% end %>
-                </td>
-              <% end %>
-                <td><%= project.the_geom %></td>
+              <td><%= project.the_geom %></td>
             </tr>
           <% end %>
         </tbody>
       </table>
     </div>
+    <div class="pt-3">
+      <%= pager @projects %>
+    </div>
   </div>
 </div>
-<br>
