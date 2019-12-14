@@ -103,3 +103,35 @@ body {
 }
 .form-signin input[type="password"] {
   margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+
+.pagination {
+    font-size: 12px;
+}
+.pagination > * {
+    margin-right: 0.1em;
+    padding: 0.3em 0.4em;
+}
+.pagination a {
+    color: #e8ebef;
+}
+.pagination a:hover {
+    background: #BFC400 none repeat scroll 0 0;
+    text-shadow: 1px 1px 1px #d3d800;
+    color: #000;
+}
+.pagination a:active {
+    text-shadow: none;
+    color: #000;
+}
+.pagination .current {
+    background: #BFC400 none repeat scroll 0 0;
+    color: #000;
+    text-shadow: 1px 1px 1px #d3d800;
+}
+.pagination .disabled {
+    color: #798088;
+}
