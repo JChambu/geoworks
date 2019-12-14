@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     get 'project_types/:id/geocoding' => 'project_types#geocoding', as: :project_types_geocoding
     get 'project_types/:id/dashboard' => 'project_types#dashboard',  :as => :project_types_dashboard
     get 'project_types/import_file' => 'project_types#import_file', as: :import_file
+    get 'dashboards/show' => 'dashboards#show'
 
     resources :field_types
     resources :roles
@@ -73,9 +74,9 @@ Rails.application.routes.draw do
     devise_for :users
     resources :users
 
-    root 'project_types#index'
-  end
 
+    root 'dashboards#show'
+  end
 
   match '*path', to: redirect("/#{I18n.default_locale}/%{path}"), via: :all
   match '', to: redirect("/#{I18n.default_locale}"), via: :all

@@ -6,12 +6,18 @@
     Navarra.dashboards.config.name_layer = '<%= @project_type.name_layer %>';
     Navarra.dashboards.config.dashboard_id = <%= @dashboard_id %>
     Navarra.dashboards.config.type_geometry = '<%= @project_type.type_geometry %>';
-
+    <% if !@extent.empty? %>
     Navarra.dashboards.config.minx = <%= @extent[0].minx %>
     Navarra.dashboards.config.miny = <%= @extent[0].miny  %>
     Navarra.dashboards.config.maxx = <%= @extent[0].maxx  %>
     Navarra.dashboards.config.maxy = <%= @extent[0].maxy %>
+    <% else %>
 
+       Navarra.dashboards.config.minx = -180;
+    Navarra.dashboards.config.miny =  -90;
+    Navarra.dashboards.config.maxx = 180;
+    Navarra.dashboards.config.maxy = 90;
+<% end %>
 <% @projects.each do |a|%>
     <%if !a.the_geom.nil?  %>
     <% if @project_type.type_geometry != 'Polygon' %>
@@ -38,10 +44,10 @@
     <i class="fa fa-pie-chart fa-5x loadingBar"></i>
   </div>
 
-<div class="row">
-  <div id="map"></div>
-  <div class="graphics card-columns"></div>
-</div>
+  <div class="row">
+    <div id="map"></div>
+    <div class="graphics card-columns"></div>
+  </div>
 
   <!-- BOTONES FILTER HEATMAP COLOUR -->
   <div class="col-md-3 form-row" id="active-filters">
