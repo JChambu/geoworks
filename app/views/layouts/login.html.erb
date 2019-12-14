@@ -1,32 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <%= render :partial => 'common/head' %>
   </head>
- <body class="login">
-      <div>
-          <%= flash_messages %>
-          <div>
-               <a class="hiddenanchor" id="signup"></a>
-               <a class="hiddenanchor" id="signin"></a>
+  <body class="login">
 
-               <div class="login_wrapper">
-                 <div class="animate form login_form card">
-                   <div class="company-logo">
-                    <%=image_tag "geoworks_login.jpg", class:"img-circle", alt:""%>
+    <%= yield %>
 
-                   </div>
-                   <section class="login_content">
-
-          <%= yield %>
-        </section>
-        <div class="logo-geoworks">
-          <%=image_tag "logo_geoworks.png", alt:""  %>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
   </body>
 </html>
