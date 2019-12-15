@@ -1,10 +1,10 @@
 <p id="notice"><%= notice %></p>
 
-<div class="card card-margin shadow">
+<div class="card m-2 shadow">
   <div class="card-body">
     <div class="row">
       <div class="col-md-6">
-      <h1>Estados</h1>
+        <h1 class="m-0">Estados</h1>
       </div>
       <div class="col-md-6 text-right">
         <%= link_to 'Nuevo', new_project_type_project_status_path(@project_type), class: "btn btn-primary" %>
@@ -13,29 +13,29 @@
   </div>
 </div>
 
-<div class="offset-md-2 col-md-8">
- <div class="card m-2 shadow">
-   <div class="card-body">
-     <div class="table-responsive">
-       <table class="table table-hover table-striped table-bordered m-0">
-         <thead>
-           <tr>
-             <th>Nombre</th>
-             <th>Color</th>
-             <th colspan="3" class="text-center">Acciones</th>
-           </tr>
-         </thead>
-         <tbody>
-           <% @project_statuses.each do |project_status| %>
-             <tr>
-               <td><%= project_status.name %></td>
-               <td><div class="col-md-3" style="border-style: outset; background-color: <%= project_status.color %>">.</div></td>
-               <td class="text-center"><%= link_to edit_project_type_project_status_path(project_status.project_type_id, project_status) do %><i class="fas fa-edit"></i><%end%></td>
-             </tr>
-           <% end %>
-         </tbody>
-       </table>
-     </div>
-   </div>
- </div>
+<div class="card m-2 shadow">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped table-bordered m-0">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Color</th>
+            <th colspan="3" class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @project_statuses.each do |project_status| %>
+            <tr>
+              <td><%= project_status.name %></td>
+              <td>
+                <div class="col-md-3" style="border-style: outset; background-color: <%= project_status.color %>">.</div>
+              </td>
+              <td class="text-center"><%= link_to edit_project_type_project_status_path(project_status.project_type_id, project_status) do %><i class="fas fa-edit"></i><% end %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
