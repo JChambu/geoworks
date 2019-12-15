@@ -1,6 +1,6 @@
 module UsersHelper
   def roles_for_select
-    Role.sorted_by_name { |role| [role.name, role.id] }
+    Role.sorted_by_name  { |role| [role.name, role.id] }
   end
 
   def users_for_select

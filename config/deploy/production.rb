@@ -1,17 +1,13 @@
+# server-based syntax
 # ======================
 # Defines a single server with a list of roles and multiple properties.
 # You can define all roles on a single server, or split them:
 
-# server "example.com", user: "deploy", roles: %w{app db web}, my_property: :my_value
-# server "example.com", user: "deploy", roles: %w{app web}, other_property: :other_value
-# server "db.example.com", user: "deploy", roles: %w{db}
-
 
   set :stage, :production
   set :rails_env, 'production'
-  #set :default_env, { 'NODE_ENV' => 'production' }
 
-  server 'gis_staging.com', user: 'deployer', roles: %w{ web app}, my_property: :my_value
+  server 'navarra.xoomcode.com', user: 'webapps', roles: %w{ web app}, my_property: :my_value
 # role-based syntax
 # ==================
 
@@ -20,23 +16,10 @@
 # property set. Specify the username and a domain or IP for the server.
 # Don't use `:all`, it's a meta role.
 
-  #set :rbenv_ruby, '2.3.0'
-  role :app, %w{deployer@gis_staging.com}
-  role :web, %w{deployer@gis_staging.com}
-  role :db,  %w{deployer@gis_staging.com}
-
-
-# role-based syntax
-# ==================
-
-# Defines a role with one or multiple servers. The primary server in each
-# group is considered to be the first unless any hosts have the primary
-# property set. Specify the username and a domain or IP for the server.
-# Don't use `:all`, it's a meta role.
-
-# role :app, %w{deploy@example.com}, my_property: :my_value
-# role :web, %w{user1@primary.com user2@additional.com}, other_property: :other_value
-# role :db,  %w{deploy@example.com}
+set :rvm_ruby_version, '2.3.0'
+  role :app, %w{webapps@navarra.xoomcode.com}
+  role :web, %w{webapps@navarra.xoomcode.com}
+  role :db,  %w{webapps@navarra.xoomcode.com}
 
 
 

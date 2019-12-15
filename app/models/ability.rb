@@ -3,14 +3,12 @@ class Ability
 
   def initialize(user)
     #user ||= User.new # guest user (not logged in)
-   current_tenant = Apartment::Tenant.current
-   @user_c =  UserCustomer.where(user_id: user.id).where(customer_id: 1).first
-    @user_c.role.permissions.each do |permission|
+    user.role.permissions.each do |permission|
       can permission.model_type.name.to_sym, permission.event.name.to_sym 
     end
-     if @user_c.role.name == "superadmin"
-       can :manage, :all
-     end
+    if user.role.name == "superadmin"
+      can :manage, :all
+    end
 
     # if user.is? "Moderator"
     #   can :manage, :all

@@ -20,7 +20,6 @@ class RolesController < ApplicationController
 
   # GET /roles/1/edit
   def edit
-    @permissions = @role.permissions.all
   end
 
   # POST /roles
@@ -52,16 +51,15 @@ class RolesController < ApplicationController
   def update
     respond_to do |format|
        if @role.update(role_params)
-         Permission.where(role_id: @role.id).destroy_all
-        params[:permissions].each do |a|
-          params[:permissions][a].each do |r|
-            @a = Permission.new()
-            @a['event_id'] = r.to_i
-            @a['model_type_id'] = a.to_i
-            @a['role_id'] = @role.id
-            @a.save!
-          end 
-        end 
+      #   params[:permissions].each do |a|
+      #     params[:permissions][a].each do |r| 
+      #       @a = Permission.where()
+      #       @a['event_id'] = r.to_i
+      #       @a['model_type_id'] = a.to_i
+      #       @a['role_id'] = @role.id
+      #       @a.save!
+      #     end 
+      #   end 
          format.html { redirect_to roles_path, notice: 'Role was successfully updated.' }
          format.json { render :show, status: :ok, location: @role }
        else
