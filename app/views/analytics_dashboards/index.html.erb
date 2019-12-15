@@ -1,61 +1,30 @@
 <%- model_class = AnalyticsDashboard -%>
-<!-- OCULTA TITULO COPADO PARA USAR UNO CHONGO
-<div class="page-header">
-  <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
-</div>
--->
-<div class="col-md-12">
-  <h1>Indicadores de <%= project_name.name %></h1>
-</div>
-<div class="col-md-12 col-sm-12 col-xs-12 sub-header">
-  <div class="row">
-    <div class="col-md-9">
-    </div>
-    <div class="col-md-3 text-right">
-      <!-- OCULTA BOTON COPADO PARA USAR UNO CHONGO
-      <%= link_to t('.new', :default => t("helpers.links.new")),  new_project_type_dashboard_analytics_dashboard_path(@project_type, @dashboard), class:'btn btn-primary', remote: true%>
-      -->
-      <%= link_to 'Nuevo Inidicador',  new_project_type_dashboard_analytics_dashboard_path(@project_type, @dashboard), class:'btn btn-primary', remote: true%>
+
+<div class="card m-2 shadow">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <h1 class="m-0">Indicadores de
+          <%= project_name.name %></h1>
+      </div>
+      <div class="col-md-6 text-right">
+        <%= link_to 'Nuevo', new_project_type_dashboard_analytics_dashboard_path(@project_type, @dashboard), class:'btn btn-primary', remote: true%>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="col-md-12 col-sm-12 col-xs-12">
-  <div class="x_panel card">
-    <!--
-    <div class="x_title">
-      <ul class="nav navbar-right panel_toolbox">
-        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-        </li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Settings 1</a>
-            </li>
-            <li><a href="#">Settings 3</a>
-            </li>
-          </ul>
-        </li>
-        <li><a class="close-link"><i class="fa fa-close"></i></a>
-        </li>
-      </ul>
-      <div class="clearfix"></div>
-    </div>
-    -->
-    <div class="x_content">
-      <table class="table table-hover">
+<div class="card m-2 shadow">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped table-bordered m-0">
         <thead>
           <tr>
-            <!-- OCULTA CABECERAS COPADAS PARA USAR UNAS CHONGAS
-            <th><%= model_class.human_attribute_name(:title) %></th>
-            <th><%= model_class.human_attribute_name(:description) %></th>
-            -->
             <th>Título</th>
             <th>Descripción</th>
-            <th colspan="3"></th>
+            <th class="text-center" colspan="3">Acciones</th>
           </tr>
         </thead>
-
         <tbody>
           <% @analytics_dashboards.each do |analytics_dashboard| %>
             <%= render "row", analytics_dashboard: analytics_dashboard %>
@@ -65,4 +34,3 @@
     </div>
   </div>
 </div>
-<br>
