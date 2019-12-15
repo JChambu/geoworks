@@ -1,24 +1,25 @@
 <%- model_class = User -%>
 
-<div class="form-row">
-  <div class="col-md-12">
-    <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
-  </div>
-</div>
-<div class="form-row">
-  <div class="col-md-3"></div>
-  <div class="col-md-6 text-center">
-    <%= render :partial=> 'search' %>
-  </div>
-  <div class="col-md-3 text-right">
-    <%= link_to t('.new', :default => t("helpers.links.new")), new_admin_user_path,:class => 'btn btn-primary' %>
+<div class="card m-2 shadow">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-3">
+        <h1 class="m-0"><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
+      </div>
+      <div class="col-md-6 text-center">
+        <%= render :partial=> 'search'%>
+      </div>
+      <div class="col-md-3 text-right">
+        <%= link_to t('.new', :default => t("helpers.links.new")), new_admin_user_path,:class => 'btn btn-primary' %>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="x_panel card">
-  <div class="x_content">
+<div class="card m-2 shadow">
+  <div class="card-body">
     <div class="table-responsive">
-      <table class="table table-hover">
+      <table class="table table-hover table-striped table-bordered m-0">
         <thead>
           <tr>
             <th><%= model_class.human_attribute_name(:id) %></th>
@@ -43,5 +44,4 @@
     </div>
   </div>
 </div>
-
 <%= pager @users %>

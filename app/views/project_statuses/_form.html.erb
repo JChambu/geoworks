@@ -1,44 +1,37 @@
-<%= simple_form_for [@project_type, @project_status]  do |form| %>
-  <% if project_status.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(project_status.errors.count, "error") %> prohibited this project_status from being saved:</h2>
+<div class="offset-md-3 col-md-6">
+ <div class="card m-2 shadow">
+   <div class="card-body">
 
-      <ul>
-        <% project_status.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
+      <%= simple_form_for [@project_type, @project_status]  do |form| %>
+        <% if project_status.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(project_status.errors.count, "error") %> prohibited this project_status from being saved:</h2>
+            <ul><% project_status.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
+          </div>
         <% end %>
-      </ul>
-    </div>
-  <% end %>
 
-  <div class="x_panel card">
-    <div class="x_content">
+        <div class="form-group">
+          <div class="row justify-content-center">
+            <%= form.label :name, 'Nombre', class:'col-md-2 text-right col-form-label' %>
+            <div class="col-md-5">
+              <%= form.text_field :name, id: :project_status_name, class: "form-control form-control-sm" %>
+            </div>
+          </div>
+          <div class="row justify-content-center">
+            <%= form.label :color, class:'col-md-2 text-right col-form-label' %>
+            <div class="col-md-5">
+              <%= form.color_field :color, id: :project_status_color %>
+            </div>
+          </div>
+        </div>
 
-      <div class="form-group col-md-12">
-        <div class="col-md-1 text-right">
-          <%= form.label :name, 'Nombre' %>
-        </div>
-        <div class="col-md-3">
-          <%= form.text_field :name, id: :project_status_name, class: "form-control" %>
-        </div>
-      </div>
-
-      <div class="form-group col-md-12">
-        <div class="col-md-1 text-right">
-          <%= form.label :color %>
-        </div>
-        <div class="col-md-1">
-          <%= form.color_field :color, id: :project_status_color, class: "form-control" %>
-        </div>
-      </div>
-
-      <div class="form-group col-md-12 form-actions">
-        <div class="col-md-4 text-right">
-          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), project_type_project_statuses_path(@project_type), :class => 'btn btn-default' %>
+        <div class="row justify-content-center">
+          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), project_type_project_statuses_path(@project_type), :class => 'btn btn-secondary' %>
           <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
         </div>
-      </div>
+
+      <% end %>
 
     </div>
   </div>
-<% end %>
+</div>

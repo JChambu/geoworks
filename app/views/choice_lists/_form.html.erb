@@ -1,39 +1,38 @@
-<div class="x_panel card">
-  <div class="x_content">
+<div class="offset-md-3 col-md-6">
+  <div class="card m-2 shadow">
+    <div class="card-body">
 
-    <%= simple_form_for(choice_list) do |f| %>
-      <% if choice_list.errors.any? %>
-        <div id="error_explanation">
-          <h2><%= pluralize(choice_list.errors.count, "error") %> prohibited this choice_list from being saved:</h2>
-          <ul><% choice_list.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
-        </div>
-      <% end %>
-
-      <div class="form-group col-md-12">
-        <div class="col-md-1 text-right">
-          <%= f.label :name, 'Nombre' %>
-        </div>
-        <div class="col-md-3">
-          <%= f.text_field :name, class: "form-control" %>
-        </div>
-      </div>
-
-      <%= link_to_add_fields "Agregar Items", f, :choice_list_items %>
-
-      <div id="field_items" ,="," class="field_items">
-        <%= f.fields_for :choice_list_items do |i| %>
-          <%= render "choice_list_item_fields", f: i %>
+      <%= simple_form_for(choice_list) do |f| %>
+        <% if choice_list.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(choice_list.errors.count, "error") %> prohibited this choice_list from being saved:</h2>
+            <ul><% choice_list.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
+          </div>
         <% end %>
-      </div>
 
-      <div class="form-group col-md-12 form-actions">
-        <div class="col-md-4 text-right">
-          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), choice_lists_path, :class => 'btn btn-default' %>
+        <div class="row justify-content-center">
+          <%= f.label :name, 'Nombre', class: 'col-md-2 text-right col-form-label' %>
+          <div class="col-md-6">
+            <%= f.text_field :name, class: "form-control form-control-sm" %>
+          </div>
+        </div>
+
+        <div id="field_items" class="field_items text-center">
+          <%= f.fields_for :choice_list_items do |i| %>
+            <%= render "choice_list_item_fields", f: i %>
+          <% end %>
+        </div>
+
+        <div class="text-center mb-4">
+          <%= link_to_add_fields "<i class='fas fa-plus' title='Agregar item'></i>".html_safe, f, :choice_list_items %>
+        </div>
+
+        <div class="row justify-content-center">
+          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), choice_lists_path, :class => 'btn btn-secondary mr-1' %>
           <%= f.submit class: 'btn btn-primary', value: "Guardar"%>
         </div>
-      </div>
 
-    <% end %>
-
+      <% end %>
+    </div>
   </div>
 </div>

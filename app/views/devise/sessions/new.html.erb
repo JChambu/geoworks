@@ -1,19 +1,13 @@
-<%= simple_form_for(resource,
-  :as => resource_name,
-  :url => session_path(resource_name))  do |f| %>
+<%= simple_form_for(resource, :as => resource_name, :url => session_path(resource_name), html: {class: 'form-signin card p-5'}) do |f| %>
 
-<div class="form-group">
-  <%= f.label :email, "Email" %>
-  <%= f.input :email, label: false, placeholder: "Email",  required: false, autofocus: true, input_html: {class: "form-control"} %>
-</div>
- <div class="form-group">
-   <%= f.label :password, "Contraseña" %>
-<%= f.input :password, label: false, placeholder: "Password", input_html: {class: "form-control"} %>
-</div>
+  <div class="form-group">
+    <center><%=image_tag 'user.svg', class:'rounded-circle mb-4', width:"120"%></center>
+    <%= f.input :email, label: false, placeholder: "E-mail", required: false, autofocus: true, input_html: {class: "form-control"} %>
+    <%= f.input :password, label: false, placeholder: "Contraseña", input_html: {class: "form-control"} %>
+  </div>
 
-<div class="text-center">
-  <%= f.button :submit, "Ingresar", class: 'btn btn-primary btn-lg submit' %>
-</div>
-               <div class="clearfix"></div>
+  <%= f.button :submit, "Ingresar", class: 'btn btn-lg btn-primary btn-block mb-4' %>
+
+  <center><%=image_tag "logo_geoworks.png" %></center>
 
 <% end %>

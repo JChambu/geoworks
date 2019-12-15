@@ -63,7 +63,7 @@ $(document).on('click', 'form .add_fields', function(event){
   } else if ($(this).hasClass('chart_serie')) { // Series de gráficos
     $(this).before($(this).data('fields').replace(regexp, time))
   } else { // Resto
-    $(this).after($(this).data('fields').replace(regexp, time))
+    $(this).before($(this).data('fields').replace(regexp, time))
   }
 
   event.preventDefault();

@@ -446,13 +446,31 @@ function init_chart_doughnut(size_box = null){
           //Valida si el chart_container no existe para entonces crearlo (Fix temporal, averiguar porque duplican los charts)
           if($(".chart_container"+graphic_id).length == 0) {
 
-            var canvas_graph = document.createElement('canvas');
-            canvas_id = ('canvas'+graphic_id);
-            canvas_graph.id = canvas_id;
-            canvas_graph.className = 'canvas'+graphic_id;
-            htmldiv = '<div class="panel panel-default chart_container'+graphic_id+'" style="margin-bottom: 5px">';
-            $('.graphics').append(htmldiv);
-            $('.chart_container'+graphic_id).append(canvas_graph);
+
+            $('.graphics').append(
+              $('<div>', {
+                'class': 'card text-light bg-primary chart_container'+graphic_id,
+                'id': 'chart-container'+graphic_id
+              }).append(
+                $('<div>', {
+                  'class': 'card-header pl-3',
+                  'id': 'header'+graphic_id
+                }).append(
+                  $('<b>', {
+                    'text': title
+                  })
+                ),
+                $('<div>', {
+                  'class': 'card-body',
+                  'id': 'body'+graphic_id
+                }).append(
+                  $('<canvas>', {
+                    'class': 'canvas'+graphic_id,
+                    'id': 'canvas'+graphic_id
+                  })
+                )
+              )
+            )
 
             //Chequeamos el estado de view
             status_view = $('#view').hasClass('active');
@@ -460,17 +478,20 @@ function init_chart_doughnut(size_box = null){
             if (!status_view){ //Default
 
               $('.chart_container'+graphic_id).addClass('col-md-12');
-              aspectR ="1";
+              //aspectR ="1";
               //legend_display = false;
 
             }else{ //Active
 
               $('.chart_container'+graphic_id).addClass('col-md-'+width);
+
+              /*
               if(width == '6'){
                 aspectR = "1";
               }else{
                 aspectR = "2";
               }
+              */
               //legend_display = true;
 
             }
@@ -480,11 +501,6 @@ function init_chart_doughnut(size_box = null){
               var option_legend = {
                 responsive: true,
                 aspectRatio: aspectR,
-                title: {
-                  display: true,
-                  text: title,
-                  fontSize: 18
-                },
                 legend: {
                   display: legend_display,
                   position: 'bottom',
@@ -559,7 +575,7 @@ function init_chart_doughnut(size_box = null){
                   }
                 },
               }
-              var chart_doughnut_settings = {
+              var chart_settings = {
                 type: 'bar',
                 data: data_gx,
                 options:  option_legend
@@ -571,11 +587,6 @@ function init_chart_doughnut(size_box = null){
               var option_legend = {
                 responsive: true,
                 aspectRatio: aspectR,
-                title: {
-                  display: true,
-                  text: title,
-                  fontSize: 18
-                },
                 legend: {
                   display: legend_display,
                   position: 'bottom',
@@ -629,7 +640,7 @@ function init_chart_doughnut(size_box = null){
                   }
                 },
               }
-              var chart_doughnut_settings = {
+              var chart_settings = {
                 type: 'horizontalBar',
                 data: data_gx,
                 options:  option_legend
@@ -641,11 +652,6 @@ function init_chart_doughnut(size_box = null){
               var option_legend = {
                 responsive: true,
                 aspectRatio: aspectR,
-                title: {
-                  display: true,
-                  text: title,
-                  fontSize: 18
-                },
                 legend: {
                   display: legend_display,
                   position: 'bottom',
@@ -680,7 +686,7 @@ function init_chart_doughnut(size_box = null){
                   }
                 },
               }
-              var chart_doughnut_settings = {
+              var chart_settings = {
                 type: type_chart,
                 data: data_gx,
                 options:  option_legend
@@ -692,11 +698,6 @@ function init_chart_doughnut(size_box = null){
               var option_legend = {
                 responsive: true,
                 aspectRatio: aspectR,
-                title: {
-                  display: true,
-                  text: title,
-                  fontSize: 18
-                },
                 legend: {
                   display: legend_display,
                   position: 'bottom',
@@ -740,19 +741,16 @@ function init_chart_doughnut(size_box = null){
                   }
                 },
               }
-              var chart_doughnut_settings = {
+              var chart_settings = {
                 type: 'bubble',
                 data: data_gx,
                 options:  option_legend
               }
             }
 
-            var cc = '#'+canvas_graph.id;
-            $(cc).each(function(){
-              var chart_element = $(this);
-              var chart_doughnut = new Chart(canvas_id, chart_doughnut_settings);
-              Chart.defaults.global.defaultFontFamily = 'Source Sans Pro';
-            });
+            var chart_canvas = document.getElementById('canvas'+graphic_id).getContext('2d');
+            var final_chart = new Chart(chart_canvas, chart_settings);
+
           }; //cierra if .chart_container"+graphic_id
         } //cierra for data
 
