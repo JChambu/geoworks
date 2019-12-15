@@ -1,56 +1,80 @@
 <%- model_class = ProjectType -%>
-
-<div class="card m-2 shadow">
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-4">
-        <h1 class="m-0">Proyectos</h1>
+<div cqlass="right_col" role="main" style="margin-left: 0 !important;">
+  <div class="col-md-12">
+    <div class="page-title">
+      <div class="title_left">
+        <h1>Proyectos</h1>
       </div>
-      <div class="col-md-4 text-center">
-        <%= form_tag project_types_path, method: :get do %>
-          <div class="input-group">
-            <%= text_field_tag(:search_project, '', class: 'form-control',  placeholder: 'Buscar Proyectos' )%>
-            <div class="input-group-append">
-              <%= submit_tag 'Buscar', class: 'btn btn-primary' %>
+      <%= form_tag project_types_path, method: :get do %>
+        <div class="title_right">
+          <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+            <div class="input-group">
+              <%= text_field_tag(:search_project, '', class: 'form-control',  placeholder: 'Buscar Proyectos' )%>
+              <span class="input-group-btn">
+                <%= submit_tag 'Buscar' , class: 'btn btn-default'  %>
+              </span>
             </div>
           </div>
-        <% end %>
-      </div>
-      <div class="col-md-4 text-right">
-        <%= link_to 'Nuevo', new_project_type_path, class: "btn btn-primary" %>
-      </div>
-    </div>
-    <div>
-      <%= pager @project_types %>
+        </div>
+      <% end %>
     </div>
   </div>
-</div>
+  <div class="col-md-12 col-sm-12 col-xs-12 sub-header">
+    <div class="row">
+      <div class="col-md-9">
+        <ul>
+          <%= pager @project_types %>
+        </ul>
+      </div>
+      <div class="col-md-3 text-right">
+  <% if can? :project_types, :new %>
+        <%= link_to 'Nuevo Proyecto', new_project_type_path, class: "btn btn-primary" %>
+  <% end %>
+      </div>
+    </div>
+  </div>
 
-<div class="card m-2 shadow">
-  <div class="card-body">
-    <div class="table-responsive">
-      <table class="table table-hover table-striped table-bordered m-0">
-        <thead>
-          <th>Nombre</th>
-          <th colspan="4">Cantidad</th>
-          <th colspan="3" class="text-center">Acciones</th>
-        </thead>
-        <tbody>
-          <% @project_types.each do |project_type| %>
-            <tr>
-              <td><%= project_type.name %></td>
-              <td><%= project_type.projects.count %></td>
-              <td><%= link_to 'Datos', project_type_projects_path(project_type) %></td>
-              <td><%= link_to 'Tableros', project_type_dashboards_path(project_type.id) %></td>
-              <td><%= link_to 'Estados', project_type_project_statuses_path(project_type) %></td>
-              <td class="text-center"><%= link_to project_type_share_path(project_type.id) , id: "share", :remote=> true  do  %> <i class="fas fa-share-alt" title="Compartir"></i> <%end %></td>
-              <td class="text-center"><%= link_to edit_project_type_path(project_type) do  %> <i class="fas fa-edit" title="Editar"></i> <%end %></td>
-              <td class="text-center"><%= link_to project_type_path(project_type), method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
-            </tr>
-            <%= render "share" %>
-          <% end %>
-        </tbody>
-      </table>
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel card">
+      <div class="x_content">
+
+        <table class="table table-hover">
+          <thead>
+            <th>Nombre</th>
+            <th>Cantidad</th>
+            <th colspan="3"></th>
+          </thead>
+          <tbody>
+            <% @project_types.each do |project_type| %>
+              <tr>
+                <td><%= project_type.name %></td>
+                <td><%= project_type.projects.count %></td>
+
+                <% if can? :projects, :visualizer %>
+                  <td><%= link_to 'Datos', project_type_projects_path(project_type) %></td>
+                <% end %>
+                <% if can? :dashboards, :visualizer %>
+                <td><%= link_to 'Tableros', project_type_dashboards_path(project_type.id) %></td>
+                <% end %>
+                <% if can? :statuses, :visualizer %>
+                  <td><%= link_to 'Estados', project_type_project_statuses_path(project_type) %></td>
+                <% end %>
+                <% if can? :project_types, :share %>
+                  <td><%= link_to project_type_share_path(project_type.id) , id: "share", :remote=> true  do  %> <i class="fas fa-share-alt" title="Compartir"></i> <%end %></td>
+                <% end %>
+                <% if can? :project_types, :edit %>
+                  <td><%= link_to edit_project_type_path(project_type) do  %> <i class="fas fa-edit" title="Editar"></i> <%end %></td>
+                <% end %>
+                <% if can? :project_types, :destroy %>
+                <td><%= link_to project_type_path(project_type), method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
+                <% end %>
+              </tr>
+              <%= render "share" %>
+            <% end %>
+          </tbody>
+        </table>
+
+      </div>
     </div>
   </div>
 </div>
