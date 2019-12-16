@@ -1,25 +1,24 @@
-<!-- Padres -->
 <tr>
-  <td colspan="2"><%= f.text_field :name, class: "form-control" %></td>
+  <td colspan="2"><%= f.text_field :name, class: "form-control form-control-sm" %></td>
   <td><%= f.check_box :required %></td>
   <td><%= f.check_box :hidden %></td>
   <td><%= f.check_box :read_only %></td>
   <td><%= f.check_box :popup %></td>
-  <td><%= f.text_field :calculated_field, class: "form-control" %></td>
-  <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {include_blank: ''}, {class: 'typef form-control' } %></td>
+  <td><%= f.text_field :calculated_field, class: "form-control form-control-sm" %></td>
+  <td><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {include_blank: ''}, {class: 'typef form-control form-control-sm' } %></td>
   <td>
     <% if f.object.field_type_id == 2 || f.object.field_type_id == 10 %>
-      <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control choice_list'} %>
+      <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control form-control-sm choice_list'} %>
     <% elsif f.object.field_type_id == 7 %>
       <%= link_to_add_fields "<i class='fas fa-plus sub_form' title='Agregar sub-atributo'></i>".html_safe, f, :project_subfields, class: 'table_children' %>
     <% else %>
-      <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control choice_list', :style => 'display: none'} %>
+      <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control form-control-sm choice_list', :style => 'display: none'} %>
       <%= link_to_add_fields "<i class='fas fa-plus sub_form' title='Agregar sub-atributo' style='display: none'></i>".html_safe, f, :project_subfields, class: 'table_children' %>
     <% end %>
   </td>
-  <%= f.hidden_field :sort, class: 'project_fields_current_position form-control', readonly: true %>
+  <%= f.hidden_field :sort, class: 'project_fields_current_position form-control form-control-sm', readonly: true %>
   <%= f.hidden_field :_destroy%>
-  <td><%= f.collection_select :role, Role.order(:name), :id, :name, {}, {multiple: true, size: 1, class: 'form-control rol_select'} %></td>
+  <td><%= f.collection_select :role, Role.order(:name), :id, :name, {}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></td>
   <td><%= link_to '#', class: "remove_fields_2" do  %> <i class="fas fa-trash-alt" title="Eliminar atributo"></i> <%end %></td>
   <%= f.fields_for :project_subfields, @project_subfields do |a| %>
     <%= render 'project_subfield_fields', f: a  %>
