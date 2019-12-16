@@ -28,17 +28,33 @@
           </li>
         <% end %>
         <% if !@project_type.nil? %>
-
-          <%= form_for(dashboards_show_path(), method: 'Get') do |f|  %>
-            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-              <%= select_tag :project_type_id, options_from_collection_for_select(ProjectType.all, :id, :name), class: 'form-control' %>
-              <%= f.submit "Buscar", class: "btn btn-primary" %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Proyectos
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <% ProjectType.all.each do |project| %>
+                <%= link_to "#{project.name}", dashboards_show_path(project_type_id: project.id),  class: "dropdown-item" %>
+              <% end %>
+              <div class="dropdown-divider"></div>
+              <%= link_to 'Nuevo', new_project_type_path, class: "btn btn-primary", class: "dropdown-item"  %>
             </div>
-            <%= link_to 'Nuevo', new_project_type_path, class: "btn btn-primary" %>
-          <% end %>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <%= @project_type.name %>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <%= link_to 'Datos', project_type_projects_path(@project_type.id), class: "dropdown-item"  %>
+              <%= link_to 'Estados', project_type_project_statuses_path(@project_type.id), class: "dropdown-item"  %>
+              <%= link_to 'Compartir', project_type_share_path(@project_type.id), remote:true,remote:true,  class: "dropdown-item"  %>
+              <%= link_to 'Editar', edit_project_type_path(@project_type.id), class: "dropdown-item"  %>
+              <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' } , remote: true, class: "dropdown-item" %> 
+            </div>
+          </li>
+
         <% end %>
       <% end %>
-
       <!-- Datos del Proyecto -->
       <%if params[:controller] == 'projects' && params[:action] == 'index' %>
         <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
@@ -47,70 +63,70 @@
       <!-- Tableros -->
       <%if params[:controller] == 'dashboards' && params[:action] == 'index' %>
         <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-      <% end %>
+    <% end %>
 
-      <%if params[:controller] == 'dashboards' && params[:action] == 'edit' || params[:controller] == 'dashboards' && params[:action] == 'new' %>
-        <li class="nav-item"><%= link_to project_type_dashboards_path(@project_type.id), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-      <% end %>
+    <%if params[:controller] == 'dashboards' && params[:action] == 'edit' || params[:controller] == 'dashboards' && params[:action] == 'new' %>
+      <li class="nav-item"><%= link_to project_type_dashboards_path(@project_type.id), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+  <% end %>
 
-      <%if params[:controller] == 'project_fields' && params[:action] == 'edit_multiple' %>
-        <li class="nav-item"><%= link_to project_type_project_fields_path(params[:project_type_id]), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-      <% end %>
+  <%if params[:controller] == 'project_fields' && params[:action] == 'edit_multiple' %>
+    <li class="nav-item"><%= link_to project_type_project_fields_path(params[:project_type_id]), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+<% end %>
 
-      <%if params[:controller] == 'project_data_children' && params[:action] == 'index' %>
-        <li class="nav-item"><%= link_to project_type_projects_path(params[:project_type_id]), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+<%if params[:controller] == 'project_data_children' && params[:action] == 'index' %>
+  <li class="nav-item"><%= link_to project_type_projects_path(params[:project_type_id]), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
       <% end %>
 
       <!-- Campos del Proyecto -->
       <%if params[:controller] == 'project_fields' && params[:action] == 'index' %>
         <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-      <% end %>
+    <% end %>
 
-      <!-- Editar Proyecto -->
-      <%if params[:controller] == 'project_types' && params[:action] == 'edit' %>
-        <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-      <% end %>
+    <!-- Editar Proyecto -->
+    <%if params[:controller] == 'project_types' && params[:action] == 'edit' %>
+      <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+  <% end %>
 
-      <!-- Nuevo Proyecto -->
-      <%if params[:controller] == 'project_types' && params[:action] == 'new' %>
-        <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-      <% end %>
+  <!-- Nuevo Proyecto -->
+  <%if params[:controller] == 'project_types' && params[:action] == 'new' %>
+    <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+<% end %>
 
-      <!-- Capas -->
-      <%if params[:controller] == 'layers' && params[:action] == 'index' %>
-        <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+<!-- Capas -->
+<%if params[:controller] == 'layers' && params[:action] == 'index' %>
+  <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
       <% end %>
 
       <!-- Nueva Capa y Editar Capas a Capas -->
       <%if params[:controller] == 'layers' && params[:action] == 'edit' || params[:controller] == 'layers' && params[:action] == 'new' %>
         <li class="nav-item"><%= link_to layers_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-      <% end %>
+    <% end %>
 
-      <!-- Roles -->
-      <%if params[:controller] == 'roles' && params[:action] == 'index' %>
-        <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-      <% end %>
+    <!-- Roles -->
+    <%if params[:controller] == 'roles' && params[:action] == 'index' %>
+      <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+  <% end %>
 
-      <!-- Nuevo Rol y Editar Rol a Roles -->
-      <%if params[:controller] == 'roles' && params[:action] == 'edit' || params[:controller] == 'roles' && params[:action] == 'new' %>
-        <li class="nav-item"><%= link_to roles_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-      <% end %>
+  <!-- Nuevo Rol y Editar Rol a Roles -->
+  <%if params[:controller] == 'roles' && params[:action] == 'edit' || params[:controller] == 'roles' && params[:action] == 'new' %>
+    <li class="nav-item"><%= link_to roles_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+<% end %>
 
-      <!-- Nuevo Listado y Editar Listado a Listados -->
-      <%if params[:controller] == 'choice_lists' && params[:action] == 'edit' || params[:controller] == 'choice_lists' && params[:action] == 'new' %>
-        <li class="nav-item"><%= link_to choice_lists_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+<!-- Nuevo Listado y Editar Listado a Listados -->
+<%if params[:controller] == 'choice_lists' && params[:action] == 'edit' || params[:controller] == 'choice_lists' && params[:action] == 'new' %>
+  <li class="nav-item"><%= link_to choice_lists_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
       <% end %>
 
       <!-- Editar Usuario -->
       <%if params[:controller] == 'users' && params[:action] == 'edit' %>
         <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-      <% end %>
+    <% end %>
 
-      <!-- Indicadores -->
-      <%if params[:controller] == 'analytics_dashboards' && params[:action] == 'index' %>
-        <li class="nav-item"><%= link_to project_type_dashboards_path(@project_type.id), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-        <li class="nav-item"><%= link_to project_type_dashboard_path(@project_type, params[:dashboard_id]), class: 'nav-link' do %> <i class="fas fa-map-marked-alt"></i></li> <% end %>
-      <% end %>
+    <!-- Indicadores -->
+    <%if params[:controller] == 'analytics_dashboards' && params[:action] == 'index' %>
+      <li class="nav-item"><%= link_to project_type_dashboards_path(@project_type.id), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+    <li class="nav-item"><%= link_to project_type_dashboard_path(@project_type, params[:dashboard_id]), class: 'nav-link' do %> <i class="fas fa-map-marked-alt"></i></li> <% end %>
+<% end %>
     </ul>
 
     <!-- Menú  -->
