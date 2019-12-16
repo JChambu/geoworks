@@ -6,35 +6,38 @@
       <!-- Tablero Mapa -->
       <%if params[:controller] == 'dashboards' && params[:action] == 'show' %>
         <% if !@dashboard.nil? %>
-        <li class="nav-item"><%= link_to project_type_dashboards_path(@project_type.id), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver" style="font-size: 26px"></i> <% end %></li>
-        <li class="nav-item"><%= link_to "#", class: 'nav-link', id: "view" do %> <i class="fas fa-table" title="Cambiar Vista" style="font-size: 26px"></i> <% end %></li>
-        <li class="nav-item"><%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, @dashboard.id), class: 'nav-link' do %> <i class="fas fa-database" title="Crear Indicador" style="font-size: 26px"></i> <% end %></li>
-        <li class="nav-item"><%= link_to "#", class: 'nav-link', id: "select" do %> <i class="fas fa-draw-polygon" title="Dibujar Polígono" style="font-size: 26px"></i> <% end %></li>
-        <li class="nav-item"><%= link_to project_type_filters_path(@project_type.id), class: 'nav-link', id: "filter",:remote => true do %> <i class="fas fa-filter" title="Filtrar" style="font-size: 26px"></i> <% end %></li>
-        <li class="nav-item">
-          <%= link_to project_type_heatmap_path(@project_type.id), class: 'nav-link', id: "heatmap", :remote=> true do %> <i class="fas fa-fire" title="Mapa de Calor" style="font-size: 26px"></i> <% end %></li><li class="nav-item">
-          <%= link_to project_type_point_colors_path(@project_type.id), class: 'nav-link', id: "point_colors", :remote=> true do %> <i class="fas fa-spinner" title="Puntos de Colores" style="font-size: 26px"></i> <% end %>
-        </li>
-        <li class="nav-item dropdown">
-          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-            <i class="fas fa-chart-pie chart-modal" style="font-size: 26px"></i>
-          </a>
-          <ul class="dropdown-menu" style="min-width: 60px">
-            <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-pie chart-modal" style="font-size: 26px" id="doughnut" title="Dona"></i> <% end %> </a></li>
-            <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-bar chart-modal" style="font-size: 26px" id="bar" title="Barra"></i> <% end %> </a></li>
-            <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-align-left chart-modal" style="font-size: 26px" id="horizontal" title="Barra Horizontal"></i> <% end %> </a></li>
-            <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-ellipsis-h chart-modal" style="font-size: 26px" id="bubble" title="Burbuja"></i> <% end %> </a></li>
-          </ul>
-        </li>
-      <% end %>
+          <li class="nav-item"><%= link_to project_type_dashboards_path(@project_type.id), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver" style="font-size: 26px"></i> <% end %></li>
+          <li class="nav-item"><%= link_to "#", class: 'nav-link', id: "view" do %> <i class="fas fa-table" title="Cambiar Vista" style="font-size: 26px"></i> <% end %></li>
+          <li class="nav-item"><%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, @dashboard.id), class: 'nav-link' do %> <i class="fas fa-database" title="Crear Indicador" style="font-size: 26px"></i> <% end %></li>
+          <li class="nav-item"><%= link_to "#", class: 'nav-link', id: "select" do %> <i class="fas fa-draw-polygon" title="Dibujar Polígono" style="font-size: 26px"></i> <% end %></li>
+          <li class="nav-item"><%= link_to project_type_filters_path(@project_type.id), class: 'nav-link', id: "filter",:remote => true do %> <i class="fas fa-filter" title="Filtrar" style="font-size: 26px"></i> <% end %></li>
+          <li class="nav-item">
+            <%= link_to project_type_heatmap_path(@project_type.id), class: 'nav-link', id: "heatmap", :remote=> true do %> <i class="fas fa-fire" title="Mapa de Calor" style="font-size: 26px"></i> <% end %></li><li class="nav-item">
+            <%= link_to project_type_point_colors_path(@project_type.id), class: 'nav-link', id: "point_colors", :remote=> true do %> <i class="fas fa-spinner" title="Puntos de Colores" style="font-size: 26px"></i> <% end %>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-chart-pie chart-modal" style="font-size: 26px"></i>
+            </a>
+            <ul class="dropdown-menu" style="min-width: 60px">
+              <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-pie chart-modal" style="font-size: 26px" id="doughnut" title="Dona"></i> <% end %> </a></li>
+              <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-bar chart-modal" style="font-size: 26px" id="bar" title="Barra"></i> <% end %> </a></li>
+              <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-align-left chart-modal" style="font-size: 26px" id="horizontal" title="Barra Horizontal"></i> <% end %> </a></li>
+              <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-ellipsis-h chart-modal" style="font-size: 26px" id="bubble" title="Burbuja"></i> <% end %> </a></li>
+            </ul>
+          </li>
+        <% end %>
         <% if !@project_type.nil? %>
-        <%= form_for(dashboards_show_path(), method: 'Get') do |f|  %>
-      <%= f.submit "Buscar" %>
-      <%= select_tag :project_type_id, options_from_collection_for_select(ProjectType.all, :id, :name) %>
-      <li><%= link_to 'Nuevo', new_project_type_path, class: "btn btn-primary" %></li>
-    <% end %>
-    <% end %>
-    <% end %>
+
+          <%= form_for(dashboards_show_path(), method: 'Get') do |f|  %>
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+              <%= select_tag :project_type_id, options_from_collection_for_select(ProjectType.all, :id, :name), class: 'form-control' %>
+              <%= f.submit "Buscar", class: "btn btn-primary" %>
+            </div>
+            <%= link_to 'Nuevo', new_project_type_path, class: "btn btn-primary" %>
+          <% end %>
+        <% end %>
+      <% end %>
 
       <!-- Datos del Proyecto -->
       <%if params[:controller] == 'projects' && params[:action] == 'index' %>
