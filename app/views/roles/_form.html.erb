@@ -21,16 +21,16 @@
       <div class="row">
         <% ModelType.all.each do |mt| %>
           <div class="col-md-2 mb-2">
-            <legend><%= mt.name %></legend>
+            <legend><%= t(mt.name) %></legend>
             <% Event.all.each do |e| %>
               <% if params[:action] == 'new' %>
                 <%= check_box_tag "permissions[#{mt.id}][#{e.id}]" %>
-                <%= e.name %>
+                <%= t(e.name) %>
               <% else %>
                 <div class="form-group">
                   <div class="custom-control custom-switch">
                     <%= check_box_tag "permissions[#{mt.id}][#{e.id}]",e.id , @permissions.any? {|c| c.event_id == e.id && c.model_type_id == mt.id}, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
-                    <label class="custom-control-label" for="<%="chk#{mt.name}#{e.name}"%>"><%= e.name %></label>
+                    <label class="custom-control-label" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
                   </div>
                 </div>
               <% end %>

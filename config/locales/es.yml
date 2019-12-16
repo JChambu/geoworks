@@ -1,9 +1,32 @@
 es:
+  new: 'Nuevo'
+  edit: 'Editar'
+  destroy: 'Baja'
+  visualizer: 'Consultar'
+  export: 'Exportar'
+  import: 'Importar'
+  share: 'Compartir'
+  choice_lists: 'Listados'
+  customers: 'Corporaciones'
+  roles: 'Roles'
+  attributes: 'Atributos'
+  users: 'Usuarios'
+  data: 'Datos'
+  reports: 'Reportes'
+  indicators: 'Indicadores'
+  dashboards: 'Tableros'
+  project_types: 'Proyectos'
+  layers: 'Capas'
+  regexp: 'Expresiones Regulares'
   buttons:
     search: Buscar
     validated: Buscar Validados de esta semana
     delivered: Buscar Entregados de esta semana
   views:
+    events:
+      index:
+        td:
+         'New': Nuevo
     reports:
       pois:
         title: Reporte de Pois
@@ -17,84 +40,6 @@ es:
       users:
         title: Reporte de Usuarios
       poi_verification: Verificacion de poi
-    poi_load:
-      form:
-        pois_upload_explanation_title: Recordar
-        pois_upload_explanation: |
-          <ul><li>Se debe cargar un archivo con la misma estructura que el de este <a href=%{link}>archivo de ejemplo</a></li>
-          <li>Debe ser un archivo de tipo .xls (NO .xlsx)</li>
-          <li>Se debe respetar el orden de las columnas y su nombre.</li></ul>
-      index:
-        delete_confirm: "Tenga presente que si borra la carga se borrarán los Pois asociados a esta. Desea continuar de todos modos?"
-        explanation_title: Atención!
-        explanation: |
-          <li>Si se borra una carga con Pois salvados estos se borrarán del sistema de forma permanente.</li>
-          <li>Si la carga realizada tiene errores se podrá descargar un archivo con el detalle de estos.</li>
-          <li>Las cargas tienen tres estados:
-            <ol><li>Pendiente: para indicar que se está procesando el archivo Excel y que los puntos todavía no están en el sistema.</li>
-            <li>Completa: para indicar que se terminó con el proceso de carga.</li>
-            <li>Incompleto: si se produjo algún error desconocido por el que no se pudo terminar de cargar los puntos.</li></ol>
-          <li>Independientemente del estado, se podrá visualizar la cantidad de Pois cargados en el sistema y si los hubiera, la cantidad de Pois que no se ingresaron por contener errores. También se ignorará aquellos Pois cuyo identificador (primer columna del Excel) se encuentre previamente guardado en la base de datos.</li>
-          <li>Si el valor de la primer columna del Excel (Identificador) es vacío se tomará como final de archivo y se interrumpirá la carga.</li></ul>
-    poi_address: Poi addresses
-    extented_listings: Listado
-    parkings:
-      fieldset:
-        name_parking: Nombre Estacionamiento
-        facility_type: Tipo de Estacionamiento
-        detailed_address: Dirección
-        price_information: Información precio
-        payment_methods: Métodos de Pago
-        opening_hours: Horario
-        restrictions: Restrinciones
-        facility_details: Caracteristicas
-        facility_detail_drive_electrics: Caracteristicas Vehiculos Electricos
-        administration: Administracion
-        facility_availability: Disponibilidad
-        referencies: Referencias
-        payment: Pagos
-        parking_configuration: Tipo de Estacionamientos
-        parking_capacity: Capacidad de Estacionamientos
-        side_street: Lado de Calle
-        poi_statuses: Estado
-
-    poi:
-      duplicated:
-        title: Posibles Duplicados
-      index:
-        pois_count: "Total: %{count}"
-        messages:
-          to_many_poist_for_download: "No puede descargar más de %{count} Pois. Cambie su filtro de búsqueda e intente otra vez"
-          download_error: "Ocurrio un error al intentar descargar el archivo" 
-          deliver_error: "Ocurrio un error al intentar marcar los Pois como entregados"
-          deliver_success: "Se marcaron como \"Entregado\": %{count} poi"
-          deliver_warning: "Se marcarán como enviados todos Pois que caigan dentro del filtro elegido. Esta operación no puede deshacerse. Desea continuar?"
-          control_date_range_doesnt_exist: "Debe especificar un rango de fechas para poder realizar esta acción"
-        buttons:
-          deliver: Marcar como Entregados
-          download: Descargar .xls
-      form:
-        possible_duplicates:
-          title: Posibles Duplicados
-        fieldsets:
-          poi: Poi
-          contact: Contacto
-          location: Ubicación
-          other: Nota
-          map_legend: Leyenda Mapa
-          map_actions: Selección de ubicación
-          poi_action: Acción
-
-        buttons:
-          add_location: Agregar ubicación
-          suggest_location: Sugerir ubicaciones
-        map:
-          add_location_hint: Seleccione una ubicación en el mapa haciendo clic en él.<br>Debe aparecer un marker verde indicando la posición elegida.
-          suggest_location_hint: Seleccione el marker que representa la ubicación deseada.<br>Este debe cambiar de color azul a verde.
-          legend:
-            selected: "Ubicación seleccionada"
-            suggested: "Ubicación sugerida"
-            initial: "Ubicación inicial"
   true_value: "Sí"
   false_value: "No"
   flash_message:
@@ -112,17 +57,6 @@ es:
       update_fail: Ocurrió un problema en la actualización
       resource_destroy_fail: "Ocurrió un problema al intentar eliminar recurso \"%{resource}\""
       destroy_fail: Ocurrió un problema al intentar eliminar
-  roles:
-    admin: Administrador
-    user: Usuario
-  poi_load_statuses:
-    complete: Completa
-    pending: Pendiente
-    uncomplete: Incompleto
-  poi_address_load_statuses:
-    complete: Completa
-    pending: Pendiente
-    uncomplete: Incompleto
   pager:
     next: Siguiente
     previous: Anterior
@@ -146,25 +80,6 @@ es:
       generate_deliveries: Generar Entregas
       extended_listings: LED 
       categories: categorias
-    reports:
-      title: Reportes
-      pois: Poi
-      users: Usuarios
-      poi_verification: Verificacion de poi
-    pois:
-      new: Nuevo Poi
-      title: Poi
-      check: Check
-      list: Listado
-      upload: Cargas Poi
-      duplicated: Duplicados
-    poi_addresses: 
-      title: Poi Address
-      new: Nuevo poi Address
-      loads: Cargar Poi Address
-      georeferenced: Poi Georeferenciados
-    geo_editions:
-      title: Geo Edicion
   date:
     abbr_day_names:
     - dom
@@ -268,46 +183,6 @@ es:
 
       app_configuration:
         al_least_one_configuration: Debe existir por lo menos una configuración activa en el sistema.
-      poi:
-        undefined_control_date: Debe seleccionar una fecha de control.
-        nonexistent: No existe Poi con el identificador dado.
-        invalid_poi_action: "El poi Action para los poi nuevos, debe ser: new o check "
-        same_original_and_duplicated: El identificador del duplicado no puede ser igual al del Poi.
-        empty_geometry: Debe seleccionar una ubicación en el mapa.
-        restaurant_type_error: El tipo de Restaurant es solo para México
-      city:
-        related_pois: La ciudad tiene Pois relacionados.
-      province:
-        related_departments: La provincia tiene Departamentos relacionados.
-      department:
-        related_cities: El departamento tiene Ciudades relacionadas.
-      country:
-        related_provinces: El país tiene provincias relacionadas.
-      user:
-        related_pois: El usuario ha creado/editado Pois.
-      poi_source:
-        related_pois: El origen de datos tiene Pois relacionados.
-      street_type:
-        related_pois: El tipo de calle tiene Pois relacionados.
-      restaurant_type:
-        related_pois: El tipo de restaurant tiene Pois relacionados.
-      chain:
-        related_pois: La cadena tiene Pois relacionados.
-      food_type:
-        related_pois: El tipo de comida tiene Pois relacionados.
-      poi_status:
-        related_pois: El estado de Poi tiene Pois relacionados.
-      poi_sub_type:
-        related_pois: El Subtipo de Poi tiene Pois relacionados.
-      poi_load:
-        xls_does_not_exist: "Debe seleccionar un archivo Excel con la estructura de los pois a cargar en el sistema"
-        invalid_xls_type: "El archivo a subir debe ser del tipo: Libro de Excel 97-2004 y tener extensión .xls"
-        invalid_file_type: "El archivo a subir debe ser del tipo: CSV o SHP"
-      poi_type:
-        related_pois: El Tipo de Poi tiene Pois relacionados.     
-        related_poi_sub_types: El Tipo de Poi tiene Subtipos de Poi relacionados.
-        related_chains: El Tipo de Poi tiene Cadenas relacionadas.
-        related_food_types: El Tipo de Poi tiene Tipos de comida relacionados.
       project_type:
         attributes:
           name:
