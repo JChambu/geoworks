@@ -1,9 +1,13 @@
 class DashboardsController < ApplicationController
-  before_action :set_dashboard, only: [:show, :edit, :update, :destroy]
   before_action :set_project_type
+  before_action :set_dashboard, only: [:show, :edit, :update, :destroy]
+
 
   # GET /dashboards
   # GET /dashboards.json
+
+  def maps
+  end
 
   def create_graph
 
@@ -20,10 +24,8 @@ class DashboardsController < ApplicationController
   # GET /dashboards/1
   # GET /dashboards/1.json
   def show
-
-    @projects = Project.where(project_type_id: params[:project_type_id])
-    @extent = Project.geometry_bounds(params[:project_type_id])
-    @dashboard_id = params[:id]
+    @projects = Project.where(project_type_id: @project_type.id)
+    @extent = Project.geometry_bounds(@project_type.id)
     @current_tenant = Apartment::Tenant.current
   end
 
@@ -80,11 +82,15 @@ class DashboardsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
 
   def set_project_type
-    @project_type = ProjectType.find(params[:project_type_id])
+    if !params[:project_type_id].nil?
+        @project_type = ProjectType.find(params[:project_type_id])
+    else
+        @project_type = ProjectType.last
+    end
   end
 
   def set_dashboard
-    @dashboard = Dashboard.find(params[:id])
+    @dashboard = @project_type.dashboards.first
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
