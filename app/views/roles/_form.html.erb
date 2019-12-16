@@ -1,60 +1,50 @@
-<%= form_for(@role) do |form| %>
-  <% if role.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(role.errors.count, "error") %> prohibited this role from being saved:</h2>
+<div class="card m-2 shadow">
+  <div class="card-body">
 
-      <ul>
-        <% role.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="x_panel card">
-    <div class="x_content">
-
-      <div class="form-group col-md-12">
-        <div class="col-md-5 text-right">
-          <%= form.label 'Nombre' %>
+    <%= form_for(@role) do |form| %>
+      <% if role.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(role.errors.count, "error") %> prohibited this role from being saved:</h2>
+          <ul><% role.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
         </div>
+      <% end %>
+
+      <div class="form-group row justify-content-center">
+        <%= form.label 'Nombre', class: 'col-sm-1 col-form-label text-right' %>
         <div class="col-md-3">
           <%= form.text_field :name, id: :role_name, class: "form-control" %>
         </div>
       </div>
 
-      <br><br><br>
-      <center><h2>Permisos</h2></center>
-      <br>
+      <h2 class="text-center m-4">Permisos</h2>
 
-      <div class="col-md-12">
+      <div class="row">
         <% ModelType.all.each do |mt| %>
-          <div class="col-md-2">
-            <h3><%= mt.name %></h3>
-            <br>
+          <div class="col-md-2 mb-2">
+            <legend><%= mt.name %></legend>
             <% Event.all.each do |e| %>
-              <div class="form-group form-check">
-                <% if params[:action] == 'new' %>
-                  <%= check_box_tag "permissions[#{mt.id}][#{e.id}]" %>
-                <% else %>
-                  <%= check_box_tag "permissions[#{mt.id}][#{e.id}]",e.id , @permissions.any? {|c| c.event_id == e.id && c.model_type_id == mt.id} %>
-                <% end %>
+              <% if params[:action] == 'new' %>
+                <%= check_box_tag "permissions[#{mt.id}][#{e.id}]" %>
+                <%= e.name %>
+              <% else %>
+                <div class="form-group">
+                  <div class="custom-control custom-switch">
+                    <%= check_box_tag "permissions[#{mt.id}][#{e.id}]",e.id , @permissions.any? {|c| c.event_id == e.id && c.model_type_id == mt.id}, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
+                    <label class="custom-control-label" for="<%="chk#{mt.name}#{e.name}"%>"><%= e.name %></label>
+                  </div>
+                </div>
               <% end %>
-              <br>
-              </div>
             <% end %>
-
-
-
-            <br><br><br><br><br><br><br><br><br><br>
-
-            <div class="form-group col-md-12 form-actions">
-              <div class="col-md-7 text-right">
-                <%= link_to t('.cancel', :default => t("helpers.links.cancel")), roles_path, :class => 'btn btn-default' %>
-                <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
-              </div>
-            </div>
-
           </div>
+        <% end %>
       </div>
+
+      <div class="row justify-content-center">
+        <%= link_to t('.cancel', :default => t("helpers.links.cancel")), roles_path, :class => 'btn btn-secondary mr-1' %>
+        <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
+      </div>
+
     <% end %>
+
+  </div>
+</div>
