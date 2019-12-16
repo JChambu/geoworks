@@ -1,136 +1,104 @@
-<div id="ana-modal" class="modal fade">
-  <div class="modal-dialog">
+<div class="modal fade" id="ana-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
+
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Indicador</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <%= simple_form_for([@project_type, @dashboard, @analytics_dashboard], html: {role: :form, remote: true, class: 'form form-inline'}) do |f| %>
-      <div class="modal-body">
-        <div id="alert-success"></div>
-        <% if @analytics_dashboard.errors.any? %>
-          <div id="error_explanation">
-            <h2><%= pluralize(@analytics_dashboard.errors.count, "error") %>
-              prohibited this analytics_dashboard from being saved:</h2>
-            <ul>
-              <% @analytics_dashboard.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
-          </div>
-        <% end %>
 
-        <div class="form-row">
-          <div class="form-group col-md-4">
-            <%= f.input :title, label: "Nombre", input_html: {class:"form-control col-md-12"} %>
-          </div>
-          <div class="form-group col-md-2">
-            <%= f.input :analysis_type_id, :collection => analysis_types_for_select, label: "Análisis", input_html: {class:"form-control"}%>
-          </div>
-          <div class="form-group col-md-3">
-            <%= f.input :project_field_id, :collection => fields_for_select_a, label: "Campo", input_html: {class:"form-control"} %>
-          </div>
-          <div class="form-group col-md-3">
-            <%= f.input :group_field_id, :collection => fields_for_select_a, input_html: {class:"form-control"}%>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-5">
-            <div class="control-group string required ">
-              <%= f.input :condition_field_id, :collection => fields_for_select_a, label: "Campo", input_html: {class:"form-control"} %>
-              </div>
+      <%= simple_form_for([@project_type, @dashboard, @analytics_dashboard], html: {role: :form, remote: true, class:'form'}) do |f| %>
+
+        <div class="modal-body">
+
+          <div id="alert-success"></div>
+
+          <% if @analytics_dashboard.errors.any? %>
+            <div id="error_explanation">
+              <h2><%= pluralize(@analytics_dashboard.errors.count, "error") %> prohibited this analytics_dashboard from being saved:</h2>
+              <ul><% @analytics_dashboard.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
             </div>
-          <div class="form-group col-md-2">
-            <div class="control-group select optional">
-              <label class="select optional control-label" for="">Operador</label>
-              <div class="controls">
-                <%= f.input :filter_input, label: false, collection: ProjectType::FILTERS, input_html: {class: 'form-control'} %>
-              </div>
+          <% end %>
+
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <%= f.input :title, label: "Nombre", input_html: {class:"form-control form-control-sm"} %>
             </div>
-          </div>
-          <div class="form-group col-md-5">
-            <div class="control-group string required ">
-              <label class="string required control-label" for="">Valor</label>
-              <div class="controls">
-                <%= f.input :input_value, label: false, input_html: {class: 'form-control'} %>
-              </div>
+            <div class="form-group col-md-3">
+              <%= f.input :analysis_type_id, :collection => analysis_types_for_select, label: "Análisis", input_html: {class:"form-control form-control-sm"}%>
+            </div>
+            <div class="form-group col-md-3">
+              <%= f.input :project_field_id, :collection => fields_for_select_a, label: "Campo", input_html: {class:"form-control form-control-sm"} %>
+            </div>
+            <div class="form-group col-md-3">
+              <%= f.input :group_field_id, :collection => fields_for_select_a, label: "Agrupar", input_html: {class:"form-control form-control-sm"}%>
             </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-12">
-            <%= f.input :description, input_html: {class:"form-control"} %>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-12">
-            <div class="form-group">
-              <%= f.check_box :graph, input_html: {class:"form-check"}%>
-              <%= f.label :graph, "Graficar" %>
+
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <%= f.input :condition_field_id, :collection => fields_for_select_a, label: 'Campo', input_html: {class:"form-control form-control-sm"} %>
+            </div>
+            <div class="form-group col-md-4">
+              <%= f.input :filter_input, label: 'Operador', collection: ProjectType::FILTERS, input_html: {class: 'form-control form-control-sm'} %>
+            </div>
+            <div class="form-group col-md-4">
+              <%= f.input :input_value, label: 'Valor', input_html: {class: 'form-control form-control-sm'} %>
             </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-12">
-            <div class="form-group">
-              <%= f.check_box :children, input_html: {class:"form-check"}%>
-              <%= f.label :children, "Hijos" %>
+
+          <div class="form-row">
+            <div class="col-md-12">
+              <%= f.label :description, 'Descripción' %>
+              <%= f.text_area :description, rows: 3, class:"form-control form-control-sm mb-3" %>
             </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-12">
-            <div class="control-group string required ">
-              <div class="controls">
-                <%=f.input :sql_sentence, input_html: {class: "string required form-control col-md-12"}  %>
-                <br><br><br><br>
-              </div>
+
+          <div class="form-row">
+            <div class="form-group form-check col-md-6">
+              <%= f.check_box :graph, input_html: {class:"form-check-input"}%>
+              <%= f.label :graph, "Graficar", class: 'form-check-label' %>
+            </div>
+            <div class="form-group form-check col-md-6">
+              <%= f.check_box :children, input_html: {class:"form-check-input"}%>
+              <%= f.label :children, "Hijos", class: 'form-check-label' %>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-12">
+              <%=f.input :sql_sentence, input_html: {class: "form-control form-control-sm"} %>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-12">
+              <%=f.input :conditions_sql, input_html: {class: "form-control form-control-sm"} %>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-12">
+              <%=f.input :group_sql, input_html: {class: "form-control form-control-sm"} %>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-12">
+              <%=f.input :order_sql, input_html: {class: "form-control form-control-sm"} %>
             </div>
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group col-md-12">
-            <div class="control-group string required ">
-              <div class="controls">
-                <%=f.input :conditions_sql, input_html: {class: "string required form-control col-md-12"}  %>
-                <br><br><br><br>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-12">
-            <div class="control-group string required ">
-              <div class="controls">
-                <%=f.input :group_sql, input_html: {class: "string required form-control col-md-12"}  %>
-                <br><br><br><br>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-12">
-            <div class="control-group string required ">
-              <div class="controls">
-                <%=f.input :order_sql, input_html: {class: "string required form-control col-md-12"}  %>
-                <br><br><br><br>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="actions text-right" style="">
-          <br>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
           <%= f.submit class: 'btn btn-primary', value: "Guardar" %>
         </div>
-      </div>
-      <!-- OCULTA FOOTER
-      <div class="modal-footer">
-      </div>
-      -->
+
       <% end %>
+
     </div>
   </div>
 </div>

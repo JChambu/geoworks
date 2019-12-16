@@ -1,52 +1,46 @@
-<div class="x_panel card">
-  <div class="x_content">
+<div class="offset-md-3 col-md-6">
+  <div class="card m-2 shadow">
+    <div class="card-body">
 
-    <%= simple_form_for @user do |f| %>
+      <%= simple_form_for @user do |f| %>
 
-      <div class="form-group col-md-12">
-        <div class="col-md-2 text-right">
-          <%= f.label :name %>
-        </div>
-        <div class="col-md-3">
-          <%= f.input :name, label: false, input_html: {class: 'form-control'} %>
-        </div>
-      </div>
+        <div class="form-group">
+          <div class="row justify-content-center">
+            <%= f.label :name, class:'col-md-4 text-right col-form-label' %>
+            <div class="col-md-6">
+              <%= f.input :name, label: false, input_html: {class: 'form-control form-control-sm'} %>
+            </div>
+          </div>
 
-      <div class="form-group col-md-12">
-        <div class="col-md-2 text-right">
-          <%= f.label :email %>
-        </div>
-        <div class="col-md-3">
-          <%= f.input :email, label: false, input_html: {class: 'form-control'} %>
-        </div>
-      </div>
+          <div class="row justify-content-center">
+            <%= f.label :email, class:'col-md-4 text-right col-form-label' %>
+            <div class="col-md-6">
+              <%= f.input :email, label: false, input_html: {class: 'form-control form-control-sm'} %>
+            </div>
+          </div>
 
-      <div class="form-group col-md-12">
-        <div class="col-md-2 text-right">
-          <%= f.label :password %>
-        </div>
-        <div class="col-md-3">
-          <%= f.input :password, label: false, input_html: {class: 'form-control'} %>
-        </div>
-      </div>
+          <div class="row justify-content-center">
+            <%= f.label :password, class:'col-md-4 text-right col-form-label' %>
+            <div class="col-md-6">
+              <%= f.input :password, label: false, input_html: {class: 'form-control form-control-sm'} %>
+            </div>
+          </div>
 
-      <div class="form-group col-md-12">
-        <div class="col-md-2 text-right">
-          <%= f.label :password_confirmation, 'Confirmar contraseña' %>
+          <div class="row justify-content-center">
+            <%= f.label :password_confirmation, 'Confirmar Contraseña', class:'col-md-4 text-right col-form-label' %>
+            <div class="col-md-6">
+              <%= f.input :password_confirmation, label: false, input_html: {class: 'form-control form-control-sm'} %>
+            </div>
+          </div>
         </div>
-        <div class="col-md-3">
-          <%= f.input :password_confirmation, label: false, input_html: {class: 'form-control'} %>
-        </div>
-      </div>
 
-      <div class="form-group col-md-12 form-actions">
-        <div class="col-md-5 text-right">
-          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), project_types_path, :class => 'btn btn-default' %>
+        <div class="row justify-content-center">
+          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), project_types_path, :class => 'btn btn-secondary mr-1' %>
           <%= f.submit :class => 'btn btn-primary', value: 'Guardar' %>
         </div>
-      </div>
 
-    <% end %>
+      <% end %>
 
+    </div>
   </div>
 </div>

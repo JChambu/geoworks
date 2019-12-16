@@ -5,6 +5,7 @@
       <div class="title_left">
         <h1>Proyectos</h1>
       </div>
+<<<<<<< HEAD
       <%= form_tag project_types_path, method: :get do %>
         <div class="title_right">
           <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
@@ -13,6 +14,14 @@
               <span class="input-group-btn">
                 <%= submit_tag 'Buscar' , class: 'btn btn-default'  %>
               </span>
+=======
+      <div class="col-md-4 text-center">
+        <%= form_tag project_types_path, method: :get do %>
+          <div class="input-group">
+            <%= text_field_tag(:search_project, '', class: 'form-control',  placeholder: 'Buscar Proyectos') %>
+            <div class="input-group-append">
+              <%= submit_tag 'Buscar', class: 'btn btn-primary' %>
+>>>>>>> 9c9d88594ab51910888039c9e3dd312f764162ce
             </div>
           </div>
         </div>
@@ -26,14 +35,24 @@
           <%= pager @project_types %>
         </ul>
       </div>
+<<<<<<< HEAD
       <div class="col-md-3 text-right">
   <% if can? :project_types, :new %>
         <%= link_to 'Nuevo Proyecto', new_project_type_path, class: "btn btn-primary" %>
   <% end %>
+=======
+      <div class="col-md-4 text-right">
+        <% if can? :project_types, :new %>
+          <%= link_to 'Nuevo', new_project_type_path, class: "btn btn-primary" %>
+        <% else %>
+          <a class="btn btn-primary unselectable" href="#">Nuevo</a>
+        <% end %>
+>>>>>>> 9c9d88594ab51910888039c9e3dd312f764162ce
       </div>
     </div>
   </div>
 
+<<<<<<< HEAD
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel card">
       <div class="x_content">
@@ -75,6 +94,58 @@
         </table>
 
       </div>
+=======
+<div class="card m-2 shadow">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped table-bordered m-0">
+        <thead>
+          <th>Nombre</th>
+          <th>Cantidad</th>
+          <th colspan="3"></th>
+          <th class="text-center" colspan="3">Acciones</th>
+        </thead>
+        <tbody>
+          <% @project_types.each do |project_type| %>
+            <tr>
+              <td><%= project_type.name %></td>
+              <td><%= project_type.projects.count %></td>
+              <% if can? :projects, :visualizer %>
+                <td><%= link_to 'Datos', project_type_projects_path(project_type) %></td>
+              <% else %>
+                <td><a class="unselectable" href="#">Datos</a></td>
+              <% end %>
+              <% if can? :dashboards, :visualizer %>
+                <td><%= link_to 'Tableros', project_type_dashboards_path(project_type.id) %></td>
+              <% else %>
+                <td><a class="unselectable" href="#">Tableros</a></td>
+              <% end %>
+              <% if can? :statuses, :visualizer %>
+                <td><%= link_to 'Estados', project_type_project_statuses_path(project_type) %></td>
+              <% else %>
+                <td><a class="unselectable" href="#">Estados</a></td>
+              <% end %>
+              <% if can? :project_types, :share %>
+                <td class="text-center"><%= link_to project_type_share_path(project_type.id) , id: "share", :remote=> true  do  %> <i class="fas fa-share-alt" title="Compartir"></i> <%end %></td>
+              <% else %>
+                <td class="text-center"><i class="fas fa-share-alt unselectable" title="Compartir"></i></td>
+              <% end %>
+              <% if can? :project_types, :edit %>
+                <td class="text-center"><%= link_to edit_project_type_path(project_type) do  %> <i class="fas fa-edit" title="Editar"></i> <%end %></td>
+              <% else %>
+                <td class="text-center"><i class="fas fa-edit unselectable" title="Editar"></i></td>
+              <% end %>
+              <% if can? :project_types, :destroy %>
+                <td class="text-center"><%= link_to project_type_path(project_type), method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt" title="Eliminar"></i> <%end%></td>
+              <% else %>
+                <td class="text-center"><i class="fas fa-trash-alt unselectable" title="Eliminar"></i></td>
+              <% end %>
+            </tr>
+            <%= render "share" %>
+          <% end %>
+        </tbody>
+      </table>
+>>>>>>> 9c9d88594ab51910888039c9e3dd312f764162ce
     </div>
   </div>
 </div>
