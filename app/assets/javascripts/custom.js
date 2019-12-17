@@ -72,11 +72,6 @@ function init_chart_doughnut(size_box = null){
   // Guardamos la posición del scroll
   var scroll = $('.graphics').scrollTop();
 
-  // Seteamos el alto de los gráficos y del mapa
-  var o = parseInt(window.innerHeight) - 100;
-  $(".graphics").css("height", o+"px");
-  $("#map").css("height", o+"px");
-
   if( typeof(Chart) === 'undefined'){ return; }
 
   if ($('.graphics').length){
