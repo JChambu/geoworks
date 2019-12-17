@@ -3,43 +3,6 @@ body {
   height: 100%;
 }
 
-.navbar-right {
-  margin-right: 0
-}
-.top_nav .navbar-right {
-  margin: 0;
-  width: 60vw;
-  float: right
-}
-.top_nav .navbar-right li {
-  display: inline-block;
-  float: right;
-  position: static
-}
-@media (min-width: 480px) {
-  .top_nav .navbar-right li {
-    position: relative
-  }
-}
-.navbar-left {
-  margin-left: 0
-}
-.top_nav .navbar-left {
-  margin: 0;
-  width: auto;
-  float: left
-}
-.top_nav .navbar-left li {
-  display: inline-block;
-  float: left;
-  position: static
-}
-@media (min-width: 480px) {
-  .top_nav .navbar-left li {
-    position: relative
-  }
-}
-
 #map {
   position: relative;
   top: 0;
