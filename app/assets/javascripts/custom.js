@@ -477,22 +477,35 @@ function init_chart_doughnut(size_box = null){
 
             if (!status_view){ //Default
 
-              $('.chart_container'+graphic_id).addClass('col-md-12');
+              $('.card-columns').css("column-count", "1")
+              /*
+              NOTE: Actualmente se está utilizando card-columns, pero no permite agrandar los charts
+              Se conserva el siguiente código por si se decide volver al método anterior
+
+              //$('.chart_container'+graphic_id).addClass('col-md-12');
+
               //aspectR ="1";
               //legend_display = false;
+              */
 
             }else{ //Active
 
-              $('.chart_container'+graphic_id).addClass('col-md-'+width);
+              $('.card-columns').css("column-count", "2")
 
               /*
+              NOTE: Actualmente se está utilizando card-columns, pero no permite agrandar los charts
+              Se conserva el siguiente código por si se decide volver al método anterior
+
+              $('.chart_container'+graphic_id).addClass('col-md-'+width);
+
               if(width == '6'){
                 aspectR = "1";
               }else{
                 aspectR = "2";
               }
+
+              legend_display = true;
               */
-              //legend_display = true;
 
             }
 
