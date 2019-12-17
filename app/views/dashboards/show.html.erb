@@ -33,11 +33,12 @@
 
 <div id="firewall-content"></div>
 
-<div id="modal-window" class="modal fade" >
+<div class="modal fade" id="modal-window" tabindex="-1" role="dialog" aria-labelledby="chartModalLabel" aria-hidden="true">
   <div class="modal-dialog" id="graphics_modal" role="document">
     <div class="modal-content"></div>
   </div>
 </div>
+
 <%= form_for :q, :method => :get  do |f| %>
 
   <div id="wait" class="modal fade">
