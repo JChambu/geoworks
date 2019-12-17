@@ -39,9 +39,7 @@ body {
     position: relative
   }
 }
-#graphics_modal{
-  width: 60% !important;
-}
+
 #map {
   position: relative;
   top: 0;
