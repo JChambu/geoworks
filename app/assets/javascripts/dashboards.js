@@ -111,7 +111,7 @@ Navarra.dashboards.action_show = function(){
       } else { // Default
         $('#view').removeClass('active');
         $(".fa-table").css("color", "#9b9b9b");
-        $(".graphics").css("width", "25%");
+        $(".graphics").css("width", "30%");
         $("#active-filters").removeClass('col-md-6').addClass('col-md-3');
         init_chart_doughnut();
       }
