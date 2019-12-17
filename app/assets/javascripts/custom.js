@@ -360,7 +360,7 @@ function init_chart_doughnut(size_box = null){
 
             $('.graphics').append(
               $('<div>', {
-                'class': 'card text-light bg-primary chart_container'+graphic_id,
+                'class': 'card text-light p-0 mb-2 bg-primary chart_container'+graphic_id,
                 'id': 'chart-container'+graphic_id
               }).append(
                 $('<div>', {
@@ -388,35 +388,25 @@ function init_chart_doughnut(size_box = null){
 
             if (!status_view){ //Default
 
-              $('.card-columns').css("column-count", "1")
-              /*
-              NOTE: Actualmente se está utilizando card-columns, pero no permite agrandar los charts
-              Se conserva el siguiente código por si se decide volver al método anterior
+              $('.chart_container'+graphic_id).addClass('col-md-12');
+              aspectR ="1";
 
-              //$('.chart_container'+graphic_id).addClass('col-md-12');
+              legend_display = false;
 
-              //aspectR ="1";
-              //legend_display = false;
-              */
 
             }else{ //Active
 
-              $('.card-columns').css("column-count", "2")
-
-              /*
-              NOTE: Actualmente se está utilizando card-columns, pero no permite agrandar los charts
-              Se conserva el siguiente código por si se decide volver al método anterior
-
               $('.chart_container'+graphic_id).addClass('col-md-'+width);
+
+              console.log(width);
 
               if(width == '6'){
                 aspectR = "1";
               }else{
-                aspectR = "2";
+                aspectR = 2;
               }
 
-              legend_display = true;
-              */
+              //legend_display = true;
 
             }
 
