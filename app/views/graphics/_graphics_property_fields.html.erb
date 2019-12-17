@@ -1,33 +1,29 @@
-<fieldset>
-  <div class="form-row col-md-12">
-    <div class="form-group col-md-2">
-      <%= f.input :chart_id, input_html: {class: 'form-control'}, collection: chart_types_for_select, label: "Tipo de Gráfico" %>
-    </div>
-    <div class="form-group col-md-3">
-      <%= f.input :analytics_dashboard_id, label: "Indicador", input_html: {class: 'form-control'},collection: kpi_for_select, include_blank: true %>
-    </div>
-    <div class="form-group hide-div bar horizontal bubble col-md-2">
-      <%=f.input :label_datasets, label: "Leyenda", input_html: {class:"form-control"}  %>
-    </div>
-    <div class="form-group hide-div bar col-md-2">
-      <%= f.input :point_type, input_html: {class: 'form-control'}, collection: point_types, label: "Tipo de Puntos" %>
-    </div>
-    <div class="form-group col-md-1">
-      <%= f.label :color %>
-      <br>
-      <%= f.color_field :color, as: :color %>
-      <br><br>
-    </div>
-    <div class="form-group hide-div bar col-md-1">
-      <%= f.label :left_y_axis, "Derecha" %>
-      <%= f.check_box :left_y_axis, input_html: {class:"form-check"}%>
-    </div>
-    <% if f.options[:child_index] != 0  %>
-      <div class="form-group col-md-1">
-        <br>
-        <%= f.hidden_field :_destroy %>
-        <%= link_to '#', class: "remove" do  %> <i class="fas fa-trash-alt" title="Eliminar Serie" style="font-size: 1.5em"></i> <%end %>
-      </div>
-    <% end %>
+<div class="form-group col-md-2">
+  <%= f.input :chart_id, input_html: {class: 'form-control form-control-sm'}, collection: chart_types_for_select, label: "Tipo de Gráfico" %>
+</div>
+<div class="form-group col-md-3">
+  <%= f.input :analytics_dashboard_id, label: "Indicador", input_html: {class: 'form-control form-control-sm'},collection: kpi_for_select, include_blank: true %>
+</div>
+<div class="form-group hide-div bar horizontal bubble col-md-2">
+  <%=f.input :label_datasets, label: "Leyenda", input_html: {class:"form-control form-control-sm"}  %>
+</div>
+<div class="form-group hide-div bar col-md-2">
+  <%= f.input :point_type, input_html: {class: 'form-control form-control-sm'}, collection: point_types, label: "Tipo de Puntos" %>
+</div>
+<div class="form-group col-md-1">
+  <%= f.label :color %>
+  <br>
+  <%= f.color_field :color, as: :color %>
+  <br><br>
+</div>
+<div class="form-group hide-div bar col-md-1">
+  <%= f.label :left_y_axis, "Derecha" %>
+  <%= f.check_box :left_y_axis, input_html: {class:"form-check"}%>
+</div>
+<% if f.options[:child_index] != 0  %>
+  <div class="form-group col-md-1">
+    <br>
+    <%= f.hidden_field :_destroy %>
+    <%= link_to '#', class: "remove" do  %> <i class="fas fa-trash-alt" title="Eliminar Serie" style="font-size: 1.5em"></i> <%end %>
   </div>
-</fieldset>
+<% end %>
