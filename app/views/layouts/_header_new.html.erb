@@ -1,33 +1,14 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <%= link_to root_path() do  %> <%= image_tag "geoworks_h.png", height:"40" %> <% end %>
+  <%= link_to root_path() do %> <%= image_tag "geoworks_h.png", class: 'mr-4', height:"40" %> <% end %>
   <div class="collapse navbar-collapse" id="navbarColor02">
+
     <ul class="navbar-nav mr-auto">
 
-      <!-- Tablero Mapa -->
+      <!-- Principal -->
       <%if params[:controller] == 'dashboards' && params[:action] == 'show' %>
-        <% if !@dashboard.nil? %>
-          <li class="nav-item"><%= link_to project_type_dashboards_path(@project_type.id), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver" style="font-size: 26px"></i> <% end %></li>
-          <li class="nav-item"><%= link_to "#", class: 'nav-link', id: "view" do %> <i class="fas fa-table" title="Cambiar Vista" style="font-size: 26px"></i> <% end %></li>
-          <li class="nav-item"><%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, @dashboard.id), class: 'nav-link' do %> <i class="fas fa-database" title="Crear Indicador" style="font-size: 26px"></i> <% end %></li>
-          <li class="nav-item"><%= link_to "#", class: 'nav-link', id: "select" do %> <i class="fas fa-draw-polygon" title="Dibujar Polígono" style="font-size: 26px"></i> <% end %></li>
-          <li class="nav-item"><%= link_to project_type_filters_path(@project_type.id), class: 'nav-link', id: "filter",:remote => true do %> <i class="fas fa-filter" title="Filtrar" style="font-size: 26px"></i> <% end %></li>
-          <li class="nav-item">
-            <%= link_to project_type_heatmap_path(@project_type.id), class: 'nav-link', id: "heatmap", :remote=> true do %> <i class="fas fa-fire" title="Mapa de Calor" style="font-size: 26px"></i> <% end %></li><li class="nav-item">
-            <%= link_to project_type_point_colors_path(@project_type.id), class: 'nav-link', id: "point_colors", :remote=> true do %> <i class="fas fa-spinner" title="Puntos de Colores" style="font-size: 26px"></i> <% end %>
-          </li>
-          <li class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-              <i class="fas fa-chart-pie chart-modal" style="font-size: 26px"></i>
-            </a>
-            <ul class="dropdown-menu" style="min-width: 60px">
-              <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-pie chart-modal" style="font-size: 26px" id="doughnut" title="Dona"></i> <% end %> </a></li>
-              <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-bar chart-modal" style="font-size: 26px" id="bar" title="Barra"></i> <% end %> </a></li>
-              <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-align-left chart-modal" style="font-size: 26px" id="horizontal" title="Barra Horizontal"></i> <% end %> </a></li>
-              <li style="text-align: center"><a> <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-ellipsis-h chart-modal" style="font-size: 26px" id="bubble" title="Burbuja"></i> <% end %> </a></li>
-            </ul>
-          </li>
-        <% end %>
+
         <% if !@project_type.nil? %>
+
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Proyectos
@@ -37,24 +18,63 @@
                 <%= link_to "#{project.name}", dashboards_show_path(project_type_id: project.id),  class: "dropdown-item" %>
               <% end %>
               <div class="dropdown-divider"></div>
-              <%= link_to 'Nuevo', new_project_type_path, class: "btn btn-primary", class: "dropdown-item"  %>
+              <%= link_to 'Nuevo', new_project_type_path, class: "dropdown-item" %>
             </div>
           </li>
+
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <%= @project_type.name %>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <%= link_to 'Datos', project_type_projects_path(@project_type.id), class: "dropdown-item"  %>
-              <%= link_to 'Estados', project_type_project_statuses_path(@project_type.id), class: "dropdown-item"  %>
-              <%= link_to 'Compartir', project_type_share_path(@project_type.id), remote:true,remote:true,  class: "dropdown-item"  %>
-              <%= link_to 'Editar', edit_project_type_path(@project_type.id), class: "dropdown-item"  %>
-              <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' } , remote: true, class: "dropdown-item" %>
+              <%= link_to 'Datos', project_type_projects_path(@project_type.id), class: "dropdown-item" %>
+              <%= link_to 'Estados', project_type_project_statuses_path(@project_type.id), class: "dropdown-item" %>
+              <%= link_to 'Compartir', project_type_share_path(@project_type.id), remote:true,remote:true, class: "dropdown-item" %>
+              <%= link_to 'Editar', edit_project_type_path(@project_type.id), class: "dropdown-item" %>
+              <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, remote: true, class: "dropdown-item" %>
             </div>
           </li>
 
         <% end %>
+
+        <% if !@dashboard.nil? %>
+
+          <li class="nav-item">
+            <%= link_to "#", class: 'nav-link', id: "view" do %> <i class="fas fa-table" title="Cambiar Vista" style="font-size: 20px"></i> <% end %>
+          </li>
+
+          <li class="nav-item">
+            <%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, @dashboard.id), class: 'nav-link' do %> <i class="fas fa-database" title="Crear Indicador" style="font-size: 20px"></i> <% end %>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle nocaret" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-globe-americas" style="font-size: 20px"></i>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <%= link_to "#", class: 'dropdown-item', id: "select" do %> <i class="fas fa-draw-polygon" title="Dibujar Polígono" style="font-size: 20px"></i> <% end %>
+              <%= link_to project_type_filters_path(@project_type.id), class: 'dropdown-item', id: "filter",:remote => true do %> <i class="fas fa-filter" title="Filtrar" style="font-size: 20px"></i> <% end %>
+              <%= link_to project_type_heatmap_path(@project_type.id), class: 'dropdown-item', id: "heatmap", :remote=> true do %> <i class="fas fa-fire" title="Mapa de Calor" style="font-size: 20px"></i> <% end %>
+              <%= link_to project_type_point_colors_path(@project_type.id), class: 'dropdown-item', id: "point_colors", :remote=> true do %> <i class="fas fa-spinner" title="Puntos de Colores" style="font-size: 20px"></i> <% end %>
+            </div>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle nocaret" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-chart-pie" style="font-size: 20px"></i>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-pie chart-modal" style="font-size: 20px" id="doughnut" title="Dona"></i> <% end %>
+              <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-bar chart-modal" style="font-size: 20px" id="bar" title="Barra"></i> <% end %>
+              <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-align-left chart-modal" style="font-size: 20px" id="horizontal" title="Barra Horizontal"></i> <% end %>
+              <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-ellipsis-h chart-modal" style="font-size: 20px" id="bubble" title="Burbuja"></i> <% end %>
+            </div>
+          </li>
+
+        <% end %>
+
       <% end %>
+
       <!-- Datos del Proyecto -->
       <%if params[:controller] == 'projects' && params[:action] == 'index' %>
         <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i> <%end %>
@@ -63,70 +83,71 @@
       <!-- Tableros -->
       <%if params[:controller] == 'dashboards' && params[:action] == 'index' %>
         <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-    <% end %>
+      <% end %>
 
-    <%if params[:controller] == 'dashboards' && params[:action] == 'edit' || params[:controller] == 'dashboards' && params[:action] == 'new' %>
-      <li class="nav-item"><%= link_to project_type_dashboards_path(@project_type.id), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-  <% end %>
+      <%if params[:controller] == 'dashboards' && params[:action] == 'edit' || params[:controller] == 'dashboards' && params[:action] == 'new' %>
+        <li class="nav-item"><%= link_to project_type_dashboards_path(@project_type.id), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+      <% end %>
 
-  <%if params[:controller] == 'project_fields' && params[:action] == 'edit_multiple' %>
-    <li class="nav-item"><%= link_to project_type_project_fields_path(params[:project_type_id]), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-<% end %>
+      <%if params[:controller] == 'project_fields' && params[:action] == 'edit_multiple' %>
+        <li class="nav-item"><%= link_to project_type_project_fields_path(params[:project_type_id]), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+      <% end %>
 
-<%if params[:controller] == 'project_data_children' && params[:action] == 'index' %>
-  <li class="nav-item"><%= link_to project_type_projects_path(params[:project_type_id]), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+      <%if params[:controller] == 'project_data_children' && params[:action] == 'index' %>
+        <li class="nav-item"><%= link_to project_type_projects_path(params[:project_type_id]), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
       <% end %>
 
       <!-- Campos del Proyecto -->
       <%if params[:controller] == 'project_fields' && params[:action] == 'index' %>
         <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-    <% end %>
+      <% end %>
 
-    <!-- Editar Proyecto -->
-    <%if params[:controller] == 'project_types' && params[:action] == 'edit' %>
-      <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-  <% end %>
+      <!-- Editar Proyecto -->
+      <%if params[:controller] == 'project_types' && params[:action] == 'edit' %>
+        <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+      <% end %>
 
-  <!-- Nuevo Proyecto -->
-  <%if params[:controller] == 'project_types' && params[:action] == 'new' %>
-    <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-<% end %>
+      <!-- Nuevo Proyecto -->
+      <%if params[:controller] == 'project_types' && params[:action] == 'new' %>
+        <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+      <% end %>
 
-<!-- Capas -->
-<%if params[:controller] == 'layers' && params[:action] == 'index' %>
-  <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+      <!-- Capas -->
+      <%if params[:controller] == 'layers' && params[:action] == 'index' %>
+        <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
       <% end %>
 
       <!-- Nueva Capa y Editar Capas a Capas -->
       <%if params[:controller] == 'layers' && params[:action] == 'edit' || params[:controller] == 'layers' && params[:action] == 'new' %>
         <li class="nav-item"><%= link_to layers_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-    <% end %>
+      <% end %>
 
-    <!-- Roles -->
-    <%if params[:controller] == 'roles' && params[:action] == 'index' %>
-      <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-  <% end %>
+      <!-- Roles -->
+      <%if params[:controller] == 'roles' && params[:action] == 'index' %>
+        <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+      <% end %>
 
-  <!-- Nuevo Rol y Editar Rol a Roles -->
-  <%if params[:controller] == 'roles' && params[:action] == 'edit' || params[:controller] == 'roles' && params[:action] == 'new' %>
-    <li class="nav-item"><%= link_to roles_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-<% end %>
+      <!-- Nuevo Rol y Editar Rol a Roles -->
+      <%if params[:controller] == 'roles' && params[:action] == 'edit' || params[:controller] == 'roles' && params[:action] == 'new' %>
+        <li class="nav-item"><%= link_to roles_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+      <% end %>
 
-<!-- Nuevo Listado y Editar Listado a Listados -->
-<%if params[:controller] == 'choice_lists' && params[:action] == 'edit' || params[:controller] == 'choice_lists' && params[:action] == 'new' %>
-  <li class="nav-item"><%= link_to choice_lists_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+      <!-- Nuevo Listado y Editar Listado a Listados -->
+      <%if params[:controller] == 'choice_lists' && params[:action] == 'edit' || params[:controller] == 'choice_lists' && params[:action] == 'new' %>
+        <li class="nav-item"><%= link_to choice_lists_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
       <% end %>
 
       <!-- Editar Usuario -->
       <%if params[:controller] == 'users' && params[:action] == 'edit' %>
         <li class="nav-item"><%= link_to project_types_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-    <% end %>
+      <% end %>
 
-    <!-- Indicadores -->
-    <%if params[:controller] == 'analytics_dashboards' && params[:action] == 'index' %>
-      <li class="nav-item"><%= link_to project_type_dashboards_path(@project_type.id), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
-    <li class="nav-item"><%= link_to project_type_dashboard_path(@project_type, params[:dashboard_id]), class: 'nav-link' do %> <i class="fas fa-map-marked-alt"></i></li> <% end %>
-<% end %>
+      <!-- Indicadores -->
+      <%if params[:controller] == 'analytics_dashboards' && params[:action] == 'index' %>
+        <li class="nav-item"><%= link_to project_type_dashboards_path(@project_type.id), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver"></i></li> <%end %>
+        <li class="nav-item"><%= link_to project_type_dashboard_path(@project_type, params[:dashboard_id]), class: 'nav-link' do %> <i class="fas fa-map-marked-alt"></i></li> <% end %>
+      <% end %>
+
     </ul>
 
     <!-- Menú  -->
@@ -142,6 +163,7 @@
         <%= link_to 'Cerrar Sesión', destroy_user_session_path, class: "dropdown-item", method: :delete %>
       </div>
     </div>
+
   </div>
 </nav>
 
