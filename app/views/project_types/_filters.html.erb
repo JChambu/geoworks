@@ -1,28 +1,34 @@
 <div id="filters-modal" class="modal fade">
   <div class="modal-dialog">
     <div class="modal-content">
+
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title"> Filtro </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
-      <div class="modal-body">
-        <%= form_tag project_type_create_filters_path, :remote => true, :method => :get do |f| %>
-          <div class="form-row col-md-12">
-            <div class="form-group col-md-4">
+
+      <%= form_tag project_type_create_filters_path, :remote => true, :method => :get do |f| %>
+
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="col-md-5">
               <%=select_tag 'q[project_field]', options_for_select(region_for_select), class:'proj_field form-control' %>
             </div>
-            <div class="form-group col-md-1">
+            <div class="col-md-2">
               <%=select_tag 'q[filters]', options_for_select(ProjectType::FILTERS), class: 'form-control' %>
             </div>
-            <div class="form-group col-md-5">
+            <div class="col-md-5">
               <%=text_field_tag 'q[input_value]', '', class: 'form-control' %>
             </div>
-            <div class="form-group col-md-2">
-        <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary" %>
-            </div>
-        <% end %>
           </div>
-      </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary", value: 'Guardar' %>
+        </div>
+      <% end %>
+
     </div>
   </div>
 </div>
