@@ -75,7 +75,9 @@ function init_chart_doughnut(size_box = null){
   if( typeof(Chart) === 'undefined'){ return; }
 
   if ($('.graphics').length){
-    $('.graphics').empty();
+
+    $(".chart_container").remove();
+
     var type_box = 'polygon';
     if (size_box== null){
       size_box = [];
@@ -97,62 +99,39 @@ function init_chart_doughnut(size_box = null){
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
       success: function(data){
 
-        $('.graphics').append(
-          $('<div>', { // card
-            'class': 'card text-light bg-primary sticky-top w-100',
-            'id': 'filter-container'
-          }).append(
-            $('<div>', { // card-header
-              'class': 'card-header pl-3',
-              'id': 'filter-header'
+        if ($('#time_slider').length == 0) {
+
+          $('#filter-body').prepend(
+            $('<div>', {
+              'id': 'time_slider_item'
             }).append(
-              $('<b>', { // título
-                'text': 'Filtros Activos'
-              })
-            ),
-            $('<div>', { // collapse
-              'class': 'collapse show',
-              'id': 'filter-collapse'
-            }).append(
-              $('<div>', { // card-body
-                'class': 'card-body',
-                'id': 'filter-body'
+              $("<input>", {
+                'id': 'time_slider'
+              }),
+              $("<div>", {
+                'class': 'dropdown-divider',
               })
             )
           )
-        )
 
-        $('#filter-body').prepend(
-          $('<div>', {
-            'id': 'time_slider_item'
-          }).append(
-            $("<input>", {
-              'id': 'time_slider'
-            }),
-            $("<div>", {
-              'class': 'dropdown-divider',
-            })
-          )
-        )
+          var lang = "es-AR";
+          var year = 2019;
 
-        var lang = "es-AR";
-        var year = 2019;
-
-        function dateToTS (date) {
+          function dateToTS(date) {
             return date.valueOf();
-        }
+          }
 
-        function tsToDate (ts) {
+          function tsToDate(ts) {
             var d = new Date(ts);
 
             return d.toLocaleDateString(lang, {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
             });
-        }
+          }
 
-        $("#time_slider").ionRangeSlider({
+          $("#time_slider").ionRangeSlider({
             skin: "flat",
             type: "double",
             grid: true,
@@ -161,7 +140,8 @@ function init_chart_doughnut(size_box = null){
             from: dateToTS(new Date(year, 10, 8)),
             to: dateToTS(new Date(year, 10, 23)),
             prettify: tsToDate
-        });
+          });
+        }
 
         // Ordenamos las series por chart
         for(var i = 0; i < data.length; i ++){
@@ -421,13 +401,13 @@ function init_chart_doughnut(size_box = null){
           }) //cierra each reg
 
           //Valida si el chart_container no existe para entonces crearlo (Fix temporal, averiguar porque duplican los charts)
-          if($(".chart_container"+graphic_id).length == 0) {
+          if($("#chart_container"+graphic_id).length == 0) {
 
 
             $('.graphics').append(
               $('<div>', {
-                'class': 'card text-light p-0 mb-2 bg-primary chart_container'+graphic_id,
-                'id': 'chart-container'+graphic_id
+                'class': 'card text-light p-0 mb-2 bg-primary chart_container',
+                'id': 'chart_container'+graphic_id
               }).append(
                 $('<div>', {
                   'class': 'card-header pl-3',
@@ -454,7 +434,7 @@ function init_chart_doughnut(size_box = null){
 
             if (!status_view){ //Default
 
-              $('.chart_container'+graphic_id).addClass('col-md-12');
+              $('#chart_container'+graphic_id).addClass('col-md-12');
               aspectR ="1";
 
               legend_display = false;
@@ -462,7 +442,7 @@ function init_chart_doughnut(size_box = null){
 
             }else{ //Active
 
-              $('.chart_container'+graphic_id).addClass('col-md-'+width);
+              $('#chart_container'+graphic_id).addClass('col-md-'+width);
 
               console.log(width);
 
@@ -731,7 +711,7 @@ function init_chart_doughnut(size_box = null){
             var chart_canvas = document.getElementById('canvas'+graphic_id).getContext('2d');
             var final_chart = new Chart(chart_canvas, chart_settings);
 
-          }; //cierra if .chart_container"+graphic_id
+          }; //cierra if #chart_container"+graphic_id
         } //cierra for data
 
         // Aplicamos la posición del scroll
