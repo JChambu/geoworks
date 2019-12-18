@@ -418,7 +418,7 @@ function init_chart_doughnut(size_box = null){
                   })
                 ),
                 $('<div>', {
-                  'class': 'card-body',
+                  'class': 'card-body px-1 pb-0',
                   'id': 'body'+graphic_id
                 }).append(
                   $('<canvas>', {
