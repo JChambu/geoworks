@@ -288,7 +288,7 @@ function init_chart_doughnut(size_box = null){
                       pointStyle: point_style,
                       backgroundColor: color,
                       borderColor: color,
-                      borderWidth: 3,
+                      borderWidth: 4,
                       hoverBackgroundColor: color,
                       hoverBorderColor: color,
                       hoverBorderWidth: 2,
@@ -464,15 +464,26 @@ function init_chart_doughnut(size_box = null){
                 legend: {
                   display: legend_display,
                   position: 'bottom',
-                  labels: {
-                    boxWidth: 40,
-                    padding: 10,
-                    usePointStyle: true,
+                },
+                tooltips: {
+                  callbacks: {
+                    label: function(tooltipItem, data) {
+                      var dataset = data.datasets[tooltipItem.datasetIndex];
+                      var currentValue = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                      return currentValue.toLocaleString('es-ES');
+                    }
                   }
                 },
                 scales: {
                   xAxes: [{
                     stacked: stacked,
+                    ticks: {
+                      autoSkip: false,
+                      fontColor: '#e8ebef'
+                    },
+                    gridLines: {
+                      color: "#2c2e34"
+                    },
                     display: true,
                     scaleLabel: {
                       display: true,
@@ -488,6 +499,12 @@ function init_chart_doughnut(size_box = null){
                       suggestedMin: parseInt(tick_min_left),
                       suggestedMax: parseInt(tick_max_left),
                       stepSize: parseInt(tick_step_left),
+                      callback: function(label, index, labels) {
+                        label = label.toLocaleString('es-ES')
+                        return label;
+                      },
+                      beginAtZero: true,
+                      fontColor: '#e8ebef'
                     },
                     stacked: stacked,
                     scaleLabel: {
@@ -495,6 +512,7 @@ function init_chart_doughnut(size_box = null){
                       labelString: label_y_axis_left
                     },
                     gridLines: {
+                      color: "#2c2e34",
                       drawOnChartArea: true,
                     },
                   },{
