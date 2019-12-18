@@ -5,6 +5,7 @@ class ChoiceListsController < ApplicationController
   # GET /choice_lists.json
   def index
     @choice_lists = ChoiceList.order(:name)
+    authorize! :choice_lists, :visualizer
   end
 
   # GET /choice_lists/1
@@ -14,12 +15,14 @@ class ChoiceListsController < ApplicationController
 
   # GET /choice_lists/new
   def new
+    authorize! :choice_lists, :new
     @choice_list = ChoiceList.new
     @choice_list_item = @choice_list.choice_list_items.build 
   end
 
   # GET /choice_lists/1/edit
   def edit
+    authorize! :choice_lists, :edit
   end
 
   # POST /choice_lists
@@ -55,6 +58,7 @@ class ChoiceListsController < ApplicationController
   # DELETE /choice_lists/1
   # DELETE /choice_lists/1.json
   def destroy
+    authorize! :choice_lists, :destroy
     @choice_list.destroy
     respond_to do |format|
       format.html { redirect_to choice_lists_url, notice: 'Choice list was successfully destroyed.' }

@@ -28,7 +28,7 @@
               <% if can? :choice_lists, :edit %>
                 <td><%= link_to edit_choice_list_path(choice_list) do %> <i class="fas fa-edit"></i><%end%></td>
               <% end %>
-            <% if can? :choice_lists, :delete %>
+            <% if can? :choice_lists, :destroy %>
               <td><%= link_to choice_list, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
               <% end %>
             </tr>
