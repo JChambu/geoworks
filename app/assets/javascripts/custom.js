@@ -97,6 +97,30 @@ function init_chart_doughnut(size_box = null){
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
       success: function(data){
 
+        $('.graphics').append(
+          $('<div>', { // card
+            'class': 'card text-light bg-primary sticky-top w-100',
+            'id': 'filter-container'
+          }).append(
+            $('<div>', { // card-header
+              'class': 'card-header pl-3',
+              'id': 'filter-header'
+            }).append(
+              $('<b>', { // título
+                'text': 'Filtros Activos'
+              })
+            ),
+            $('<div>', { // collapse
+              'class': 'collapse show',
+              'id': 'filter-collapse'
+            }).append(
+              $('<div>', { // card-body
+                'class': 'card-body',
+                'id': 'filter-body'
+              })
+            )
+          )
+        )
         // Ordenamos las series por chart
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
