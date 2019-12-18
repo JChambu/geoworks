@@ -34,6 +34,8 @@ Rails.application.routes.draw do
     namespace :admin do
       resources :users
       resources :roles
+      get 'dashboards/index'
+      root 'dashboards#index'
     end
 
     resources :project_types do 

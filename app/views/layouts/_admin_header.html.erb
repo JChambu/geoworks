@@ -1,0 +1,19 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <%= link_to root_path() do %> <%= image_tag "geoworks_h.png", class: 'mr-4', height:"40" %> <% end %>
+  <div class="collapse navbar-collapse" id="navbarColor02">
+    <ul class="navbar-nav mr-auto">
+
+          <li class="nav-item">
+            <%= link_to "Usuarios", admin_users_path(),  class: 'nav-link', id: "view" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "Roles", admin_roles_path(),  class: 'nav-link', id: "view" %>
+          </li>
+      <!-- Principal -->
+    </ul>
+    <!-- Menú  -->
+
+  </div>
+</nav>
+
+<%= yield %>
