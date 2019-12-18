@@ -55,6 +55,7 @@ class Admin::RolesController < ApplicationController
     respond_to do |format|
        if @role.update(role_params)
          Permission.where(role_id: @role.id).destroy_all
+        if !params[:permissions].nil?
         params[:permissions].each do |a|
           params[:permissions][a].each do |r|
             @a = Permission.new()
@@ -63,6 +64,7 @@ class Admin::RolesController < ApplicationController
             @a['role_id'] = @role.id
             @a.save!
           end 
+        end 
         end 
          format.html { redirect_to admin_roles_path, notice: 'Role was successfully updated.' }
          format.json { render :show, status: :ok, location: @role }
