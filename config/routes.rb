@@ -23,7 +23,6 @@ Rails.application.routes.draw do
     get 'dashboards/show' => 'dashboards#show'
 
     resources :field_types
-    resources :roles
     resources :layers
     resources :choice_lists
     resources :charts
@@ -34,6 +33,7 @@ Rails.application.routes.draw do
 
     namespace :admin do
       resources :users
+      resources :roles
     end
 
     resources :project_types do 

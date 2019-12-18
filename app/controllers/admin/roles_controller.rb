@@ -1,4 +1,4 @@
-class RolesController < ApplicationController
+class Admin::RolesController < ApplicationController
   before_action :set_role, only: [:show, :edit, :update, :destroy]
 
   # GET /roles
@@ -38,7 +38,7 @@ class RolesController < ApplicationController
             @a.save!
           end 
         end 
-        format.html { redirect_to roles_path, notice: 'Role was successfully created.' }
+        format.html { redirect_to admin_roles_path, notice: 'Role was successfully created.' }
         format.json { render :show, status: :created, location: @role }
       else
         format.html { render :new }
@@ -62,7 +62,7 @@ class RolesController < ApplicationController
             @a.save!
           end 
         end 
-         format.html { redirect_to roles_path, notice: 'Role was successfully updated.' }
+         format.html { redirect_to admin_roles_path, notice: 'Role was successfully updated.' }
          format.json { render :show, status: :ok, location: @role }
        else
          format.html { render :edit }
@@ -76,7 +76,7 @@ class RolesController < ApplicationController
   def destroy
     @role.destroy
     respond_to do |format|
-      format.html { redirect_to roles_url, notice: 'Role was successfully destroyed.' }
+      format.html { redirect_to admin_roles_path, notice: 'Role was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

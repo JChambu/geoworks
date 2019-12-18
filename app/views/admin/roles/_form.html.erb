@@ -1,7 +1,7 @@
 <div class="card m-2 shadow">
   <div class="card-body">
 
-    <%= form_for(@role) do |form| %>
+    <%= form_for([:admin, @role]) do |form| %>
       <% if role.errors.any? %>
         <div id="error_explanation">
           <h2><%= pluralize(role.errors.count, "error") %> prohibited this role from being saved:</h2>
@@ -71,7 +71,7 @@
       </div>
 
       <div class="row justify-content-center">
-        <%= link_to t('.cancel', :default => t("helpers.links.cancel")), roles_path, :class => 'btn btn-secondary mr-1' %>
+        <%= link_to t('.cancel', :default => t("helpers.links.cancel")), admin_roles_path, :class => 'btn btn-secondary mr-1' %>
         <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
       </div>
     <% end %>
