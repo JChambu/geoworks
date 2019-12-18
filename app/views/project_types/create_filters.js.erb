@@ -8,7 +8,26 @@ var filter_view = '<%= params[:q][:project_field]%>' +' <%= params[:q][:filters]
 
 Navarra.project_types.config.filter_option.push(filter_option);
 Navarra.project_types.config.filter_kpi.push(filter_kpi);
-$(".add_filters").append('<div class="message success form-control" id="'+filter_option+'"value="'+filter_kpi+'" style="text-align: center;"> <b>Filtrado por:</b> '+ filter_view+'</div>')
+
+// Elimina y vuelve a agregar el item al card Filtros Activos
+$('#filter-body').append(
+  $('<div>', { // item
+    'class': 'message success form-control text-light bg-secondary px-2 mb-1 py-1 rounded border border-dark shadow',
+    'id': filter_option,
+    'value': filter_kpi
+  }).append(
+    $('<b>', {
+      'text': 'Filtrado por: '+filter_view
+    }),
+    $('<button>', {
+      'type': 'button',
+      'class': 'close',
+      'id': 'close_point_color',
+      'text': '×'
+    })
+  )
+)
+
 $("#filters-modal").modal('hide');
 $("#filters-modal").remove();
 $(".fa-filter").css("color", "#d3d800");

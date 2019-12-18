@@ -61,7 +61,7 @@ Navarra.dashboards.action_show = function(){
 
     });
 
-    $(".add_filters").on("click", ".message",  function(){
+    $("#filter-body").on("click", ".message",  function(){
       $(".fa-filter").css("color", "#9b9b9b");
       var da =  $(this).attr('id');
         Navarra.project_types.config.field_point_colors = '';
