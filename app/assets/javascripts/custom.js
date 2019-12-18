@@ -99,62 +99,39 @@ function init_chart_doughnut(size_box = null){
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
       success: function(data){
 
-        $('.graphics').append(
-          $('<div>', { // card
-            'class': 'card text-light bg-primary sticky-top w-100',
-            'id': 'filter-container'
-          }).append(
-            $('<div>', { // card-header
-              'class': 'card-header pl-3',
-              'id': 'filter-header'
+        if ($('#time_slider').length == 0) {
+
+          $('#filter-body').prepend(
+            $('<div>', {
+              'id': 'time_slider_item'
             }).append(
-              $('<b>', { // título
-                'text': 'Filtros Activos'
-              })
-            ),
-            $('<div>', { // collapse
-              'class': 'collapse show',
-              'id': 'filter-collapse'
-            }).append(
-              $('<div>', { // card-body
-                'class': 'card-body',
-                'id': 'filter-body'
+              $("<input>", {
+                'id': 'time_slider'
+              }),
+              $("<div>", {
+                'class': 'dropdown-divider',
               })
             )
           )
-        )
 
-        $('#filter-body').prepend(
-          $('<div>', {
-            'id': 'time_slider_item'
-          }).append(
-            $("<input>", {
-              'id': 'time_slider'
-            }),
-            $("<div>", {
-              'class': 'dropdown-divider',
-            })
-          )
-        )
+          var lang = "es-AR";
+          var year = 2019;
 
-        var lang = "es-AR";
-        var year = 2019;
-
-        function dateToTS (date) {
+          function dateToTS(date) {
             return date.valueOf();
-        }
+          }
 
-        function tsToDate (ts) {
+          function tsToDate(ts) {
             var d = new Date(ts);
 
             return d.toLocaleDateString(lang, {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
             });
-        }
+          }
 
-        $("#time_slider").ionRangeSlider({
+          $("#time_slider").ionRangeSlider({
             skin: "flat",
             type: "double",
             grid: true,
@@ -163,7 +140,8 @@ function init_chart_doughnut(size_box = null){
             from: dateToTS(new Date(year, 10, 8)),
             to: dateToTS(new Date(year, 10, 23)),
             prettify: tsToDate
-        });
+          });
+        }
 
         // Ordenamos las series por chart
         for(var i = 0; i < data.length; i ++){
