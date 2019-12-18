@@ -106,3 +106,19 @@ body {
 .nocaret::after {
   display:none !important;
 }
+
+div.custom-menu.show {
+  min-width: unset;
+  width: 50px;
+  z-index: 402;
+}
+.custom-item {
+  text-align: center !important;
+  height: 40px;
+  padding: 0.6rem !important;
+}
+.item-submenu {
+  width: 80% !important;
+  margin-right: 10%;
+  margin-left: 10%;
+}
