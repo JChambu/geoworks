@@ -53,10 +53,11 @@
             <%= link_to "#", class: 'nav-link', id: "view" do %> <i class="fas fa-table" title="Cambiar Vista" style="font-size: 20px"></i> <% end %>
           </li>
 
+        <% if can? :indicators, :visualizer%>
           <li class="nav-item">
             <%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, @dashboard.id), class: 'nav-link' do %> <i class="fas fa-database" title="Crear Indicador" style="font-size: 20px"></i> <% end %>
           </li>
-
+        <% end %>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle nocaret" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="fas fa-globe-americas" style="font-size: 20px"></i>

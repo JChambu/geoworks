@@ -1,6 +1,10 @@
 <tr id="<%= analytics_dashboard.id %>">
   <td><%= analytics_dashboard.title %></td>
   <td><%= analytics_dashboard.description %></td>
+<% if can? :indicators, :edit%>
   <td class="text-center"><%= link_to  edit_project_type_dashboard_analytics_dashboard_path(@project_type, @dashboard, analytics_dashboard), remote: true  do %> <i class="fas fa-edit"></i><%end%></td>
+<% end %>
+<% if can? :indicators, :destroy%>
   <td class="text-center"><%= link_to project_type_dashboard_analytics_dashboard_path(@project_type, @dashboard, analytics_dashboard), method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
+<% end %>
 </tr>

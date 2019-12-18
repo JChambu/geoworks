@@ -5,6 +5,7 @@ class AnalyticsDashboardsController < ApplicationController
   # GET /analytics_dashboards
   # GET /analytics_dashboards.json
   def index
+    authorize! :indicators, :visualizer
     @analytics_dashboards = @dashboard.analytics_dashboards.all
   end
 
@@ -15,12 +16,14 @@ class AnalyticsDashboardsController < ApplicationController
 
   # GET /analytics_dashboards/new
   def new
+    authorize! :indicators, :new
     @analytics_dashboard = @dashboard.analytics_dashboards.new
 
   end
 
   # GET /analytics_dashboards/1/edit
   def edit
+    authorize! :indicators, :edit
   end
 
   # POST /analytics_dashboards
@@ -64,6 +67,7 @@ class AnalyticsDashboardsController < ApplicationController
   # DELETE /analytics_dashboards/1
   # DELETE /analytics_dashboards/1.json
   def destroy
+    authorize! :indicators, :destroy
     @analytics_dashboard.destroy
     respond_to do |format|
       format.html {redirect_to project_type_dashboard_analytics_dashboards_path(@project_type, @dashboard) , notice: 'Analytics dashboard was successfully destroyed.' }

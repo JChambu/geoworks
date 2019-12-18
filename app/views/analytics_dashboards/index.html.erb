@@ -7,9 +7,11 @@
         <h1 class="m-0">Indicadores de
           <%= project_name.name %></h1>
       </div>
+      <% if can? :indicators, :new%>
       <div class="col-md-6 text-right">
         <%= link_to 'Nuevo', new_project_type_dashboard_analytics_dashboard_path(@project_type, @dashboard), class:'btn btn-primary', remote: true%>
       </div>
+    <% end %>
     </div>
   </div>
 </div>
