@@ -6,9 +6,11 @@
       <div class="col-md-6">
         <h1 class="m-0">Capas Externas</h1>
       </div>
-      <div class="col-md-6 text-right">
-        <%= link_to 'Nueva', new_layer_path, class: "btn btn-primary" %>
-      </div>
+      <% if can? :layers, :new %>
+        <div class="col-md-6 text-right">
+          <%= link_to 'Nueva', new_layer_path, class: "btn btn-primary" %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
@@ -35,8 +37,12 @@
               <td><%= layer.url %></td>
               <td><%= layer.description %></td>
               <td><%= layer.type_layer %></td>
-              <td class="text-center"><%= link_to edit_layer_path(layer) do %> <i class="fas fa-edit"></i><%end%></td>
-              <td class="text-center"><%= link_to layer, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
+              <% if can? :layers, :edit %>
+                <td class="text-center"><%= link_to edit_layer_path(layer) do %> <i class="fas fa-edit"></i><%end%></td>
+              <% end %>
+              <% if can? :layers, :destroy %>
+                <td class="text-center"><%= link_to layer, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
+              <% end %>
             </tr>
           <% end %>
         </tbody>

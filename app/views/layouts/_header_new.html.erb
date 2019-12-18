@@ -165,7 +165,9 @@
         <% if can? :choice_lists, :visualizer %>
           <%= link_to 'Listado', choice_lists_path, class: "dropdown-item" %>
         <% end %>
-        <%= link_to 'Capas Externas', layers_path, class: "dropdown-item" %>
+        <% if can? :layers, :visualizer %>
+          <%= link_to 'Capas Externas', layers_path, class: "dropdown-item" %>
+        <% end %>
         <%= link_to "Editar Usuario", edit_user_path(current_user.id), class: "dropdown-item" %>
         <%= link_to 'Cerrar Sesión', destroy_user_session_path, class: "dropdown-item", method: :delete %>
       </div>

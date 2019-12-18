@@ -9,6 +9,7 @@ class LayersController < ApplicationController
   # GET /layers
   # GET /layers.json
   def index
+    authorize! :layers, :visualizer
     @layers = Layer.all
   end
 
@@ -19,11 +20,13 @@ class LayersController < ApplicationController
 
   # GET /layers/new
   def new
+    authorize! :layers, :new
     @layer = Layer.new
   end
 
   # GET /layers/1/edit
   def edit
+    authorize! :layers, :edit
   end
 
   # POST /layers
@@ -59,6 +62,7 @@ class LayersController < ApplicationController
   # DELETE /layers/1
   # DELETE /layers/1.json
   def destroy
+    authorize! :layers, :destroy
     @layer.destroy
     respond_to do |format|
       format.html { redirect_to layers_url, notice: 'Layer was successfully destroyed.' }
