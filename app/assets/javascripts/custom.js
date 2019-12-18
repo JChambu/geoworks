@@ -634,33 +634,38 @@ function init_chart_doughnut(size_box = null){
                   display: legend_display,
                   position: 'bottom',
                   labels: {
-                    boxWidth: 40,
-                    padding: 10,
+                    fontColor: '#3d4046',
+                    fontSize: 12,
                     usePointStyle: true,
                   }
                 },
                 plugins: {
                   datalabels: {
                     display: data_labelling,
+                    formatter: (value, ctx) => {
+                      // Mustra sólo los valores (en porcentajes) que estén por encima del 3%
+                      let sum = 0;
+                      let dataArr = ctx.chart.data.datasets[0].data;
+                      dataArr.map(data => {
+                          sum += data;
+                      });
+                      let percentage = (value*100 / sum).toFixed(2);
+                      if (percentage > 4) {
+                        return percentage+'%';
+                      } else {
+                        return null;
+                      }
+                    },
+                    align: 'end',
+                    anchor: 'center',
+                    color: '#FFFFFF',
                     font: {
-                      size: 16,
                       weight: 'bold'
                     },
-                    color: 'white',
-                    textStrokeColor: '#1B2631',
+                    textStrokeColor: '#3d4046',
                     textStrokeWidth: 1,
                     textShadowColor: '#000000',
-                    textShadowBlur: 5,
-                    anchor: 'end',
-                    //align: 'end',
-                    //offset: -5,
-                    backgroundColor: function(context) {
-        							return context.dataset.backgroundColor;
-        						},
-                    borderColor: 'white',
-                    borderRadius: 25,
-                    borderWidth: 2,
-                    formatter: Math.round
+                    textShadowBlur: 3,
                   }
                 },
               }
