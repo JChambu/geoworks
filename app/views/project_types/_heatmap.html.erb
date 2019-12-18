@@ -3,40 +3,45 @@
     <div class="modal-content">
 
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title"> Mapa de Calor </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
 
       <%= form_tag project_type_create_heatmap_path, :remote => true, :method => :get   do |f| %>
 
         <div class="modal-body">
-          <!-- Nav tabs -->
-          <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#menu1">Campos</a></li>
-            <li><a data-toggle="tab" href="#menu2">KPI</a></li>
+
+          <ul class="nav nav-pills nav-fill mb-3">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#menu1">Campos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#menu2">KPI</a>
+            </li>
           </ul>
-          <!-- Tab panes -->
+
           <div class="tab-content">
-            <div id="menu1" class="tab-pane fade in active">
-              <br>
+            <div class="tab-pane fade active show" id="menu1">
               <%=select_tag 'q[project_field]',  options_for_select(region_for_select), include_blank: true, class:'proj_field form-control' %>
             </div>
-            <div id="menu2" class="tab-pane fade">
-              <br>
+            <div class="tab-pane fade" id="menu2">
               <%=select_tag 'q[project_kpi]',  options_for_select(kpi_for_select), include_blank: true, class:'proj_field form-control' %>
             </div>
           </div>
+
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
           <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary text-right", value: 'Guardar' %>
         </div>
 
       <% end %>
 
+    </div>
   </div>
 </div>
+
 <script>
   $('#heatmap-modal').on('hidden.bs.modal', function (e) {
     $(this).remove();
