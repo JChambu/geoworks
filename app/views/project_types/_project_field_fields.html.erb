@@ -13,13 +13,17 @@
       <%= link_to_add_fields "<i class='fas fa-plus sub_form' title='Agregar sub-atributo'></i>".html_safe, f, :project_subfields, class: 'table_children' %>
     <% else %>
       <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control form-control-sm choice_list', :style => 'display: none'} %>
+    <% if can? :attributes, :new %>
       <%= link_to_add_fields "<i class='fas fa-plus sub_form' title='Agregar sub-atributo' style='display: none'></i>".html_safe, f, :project_subfields, class: 'table_children' %>
+    <% end %>
     <% end %>
   </td>
   <%= f.hidden_field :sort, class: 'project_fields_current_position form-control form-control-sm', readonly: true %>
   <%= f.hidden_field :_destroy%>
   <td><%= f.collection_select :role, Role.order(:name), :id, :name, {}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></td>
-  <td><%= link_to '#', class: "remove_fields_2" do  %> <i class="fas fa-trash-alt" title="Eliminar atributo"></i> <%end %></td>
+  <% if can? :attributes, :destroy %>
+    <td><%= link_to '#', class: "remove_fields_2" do  %> <i class="fas fa-trash-alt" title="Eliminar atributo"></i> <%end %></td>
+  <% end %>
   <%= f.fields_for :project_subfields, @project_subfields do |a| %>
     <%= render 'project_subfield_fields', f: a  %>
   <% end %>

@@ -17,9 +17,11 @@
               <% ProjectType.all.each do |project| %>
                 <%= link_to "#{project.name}", dashboards_show_path(project_type_id: project.id),  class: "dropdown-item" %>
               <% end %>
+              <% if can? :project_types, :new %>
               <div class="dropdown-divider"></div>
               <%= link_to 'Nuevo', new_project_type_path, class: "dropdown-item" %>
             </div>
+              <% end %>
           </li>
 
           <li class="nav-item dropdown">
@@ -29,9 +31,15 @@
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <%= link_to 'Datos', project_type_projects_path(@project_type.id), class: "dropdown-item" %>
               <%= link_to 'Estados', project_type_project_statuses_path(@project_type.id), class: "dropdown-item" %>
+              <% if can? :project_types, :share%>
               <%= link_to 'Compartir', project_type_share_path(@project_type.id), remote:true,remote:true, class: "dropdown-item" %>
+              <% end %>
+              <% if can? :project_types, :edit%>
               <%= link_to 'Editar', edit_project_type_path(@project_type.id), class: "dropdown-item" %>
+              <% end %>
+              <% if can? :project_types, :destroy%>
               <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, remote: true, class: "dropdown-item" %>
+              <% end %>
             </div>
           </li>
 

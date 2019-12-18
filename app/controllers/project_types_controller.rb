@@ -10,6 +10,7 @@ class ProjectTypesController < ApplicationController
   end
 
   def share
+    authorize! :project_types, :share
     @project_type = ProjectType.find(params[:project_type_id])
     respond_to do |format|
       format.js
@@ -17,6 +18,7 @@ class ProjectTypesController < ApplicationController
   end
 
   def create_share
+    authorize! :project_types, :share
     user_share = params[:user_ids]
     user_unshare =params[:unshare_user_ids]
     project_type_id = params[:project_type_id]
@@ -212,12 +214,14 @@ class ProjectTypesController < ApplicationController
 
   # GET /project_types/new
   def new
+    authorize! :project_types, :new
     @project_type = ProjectType.new
     @project_field = @project_type.project_fields.build
   end
 
   # GET /project_types/1/edit
   def edit
+    authorize! :project_types, :edit
   end
 
   # POST /project_types
@@ -257,6 +261,7 @@ class ProjectTypesController < ApplicationController
   # DELETE /project_types/1
   # DELETE /project_types/1.json
   def destroy
+    authorize! :project_types, :destroy
     @project_type.destroy
     respond_to do |format|
       format.html { redirect_to project_types_url, notice: 'Project type was successfully destroyed.' }
