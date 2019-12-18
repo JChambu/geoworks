@@ -121,6 +121,48 @@ function init_chart_doughnut(size_box = null){
             )
           )
         )
+
+        $('#filter-body').prepend(
+          $('<div>', {
+            'id': 'time_slider_item'
+          }).append(
+            $("<input>", {
+              'id': 'time_slider'
+            }),
+            $("<div>", {
+              'class': 'dropdown-divider',
+            })
+          )
+        )
+
+        var lang = "es-AR";
+        var year = 2019;
+
+        function dateToTS (date) {
+            return date.valueOf();
+        }
+
+        function tsToDate (ts) {
+            var d = new Date(ts);
+
+            return d.toLocaleDateString(lang, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        $("#time_slider").ionRangeSlider({
+            skin: "flat",
+            type: "double",
+            grid: true,
+            min: dateToTS(new Date(year, 10, 1)),
+            max: dateToTS(new Date(year, 11, 1)),
+            from: dateToTS(new Date(year, 10, 8)),
+            to: dateToTS(new Date(year, 10, 23)),
+            prettify: tsToDate
+        });
+
         // Ordenamos las series por chart
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
