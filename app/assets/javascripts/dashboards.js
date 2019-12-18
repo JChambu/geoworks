@@ -32,7 +32,7 @@ Navarra.dashboards.action_show = function(){
      Navarra.dashboards.config.graph_id= graph_id;
     });
 
-    $(".add_field_point_color").on("click", ".mes",  function(){
+    $("#filter-body").on("click", ".mes",  function(){
 
       $(".fa-spinner").css("color", "#9b9b9b");
       var da =  $(this).attr('id');

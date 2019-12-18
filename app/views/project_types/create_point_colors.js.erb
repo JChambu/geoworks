@@ -3,8 +3,26 @@ field = <%= raw params[:q][:project_field].to_json %>
 Navarra.project_types.config.field_point_colors = field;
 Navarra.project_types.config.data_point_colors = d;
 Navarra.geomaps.point_colors_data();
-$(".add_field_point_color").empty();
-$(".add_field_point_color").append('<div class="mes form-control" id="point_color" style="text-align: center;"> <b>Puntos coloreados por:</b> '+ field+'</div>');
+
+// Elimina y vuelve a agregar el item al card Filtros Activos
+$("#point_color").remove();
+$('#filter-body').append(
+  $('<div>', { // item
+    'class': 'mes text-light bg-secondary px-2 mb-1 py-1 rounded border border-dark shadow',
+    'id': 'point_color',
+  }).append(
+    $('<b>', {
+      'text': 'Puntos coloreados por: '+field
+    }),
+    $('<button>', {
+      'type': 'button',
+      'class': 'close',
+      'id': 'close_point_color',
+      'text': '×'
+    })
+  )
+)
+
 $("#point_colors-modal").modal('hide');
 $("#point_colors-modal").remove();
 $(".fa-spinner").css("color", "#d3d800");
