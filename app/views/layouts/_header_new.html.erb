@@ -29,7 +29,9 @@
               <%= @project_type.name %>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <% if can? :data, :visualizer%>
               <%= link_to 'Datos', project_type_projects_path(@project_type.id), class: "dropdown-item" %>
+              <% end %>
               <%= link_to 'Estados', project_type_project_statuses_path(@project_type.id), class: "dropdown-item" %>
               <% if can? :project_types, :share%>
               <%= link_to 'Compartir', project_type_share_path(@project_type.id), remote:true,remote:true, class: "dropdown-item" %>

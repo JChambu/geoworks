@@ -6,6 +6,7 @@ class ProjectsController < ApplicationController
   # GET /projects.json
   def index
     
+    authorize! :data, :visualizer
     @search = @project_type.projects.all
     @search = @search.search(params[:q])
     @projects = @search.result.paginate(:page => params[:page])
@@ -25,12 +26,13 @@ class ProjectsController < ApplicationController
 
   # GET /projects/new
   def new
-
+    authorize! :data, :new
     @project = Project.new(project_type_id: params[:format])
   end
 
   # GET /projects/1/edit
   def edit
+    authorize! :data, :edit
   end
 
   # POST /projects
@@ -66,6 +68,7 @@ class ProjectsController < ApplicationController
   # DELETE /projects/1
   # DELETE /projects/1.json
   def destroy
+    authorize! :data, :destroy
     @project.destroy
     respond_to do |format|
       format.html { redirect_to projects_url, notice: 'Project was successfully destroyed.' }
