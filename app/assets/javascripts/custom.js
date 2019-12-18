@@ -75,7 +75,9 @@ function init_chart_doughnut(size_box = null){
   if( typeof(Chart) === 'undefined'){ return; }
 
   if ($('.graphics').length){
-    $('.graphics').empty();
+
+    $(".chart_container").remove();
+
     var type_box = 'polygon';
     if (size_box== null){
       size_box = [];
@@ -421,13 +423,13 @@ function init_chart_doughnut(size_box = null){
           }) //cierra each reg
 
           //Valida si el chart_container no existe para entonces crearlo (Fix temporal, averiguar porque duplican los charts)
-          if($(".chart_container"+graphic_id).length == 0) {
+          if($("#chart_container"+graphic_id).length == 0) {
 
 
             $('.graphics').append(
               $('<div>', {
-                'class': 'card text-light p-0 mb-2 bg-primary chart_container'+graphic_id,
-                'id': 'chart-container'+graphic_id
+                'class': 'card text-light p-0 mb-2 bg-primary chart_container',
+                'id': 'chart_container'+graphic_id
               }).append(
                 $('<div>', {
                   'class': 'card-header pl-3',
@@ -454,7 +456,7 @@ function init_chart_doughnut(size_box = null){
 
             if (!status_view){ //Default
 
-              $('.chart_container'+graphic_id).addClass('col-md-12');
+              $('#chart_container'+graphic_id).addClass('col-md-12');
               aspectR ="1";
 
               legend_display = false;
@@ -462,7 +464,7 @@ function init_chart_doughnut(size_box = null){
 
             }else{ //Active
 
-              $('.chart_container'+graphic_id).addClass('col-md-'+width);
+              $('#chart_container'+graphic_id).addClass('col-md-'+width);
 
               console.log(width);
 
@@ -731,7 +733,7 @@ function init_chart_doughnut(size_box = null){
             var chart_canvas = document.getElementById('canvas'+graphic_id).getContext('2d');
             var final_chart = new Chart(chart_canvas, chart_settings);
 
-          }; //cierra if .chart_container"+graphic_id
+          }; //cierra if #chart_container"+graphic_id
         } //cierra for data
 
         // Aplicamos la posición del scroll
