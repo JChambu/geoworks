@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :set_project_type
+  before_action :set_project_type, only: [:index]
   before_action :set_project, only: [:show, :edit, :update, :destroy]
 
   def popup
