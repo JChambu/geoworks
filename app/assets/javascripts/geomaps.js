@@ -98,7 +98,21 @@ Navarra.geomaps = function (){
           var z = document.createElement('p'); // is a node
           var x = []
           var count = 1;
+          var project_id = cc['features'][0]['properties']['id'];
           var data_id = Navarra.dashboards.config.project_type_id;
+          
+          $.ajax({
+            type: 'GET',
+            url: '/projects/popup.json',
+            datatype: 'json',
+            data: {
+              project_id: project_id
+            },
+            success: function(data) {
+              console.log(data);
+            }
+          });
+
 
           $.ajax({
             type: 'GET',
