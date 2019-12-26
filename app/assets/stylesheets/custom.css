@@ -122,3 +122,10 @@ div.custom-menu.show {
   margin-right: 10%;
   margin-left: 10%;
 }
+
+.handle {
+  padding: 4px;
+  margin-right: 10px;
+  background-color: rgba(0, 0, 0, 0.3);
+  cursor: move;
+}

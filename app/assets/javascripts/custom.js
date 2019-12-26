@@ -143,6 +143,14 @@ function init_chart_doughnut(size_box = null){
           });
         }
 
+        // Aplicamos drag and drop
+        dragula({
+          containers: Array.prototype.slice.call($('.graphics')),
+          moves: function(el, container, handle) {
+            return handle.classList.contains('handle') || handle.parentNode.classList.contains('handle');
+          }
+        });
+
         // Ordenamos las series por chart
         for(var i = 0; i < data.length; i ++){
           var reg = data[i];
@@ -413,6 +421,9 @@ function init_chart_doughnut(size_box = null){
                   'class': 'card-header pl-3',
                   'id': 'header'+graphic_id
                 }).append(
+                  $('<span>', { // handle
+                    'class': 'fas fa-arrows-alt handle border border-dark'
+                  }),
                   $('<b>', {
                     'text': title
                   })
