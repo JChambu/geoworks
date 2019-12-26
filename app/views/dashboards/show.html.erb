@@ -52,9 +52,12 @@
     <div class="graphics row p-2">
       <div class="card text-light bg-primary sticky-top w-100 mb-2" id="filter-container">
         <div class="card-header pl-3" id="filter-header">
+          <button class="close" type="button" data-toggle="collapse" data-target="#collapse_filter" aria-expanded="true" aria-controls="collapse_filter"><i class="fas fa-window-minimize"></i></button>
           <b>Filtros Activos</b>
         </div>
-        <div class="card-body" id="filter-body"></div>
+        <div class="collapse show" id="collapse_filter">
+          <div class="card-body" id="filter-body"></div>
+        </div>
       </div>
     </div>
   </div>

@@ -126,7 +126,7 @@ function init_chart_doughnut(size_box = null){
 
             return d.toLocaleDateString(lang, {
               year: 'numeric',
-              month: 'long',
+              month: 'numeric',
               day: 'numeric'
             });
           }
@@ -426,16 +426,33 @@ function init_chart_doughnut(size_box = null){
                   }),
                   $('<b>', {
                     'text': title
-                  })
+                  }),
+                  $('<button>', { // boton minimizar
+                    'class': 'close',
+                    'type': 'button',
+                    'data-toggle': 'collapse',
+                    'data-target': '#collapse_' + graphic_id,
+                    'aria-expanded': "true",
+                    'aria-controls': 'collapse_' + graphic_id,
+                  }).append(
+                    $('<i>', { // icono minimizar
+                      'class': 'fas fa-window-minimize'
+                    })
+                  )
                 ),
-                $('<div>', {
-                  'class': 'card-body px-1 pb-0',
-                  'id': 'body'+graphic_id
+                $('<div>', { // collapse
+                  'class': 'collapse show',
+                  'id': 'collapse_' + graphic_id
                 }).append(
-                  $('<canvas>', {
-                    'class': 'canvas'+graphic_id,
-                    'id': 'canvas'+graphic_id
-                  })
+                  $('<div>', {
+                    'class': 'card-body px-1 pb-0',
+                    'id': 'body' + graphic_id
+                  }).append(
+                    $('<canvas>', {
+                      'class': 'canvas' + graphic_id,
+                      'id': 'canvas' + graphic_id
+                    })
+                  )
                 )
               )
             )
