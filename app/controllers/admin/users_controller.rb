@@ -11,7 +11,7 @@ class Admin::UsersController < ApplicationController
       @users = @users.where(" email ilike ?", "%#{params[:email]}%") unless params[:email].blank?
       @users = @users.where("name ilike ?",  "%#{params[:name]}%") unless params[:name].blank?
     end
-      @users = @users.paginate(:page => params[:page])
+    @users = @users.paginate(:page => params[:page])
   end
 
   # GET /users/1
@@ -25,6 +25,9 @@ class Admin::UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+    @current_tenant = Apartment::Tenant.current
+    @customer = Customer.where(subdomain: current_tenant).first
+    @role_id =  UserCustomer.where(user_id: params[:id]).where(customer_id: @customer.id).pluck(:role_id).first
   end
 
   # POST /users
@@ -32,13 +35,13 @@ class Admin::UsersController < ApplicationController
   def create
     respond_to do |format|
       if @user.save      
-       @user_customers =  UserCustomer.new
-       @user_customers[:user_id] = @user.id
+        @user_customers =  UserCustomer.new
+        @user_customers[:user_id] = @user.id
         @current_tenant = Apartment::Tenant.current
         @customer = Customer.where(subdomain: current_tenant).first
         @user_customers[:customer_id] = @customer.id
         @user_customers[:role_id] = params[:user][:role].to_i
-       @user_customers.save!
+        @user_customers.save!
         format.html { redirect_to admin_users_path() }
         format.json { render action: 'show', status: :created, location: @user }
       else
@@ -51,13 +54,14 @@ class Admin::UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
-      @current_tenant = Apartment::Tenant.current
-      customer_id = Customer.where(name: @current_tenant)
-      user_id = current_user.id
-      user_customer = UserCustomer.where(customer_id: customer_id).where(user_id: user_id)
+    @current_tenant = Apartment::Tenant.current
+    customer_id = Customer.where(name: @current_tenant)
+    user_id = current_user.id
+    user_customer = UserCustomer.where(customer_id: customer_id).where(user_id: params[:id])
     respond_to do |format|
-      if @user.update(user_params)      
-        UserMailer.new_user(@user).deliver_now
+      if @user.update(user_params)     
+        user_customer = user_customer.update(role_id: params[:user][:role_id] )
+        #UserMailer.new_user(@user).deliver_now
         format.html { redirect_to admin_users_path() }
         format.json { head :no_content }
       else
@@ -81,9 +85,9 @@ class Admin::UsersController < ApplicationController
       format.json { head :no_content }
     end
   end
-    
+
   def build_token
-       authentication_token = SecureRandom.base64(64)
+    authentication_token = SecureRandom.base64(64)
   end
 
   private
@@ -100,6 +104,6 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :name, :password_confirmation, :active, :role_id).merge(token: build_token)
+    params.require(:user).permit(:email, :password, :name, :password_confirmation, :active, user_customer_attributes: [:id, :role_id]).merge(token: build_token)
   end
 end
