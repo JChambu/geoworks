@@ -126,7 +126,7 @@ function init_chart_doughnut(size_box = null){
 
             return d.toLocaleDateString(lang, {
               year: 'numeric',
-              month: 'long',
+              month: 'numeric',
               day: 'numeric'
             });
           }
