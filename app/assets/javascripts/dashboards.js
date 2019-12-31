@@ -32,16 +32,16 @@ Navarra.dashboards.action_show = function(){
      Navarra.dashboards.config.graph_id= graph_id;
     });
 
-    $("#filter-body").on("click", ".mes",  function(){
+    // Desactiva Puntos Coloreados
+    $("#filter-body").on("click", "#close_colored_points", function() {
 
       $(".fa-spinner").css("color", "#9b9b9b");
-      var da =  $(this).attr('id');
-        Navarra.project_types.config.field_point_colors = '';
-        $(this).remove();
-        Navarra.geomaps.wms_filter();
-        Navarra.geomaps.point_colors_data();
+      Navarra.project_types.config.field_point_colors = '';
+      $('#colored_points').remove();
+      Navarra.geomaps.wms_filter();
+      Navarra.geomaps.point_colors_data();
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
-      if (heatmap_actived != ''){
+      if (heatmap_actived != '') {
         Navarra.geomaps.heatmap_data();
       }
       //Navarra.geomaps.current_layer();

@@ -2,14 +2,16 @@ d = <%= raw  @query_point.to_json%>;
 field = <%= raw params[:q][:project_field].to_json %>
 Navarra.project_types.config.field_point_colors = field;
 Navarra.project_types.config.data_point_colors = d;
-Navarra.geomaps.point_colors_data();
+
+$("#point_colors-modal").remove();
+$('.modal-backdrop').remove();
 
 // Elimina y vuelve a agregar el item al card Filtros Activos
-$("#point_color").remove();
+$("#colored_points").remove();
 $('#filter-body').append(
-  $('<div>', { // item
-    'class': 'mes text-light bg-secondary px-2 mb-1 py-1 rounded border border-dark shadow',
-    'id': 'point_color',
+  $('<div>', {
+    'class': 'text-light bg-secondary px-2 mb-1 py-1 rounded border border-dark shadow',
+    'id': 'colored_points',
   }).append(
     $('<b>', {
       'text': 'Puntos coloreados por: '+field
@@ -17,12 +19,11 @@ $('#filter-body').append(
     $('<button>', {
       'type': 'button',
       'class': 'close',
-      'id': 'close_point_color',
+      'id': 'close_colored_points',
       'text': '×'
     })
   )
 )
 
-$("#point_colors-modal").modal('hide');
-$("#point_colors-modal").remove();
 $(".fa-spinner").css("color", "#d3d800");
+Navarra.geomaps.point_colors_data();
