@@ -50,13 +50,13 @@ Navarra.dashboards.action_show = function(){
 
     });
 
-    $(".add_heatmap").on("click", ".mes",  function(){
+    // Desactiva Mapa de Calor
+    $("#filter-body").on("click", '#close_heatmap_filter', function() {
 
       $(".fa-fire").css("color", "#9b9b9b");
-      var da =  $(this).attr('id');
-        Navarra.project_types.config.field_point_colors = '';
-        Navarra.project_types.config.heatmap_field = '';
-        $(this).remove();
+      Navarra.project_types.config.field_point_colors = '';
+      Navarra.project_types.config.heatmap_field = '';
+      $('#heatmap_filter').remove();
       Navarra.geomaps.remove_heatmap();
 
     });

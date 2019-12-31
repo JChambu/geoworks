@@ -2,9 +2,28 @@ heatmap_indicator = '<%= params[:q][:project_kpi] %>';
 field =  '<%= params[:q][:project_field] %>';
 Navarra.project_types.config.heatmap_field = field;
 Navarra.project_types.config.heatmap_indicator = heatmap_indicator;
-$("#heatmap-modal").modal('hide');
+
 $("#heatmap-modal").remove();
-$(".add_heatmap").empty();
-$(".add_heatmap").append('<div class="mes form-control" id="point_color" style="text-align: center;"> <b>Heatmap por:</b> '+ field+'</div>');
+$('.modal-backdrop').remove();
+
+// Elimina y vuelve a agregar el item al card Filtros Activos
+$("#heatmap_filter").remove();
+$('#filter-body').append(
+  $('<div>', {
+    'class': 'text-light bg-secondary px-2 mb-1 py-1 rounded border border-dark shadow',
+    'id': 'heatmap_filter',
+  }).append(
+    $('<b>', {
+      'text': 'Mapa de Calor por: '+field
+    }),
+    $('<button>', {
+      'type': 'button',
+      'class': 'close',
+      'id': 'close_heatmap_filter',
+      'text': '×'
+    })
+  )
+)
+
 $(".fa-fire").css("color", "#d3d800");
 Navarra.geomaps.heatmap_data();
