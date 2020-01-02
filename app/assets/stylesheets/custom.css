@@ -129,3 +129,33 @@ div.custom-menu.show {
   background-color: rgba(0, 0, 0, 0.3);
   cursor: move;
 }
+
+.tile_count {
+  margin-bottom: 10px;
+  margin-top: 10px
+}
+.tile_count .tile_stats_count {
+  padding: 0 10px 0 20px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative
+}
+.tile_count .tile_stats_count:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  height: 65px;
+  border-left: 1px solid #798088;
+}
+.tile_count .tile_stats_count .count {
+  font-size: 28px;
+  line-height: 30px;
+  font-weight: 600
+}
+.tile_count .tile_stats_count span {
+  font-size: 12px
+}
+.tile_count .tile_stats_count .count_bottom i {
+  width: 12px
+}

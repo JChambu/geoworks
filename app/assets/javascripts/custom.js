@@ -39,28 +39,41 @@ function init_kpi(size_box = null){
     type: 'GET',
     url: '/project_types/kpi.json',
     datatype: 'json',
-    data: {data_id: data_id, size_box: size_box, graph: false, type_box: type_box, data_conditions: conditions}, dashboard_id: dashboard_id,
-    success: function(data){
-      data.forEach(function(element){
-        var count_element= element['data'][0]['count'];
-        if (element['title'] == '% del Total' ){
+    data: {
+      data_id: data_id,
+      size_box: size_box,
+      graph: false,
+      type_box: type_box,
+      data_conditions: conditions
+    },
+    dashboard_id: dashboard_id,
+    success: function(data) {
+
+      console.log(data);
+
+      data.forEach(function(element) {
+        var count_element = element['data'][0]['count'];
+
+        if (element['title'] == '% del Total') {
           data_cont = (Number(count_element)).format(2, 3, '.', ',');
-        }else{
+        } else {
           data_cont = (Number(count_element)).format(0, 3, '.', ',');
         }
-        if ($('.kpi_'+ element['id']).length) {
-          $('.kpi_'+element['id']).replaceWith('<div class="count  kpi_'+ element['id'] +'"><i class="fa fa-user"></i> '+ data_cont +'</div>');
-        }else{
 
-          html = ' <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">'+
-            '<span class="count_top">'+element['title']+'</span>'+
-            '<div class="count  kpi_'+ element['id'] +'"> '+ data_cont +'</div>'+
-            '</div>'+
+        if ($('.kpi_' + element['id']).length) {
+          $('.kpi_' + element['id']).replaceWith('<div class="count  kpi_' + element['id'] + '">' + data_cont + '</div>');
+        } else {
+
+          html = ' <div class="tile_stats_count">' +
+            '<span class="count_top">' + element['title'] + '</span>' +
+            '<div class="count  kpi_' + element['id'] + '"> ' + data_cont + '</div>' +
+            '</div>' +
             '</div>'
           $('.tile_count').append(html);
         }
       })
-    }});
+    }
+  });
 }
 
 function capitalize(s){
