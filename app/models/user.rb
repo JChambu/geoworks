@@ -5,7 +5,8 @@ class User < ApplicationRecord
   has_many :project_types, through: :has_project_types 
   has_many :user_customers 
   has_many :customers, through: :user_customers
-
+  accepts_nested_attributes_for :user_customers, allow_destroy: true
+  
   belongs_to :role
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
@@ -25,6 +26,7 @@ class User < ApplicationRecord
   #validate :is_role_valid?
   #before_destroy :has_related_pois?
 
+  attr_accessor :customer_id, :project
 
   ROLES = %w[User Admin Moderator]
 
