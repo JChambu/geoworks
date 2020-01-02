@@ -5,6 +5,14 @@ class Admin::UsersController < ApplicationController
   layout 'admin'
   # GET /users
   # GET /users.json
+
+  def search_projects
+    @query = "select id, name from #{params['customer_name']}.project_types"
+    #@projects = ActiveRecord::Base.connection.execute(@query).to_a
+    @projects = ProjectType.all
+  end
+
+
   def index
     @users = User.all
     if params[:email].present? || params[:name].present?
