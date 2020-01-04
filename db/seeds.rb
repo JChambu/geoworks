@@ -24,29 +24,4 @@ def create_user email, name, pass, role
 	user = User.create(options)
 end
 
-AppConfiguration.delete_all
-AppConfiguration.create(:gisworking_initial_identifier => 500000)
-  
 create_user "super@admin.com", "Admin", "superadmin", "Admin"
-
-PoiSource.find_or_create_by(name: "Navteq")
-PoiSource.find_or_create_by(name: "Gisworking")
-PoiSource.find_or_create_by(name: "Extra")
-
-PoiStatus.find_or_create_by(name: "not_validated")
-PoiStatus.find_or_create_by(name: "validated")
-PoiStatus.find_or_create_by(name: "delivered")
-PoiStatus.find_or_create_by(name: "Verificado")
-PoiStatus.find_or_create_by(name: "restricted")
-PoiStatus.find_or_create_by(name: "Pendiente")
-PoiStatus.find_or_create_by(name: "Revisad")
-
-# Creamos los actions
-
-PAction.find_or_create_by(name: "New")
-PAction.find_or_create_by(name: "Update")
-PAction.find_or_create_by(name: "Keep")
-PAction.find_or_create_by(name: "Delete")
-PAction.find_or_create_by(name: "No Info")
-PAction.find_or_create_by(name: "Restricted")
-PAction.find_or_create_by(name: "check")
