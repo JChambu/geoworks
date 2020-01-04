@@ -29,6 +29,8 @@ Rails.application.routes.draw do
     resources :analysis_types
     resources :regexp_types
     resources :customers
+    resources :events
+    resources :model_types
     
 
     namespace :admin do
