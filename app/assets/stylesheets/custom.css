@@ -159,3 +159,17 @@ div.custom-menu.show {
 .tile_count .tile_stats_count .count_bottom i {
   width: 12px
 }
+
+.custom-switch .custom-control-input:checked~.custom-role-colour::after {
+  background-color: #42d964;
+}
+.custom-switch .custom-role-colour::after {
+  background-color: #798088;
+}
+.custom-control-input:checked~.custom-role-colour::before {
+  border-color: #e8ebef;
+  background-color: #2c2e34;
+}
+.custom-role-colour::before {
+  background-color: #3d4046;
+}

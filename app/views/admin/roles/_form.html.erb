@@ -35,7 +35,7 @@
                     <div class="form-group">
                       <div class="custom-control custom-switch">
                         <%= check_box_tag "permissions[#{mt.id}][#{e.id}]",e.id , @permissions.any? {|c| c.event_id == e.id && c.model_type_id == mt.id}, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
-                        <label class="custom-control-label" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
+                        <label class="custom-control-label custom-role-colour" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
                       </div>
                     </div>
                   <% end %>
@@ -43,7 +43,7 @@
                     <div class="form-group">
                       <div class="custom-control custom-switch">
                         <%= check_box_tag "permissions[#{mt.id}][#{e.id}]",e.id , @permissions.any? {|c| c.event_id == e.id && c.model_type_id == mt.id}, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
-                        <label class="custom-control-label" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
+                        <label class="custom-control-label custom-role-colour" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
                       </div>
                     </div>
                   <% end %>
@@ -52,7 +52,7 @@
                   <div class="form-group">
                     <div class="custom-control custom-switch">
                       <%= check_box_tag "permissions[#{mt.id}][#{e.id}]",e.id , @permissions.any? {|c| c.event_id == e.id && c.model_type_id == mt.id}, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
-                      <label class="custom-control-label" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
+                      <label class="custom-control-label custom-role-colour" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
                     </div>
                   </div>
                 <% end %>
@@ -60,7 +60,7 @@
                   <div class="form-group">
                     <div class="custom-control custom-switch">
                       <%= check_box_tag "permissions[#{mt.id}][#{e.id}]",e.id , @permissions.any? {|c| c.event_id == e.id && c.model_type_id == mt.id}, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
-                      <label class="custom-control-label" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
+                      <label class="custom-control-label custom-role-colour" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
                     </div>
                   </div>
                 <% end %>
