@@ -173,3 +173,7 @@ div.custom-menu.show {
 .custom-role-colour::before {
   background-color: #3d4046;
 }
+
+.chart-bg-transparent {
+  background-color: rgba(58, 63, 68, 0.9);
+}

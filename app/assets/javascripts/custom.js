@@ -427,7 +427,7 @@ function init_chart_doughnut(size_box = null){
 
             $('.graphics').append(
               $('<div>', {
-                'class': 'card text-light p-0 mb-2 bg-primary chart_container',
+                'class': 'card text-light p-0 mb-2 chart-bg-transparent chart_container',
                 'id': 'chart_container'+graphic_id
               }).append(
                 $('<div>', {
