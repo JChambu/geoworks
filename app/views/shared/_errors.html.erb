@@ -1,0 +1,15 @@
+<%if obj.errors.any? %>   
+  <div class="panel-body">
+
+    <ul>
+
+      <% obj.errors.full_messages.each do |msg| %>
+
+        <li><%= msg %></li>
+
+      <% end %>
+
+    </ul>
+
+  </div>
+<% end %>
