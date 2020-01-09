@@ -1,10 +1,13 @@
 class User < ApplicationRecord
+  include Users::Scopes
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   has_many :has_project_types
   has_many :project_types, through: :has_project_types 
   has_many :user_customers 
   has_many :customers, through: :user_customers
+  has_many :project_filters, dependent: :destroy 
   accepts_nested_attributes_for :user_customers, allow_destroy: true
   
   belongs_to :role
@@ -86,9 +89,7 @@ end
     end
   end
 
-
   def self.sorted_by_name
     self.order(:name)
   end
-
 end

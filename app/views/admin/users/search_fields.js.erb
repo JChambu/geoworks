@@ -1,0 +1,21 @@
+fields = "<%= j(collection_select(:field, :id, @f, :id, :name, prompt: true)) %>";
+$('#search_fields').html(fields);
+
+customer_name = $("#user_customer_id").val();
+project_id = $("#project_id").val();
+
+$('#field_id').on('change', function() {
+  project_field_id = $('#field_id').val();
+  $.ajax({
+    url:  "<%= admin_users_search_properties_data_path %>",
+    type: "POST",
+    data: { 
+      project_id: project_id, 
+      customer_name: customer_name, 
+      project_field_id: project_field_id 
+    },
+    success: function(data){
+    }
+  });
+
+});

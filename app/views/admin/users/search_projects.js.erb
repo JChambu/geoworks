@@ -1,2 +1,13 @@
-var html = "<%= j(collection_select(:project_id, :id, @projects, :id, :name)) %>";
-$('#search_projects').html(html);
+projects = "<%= j(collection_select(:project, :id, @p, :id, :name, prompt: true)) %>";
+$('#search_projects').html(projects);
+customer_name = $("#user_customer_id").val();
+$('#project_id').on('change', function() {
+        $.ajax({
+          url:  "<%= admin_users_search_fields_path %>",
+          type: "POST",
+          data: { project_id: $(this).val(), customer_name: customer_name },
+          success: function(data){
+          }
+        });
+
+});

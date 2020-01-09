@@ -1,21 +1,32 @@
 class Project < ApplicationRecord
 has_paper_trail
+  include Projects::Scopes
 
   require "json"
   belongs_to :project_type
   has_many :project_data_child
   #validate :validate_properties
 
-  def self.geometry_bounds project_type_id
+  def self.geometry_bounds project_type_id, user_id
 
-    Project.
+    @bounds =  Project.
       where(project_type_id: project_type_id).
       select("public.st_Xmin(public.st_collect(the_geom)) as minx, 
                         public.st_Ymin(public.st_collect(the_geom)) as miny,
                         public.st_Xmax(public.st_collect(the_geom)) as maxx,
                         public.st_Ymax(public.st_collect(the_geom)) as maxy").
-      group(:project_type_id)
+    group(:project_type_id)
 
+
+    project_filters = ProjectFilter.where(user_id: user_id).where(project_type_id: project_type_id)
+    if !project_filters.nil?
+      project_filters.each do |filter|
+        filter.properties.to_a.each do |prop|
+          @bounds = @bounds.where(" projects.properties->>'" + prop[0] +"' = '#{prop[1]}'")
+        end
+      end
+    end
+    @bounds
   end
 
   def validate_properties

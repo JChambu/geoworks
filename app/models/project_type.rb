@@ -1,4 +1,6 @@
 class ProjectType < ApplicationRecord
+  include ProjectTypes::Scopes
+  include ProjectTypes::Validations
 
   require 'rgeo/shapefile'
   require 'rgeo/geo_json'
@@ -15,6 +17,7 @@ class ProjectType < ApplicationRecord
   has_many :has_project_types, dependent: :destroy
   has_many :users, :through=> :has_project_types
   has_many :project_statuses, dependent: :destroy
+  has_many :project_filters
   accepts_nested_attributes_for :project_fields, allow_destroy: true
   accepts_nested_attributes_for :projects, allow_destroy: true
 
@@ -84,7 +87,7 @@ class ProjectType < ApplicationRecord
     end
   end
 
-  def self.kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions)
+  def self.kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id)
 
     @ct = Apartment::Tenant.current
     @type_box = type_box
@@ -124,6 +127,16 @@ class ProjectType < ApplicationRecord
       data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
       @data_fixed = data
     end
+    
+          project_filters = ProjectFilter.where(user_id: user_id).where(project_type_id: project_type_id)
+          if !project_filters.nil?
+              project_filters.each do |filter|
+                filter.properties.to_a.each do |prop|
+                data =  data.where(" projects.properties->>'" + prop[0] +"' = '#{prop[1]}'")
+                end
+              end
+          end
+      @data_fixed = data
     if !data_conditions.blank?
       data_conditions.each do |key| 
         @s = key.split('|')
@@ -139,7 +152,18 @@ class ProjectType < ApplicationRecord
       @data_fixed = data
     end
 
-    @total_row = Project.where(project_type_id: project_type_id).count
+
+    @total_row = Project.where(project_type_id: project_type_id)
+
+          if !project_filters.nil?
+              project_filters.each do |filter|
+                filter.properties.to_a.each do |prop|
+              @total_row = @total_row.where(" projects.properties->>'" + prop[0] +"' = '#{prop[1]}'")
+
+                end
+              end
+          end
+    @total_row = @total_row.count
     @row_selected = @data_fixed.count 
     @avg_selected = [{ "count": ((@row_selected.to_f / @total_row.to_f) * 100).round(2)} ]
     querys << { "title":"Total", "description":"Total", "data":[{"count":@total_row}], "id": 1000}
@@ -178,7 +202,7 @@ class ProjectType < ApplicationRecord
     querys
   end
 
-  def self.kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions)
+  def self.kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id)
 
     @arr1 = []
     @size = size_box
@@ -222,6 +246,16 @@ class ProjectType < ApplicationRecord
             data = Project.joins("left outer join project_data_children on projects.id = project_data_children.project_id").where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
           end
           data.joins(:project_data_child)
+
+          project_filters = ProjectFilter.where(user_id: user_id).where(project_type_id: project_type_id)
+
+          if !project_filters.nil?
+              project_filters.each do |filter|
+                filter.properties.to_a.each do |prop|
+                data =  data.where(" projects.properties->>'" + prop[0] +"' = '#{prop[1]}'")
+                end
+              end
+          end
 
           if !chart.sql_sentence.blank?
             if chart.group_sql.blank?

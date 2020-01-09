@@ -3,6 +3,7 @@
     <div class="card-body">
 
       <%= simple_form_for([:admin,@user]) do |f| %>
+        <%= render 'shared/errors', obj: @user %>
         <div class="form-group col-md-12">
           <div class="col-md-6 text-left">
             <%= f.label :name %>
@@ -21,14 +22,17 @@
           </div>
         </div>
         <div class="col-md-3">
-          <%= f.input :customer_id, :required => true, :collection => customers_for_select, :prompt => t('simple_form.select_item_prompt'), label: false, input_html: {class: 'form-control'}  %>
+          <%= f.input :customer_id, required: true, collection: customers_for_select, prompt: t('simple_form.select_item_prompt'), label: false, input_html: {class: 'form-control'}, selected: @customer.nil? ? '' : @customer.id%>
         </div>
 
         <div class="form-group col-md-12">
-        <div id='search_projects'></div>
+
           <div class="col-md-6 text-left">
             <div class="col-md-12">
-              <%= f.input :role_id, collection: roles_for_select, prompt: "Seleccione un rol",include_blank:true, selected: @role_id.to_i||'' %>
+        <div id='search_roles'></div>
+        <div id='search_projects'></div>
+        <div id='search_fields'></div>
+        <div id='search_data'></div>
             </div>
           </div>
 
@@ -60,6 +64,13 @@
           type: "POST",
           data: { customer_name: $(this).val() }
         });
+        
+        $.ajax({
+          url:  "<%= admin_users_search_roles_path %>",
+          type: "POST",
+          data: { customer_name: $(this).val() },
+        });
       });
     });
+
   </script>

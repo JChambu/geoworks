@@ -387,7 +387,7 @@ Navarra.geomaps = function (){
 
     var cql_filter = 'project_type_id='+Navarra.dashboards.config.project_type_id;
     var filter_option = Navarra.project_types.config.filter_option;
-
+    console.log(filter_option);
     if (filter_option.length > 0){
       $.each(filter_option, function(a,b){
         data_filter = b.split('|');
@@ -623,7 +623,13 @@ Navarra.geomaps = function (){
 
   function current_layer(){
 
-    name_layer = Navarra.dashboards.config.name_layer;
+    var filter_option = Navarra.project_types.config.filter_option;
+    console.log(filter_option);
+    cql_filter = "1 = 1";
+    if (filter_option.length > 0){
+        cql_filter +=" and "+ filter_option[0]+ " " + filter_option[1] + " '" +  filter_option[2] + "'";
+    } 
+      name_layer = Navarra.dashboards.config.name_layer;
     switch (type_geometry) {
       case 'Point':
         style = 'poi_new';
@@ -647,7 +653,8 @@ Navarra.geomaps = function (){
       tiled: true,
       styles: style,
       INFO_FORMAT: 'application/json',
-      format_options: 'callback:getJson'
+      format_options: 'callback:getJson',
+      CQL_FILTER: cql_filter
     })
 
     project_current = layerProjects.getLayer(name_layer).addTo(mymap);

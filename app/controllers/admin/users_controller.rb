@@ -1,19 +1,30 @@
 class Admin::UsersController < ApplicationController
   #before_filter :new_user, :only => [:create]
-  load_and_authorize_resource
+  load_and_authorize_resource except: [:search_projects]
   before_action :set_user, only: [:show, :edit, :update, :destroy]
   layout 'admin'
   # GET /users
   # GET /users.json
 
   def search_projects
-    @query = "select id, name from #{params['customer_name']}.project_types"
-    #@projects = ActiveRecord::Base.connection.execute(@query).to_a
-    @projects = ProjectType.all
+    @p = ProjectType.search_projects_for_tenant  params 
   end
 
+  def search_roles
+    @r = Role.search_roles_for_tenant params
+  end
+
+  def search_fields
+    @f = ProjectField.search_fields_for_tenant params
+  end
+
+  def search_properties_data
+    @data = Project.search_properties_data_for_tenant params
+  end
 
   def index
+    Apartment::Tenant.switch! 'public'
+    
     @users = User.all
     if params[:email].present? || params[:name].present?
       @users = @users.where(" email ilike ?", "%#{params[:email]}%") unless params[:email].blank?
@@ -29,6 +40,7 @@ class Admin::UsersController < ApplicationController
 
   # GET /users/new
   def new
+
   end
 
   # GET /users/1/edit
@@ -43,13 +55,15 @@ class Admin::UsersController < ApplicationController
   def create
     respond_to do |format|
       if @user.save      
-        @user_customers =  UserCustomer.new
+        @user_customers = UserCustomer.new
         @user_customers[:user_id] = @user.id
-        @current_tenant = Apartment::Tenant.current
-        @customer = Customer.where(subdomain: current_tenant).first
+        @current_tenant = params[:user][:customer_id]
+        @customer = Customer.where(subdomain: @current_tenant).first
         @user_customers[:customer_id] = @customer.id
         @user_customers[:role_id] = params[:user][:role].to_i
         @user_customers.save!
+        params[:id] = @user.id
+        user_filters = User.save_filters params
         format.html { redirect_to admin_users_path() }
         format.json { render action: 'show', status: :created, location: @user }
       else
@@ -68,8 +82,9 @@ class Admin::UsersController < ApplicationController
     user_customer = UserCustomer.where(customer_id: customer_id).where(user_id: params[:id])
     respond_to do |format|
       if @user.update(user_params)     
-        user_customer = user_customer.update(role_id: params[:user][:role_id] )
-        #UserMailer.new_user(@user).deliver_now
+        user_customer = user_customer.update(role_id: params[:role_id]['id'].to_i )
+        user_filters = User.save_filters params
+        UserMailer.new_user(@user).deliver_now
         format.html { redirect_to admin_users_path() }
         format.json { head :no_content }
       else

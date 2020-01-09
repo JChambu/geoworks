@@ -28,6 +28,14 @@
 <% end %>
 <% end %>
 <% end %>
+  <%= !@project_filters.nil? %>
+  <% @project_filters.each do |s| %>
+    <% s.properties.each do |p|  %>
+    Navarra.project_types.config.filter_option.push('<%= p[0] %>');
+    Navarra.project_types.config.filter_option.push('=');
+    Navarra.project_types.config.filter_option.push('<%= p[1] %>');
+  <% end %>
+  <% end %>
   </script>
 <% end %>
 

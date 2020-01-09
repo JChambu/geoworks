@@ -1,5 +1,6 @@
 class ProjectField < ApplicationRecord
  include RailsSortable::Model
+ include ProjectFields::Scopes
    set_sortable :sort
 
   has_many :project_subfields, -> {order(:sort)}

@@ -35,6 +35,9 @@ Rails.application.routes.draw do
 
     namespace :admin do
       post 'users/search_projects'
+      post 'users/search_roles'
+      post 'users/search_fields'
+      post 'users/search_properties_data'
       resources :users
       resources :roles
       get 'dashboards/index'

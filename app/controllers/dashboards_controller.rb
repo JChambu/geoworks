@@ -25,8 +25,9 @@ class DashboardsController < ApplicationController
   # GET /dashboards/1.json
   def show
     @projects = Project.where(project_type_id: @project_type.id)
-    @extent = Project.geometry_bounds(@project_type.id)
+    @extent = Project.geometry_bounds(@project_type.id, current_user.id)
     @current_tenant = Apartment::Tenant.current
+    @project_filters = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id)
   end
 
   # GET /dashboards/new

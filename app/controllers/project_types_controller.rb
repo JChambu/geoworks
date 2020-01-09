@@ -4,6 +4,13 @@ class ProjectTypesController < ApplicationController
   # GET /project_types
   # GET /project_types.json
 
+  def search
+    @project = ProjectType.all
+    render json: {"data": @project}
+  end
+
+
+
   def project_type_layers
     @projects = ProjectType.where.not(name:params[:name_projects]).where(enabled_as_layer: true)
     render json: {"data": @projects}
@@ -74,9 +81,9 @@ class ProjectTypesController < ApplicationController
     filter_condition = []
     @querys = ''
     if @op_graph == 'true'
-      @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id], @data_conditions)
+      @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id], @data_conditions, current_user.id)
     else
-      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id],@data_conditions)
+      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id],@data_conditions, current_user.id)
     end
   end
 

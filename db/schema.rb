@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191210145319) do
+ActiveRecord::Schema.define(version: 20200107174819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -256,6 +256,17 @@ ActiveRecord::Schema.define(version: 20191210145319) do
     t.index ["project_type_id"], name: "index_project_fields_on_project_type_id"
   end
 
+  create_table "project_filters", force: :cascade do |t|
+    t.jsonb "properties"
+    t.bigint "user_id", null: false
+    t.bigint "project_type_id", null: false
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_type_id"], name: "index_project_filters_on_project_type_id"
+    t.index ["user_id"], name: "index_project_filters_on_user_id"
+  end
+
   create_table "project_statuses", force: :cascade do |t|
     t.string "name"
     t.bigint "project_type_id"
@@ -368,6 +379,7 @@ ActiveRecord::Schema.define(version: 20191210145319) do
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
     t.boolean "active"
+    t.integer "role_id"
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["token"], name: "index_users_on_token", unique: true
@@ -391,6 +403,8 @@ ActiveRecord::Schema.define(version: 20191210145319) do
   add_foreign_key "permissions", "roles"
   add_foreign_key "photo_children", "project_data_children"
   add_foreign_key "project_fields", "project_types"
+  add_foreign_key "project_filters", "project_types"
+  add_foreign_key "project_filters", "users"
   add_foreign_key "project_statuses", "project_types"
   add_foreign_key "project_types", "users"
   add_foreign_key "projects", "project_statuses"

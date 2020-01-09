@@ -1,5 +1,6 @@
 class Role < ApplicationRecord
-  
+  include Roles::Scopes
+
   has_many :permissions, dependent: :destroy
   has_many :users
   has_many :user_customers
