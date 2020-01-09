@@ -1,2 +1,2 @@
-var roles = "<%= j(collection_select(:role_id, :id, @r, :id, :name)) %>";
+var roles = "<%= j(collection_select(:role_id, :id, @r, :id, :name, {}, {class: 'form-control form-control-sm'})) %>";
 $('#search_roles').html(roles);

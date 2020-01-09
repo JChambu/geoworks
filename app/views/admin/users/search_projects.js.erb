@@ -1,4 +1,4 @@
-projects = "<%= j(collection_select(:project, :id, @p, :id, :name, prompt: true)) %>";
+projects = "<%= j(collection_select(:project, :id, @p, :id, :name, {prompt: true}, {class: 'form-control form-control-sm'})) %>";
 $('#search_projects').html(projects);
 customer_name = $("#user_customer_id").val();
 $('#project_id').on('change', function() {

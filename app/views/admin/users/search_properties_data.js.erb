@@ -1,2 +1,2 @@
-data = "<%= j(collection_select(:data_name, :name, @data, :name, :name)) %>";
+data = "<%= j(collection_select(:data_name, :name, @data, :name, :name, {}, {class: 'form-control form-control-sm'})) %>";
 $('#search_data').html(data);
