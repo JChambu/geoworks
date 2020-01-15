@@ -416,15 +416,22 @@ class ProjectType < ApplicationRecord
     items = {}
     st1 = JSON.parse(File.read("#{@directory[0]}/#{file_name}.geojson"))
     data = RGeo::GeoJSON.decode(st1, :json_parser => :json)
+    user_id = nil
     data.each do |a|
       properties = a.properties
-      properties.each do |value|
+      properties.each do |idx, value|
         field = value[0].parameterize(separator: '_').downcase
-        field_type = ProjectField.find_or_create_by(name: field, project_type_id: project_type_id)
-        fields << field if fields.include?(field)
+        if idx == 'user_id'
+          user_id = value
+        else
+          field_type = ProjectField.find_or_create_by(key: field, project_type_id: project_type_id)
+          fields[idx] = value
+        end
+        #field_type = ProjectField.find_or_create_by(key: field, project_type_id: project_type_id)
+        #fields << field if fields.include?(field)
       end
       the_geom = a.geometry.as_text
-      Project.create(properties: properties, project_type_id: project_type_id, the_geom:the_geom)
+      Project.create(properties: properties, project_type_id: project_type_id, the_geom:the_geom, user_id: user_id)
     end
   end
 
