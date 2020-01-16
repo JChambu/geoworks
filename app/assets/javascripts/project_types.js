@@ -26,8 +26,8 @@ Navarra.project_types.config = {
 $(document).ready(function() {
   $('.rol_select').multiselect({
     maxHeight: 500,
-    buttonClass: 'form-control',
-    buttonWidth: '200px',
+    buttonClass: 'form-control form-control-sm',
+    buttonWidth: '230px',
     nonSelectedText: 'Seleccione una opción',
     allSelectedText: 'Todos',
     numberDisplayed: 1,
