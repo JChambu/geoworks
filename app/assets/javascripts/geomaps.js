@@ -83,6 +83,12 @@ Navarra.geomaps = function (){
       position:'topleft'
     }).addTo(mymap);
 
+    // Agrega la escala al mapa
+    L.control.scale({
+      imperial: false,
+      position: 'bottomleft',
+    }).addTo(mymap);
+
     MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
         if (!this._map) {
