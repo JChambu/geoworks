@@ -473,23 +473,27 @@ function init_chart_doughnut(size_box = null){
             //Chequeamos el estado de view
             status_view = $('#view').hasClass('active');
 
-            if (!status_view){ //Default
+            if (!status_view) { // Default
 
-              $('#chart_container'+graphic_id).addClass('col-md-12');
-              aspectR ="1";
+              $('#chart_container' + graphic_id).addClass('col-md-6');
+              aspectR = "1";
 
               legend_display = false;
 
 
-            }else{ //Active
+            } else { // Expanded
 
-              $('#chart_container'+graphic_id).addClass('col-md-'+width);
+              if (width == 3) {
+                width = 4;
+              } else if (width == 9) {
+                width = 8;
+              }
 
-              console.log(width);
+              $('#chart_container' + graphic_id).addClass('col-md-' + width);
 
-              if(width == '6'){
+              if (width == '4') {
                 aspectR = "1";
-              }else{
+              } else {
                 aspectR = 2;
               }
 
