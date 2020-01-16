@@ -441,8 +441,8 @@
             templates: {
                 button: '<button type="button" class="multiselect dropdown-toggle" data-toggle="dropdown"><span class="multiselect-selected-text"></span> <b class="caret"></b></button>',
                 ul: '<ul class="multiselect-container dropdown-menu"></ul>',
-                filter: '<li class="multiselect-item multiselect-filter"><div class="input-group"><span class="input-group-addon"><i class="fas fa-search"></i></span><input class="form-control multiselect-search" type="text" /></div></li>',
-                filterClearBtn: '<span class="input-group-btn"><button class="btn btn-secondary multiselect-clear-filter" type="button"><i class="far fa-times-circle"></i></button></span>',
+                filter: '<li class="multiselect-item multiselect-filter"> <div class="form-group"> <div class="input-group mb-3"> <div class="input-group-prepend"> <span class="input-group-text"> <i class="fas fa-search"></i> </span> </div><input type="text" class="form-control multiselect-search"> </div></div></li>',
+                filterClearBtn: '<span class="input-group-append"> <button class="btn btn-secondary multiselect-clear-filter" type="button"> <i class="fas fa-times-circle"></i> </button></span>',
                 li: '<li><a tabindex="0"><label></label></a></li>',
                 divider: '<li class="multiselect-item divider"></li>',
                 liGroup: '<li class="multiselect-item multiselect-group"><label></label></li>',
