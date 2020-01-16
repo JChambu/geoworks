@@ -175,5 +175,25 @@ div.custom-menu.show {
 }
 
 .chart-bg-transparent {
-  background-color: rgba(58, 63, 68, 0.9);
+  background-color: rgba(58, 63, 68, 0.8);
+}
+
+.leaflet-control-layers-expanded {
+  background: rgba(58, 63, 68, 0.8) !important;
+  color: #e8ebef !important;
+}
+
+.leaflet-control-layers-toggle {
+  background: rgba(58, 63, 68, 0.8) !important;
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  background: rgba(58, 63, 68, 0.8) !important;
+  color: #e8ebef !important;
+}
+
+.leaflet-control-scale-line {
+  background: rgba(58, 63, 68, 0.8) !important;
+  color: #e8ebef !important;
 }
