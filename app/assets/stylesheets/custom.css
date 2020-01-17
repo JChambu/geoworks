@@ -175,7 +175,7 @@ div.custom-menu.show {
 }
 
 .chart-bg-transparent {
-  background-color: rgba(58, 63, 68, 0.8);
+  background-color: rgba(58, 63, 68, 0.5);
 }
 
 .leaflet-control-layers-expanded {
