@@ -106,7 +106,7 @@ Navarra.geomaps = function (){
           var count = 1;
           var project_id = cc['features'][0]['properties']['id'];
           var data_id = Navarra.dashboards.config.project_type_id;
-          
+
           $.ajax({
             type: 'GET',
             url: '/projects/popup.json',
@@ -115,6 +115,8 @@ Navarra.geomaps = function (){
               project_id: project_id
             },
             success: function(data) {
+
+              /* Desactiva reporte hasta que se termine su desarrollo
 
               data = data['data']
 
@@ -205,8 +207,11 @@ Navarra.geomaps = function (){
 
               }) // Cierra each
               doc.save("Reporte.pdf");
+              */
             } // Cierra success
           }); // Cierra ajax
+
+
 
           $.ajax({
             type: 'GET',
@@ -634,7 +639,7 @@ Navarra.geomaps = function (){
     cql_filter = "1 = 1";
     if (filter_option.length > 0){
         cql_filter +=" and "+ filter_option[0]+ " " + filter_option[1] + " '" +  filter_option[2] + "'";
-    } 
+    }
       name_layer = Navarra.dashboards.config.name_layer;
     switch (type_geometry) {
       case 'Point':
