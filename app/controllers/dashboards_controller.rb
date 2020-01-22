@@ -24,10 +24,13 @@ class DashboardsController < ApplicationController
   # GET /dashboards/1
   # GET /dashboards/1.json
   def show
-    @projects = Project.where(project_type_id: @project_type.id)
-    @extent = Project.geometry_bounds(@project_type.id, current_user.id)
-    @current_tenant = Apartment::Tenant.current
-    @project_filters = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id)
+    if !@project_type.nil?
+      @projects = Project.where(project_type_id: @project_type.id)
+      @extent = Project.geometry_bounds(@project_type.id, current_user.id)
+      @current_tenant = Apartment::Tenant.current
+      @project_filters = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id)
+    end
+
   end
 
   # GET /dashboards/new
@@ -91,7 +94,9 @@ class DashboardsController < ApplicationController
   end
 
   def set_dashboard
-    @dashboard = @project_type.dashboards.first
+    if !@project_type.nil?
+      @dashboard = @project_type.dashboards.first
+    end
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
