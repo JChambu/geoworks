@@ -1,46 +1,44 @@
 <%= content_for :head do %>
 
   <script type="text/javascript">
-    Navarra.dashboards.config.project_type_id = <%= @project_type.id %>
-    Navarra.dashboards.config.current_tenant = '<%= @current_tenant %>';
-    Navarra.dashboards.config.name_layer = '<%= @project_type.name_layer %>';
+    <% if !@project_type.nil? %>
+      Navarra.dashboards.config.project_type_id = <%= @project_type.id %>
+      Navarra.dashboards.config.current_tenant = '<%= @current_tenant %>';
+      Navarra.dashboards.config.name_layer = '<%= @project_type.name_layer %>';
+      Navarra.dashboards.config.type_geometry = '<%= @project_type.type_geometry %>';
+    <% end %>
     <% if !@dashboard.nil? %>
       Navarra.dashboards.config.dashboard_id = <%= @dashboard.id %>
     <% end %>
-    Navarra.dashboards.config.type_geometry = '<%= @project_type.type_geometry %>';
-    <% if !@extent.empty? %>
-    Navarra.dashboards.config.minx = <%= @extent[0].minx %>
-    Navarra.dashboards.config.miny = <%= @extent[0].miny  %>
-    Navarra.dashboards.config.maxx = <%= @extent[0].maxx  %>
-    Navarra.dashboards.config.maxy = <%= @extent[0].maxy %>
-    <% else %>
-
-       Navarra.dashboards.config.minx = -180;
-    Navarra.dashboards.config.miny =  -90;
-    Navarra.dashboards.config.maxx = 180;
-    Navarra.dashboards.config.maxy = 90;
-<% end %>
-<% @projects.each do |a|%>
-    <%if !a.the_geom.nil?  %>
-    <% if @project_type.type_geometry != 'Polygon' %>
-    Navarra.dashboards.config.lat.push( <%= a.the_geom.y %>)
-    Navarra.dashboards.config.lon.push( <%= a.the_geom.x %>)
-<% end %>
-<% end %>
-<% end %>
-  <%= !@project_filters.nil? %>
-  <% @project_filters.each do |s| %>
-    <% s.properties.each do |p|  %>
-    Navarra.project_types.config.filter_option.push('<%= p[0] %>');
-    Navarra.project_types.config.filter_option.push('=');
-    Navarra.project_types.config.filter_option.push('<%= p[1] %>');
-  <% end %>
-  <% end %>
+  <% if @extent.length > 0  %>
+      Navarra.dashboards.config.minx = <%= @extent[0].minx %>
+      Navarra.dashboards.config.miny = <%= @extent[0].miny  %>
+      Navarra.dashboards.config.maxx = <%= @extent[0].maxx  %>
+      Navarra.dashboards.config.maxy = <%= @extent[0].maxy %>
+    <% end %>
+    <% if !@projects.nil? %>
+      <% @projects.each do |a|%>
+        <%if !a.the_geom.nil?  %>
+          <% if @project_type.type_geometry != 'Polygon' %>
+            Navarra.dashboards.config.lat.push( <%= a.the_geom.y %>)
+            Navarra.dashboards.config.lon.push( <%= a.the_geom.x %>)
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+    <% if @project_filters %>
+      <% @project_filters.each do |s| %>
+        <% s.properties.each do |p|  %>
+          Navarra.project_types.config.filter_option.push('<%= p[0] %>');
+          Navarra.project_types.config.filter_option.push('=');
+          Navarra.project_types.config.filter_option.push('<%= p[1] %>');
+        <% end %>
+      <% end %>
+    <% end %>
   </script>
 <% end %>
 
 <div class="fakeLoader"></div>
-
 <div id="firewall-content"></div>
 
 <div class="modal fade" id="modal-window" tabindex="-1" role="dialog" aria-labelledby="chartModalLabel" aria-hidden="true">
