@@ -533,10 +533,10 @@ function init_chart_doughnut(size_box = null){
                     stacked: stacked,
                     ticks: {
                       autoSkip: false,
-                      fontColor: '#e8ebef'
+                      fontColor: '#FDFEFE'
                     },
                     gridLines: {
-                      color: "#2c2e34"
+                      color: "#626567"
                     },
                     display: true,
                     scaleLabel: {
@@ -558,7 +558,7 @@ function init_chart_doughnut(size_box = null){
                         return label;
                       },
                       beginAtZero: true,
-                      fontColor: '#e8ebef'
+                      fontColor: '#FDFEFE'
                     },
                     stacked: stacked,
                     scaleLabel: {
@@ -566,7 +566,7 @@ function init_chart_doughnut(size_box = null){
                       labelString: label_y_axis_left
                     },
                     gridLines: {
-                      color: "#2c2e34",
+                      color: "#626567",
                       drawOnChartArea: true,
                     },
                   },{
@@ -640,7 +640,7 @@ function init_chart_doughnut(size_box = null){
                         return label;
                       },
                       beginAtZero: true,
-                      fontColor: '#e8ebef'
+                      fontColor: '#FDFEFE'
                     },
                     stacked: stacked,
                     scaleLabel: {
@@ -649,7 +649,7 @@ function init_chart_doughnut(size_box = null){
                     },
                     gridLines: {
                       drawOnChartArea: true,
-                      color: "#2c2e34",
+                      color: "#626567",
                     },
                   }],
                   yAxes: [{
@@ -661,10 +661,10 @@ function init_chart_doughnut(size_box = null){
                     },
                     ticks: {
                       autoSkip: false,
-                      fontColor: '#e8ebef'
+                      fontColor: '#FDFEFE'
                     },
                     gridLines: {
-                      color: "#2c2e34"
+                      color: "#626567"
                     },
                   }]
                 },
@@ -748,7 +748,7 @@ function init_chart_doughnut(size_box = null){
                       size: 11,
                     },
                     textStrokeColor: '#616A6B',
-                    color: '#e8ebef',
+                    color: '#FDFEFE',
                     textStrokeWidth: 1,
                     textShadowColor: '#000000',
                     textShadowBlur: 2,
