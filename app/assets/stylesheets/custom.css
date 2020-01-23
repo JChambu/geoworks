@@ -16,7 +16,7 @@ body {
   position: absolute;
   right: 0px;
   z-index: 401;
-  background-color: rgba(23, 32, 42, 0.3);
+  background-color: rgba(0, 0, 0, 0.2);
   pointer-events: auto;
   overflow-y: scroll;
 }
@@ -124,9 +124,10 @@ div.custom-menu.show {
 }
 
 .handle {
+  border: transparent !important;
   padding: 4px;
-  margin-right: 10px;
-  background-color: rgba(0, 0, 0, 0.3);
+  margin-right: 5px;
+  background-color: transparent;
   cursor: move;
 }
 
@@ -174,8 +175,12 @@ div.custom-menu.show {
   background-color: #3d4046;
 }
 
+.chart-header-bg-transparent {
+  background-color: rgba(81, 89, 96, 0.4);
+}
+
 .chart-bg-transparent {
-  background-color: rgba(58, 63, 68, 0.5);
+  background-color: rgba(58, 63, 68, 0.4);
 }
 
 .leaflet-control-layers-expanded {

@@ -431,13 +431,13 @@ function init_chart_doughnut(size_box = null){
                 'id': 'chart_container'+graphic_id
               }).append(
                 $('<div>', {
-                  'class': 'card-header pl-3',
+                  'class': 'card-header chart-header-bg-transparent py-1 px-2',
                   'id': 'header'+graphic_id
                 }).append(
                   $('<span>', { // handle
                     'class': 'fas fa-arrows-alt handle border border-dark'
                   }),
-                  $('<b>', {
+                  $('<text>', {
                     'text': title
                   }),
                   /* Oculta minimizado hasta solucionar el tema de row
