@@ -705,33 +705,52 @@ function init_chart_doughnut(size_box = null){
                     usePointStyle: true,
                   }
                 },
+                tooltips: {
+                  callbacks: {
+                    title: function(tooltipItem, data) {
+                      return data.labels[tooltipItem[0].index];
+                    },
+                    label: function(tooltipItem, data) {
+                      // Obtenemos los datos
+                      var dataset = data.datasets[tooltipItem.datasetIndex];
+                      // Calcula el total
+                      var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                        return previousValue + currentValue;
+                      });
+                      // Obtenemos el valor de los elementos actuales
+                      var currentValue = dataset.data[tooltipItem.index];
+                      // Calculamos el porcentaje
+                      var precentage = ((currentValue/total) * 100).toFixed(2)
+                      return precentage + "%";
+                    }
+                  }
+                },
                 plugins: {
                   datalabels: {
-                    display: data_labelling,
                     formatter: (value, ctx) => {
-                      // Mustra sólo los valores (en porcentajes) que estén por encima del 3%
+                      // Mustra sólo los labels cuyo valor sea mayor al 4%
                       let sum = 0;
+                      var label = ctx.chart.data.labels[ctx.dataIndex]
                       let dataArr = ctx.chart.data.datasets[0].data;
                       dataArr.map(data => {
                           sum += data;
                       });
                       let percentage = (value*100 / sum).toFixed(2);
                       if (percentage > 4) {
-                        return percentage+'%';
+                        return label;
                       } else {
                         return null;
                       }
                     },
-                    align: 'end',
-                    anchor: 'center',
-                    color: '#FFFFFF',
                     font: {
-                      weight: 'bold'
+                      size: 11,
                     },
-                    textStrokeColor: '#3d4046',
+                    textStrokeColor: '#616A6B',
+                    color: '#e8ebef',
                     textStrokeWidth: 1,
                     textShadowColor: '#000000',
-                    textShadowBlur: 3,
+                    textShadowBlur: 2,
+                    align: 'center',
                   }
                 },
               }
