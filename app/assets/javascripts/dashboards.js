@@ -105,7 +105,7 @@ Navarra.dashboards.action_show = function(){
       if (!status_view) { // Default
         $('#view').addClass('active');
         $(".fa-table").css("color", "#d3d800");
-        $(".graphics").css("width", "50%");
+        $(".graphics").css("width", "60%");
         init_chart_doughnut();
       } else { // Expanded
         $('#view').removeClass('active');
