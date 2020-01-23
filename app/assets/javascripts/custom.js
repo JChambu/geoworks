@@ -440,6 +440,7 @@ function init_chart_doughnut(size_box = null){
                   $('<b>', {
                     'text': title
                   }),
+                  /* Oculta minimizado hasta solucionar el tema de row
                   $('<button>', { // boton minimizar
                     'class': 'close',
                     'type': 'button',
@@ -452,6 +453,7 @@ function init_chart_doughnut(size_box = null){
                       'class': 'fas fa-window-minimize'
                     })
                   )
+                  */
                 ),
                 $('<div>', { // collapse
                   'class': 'collapse show',
