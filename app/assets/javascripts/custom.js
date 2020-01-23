@@ -475,29 +475,36 @@ function init_chart_doughnut(size_box = null){
 
             if (!status_view) { // Default
 
-              $('#chart_container' + graphic_id).addClass('col-md-6');
-              aspectR = "1";
+              if (width == 3) {
+                width = 6;
+                aspectR = "1";
+              } else if (width == 6) {
+                aspectR = "1";
+              } else if (width == 9) {
+                width = 12;
+                aspectR = "2";
+              } else if (width == 12) {
+                aspectR = "2";
+              }
 
+              $('#chart_container' + graphic_id).addClass('col-md-' + width);
               legend_display = false;
 
 
             } else { // Expanded
 
               if (width == 3) {
-                width = 4;
+                aspectR = "1";
+              } else if (width == 6) {
+                aspectR = "2";
               } else if (width == 9) {
-                width = 8;
+                aspectR = "3";
+              } else if (width == 12) {
+                aspectR = "4";
               }
 
               $('#chart_container' + graphic_id).addClass('col-md-' + width);
-
-              if (width == '4') {
-                aspectR = "1";
-              } else {
-                aspectR = 2;
-              }
-
-              //legend_display = true;
+              legend_display = false;
 
             }
 
