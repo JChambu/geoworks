@@ -633,6 +633,12 @@ function init_chart_doughnut(size_box = null){
                       suggestedMin: parseInt(tick_min_left),
                       suggestedMax: parseInt(tick_max_left),
                       stepSize: parseInt(tick_step_left),
+                      callback: function(label, index, labels) {
+                        label = label.toLocaleString('es-ES')
+                        return label;
+                      },
+                      beginAtZero: true,
+                      fontColor: '#e8ebef'
                     },
                     stacked: stacked,
                     scaleLabel: {
@@ -641,6 +647,7 @@ function init_chart_doughnut(size_box = null){
                     },
                     gridLines: {
                       drawOnChartArea: true,
+                      color: "#2c2e34",
                     },
                   }],
                   yAxes: [{
@@ -649,7 +656,14 @@ function init_chart_doughnut(size_box = null){
                     scaleLabel: {
                       display: true,
                       labelString: label_y_axis_left
-                    }
+                    },
+                    ticks: {
+                      autoSkip: false,
+                      fontColor: '#e8ebef'
+                    },
+                    gridLines: {
+                      color: "#2c2e34"
+                    },
                   }]
                 },
                 plugins: {
