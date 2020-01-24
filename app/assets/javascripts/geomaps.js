@@ -687,6 +687,7 @@ Navarra.geomaps = function (){
         $.each(data, function(c,v){
           $.each(v, function(x,y){
             let sub_layer = y.name_layer;
+            let label_layer = y.name;
             let color_layer = y.layer_color;
             let type_geometry = y.type_geometry
             let style;
@@ -720,7 +721,7 @@ Navarra.geomaps = function (){
             })
 
             projectsa = layerSubProjects.getLayer(sub_layer);
-            layerControl.addOverlay(projectsa , sub_layer, null, {sortLayers: true});
+            layerControl.addOverlay(projectsa , label_layer, null, {sortLayers: true});
           })
         })
       }
