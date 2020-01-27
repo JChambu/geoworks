@@ -206,3 +206,8 @@ div.custom-menu.show {
 .irs--flat .irs-grid-text {
     color: #FDFEFE !important;
 }
+
+/* Evita los iconos de la derecha se superpongan con el overlay */
+.leaflet-right {
+  margin-right: 30%;
+}
