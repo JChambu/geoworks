@@ -80,7 +80,7 @@ Navarra.geomaps = function (){
     }).addTo(mymap);
 
     L.control.zoom({
-      position:'topleft'
+      position:'bottomright'
     }).addTo(mymap);
 
     // Agrega la escala al mapa
