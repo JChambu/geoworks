@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :user_customers 
   has_many :customers, through: :user_customers
   has_many :project_filters, dependent: :destroy 
+  has_many :projects
   accepts_nested_attributes_for :user_customers, allow_destroy: true
   
   belongs_to :role

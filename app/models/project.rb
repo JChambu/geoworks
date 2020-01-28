@@ -3,8 +3,11 @@ has_paper_trail
   include Projects::Scopes
 
   require "json"
+  belongs_to :project_status
   belongs_to :project_type
+  belongs_to :user
   has_many :project_data_child
+
   #validate :validate_properties
 
   def self.geometry_bounds project_type_id, user_id
