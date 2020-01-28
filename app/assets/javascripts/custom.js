@@ -294,10 +294,10 @@ function init_chart_doughnut(size_box = null){
                     lab.push(v['name']);
                     da.push(v['count']);
                     // Si el dato viene nulo lo omite
-                    if (v['name'] != null && v['name'] != 'null') {
-                      lab.push(v['name']);
-                      da.push(v['count']);
-                    }
+                   // if (v['name'] != null && v['name'] != 'null') {
+                    //  lab.push(v['name']);
+                    //  da.push(v['count']);
+                   // }
                   })
                 }
 
