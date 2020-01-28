@@ -183,12 +183,13 @@ div.custom-menu.show {
   background-color: rgba(58, 63, 68, 0.4);
 }
 
+/* Modifica el estilo del layerControl de Leaflet*/
 .leaflet-control-layers-expanded {
-  background: rgba(58, 63, 68, 0.5) !important;
   color: #e8ebef !important;
+  text-shadow: 1px 1px 1px #2c2e34;
 }
-
-.leaflet-control-layers-toggle {
+.leaflet-control-layers {
+  border: 2px solid rgba(0, 0, 0, 0.2) !important;
   background: rgba(58, 63, 68, 0.5) !important;
 }
 
