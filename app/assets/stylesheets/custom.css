@@ -192,10 +192,12 @@ div.custom-menu.show {
   background: rgba(58, 63, 68, 0.5) !important;
 }
 
+/* Modifica el estilo del zoom de Leaflet*/
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
   background: rgba(58, 63, 68, 0.5) !important;
   color: #e8ebef !important;
+  text-shadow: 1px 1px 1px #2c2e34;
 }
 
 .leaflet-control-scale-line {
