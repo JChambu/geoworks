@@ -110,6 +110,7 @@ function init_chart_doughnut(size_box = null){
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
       success: function(data){
 
+        // Agrega el time_slider al card de filtros
         if ($('#time_slider').length == 0) {
 
           $('#filter-body').prepend(

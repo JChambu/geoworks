@@ -79,6 +79,7 @@ Navarra.geomaps = function (){
       collapsed: true
     }).addTo(mymap);
 
+    // Agrega el zoom al mapa
     L.control.zoom({
       position:'bottomright'
     }).addTo(mymap);
