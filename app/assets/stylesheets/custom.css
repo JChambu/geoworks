@@ -203,8 +203,10 @@ div.custom-menu.show {
   color: #e8ebef !important;
 }
 
+/* Modifica el texto del grid de time_slider */
 .irs--flat .irs-grid-text {
-    color: #FDFEFE !important;
+  color: #e8ebef !important;
+  text-shadow: 1px 1px 1px #2c2e34;
 }
 
 /* Evita los iconos de la derecha se superpongan con el overlay */
