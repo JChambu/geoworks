@@ -464,7 +464,10 @@ Navarra.geomaps = function (){
           mymap.removeLayer(layer);
         });
         mymap.removeControl(layerControl);
-        layerControl =  L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+        layerControl =  L.control.layers(baseMaps, overlayMaps, {
+          position: 'topleft',
+          collapsed: true
+        }).addTo(mymap);
         ss = [];
       }
 
@@ -538,7 +541,10 @@ Navarra.geomaps = function (){
           mymap.removeLayer(layer);
         });
         mymap.removeControl(layerControl);
-        layerControl =  L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+        layerControl =  L.control.layers(baseMaps, overlayMaps, {
+          position: 'topleft',
+          collapsed: true
+        }).addTo(mymap);
 
         if(filter_option.length == 0){
           current_layer();
