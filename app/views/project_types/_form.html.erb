@@ -3,7 +3,6 @@
     $('.sortable').sortable({
       update: function( event, ui ) {
 
-          console.log($(this).children());
         $(this).find('tr').each(function(index) {
           $(this).find('.project_fields_current_position').val(index + 1);
         });

@@ -49,8 +49,6 @@ function init_kpi(size_box = null){
     dashboard_id: dashboard_id,
     success: function(data) {
 
-      console.log(data);
-
       data.forEach(function(element) {
         var count_element = element['data'][0]['count'];
 

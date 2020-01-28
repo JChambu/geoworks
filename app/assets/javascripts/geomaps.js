@@ -120,8 +120,6 @@ Navarra.geomaps = function (){
 
               data = data['data']
 
-              console.log(data);
-
               var created_at = data['created_at']
               var properties = data['properties']
 
@@ -398,7 +396,7 @@ Navarra.geomaps = function (){
 
     var cql_filter = 'project_type_id='+Navarra.dashboards.config.project_type_id;
     var filter_option = Navarra.project_types.config.filter_option;
-    console.log(filter_option);
+
     if (filter_option.length > 0){
       $.each(filter_option, function(a,b){
         data_filter = b.split('|');
@@ -641,7 +639,6 @@ Navarra.geomaps = function (){
   function current_layer(){
 
     var filter_option = Navarra.project_types.config.filter_option;
-    console.log(filter_option);
     cql_filter = "1 = 1";
     if (filter_option.length > 0){
         cql_filter +=" and "+ filter_option[0]+ " " + filter_option[1] + " '" +  filter_option[2] + "'";
