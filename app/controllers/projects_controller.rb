@@ -2,6 +2,11 @@ class ProjectsController < ApplicationController
   before_action :set_project_type, only: [:index]
   before_action :set_project, only: [:show, :edit, :update, :destroy]
 
+  def search_data
+    @user = Project.search_value_for_fields params
+    render json: {data: @user}
+  end
+
   def popup
     project_data = Project.find(params['project_id'].to_i)
      render json: {data: project_data }

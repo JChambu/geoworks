@@ -1,34 +1,48 @@
-<div id="filters-modal" class="modal fade">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<div class="modal-header">
+  <h4 class="modal-title"> Filtro </h4>
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
 
-      <div class="modal-header">
-        <h4 class="modal-title"> Filtro </h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+<%= form_tag project_type_create_filters_path, :remote => true, :method => :get do |f| %>
+
+  <div class="modal-body">
+    <div class="form-row">
+      <div class="col-md-5">
+      <%=select_tag 'q[project_field]', options_for_select(region_for_select), class:'proj_field form-control' %>
       </div>
-
-      <%= form_tag project_type_create_filters_path, :remote => true, :method => :get do |f| %>
-
-        <div class="modal-body">
-          <div class="form-row">
-            <div class="col-md-5">
-              <%=select_tag 'q[project_field]', options_for_select(region_for_select), class:'proj_field form-control' %>
-            </div>
-            <div class="col-md-2">
-              <%=select_tag 'q[filters]', options_for_select(ProjectType::FILTERS), class: 'form-control' %>
-            </div>
-            <div class="col-md-5">
-              <%=text_field_tag 'q[input_value]', '', class: 'form-control' %>
-            </div>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary", value: 'Guardar' %>
-        </div>
-      <% end %>
-
+      <div class="col-md-2">
+        <%=select_tag 'q[filters]', options_for_select(ProjectType::FILTERS), class: 'form-control' %>
+      </div>
+      <div class="col-md-5">
+        <%=select_tag 'q[input_value]', options_for_select(Project.none), class: 'form-control' %>
+      </div>
     </div>
   </div>
-</div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+    <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary", value: 'Guardar' %>
+  </div>
+<% end %>
+<script>
+  var $select_field = $('#q_project_field');
+  $select_field.on('change', function(){
+  $.ajax({
+    url:  "/projects/search_data.json",
+    type: "GET",
+    data: { project_field_id: $(this).val(), project_type_id: <%= params[:project_type_id] %> },
+    success: function(data){
+
+
+      var $select_value = $('#q_input_value');
+      $select_value.empty();
+      $select_value.append( $('<option>Select</option>'));
+      $.each(data['data'], function(value, a){
+        $select_value.append($('<option value="'+ a.name + '">'+ a.name + ' </option>'));
+
+      })
+    }
+  });
+
+})
+</script>
