@@ -234,3 +234,21 @@ div.custom-menu.show {
   border-radius: 10px;
   background-color: rgba(232, 235, 239, 0.5);
 }
+
+/* Modifica el estilo de las leyendas de Leaflet */
+.leaflet-html-legend {
+  /*border: 2px solid rgba(0, 0, 0, 0.2) !important;*/
+  /*border-radius: 5px !important;*/
+  background: rgba(58, 63, 68, 0.5) !important;
+  padding: 4px !important;
+  line-height: 1 !important;
+  width: 180px !important;
+}
+.leaflet-html-legend label {
+  color: #e8ebef !important;
+  text-shadow: 1px 1px 1px #2c2e34;
+}
+.leaflet-control-layers-expanded {
+  max-height: 45vh !important;
+  overflow: auto;
+}
