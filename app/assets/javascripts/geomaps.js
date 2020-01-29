@@ -222,15 +222,19 @@ Navarra.geomaps = function (){
             success: function(data) {
               $.each(data, function(i, value) {
 
+                console.log(label);
+
                 // Reemplaza los guiones bajos del label por espacios
                 var label = value.split('_').join(' ')
                 // Pone la primer letra en mayúscula
                 label = label.charAt(0).toUpperCase() + label.slice(1)
 
+                var val = prop[value]
+                console.log(val);
+
                 // Valida si el valor no es nulo
                 if (val != null && val != 'null') {
                   // Elimina los corchetes y comillas del valor (en caso que contenga)
-                  var val = prop[value]
                   var val = val.split('[').join('')
                   var val = val.split(']').join('')
                   var val = val.split('"').join('')
