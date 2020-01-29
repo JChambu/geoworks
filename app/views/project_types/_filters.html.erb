@@ -8,7 +8,7 @@
   <div class="modal-body">
     <div class="form-row">
       <div class="col-md-5">
-      <%=select_tag 'q[project_field]', options_for_select(region_for_select), class:'proj_field form-control' %>
+      <%=select_tag 'q[project_field]', options_for_select(region_for_select, prompt: "Seleccione un Campo"), class:'proj_field form-control' %>
       </div>
       <div class="col-md-2">
         <%=select_tag 'q[filters]', options_for_select(ProjectType::FILTERS), class: 'form-control' %>

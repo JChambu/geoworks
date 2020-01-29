@@ -69,27 +69,28 @@ module ProjectTypes::Indicators
             else
               if chart.project_field.key == 'app_estado'
                 @field_select = analysis_type(chart.analysis_type.name, 'project_statuses.name') + ' as count'
-                @field_select += ', project_statuses.name  as name'
               end
+              
               if chart.project_field.key == 'app_usuario'
                 @field_select = analysis_type(chart.analysis_type.name, 'users.name') + ' as count'
-                @field_select += ', users.name  as name'
               end
 
               if chart.project_field.key != 'app_usuario' && chart.project_field.key !='app_estado'
                 @field_select = analysis_type(chart.analysis_type.name, "projects.properties->>'#{chart.project_field.key}'") + ' as count'
-                @field_select += ", projects.properties->>'" + chart.group_field.key + "' as name "
               end
 
-              if chart.project_field.key == 'app_estado'
+              if chart.group_field.key == 'app_estado'
                 @field_group = "project_statuses.name "
+                @field_select += ', project_statuses.name  as name'
               end
-              if chart.project_field.key == 'app_usuario'
+              if chart.group_field.key == 'app_usuario'
                 @field_group = "users.name"
+                @field_select += ', users.name  as name'
               end
 
-              if chart.project_field.key != 'app_usuario' && chart.project_field.key !='app_estado'
+              if chart.group_field.key != 'app_usuario' && chart.group_field.key !='app_estado'
                 @field_group = "projects.properties->>'"+ chart.group_field.key + "'"
+                @field_select += ", projects.properties->>'" + chart.group_field.key + "' as name "
               end
 
               data =  data.select(@field_select).group(@field_group).order(@field_group)
@@ -100,7 +101,17 @@ module ProjectTypes::Indicators
                 @field = @s[0]
                 @filter = @s[1]
                 @value = @s[2]
-                data =  data.where(" projects.properties->>'" + @field +"'" +  @filter +"#{@value}")
+                if @field == 'app_usuario'
+                  data =  data.where(" users.name " + @filter + " #{@value}")
+                end
+                if @field == 'app_estado'
+                  data =  data.where(" project_statuses.name " + @filter + " #{@value} ")
+                end
+                if @field != 'app_usuario' && @field != 'app_estado'
+                  data =  data.where(" projects.properties->>'" + @field +"'" +  @filter +" #{@value} ")
+                end
+
+
               end
             end
             conditions_field = chart.condition_field
