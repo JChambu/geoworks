@@ -124,7 +124,7 @@ module ProjectTypes::Indicators
       querys
     end
 
-    def self.kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id)
+    def kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id)
 
       @ct = Apartment::Tenant.current
       @type_box = type_box
