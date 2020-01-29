@@ -299,7 +299,7 @@ function init_chart_doughnut(size_box = null){
                     var isdate = date_regexp.test(string)
 
                     // Si es fecha le da el formato correcto
-                    if (isdate == true) {
+                    if (isdate == true && v['count'] != 0 ) {
 
                       // Agrega los ceros faltantes a los días y meses
                       var no_zero_day_regexp = /^(\d{1})\/(\d{1,2})\/(\d{4})/g;
@@ -350,7 +350,7 @@ function init_chart_doughnut(size_box = null){
                       da = daa;
                       lab = labb;
 
-                    } else {
+                    } else if (v['name'] != null && v['name'] != 'null' && v['count'] != 0) {
 
                       lab.push(v['name']);
                       da.push(v['count']);
