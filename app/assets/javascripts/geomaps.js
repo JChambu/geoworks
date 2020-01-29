@@ -415,6 +415,20 @@ Navarra.geomaps = function (){
       }
 
       var point_color = Navarra.project_types.config.field_point_colors;
+    switch (type_geometry) {
+      case 'Point':
+        style = 'poi_new';
+        break;
+      case 'LineString':
+        style = 'line';
+        break;
+      case 'Polygon':
+        style = 'polygon_new';
+        break;
+      default:
+        style = 'poi_new';
+    }
+
       if(point_color != ''){
         if(typeof(projectss)!=='undefined'){
           mymap.removeLayer(projectss);
@@ -428,7 +442,7 @@ Navarra.geomaps = function (){
           opacity: 1,
           version: '1.0.0',//wms version (ver get capabilities)
           tiled: true,
-          styles: 'poi_new',
+          styles: style,
           INFO_FORMAT: 'application/json',
           format_options: 'callback:getJson',
           CQL_FILTER: cql_filter
