@@ -5,17 +5,17 @@ module Projects::Scopes
 
     def search_value_for_fields params
       @d = []
-      field = ProjectField.find_by(key: params['project_field_id']) if params['project_field_id'] != 'usuario' && params['project_field_id'] !='estado'
-      select = "projects.properties->>'#{field.key}' as name" if params['project_field_id'] != 'usuario' && params['project_field_id'] !='estado'
-      select = "users.name as name"  if params['project_field_id'] == 'usuario' 
-      select = "project_statuses.name  as name" if params['project_field_id'] == 'estado'
+      field = ProjectField.find_by(key: params['project_field_id']) if params['project_field_id'] != 'app_usuario' && params['project_field_id'] !='app_estado'
+      select = "projects.properties->>'#{field.key}' as p_name" if params['project_field_id'] != 'app_usuario' && params['project_field_id'] !='app_estado'
+      select = "users.name as p_name"  if params['project_field_id'] == 'app_usuario' 
+      select = "project_statuses.name as p_name" if params['project_field_id'] == 'app_estado'
 
       @ss = select
       @pp = params
       ddata = Project.joins(:user, :project_status).
         where(project_type_id: params[:project_type_id]).
         select(select).
-      group('name')
+      group('p_name')
       ddata.each do |d|
         @d.push(d)
       end
