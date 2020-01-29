@@ -227,11 +227,14 @@ Navarra.geomaps = function (){
                 // Pone la primer letra en mayúscula
                 label = label.charAt(0).toUpperCase() + label.slice(1)
 
-                // Elimina los corchetes y comillas del valor (en caso que contenga)
-                var val = prop[value]
-                var val = val.split('[').join('')
-                var val = val.split(']').join('')
-                var val = val.split('"').join('')
+                // Valida si el valor no es nulo
+                if (val != null && val != 'null') {
+                  // Elimina los corchetes y comillas del valor (en caso que contenga)
+                  var val = prop[value]
+                  var val = val.split('[').join('')
+                  var val = val.split(']').join('')
+                  var val = val.split('"').join('')
+                }
 
                 x.push('<b>' + label + ': </b> ' + val);
 
