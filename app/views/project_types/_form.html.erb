@@ -55,19 +55,51 @@
       </div>
 
       <ul class="nav nav-pills nav-fill" id="myTab" role="tablist">
+        <% if can? :attributes, :edit %>
+          <li class="nav-item">
+            <a class="nav-link active" id="attributes-tab" data-toggle="tab" href="#attributes" role="tab" aria-controls="attributes" aria-selected="true">Por Atributos</a>
+          </li>
+        <% end %>
         <li class="nav-item">
-          <a class="nav-link active" id="file-tab" data-toggle="tab" href="#file" role="tab" aria-controls="file" aria-selected="true">Por Archivos</a>
+          <a class="nav-link" id="file-tab" data-toggle="tab" href="#file" role="tab" aria-controls="file" aria-selected="false">Por Archivos</a>
         </li>
-      <% if can? :attributes, :edit %>
-        <li class="nav-item">
-          <a class="nav-link" id="attributes-tab" data-toggle="tab" href="#attributes" role="tab" aria-controls="attributes" aria-selected="false">Por Atributos</a>
-        </li>
-      <% end %>
       </ul>
 
       <div class="tab-content p-4" id="myTabContent">
 
-        <div class="tab-pane fade show active" id="file" role="tabpanel" aria-labelledby="file-tab">
+        <% if can? :attributes, :edit %>
+          <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
+            <div class="table-responsive">
+              <table class="table table-hover table-striped m-0" id="user_assignments">
+                <thead>
+                  <tr>
+                <% if can? :attributes, :new %>
+                  <th><%= link_to_add_fields "<i class='fas fa-plus' title='Agregar atributo'></i>".html_safe, f, :project_fields, class: 'table_father' %></th>
+                <% end %>
+                    <th>Nombre</th>
+                    <th>Requerido</th>
+                    <th>Oculto</th>
+                    <th>Solo Lectura</th>
+                    <th>Pop-up</th>
+                    <th>Cálculo</th>
+                    <th>Script</th>
+                    <th>Tipo de Campo</th>
+                    <th></th>
+                    <th>Rol en GW-Lite</th>
+                    <th></th>
+                  </tr>
+                 </thead>
+                <tbody class="sortable">
+                  <%= f.fields_for :project_fields, @project_fields do |a| %>
+                    <%= render 'project_field_fields', f: a %>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="tab-pane fade" id="file" role="tabpanel" aria-labelledby="file-tab">
           <div class="row justify-content-center">
             <%= f.label :file, 'Cargar Archivos:', class:'col-md-2 text-right col-form-label' %>
             <div class="col-md-4">
@@ -97,37 +129,6 @@
           </div>
         </div>
 
-      <% if can? :attributes, :edit %>
-        <div class="tab-pane fade" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
-          <div class="table-responsive">
-            <table class="table table-hover table-striped m-0" id="user_assignments">
-              <thead>
-                <tr>
-              <% if can? :attributes, :new %>
-                <th><%= link_to_add_fields "<i class='fas fa-plus' title='Agregar atributo'></i>".html_safe, f, :project_fields, class: 'table_father' %></th>
-              <% end %>
-                  <th>Nombre</th>
-                  <th>Requerido</th>
-                  <th>Oculto</th>
-                  <th>Solo Lectura</th>
-                  <th>Pop-up</th>
-                  <th>Cálculo</th>
-                  <th>Script</th>
-                  <th>Tipo de Campo</th>
-                  <th></th>
-                  <th>Rol en GW-Lite</th>
-                  <th></th>
-                </tr>
-               </thead>
-              <tbody class="sortable">
-                <%= f.fields_for :project_fields, @project_fields do |a| %>
-                  <%= render 'project_field_fields', f: a %>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      <% end %>
       </div>
 
       <div class="row justify-content-center">
