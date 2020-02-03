@@ -241,7 +241,7 @@ class ProjectTypesController < ApplicationController
 
         HasProjectType.create(user_id: current_user.id, project_type_id: @project_type.id)
         ProjectType.add_layer_geoserver(params[:project_type][:name_layer])
-        format.html { redirect_to project_types_path(), notice: 'Project type was successfully created.' }
+        format.html { redirect_to root_path(), notice: 'Project type was successfully created.' }
         format.json { render :show, status: :created, location: @project_type }
       else
         format.html { render :new, status: :no_created}
