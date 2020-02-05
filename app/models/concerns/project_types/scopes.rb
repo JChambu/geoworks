@@ -1,6 +1,10 @@
 module ProjectTypes::Scopes
   extend ActiveSupport::Concern
 
+  included do
+    scope :ordered, -> { order :name }
+  end
+
   module ClassMethods
     def search_projects_for_tenant params
       @p = []

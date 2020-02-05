@@ -1,4 +1,6 @@
 class AnalyticsDashboard < ApplicationRecord
+
+  include AnalyticsDashboards::Scopes
   belongs_to :analysis_type
   belongs_to :dashboard
  # belongs_to :project_field

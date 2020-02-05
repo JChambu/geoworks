@@ -19,7 +19,7 @@ module ProjectTypesHelper
   end
   
   def kpi_for_select
-    AnalyticsDashboard.where(project_type_id: params[:project_type_id], graph: true).select("id, title").map { |name_kpi|  [name_kpi.title, name_kpi.id]  }
+    AnalyticsDashboard.where(project_type_id: params[:project_type_id], graph: true).select("id, title").ordered.map { |name_kpi|  [name_kpi.title, name_kpi.id]  }
   end
   def fields_for_select
     ProjectField.where(project_type_id: params["id"]).select("key").map { |region| region.key }

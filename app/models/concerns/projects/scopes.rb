@@ -15,7 +15,8 @@ module Projects::Scopes
       ddata = Project.joins(:user, :project_status).
         where(project_type_id: params[:project_type_id]).
         select(select).
-      group('p_name')
+        group('p_name').
+        order('p_name')
       ddata.each do |d|
         @d.push(d)
       end

@@ -14,7 +14,7 @@
               Proyectos
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <% ProjectType.all.each do |project| %>
+              <% ProjectType.all.ordered.each do |project| %>
                 <%= link_to "#{project.name}", dashboards_show_path(project_type_id: project.id),  class: "dropdown-item" %>
               <% end %>
               <% if can? :project_types, :new %>
