@@ -1,6 +1,10 @@
 module ProjectFields::Scopes
   extend ActiveSupport::Concern
-  
+
+  included do
+    scope :ordered, -> { order :name }
+  end
+
   module ClassMethods
     def search_fields_for_tenant params
       @f = []

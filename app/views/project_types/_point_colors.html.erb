@@ -10,7 +10,7 @@
         <%= form_tag project_type_create_point_colors_path, :remote => true, :method => :get   do |f| %>
 
           <div class="modal-body">
-            <%=select_tag 'q[project_field]',  options_for_select(region_for_select), include_blank: true, class:'proj_field form-control' %>
+            <%=select_tag 'q[project_field]',  options_for_select(colored_points_field_for_select), include_blank: true, class:'proj_field form-control' %>
           </div>
 
           <div class="modal-footer">

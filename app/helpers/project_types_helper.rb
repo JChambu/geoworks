@@ -4,13 +4,25 @@ module ProjectTypesHelper
    @a = ProjectField.where(project_type_id: params[:project_type_id]).select("key").map { |region|  region.key }
   end
 
+  
+  def heatmap_field_for_select
+    @a = ProjectField.where(project_type_id: params[:project_type_id]).where(heatmap_field: true).select("key").ordered.map { |region|  region.key }
+    
+  end
+
+  def colored_points_field_for_select
+    @a = ProjectField.where(project_type_id: params[:project_type_id]).where(colored_points_field: true).select("key").ordered.map { |region|  region.key }
+  end
+
+  def filter_field_for_select
+    @a = ProjectField.where(project_type_id: params[:project_type_id]).where(filter_field: true).select("key").ordered.map { |region|  region.key }
+  end
+  
   def kpi_for_select
     AnalyticsDashboard.where(project_type_id: params[:project_type_id], graph: true).select("id, title").map { |name_kpi|  [name_kpi.title, name_kpi.id]  }
   end
   def fields_for_select
-
-    ProjectField.where(project_type_id: params["id"]).select("key").map { |region|    region.key
-    }
+    ProjectField.where(project_type_id: params["id"]).select("key").map { |region| region.key }
   end
 
   def project_types_for_select
