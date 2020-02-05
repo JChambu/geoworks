@@ -287,7 +287,11 @@ class ProjectType < ApplicationRecord
     vv += " select "
     fields.each do |field|
       if field.key != ''
-        vv += " properties->>'#{field.key}' as #{field.key}, "
+        if field.key != 'app_estado' && field.key != 'app_usuario'
+          if field.popup == true || field.filter_field == true || field.heatmap_field == true || field.colored_points_field == true
+            vv += " properties->>'#{field.key}' as #{field.key}, "
+          end
+        end
       end
     end
     vv += " projects.project_type_id, "
@@ -295,16 +299,17 @@ class ProjectType < ApplicationRecord
     vv += " st_x(the_geom), "if type_geometry != 'Polygon'
     vv += " project_statuses.color, "
     vv += " the_geom "
-    vv += "FROM #{current_tenant}.projects "
-    vv += "LEFT OUTER JOIN #{current_tenant}.project_statuses ON projects.project_status_id = project_statuses.id
-    where projects.project_type_id =#{project_type_id} ; "
+    vv += " FROM #{current_tenant}.projects "
+    vv += " LEFT OUTER JOIN #{current_tenant}.project_statuses ON projects.project_status_id = project_statuses.id "
+    vv += " JOIN users ON users.id = projects.user_id "
+    vv += " where projects.project_type_id =#{project_type_id} ; "
     view = ActiveRecord::Base.connection.execute(vv)
     return
   end
 
   def destroy_view
     query = "DROP VIEW IF EXISTS #{self.name_layer}"
-      ActiveRecord::Base.connection.execute(query)
+    ActiveRecord::Base.connection.execute(query)
   end
 
 
