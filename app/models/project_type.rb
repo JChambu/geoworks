@@ -287,7 +287,7 @@ class ProjectType < ApplicationRecord
     vv += " select "
     fields.each do |field|
       if field.key != ''
-        if field.key != 'app_estado' && field.key != 'app_usuario'
+        if field.key != 'app_estado' && field.key != 'app_usuario' && field.key != 'app_id'
           if field.popup == true || field.filter_field == true || field.heatmap_field == true || field.colored_points_field == true
             vv += " properties->>'#{field.key}' as #{field.key}, "
           end
@@ -296,6 +296,7 @@ class ProjectType < ApplicationRecord
     end
     vv += " users.name as app_usuario, "
     vv += " project_statuses.name as app_estado, "
+    vv += " projects.id as app_id, "
     vv += " projects.project_type_id, "
     vv += " st_y(the_geom),  " if type_geometry != 'Polygon'
     vv += " st_x(the_geom), "if type_geometry != 'Polygon'
