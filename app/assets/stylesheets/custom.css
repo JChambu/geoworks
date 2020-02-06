@@ -162,7 +162,7 @@ div.custom-menu.show {
 }
 
 .custom-switch .custom-control-input:checked~.custom-role-colour::after {
-  background-color: #42d964;
+  background-color: #d3d800;
 }
 .custom-switch .custom-role-colour::after {
   background-color: #798088;
