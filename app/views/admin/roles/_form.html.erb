@@ -24,9 +24,21 @@
             <legend><%= t(mt.name) %></legend>
             <% Event.all.each do |e| %>
               <% if params[:action] == 'new' %>
-                <% if (mt.name != 'project_types' && e.name != 'share') %>
-                  <%= check_box_tag "permissions[#{mt.id}][#{e.id}]" %>
-                  <%= t(e.name) %>
+
+                <% if mt.name != 'project_types' && e.name != 'share' %>
+                  <div class="form-group">
+                    <div class="custom-control custom-switch">
+                      <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, false, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
+                      <label class="custom-control-label custom-role-colour" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
+                    </div>
+                  </div>
+                <% elsif mt.name == 'project_types' %>
+                  <div class="form-group">
+                    <div class="custom-control custom-switch">
+                      <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, false, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
+                      <label class="custom-control-label custom-role-colour" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
+                    </div>
+                  </div>
                 <% end %>
               <% else %>
 
