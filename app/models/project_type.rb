@@ -294,6 +294,8 @@ class ProjectType < ApplicationRecord
         end
       end
     end
+    vv += " users.name as app_usuario, "
+    vv += " project_statuses.name as app_estado, "
     vv += " projects.project_type_id, "
     vv += " st_y(the_geom),  " if type_geometry != 'Polygon'
     vv += " st_x(the_geom), "if type_geometry != 'Polygon'
