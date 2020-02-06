@@ -9,9 +9,9 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1.json
   def update
     respond_to do |format|
-      if @user.update(user_params)      
+      if @user.update(user_params)
         UserMailer.edit_user(@user).deliver_now
-        format.html { redirect_to project_types_path}
+        format.html { redirect_to root_path}
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
