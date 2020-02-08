@@ -113,7 +113,10 @@
         <li class="nav-item"><%= link_to project_type_dashboard_path(@project_type, params[:dashboard_id]), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver" style="font-size: 20px"></i></li> <% end %>
       <% end %>
 
-      <!-- Listado -->
+      <!-- Listados -->
+      <% if params[:controller] == 'choice_lists' && params[:action] == 'index' %>
+        <li class="nav-item"><%= link_to root_path(), class: 'nav-link' do %> <i class="fas fa-arrow-left" title="Volver" style="font-size: 20px"></i></li> <% end %>
+      <% end %>
 
       <!-- Capas Externas -->
       <% if params[:controller] == 'layers' && params[:action] == 'index' %>
@@ -145,7 +148,7 @@
       </a>
       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
         <% if can? :choice_lists, :visualizer %>
-          <%= link_to 'Listado', choice_lists_path, class: "dropdown-item" %>
+          <%= link_to 'Listados', choice_lists_path, class: "dropdown-item" %>
         <% end %>
         <% if can? :layers, :visualizer %>
           <%= link_to 'Capas Externas', layers_path, class: "dropdown-item" %>
