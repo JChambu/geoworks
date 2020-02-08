@@ -1,35 +1,39 @@
 <p id="notice"><%= notice %></p>
 
-<div class="col-md-12">
-  <h1>Listados</h1>
+<div class="card m-2 shadow">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <h1 class="m-0">Listados</h1>
+      </div>
+      <div class="col-md-6 text-right">
+        <% if can? :choice_lists, :new %>
+          <%= link_to 'Nuevo', new_choice_list_path, class: "btn btn-primary" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="col-md-12 text-right sub-header">
-  <% if can? :choice_lists, :new %>
-    <%= link_to 'Nuevo Listado', new_choice_list_path, class: "btn btn-primary" %>
-  <% end %>
-</div>
-
-<div class="x_panel card">
-  <div class="x_content">
+<div class="card m-2 shadow">
+  <div class="card-body">
     <div class="table-responsive">
-      <table class="table table-hover">
+      <table class="table table-hover table-striped table-bordered m-0">
         <thead>
           <tr>
             <th>Nombre</th>
-            <th colspan="2"></th>
+            <th colspan="2" class="text-center">Acciones</th>
           </tr>
         </thead>
-
         <tbody>
           <% @choice_lists.each do |choice_list| %>
             <tr>
               <td><%= choice_list.name %></td>
               <% if can? :choice_lists, :edit %>
-                <td><%= link_to edit_choice_list_path(choice_list) do %> <i class="fas fa-edit"></i><%end%></td>
+                <td class="text-center"><%= link_to edit_choice_list_path(choice_list) do %> <i class="fas fa-edit"></i><%end%></td>
               <% end %>
-            <% if can? :choice_lists, :destroy %>
-              <td><%= link_to choice_list, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
+              <% if can? :choice_lists, :destroy %>
+                <td class="text-center"><%= link_to choice_list, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
               <% end %>
             </tr>
           <% end %>
