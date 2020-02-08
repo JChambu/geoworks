@@ -3,7 +3,7 @@ class LayersController < ApplicationController
 
   def  find
     @layers = Layer.all
-    render json: @layers 
+    render json: @layers
   end
 
   # GET /layers
@@ -36,7 +36,7 @@ class LayersController < ApplicationController
 
     respond_to do |format|
       if @layer.save
-        format.html { redirect_to @layer, notice: 'Layer was successfully created.' }
+        format.html { redirect_to layers_path, notice: 'Layer was successfully created.' }
         format.json { render :show, status: :created, location: @layer }
       else
         format.html { render :new }
@@ -50,7 +50,7 @@ class LayersController < ApplicationController
   def update
     respond_to do |format|
       if @layer.update(layer_params)
-        format.html { redirect_to @layer, notice: 'Layer was successfully updated.' }
+        format.html { redirect_to layers_path, notice: 'Layer was successfully updated.' }
         format.json { render :show, status: :ok, location: @layer }
       else
         format.html { render :edit }
