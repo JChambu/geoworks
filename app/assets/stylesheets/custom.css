@@ -252,3 +252,17 @@ div.custom-menu.show {
   max-height: 45vh !important;
   overflow: auto;
 }
+
+/* Modifica el estilo del popup de Leaflet */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  background: rgba(58, 63, 68, 0.5) !important;
+  color: #FFFFFF !important;
+  text-shadow: 1px 1px 1px #2c2e34;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4) !important;
+}
+.leaflet-container a.leaflet-popup-close-button {
+  color: #FFFFFF !important;
+  text-shadow: 1px 1px 1px #2c2e34;
+}
