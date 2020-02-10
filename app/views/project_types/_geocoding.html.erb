@@ -1,32 +1,27 @@
-<div class="form-group col-md-12">
-  <div class="col-md-2 text-right">
-    <label>Dirección:</label>
-  </div>
-  <div class="col-md-3">
-    <%=f.select :address, '', {include_blank: ''}, {class: 'form-control'} %>
+<div class="row justify-content-center">
+  <label class="col-md-2 text-right col-form-label">Dirección:</label>
+  <div class="col-md-4">
+    <%=f.select :address, '', {include_blank: ''}, {class: 'form-control form-control-sm'} %>
   </div>
 </div>
-<div class="form-group col-md-12">
-  <div class="col-md-2 text-right">
-    <label>Departamento:</label>
-  </div>
-  <div class="col-md-3">
-    <%= f.select :department, '', {include_blank: ''}, {class: 'form-control'} %>
-  </div>
-</div>
-<div class="form-group col-md-12">
-  <div class="col-md-2 text-right">
-    <label>Provincia:</label>
-  </div>
-  <div class="col-md-3">
-    <%=f.select :province, '', {include_blank: ''}, {class: 'form-control'} %>
+
+<div class="row justify-content-center">
+  <label class="col-md-2 text-right col-form-label">Departamento:</label>
+  <div class="col-md-4">
+    <%= f.select :department, '', {include_blank: ''}, {class: 'form-control form-control-sm'} %>
   </div>
 </div>
-<div class="form-group col-md-12">
-  <div class="col-md-2 text-right">
-    <label>País:</label>
+
+<div class="row justify-content-center">
+  <label class="col-md-2 text-right col-form-label">Provincia:</label>
+  <div class="col-md-4">
+    <%=f.select :province, '', {include_blank: ''}, {class: 'form-control form-control-sm'} %>
   </div>
-  <div class="col-md-3">
-    <%= f.select :country, '', {include_blank: ''}, {class: 'form-control'} %>
+</div>
+
+<div class="row justify-content-center">
+  <label class="col-md-2 text-right col-form-label">País:</label>
+  <div class="col-md-4">
+    <%= f.select :country, '', {include_blank: ''}, {class: 'form-control form-control-sm'} %>
   </div>
 </div>
