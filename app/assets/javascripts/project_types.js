@@ -28,7 +28,7 @@ $(document).ready(function() {
     maxHeight: 500,
     buttonClass: 'form-control form-control-sm',
     buttonWidth: '100%',
-    nonSelectedText: 'Seleccione una opción',
+    nonSelectedText: 'Seleccionar',
     allSelectedText: 'Todos',
     numberDisplayed: 1,
     nSelectedText: 'seleccionados',
