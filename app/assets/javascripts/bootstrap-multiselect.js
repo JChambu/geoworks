@@ -441,12 +441,12 @@
             templates: {
                 button: '<button type="button" class="multiselect dropdown-toggle" data-toggle="dropdown"><span class="multiselect-selected-text"></span> <b class="caret"></b></button>',
                 ul: '<ul class="multiselect-container dropdown-menu"></ul>',
-                filter: '<li class="multiselect-item multiselect-filter"> <div class="form-group"> <div class="input-group mb-3"> <div class="input-group-prepend"> <span class="input-group-text"> <i class="fas fa-search"></i> </span> </div><input type="text" class="form-control multiselect-search"> </div></div></li>',
+                filter: '<li class="multiselect-item multiselect-filter"> <div class="form-group"> <div class="input-group input-group-sm mb-3"> <div class="input-group-prepend"> <span class="input-group-text"> <i class="fas fa-search"></i> </span> </div><input type="text" class="form-control form-control-sm multiselect-search"> </div></div></li>',
                 filterClearBtn: '<span class="input-group-append"> <button class="btn btn-secondary multiselect-clear-filter" type="button"> <i class="fas fa-times-circle"></i> </button></span>',
                 li: '<li><a tabindex="0"><label></label></a></li>',
                 divider: '<li class="multiselect-item divider"></li>',
                 liGroup: '<li class="multiselect-item multiselect-group"><label></label></li>',
-                resetButton: '<li class="multiselect-reset text-center"><div class="input-group"><a class="btn btn-default btn-block"></a></div></li>'
+                resetButton: '<li class="multiselect-reset text-center"><div class="input-group input-group-sm"><a class="btn btn-default btn-block"></a></div></li>'
             }
         },
 
