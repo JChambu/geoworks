@@ -27,7 +27,7 @@ $(document).ready(function() {
   $('.rol_select').multiselect({
     maxHeight: 500,
     buttonClass: 'form-control form-control-sm',
-    buttonWidth: '230px',
+    buttonWidth: '100%',
     nonSelectedText: 'Seleccione una opción',
     allSelectedText: 'Todos',
     numberDisplayed: 1,
