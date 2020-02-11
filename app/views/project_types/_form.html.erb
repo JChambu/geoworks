@@ -78,22 +78,22 @@
                 <thead>
                   <tr>
                 <% if can? :attributes, :new %>
-                  <th><%= link_to_add_fields "<i class='fas fa-plus' title='Agregar atributo'></i>".html_safe, f, :project_fields, class: 'table_father' %></th>
+                  <th style="width: 37px"><%= link_to_add_fields "<i class='fas fa-plus' title='Agregar atributo'></i>".html_safe, f, :project_fields, class: 'table_father' %></th>
                 <% end %>
                     <th>Nombre</th>
+                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Requerido">R</th>
+                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Oculto">O</th>
+                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Sólo Lectura">SL</th>
+                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Pop-up">P</th>
+                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Filtro">F</th>
+                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Mapa de Calor">MC</th>
+                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Colorear Puntos">CP</th>
                     <th>Cálculo</th>
                     <th>Script</th>
                     <th>Tipo de Campo</th>
                     <th></th>
-                    <th data-toggle="tooltip" data-placement="bottom" title="Requerido">R</th>
-                    <th data-toggle="tooltip" data-placement="bottom" title="Oculto">O</th>
-                    <th data-toggle="tooltip" data-placement="bottom" title="Sólo Lectura">SL</th>
-                    <th data-toggle="tooltip" data-placement="bottom" title="Pop-up">P</th>
-                    <th data-toggle="tooltip" data-placement="bottom" title="Filtro">F</th>
-                    <th data-toggle="tooltip" data-placement="bottom" title="Mapa de Calor">MC</th>
-                    <th data-toggle="tooltip" data-placement="bottom" title="Colorear Puntos">CP</th>
-                    <th></th>
                     <th>Rol GW-Lite</th>
+                    <th style="width: 45px"></th>
                   </tr>
                  </thead>
                 <tbody class="sortable">
