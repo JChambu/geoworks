@@ -37,7 +37,7 @@ $(document).ready(function() {
     filterPlaceholder: 'Buscar',
     includeFilterClearBtn: false,
     includeSelectAllOption: true,
-    selectAllText: 'Seleccionar todos',
+    selectAllText: 'Todos',
   });
 });
 
