@@ -267,3 +267,8 @@ div.custom-menu.show {
   color: #FFFFFF !important;
   text-shadow: 1px 1px 1px #2c2e34;
 }
+
+/* Modifica el padding de los checkbox de multiselect */
+.multiselect-container>li>a>label {
+  padding: 3px 10px 3px 10px !important;
+}
