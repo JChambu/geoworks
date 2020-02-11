@@ -35,6 +35,7 @@ $(document).ready(function() {
     enableFiltering: true,
     enableCaseInsensitiveFiltering: true,
     filterPlaceholder: 'Buscar',
+    includeFilterClearBtn: false,
     includeSelectAllOption: true,
     selectAllText: 'Seleccionar todos',
   });
