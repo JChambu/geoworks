@@ -1,27 +1,69 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
+ActiveRecord::Base.transaction do
 
+  if User.where(email: ENV['email']).empty?
+    @user =  User.create!(
+      name: ENV['username'],
+      email:  ENV['email'],
+      password:  ENV['password'], 
+      password_confirmation:  ENV['password'],
+      active: true,
+      confirmed_at: '2019-10-28 20:21:41.312046',
+      token: SecureRandom.base64(64),
+      authentication_token: SecureRandom.base64(20)
+    )
+  end
 
-def create_user email, name, pass, role
-	u = User.find_by_email email
-	User.delete(u.id) unless u.nil?
+  if Role.where(name: 'superadmin').empty?
+    @role = Role.create!(
+      name: 'superadmin'
+    )
+  end
 
-	options = {
-	  :name => name,
-	  :email => email,
-	  :password => pass,      
-	  :role => role
-	}
+  if Customer.where(name: 'public').empty?
+    @customer = Customer.create!(
+      name: 'public',
+      subdomain: 'public'
+    )
+  end
+  if !@user.nil? and !@customer.nil? and !@role.nil?
+    UserCustomer.where(user_id: @user.id).where(customer_id: @customer.id).where(role_id: @role.id).first_or_create! 
+  end
+ 
+  AnalysisType.where(name: 'countq' ).first_or_create!
+  AnalysisType.where(name: 'sumq' ).first_or_create!
+  AnalysisType.where(name: 'minq' ).first_or_create!
+  AnalysisType.where(name: 'maxq' ).first_or_create!
+  AnalysisType.where(name: 'avgq' ).first_or_create!
 
-	user = User.create(options)
+  Chart.where(name: 'point' ).first_or_create! 
+  Chart.where(name: 'area' ).first_or_create! 
+  Chart.where(name: 'line' ).first_or_create! 
+  Chart.where(name: 'doughnut' ).first_or_create! 
+  Chart.where(name: 'bubble' ).first_or_create! 
+  Chart.where(name: 'horizontalBar' ).first_or_create! 
+  Chart.where(name: 'bar' ).first_or_create! 
+
+  Event.where(name: 'new' ).first_or_create!
+  Event.where(name: 'edit').first_or_create!
+  Event.where(name: 'destroy').first_or_create!
+  Event.where(name: 'visualizer').first_or_create!
+  Event.where(name: 'share').first_or_create!
+  Event.where(name: 'export').first_or_create!
+
+  FieldType.where(name: 'Texto' ).first_or_create!
+  FieldType.where(name: 'Listado (opción única)' ).first_or_create!
+  FieldType.where(name: 'Fecha' ).first_or_create!
+  FieldType.where(name: 'Boleano' ).first_or_create!
+  FieldType.where(name: 'Numerico' ).first_or_create!
+  FieldType.where(name: 'Sub-formulario' ).first_or_create!
+  FieldType.where(name: 'Listado (opción multiple)' ).first_or_create!
+  FieldType.where(name: 'Sub Titulo' ).first_or_create!
+
+  ModelType.where(name: 'project_types').first_or_create!
+  ModelType.where(name: 'indicators').first_or_create!
+  ModelType.where(name: 'reports').first_or_create!
+  ModelType.where(name: 'data').first_or_create!
+  ModelType.where(name: 'attributes').first_or_create!
+  ModelType.where(name: 'layers').first_or_create!
+  ModelType.where(name: 'choice_lists').first_or_create!
 end
-
-create_user "super@admin.com", "Admin", "superadmin", "Admin"
