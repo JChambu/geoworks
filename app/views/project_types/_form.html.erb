@@ -74,26 +74,26 @@
         <% if can? :attributes, :edit %>
           <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
             <div class="table-responsive">
-              <table class="table table-hover table-striped m-0" id="user_assignments">
-                <thead>
+              <table class="table table-hover table-tbody-scroll table-striped m-0" id="user_assignments">
+                <thead style="padding-right: 10px">
                   <tr>
-                <% if can? :attributes, :new %>
-                  <th style="width: 37px"><%= link_to_add_fields "<i class='fas fa-plus' title='Agregar atributo'></i>".html_safe, f, :project_fields, class: 'table_father' %></th>
-                <% end %>
-                    <th>Nombre</th>
-                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Requerido">R</th>
-                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Oculto">O</th>
-                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Sólo Lectura">SL</th>
-                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Pop-up">P</th>
-                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Filtro">F</th>
-                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Mapa de Calor">MC</th>
-                    <th style="width: 45px" data-toggle="tooltip" data-placement="bottom" title="Colorear Puntos">CP</th>
-                    <th>Cálculo</th>
-                    <th>Script</th>
-                    <th>Tipo de Campo</th>
-                    <th></th>
-                    <th>Rol GW-Lite</th>
-                    <th style="width: 45px"></th>
+                  <% if can? :attributes, :new %>
+                    <th style="width: 3%"><%= link_to_add_fields "<i class='fas fa-plus' title='Agregar atributo'></i>".html_safe, f, :project_fields, class: 'table_father' %></th>
+                  <% end %>
+                    <th style="width: 13%" >Nombre</th>
+                    <th style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Requerido">R</th>
+                    <th style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Oculto">O</th>
+                    <th style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Sólo Lectura">SL</th>
+                    <th style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Pop-up">P</th>
+                    <th style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Filtro">F</th>
+                    <th style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Mapa de Calor">MC</th>
+                    <th style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Colorear Puntos">CP</th>
+                    <th style="width: 12%">Cálculo</th>
+                    <th style="width: 12%">Script</th>
+                    <th style="width: 12%">Tipo de Campo</th>
+                    <th style="width: 12%"></th>
+                    <th style="width: 12%">Rol GW-Lite</th>
+                    <th style="width: 3%"></th>
                   </tr>
                  </thead>
                 <tbody class="sortable">

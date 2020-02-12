@@ -272,3 +272,14 @@ div.custom-menu.show {
 .multiselect-container>li>a>label {
   padding: 3px 10px 3px 10px !important;
 }
+
+/* Aplica scroll solo al tbody */
+.table-tbody-scroll tbody {
+  display: block;
+  height: 85vh;
+  overflow: auto;
+}
+.table-tbody-scroll thead, .table-tbody-scroll tbody tr {
+  display: table;
+  width: 100%;
+}
