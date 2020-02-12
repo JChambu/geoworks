@@ -86,6 +86,8 @@
                   <% if can? :attributes, :new %>
                     <th style="width: 3%"><%= link_to_add_fields "<i class='fas fa-plus' title='Agregar atributo'></i>".html_safe, f, :project_fields, class: 'table_father' %></th>
                   <% end %>
+
+                    <th></th>
                     <th style="width: 13%" >Nombre</th>
                     <th style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Requerido">R</th>
                     <th style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Oculto">O</th>
