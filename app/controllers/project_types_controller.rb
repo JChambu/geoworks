@@ -54,7 +54,7 @@ class ProjectTypesController < ApplicationController
   def geocoding
 
     if params[:q].present?
-      geo = ProjectType.build_geom(params[:q], params[:id])  
+      geo = ProjectType.build_geom(params[:q], params[:id])
     end
   end
 
@@ -115,7 +115,7 @@ class ProjectTypesController < ApplicationController
     type_box = params[:type_box]
     size_box = params[:size_box]
     @ct = Apartment::Tenant.current
-    @arr1 = [] 
+    @arr1 = []
     if type_box == 'polygon'
       size_box.each do |a,x|
         z = []
@@ -135,7 +135,7 @@ class ProjectTypesController < ApplicationController
     end
     condition = params[:conditions]
     if !condition.blank?
-      condition.each do |key| 
+      condition.each do |key|
         @s = key.split('|')
         @field = @s[0]
         @filter = @s[1]
@@ -144,7 +144,7 @@ class ProjectTypesController < ApplicationController
           data =  data.where(" (properties->>'" + @field +"')::numeric" +  @filter +"#{@value}")
         else
           data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
-        end 
+        end
       end
     end
 
@@ -194,7 +194,7 @@ class ProjectTypesController < ApplicationController
     else
 
       @projects = Project.where(project_type_id: params[:data_id]).select("st_x(the_geom) as x, st_y(the_geom)as y ")
-    end                                                                
+    end
 
     if !params[:project_field].blank?
       project_field = params[:project_field]
@@ -206,10 +206,10 @@ class ProjectTypesController < ApplicationController
   end
 
   def index
-    
+
     @has_project_types = HasProjectType.where(user_id: current_user.id).select(:project_type_id)
     @p =[]
-    @has_project_types.each do |s| @p.push(s.project_type_id) end 
+    @has_project_types.each do |s| @p.push(s.project_type_id) end
     @project_types = ProjectType.where(id: @p)
     if !params[:search_project].nil? || !params[:search_project].blank?
       @project_types = @project_types.where("name ILIKE :name", name: "%#{params[:search_project]}%")
@@ -291,6 +291,6 @@ class ProjectTypesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_type_params
-    params.require(:project_type).permit(:name, :type_file,  :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color, :type_geometry, {file:[]}, :tracking, project_fields_attributes: [:id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, {role:[]}, :sort, :key, :_destroy, :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,  project_subfields_attributes: [:id, :field_type_id, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id, :sort, :_destroy, :key, :choice_list_id, :hidden, :read_only, :popup, :calculated_field, {role:[]}, :data_script, :key]]) 
+    params.require(:project_type).permit(:name, :type_file,  :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color, :type_geometry, {file:[]}, :tracking, project_fields_attributes: [:id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, {role:[]}, :sort, :key, :_destroy, :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,  project_subfields_attributes: [:id, :field_type_id, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id, :sort, :_destroy, :key, :choice_list_id, :hidden, :read_only, :popup, :calculated_field, {role:[]}, :data_script, :key]])
   end
 end
