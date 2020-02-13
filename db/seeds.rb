@@ -4,7 +4,7 @@ ActiveRecord::Base.transaction do
     @user =  User.create!(
       name: ENV['username'],
       email:  ENV['email'],
-      password:  ENV['password'], 
+      password:  ENV['password'],
       password_confirmation:  ENV['password'],
       active: true,
       confirmed_at: '2019-10-28 20:21:41.312046',
@@ -26,22 +26,22 @@ ActiveRecord::Base.transaction do
     )
   end
   if !@user.nil? and !@customer.nil? and !@role.nil?
-    UserCustomer.where(user_id: @user.id).where(customer_id: @customer.id).where(role_id: @role.id).first_or_create! 
+    UserCustomer.where(user_id: @user.id).where(customer_id: @customer.id).where(role_id: @role.id).first_or_create!
   end
- 
+
   AnalysisType.where(name: 'countq' ).first_or_create!
   AnalysisType.where(name: 'sumq' ).first_or_create!
   AnalysisType.where(name: 'minq' ).first_or_create!
   AnalysisType.where(name: 'maxq' ).first_or_create!
   AnalysisType.where(name: 'avgq' ).first_or_create!
 
-  Chart.where(name: 'point' ).first_or_create! 
-  Chart.where(name: 'area' ).first_or_create! 
-  Chart.where(name: 'line' ).first_or_create! 
-  Chart.where(name: 'doughnut' ).first_or_create! 
-  Chart.where(name: 'bubble' ).first_or_create! 
-  Chart.where(name: 'horizontalBar' ).first_or_create! 
-  Chart.where(name: 'bar' ).first_or_create! 
+  Chart.where(name: 'point' ).first_or_create!
+  Chart.where(name: 'area' ).first_or_create!
+  Chart.where(name: 'line' ).first_or_create!
+  Chart.where(name: 'doughnut' ).first_or_create!
+  Chart.where(name: 'bubble' ).first_or_create!
+  Chart.where(name: 'horizontalBar' ).first_or_create!
+  Chart.where(name: 'bar' ).first_or_create!
 
   Event.where(name: 'new' ).first_or_create!
   Event.where(name: 'edit').first_or_create!
