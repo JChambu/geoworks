@@ -12,6 +12,6 @@ class ProjectField < ApplicationRecord
   before_create :key_name
 
   def key_name
-      self.key = self.name.gsub(/\s+/, '_').downcase
+    self.key = self.name.gsub(/\s+/, '_').gsub(/[^0-9A-Za-z\_]/,'').downcase
   end
 end
