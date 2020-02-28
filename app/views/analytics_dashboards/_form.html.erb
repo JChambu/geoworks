@@ -30,16 +30,16 @@
               <%= f.input :analysis_type_id, :collection => analysis_types_for_select, label: "Análisis", input_html: {class:"form-control form-control-sm"}%>
             </div>
             <div class="form-group col-md-3">
-              <%= f.input :project_field_id, :collection => filter_field_for_select, label: "Campo", input_html: {class:"form-control form-control-sm"} %>
+              <%= f.input :project_field_id, :collection => filter_field_for_indicator_select, label: "Campo", input_html: {class:"form-control form-control-sm"} %>
             </div>
             <div class="form-group col-md-3">
-              <%= f.input :group_field_id, :collection => filter_field_for_select, label: "Agrupar", input_html: {class:"form-control form-control-sm"}%>
+              <%= f.input :group_field_id, :collection => filter_field_for_indicator_select, label: "Agrupar", input_html: {class:"form-control form-control-sm"}%>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group col-md-4">
-              <%= f.input :condition_field_id, :collection => filter_field_for_select, label: 'Campo', input_html: {class:"form-control form-control-sm"} %>
+              <%= f.input :condition_field_id, :collection => filter_field_for_indicator_select, label: 'Campo', input_html: {class:"form-control form-control-sm"} %>
             </div>
             <div class="form-group col-md-4">
               <%= f.input :filter_input, label: 'Operador', collection: ProjectType::FILTERS, input_html: {class: 'form-control form-control-sm'} %>
