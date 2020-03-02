@@ -260,7 +260,7 @@ class ProjectTypesController < ApplicationController
   def update
     respond_to do |format|
       if @project_type.update(project_type_params)
-        ProjectType.exist_layer_rgeoserver @project_type.name
+        ProjectType.exist_layer_rgeoserver @project_type.name_layer
         format.html { redirect_to edit_project_type_path(@project_type), notice: 'Project type was successfully updated.' }
         format.json { render :show, status: :ok, location: @project_type }
       else
