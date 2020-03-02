@@ -24,6 +24,7 @@ class DashboardsController < ApplicationController
   # GET /dashboards/1
   # GET /dashboards/1.json
   def show
+    @extent = []
     if !@project_type.nil?
       @projects = Project.where(project_type_id: @project_type.id)
       @extent = Project.geometry_bounds(@project_type.id, current_user.id)
