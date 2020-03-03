@@ -6,9 +6,7 @@ ActiveRecord::Base.transaction do
       email: ENV['email'],
       password: ENV['user_password'],
       active: true,
-      confirmed_at: '2019-10-28 20:21:41.312046',
-      token: SecureRandom.base64(64),
-      authentication_token: SecureRandom.base64(20),
+      confirmed_at: '2019-10-28 20:21:41.312046'
     )
   end
 
