@@ -35,7 +35,9 @@ class User < ApplicationRecord
   ROLES = %w[User Admin Moderator]
 
   def generate_password
-    self.password = Devise.friendly_token.first(8)
+    if !self.email == 'super@admin.com'
+      self.password = Devise.friendly_token.first(8)
+    end
   end
 
   def send_mail_confirmable
@@ -46,6 +48,13 @@ class User < ApplicationRecord
      return User.find(self.id).active
    end
 
+  def exist_user_in_user_customers
+    if !self.email == 'super@admin.com'
+      current_tenant = Apartment::Tenant.current
+      customer_id = Customer.where(subdomain: current_tenant).pluck(:id).first
+      user_customer= UserCustomer.find_or_create_by(email: email, customer_id: customer_id, user_id: id)
+    end
+  end
 
   def active_for_authentication?
    super && is_active?

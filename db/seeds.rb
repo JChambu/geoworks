@@ -3,28 +3,18 @@ ActiveRecord::Base.transaction do
   if User.where(email: ENV['email']).empty?
     @user =  User.create!(
       name: ENV['username'],
-      email:  ENV['email'],
-      password:  ENV['password'],
-      password_confirmation:  ENV['password'],
+      email: ENV['email'],
+      password: ENV['user_password'],
       active: true,
       confirmed_at: '2019-10-28 20:21:41.312046',
       token: SecureRandom.base64(64),
-      authentication_token: SecureRandom.base64(20)
+      authentication_token: SecureRandom.base64(20),
     )
   end
 
-  if Role.where(name: 'superadmin').empty?
-    @role = Role.create!(
-      name: 'superadmin'
-    )
-  end
+  @role = Role.where(name: 'superadmin').first_or_create!
 
-  if Customer.where(name: 'public').empty?
-    @customer = Customer.create!(
-      name: 'public',
-      subdomain: 'public'
-    )
-  end
+ @customer = Customer.where(name: 'public').where(subdomain: 'public').first_or_create!
   if !@user.nil? and !@customer.nil? and !@role.nil?
     UserCustomer.where(user_id: @user.id).where(customer_id: @customer.id).where(role_id: @role.id).first_or_create!
   end
