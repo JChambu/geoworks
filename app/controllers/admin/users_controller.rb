@@ -109,10 +109,6 @@ class Admin::UsersController < ApplicationController
     end
   end
 
-  def build_token
-    authentication_token = SecureRandom.base64(64)
-  end
-
   private
   def after_confirmation_path_for(resource_name, resource)
     sign_up(resource)
@@ -127,6 +123,6 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :name, :password_confirmation, :active, user_customer_attributes: [:id, :role_id]).merge(token: build_token)
+    params.require(:user).permit(:email, :password, :name, :password_confirmation, :active, :role_id, has_project_types_attributes: [:id, :project_type_id, :user_id, :_destroy, :owner, :properties])
   end
 end

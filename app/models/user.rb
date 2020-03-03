@@ -29,15 +29,21 @@ class User < ApplicationRecord
   validates :password, confirmation: {case_sensitive: true}
   #validate :is_role_valid?
   #before_destroy :has_related_pois?
+  before_create :generate_token, on: :create
 
   attr_accessor :customer_id, :project
 
   ROLES = %w[User Admin Moderator]
 
   def generate_password
-    if !self.email == 'super@admin.com'
+    if self.email != 'super@admin.com'
       self.password = Devise.friendly_token.first(8)
     end
+  end
+  
+  def generate_token
+      self.token = SecureRandom.base64(20)
+      self.authentication_token =  SecureRandom.base64(64)
   end
 
   def send_mail_confirmable
