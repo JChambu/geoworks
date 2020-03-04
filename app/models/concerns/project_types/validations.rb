@@ -1,9 +1,12 @@
 module ProjectTypes::Validations
   extend ActiveSupport::Concern
   
-  include do
+  included do
     validates :name,  presence: true,
               uniqueness: { case_sensitive: false },
               length: { maximum: 255 }
+    validates :type_geometry, presence: true
+
   end
+
 end

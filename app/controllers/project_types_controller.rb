@@ -228,7 +228,11 @@ class ProjectTypesController < ApplicationController
   def new
     authorize! :project_types, :new
     @project_type = ProjectType.new
-    @project_field = @project_type.project_fields.build
+    @project_field=[]
+    @project_field.push(@project_type.project_fields.build({name: 'app_id', field_type_id: '1', hidden: true, read_only: true}))
+    @project_field.push(@project_type.project_fields.build({name: 'app_estado', 'field_type_id': '1', hidden: true, read_only: true}))
+    @project_field.push(@project_type.project_fields.build({name: 'app_usuario', 'field_type_id': '1', hidden: true, read_only: true}))
+
   end
 
   # GET /project_types/1/edit

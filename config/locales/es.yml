@@ -187,6 +187,7 @@ es:
         attributes:
           name:
             present: no de
+          type_geometry: Tipo de Geometria
           base:
             invalid_type_file: El archivo debe ser CSV o SHP
       geo_edition:
@@ -542,6 +543,11 @@ es:
         source: "Fuente"
       project_type:
         name: "Nombre"
+        type_geometry: "Tipo de Geometria"
+      project_fields:
+        name: "Nombre de Campo"
+        key: "Key"
+        field_type_id: "Tipo de Campo"
       analytics_dashboard:
         title: "Titulo"
         description: "Descripcion"
