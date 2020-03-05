@@ -1,27 +1,28 @@
 ActiveRecord::Base.transaction do
 
-  if User.where(email: ENV['email']).empty?
+  if User.where(email: ENV['USER_EMAIL']).empty?
     @user =  User.create!(
-      name: ENV['username'],
-      email: ENV['email'],
-      password: ENV['user_password'],
+      name: ENV['USER_NAME'],
+      email:  ENV['USER_EMAIL'],
+      password:  ENV['USER_PASSWORKD'],
       active: true,
-      confirmed_at: '2019-10-28 20:21:41.312046'
+      confirmed_at: '2019-10-28 20:21:41.312046',
     )
   end
 
   @role = Role.where(name: 'superadmin').first_or_create!
 
- @customer = Customer.where(name: 'public').where(subdomain: 'public').first_or_create!
+  @customer = Customer.where(name: 'public').where(subdomain: 'public').first_or_create!
+
   if !@user.nil? and !@customer.nil? and !@role.nil?
     UserCustomer.where(user_id: @user.id).where(customer_id: @customer.id).where(role_id: @role.id).first_or_create!
   end
 
-  AnalysisType.where(name: 'countq' ).first_or_create!
-  AnalysisType.where(name: 'sumq' ).first_or_create!
-  AnalysisType.where(name: 'minq' ).first_or_create!
-  AnalysisType.where(name: 'maxq' ).first_or_create!
-  AnalysisType.where(name: 'avgq' ).first_or_create!
+  AnalysisType.where(name: 'count' ).first_or_create!
+  AnalysisType.where(name: 'sum' ).first_or_create!
+  AnalysisType.where(name: 'min' ).first_or_create!
+  AnalysisType.where(name: 'max' ).first_or_create!
+  AnalysisType.where(name: 'avg' ).first_or_create!
 
   Chart.where(name: 'point' ).first_or_create!
   Chart.where(name: 'area' ).first_or_create!
@@ -42,10 +43,10 @@ ActiveRecord::Base.transaction do
   FieldType.where(name: 'Listado (opción única)' ).first_or_create!
   FieldType.where(name: 'Fecha' ).first_or_create!
   FieldType.where(name: 'Boleano' ).first_or_create!
-  FieldType.where(name: 'Numerico' ).first_or_create!
+  FieldType.where(name: 'Numérico' ).first_or_create!
   FieldType.where(name: 'Sub-formulario' ).first_or_create!
   FieldType.where(name: 'Listado (opción multiple)' ).first_or_create!
-  FieldType.where(name: 'Sub Titulo' ).first_or_create!
+  FieldType.where(name: 'Subtítulo' ).first_or_create!
 
   ModelType.where(name: 'project_types').first_or_create!
   ModelType.where(name: 'indicators').first_or_create!
