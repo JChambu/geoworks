@@ -42,7 +42,7 @@ class User < ApplicationRecord
   end
   
   def generate_token
-      self.token = SecureRandom.base64(20)
+      self.token = SecureRandom.base64(15)
       self.authentication_token =  SecureRandom.base64(64)
   end
 
