@@ -4,28 +4,28 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   has_many :has_project_types
-  has_many :project_types, through: :has_project_types 
-  has_many :user_customers 
+  has_many :project_types, through: :has_project_types
+  has_many :user_customers
   has_many :customers, through: :user_customers
-  has_many :project_filters, dependent: :destroy 
+  has_many :project_filters, dependent: :destroy
   has_many :projects
   accepts_nested_attributes_for :user_customers, allow_destroy: true
-  
+
   belongs_to :role
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
   #  :timeoutable, :omniauthable,
-  # :recoverable, :registerable, 
+  # :recoverable, :registerable,
   devise :database_authenticatable, :rememberable, :trackable, :lockable, :confirmable
 
   before_create :generate_password, on: :create
   after_create :send_mail_confirmable
-  
+
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
   validates :email, :email_format => {:message => I18n.t("activerecord.errors.messages.invalid_email")}
   #validates :role, presence: true
-  validates :password, length: { minimum: 6 }, unless: -> { !:password.blank? } 
+  validates :password, length: { minimum: 6 }, unless: -> { !:password.blank? }
   validates :password, confirmation: {case_sensitive: true}
   #validate :is_role_valid?
   #before_destroy :has_related_pois?
@@ -40,7 +40,7 @@ class User < ApplicationRecord
       self.password = Devise.friendly_token.first(8)
     end
   end
-  
+
   def generate_token
       self.token = SecureRandom.base64(15)
       self.authentication_token =  SecureRandom.base64(64)
@@ -64,14 +64,14 @@ class User < ApplicationRecord
 
   def active_for_authentication?
    super && is_active?
-   super && is_validated? 
+   super && is_validated?
  end
 def inactive_message
     is_active? ? :is_locked :  super
 end
-  
+
  def is_validated?
-       
+
    current_tenant = Apartment::Tenant.current
    @customer_id = Customer.where(subdomain: current_tenant)
     @user = UserCustomer.where(user_id: self.id, customer_id: @customer_id )

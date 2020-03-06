@@ -7,15 +7,17 @@
       <!-- Principal -->
       <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
 
-        <% if !@project_type.nil? %>
+
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Proyectos
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <% if !@project_type.nil? %>
               <% ProjectType.all.ordered.each do |project| %>
                 <%= link_to "#{project.name}", dashboards_show_path(project_type_id: project.id),  class: "dropdown-item" %>
+              <% end %>
               <% end %>
               <% if can? :project_types, :new %>
               <div class="dropdown-divider"></div>
@@ -23,6 +25,8 @@
             </div>
               <% end %>
           </li>
+
+        <% if !@project_type.nil? %>
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
