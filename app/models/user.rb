@@ -43,7 +43,7 @@ class User < ApplicationRecord
 
   def generate_token
       self.token = SecureRandom.base64(15)
-      self.authentication_token =  SecureRandom.base64(64)
+      self.authentication_token =  SecureRandom.base64(15)
   end
 
   def send_mail_confirmable
