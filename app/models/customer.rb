@@ -14,6 +14,7 @@ class Customer < ApplicationRecord
   private
 
   def create_tenant
+    return if subdomain == 'public'
     Apartment::Tenant.create(subdomain)
   end
 end
