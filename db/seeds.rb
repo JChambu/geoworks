@@ -4,7 +4,7 @@ ActiveRecord::Base.transaction do
     @user =  User.create!(
       name: ENV['USER_NAME'],
       email:  ENV['USER_EMAIL'],
-      password:  ENV['USER_PASSWORKD'],
+      password:  ENV['USER_PASSWORD'],
       active: true,
       confirmed_at: '2019-10-28 20:21:41.312046',
     )
