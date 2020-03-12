@@ -228,9 +228,8 @@ Navarra.geomaps = function (){
               project_type_id: data_id
             },
             success: function(data) {
-              $.each(data, function(i, value) {
 
-                console.log(label);
+              $.each(data, function(i, value) {
 
                 // Reemplaza los guiones bajos del label por espacios
                 var label = value.split('_').join(' ')
@@ -238,7 +237,6 @@ Navarra.geomaps = function (){
                 label = label.charAt(0).toUpperCase() + label.slice(1)
 
                 var val = prop[value]
-                console.log(val);
 
                 // Valida si el valor no es nulo
                 if (val != null && val != 'null') {
@@ -251,6 +249,7 @@ Navarra.geomaps = function (){
                 x.push('<b>' + label + ': </b> ' + val);
 
               });
+
               z.innerHTML = x.join(" <br>");
               inn = document.body.appendChild(z);
               checked = $('#select').hasClass('active');
@@ -386,20 +385,30 @@ Navarra.geomaps = function (){
         }
 
         checked = $('#select').hasClass('active');
-        if (!checked){
+
+        if (!checked) {
+
           var cc = JSON.parse(info);
           var prop = cc['features'][0]['properties'];
           var z = document.createElement('p'); // is a node
           var x = []
-          $.each(prop, function(a,b){
-            x.push('<b>' + a + ': </b> ' + b + '</br>');
+
+          $.each(prop, function(lab, val) {
+
+            // Reemplaza los guiones bajos del label por espacios
+            var lab = lab.split('_').join(' ')
+            // Pone la primer letra en mayúscula
+            lab = lab.charAt(0).toUpperCase() + lab.slice(1)
+
+            x.push('<b>' + lab + ': </b> ' + val);
+
           })
 
-          z.innerHTML = x;
+          z.innerHTML = x.join(" <br>");
           inn = document.body.appendChild(z);
           checked = $('#select').hasClass('active');
 
-          if (!checked){
+          if (!checked) {
             L.popup()
               .setLatLng(latlng)
               .setContent(inn)
