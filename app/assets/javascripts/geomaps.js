@@ -392,28 +392,53 @@ Navarra.geomaps = function (){
           var prop = cc['features'][0]['properties'];
           var z = document.createElement('p'); // is a node
           var x = []
+          var count = 1;
+          var project_id = cc['features'][0]['properties']['id'];
+          var data_id = Navarra.dashboards.config.project_type_id;
 
-          $.each(prop, function(lab, val) {
+          $.ajax({
+            type: 'GET',
+            url: '/project_fields/field_popup.json',
+            datatype: 'json',
+            data: {
+              project_type_id: data_id
+            },
+            success: function(data) {
 
-            // Reemplaza los guiones bajos del label por espacios
-            var lab = lab.split('_').join(' ')
-            // Pone la primer letra en mayúscula
-            lab = lab.charAt(0).toUpperCase() + lab.slice(1)
+              $.each(data, function(i, value) {
 
-            x.push('<b>' + lab + ': </b> ' + val);
+                // Reemplaza los guiones bajos del label por espacios
+                var label = value.split('_').join(' ')
+                // Pone la primer letra en mayúscula
+                label = label.charAt(0).toUpperCase() + label.slice(1)
 
-          })
+                var val = prop[value]
 
-          z.innerHTML = x.join(" <br>");
-          inn = document.body.appendChild(z);
-          checked = $('#select').hasClass('active');
+                // Valida si el valor no es nulo
+                if (val != null && val != 'null') {
+                  // Elimina los corchetes y comillas del valor (en caso que contenga)
+                  var val = val.split('[').join('')
+                  var val = val.split(']').join('')
+                  var val = val.split('"').join('')
+                }
 
-          if (!checked) {
-            L.popup()
-              .setLatLng(latlng)
-              .setContent(inn)
-              .openOn(mymap);
-          }
+                x.push('<b>' + label + ': </b> ' + val);
+
+              });
+
+              z.innerHTML = x.join(" <br>");
+              inn = document.body.appendChild(z);
+              checked = $('#select').hasClass('active');
+
+              if (!checked) {
+                L.popup()
+                  .setLatLng(latlng)
+                  .setContent(inn)
+                  .openOn(mymap);
+              }
+            } // Cierra success
+          }); // Cierra ajax
+
         }
       }
 
