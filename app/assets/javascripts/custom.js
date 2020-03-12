@@ -290,7 +290,7 @@ function init_chart_doughnut(size_box = null){
                   }
                     count_series = 1 ;
                 }else{
-                  
+
                   $.each(vax, function(i, v) {
 
                     // Verifica si el dato es un fecha
@@ -350,7 +350,7 @@ function init_chart_doughnut(size_box = null){
                       da = daa;
                       lab = labb;
 
-                    } else if (v['name'] != null && v['name'] != 'null' && v['count'] != 0) {
+                    } else {
 
                       lab.push(v['name']);
                       da.push(v['count']);
