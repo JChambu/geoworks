@@ -16,16 +16,6 @@
     Navarra.dashboards.config.maxx = <%= @extent[0].maxx  %>
     Navarra.dashboards.config.maxy = <%= @extent[0].maxy %>
     <% end %>
-  <% if !@projects.nil? %>
-    <% @projects.each do |a|%>
-      <%if !a.the_geom.nil?  %>
-        <% if @project_type.type_geometry != 'Polygon' %>
-          Navarra.dashboards.config.lat.push( <%= a.the_geom.y %>)
-          Navarra.dashboards.config.lon.push( <%= a.the_geom.x %>)
-        <% end %>
-      <% end %>
-    <% end %>
-<% end %>
   <% if @project_filters %>
     <% @project_filters.each do |s| %>
     <% if !s.properties.nil? %>
