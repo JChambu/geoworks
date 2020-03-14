@@ -272,92 +272,98 @@ function init_chart_doughnut(size_box = null){
                 // Extraemos los datos del array de la serie
                 $.each(data_general, function(idx, vax){
 
-                  // Extraemos label y value de los datos
+                  // Burbuja
                   if (type_chart == 'bubble') {
-                    $.each(vax, function(i, v ){
-                  if(count_series == 0){
-                    bubble_dataset_x.push(v['count']);
-                  }else{
-                    bubble_dataset_y.push(v['count']);
-                  }
-                  })
-
-                  if(count_series == 1){
-                    for(var b = 0; b < vax.length; b ++){
-                     r = (parseFloat(bubble_dataset_y[b]) * parseFloat(bubble_dataset_x)) * scale;
-                    bubble_dataset.push({"x":bubble_dataset_x[b], "y":bubble_dataset_y[b], "r": r });
-                  }
-                  }
-                    count_series = 1 ;
-                }else{
-
-                  $.each(vax, function(i, v) {
-
-                    // Verifica si el dato es un fecha
-                    var date_regexp = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/g;
-                    var string = v['name'];
-                    var isdate = date_regexp.test(string)
-
-                    // Si es fecha le da el formato correcto
-                    if (isdate == true && v['count'] != 0 ) {
-
-                      // Agrega los ceros faltantes a los días y meses
-                      var no_zero_day_regexp = /^(\d{1})\/(\d{1,2})\/(\d{4})/g;
-                      var no_zero_month_regexp = /^(\d{1,2})\/(\d{1})\/(\d{4})/g;
-
-                      var day_zero_fail = no_zero_day_regexp.test(string)
-                      var month_zero_fail = no_zero_month_regexp.test(string)
-
-                      if (day_zero_fail == true) {
-                        var string = string.split('/')
-                        string[0] = '0' + string[0]
-                        string = string.join('/')
-                      };
-
-                      if (month_zero_fail == true) {
-                        var string = string.split('/')
-                        string[1] = '0' + string[1]
-                        string = string.join('/')
-                      };
-
-                      // Invierte el orden de la fecha y lo separa con guiones
-                      var stringdate = string.split('/').reverse().join('-');
-
-                      // Armamos los arrays de label y count
-                      lab.push(stringdate);
-                      da.push(v['count']);
-
-                      // Unimos el label con el count
-                      var row_array = [];
-                      for (var i = 0; i < lab.length; i++) {
-                        var row = lab[i] + '|' + da[i]
-                        row_array.push(row)
+                    $.each(vax, function(i, v) {
+                      if (count_series == 0) {
+                        bubble_dataset_x.push(v['count']);
+                      } else {
+                        bubble_dataset_y.push(v['count']);
                       }
+                    })
 
-                      // Ordenamos las fechas (label unido a count)
-                      row_array.sort();
-
-                      var labb = [];
-                      var daa = [];
-
-                      // Separamos el label del count y armamos los arrays nuevamente
-                      for (var i = 0; i < row_array.length; i++) {
-                        var abierto = row_array[i].split("|")
-                        labb.push(abierto[0]);
-                        daa.push(abierto[1]);
+                    if (count_series == 1) {
+                      for (var b = 0; b < vax.length; b++) {
+                        r = (parseFloat(bubble_dataset_y[b]) * parseFloat(bubble_dataset_x)) * scale;
+                        bubble_dataset.push({
+                          "x": bubble_dataset_x[b],
+                          "y": bubble_dataset_y[b],
+                          "r": r
+                        });
                       }
-
-                      da = daa;
-                      lab = labb;
-
-                    } else {
-
-                      lab.push(v['name']);
-                      da.push(v['count']);
-
                     }
-                  })
-                }
+                    count_series = 1;
+
+                  // Resto de los gráficos
+                  } else {
+
+                    $.each(vax, function(i, v) {
+
+                      // Verifica si el dato es un fecha
+                      var date_regexp = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/g;
+                      var string = v['name'];
+                      var isdate = date_regexp.test(string)
+
+                      // Si es fecha le da el formato correcto
+                      if (isdate == true) {
+
+                        // Agrega los ceros faltantes a los días y meses
+                        var no_zero_day_regexp = /^(\d{1})\/(\d{1,2})\/(\d{4})/g;
+                        var no_zero_month_regexp = /^(\d{1,2})\/(\d{1})\/(\d{4})/g;
+
+                        var day_zero_fail = no_zero_day_regexp.test(string)
+                        var month_zero_fail = no_zero_month_regexp.test(string)
+
+                        if (day_zero_fail == true) {
+                          var string = string.split('/')
+                          string[0] = '0' + string[0]
+                          string = string.join('/')
+                        };
+
+                        if (month_zero_fail == true) {
+                          var string = string.split('/')
+                          string[1] = '0' + string[1]
+                          string = string.join('/')
+                        };
+
+                        // Invierte el orden de la fecha y lo separa con guiones
+                        var stringdate = string.split('/').reverse().join('-');
+
+                        // Armamos los arrays de label y count
+                        lab.push(stringdate);
+                        da.push(v['count']);
+
+                        // Unimos el label con el count
+                        var row_array = [];
+                        for (var i = 0; i < lab.length; i++) {
+                          var row = lab[i] + '|' + da[i]
+                          row_array.push(row)
+                        }
+
+                        // Ordenamos las fechas (label unido a count)
+                        row_array.sort();
+
+                        var labb = [];
+                        var daa = [];
+
+                        // Separamos el label del count y armamos los arrays nuevamente
+                        for (var i = 0; i < row_array.length; i++) {
+                          var abierto = row_array[i].split("|")
+                          labb.push(abierto[0]);
+                          daa.push(abierto[1]);
+                        }
+
+                        da = daa;
+                        lab = labb;
+
+                      } else {
+
+                        lab.push(v['name']);
+                        da.push(v['count']);
+
+                      }
+                    })
+                  }
 
                   // BAR & LINE datasets
                   if (type_chart == 'bar' || type_chart == 'line') {
