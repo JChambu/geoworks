@@ -195,13 +195,13 @@ Navarra.project_types.action_new = function(){
 }();
 
 $(window).on('resize', function() {
-  var height_browser = window.outerHeight
-  var height_table = height_browser - 455
+  var height_browser = window.innerHeight
+  var height_table = height_browser - 380
   $(".table-tbody-scroll, tbody").css("height", height_table);
 });
 
 $(document).ready(function() {
-  var height_browser = window.outerHeight
-  var height_table = height_browser - 455
+  var height_browser = window.innerHeight
+  var height_table = height_browser - 380
   $(".table-tbody-scroll, tbody").css("height", height_table);
 });
