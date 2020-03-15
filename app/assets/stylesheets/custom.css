@@ -276,7 +276,7 @@ div.custom-menu.show {
 /* Aplica scroll solo al tbody */
 .table-tbody-scroll tbody {
   display: block;
-  height: 85vh;
+  height: 0vh;
   overflow: auto;
 }
 .table-tbody-scroll thead, .table-tbody-scroll tbody tr {
