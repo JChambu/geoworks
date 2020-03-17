@@ -74,9 +74,18 @@ module ProjectTypes::GeoJson
           field_type = ProjectField.where(name: idx, project_type_id: project_type_id, field_type_id: (FieldType.where(name: 'Texto').pluck(:id))).first_or_create!
           fields[field_type.key] = value
         end
+        ProjectField.where(name: 'app_usuario', project_type_id: project_type_id, field_type_id: (FieldType.where(name: 'Texto').pluck(:id))).first_or_create!
+        ProjectField.where(name: 'app_estado', project_type_id: project_type_id, field_type_id: (FieldType.where(name: 'Texto').pluck(:id))).first_or_create!
+        ProjectField.where(name: 'app_id', project_type_id: project_type_id, field_type_id: (FieldType.where(name: 'Texto').pluck(:id))).first_or_create!
+        fields['app_usuario'] = user_id
+        fields['app_estado'] = project_status.id
+
         the_geom = a.geometry.as_text
-        if Project.create(properties: fields, project_type_id: project_type_id, the_geom:the_geom, user_id: user_id, project_status_id: project_status.id ).valid?
-            count_insert += count_insert
+        row = Project.create(properties: fields, project_type_id: project_type_id, the_geom:the_geom, user_id: user_id, project_status_id: project_status.id )
+        if row.valid?
+          row.properties.merge!('app_id': row.id)
+          row.save
+          count_insert += count_insert
         else
           count_errors += count_errors
         end
