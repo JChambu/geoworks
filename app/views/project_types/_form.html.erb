@@ -7,18 +7,22 @@
           <a class="nav-link active" id="attributes-tab" data-toggle="tab" href="#attributes" role="tab" aria-controls="attributes" aria-selected="true">Por Atributos</a>
         </li>
       <% end %>
+      <% if params[:controller] == 'project_types' && (params[:action] == 'new' || params[:action] == 'create') %>
       <li class="nav-item">
         <a class="nav-link" id="file-tab" data-toggle="tab" href="#file" role="tab" aria-controls="file" aria-selected="false">Por Archivos</a>
       </li>
+    <% end %>
     </ul>
 
     <div class="tab-content" id="myTabContent">
       <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
         <%= render 'attributes' %>
       </div>
+      <% if params[:controller] == 'project_types' && (params[:action] == 'new' || params[:action] == 'create') %>
       <div class="tab-pane fade" id="file" role="tabpanel" aria-labelledby="file-tab">
         <%= render 'files' %>
       </div>
+    <% end %>
     </div>
 
   </div>
