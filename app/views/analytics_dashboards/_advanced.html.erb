@@ -15,24 +15,30 @@
   </div>
 
   <div class="form-group">
-    <%=f.input :sql_sentence, label: 'Sentencia (SELECT)', input_html: {class: "form-control form-control-sm"} %>
+    <%= f.label :sql_sentence, 'Sentencia (SELECT)' %>
+    <%=f.text_area :sql_sentence, rows: 1, class:"form-control form-control-sm" %>
   </div>
 
   <div class="form-group">
-    <%=f.input :conditions_sql, label: 'Condición (WHERE)', input_html: {class: "form-control form-control-sm"} %>
+    <%= f.label :conditions_sql, 'Condición (WHERE)' %>
+    <%=f.text_area :conditions_sql, rows: 1, class:"form-control form-control-sm" %>
   </div>
 
-  <div class="form-group">
-    <%=f.input :group_sql, label: 'Agrupar (GROUP BY)', input_html: {class: "form-control form-control-sm"} %>
+  <div class="form-row">
+  <div class="form-group col-md-6">
+    <%= f.label :group_sql, 'Agrupar (GROUP BY)' %>
+    <%=f.text_area :group_sql, rows: 1, class:"form-control form-control-sm" %>
   </div>
 
-  <div class="form-group">
-    <%=f.input :order_sql, label: 'Odenar (ORDER BY)', input_html: {class: "form-control form-control-sm"} %>
+  <div class="form-group col-md-6">
+    <%= f.label :order_sql, 'Odenar (ORDER BY)' %>
+    <%=f.text_area :order_sql, rows: 1, class:"form-control form-control-sm" %>
+  </div>
   </div>
 
   <div class="form-group">
     <%= f.label :description, 'Descripción' %>
-    <%= f.text_area :description, label: 'Descripción', rows: 3, class:"form-control form-control-sm mb-3" %>
+    <%= f.text_area :description, rows: 1, class:"form-control form-control-sm" %>
   </div>
 
   <div class="form-group">
