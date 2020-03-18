@@ -9,95 +9,27 @@
         </button>
       </div>
 
-      <%= simple_form_for([@project_type, @dashboard, @analytics_dashboard], html: {role: :form, remote: true, class:'form'}) do |f| %>
+      <div class="modal-body">
 
-        <div class="modal-body">
+        <ul class="nav nav-pills nav-fill" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="simple-tab" data-toggle="tab" href="#simple" role="tab" aria-controls="simple" aria-selected="true">Simple</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="advanced-tab" data-toggle="tab" href="#advanced" role="tab" aria-controls="advanced" aria-selected="false">Avanzado</a>
+          </li>
+        </ul>
 
-          <div id="alert-success"></div>
-
-          <% if @analytics_dashboard.errors.any? %>
-            <div id="error_explanation">
-              <h2><%= pluralize(@analytics_dashboard.errors.count, "error") %> prohibited this analytics_dashboard from being saved:</h2>
-              <ul><% @analytics_dashboard.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
-            </div>
-          <% end %>
-
-          <div class="form-row">
-            <div class="form-group col-md-3">
-              <%= f.input :title, label: "Nombre", input_html: {class:"form-control form-control-sm"} %>
-            </div>
-            <div class="form-group col-md-3">
-              <%= f.input :analysis_type_id, :collection => analysis_types_for_select, label: "Análisis", input_html: {class:"form-control form-control-sm"}%>
-            </div>
-            <div class="form-group col-md-3">
-              <%= f.input :project_field_id, :collection => filter_field_for_indicator_select, label: "Campo", input_html: {class:"form-control form-control-sm"} %>
-            </div>
-            <div class="form-group col-md-3">
-              <%= f.input :group_field_id, :collection => filter_field_for_indicator_select, label: "Agrupar", input_html: {class:"form-control form-control-sm"}%>
-            </div>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="simple" role="tabpanel" aria-labelledby="simple-tab">
+            <%= render 'simple' %>
           </div>
-
-          <div class="form-row">
-            <div class="form-group col-md-4">
-              <%= f.input :condition_field_id, :collection => filter_field_for_indicator_select, label: 'Campo', input_html: {class:"form-control form-control-sm"} %>
-            </div>
-            <div class="form-group col-md-4">
-              <%= f.input :filter_input, label: 'Operador', collection: ProjectType::FILTERS, input_html: {class: 'form-control form-control-sm'} %>
-            </div>
-            <div class="form-group col-md-4">
-              <%= f.input :input_value, label: 'Valor', input_html: {class: 'form-control form-control-sm'} %>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="col-md-12">
-              <%= f.label :description, 'Descripción' %>
-              <%= f.text_area :description, rows: 3, class:"form-control form-control-sm mb-3" %>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group form-check col-md-6">
-              <%= f.check_box :graph, input_html: {class:"form-check-input"}%>
-              <%= f.label :graph, "Graficar", class: 'form-check-label' %>
-            </div>
-            <div class="form-group form-check col-md-6">
-              <%= f.check_box :children, input_html: {class:"form-check-input"}%>
-              <%= f.label :children, "Hijos", class: 'form-check-label' %>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="col-md-12">
-              <%=f.input :sql_sentence, input_html: {class: "form-control form-control-sm"} %>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="col-md-12">
-              <%=f.input :conditions_sql, input_html: {class: "form-control form-control-sm"} %>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="col-md-12">
-              <%=f.input :group_sql, input_html: {class: "form-control form-control-sm"} %>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="col-md-12">
-              <%=f.input :order_sql, input_html: {class: "form-control form-control-sm"} %>
-            </div>
+          <div class="tab-pane fade" id="advanced" role="tabpanel" aria-labelledby="advanced-tab">
+            <%= render 'advanced' %>
           </div>
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <%= f.submit class: 'btn btn-primary', value: "Guardar" %>
-        </div>
-
-      <% end %>
+      </div>
 
     </div>
   </div>
