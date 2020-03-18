@@ -1,1 +1,5 @@
-$('<%= j render "form", title: "Calculos" %>').modal();
+$('<%= j render "form", title: "Calculos" %>').on('hidden.bs.modal', function (e) {
+  // Cuando se termina de ocultar el modal lo elimina para evitar que se quede pegado el tab
+  $(this).remove();
+  $('.modal-backdrop').remove();
+}).modal();

@@ -1,8 +1,7 @@
-// add the row to the table, show alert and hide modal
+// Agrega la fila a la tabla
 $('table tbody').append(' <%= j render "row", analytics_dashboard: @analytics_dashboard %>');
+// Muestra la alerta
 $('.alert-success').html("El producto ha sido creado con éxito").show();
-$('#ana-modal').modal('hide');
-$('#ana-modal').on('hidden.bs.modal', function (e) {
-  $(this).remove();
-  $('.modal-backdrop').remove();
-})
+// Elimina el modal
+$('#ana-modal').remove();
+$('.modal-backdrop').remove();
