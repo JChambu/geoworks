@@ -30,7 +30,7 @@ class ProjectType < ApplicationRecord
 
   FILTERS = %w(= < > <= >= != ilike )
 
-  attr_accessor :file, :latitude, :longitude, :address, :department, :province, :country, :data, :type_file
+  attr_accessor :file, :latitude, :longitude, :address, :department, :province, :country, :data, :type_file, :kind_file
 
   after_create :create_project_statuses
   after_create :new_dashboard

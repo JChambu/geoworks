@@ -2,8 +2,7 @@ module ProjectTypes::GeoJson
   extend ActiveSupport::Concern
 
   included do
-    validate :file_exist? 
-    validate :is_file_type_valid?
+    validate :is_file_type_valid?, if: :file_exist?
 
   end
   def save_file
@@ -34,20 +33,22 @@ module ProjectTypes::GeoJson
   return true
   end
 
-    def is_file_type_valid?
+  def is_file_type_valid?
 
-      self.file.each do |f| @f = f.content_type
-      begin
-        if @f == "application/geo+json" 
-          valid = f.content_type 
+    if self.kind_file == 'true'
+        self.file.each do |f| @f = f.content_type
+        begin
+          if @f == "application/geo+json" 
+            valid = f.content_type 
+          end
+        rescue
+          valid = false
         end
-      rescue
-        valid = false
+        self.errors.add(:base, :invalid_type_file) unless valid
+        valid
+        end
       end
-      self.errors.add(:base, :invalid_type_file) unless valid
-      valid
-      end
-    end
+  end
 
 
     def load_file
