@@ -34,11 +34,18 @@ class ProjectType < ApplicationRecord
 
   after_create :create_project_statuses
   after_create :new_dashboard
-  after_create :load_file, if: :file_exist? 
+  after_create :load_file, if: :create_project_is_for_file
   after_create :create_view
   after_destroy :destroy_view
   after_update :destroy_view
   after_update :create_view
+
+  def create_project_is_for_file
+    return true if self.kind_file == 'true'
+    return false
+  end
+
+
 
   def create_project_statuses
     ProjectStatus.create(name: 'default', color:"#ff00ee", project_type_id: self.id)
