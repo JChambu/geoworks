@@ -190,7 +190,7 @@ es:
           type_geometry: Tipo de Geometria
           file: Archivo
           base:
-            invalid_type_file: El archivo debe ser CSV o SHP
+            invalid_type_file: El archivo debe ser tipo GeoJSON
       geo_edition:
         attributes:
           gw_pta_ini:

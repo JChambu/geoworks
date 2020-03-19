@@ -2,7 +2,9 @@ module ProjectTypes::GeoJson
   extend ActiveSupport::Concern
 
   included do
-    validate :file_exist?  
+    validate :file_exist? 
+    validate :is_file_type_valid?
+
   end
   def save_file
     @directory = Geoworks::Shp.save(self.file, "shape")
@@ -32,7 +34,7 @@ module ProjectTypes::GeoJson
   return true
   end
 
-    def self.is_file_type_valid?
+    def is_file_type_valid?
 
       self.file.each do |f| @f = f.content_type
       begin
