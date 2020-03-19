@@ -81,7 +81,8 @@ module ProjectTypes::Indicators
       end
 
       if !chart.condition_field.blank?
-        data =  data.where("projects.properties->>'" + chart.condition_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
+        condition_field_custom =  validate_type_field(chart.condition_field)
+        data =  data.where("#{condition_field_custom } #{chart.filter_input}  '#{chart.input_value}'")
       end
 
       if chart.group_field.key == 'app_estado'
@@ -101,6 +102,14 @@ module ProjectTypes::Indicators
       @data = data
     end
 
+    def validate_type_field(field)
+        if field.field_type.name ='Numerico'
+          return "(projects.properties->>'#{field.key}')::numeric"
+        else
+          return "projects.properties->>'#{field.key}'"
+    end
+    end
+        
     def filters_on_the_fly data, data_conditions
       if !data_conditions.blank?
         data_conditions.each do |key| 
@@ -223,7 +232,6 @@ module ProjectTypes::Indicators
         end
         @data_fixed = data
       end
-
 
       @total_row = Project.where(project_type_id: project_type_id)
 
