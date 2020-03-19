@@ -299,3 +299,9 @@ div.custom-menu.show {
   border-radius: 50%;
   border-style: solid;
 }
+
+/* Setea alto y overflow para dropdown de proyectos */
+#projects_dropdown{
+  max-height: 80vh;;
+  overflow-y:auto;
+}

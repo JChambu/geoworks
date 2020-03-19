@@ -15,17 +15,17 @@
               Proyecto
             <% end %>
           </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <div class="dropdown-menu" id="projects_dropdown" aria-labelledby="navbarDropdown">
+            <% if can? :project_types, :new %>
+              <%= link_to 'Nuevo Proyecto', new_project_type_path, class: "dropdown-item" %>
+            <% end %>
+            <div class="dropdown-divider"></div>
             <% if !@project_type.nil? %>
               <% ProjectType.all.ordered.each do |project| %>
                 <% if @project_type.name != project.name %>
                   <%= link_to "#{project.name}", dashboards_show_path(project_type_id: project.id),  class: "dropdown-item" %>
                 <% end %>
               <% end %>
-            <% end %>
-            <div class="dropdown-divider"></div>
-            <% if can? :project_types, :new %>
-              <%= link_to 'Nuevo Proyecto', new_project_type_path, class: "dropdown-item" %>
             <% end %>
           </div>
         </li>
