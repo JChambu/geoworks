@@ -7,48 +7,50 @@
       <!-- Principal -->
       <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
 
-
-
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Proyectos
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <% if !@project_type.nil? %>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <% if !@project_type.nil? %>
+              <%= @project_type.name %>
+            <% else %>
+              Proyecto
+            <% end %>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <% if !@project_type.nil? %>
               <% ProjectType.all.ordered.each do |project| %>
-                <%= link_to "#{project.name}", dashboards_show_path(project_type_id: project.id),  class: "dropdown-item" %>
+                <% if @project_type.name != project.name %>
+                  <%= link_to "#{project.name}", dashboards_show_path(project_type_id: project.id),  class: "dropdown-item" %>
+                <% end %>
               <% end %>
-              <% end %>
-              <% if can? :project_types, :new %>
-              <div class="dropdown-divider"></div>
-              <%= link_to 'Nuevo', new_project_type_path, class: "dropdown-item" %>
-            </div>
-              <% end %>
-          </li>
+            <% end %>
+            <div class="dropdown-divider"></div>
+            <% if can? :project_types, :new %>
+              <%= link_to 'Nuevo Proyecto', new_project_type_path, class: "dropdown-item" %>
+            <% end %>
+          </div>
+        </li>
 
         <% if !@project_type.nil? %>
-
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <%= @project_type.name %>
+            <a class="nav-link dropdown-toggle nocaret" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-clipboard-list" style="font-size: 20px"></i>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <% if can? :data, :visualizer%>
-              <%= link_to 'Datos', project_type_projects_path(@project_type.id), class: "dropdown-item" %>
+                <%= link_to 'Datos', project_type_projects_path(@project_type.id), class: "dropdown-item" %>
               <% end %>
               <%= link_to 'Estados', project_type_project_statuses_path(@project_type.id), class: "dropdown-item" %>
               <% if can? :project_types, :share%>
-              <%= link_to 'Compartir', project_type_share_path(@project_type.id), remote:true,remote:true, class: "dropdown-item" %>
+                <%= link_to 'Compartir', project_type_share_path(@project_type.id), remote:true,remote:true, class: "dropdown-item" %>
               <% end %>
               <% if can? :project_types, :edit%>
-              <%= link_to 'Editar', edit_project_type_path(@project_type.id), class: "dropdown-item" %>
+                <%= link_to 'Editar', edit_project_type_path(@project_type.id), class: "dropdown-item" %>
               <% end %>
               <% if can? :project_types, :destroy%>
-              <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, remote: true, class: "dropdown-item" %>
+                <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, remote: true, class: "dropdown-item" %>
               <% end %>
             </div>
           </li>
-
         <% end %>
 
         <% if !@dashboard.nil? %>
