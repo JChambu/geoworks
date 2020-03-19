@@ -104,13 +104,15 @@ Navarra.dashboards.action_show = function(){
 
       if (!status_view) { // Default
         $('#view').addClass('active');
-        $(".fa-table").css("color", "#d3d800");
+        $('#view').removeClass('fa-arrow-alt-circle-left');
+        $('#view').addClass('fa-arrow-alt-circle-right');
         $(".graphics").css("width", "60%");
         $(".leaflet-right").css("margin-right", "60%");
         init_chart_doughnut();
       } else { // Expanded
         $('#view').removeClass('active');
-        $(".fa-table").css("color", "#9b9b9b");
+        $('#view').removeClass('fa-arrow-alt-circle-right');
+        $('#view').addClass('fa-arrow-alt-circle-left');
         $(".graphics").css("width", "30%");
         $(".leaflet-right").css("margin-right", "30%");
         init_chart_doughnut();

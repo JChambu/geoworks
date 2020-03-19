@@ -53,10 +53,6 @@
 
         <% if !@dashboard.nil? %>
 
-          <li class="nav-item">
-            <%= link_to "#", class: 'nav-link', id: "view" do %> <i class="fas fa-table" title="Cambiar Vista" style="font-size: 20px"></i> <% end %>
-          </li>
-
         <% if can? :indicators, :visualizer%>
           <li class="nav-item">
             <%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, @dashboard.id), class: 'nav-link' do %> <i class="fas fa-database" title="Crear Indicador" style="font-size: 20px"></i> <% end %>

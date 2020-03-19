@@ -283,3 +283,19 @@ div.custom-menu.show {
   display: table;
   width: 100%;
 }
+
+/* Botón para extender el overlay */
+#view {
+  cursor: pointer;
+  position: absolute;
+  top: 40vh;
+  z-index: 402 !important;
+  font-size: 20px;
+  color: #e8ebef;
+  background: rgba(58, 63, 68, 0.5);
+  transform: translate(-50%);
+  border-width: 5px;
+  border-color: transparent;
+  border-radius: 50%;
+  border-style: solid;
+}
