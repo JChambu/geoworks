@@ -47,7 +47,7 @@
                 <%= link_to 'Editar', edit_project_type_path(@project_type.id), class: "dropdown-item" %>
               <% end %>
               <% if can? :project_types, :destroy%>
-                <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, remote: true, class: "dropdown-item" %>
+                <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, class: "dropdown-item" %>
               <% end %>
             </div>
           </li>
