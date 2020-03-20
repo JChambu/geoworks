@@ -34,6 +34,7 @@ body {
   cursor: not-allowed !important;
 }
 
+/* Login */
 .login {
   display: -ms-flexbox;
   display: flex;
@@ -72,7 +73,7 @@ body {
   border-top-right-radius: 0;
 }
 
-
+/* Paginación */
 .pagination {
     font-size: 12px;
 }
@@ -141,6 +142,23 @@ div.custom-menu.show {
   min-width: auto;
 }
 
+/* Botón para extender el overlay */
+#view {
+  cursor: pointer;
+  position: absolute;
+  top: 40vh;
+  z-index: 402 !important;
+  font-size: 20px;
+  color: #e8ebef;
+  background: rgba(58, 63, 68, 0.5);
+  transform: translate(-50%);
+  border-width: 5px;
+  border-color: transparent;
+  border-radius: 50%;
+  border-style: solid;
+}
+
+/* Gráficos */
 .handle {
   border: transparent !important;
   padding: 4px;
@@ -148,7 +166,20 @@ div.custom-menu.show {
   background-color: transparent;
   cursor: move;
 }
+.chart-header-bg-transparent {
+  background-color: rgba(81, 89, 96, 0.4);
+}
+.chart-bg-transparent {
+  background-color: rgba(58, 63, 68, 0.4);
+}
 
+/* Modifica el texto del grid de time_slider */
+.irs--flat .irs-grid-text {
+  color: #e8ebef !important;
+  text-shadow: 1px 1px 1px #2c2e34;
+}
+
+/* Indicadores de texto */
 .tile_count {
   margin-bottom: 10px;
   margin-top: 10px
@@ -179,6 +210,7 @@ div.custom-menu.show {
   width: 12px
 }
 
+/* Personaliza colores del custom switch en Roles */
 .custom-switch .custom-control-input:checked~.custom-role-colour::after {
   background-color: #d3d800;
 }
@@ -191,14 +223,6 @@ div.custom-menu.show {
 }
 .custom-role-colour::before {
   background-color: #3d4046;
-}
-
-.chart-header-bg-transparent {
-  background-color: rgba(81, 89, 96, 0.4);
-}
-
-.chart-bg-transparent {
-  background-color: rgba(58, 63, 68, 0.4);
 }
 
 /* Modifica el estilo del layerControl de Leaflet*/
@@ -225,33 +249,6 @@ div.custom-menu.show {
   color: #e8ebef !important;
   text-shadow: 1px 1px 1px #2c2e34;
   border: 2px solid rgba(0, 0, 0, 0.2) !important;
-}
-
-/* Modifica el texto del grid de time_slider */
-.irs--flat .irs-grid-text {
-  color: #e8ebef !important;
-  text-shadow: 1px 1px 1px #2c2e34;
-}
-
-/* Evita los iconos de la derecha se superpongan con el overlay */
-.leaflet-right {
-  margin-right: 30%;
-}
-
-/* Modifica el scroll del navagador */
-::-webkit-scrollbar {
-  width: 10px;
-  background-color: rgba(232, 235, 239, 0.5);
-}
-::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: rgba(72, 75, 79, 0.5);
-}
-::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-  background-color: rgba(232, 235, 239, 0.5);
 }
 
 /* Modifica el estilo de las leyendas de Leaflet */
@@ -286,6 +283,27 @@ div.custom-menu.show {
   text-shadow: 1px 1px 1px #2c2e34;
 }
 
+/* Evita los elementos de leaflet de la derecha se superpongan con el overlay */
+.leaflet-right {
+  margin-right: 30%;
+}
+
+/* Modifica el scroll del navagador */
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: rgba(232, 235, 239, 0.5);
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: rgba(72, 75, 79, 0.5);
+}
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: rgba(232, 235, 239, 0.5);
+}
+
 /* Modifica el padding de los checkbox de multiselect */
 .multiselect-container>li>a>label {
   padding: 3px 10px 3px 10px !important;
@@ -301,20 +319,3 @@ div.custom-menu.show {
   display: table;
   width: 100%;
 }
-
-/* Botón para extender el overlay */
-#view {
-  cursor: pointer;
-  position: absolute;
-  top: 40vh;
-  z-index: 402 !important;
-  font-size: 20px;
-  color: #e8ebef;
-  background: rgba(58, 63, 68, 0.5);
-  transform: translate(-50%);
-  border-width: 5px;
-  border-color: transparent;
-  border-radius: 50%;
-  border-style: solid;
-}
-
