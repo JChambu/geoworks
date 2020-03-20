@@ -9,7 +9,7 @@ module ProjectTypes::Indicators
       maxx = size_box[2].to_f if !size_box.nil?
       maxy = size_box[3].to_f if !size_box.nil?
 
-      @data = Project.joins("left outer join project_data_children on projects.id = project_data_children.project_id", :project_status, :user).
+      @data = Project.joins(":project_status, :user).
         where(project_type_id: project_type_id).
         where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
       @data
@@ -28,7 +28,7 @@ module ProjectTypes::Indicators
         end
         arr1.push([z])
       end
-      @data = Project.joins("left outer join project_data_children on projects.id = project_data_children.project_id", :project_status, :user).
+      @data = Project.joins(" :project_status, :user).
         where(project_type_id: project_type_id).
         where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
       @data
