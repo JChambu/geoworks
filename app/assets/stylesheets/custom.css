@@ -102,11 +102,7 @@ body {
 }
 
 
-
-.nocaret::after {
-  display:none !important;
-}
-
+/* Dropdowns de navbar */
 div.custom-menu.show {
   min-width: unset;
   width: 50px;
@@ -121,6 +117,28 @@ div.custom-menu.show {
   width: 80% !important;
   margin-right: 10%;
   margin-left: 10%;
+}
+.dropdown-width {
+  width: 50px;
+  text-align: center;
+}
+.nocaret::after {
+  display:none !important;
+}
+#projects_dropdown {
+  max-width: 10vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#projects_menu {
+  max-width: 20vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+#current_project_menu {
+  min-width: auto;
 }
 
 .handle {
@@ -300,8 +318,3 @@ div.custom-menu.show {
   border-style: solid;
 }
 
-/* Setea alto y overflow para dropdown de proyectos */
-#projects_dropdown{
-  max-height: 80vh;;
-  overflow-y:auto;
-}
