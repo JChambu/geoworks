@@ -1,7 +1,7 @@
 class ProjectType < ApplicationRecord
 
-  include ProjectTypes::Geoserver 
-  include ProjectTypes::Indicators 
+  include ProjectTypes::Geoserver
+  include ProjectTypes::Indicators
   include ProjectTypes::Scopes
   include ProjectTypes::Validations
   include ProjectTypes::GeoJson
@@ -52,7 +52,7 @@ class ProjectType < ApplicationRecord
   end
 
   def new_dashboard
-    Dashboard.create(name: "Dashboard_1", project_type_id: self.id )  
+    Dashboard.create(name: "Dashboard_1", project_type_id: self.id )
   end
 
   def validate_options
@@ -74,7 +74,7 @@ class ProjectType < ApplicationRecord
   def create_view
 
     fields = self.project_fields
-    current_tenant = Apartment::Tenant.current 
+    current_tenant = Apartment::Tenant.current
     project_type_id = self.id
     name_layer = self.name_layer
     type_geometry = self.type_geometry
@@ -111,7 +111,7 @@ class ProjectType < ApplicationRecord
     ActiveRecord::Base.connection.execute(query)
   end
 
-  def self.save_rows_project_data_childs row, i, project_type_id 
+  def self.save_rows_project_data_childs row, i, project_type_id
     result_hash = {}
 
     if !row.nil?
@@ -124,7 +124,7 @@ class ProjectType < ApplicationRecord
         row.each do |data |
           field = ProjectSubfield.where(key: data[0], project_field_id: project_field_id).first
           if !field.nil?
-            value_name.merge!("#{field.id}": data[1] ) 
+            value_name.merge!("#{field.id}": data[1] )
           end
         end
         child_data[:properties] = [value_name]
