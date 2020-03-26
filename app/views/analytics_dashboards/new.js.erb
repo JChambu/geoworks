@@ -1,5 +1,16 @@
+var count = '<%= @analytics_dashboard.errors.count %>';
+
+if (count > 0){
+  $('#helpBlock').empty();
+  <% @analytics_dashboard.errors.full_messages.each do |msg| %>
+      console.log('<%= msg %>');
+    $('#helpBlock').append('<div> asdfa <%= msg %> </div>');
+  <% end %>
+}else{
+
 $('<%= j render "form", title: "Calculos" %>').on('hidden.bs.modal', function (e) {
-  // Cuando se termina de ocultar el modal lo elimina para evitar que se quede pegado el tab
+  // Cuando se termina de ocultar el modal lo elimia para evitar que se quede pegado el tab
   $(this).remove();
   $('.modal-backdrop').remove();
 }).modal();
+}
