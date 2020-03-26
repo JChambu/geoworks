@@ -13,5 +13,6 @@ module CustomersHelper
     if @ct == 'public'
       @ct = 'geoworks'
     end
+    @ct
   end
 end
