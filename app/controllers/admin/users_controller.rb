@@ -60,7 +60,7 @@ class Admin::UsersController < ApplicationController
         @current_tenant = params[:user][:customer_id]
         @customer = Customer.where(subdomain: @current_tenant).first
         @user_customers[:customer_id] = @customer.id
-        @user_customers[:role_id] = params[:user][:role].to_i
+        @user_customers[:role_id] = params[:role_id]['id'].to_i
         @user_customers.save!
         params[:id] = @user.id
         user_filters = User.save_filters params
