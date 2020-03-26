@@ -1,6 +1,7 @@
 <%= content_for :head do %>
 
-  <script type="text/javascript">
+    <script type="text/javascript">
+      Navarra.dashboards.config.current_tenement = '<%= current_tenement_helper %>';
     <% if !@project_type.nil? %>
       Navarra.dashboards.config.project_type_id = <%= @project_type.id %>
       Navarra.dashboards.config.current_tenant = '<%= @current_tenant %>';

@@ -20,13 +20,13 @@ Navarra.dashboards.config = {
   "graph_id":'',
   size_box: [],
   name_layer: '',
-  type_geometry: ''
+  type_geometry: '',
+  current_tenement: ''
 };
 
 Navarra.dashboards.action_show = function(){
 
   var init = function(){
-
     $(".chart-modal").on('click', function(){
      var   graph_id =  $(this).attr('id');
      Navarra.dashboards.config.graph_id= graph_id;

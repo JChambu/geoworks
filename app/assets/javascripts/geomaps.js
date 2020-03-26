@@ -2,7 +2,7 @@ Navarra.namespace("geomaps");
 
 Navarra.geomaps = function (){
   var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl, url, type_geometry;
-  var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current;
+  var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current, current_tenement;
   var ss = [];
   var size_box = [];
   var init= function() {
@@ -730,9 +730,10 @@ Navarra.geomaps = function (){
       default:
         style = 'poi_new';
     }
-
+     
+    current_tenement = Navarra.dashboards.config.current_tenement;
     layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
-      layers: "geoworks:" + name_layer,//nombre de la capa (ver get capabilities)
+      layers: current_tenement + ":" + name_layer,//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
@@ -780,6 +781,7 @@ Navarra.geomaps = function (){
             if (color_layer == '' ){
               color_layer = "#00ff55";
             }
+
             layerSubProjects = new MySource("http://"+url+":8080/geoserver/wms", {
               layers: "geoworks:" + sub_layer,//nombre de la capa (ver get capabilities)
               format: 'image/png',

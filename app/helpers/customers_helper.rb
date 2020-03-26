@@ -8,4 +8,10 @@ module CustomersHelper
     Customer.all.map {|customer| [customer.name, customer.name] }
   end
 
+  def current_tenement_helper
+    @ct = Apartment::Tenant.current
+    if @ct == 'public'
+      @ct = 'geoworks'
+    end
+  end
 end
