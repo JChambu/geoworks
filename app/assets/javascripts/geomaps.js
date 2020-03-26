@@ -788,7 +788,7 @@ Navarra.geomaps = function (){
             }
 
             current_tenement = Navarra.dashboards.config.current_tenement;
-            layer_current= current_tenement +":"+ name_layer;
+            layer_current= current_tenement +":"+ sub_layer;
             layerSubProjects = new MySource("http://"+url+":8080/geoserver/wms", {
               layers: layer_current,//nombre de la capa (ver get capabilities)
               format: 'image/png',
