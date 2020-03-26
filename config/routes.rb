@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
 
   get 'project_types/maps' => 'project_types#maps'
+  get 'project_types/search_name_layer' => 'project_types#search_name_layer'
   get 'projects/popup' => 'projects#popup'
   get 'project_types/kpi' => 'project_types#kpi'
   get 'project_types/filter_heatmap' => 'project_types#filter_heatmap'
