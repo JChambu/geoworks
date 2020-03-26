@@ -101,7 +101,7 @@ class ProjectType < ApplicationRecord
     vv += " FROM #{current_tenant}.projects "
     vv += " LEFT OUTER JOIN #{current_tenant}.project_statuses ON projects.project_status_id = project_statuses.id "
     vv += " JOIN public.users ON users.id = projects.user_id "
-    vv += " where projects.project_type_id =#{project_type_id} ; "
+    vv += " where projects.project_type_id =#{project_type_id} and row_active = true; "
     view = ActiveRecord::Base.connection.execute(vv)
     return
   end

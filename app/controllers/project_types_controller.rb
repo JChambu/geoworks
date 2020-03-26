@@ -127,9 +127,14 @@ class ProjectTypesController < ApplicationController
         @arr1.push([z])
       end
 
-      data = Project.where(project_type_id: project_type_id).where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})")
+      data = Project.
+          where(project_type_id: project_type_id).
+          where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})").
+          where(row_active: true)
     else
-      data = Project.where(project_type_id: project_type_id)
+      data = Project.
+        where(project_type_id: project_type_id).
+        where(row_active: true)
     end
     condition = params[:conditions]
     if !condition.blank?
