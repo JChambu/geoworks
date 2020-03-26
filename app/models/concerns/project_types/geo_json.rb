@@ -54,10 +54,9 @@ module ProjectTypes::GeoJson
     def load_file
       a = []
       self.file.each do |f|
-        case f.content_type
-        when  'application/geo+json'
-          load_geojson(self.id, self.name_layer, self.type_geometry, self.user_id)
-        end
+          if @f == "application/geo+json" || @f =="application/octet-stream" 
+            load_geojson(self.id, self.name_layer, self.type_geometry, self.user_id)
+          end
       end
       a
     end
