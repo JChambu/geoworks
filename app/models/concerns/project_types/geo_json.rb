@@ -44,7 +44,7 @@ module ProjectTypes::GeoJson
         rescue
           valid = false
         end
-        self.errors.add(:base, :invalid_type_file) unless valid
+        self.errors.add(:base, "Tipo de Archivo invalido - #{f.content_type}") unless valid
         valid
         end
       end
