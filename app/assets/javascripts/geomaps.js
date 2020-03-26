@@ -484,8 +484,10 @@ Navarra.geomaps = function (){
         }
         Navarra.geomaps.point_colors_data();
       }else{
+        current_tenement = Navarra.dashboards.config.current_tenement;
+        layer_current= current_tenement +":"+ name_layer;
         projectFilterLayer = new MySourceb("http://"+url+":8080/geoserver/wms", {
-          layers: "geoworks:"+name_layer,//nombre de la capa (ver get capabilities)
+          layers: layer_current,//nombre de la capa (ver get capabilities)
           format: 'image/png',
           transparent: 'true',
           opacity: 1,
@@ -554,9 +556,12 @@ Navarra.geomaps = function (){
           });
         }
         var env_f = "color:" + col ;
+          current_tenement = Navarra.dashboards.config.current_tenement;
+          layer_current= current_tenement +":"+ name_layer;
         var options = {
 
-          layers: "geoworks:"+name_layer,//nombre de la capa (ver get capabilities)
+
+          layers: layer_current,//nombre de la capa (ver get capabilities)
           format: 'image/png',
           transparent: 'true',
           opacity: 1,
@@ -730,11 +735,10 @@ Navarra.geomaps = function (){
       default:
         style = 'poi_new';
     }
-     
     current_tenement = Navarra.dashboards.config.current_tenement;
-    name_layer=current_tenement +':'+name_layer;
+    layer_current= current_tenement +":"+ name_layer;
     layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
-      layers:  name_layer,//nombre de la capa (ver get capabilities)
+      layers: layer_current,//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
@@ -746,7 +750,7 @@ Navarra.geomaps = function (){
       CQL_FILTER: cql_filter
     })
 
-    project_current = layerProjects.getLayer(name_layer).addTo(mymap);
+    project_current = layerProjects.getLayer(layer_current).addTo(mymap);
     layerControl.addOverlay(project_current , labelLayer, null, {sortLayers: false});
   }
 
@@ -783,8 +787,10 @@ Navarra.geomaps = function (){
               color_layer = "#00ff55";
             }
 
+            current_tenement = Navarra.dashboards.config.current_tenement;
+            layer_current= current_tenement +":"+ name_layer;
             layerSubProjects = new MySource("http://"+url+":8080/geoserver/wms", {
-              layers: "geoworks:" + sub_layer,//nombre de la capa (ver get capabilities)
+              layers: layer_current,//nombre de la capa (ver get capabilities)
               format: 'image/png',
               transparent: 'true',
               opacity: 1,
@@ -796,7 +802,7 @@ Navarra.geomaps = function (){
               format_options: 'callback:getJson'
             })
 
-            projectsa = layerSubProjects.getLayer(sub_layer);
+            projectsa = layerSubProjects.getLayer(layer_current);
             layerControl.addOverlay(projectsa , label_layer, null, {sortLayers: true});
           })
         })
