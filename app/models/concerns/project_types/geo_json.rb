@@ -38,7 +38,7 @@ module ProjectTypes::GeoJson
     if self.kind_file == 'true'
         self.file.each do |f| @f = f.content_type
         begin
-          if @f == "application/geo+json" 
+          if @f == "application/geo+json" || @f =="application/octet-stream" 
             valid = f.content_type 
           end
         rescue
