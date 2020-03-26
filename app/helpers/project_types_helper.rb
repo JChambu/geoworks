@@ -29,6 +29,11 @@ module ProjectTypesHelper
     ProjectType.all.map { |region| [region.name, region.id]   }
   end
 
+  def project_types_for_layout
+     ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).ordered
+  end
+
+
   def user_for_projects
     @users = User.joins("LEFT OUTER JOIN has_project_type on users.id = ")
   end

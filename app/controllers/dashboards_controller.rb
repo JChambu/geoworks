@@ -88,14 +88,14 @@ class DashboardsController < ApplicationController
 
   def set_project_type
     if !params[:project_type_id].nil?
-      @project_type = ProjectType.where(id: params[:project_type_id]).first
+      @project_type = ProjectType.joins(:has_project_types).where(id: params[:project_type_id]).where(has_project_types: {user_id: current_user.id}).first
         session[:project_type_id] = @project_type.id if !@project_type.nil?
     else
         if session.has_key? :project_type_id 
-          @project_type = ProjectType.where(id: session[:project_type_id]).first
-          @project_type = ProjectType.last if @project_type.nil?
+          @project_type = ProjectType.joins(:has_project_types).where(id: session[:project_type_id]).where(has_project_types: { user_id: current_user.id}).first
+          @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).last if @project_type.nil?
         else
-          @project_type = ProjectType.last
+          @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).last
         end
     end
   end
