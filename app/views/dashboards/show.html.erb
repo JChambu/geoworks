@@ -2,6 +2,7 @@
 
     <script type="text/javascript">
       Navarra.dashboards.config.current_tenement = '<%= current_tenement_helper %>';
+      Navarra.dashboards.config.user_name = '<%= current_user.name %>';
     <% if !@project_type.nil? %>
       Navarra.dashboards.config.project_type_id = <%= @project_type.id %>
       Navarra.dashboards.config.current_tenant = '<%= @current_tenant %>';
@@ -25,7 +26,9 @@
         Navarra.project_types.config.filter_option.push('=');
         Navarra.project_types.config.filter_option.push('<%= p[1] %>');
       <% end %>
-      <% end %>
+<% end %>
+        Navarra.project_types.config.owner = <%= s.owner %>;
+    
     <% end %>
 <% end %>
   </script>

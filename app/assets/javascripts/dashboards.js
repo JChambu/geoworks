@@ -21,7 +21,8 @@ Navarra.dashboards.config = {
   size_box: [],
   name_layer: '',
   type_geometry: '',
-  current_tenement: ''
+  current_tenement: '',
+  user_name: ''
 };
 
 Navarra.dashboards.action_show = function(){

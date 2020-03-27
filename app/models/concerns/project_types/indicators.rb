@@ -44,7 +44,7 @@ module ProjectTypes::Indicators
           data =  data.where(" projects.properties->>'" + prop[0] +"' = '#{prop[1]}'")
         end
 
-        if project_filters.owner == 'true'
+        if project_filters.owner == true
           data = data.where(user_id: user_id)
         end
       end
@@ -216,41 +216,12 @@ module ProjectTypes::Indicators
         @data_fixed = data
       end
 
-      project_filters = ProjectFilter.where(user_id: user_id).where(project_type_id: project_type_id)
-      if !project_filters.nil?
-        project_filters.each do |filter|
-          filter.properties.to_a.each do |prop|
-            data =  data.where(" projects.properties->>'" + prop[0] +"' = '#{prop[1]}'")
-          end
-        end
-      end
-      @data_fixed = data
-      if !data_conditions.blank?
-        data_conditions.each do |key| 
-          @s = key.split('|')
-          @field = @s[0]
-          @filter = @s[1]
-          @value = @s[2]
-          if (@filter == '<' || @filter == '>' || @filter == '>=' || @filter == '<=' )
-            data =  data.where(" (properties->>'" + @field +"')::numeric" +  @filter +"#{@value}")
-          else
-            data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
-          end 
-        end
-        @data_fixed = data
-      end
-
+      @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id 
+      @data_fixed = conditions_on_the_fly =  filters_on_the_fly @data_fixed, data_conditions
       @total_row = Project.where(project_type_id: project_type_id).where(row_active: true)
-
-      if !project_filters.nil?
-        project_filters.each do |filter|
-          filter.properties.to_a.each do |prop|
-            @total_row = @total_row.where(" projects.properties->>'" + prop[0] +"' = '#{prop[1]}'")
-
-          end
-        end
-      end
-      @total_row = @total_row.count
+ 
+      @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id 
+      @total_row = @ctotal.count
       @row_selected = @data_fixed.count 
       @avg_selected = [{ "count": ((@row_selected.to_f / @total_row.to_f) * 100).round(2)} ]
       querys << { "title":"Total", "description":"Total", "data":[{"count":@total_row}], "id": 1000}
@@ -268,19 +239,7 @@ module ProjectTypes::Indicators
           field_select = analysis_type(chart.analysis_type.name, "projects.properties->>'#{chart.project_field.key}'") 
           conditions_field = chart.condition_field
         end
-        if !data_conditions.blank?
-          data_conditions.each do |key| 
-            @s = key.split('|')
-            @field = @s[0]
-            @filter = @s[1]
-            @value = @s[2]
-            if (@filter == '<' || @filter == '>' || @filter == '>=' || @filter == '<=' )
-              data =  data.where(" (properties->>'" + @field +"')::numeric" +  @filter +"#{@value}")
-            else
-              data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
-            end 
-          end
-        end
+      data = conditions_on_the_fly =  filters_on_the_fly @data_fixed, data_conditions
         if !conditions_field.blank?
           data =  data.where(" properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
         end

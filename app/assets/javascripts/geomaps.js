@@ -463,6 +463,11 @@ Navarra.geomaps = function (){
         Navarra.geomaps.heatmap_data();
       }
 
+    var owner = Navarra.project_types.config.owner;
+    var user_name = Navarra.dashboards.config.user_name;
+    if (owner == true){
+      cql_filter += " and app_usuario='"+user_name +"'";
+    }
       var point_color = Navarra.project_types.config.field_point_colors;
     switch (type_geometry) {
       case 'Point':
@@ -722,6 +727,12 @@ Navarra.geomaps = function (){
     if (filter_option.length > 0){
       cql_filter +=" and "+ filter_option[0]+ " " + filter_option[1] + " '" +  filter_option[2] + "'";
     }
+    var owner = Navarra.project_types.config.owner;
+    var user_name = Navarra.dashboards.config.user_name;
+    if (owner == true){
+      cql_filter += " and app_usuario='"+user_name +"'";
+    }
+
     switch (type_geometry) {
       case 'Point':
         style = 'poi_new';
