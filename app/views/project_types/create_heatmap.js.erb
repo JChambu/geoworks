@@ -1,5 +1,6 @@
 heatmap_indicator = '<%= params[:q][:project_kpi] %>';
-field =  '<%= params[:q][:project_field] %>';
+field =  "<%=  get_name_from_key().name  %>";
+
 Navarra.project_types.config.heatmap_field = field;
 Navarra.project_types.config.heatmap_indicator = heatmap_indicator;
 
