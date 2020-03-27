@@ -15,7 +15,7 @@ module ProjectTypesHelper
   end
 
   def filter_field_for_select
-    @a = ProjectField.where(project_type_id: params[:project_type_id]).where(filter_field: true).select("key").ordered.map { |region|  region.key }
+    @a = ProjectField.where(project_type_id: params[:project_type_id]).where(filter_field: true).select("name, key").ordered.map { |region|  [region.name, region.key] }
   end
   
   def kpi_for_select
