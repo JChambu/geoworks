@@ -129,7 +129,7 @@ module ProjectTypes::Indicators
           end
         end
       end
-      @data = @data
+      @data = data
     end
 
     def kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id)
