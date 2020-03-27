@@ -498,7 +498,7 @@ Navarra.geomaps = function (){
           format_options: 'callback:getJson',
           CQL_FILTER: cql_filter
         })
-        projectss = projectFilterLayer.getLayer(name_layer).addTo(mymap);
+        projectss = projectFilterLayer.getLayer(layer_current).addTo(mymap);
       } }else{
         if(typeof(projectss)!=='undefined'){
           mymap.removeLayer(projectss);
