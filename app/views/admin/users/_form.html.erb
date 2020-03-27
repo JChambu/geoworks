@@ -35,27 +35,6 @@
           </div>
 
           <div class="row justify-content-center">
-            <label class="col-md-4 text-right col-form-label">Proyectos</label>
-            <div class="col-md-6">
-              <div id='search_projects'></div>
-            </div>
-          </div>
-
-          <div class="row justify-content-center">
-            <label class="col-md-4 text-right col-form-label">Campos</label>
-            <div class="col-md-6">
-              <div id='search_fields'></div>
-            </div>
-          </div>
-
-          <div class="row justify-content-center">
-            <label class="col-md-4 text-right col-form-label">Datos</label>
-            <div class="col-md-6">
-              <div id='search_data'></div>
-            </div>
-          </div>
-
-          <div class="row justify-content-center">
             <%= f.label 'Activo', class:'col-md-4 text-right form-check-label' %>
             <div class="col-md-6">
               <%= f.check_box :active, label: false, input_html: {class: 'form-check-input'} %>
@@ -79,13 +58,13 @@
     $('#user_customer_id').on('change', function() {
       $.ajax({
         url:  "<%= admin_users_search_projects_path %>",
-        type: "POST",
+        type: "GET",
         data: { customer_name: $(this).val() }
       });
 
       $.ajax({
         url:  "<%= admin_users_search_roles_path %>",
-        type: "POST",
+        type: "GET",
         data: { customer_name: $(this).val() },
       });
     });
