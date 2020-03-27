@@ -201,14 +201,14 @@ module ProjectTypes::Indicators
       @op = option_graph
 
       if type_box == 'extent'
-        data = Project.
+        data = Project.joins(:project_status, :user).
             where(project_type_id: project_type_id).where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})").
             where(row_active: true)
         @data_fixed = data
       end
 
       if type_box == 'polygon'
-        data = Project.
+        data = Project.joins(:project_status, :user).
             where(project_type_id: project_type_id).
             where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})").
             where(row_active: true)
@@ -217,7 +217,7 @@ module ProjectTypes::Indicators
       end
 
       @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id 
-      @data_fixed = conditions_on_the_fly =  filters_on_the_fly @data_fixed, data_conditions
+      @data_fixed = filters_on_the_fly @data_fixed, data_conditions
       @total_row = Project.where(project_type_id: project_type_id).where(row_active: true)
  
       @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id 
@@ -239,7 +239,7 @@ module ProjectTypes::Indicators
           field_select = analysis_type(chart.analysis_type.name, "projects.properties->>'#{chart.project_field.key}'") 
           conditions_field = chart.condition_field
         end
-      data = conditions_on_the_fly =  filters_on_the_fly @data_fixed, data_conditions
+      data = filters_on_the_fly data, data_conditions
         if !conditions_field.blank?
           data =  data.where(" properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
         end
