@@ -30,7 +30,7 @@ module ProjectTypes::Indicators
       end
       @data = Project.joins(:project_status, :user).
         where(project_type_id: project_type_id).
-        where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})").
+        where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom})").
         where(row_active: true)
       @data
     end
