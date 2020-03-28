@@ -1,5 +1,6 @@
 d = <%= raw  @query_point.to_json%>;
 field = <%= raw params[:q][:project_field].to_json %>
+field_label =  "<%=  get_name_from_key().name  %>";
 Navarra.project_types.config.field_point_colors = field;
 Navarra.project_types.config.data_point_colors = d;
 
@@ -14,7 +15,7 @@ $('#filter-body').append(
     'id': 'colored_points',
   }).append(
     $('<b>', {
-      'text': 'Puntos coloreados por: '+field
+      'text': 'Puntos coloreados por: '+field_label
     }),
     $('<button>', {
       'type': 'button',
