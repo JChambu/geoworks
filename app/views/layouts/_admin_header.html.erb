@@ -1,17 +1,33 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <%= link_to root_path() do %> <%= image_tag "geoworks_brand.png", class: 'mr-4', height:"40" %> <% end %>
   <div class="collapse navbar-collapse" id="navbarColor02">
-    <ul class="navbar-nav mr-auto">
 
-          <li class="nav-item">
-            <%= link_to "Usuarios", admin_users_path(),  class: 'nav-link', id: "view" %>
-          </li>
-          <li class="nav-item">
-            <%= link_to "Roles", admin_roles_path(),  class: 'nav-link', id: "view" %>
-          </li>
+    <ul class="navbar-nav mr-auto">
       <!-- Principal -->
+      <li class="nav-item">
+        <%= link_to "Usuarios", admin_users_path(), class: 'nav-link', id: "view" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Roles", admin_roles_path(), class: 'nav-link', id: "view" %>
+      </li>
     </ul>
+
     <!-- Menú  -->
+    <div class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle nocaret" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-bars"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+        <% if can? :choice_lists, :visualizer %>
+          <%= link_to 'Listados', choice_lists_path, class: "dropdown-item" %>
+        <% end %>
+        <% if can? :layers, :visualizer %>
+          <%= link_to 'Capas Externas', layers_path, class: "dropdown-item" %>
+        <% end %>
+        <%= link_to "Editar Usuario", edit_user_path(current_user.id), class: "dropdown-item" %>
+        <%= link_to 'Cerrar Sesión', destroy_user_session_path, class: "dropdown-item", method: :delete %>
+      </div>
+    </div>
 
   </div>
 </nav>
