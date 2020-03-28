@@ -1,9 +1,12 @@
+// Levanta los datos
 heatmap_indicator = '<%= params[:q][:project_kpi] %>';
 field =  "<%=  get_name_from_key().name  %>";
 
+// Carga las variables globales
 Navarra.project_types.config.heatmap_field = field;
 Navarra.project_types.config.heatmap_indicator = heatmap_indicator;
 
+// Elimina el modal
 $("#heatmap-modal").remove();
 $('.modal-backdrop').remove();
 
@@ -26,5 +29,8 @@ $('#filter-body').append(
   )
 )
 
+// Activa el icono
 $(".fa-fire").css("color", "#d3d800");
+
+// Lanza la función
 Navarra.geomaps.heatmap_data();

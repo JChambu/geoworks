@@ -1,13 +1,15 @@
 <div id="share-modal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
+
       <div class="modal-header">
         <h4 class="modal-title"> Compartir Proyecto </h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
-      <div class="modal-body">
 
-        <%= form_tag create_share_path(project_type_id: @project_type), :remote => true, :method => :get   do |f| %>
+      <%= form_tag create_share_path(project_type_id: @project_type), :remote => true, :method => :get   do |f| %>
+
+        <div class="modal-body">
           <div class="form-row col-md-12">
             <div class="form-group col-md-6">
               Usuarios a agregar:
@@ -18,13 +20,15 @@
               <%= select_tag :unshare_user_ids, options_for_select(users_for_select_unshare_projects), include_blank: true, multiple: true, class: 'form-control', :style => 'width: 100%; min-height: 200px;' %>
             </div>
           </div>
-          <div class="actions col-md-12 text-right">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-            <%= submit_tag :share, class:"btn btn-primary", value: "Guardar" %>
-          </div>
-        <% end %>
+        </div>
 
-      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <%= submit_tag :share, class:"btn btn-primary", value: "Guardar" %>
+        </div>
+
+      <% end %>
+
     </div>
   </div>
 </div>
