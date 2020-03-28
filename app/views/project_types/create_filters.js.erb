@@ -1,10 +1,10 @@
 //Navarra.project_types.config.project_field = '<%= params[:q][:project_field] %>';
 //Navarra.project_types.config.input_value = '<%= params[:q][:input_value] %>';
-field = '<%= params[:q][:project_field] %>';
+field =  "<%=  get_name_from_key().name  %>";
 value = '<%= params[:q][:input_value] %>';
 var filter_option = '<%= params[:q][:project_field].downcase %>|' +'<%=raw  params[:q][:filters] %>'+ "|'<%= params[:q][:input_value] %>'";
 var filter_kpi = '<%= params[:q][:project_field]%>|' + ' <%= raw params[:q][:filters] %>'+ "|'<%= params[:q][:input_value] %>'";
-var filter_view = '<%= params[:q][:project_field]%>' + ' <%= params[:q][:filters] %> '+ "'<%= params[:q][:input_value] %>'";
+var filter_view = field  + ' <%= params[:q][:filters] %> '+ "'<%= params[:q][:input_value] %>'";
 
 Navarra.project_types.config.filter_option.push(filter_option);
 Navarra.project_types.config.filter_kpi.push(filter_kpi);
