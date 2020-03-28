@@ -18,6 +18,7 @@ Navarra.dashboards.config = {
   "maxy": 90,
   "current_tenant": '',
   "graph_id":'',
+  draw_disabled: true,
   size_box: [],
   name_layer: '',
   type_geometry: '',
