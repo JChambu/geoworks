@@ -629,8 +629,6 @@ Navarra.geomaps = function (){
           return;
         }
 
-        var checked = $('#select').hasClass('active');
-
         draw_disabled = Navarra.dashboards.config.draw_disabled;
         if (draw_disabled){
 
@@ -657,11 +655,9 @@ Navarra.geomaps = function (){
                 label = label.charAt(0).toUpperCase() + label.slice(1)
                 var val = prop[value]
                 // Valida si el valor no es nulo
-                if (val != null && val != 'null') {
+                if (val != null && val != 'null' ) {
                   // Elimina los corchetes y comillas del valor (en caso que contenga)
-                  var val = val.split('[').join('')
-                  var val = val.split(']').join('')
-                  var val = val.split('"').join('')
+                  val = val.toString().replace('/\[|\]|\"','');
                 }
                 x.push('<b>' + label + ': </b> ' + val);
               });
