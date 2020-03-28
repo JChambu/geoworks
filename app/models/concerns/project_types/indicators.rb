@@ -171,50 +171,15 @@ module ProjectTypes::Indicators
 
     def kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id)
 
-      @ct = Apartment::Tenant.current
-      @type_box = type_box
-      @arr1 = []
-
-      @size = size_box
-
-      @size = size_box
-      if type_box == 'polygon'
-        @size.each do |a,x|
-          z = []
-          @a = a
-          @x = x
-          x.each do |b,y|
-            @b = b
-            @y = y
-            z.push(y)
-          end
-          @arr1.push([z])
-        end
-      else
-        minx = size_box[0].to_f if !size_box.nil?
-        miny = size_box[1].to_f if !size_box.nil?
-        maxx = size_box[2].to_f if !size_box.nil?
-        maxy = size_box[3].to_f if !size_box.nil?
-      end
       querys=[]
       @data_fixed = ''
       @op = option_graph
-
-      if type_box == 'extent'
-        data = Project.joins(:project_status, :user).
-            where(project_type_id: project_type_id).where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})").
-            where(row_active: true)
-        @data_fixed = data
-      end
-
-      if type_box == 'polygon'
-        data = Project.joins(:project_status, :user).
-            where(project_type_id: project_type_id).
-            where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})").
-            where(row_active: true)
-
-        @data_fixed = data
-      end
+      @ct = Apartment::Tenant.current
+            if type_box == 'extent'
+              @data_fixed = query_extent size_box, project_type_id
+            else
+              @data_fixed = query_draw_polygon  size_box, project_type_id
+            end
 
       @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id 
       @data_fixed = filters_on_the_fly @data_fixed, data_conditions
@@ -230,7 +195,12 @@ module ProjectTypes::Indicators
 
       @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
       @analytics_charts.each do |chart|
-
+        
+            if type_box == 'extent'
+              data = query_extent size_box, project_type_id
+            else
+              data = query_draw_polygon  size_box, project_type_id
+            end
 
         if !chart.sql_sentence.blank?
 
@@ -239,7 +209,7 @@ module ProjectTypes::Indicators
           field_select = analysis_type(chart.analysis_type.name, "projects.properties->>'#{chart.project_field.key}'") 
           conditions_field = chart.condition_field
         end
-      data = filters_on_the_fly data, data_conditions
+        data = filters_on_the_fly data, data_conditions
         if !conditions_field.blank?
           data =  data.where(" properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
         end
@@ -252,15 +222,15 @@ module ProjectTypes::Indicators
     def analysis_type(type, field)
       case type
       when 'sum'
-        query = " #{type}(( #{field} )::numeric)"
+        query = " #{type}(( #{field} )::numeric) as count "
       when 'count'
-        query = " #{type}(( #{field } ))"
+        query = " #{type}(( #{field } )) "
       when 'avg'
-        query = " #{type}(( #{field} )::numeric)"
+        query = " #{type}(( #{field} )::numeric) as count "
       when 'min'
-        query = " #{type}(( #{field} )::numeric)"
+        query = " #{type}(( #{field} )::numeric) as count "
       when 'max'
-        query = " #{type}(( #{field} )::numeric)"
+        query = " #{type}(( #{field} )::numeric) as count "
       when 'weighted_average'
         query = "case sum((properties->>'oferta')::numeric) when 0 then 0 else  sum((properties->>'" + field+ "')::numeric * (properties->>'oferta')::numeric) / sum((properties->>'oferta')::numeric) end "
       end
