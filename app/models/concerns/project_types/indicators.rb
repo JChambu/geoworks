@@ -206,7 +206,8 @@ module ProjectTypes::Indicators
 
           field_select = chart.sql_sentence
         else
-          field_select = analysis_type(chart.analysis_type.name, "projects.properties->>'#{chart.project_field.key}'") 
+          field_select = analysis_type(chart.analysis_type.name, "projects.properties->>'#{chart.project_field.key}'") + ' as count'
+
           conditions_field = chart.condition_field
         end
         data = filters_on_the_fly data, data_conditions
@@ -222,15 +223,15 @@ module ProjectTypes::Indicators
     def analysis_type(type, field)
       case type
       when 'sum'
-        query = " #{type}(( #{field} )::numeric) as count "
+        query = " #{type}(( #{field} )::numeric) "
       when 'count'
         query = " #{type}(( #{field } )) "
       when 'avg'
-        query = " #{type}(( #{field} )::numeric) as count "
+        query = " #{type}(( #{field} )::numeric) "
       when 'min'
-        query = " #{type}(( #{field} )::numeric) as count "
+        query = " #{type}(( #{field} )::numeric) "
       when 'max'
-        query = " #{type}(( #{field} )::numeric) as count "
+        query = " #{type}(( #{field} )::numeric) "
       when 'weighted_average'
         query = "case sum((properties->>'oferta')::numeric) when 0 then 0 else  sum((properties->>'" + field+ "')::numeric * (properties->>'oferta')::numeric) / sum((properties->>'oferta')::numeric) end "
       end
