@@ -7,6 +7,7 @@
       <!-- Principal -->
       <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
 
+        <!-- Proyectos -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="projects_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <% if !@project_type.nil? %>
@@ -30,6 +31,7 @@
           </div>
         </li>
 
+        <!-- Proyecto Actual -->
         <% if !@project_type.nil? %>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle nocaret dropdown-width" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -55,11 +57,14 @@
 
         <% if !@dashboard.nil? %>
 
-        <% if can? :indicators, :visualizer%>
-          <li class="nav-item">
-            <%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, @dashboard.id), class: 'nav-link dropdown-width' do %> <i class="fas fa-database" title="Crear Indicador" style="font-size: 20px"></i> <% end %>
-          </li>
-        <% end %>
+          <!-- Indicadores -->
+          <% if can? :indicators, :visualizer%>
+            <li class="nav-item">
+              <%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, @dashboard.id), class: 'nav-link dropdown-width' do %> <i class="fas fa-database" title="Crear Indicador" style="font-size: 20px"></i> <% end %>
+            </li>
+          <% end %>
+
+          <!-- Herramientas geográficas -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle nocaret dropdown-width" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="fas fa-globe-americas" style="font-size: 20px"></i>
@@ -72,6 +77,7 @@
             </div>
           </li>
 
+          <!-- Creador de gráficos -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle nocaret dropdown-width" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="fas fa-chart-pie" style="font-size: 20px"></i>
@@ -86,6 +92,7 @@
 
         <% end %>
 
+        <!-- Indicadores de texto -->
         <li class="tile_count row m-0"></li>
 
       <% end %>
