@@ -11,7 +11,8 @@ module ProjectTypes::Indicators
 
       @data = Project.joins(:project_status, :user).
         where(project_type_id: project_type_id).
-        where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+        where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})").
+        where(row_active: true)
       @data
     end
 
