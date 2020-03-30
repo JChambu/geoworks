@@ -98,7 +98,14 @@ class ProjectTypesController < ApplicationController
   end
 
   def create_point_colors
-    @query_point = Project.where(project_type_id: params[:project_type_id]).select("properties->>'#{params[:q][:project_field]}' as name").group("properties->>'#{params[:q][:project_field]}'").limit(10)
+    field_name = "properties->>'#{params[:q][:project_field]}'"
+    field_name = "project_statuses.name" if params[:q][:project_field] == 'app_estado' 
+    field_name = "users.name" if params[:q][:project_field] == 'app_usuario' 
+    @query_point = Project.joins(:user, :project_status).
+      where(project_type_id: params[:project_type_id]).
+      select("#{field_name} as name").
+      group(field_name).
+      limit(10)
     respond_to do |format|
       format.js
     end

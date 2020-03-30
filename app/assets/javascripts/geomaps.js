@@ -50,7 +50,7 @@ Navarra.geomaps = function (){
       center: [-33.113399134183744, -69.69339599609376],
       zoomControl: false,
       zoomAnimation: false,
-      layers: [streets, grayscale]
+      layers: [grayscale]
     }) ;
 
 
@@ -386,6 +386,7 @@ Navarra.geomaps = function (){
           mymap.removeLayer(layer);
         });
         mymap.removeControl(layerControl);
+        mymap.removeLayer(project_current);
         layerControl =  L.control.layers(baseMaps, overlayMaps, {
           position: 'topleft',
           collapsed: true
