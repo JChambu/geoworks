@@ -134,7 +134,6 @@ module ProjectTypes::Indicators
     end
 
     def kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id)
-
       querys=[]
       @op = option_graph
       @dashboard_id = dashboard_id
@@ -160,7 +159,7 @@ module ProjectTypes::Indicators
             @items["serie#{i}"] = @data
             @option_graph = graph
             chart_type = graph.chart.name
-            ch["it#{i}"] = { "description":@data.to_sql, "chart_type":chart_type, "group_field":@field_group,"chart_properties": @option_graph, "data":@items, "graphics_options": g}
+            ch["it#{i}"] = { "description":@data, "chart_type":chart_type, "group_field":@field_group,"chart_properties": @option_graph, "data":@items, "graphics_options": g}
           end
           ch
         end
@@ -220,6 +219,15 @@ module ProjectTypes::Indicators
       end
       querys
     end
+
+  def indicator_heatmap project_type_id, indicator_id, size_box, type_box, conditions, user_id
+      
+    dashboard = AnalyticsDashboard.find(indicator_id)
+    @q =  kpi_new(project_type_id, true, size_box, type_box, dashboard.dashboard_id, conditions, user_id)
+
+    @querys = @q[0]['it0'][:description].select("st_x(the_geom) as lng, st_y(the_geom) as lat").group(:the_geom) 
+@querys
+  end
 
     def analysis_type(type, field)
       case type

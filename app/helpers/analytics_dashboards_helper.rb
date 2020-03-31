@@ -6,6 +6,9 @@ module AnalyticsDashboardsHelper
 
   def analysis_types_for_select
     AnalysisType.all.map {|type| [type.name, type.id]}
+  end
 
+  def get_name_kpi id
+    @query = AnalyticsDashboard.where(id: id).first
   end
 end

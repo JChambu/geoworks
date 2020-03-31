@@ -116,85 +116,56 @@ class ProjectTypesController < ApplicationController
 
   def filter_heatmap
 
-    project_type_id = params[:project_type_id]
-    type_box = params[:type_box]
-    size_box = params[:size_box]
-    @ct = Apartment::Tenant.current
-    @arr1 = []
-    if type_box == 'polygon'
-      size_box.each do |a,x|
-        z = []
-        @a = a
-        @x = x
-        x.each do |b,y|
-          @b = b
-          @y = y
-          z.push(y)
+    @data_conditions = params[:conditions]
+    if !params[:heatmap_indicator].empty?
+      
+      @query_h = ProjectType.indicator_heatmap(params[:project_type_id], params[:heatmap_indicator], params[:size_box], params[:type_box], @data_conditions, current_user.id)
+    else
+      project_type_id = params[:project_type_id]
+      type_box = params[:type_box]
+      size_box = params[:size_box]
+      @ct = Apartment::Tenant.current
+      @arr1 = []
+      if type_box == 'polygon'
+        size_box.each do |a,x|
+          z = []
+          @a = a
+          @x = x
+          x.each do |b,y|
+            @b = b
+            @y = y
+            z.push(y)
+          end
+          @arr1.push([z])
         end
-        @arr1.push([z])
-      end
 
-      data = Project.
+        data = Project.
           where(project_type_id: project_type_id).
           where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})").
           where(row_active: true)
-    else
-      data = Project.
-        where(project_type_id: project_type_id).
-        where(row_active: true)
-    end
-    condition = params[:conditions]
-    if !condition.blank?
-      condition.each do |key|
-        @s = key.split('|')
-        @field = @s[0]
-        @filter = @s[1]
-        @value = @s[2]
-        if (@filter == '<' || @filter == '>' || @filter == '>=' || @filter == '<=' )
-          data =  data.where(" (properties->>'" + @field +"')::numeric" +  @filter +"#{@value}")
-        else
-          data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
+      else
+        data = Project.
+          where(project_type_id: project_type_id).
+          where(row_active: true)
+      end
+      condition = params[:conditions]
+      if !condition.blank?
+        condition.each do |key|
+          @s = key.split('|')
+          @field = @s[0]
+          @filter = @s[1]
+          @value = @s[2]
+          if (@filter == '<' || @filter == '>' || @filter == '>=' || @filter == '<=' )
+            data =  data.where(" (properties->>'" + @field +"')::numeric" +  @filter +"#{@value}")
+          else
+            data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
+          end
         end
       end
-    end
-
-    if !params[:heatmap_indicator].empty?
-
-      @analytics = AnalyticsDashboard.where(id: params[:heatmap_indicator])
-
-      @analytics.each do |f|
-        if !f.sql_sentence.blank?
-
-          if f.group_sql.blank?
-            @field_group = "projects.properties->>'"+ f.group_field.key + "'"
-          else
-            @field_group = f.group_sql
-          end
-          if f.order_sql.blank?
-            data = data.select(f.sql_sentence, "st_x(the_geom) as lng, st_y(the_geom) as lat").group(@field_group, :the_geom).order(@field_group)
-          else
-            @order_sql = f.order_sql
-            data = data.select(f.sql_sentence, "st_x(the_geom) as lng, st_y(the_geom) as lat").group(@field_group, :the_geom).order(@order_sql)
-          end
-        else
-
-          @field_select = analysis_type(f.analysis_type.name, f.project_field.key) + ' as count'
-          @field_select += ", projects.properties->>'" + f.group_field.key + "' as name "
-          @field_group = "projects.properties->>'"+ f.group_field.key + "'"
-
-          data =  data.select(@field_select).group(@field_group).order(@field_group)
-        end
-        conditions_field = f.condition_field
-        if !conditions_field.blank?
-          data =  data.where(" projects.properties->>'" + conditions_field.name + "' " + f.filter_input + "'#{f.input_value}'")
-        end
-
-        @query_h = data
-      end
-    else
       @query_h = data.select("st_x(the_geom) as lng, st_y(the_geom) as lat, projects.properties->>'#{params[:heatmap_field]}' as count").group("projects.properties->>'#{params[:heatmap_field]}', the_geom").order('count')
 
     end
+    @query_h
   end
 
   def maps

@@ -158,7 +158,7 @@ Navarra.geomaps = function (){
           init_kpi(size_box);
           init_chart_doughnut(size_box);
           // poly();
-
+          Navarra.dashboards.config.size_box = size_box;
           var heatmap_actived = Navarra.project_types.config.heatmap_field;
           if (heatmap_actived != ''){
             Navarra.geomaps.heatmap_data();
@@ -409,9 +409,14 @@ Navarra.geomaps = function (){
     if (size_box.length > 0 ){
       var type_box = 'polygon';
     }else{
-      size_box = [];
+    size_box = [];
+    type_box = 'extent';
+    size_ext = Navarra.dashboards.config.size_box;
+    size_box[0] = size_ext['_southWest']['lng'];
+    size_box[1] = size_ext['_southWest']['lat'];
+    size_box[2] = size_ext['_northEast']['lng'];
+    size_box[3] = size_ext['_northEast']['lat'];
     }
-
     var conditions = Navarra.project_types.config.filter_kpi
     var data_id =  Navarra.dashboards.config.project_type_id;
     var heatmap_field =  Navarra.project_types.config.heatmap_field;
