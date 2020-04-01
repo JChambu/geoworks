@@ -157,6 +157,8 @@ function init_chart_doughnut(size_box = null){
             to: dateToTS(new Date(year, 10, 23)),
             prettify: tsToDate
           });
+
+          resize_graphics();
         }
 
         // Aplicamos drag and drop

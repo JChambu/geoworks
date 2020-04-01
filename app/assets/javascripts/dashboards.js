@@ -43,6 +43,14 @@ Navarra.dashboards.config = {
   user_name: ''
 };
 
+resize_graphics = function(){
+  // Modificamos el alto de graphics según el alto de filter_container
+  var sidebar_height = $(".sidebar").height()
+  var filter_container_height = $("#filter-container").height()
+  var height_graphics = sidebar_height - filter_container_height - 10
+  $(".graphics").css("height", height_graphics);
+}
+
 Navarra.dashboards.action_show = function(){
 
   var init = function(){
@@ -67,6 +75,7 @@ Navarra.dashboards.action_show = function(){
       Navarra.geomaps.layers_external();
       Navarra.geomaps.layers_internal();
 
+      resize_graphics();
     });
 
     // Desactiva Mapa de Calor
@@ -78,6 +87,7 @@ Navarra.dashboards.action_show = function(){
       $('#heatmap_filter').remove();
       Navarra.geomaps.remove_heatmap();
 
+      resize_graphics();
     });
 
     $("#filter-body").on("click", ".message",  function(){
@@ -108,6 +118,8 @@ Navarra.dashboards.action_show = function(){
         Navarra.geomaps.heatmap_data();
       }
       //init_chart_doughnut();
+
+      resize_graphics();
     });
 
     $("#hide_side").on("click", function(){
@@ -138,6 +150,19 @@ Navarra.dashboards.action_show = function(){
       }
     });
 
+
+    // Redimenciona graphics según collapse de Filtros Activos
+    $('#collapse_filter').on('hidden.bs.collapse', function() {
+      resize_graphics()
+    })
+    $('#collapse_filter').on('show.bs.collapse', function() {
+      $(".graphics").css("height", '500');
+    })
+    $('#collapse_filter').on('shown.bs.collapse', function() {
+      resize_graphics()
+    })
+
+
     $(".graphics").on('click','canvas',function(){
           value_graph = $(this).attr("id");
           canvas_edit = this;
@@ -150,5 +175,6 @@ Navarra.dashboards.action_show = function(){
   }
   return {
     init: init,
+    resize_graphics: resize_graphics,
   }
 }();
