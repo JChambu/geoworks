@@ -21,8 +21,7 @@ class ProjectsController < ApplicationController
     @search = @search.search(params[:q])
     @projects = @search.result.paginate(:page => params[:page])
     @fields = ProjectField.where(project_type_id: params[:project_type_id])
-    @project_type = params[:project_type_id]
- 
+    @project_type = ProjectType.find(params[:project_type_id])
     respond_to do |format|
       format.html
       format.csv { send_data @projects.to_csv, filename: "users-#{Date.today}.csv" }
