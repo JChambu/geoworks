@@ -9,7 +9,6 @@ body {
 }
 .sidebar {
   width: 30%;
-  height: 91vh;
   position: absolute;
   z-index: 401;
   background-color: rgba(0, 0, 0, 0.2);

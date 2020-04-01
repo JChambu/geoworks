@@ -5,6 +5,23 @@ $(document).ready(function () {
     });
 });
 
+// Establece alto de mapa y sidebar al redimensionar
+$(window).on('resize', function() {
+  var height_browser = window.innerHeight
+  var height_dashboard = height_browser - 60
+  $("#map").css("height", height_dashboard);
+  $(".sidebar").css("height", height_dashboard);
+  resize_graphics()
+});
+
+// Establece alto de mapa y sidebar al cargar
+$(document).ready(function() {
+  var height_browser = window.innerHeight
+  var height_dashboard = height_browser - 60
+  $("#map").css("height", height_dashboard);
+  $(".sidebar").css("height", height_dashboard);
+});
+
 Navarra.namespace("dashboards.action_show");
 
 Navarra.dashboards.config = {
