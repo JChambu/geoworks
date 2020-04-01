@@ -219,6 +219,8 @@ class ProjectTypesController < ApplicationController
   # GET /project_types/1/edit
   def edit
     authorize! :project_types, :edit
+    @dashboard = @project_type.dashboards.first if @dashboard.nil?
+
   end
 
   # POST /project_types

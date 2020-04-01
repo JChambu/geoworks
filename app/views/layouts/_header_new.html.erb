@@ -29,12 +29,13 @@
       </li>
 
       <!-- Proyecto Actual -->
-      <% if !@project_type.nil? %>
+      <% if !@project_type.nil? && !@project_type.new_record?%>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle nocaret dropdown-width" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fas fa-clipboard-list" style="font-size: 20px"></i>
           </a>
           <div class="dropdown-menu" id="current_project_menu" aria-labelledby="navbarDropdown">
+            
             <% if can? :data, :visualizer%>
               <%= link_to 'Datos', project_type_projects_path(@project_type.id), class: "dropdown-item" %>
             <% end %>
@@ -53,7 +54,6 @@
       <% end %>
 
       <% if !@dashboard.nil? %>
-
         <!-- Indicadores -->
         <% if can? :indicators, :visualizer%>
           <li class="nav-item">
