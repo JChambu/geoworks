@@ -48,28 +48,24 @@
   </div>
 </div>
 
-<%= form_for :q, :html => {:class => '', :method => :get} do |f| %>
+<%= form_for :q, :html => {:class => 'd-flex justify-content-end', :method => :get} do |f| %>
 
-  <div class="row m-0">
+  <div id="map">
+    <div id="rose"></div>
+  </div>
 
-    <div id="map">
-      <div id="rose"></div>
-    </div>
+  <div class="graphics d-flex align-content-start flex-wrap pt-2 px-2">
 
-    <div class="graphics row m-0 pt-2 px-2">
+    <i class="fas fa-arrow-alt-circle-left" id="view"></i>
 
-      <i class="fas fa-arrow-alt-circle-left" id="view"></i>
-
-      <div class="card text-light chart-bg-transparent sticky-top w-100 mb-2" id="filter-container">
-        <div class="card-header chart-header-bg-transparent py-1 px-2" id="filter-header">
-          <button class="close" type="button" data-toggle="collapse" data-target="#collapse_filter" aria-expanded="true" aria-controls="collapse_filter"><i class="fas fa-window-minimize" style="font-size: 15px"></i></button>
-          Filtros Activos
-        </div>
-        <div class="collapse show" id="collapse_filter">
-          <div class="card-body" id="filter-body"></div>
-        </div>
+    <div class="card text-light chart-bg-transparent sticky-top w-100 mb-2" id="filter-container">
+      <div class="card-header chart-header-bg-transparent py-1 px-2" id="filter-header">
+        <button class="close" type="button" data-toggle="collapse" data-target="#collapse_filter" aria-expanded="true" aria-controls="collapse_filter"><i class="fas fa-window-minimize" style="font-size: 15px"></i></button>
+        Filtros Activos
       </div>
-
+      <div class="collapse show" id="collapse_filter">
+        <div class="card-body" id="filter-body"></div>
+      </div>
     </div>
 
   </div>
