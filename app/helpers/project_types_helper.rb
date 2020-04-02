@@ -1,5 +1,9 @@
 module ProjectTypesHelper
 
+  def role_selected role
+    @role = JSON.parse(role) if !role.nil?
+  end
+
   def region_for_select
    @a = ProjectField.where(project_type_id: params[:project_type_id]).select("key").map { |region|  region.key }
   end
