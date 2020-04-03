@@ -2,7 +2,7 @@ module ProjectTypes::Indicators
   extend ActiveSupport::Concern
   module ClassMethods
 
-    def query_extent size_box, project_type_id, children=false
+    def query_extent size_box, project_type_id, children
 
       minx = size_box[0].to_f if !size_box.nil?
       miny = size_box[1].to_f if !size_box.nil?
@@ -14,7 +14,7 @@ module ProjectTypes::Indicators
         where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})").
         where(row_active: true)
       if children == true
-        @data.joins(:project_data_child)
+        @data = @data.left_outer_joins(:project_data_child)
       end
       @data
     end
@@ -38,7 +38,7 @@ module ProjectTypes::Indicators
         where(row_active: true)
 
       if children == true
-        @data.joins(:project_data_child)
+        @data = @data.left_outer_joins(:project_data_child)
       end
       @data
     end
