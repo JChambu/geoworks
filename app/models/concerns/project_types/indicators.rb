@@ -2,7 +2,7 @@ module ProjectTypes::Indicators
   extend ActiveSupport::Concern
   module ClassMethods
 
-    def query_extent size_box, project_type_id, children
+    def query_extent size_box, project_type_id, children=false
 
       minx = size_box[0].to_f if !size_box.nil?
       miny = size_box[1].to_f if !size_box.nil?
