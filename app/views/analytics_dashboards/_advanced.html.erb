@@ -41,10 +41,18 @@
     <%= f.text_area :description, rows: 1, class:"form-control form-control-sm" %>
   </div>
 
-  <div class="form-group">
-    <div class="form-check">
-      <%= f.check_box :graph, class:"form-check-input" %>
-      <%= f.label :graph, "Graficar", class: 'form-check-label' %>
+  <div class="form-row">
+    <div class="form-group col-6">
+      <div class="form-check">
+        <%= f.check_box :graph, class:"form-check-input" %>
+        <%= f.label :graph, "Graficar", class: 'form-check-label' %>
+      </div>
+    </div>
+    <div class="form-group col-6">
+      <div class="form-check">
+        <%= f.check_box :children, class:"form-check-input" %>
+        <%= f.label :children, "Subformulario", class: 'form-check-label' %>
+      </div>
     </div>
   </div>
 
