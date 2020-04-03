@@ -15,6 +15,7 @@
   </div>
 
   <div class="form-group">
+    <%= f.input :advanced_kpi, as: :hidden, input_html: {value: true} %>
     <%= f.label :sql_sentence, 'Sentencia (SELECT)' %>
     <%=f.text_area :sql_sentence, rows: 1, class:"form-control form-control-sm" %>
   </div>

@@ -2,7 +2,7 @@ module ProjectTypes::Indicators
   extend ActiveSupport::Concern
   module ClassMethods
 
-    def query_extent size_box, project_type_id
+    def query_extent size_box, project_type_id, children=false
 
       minx = size_box[0].to_f if !size_box.nil?
       miny = size_box[1].to_f if !size_box.nil?
@@ -13,10 +13,13 @@ module ProjectTypes::Indicators
         where(project_type_id: project_type_id).
         where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})").
         where(row_active: true)
+      if children == true
+        @data.joins(:project_data_child)
+      end
       @data
     end
 
-    def query_draw_polygon size_box, project_type_id
+    def query_draw_polygon size_box, project_type_id, children=false
       arr1 = []
       size_box.each do |a,x|
         z = []
@@ -33,6 +36,10 @@ module ProjectTypes::Indicators
         where(project_type_id: project_type_id).
         where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom})").
         where(row_active: true)
+
+      if children == true
+        @data.joins(:project_data_child)
+      end
       @data
     end
 
@@ -148,13 +155,16 @@ module ProjectTypes::Indicators
           @analytics_charts.each do |chart|
             @items = {}
             if type_box == 'extent'
-              @data = query_extent size_box, project_type_id
+              @data = query_extent size_box, project_type_id, chart.children
             else
-              @data = query_draw_polygon  size_box, project_type_id
+              @data = query_draw_polygon  size_box, project_type_id, chart.children
             end
-            conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id 
-            filters_for_sql = filters_for_sql @data, chart
-            filters_simple = filters_simple @data, chart
+            conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id
+            if chart.advanced_kpi == true
+              filters_for_sql = filters_for_sql @data, chart
+            else
+              filters_simple = filters_simple @data, chart
+            end
             conditions_on_the_fly =  filters_on_the_fly @data, data_conditions
             @items["serie#{i}"] = @data
             @option_graph = graph
@@ -224,7 +234,6 @@ module ProjectTypes::Indicators
       
     dashboard = AnalyticsDashboard.find(indicator_id)
     @q =  kpi_new(project_type_id, true, size_box, type_box, dashboard.dashboard_id, conditions, user_id)
-
     @querys = @q[0]['it0'][:description].select("st_x(the_geom) as lng, st_y(the_geom) as lat").group(:the_geom) 
 @querys
   end

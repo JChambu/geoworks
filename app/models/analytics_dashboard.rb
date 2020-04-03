@@ -10,12 +10,11 @@ class AnalyticsDashboard < ApplicationRecord
   belongs_to :chart
   belongs_to :project_type
 
-  attr_accessor :type_simple
   validates :title, :analysis_type_id, :project_field_id, presence: :true, if: :is_simple_analytics?
   validates :title, :sql_sentence, presence: :true, unless: :is_simple_analytics?
 
   def is_simple_analytics?
-    return true if self.type_simple == 'true'
+    return true if self.advanced_kpi == false
     return false
   end
 

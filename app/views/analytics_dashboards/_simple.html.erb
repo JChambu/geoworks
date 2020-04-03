@@ -11,7 +11,7 @@
 
   <br>
   <div class="form-group">
-    <%= f.input :type_simple, as: :hidden, input_html: {value: 'true'} %>
+    <%= f.input :advanced_kpi, as: :hidden, input_html: {value: false} %>
     <%= f.input :title, label: "Nombre", input_html: {class:"form-control form-control-sm"} %>
   </div>
 
@@ -49,12 +49,6 @@
       <div class="form-check">
         <%= f.check_box :graph, class:"form-check-input" %>
         <%= f.label :graph, "Graficar", class: 'form-check-label' %>
-      </div>
-    </div>
-    <div class="form-group col-6">
-      <div class="form-check">
-        <%= f.check_box :children, class:"form-check-input" %>
-        <%= f.label :children, "Subformulario", class: 'form-check-label' %>
       </div>
     </div>
   </div>
