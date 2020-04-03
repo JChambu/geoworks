@@ -19,7 +19,6 @@ class User < ApplicationRecord
   devise :database_authenticatable, :rememberable, :trackable, :lockable, :confirmable
 
   before_create :generate_password, on: :create
-  after_create :send_mail_confirmable
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
@@ -44,10 +43,6 @@ class User < ApplicationRecord
   def generate_token
       self.token = SecureRandom.base64(15)
       self.authentication_token =  SecureRandom.base64(15)
-  end
-
-  def send_mail_confirmable
-    UserMailer.new_user(self).deliver_now
   end
 
    def is_active?
