@@ -663,7 +663,7 @@ Navarra.geomaps = function (){
                 success: function(data) {
                   $.each(data, function(i, value) {
                     // Reemplaza los guiones bajos del label por espacios
-                    var label = value.split('_').join(' ')
+                    var label = value.toString().replace('_',' ');
                     // Pone la primer letra en mayúscula
                     label = label.charAt(0).toUpperCase() + label.slice(1)
                     var val = prop[value]
