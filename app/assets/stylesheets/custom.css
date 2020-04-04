@@ -223,6 +223,8 @@ div.custom-menu.show {
 .leaflet-control-layers-expanded {
   color: #e8ebef !important;
   text-shadow: 1px 1px 1px #2c2e34;
+  max-height: 45vh !important;
+  overflow: auto;
 }
 .leaflet-control-layers {
   border: 2px solid rgba(0, 0, 0, 0.2) !important;
@@ -257,10 +259,6 @@ div.custom-menu.show {
 .leaflet-html-legend label {
   color: #e8ebef !important;
   text-shadow: 1px 1px 1px #2c2e34;
-}
-.leaflet-control-layers-expanded {
-  max-height: 45vh !important;
-  overflow: auto;
 }
 
 /* Modifica el estilo del popup de Leaflet */
