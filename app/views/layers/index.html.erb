@@ -23,9 +23,9 @@
           <tr>
             <th>Nombre</th>
             <th>Capa</th>
-            <th>Url</th>
-            <th>Descripción</th>
+            <th>URL</th>
             <th>Tipo de Capa</th>
+            <th>Descripción</th>
             <th colspan="3" class="text-center">Acciones</th>
           </tr>
         </thead>
@@ -35,14 +35,18 @@
               <td><%= layer.name %></td>
               <td><%= layer.layer %></td>
               <td><%= layer.url %></td>
-              <td><%= layer.description %></td>
               <td><%= layer.type_layer %></td>
-              <% if can? :layers, :edit %>
-                <td class="text-center"><%= link_to edit_layer_path(layer) do %> <i class="fas fa-edit"></i><%end%></td>
-              <% end %>
-              <% if can? :layers, :destroy %>
-                <td class="text-center"><%= link_to layer, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
-              <% end %>
+              <td><%= layer.description %></td>
+              <td class="text-center">
+                <% if can? :layers, :edit %>
+                  <%= link_to edit_layer_path(layer) do %> <i class="fas fa-edit"></i><%end%>
+                <% end %>
+              </td>
+              <td class="text-center">
+                <% if can? :layers, :destroy %>
+                  <%= link_to layer, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%>
+                <% end %>
+              </td>
             </tr>
           <% end %>
         </tbody>
