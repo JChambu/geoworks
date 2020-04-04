@@ -791,6 +791,9 @@ function init_chart_doughnut(size_box = null){
                       var dataset = data.datasets[tooltipItem.datasetIndex];
                       // Calcula el total
                       var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                        // Convierte string a float
+                        previousValue = parseFloat(previousValue)
+                        currentValue = parseFloat(currentValue)
                         return previousValue + currentValue;
                       });
                       // Obtenemos el valor de los elementos actuales
