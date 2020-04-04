@@ -3,3 +3,6 @@ $('<%= j render "heatmap", title: "Calculos" %>').on('hidden.bs.modal', function
   $(this).remove();
   $('.modal-backdrop').remove();
 }).modal();
+
+// Cierra dropdown
+$('#gis_dropdown').dropdown('toggle')
