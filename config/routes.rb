@@ -40,6 +40,9 @@ Rails.application.routes.draw do
       post 'users/search_roles'
       post 'users/search_fields'
       post 'users/search_properties_data'
+      get 'users/search_projects'
+      get 'users/search_roles'
+      get 'users/search_fields'
       resources :users
       resources :roles
       get 'dashboards/index'
