@@ -6,11 +6,11 @@ Number.prototype.format = function(n, x, s, c) {
   return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
 };
 
-function init_kpi(size_box = null){
+function init_kpi(size_box = null) {
   var type_box = 'polygon';
   var data_conditions = {}
-  if (size_box== null && Navarra.project_types.config.project_field == '' ){
 
+  if (size_box == null && Navarra.project_types.config.project_field == '') {
     size_box = [];
     type_box = 'extent';
     size_ext = Navarra.dashboards.config.size_box;
@@ -29,13 +29,12 @@ function init_kpi(size_box = null){
   //   data_conditions['input_value'] = input_value;
 
   // }
-  var  data_id =  Navarra.dashboards.config.project_type_id;
-  var  dashboard_id =  Navarra.dashboards.config.dashboard_id;
+  var data_id = Navarra.dashboards.config.project_type_id;
+  var dashboard_id = Navarra.dashboards.config.dashboard_id;
   //  var conditions = Navarra.project_types.config.filter_kpi
-  var conditions = Navarra.project_types.config.filter_kpi
+  var conditions = Navarra.project_types.config.filter_kpi;
 
   $.ajax({
-
     type: 'GET',
     url: '/project_types/kpi.json',
     datatype: 'json',
@@ -52,6 +51,7 @@ function init_kpi(size_box = null){
       console.log(data);
 
       data.forEach(function(element) {
+
         var count_element = element['data'][0]['count'];
 
         if (element['title'] == '% del Total') {
@@ -61,20 +61,22 @@ function init_kpi(size_box = null){
         }
 
         if ($('.kpi_' + element['id']).length) {
-          $('.kpi_' + element['id']).replaceWith('<div class="count  kpi_' + element['id'] + '">' + data_cont + '</div>');
+          $('.kpi_' + element['id']).replaceWith('<div class="count kpi_' + element['id'] + '">' + data_cont + '</div>');
         } else {
 
           html = ' <div class="tile_stats_count">' +
             '<span class="count_top">' + element['title'] + '</span>' +
-            '<div class="count  kpi_' + element['id'] + '"> ' + data_cont + '</div>' +
+            '<div class="count kpi_' + element['id'] + '"> ' + data_cont + '</div>' +
             '</div>' +
             '</div>'
           $('.tile_count').append(html);
+
         }
-      })
-    }
-  });
-}
+
+      }); // Cierra forEach
+    } // Cierra success
+  }); // Cierra ajax
+}; // Cierra init_kpi
 
 function capitalize(s){
   return s.toLowerCase().replace( /\b./g, function(a){ return a.toUpperCase(); } );
