@@ -368,11 +368,13 @@
 	color: #333;
 	background: #fff;
 	}
+	/* se está usando overflow en la clase leaflet-control-layers-expanded en custom.css
 .leaflet-control-layers-scrollbar {
 	overflow-y: scroll;
 	overflow-x: hidden;
 	padding-right: 5px;
 	}
+	*/
 .leaflet-control-layers-selector {
 	margin-top: 2px;
 	position: relative;
