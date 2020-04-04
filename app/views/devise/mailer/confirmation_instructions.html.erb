@@ -1,6 +1,101 @@
-<p>Welcome <%= @email %>!</p>
-<p>Usuario: <%= @email %> </p>
-<p>Contraseña: <%= @resource.password %> </p>
+<!-- Preheader -->
+<div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
+  Te falta un solo paso para activar tu cuenta.
+</div>
 
-<p>You can confirm your account email through the link below:</p>
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token, locale: I18n.locale.to_s, subdomain: Apartment::Tenant.current) %></p>
+<!-- Body -->
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+
+  <!-- Encabezado -->
+  <tr>
+    <td align="center" bgcolor="#e8ebef">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+        <tr>
+          <td align="center" bgcolor="#ffffff" valign="top" style="border-top: 3px solid #d4dadf; border-left: 3px solid #d4dadf; border-right: 3px solid #d4dadf;">
+            <a href="http://www.gisworking.com/" target="_blank" style="padding: 10; display: inline-block;">
+              <%= image_tag "geoworks_mail_logo.png", alt: "Logo", border: 0, style:"display: block; width: 60%;" %>
+              <br>
+              <%= image_tag "geoworks_mail_dispositivos.png", alt: "Dispositivos", border: 0, style:"display: block; width: 40%;" %>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- Cuerpo -->
+  <tr>
+    <td align="center" bgcolor="#e8ebef">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+
+        <!-- Saludo Inicial -->
+        <tr>
+          <td align="left" bgcolor="#ffffff" style="padding: 0px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; border-left: 3px solid #d4dadf; border-right: 3px solid #d4dadf;">
+            <h3 style="margin: 0; font-size: 25px; font-weight: 500; letter-spacing: -1px; line-height: 48px;">Hola <%= @user.name %></h3>
+          </td>
+        </tr>
+
+        <!-- Párrafo -->
+        <tr>
+          <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-left: 3px solid #d4dadf; border-right: 3px solid #d4dadf;">
+            <p style="margin: 0;">Estas son las credenciales con las que vas a poder acceder a nuestra plataforma:</p>
+            <ul style="list-style-type:none;">
+              <li><b>E-mail: </b><%= @email %></li>
+              <li><b>Contraseña: </b><%= @resource.password %></li>
+            </ul>
+            <p style="margin: 0;">Para activar tu cuenta de Geoworks, haz clic en el siguiente botón:</p>
+          </td>
+        </tr>
+
+        <!-- Botón Confirmar -->
+        <tr>
+          <td align="center" bgcolor="#ffffff" style="padding: 12px; border-left: 3px solid #d4dadf; border-right: 3px solid #d4dadf;">
+            <table border="0" cellpadding="0" cellspacing="0">
+              <tr>
+                <td align="center" bgcolor="#d3d800" style="border-radius: 6px;">
+                  <%= link_to 'Confirmar cuenta', confirmation_url(@resource, confirmation_token: @token, locale: I18n.locale.to_s, subdomain: Apartment::Tenant.current), style: "display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; font-weight: bold; color: #FFFFFF; text-shadow: 2px 2px 5px #3d4046; text-decoration: none; border-radius: 6px;" %>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Despedida -->
+        <tr>
+          <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf; border-left: 3px solid #d4dadf; border-right: 3px solid #d4dadf;">
+            <p style="margin: 0;">Pronto recibirás un mail explicativo y datos de tu interés.</p>
+            <br>
+            <p style="margin: 0;">Atte.<br>Equipo de Geoworks</p>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+
+  <!-- Footer -->
+  <tr>
+    <td align="center" bgcolor="#e8ebef" style="padding: 24px;">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+
+        <!-- Link auxiliar
+        <tr>
+          <td align="center" bgcolor="#e8ebef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
+            <p style="margin: 0;">Si el botón no te redirige a la web copiá y pegá la siguiente URL en tu navegador:</p>
+            <p style="margin: 0;"></p>
+          </td>
+        </tr>
+        -->
+
+        <!-- Aclaración final -->
+        <tr>
+          <td align="center" bgcolor="#e8ebef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
+            <p style="margin: 0;">Si recibiste este correo electrónico por error, por favor eliminalo.<br>Este e-mail se envía automáticamente. No responder a esta dirección de correo.</p>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+
+</table>
