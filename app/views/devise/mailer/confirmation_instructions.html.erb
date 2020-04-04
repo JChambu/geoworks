@@ -46,11 +46,11 @@
 
         <!-- Botón Confirmar -->
         <tr>
-          <td align="center" bgcolor="#ffffff" style="padding: 12px; border-left: 3px solid #d4dadf; border-right: 3px solid #d4dadf;">
+          <td align="center" bgcolor="#ffffff" style="padding: 10px; border-left: 3px solid #d4dadf; border-right: 3px solid #d4dadf;">
             <table border="0" cellpadding="0" cellspacing="0">
               <tr>
                 <td align="center" bgcolor="#d3d800" style="border-radius: 6px;">
-                  <%= link_to 'Confirmar cuenta', confirmation_url(@resource, confirmation_token: @token, locale: I18n.locale.to_s, subdomain: Apartment::Tenant.current), style: "display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; font-weight: bold; color: #FFFFFF; text-shadow: 2px 2px 5px #3d4046; text-decoration: none; border-radius: 6px;" %>
+                  <%= link_to 'Confirmar cuenta', confirmation_url(@resource, confirmation_token: @token, locale: I18n.locale.to_s, subdomain: Apartment::Tenant.current), style: "display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; font-weight: bold; color: #FFFFFF; text-decoration: none; border-radius: 6px;" %>
                 </td>
               </tr>
             </table>
