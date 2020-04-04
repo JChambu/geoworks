@@ -16,7 +16,7 @@ es:
       unconfirmed: "Debes de confirmar tu cuenta para continuar."
     mailer:
       confirmation_instructions:
-        subject: "Instrucciones de confirmación"
+        subject: "Confirma tu cuenta de Geoworks"
       reset_password_instructions:
         subject: "Instrucciones para reestablecer tu contraseña"
       unlock_instructions:
