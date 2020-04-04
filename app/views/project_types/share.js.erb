@@ -3,3 +3,6 @@ $('<%= j render "share" %>').on('hidden.bs.modal', function (e) {
   $(this).remove();
   $('.modal-backdrop').remove();
 }).modal();
+
+// Cierra dropdown
+$('#project_dropdown').dropdown('toggle')
