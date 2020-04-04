@@ -179,7 +179,7 @@ div.custom-menu.show {
   margin-top: 10px
 }
 .tile_count .tile_stats_count {
-  padding: 0 10px 0 20px;
+  padding: 0 10px 0 10px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -194,14 +194,12 @@ div.custom-menu.show {
 }
 .tile_count .tile_stats_count .count {
   font-size: 28px;
-  line-height: 30px;
+  line-height: 18px;
   font-weight: 600
 }
 .tile_count .tile_stats_count span {
-  font-size: 12px
-}
-.tile_count .tile_stats_count .count_bottom i {
-  width: 12px
+  font-size: 11px;
+  line-height: 13px;
 }
 
 /* Personaliza colores del custom switch en Roles */

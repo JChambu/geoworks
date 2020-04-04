@@ -65,8 +65,8 @@ function init_kpi(size_box = null) {
         } else {
 
           html = ' <div class="tile_stats_count">' +
-            '<span class="count_top">' + element['title'] + '</span>' +
-            '<div class="count kpi_' + element['id'] + '"> ' + data_cont + '</div>' +
+            '<span class="count_top align-top">' + element['title'] + '</span>' +
+            '<div class="count align-middle kpi_' + element['id'] + '"> ' + data_cont + '</div>' +
             '</div>' +
             '</div>'
           $('.tile_count').append(html);
