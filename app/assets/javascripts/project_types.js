@@ -202,7 +202,16 @@ $(window).on('resize', function() {
 });
 
 $(document).ready(function() {
+
+  // Establece el alto de la tabla de atributos según la resolución de pantalla
   var height_browser = window.innerHeight
   var height_table = height_browser - 380
   $(".table-tbody-scroll, tbody").css("height", height_table);
+
+  // Cierra el dropdown de proyectos luego de ejecutarlo
+  $("#project_del_button").on("click", function() {
+    $('#project_dropdown').dropdown('toggle')
+  });
+
+
 });
