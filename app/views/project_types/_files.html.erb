@@ -19,7 +19,7 @@
     <div class="col-md-3 row">
       <%= f.label :type_geometry, 'Tipo de Geometría:', class:'col-md-6 text-right col-form-label-sm' %>
       <div class="col-md-6">
-        <%= f.select :type_geometry, options_for_select(['Point', 'LineString', 'Polygon'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
+        <%= f.select :type_geometry, options_for_select(['Point', 'Polygon'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
       </div>
     </div>
 
