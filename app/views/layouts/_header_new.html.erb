@@ -4,6 +4,56 @@
 
     <ul class="navbar-nav mr-auto">
 
+      <!-- Nuevo Proyecto -->
+      <% if params[:controller] == 'project_types' && params[:action] == 'new' %>
+        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
+      <% end %>
+
+      <!-- Datos del Proyecto -->
+      <% if params[:controller] == 'projects' && params[:action] == 'index' %>
+        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
+      <% end %>
+
+      <!-- Estados -->
+      <% if params[:controller] == 'project_statuses' && params[:action] == 'index' %>
+        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
+      <% end %>
+
+      <!-- Editar Proyecto -->
+      <% if params[:controller] == 'project_types' && params[:action] == 'edit' %>
+        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
+      <% end %>
+
+      <!-- Listados -->
+      <% if params[:controller] == 'choice_lists' && params[:action] == 'index' %>
+        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
+      <% end %>
+
+      <!-- Capas Externas -->
+      <% if params[:controller] == 'layers' && params[:action] == 'index' %>
+        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
+      <% end %>
+
+      <!-- Editar Usuario -->
+      <% if params[:controller] == 'users' && params[:action] == 'edit' %>
+        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
+      <% end %>
+
+      <!-- Indicadores -->
+      <% if params[:controller] == 'analytics_dashboards' && params[:action] == 'index' %>
+        <li class="nav-item"><%= link_to project_type_dashboard_path(@project_type, params[:dashboard_id]), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
+      <% end %>
+
+      <!-- Nueva Capa y Editar Capas a Capas -->
+      <% if params[:controller] == 'layers' && params[:action] == 'edit' || params[:controller] == 'layers' && params[:action] == 'new' %>
+        <li class="nav-item"><%= link_to layers_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
+      <% end %>
+
+      <!-- Nuevo Listado y Editar Listado a Listados -->
+      <% if params[:controller] == 'choice_lists' && params[:action] == 'edit' || params[:controller] == 'choice_lists' && params[:action] == 'new' %>
+        <li class="nav-item"><%= link_to choice_lists_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
+      <% end %>
+
       <!-- Proyectos -->
       <% if params[:controller] != 'project_types' && params[:action] != 'new' %>
         <li class="nav-item dropdown">
@@ -96,58 +146,6 @@
 
         <% end %>
 
-      <% end %>
-
-      <!-- Nuevo Proyecto -->
-      <% if params[:controller] == 'project_types' && params[:action] == 'new' %>
-        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
-      <% end %>
-
-      <!-- Datos del Proyecto -->
-      <% if params[:controller] == 'projects' && params[:action] == 'index' %>
-        <li class="nav-item">
-          <%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
-      <% end %>
-
-      <!-- Estados -->
-      <% if params[:controller] == 'project_statuses' && params[:action] == 'index' %>
-        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
-      <% end %>
-
-      <!-- Editar Proyecto -->
-      <% if params[:controller] == 'project_types' && params[:action] == 'edit' %>
-        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
-      <% end %>
-
-      <!-- Indicadores -->
-      <% if params[:controller] == 'analytics_dashboards' && params[:action] == 'index' %>
-        <li class="nav-item"><%= link_to project_type_dashboard_path(@project_type, params[:dashboard_id]), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
-      <% end %>
-
-      <!-- Listados -->
-      <% if params[:controller] == 'choice_lists' && params[:action] == 'index' %>
-        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
-      <% end %>
-
-      <!-- Capas Externas -->
-      <% if params[:controller] == 'layers' && params[:action] == 'index' %>
-        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
-      <% end %>
-
-      <!-- Editar Usuario -->
-      <% if params[:controller] == 'users' && params[:action] == 'edit' %>
-        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
-      <% end %>
-
-
-      <!-- Nueva Capa y Editar Capas a Capas -->
-      <% if params[:controller] == 'layers' && params[:action] == 'edit' || params[:controller] == 'layers' && params[:action] == 'new' %>
-        <li class="nav-item"><%= link_to layers_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
-      <% end %>
-
-      <!-- Nuevo Listado y Editar Listado a Listados -->
-      <% if params[:controller] == 'choice_lists' && params[:action] == 'edit' || params[:controller] == 'choice_lists' && params[:action] == 'new' %>
-        <li class="nav-item"><%= link_to choice_lists_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
       <% end %>
 
     </ul>
