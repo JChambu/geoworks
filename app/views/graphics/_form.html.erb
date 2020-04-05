@@ -28,11 +28,9 @@
 
     <legend>Series</legend>
 
-    <div class="form-row">
-      <%= form.fields_for :graphics_properties do |form_property| %>
-        <%= render "graphics_property_fields", f: form_property %>
-      <% end %>
-    </div>
+    <%= form.fields_for :graphics_properties do |form_property| %>
+      <%= render "graphics_property_fields", f: form_property %>
+    <% end %>
 
     <%= link_to_add_fields "<i class='fas fa-plus' title='Agregar Serie'></i>".html_safe, form, :graphics_properties, class: 'chart_serie' %>
 
@@ -102,6 +100,7 @@
       <br>
       </div>
     </div>
+    
   </div>
 
   <div class="modal-footer">
