@@ -5,7 +5,7 @@
     <ul class="navbar-nav mr-auto">
 
       <!-- Proyectos -->
-      <% if !@project_type.new_record?%>
+      <% if params[:controller] != 'project_types' && params[:action] != 'new' %>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="projects_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <% if !@project_type.nil? %>
