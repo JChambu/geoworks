@@ -9,7 +9,7 @@ if (heatmap_indicator !=''){
   field = "<%= get_name_kpi(params[:q][:project_kpi]).title  if !params[:q][:project_kpi].empty?%>"
 }
 // Carga las variables globales
-Navarra.project_types.config.heatmap_field = field;
+Navarra.project_types.config.heatmap_field = heatmap_field;
 Navarra.project_types.config.heatmap_indicator = heatmap_indicator;
 
 // Elimina el modal
