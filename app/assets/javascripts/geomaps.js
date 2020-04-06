@@ -434,8 +434,7 @@ Navarra.geomaps = function (){
         $.each(data,function(a,b){
           count_row.push(parseFloat(b['count']));
         })
-      console.log("count_row");
-      console.log(count_row);
+
         min = Math.min(...count_row);
         max = Math.max(...count_row);
         var legendCanvas = document.createElement('canvas');
