@@ -16,7 +16,7 @@ es:
   indicators: 'Indicadores'
   dashboards: 'Tableros'
   project_types: 'Proyectos'
-  layers: 'Capas'
+  layers: 'Capas Externas'
   regexp: 'Expresiones Regulares'
   buttons:
     search: Buscar
