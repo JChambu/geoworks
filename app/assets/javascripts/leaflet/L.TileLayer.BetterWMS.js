@@ -88,34 +88,58 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
   },
 
   showGetFeatureInfo: function (err, latlng, info) {
-    
-//    if (err) { console.log(err); return; } // do nothing if there's an error
+        name_layer = Navarra.dashboards.config.name_layer;
+        draw_disabled = Navarra.dashboards.config.draw_disabled;
+        if (draw_disabled){
 
-        checked = $('#select').hasClass('active');
-        if (!checked){
           var cc = info;
-          var prop = cc['features'][0]['properties'];
-          var z = document.createElement('p'); // is a node
-          var x = []
-          $.each(prop, function(a,b){
-            x.push('<b>' + a + ': </b> ' + b + '</br>');
-          })
+          var mymap = this._map;
+          if (cc['features'].length > 0){ 
+            var prop = cc['features'][0]['properties'];
+            project_name_feature = cc['features'][0]['id'];
+            project_name = project_name_feature.split('.fid')[0];
+            var z = document.createElement('p'); // is a node
+            var x = []
+            var count = 1;
+            var project_id = cc['features'][0]['properties']['id'];
+            var data_id = Navarra.dashboards.config.project_type_id;
+            if (name_layer == project_name){
+              $.ajax({
+                type: 'GET',
+                url: '/project_fields/field_popup.json',
+                datatype: 'json',
+                data: {
+                  project_type_id: data_id
+                },
+                success: function(data) {
+                  $.each(data, function(i, value) {
+                    // Reemplaza los guiones bajos del label por espacios
+                    var label = value.toString().replace('_',' ');
+                    // Pone la primer letra en mayúscula
+                    label = label.charAt(0).toUpperCase() + label.slice(1)
+                    var val = prop[value]
+                    // Valida si el valor no es nulo
+                    if (val != null && val != 'null' ) {
+                      // Elimina los corchetes y comillas del valor (en caso que contenga)
+                      val = val.toString().replace('/\[|\]|\"','');
+                    }
+                    x.push('<b>' + label + ': </b> ' + val);
+                  });
+                  z.innerHTML = x.join(" <br>");
+                  inn = document.body.appendChild(z);
+                  checked = $('#select').hasClass('active');
 
-          z.innerHTML = x;
-          inn = document.body.appendChild(z);
-
-          if (!checked){
-              L.popup()
-              .setLatLng(latlng)
-              .setContent(inn)
-              .openOn(this._map);
-    // Otherwise show the content in a popup, or something.
-/*    L.popup({ maxWidth: 800})
-      .setLatLng(latlng)
-      .setContent(content)
-      .openOn(this._map);*/
-  }
-  }
+                  if (draw_disabled) {
+                    L.popup()
+                      .setLatLng(latlng)
+                      .setContent(inn)
+                      .openOn(mymap);
+                  }
+                } // Cierra success
+              }); // Cierra ajax
+            } // Cierra if
+          } // Cierra if
+        } // Cierra if
   }
   
 });
