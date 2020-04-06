@@ -432,7 +432,7 @@ Navarra.geomaps = function (){
       success: function(data){
         count_row = []
         $.each(data,function(a,b){
-          count_row.push(parseInt(b['count']));
+          count_row.push(parseFloat(b['count']));
         })
 
         min = Math.min(...count_row);
