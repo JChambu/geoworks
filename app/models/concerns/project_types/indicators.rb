@@ -104,16 +104,19 @@ module ProjectTypes::Indicators
       end
 
       if chart.group_field.key != 'app_usuario' && chart.group_field.key !='app_estado'
-        @field_group = "projects.properties->>'"+ chart.group_field.key + "'"
-        @field_select += ", projects.properties->>'" + chart.group_field.key + "' as name "
+        @field_group = validate_type_field(chart.group_field)
+        @field_select +=", " +  validate_type_field(chart.group_field) + " as name "
       end
       data =  data.select(@field_select).group(@field_group).order(@field_group)
       @data = data
     end
 
     def validate_type_field(field)
-        if field.field_type.name ='Numerico'
+
+        if field.field_type.name == 'Numerico'
           return "(projects.properties->>'#{field.key}')::numeric"
+        elsif field.field_type.name == 'Listado (opción multiple)'
+          return "jsonb_array_elements_text(projects.properties->'#{field.key}')"
         else
           return "projects.properties->>'#{field.key}'"
     end
@@ -216,7 +219,7 @@ module ProjectTypes::Indicators
 
           field_select = chart.sql_sentence
         else
-          field_select = analysis_type(chart.analysis_type.name, "projects.properties->>'#{chart.project_field.key}'", project_type_id) + ' as count'
+          field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
 
           conditions_field = chart.condition_field
         end
@@ -241,12 +244,11 @@ module ProjectTypes::Indicators
     def analysis_type(type, field, project_type_id)
    
       type_field = ProjectField.where(name: field, project_type_id: project_type_id).first
-
-      if type_field.field_type_id == '7'
-        field = "jsonb_array_elements(projects.properties->'#{field}')"
+      if type_field.field_type_id == 7 && !type_field.nil?
+        #field = "jsonb_array_elements_text(projects.properties->'#{field}')"
+        field = ' count(*)'
       else
         field = "projects.properties->>'#{field}'"
-      end
       case type
       when 'sum'
         query = " #{type}(( #{field} )::numeric) "
@@ -261,6 +263,7 @@ module ProjectTypes::Indicators
       when 'weighted_average'
         query = "case sum((properties->>'oferta')::numeric) when 0 then 0 else  sum((properties->>'" + field+ "')::numeric * (properties->>'oferta')::numeric) / sum((properties->>'oferta')::numeric) end "
       end
+    end
     end
   end
 end
