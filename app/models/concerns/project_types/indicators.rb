@@ -244,8 +244,7 @@ module ProjectTypes::Indicators
     def analysis_type(type, field, project_type_id)
    
       type_field = ProjectField.where(name: field, project_type_id: project_type_id).first
-      if type_field.field_type_id == 7 && !type_field.nil?
-        #field = "jsonb_array_elements_text(projects.properties->'#{field}')"
+      if !type_field.nil? && type_field.field_type.name =='Listado (opción multiple)'
         field = ' count(*)'
       else
         field = "projects.properties->>'#{field}'"
