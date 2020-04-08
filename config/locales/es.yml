@@ -16,7 +16,7 @@ es:
   indicators: 'Indicadores'
   dashboards: 'Tableros'
   project_types: 'Proyectos'
-  layers: 'Capas'
+  layers: 'Capas Externas'
   regexp: 'Expresiones Regulares'
   buttons:
     search: Buscar
@@ -61,7 +61,7 @@ es:
     next: Siguiente
     previous: Anterior
   menu:
-    users: 
+    users:
       title: Usuarios
       edit: Editar
     customers: Clientes
@@ -78,7 +78,7 @@ es:
       poi_sources: Fuentes de Poi
       load_locations: Cargar Localidades
       generate_deliveries: Generar Entregas
-      extended_listings: LED 
+      extended_listings: LED
       categories: categorias
   date:
     abbr_day_names:
@@ -90,7 +90,7 @@ es:
     - vie
     - sáb
     abbr_month_names:
-    - 
+    -
     - ene
     - feb
     - mar
@@ -116,7 +116,7 @@ es:
       long: ! '%d de %B de %Y'
       short: ! '%d de %b'
     month_names:
-    - 
+    -
     - enero
     - febrero
     - marzo
@@ -231,7 +231,7 @@ es:
       too_long: es demasiado largo (%{count} caracteres máximo)
       too_short: es demasiado corto (%{count} caracteres mínimo)
       wrong_length: no tiene la longitud correcta (%{count} caracteres exactos)
-        
+
     template:
       body: ! 'Se encontraron problemas con los siguientes campos:'
       header:
@@ -323,13 +323,13 @@ es:
         other: "Cadenas"
       food_type:
         one: "Tipo de Comida"
-        other: "Tipos de Comida"        
+        other: "Tipos de Comida"
       poi_type:
         one: "Tipo de Poi"
         other: "Tipos de Poi"
       poi_sub_type:
         one: "Subtipo de Poi"
-        other: "Subtipos de Poi"        
+        other: "Subtipos de Poi"
       poi:
         one: "Poi"
         other: "Pois"
@@ -338,10 +338,10 @@ es:
         other: "Cargas"
       poi_source:
         one: "Fuente de Poi"
-        other: "Fuentes de Poi"        
+        other: "Fuentes de Poi"
       street_type:
         one: "Tipo de Calle"
-        other: "Tipos de Calle"        
+        other: "Tipos de Calle"
       restaurant_type:
         one: "Tipo de Restaurant"
         other: "Tipos de Restaurant"
@@ -378,11 +378,11 @@ es:
         name: "Nombre"
         identifier: "Identificador"
         poi_type_id: "Tipo de Poi"
-        objetive: "Objetivo" 
+        objetive: "Objetivo"
       street_type:
         id: "ID"
         name: "Nombre"
-      restaurant_type: 
+      restaurant_type:
         id: "ID"
         name: "Nombre"
       poi_status:
@@ -446,7 +446,7 @@ es:
         poi_load_id: "ID Grupo de Carga"
         p_action_id: "Poi Accion"
         last_update: "Ultima Modificación"
-      geo_edition:  
+      geo_edition:
         street: Calle
         Paridad: Paridad
         code: Código
@@ -490,11 +490,11 @@ es:
         payment_methods: Metodos de Pago
         light: Ligero
         motorcycle_parking_spaces: Estacionamiento para Motocicletas
-        family_friendly: 
+        family_friendly:
         carwash: Lavado de Autos
         parking_disc:
         parking_ticket: Estacionamiento Ticket
-        gate: Portón 
+        gate: Portón
         monitored: Monitoreado
         none: Nada
         total_space: Total de Espacios
@@ -503,7 +503,7 @@ es:
         trend: Tendencia
         total_disabled_space: Total Espacio para Discapacitados
         available_disabled_space: Disponible Espacio para Discapacitados
-        machine_readable: Maquina 
+        machine_readable: Maquina
         maximum_duration: Maxima Duracion
 
       poi_address:
