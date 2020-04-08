@@ -76,17 +76,17 @@ module ProjectTypes::Indicators
       @data = data
     end
 
-    def filters_simple data, chart 
+    def filters_simple data, chart, project_type_id
       if chart.project_field.key == 'app_estado'
-        @field_select = analysis_type(chart.analysis_type.name, 'project_statuses.name') + ' as count'
+        @field_select = analysis_type(chart.analysis_type.name, 'project_statuses.name', project_type_id) + ' as count'
       end
 
       if chart.project_field.key == 'app_usuario'
-        @field_select = analysis_type(chart.analysis_type.name, 'users.name') + ' as count'
+        @field_select = analysis_type(chart.analysis_type.name, 'users.name', project_type_id) + ' as count'
       end
 
       if chart.project_field.key != 'app_usuario' && chart.project_field.key !='app_estado'
-        @field_select = analysis_type(chart.analysis_type.name, "projects.properties->>'#{chart.project_field.key}'") + ' as count'
+        @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
       end
 
       if !chart.condition_field.blank?
@@ -163,7 +163,7 @@ module ProjectTypes::Indicators
             if chart.advanced_kpi == true
               filters_for_sql = filters_for_sql @data, chart
             else
-              filters_simple = filters_simple @data, chart
+              filters_simple = filters_simple @data, chart, project_type_id
             end
             conditions_on_the_fly =  filters_on_the_fly @data, data_conditions
             @items["serie#{i}"] = @data
@@ -216,7 +216,7 @@ module ProjectTypes::Indicators
 
           field_select = chart.sql_sentence
         else
-          field_select = analysis_type(chart.analysis_type.name, "projects.properties->>'#{chart.project_field.key}'") + ' as count'
+          field_select = analysis_type(chart.analysis_type.name, "projects.properties->>'#{chart.project_field.key}'", project_type_id) + ' as count'
 
           conditions_field = chart.condition_field
         end
@@ -238,7 +238,15 @@ module ProjectTypes::Indicators
 @querys
   end
 
-    def analysis_type(type, field)
+    def analysis_type(type, field, project_type_id)
+   
+      type_field = ProjectField.where(name: field, project_type_id: project_type_id).first
+
+      if type_field.field_type_id == '7'
+        field = "jsonb_array_elements(projects.properties->'#{field}')"
+      else
+        field = "projects.properties->>'#{field}'"
+      end
       case type
       when 'sum'
         query = " #{type}(( #{field} )::numeric) "
