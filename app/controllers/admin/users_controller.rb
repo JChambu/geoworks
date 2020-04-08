@@ -11,7 +11,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def search_roles
-    @r = Role.search_roles_for_tenant params
+    @r = Role.search_roles_for_tenant params['customer_id']
   end
 
   def search_fields
@@ -45,9 +45,9 @@ class Admin::UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
-    @current_tenant = Apartment::Tenant.current
-    @customer = Customer.where(subdomain: current_tenant).first
-    @role_id =  UserCustomer.where(user_id: params[:id]).where(customer_id: @customer.id).pluck(:role_id).first
+    @user_customer =  UserCustomer.where(user_id: params[:id]).first
+    params['customer_id']  = @user_customer.customer_id
+    @roles = search_roles 
   end
 
   # POST /users
@@ -76,15 +76,10 @@ class Admin::UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
-    @current_tenant = Apartment::Tenant.current
-    customer_id = Customer.where(name: @current_tenant)
-    user_id = current_user.id
-    user_customer = UserCustomer.where(customer_id: customer_id).where(user_id: params[:id])
     respond_to do |format|
-      if @user.update(user_params)     
-        user_customer = user_customer.update(role_id: params[:role_id]['id'].to_i )
-        user_filters = User.save_filters params
-        UserMailer.new_user(@user).deliver_now
+      if @user.update(user_params)
+        @user_customer = UserCustomer.where(user_id: params[:id], customer_id: params[:user][:customer_id])
+        @user_customer.update(role_id: params[:user][:role_id])
         format.html { redirect_to admin_users_path() }
         format.json { head :no_content }
       else

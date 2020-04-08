@@ -5,7 +5,7 @@ module CustomersHelper
   end
 
   def customers_for_select 
-    Customer.all.map {|customer| [customer.name, customer.name] }
+    Customer.all.map {|customer| [customer.name, customer.id] }
   end
 
   def current_tenement_helper
