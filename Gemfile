@@ -40,7 +40,7 @@ gem 'rgeo-activerecord'
 gem 'rgeo-shapefile'
 gem 'rgeo-geojson'
 gem 'activerecord-postgis-adapter'
-gem 'will_paginate-bootstrap' 
+gem 'will_paginate-bootstrap'
 gem 'simple_form'
 gem 'paper_trail'
 gem 'validates_email_format_of'
@@ -90,4 +90,3 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 group :production do
     gem 'passenger'
 end
-
