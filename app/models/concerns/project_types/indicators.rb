@@ -88,7 +88,6 @@ module ProjectTypes::Indicators
       if chart.project_field.key != 'app_usuario' && chart.project_field.key !='app_estado'
         @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
       end
-
       if !chart.condition_field.blank?
         condition_field_custom =  validate_type_field(chart.condition_field)
         data =  data.where("#{condition_field_custom } #{chart.filter_input}  '#{chart.input_value}'")
@@ -104,22 +103,21 @@ module ProjectTypes::Indicators
       end
 
       if chart.group_field.key != 'app_usuario' && chart.group_field.key !='app_estado'
-        @field_group = validate_type_field(chart.group_field)
-        @field_select +=", " +  validate_type_field(chart.group_field) + " as name "
+        @field_group = validate_type_field(chart.group_field, 'group')
+        @field_select +=", " +  validate_type_field(chart.group_field, 'group') + " as name "
       end
       data =  data.select(@field_select).group(@field_group).order(@field_group)
       @data = data
     end
 
-    def validate_type_field(field)
-
-        if field.field_type.name == 'Numerico'
-          return "(projects.properties->>'#{field.key}')::numeric"
-        elsif field.field_type.name == 'Listado (opción multiple)'
-          return "jsonb_array_elements_text(projects.properties->'#{field.key}')"
-        else
-          return "projects.properties->>'#{field.key}'"
-    end
+    def validate_type_field(field, method = nil)
+      if field.field_type.name == 'Numerico'
+        return "(projects.properties->>'#{field.key}')::numeric"
+      elsif field.field_type.name == 'Listado (opción multiple)' && method == 'group'
+        return "jsonb_array_elements_text(projects.properties->'#{field.key}')"
+      else
+        return "projects.properties->>'#{field.key}'"
+      end
     end
         
     def filters_on_the_fly data, data_conditions
@@ -244,9 +242,9 @@ module ProjectTypes::Indicators
     def analysis_type(type, field, project_type_id)
    
       type_field = ProjectField.where(name: field, project_type_id: project_type_id).first
-      if !type_field.nil? && type_field.field_type.name =='Listado (opción multiple)'
+      if !type_field.nil? && (type_field.field_type.name =='Listado (opción multiple)' || type_field.field_type.name == 'Texto')
         field = ' count(*)'
-      else
+      elsif  !type_field.nil? && type_field.field_type.name =='Listado (opción multiple)'
         field = "projects.properties->>'#{field}'"
       case type
       when 'sum'
