@@ -18,6 +18,10 @@ es:
   project_types: 'Proyectos'
   layers: 'Capas Externas'
   regexp: 'Expresiones Regulares'
+  exception_handler:
+    not_found: "Página no encontrada"
+    unauthorized: "No autorizado"
+    internal_server_error: "%{status}"
   buttons:
     search: Buscar
     validated: Buscar Validados de esta semana

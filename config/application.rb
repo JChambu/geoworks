@@ -31,5 +31,13 @@ module Geoworks
     PaperTrail.serializer = JSON
     #config.active_job.queue_adapter = :delayed_job
     #config.active_record.schema_format = :sql
+    config.exception_handler = {
+      dev: true, # allows you to turn ExceptionHandler "on" in development
+      exceptions: {
+        :all => {
+          layout: "exception", # define layout
+        },
+      }
+    }
   end
 end
