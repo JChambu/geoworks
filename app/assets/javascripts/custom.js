@@ -738,7 +738,7 @@ function init_chart_doughnut(size_box = null){
                     stacked: stacked,
                     scaleLabel: {
                       display: true,
-                      labelString: label_x_axis,
+                      labelString: label_y_axis_left, // invertido para horizontalBar
                       fontColor: '#e9ecef',
                     },
                     gridLines: {
@@ -751,7 +751,7 @@ function init_chart_doughnut(size_box = null){
                     stacked: stacked,
                     scaleLabel: {
                       display: true,
-                      labelString: label_y_axis_left,
+                      labelString: label_x_axis, // invertido para horizontalBar
                       fontColor: '#e9ecef',
                     },
                     ticks: {
