@@ -192,7 +192,6 @@ function init_chart_doughnut(size_box = null){
           var tick_min_left
           var tick_max_left
           var tick_step_left
-          var tick_substep_left
           var tick_min_right
           var tick_max_right
           var count_series = 0;
@@ -248,12 +247,6 @@ function init_chart_doughnut(size_box = null){
                 if (tick_step_left == null) {
                   tick_step_left = 0;
                 }
-
-                tick_substep_left = value['substep_x'];
-                if (tick_substep_left == null) {
-                  tick_substep_left = 0;
-                }
-
 
               }
 
