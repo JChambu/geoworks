@@ -239,16 +239,10 @@ function init_chart_doughnut(size_box = null){
                 stacked = value['stack'];
                 data_labelling = value['data_labelling'];
                 scale = value['scale'];
-
                 tick_min_left = value['tick_x_min'];
-                if (tick_min_left == null) {
-                  tick_min_left = 0;
-                }
-
                 tick_max_left = value['tick_x_max'];
-                if (tick_max_left == null) {
-                  tick_max_left = 0;
-                }
+                tick_min_right = value['tick_y_min'];
+                tick_max_right = value['tick_y_max'];
 
                 tick_step_left = value['step_x'];
                 if (tick_step_left == null) {
@@ -260,15 +254,7 @@ function init_chart_doughnut(size_box = null){
                   tick_substep_left = 0;
                 }
 
-                tick_min_right = value['tick_y_min'];
-                if (tick_min_right == null) {
-                  tick_min_right = 0;
-                }
 
-                tick_max_right = value['tick_y_max'];
-                if (tick_max_right == null) {
-                  tick_max_right = 0;
-                }
               }
 
               // Extraemos el array con los datos de la serie
@@ -626,15 +612,24 @@ function init_chart_doughnut(size_box = null){
                     display: 'true',
                     type: 'linear',
                     ticks: {
-                      suggestedMin: parseInt(tick_min_left),
-                      suggestedMax: parseInt(tick_max_left),
                       stepSize: parseInt(tick_step_left),
                       callback: function(label, index, labels) {
                         label = label.toLocaleString('es-ES')
                         return label;
                       },
-                      beginAtZero: true,
                       fontColor: '#FDFEFE'
+                    },
+                    beforeBuildTicks: function(scale) {
+                      // Aplica ticks custom si se ingresan valores
+                      if (tick_min_left == null) {
+                        scale.min = 0
+                      } else {
+                        scale.min = parseInt(tick_min_left)
+                      }
+                      if (tick_max_left != null) {
+                        scale.max = parseInt(tick_max_left)
+                      }
+                      return;
                     },
                     stacked: stacked,
                     scaleLabel: {
@@ -651,8 +646,24 @@ function init_chart_doughnut(size_box = null){
                     display: display_right_y_axis,
                     type: 'linear',
                     ticks: {
-                      suggestedMin: parseInt(tick_min_right),
-                      suggestedMax: parseInt(tick_max_right),
+                      stepSize: parseInt(tick_step_left),
+                      callback: function(label, index, labels) {
+                        label = label.toLocaleString('es-ES')
+                        return label;
+                      },
+                      fontColor: '#FDFEFE',
+                    },
+                    beforeBuildTicks: function(scale) {
+                      // Aplica ticks custom si se ingresan valores
+                      if (tick_min_right == null) {
+                        scale.min = 0
+                      } else {
+                        scale.min = parseInt(tick_min_right)
+                      }
+                      if (tick_max_right != null) {
+                        scale.max = parseInt(tick_max_right)
+                      }
+                      return;
                     },
                     stacked: stacked,
                     scaleLabel: {
@@ -660,6 +671,7 @@ function init_chart_doughnut(size_box = null){
                       labelString: label_y_axis_right,
                     },
                     gridLines: {
+                      color: "#626567",
                       drawOnChartArea: false,
                     },
                   }]
