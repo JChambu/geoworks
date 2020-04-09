@@ -1,9 +1,20 @@
 $("#modal-window").find(".modal-content").html("<%= j (render 'form') %>");
 
+// Oculta los elementos por defecto
+$('.hide-div').hide();
+
+// Muestra los que corresponden al tipo de gráfico
 var graph = '<%= @chart_type%>'
 if (graph == 'line' || graph == 'area' || graph == 'point') {
     graph = 'bar'
 }
-$('.hide-div').hide();
 $('.'+graph).show();
+
+// Modifica los labels de los ejes para horizontalBar
+if (graph == 'horizontalBar') {
+  $('#eje_vertical').text('Eje X:');
+  $('#eje_horizontal').text('Eje Y:');
+}
+
+// Lanza el modal
 $("#modal-window").modal();

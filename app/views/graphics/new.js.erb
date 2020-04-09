@@ -1,7 +1,19 @@
 $("#modal-window").find(".modal-content").html("<%= j (render 'form') %>");
+
+// Oculta los elementos por defecto
 $('.hide-div').hide();
-  var graph = Navarra.dashboards.config.graph_id;
-    $('.'+graph).show();
+
+// Muestra los que corresponden al tipo de gráfico
+var graph = Navarra.dashboards.config.graph_id;
+$('.'+graph).show();
+
+// Si es barra horizontal, cambia los text de los ejes
+if (graph == 'horizontalBar') {
+  $('#eje_vertical').text('Eje X:');
+  $('#eje_horizontal').text('Eje Y:');
+}
+
+// Lanza el modal
 $("#modal-window").modal();
 
 // Cierra dropdown
