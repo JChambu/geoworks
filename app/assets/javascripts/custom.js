@@ -716,15 +716,24 @@ function init_chart_doughnut(size_box = null){
                   xAxes: [{
                     display: true,
                     ticks: {
-                      suggestedMin: parseInt(tick_min_left),
-                      suggestedMax: parseInt(tick_max_left),
                       stepSize: parseInt(tick_step_left),
                       callback: function(label, index, labels) {
                         label = label.toLocaleString('es-ES')
                         return label;
                       },
-                      beginAtZero: true,
                       fontColor: '#FDFEFE'
+                    },
+                    beforeBuildTicks: function(scale) {
+                      // Aplica ticks custom si se ingresan valores
+                      if (tick_min_left == null) {
+                        scale.min = 0
+                      } else {
+                        scale.min = parseInt(tick_min_left)
+                      }
+                      if (tick_max_left != null) {
+                        scale.max = parseInt(tick_max_left)
+                      }
+                      return;
                     },
                     stacked: stacked,
                     scaleLabel: {
