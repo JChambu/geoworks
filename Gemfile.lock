@@ -110,6 +110,10 @@ GEM
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     erubi (1.8.0)
+    exception_handler (0.8.0.0)
+      bundler
+      rails (>= 4.2.0)
+      responders
     execjs (2.7.0)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
@@ -340,6 +344,7 @@ DEPENDENCIES
   daemons
   delayed_job_active_record
   devise
+  exception_handler (~> 0.8.0.0)
   figaro
   font-awesome-rails!
   foreman

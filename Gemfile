@@ -57,6 +57,7 @@ gem 'geocoder'
 #gem 'react-rails'
 #gem 'webpacker'
 #gem 'webpacker-react', "~> 0.3.2"
+gem 'exception_handler', '~> 0.8.0.0'
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
