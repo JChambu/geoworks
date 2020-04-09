@@ -729,7 +729,8 @@ function init_chart_doughnut(size_box = null){
                     stacked: stacked,
                     scaleLabel: {
                       display: true,
-                      labelString: label_x_axis
+                      labelString: label_x_axis,
+                      fontColor: '#e9ecef',
                     },
                     gridLines: {
                       drawOnChartArea: true,
@@ -741,7 +742,8 @@ function init_chart_doughnut(size_box = null){
                     stacked: stacked,
                     scaleLabel: {
                       display: true,
-                      labelString: label_y_axis_left
+                      labelString: label_y_axis_left,
+                      fontColor: '#e9ecef',
                     },
                     ticks: {
                       autoSkip: false,
