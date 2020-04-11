@@ -244,7 +244,7 @@ module ProjectTypes::Indicators
       type_field = ProjectField.where(name: field, project_type_id: project_type_id).first
       if !type_field.nil? && (type_field.field_type.name =='Listado (opción multiple)' || type_field.field_type.name == 'Texto')
         field = ' count(*)'
-      elsif  !type_field.nil? && type_field.field_type.name =='Listado (opción multiple)'
+      else
         field = "projects.properties->>'#{field}'"
       case type
       when 'sum'
