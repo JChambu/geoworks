@@ -87,7 +87,7 @@ Navarra.geomaps = function (){
     });
     rose.addTo(mymap)
 
-    var editableLayers = new L.FeatureGroup();
+    editableLayers = new L.FeatureGroup();
     mymap.addLayer(editableLayers);
     var drawControl = new L.Control.Draw({
       draw: {
@@ -219,13 +219,11 @@ Navarra.geomaps = function (){
     mymap.on('draw:drawstart', function(e){
       Navarra.dashboards.config.draw_disabled = false;
       editableLayers.eachLayer(function(layer){
-            editableLayers.removeLayer(layer);
+        editableLayers.removeLayer(layer);
       })
     })
     mymap.on('draw:created', function(e) {
-      console.log(e);
-
-      var size_box=[];
+      size_box = [];
       var arr1 = []
       var type = e.layerType,
         layer = e.layer;
@@ -234,9 +232,9 @@ Navarra.geomaps = function (){
       arr1 = LatLngsToCoords(polygon[0]);
       arr1.push(arr1[0])
       size_box.push(arr1);
+      Navarra.dashboards.config.size_polygon.push(arr1);
       init_kpi(size_box);
       init_chart_doughnut(size_box);
-      Navarra.dashboards.config.size_box = size_box;
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
       if (heatmap_actived != ''){
         Navarra.geomaps.heatmap_data();
@@ -244,15 +242,16 @@ Navarra.geomaps = function (){
     })
 
     mymap.on('draw:deleted', function(e){
-        Navarra.dashboards.config.size_box = mymap.getBounds();
+      Navarra.dashboards.config.size_box = mymap.getBounds();
+      Navarra.dashboards.config.size_polygon = [];
       Navarra.dashboards.config.draw_disabled = true;
-        size_box=[];
-        init_kpi();
-        init_chart_doughnut();
-        var heatmap_actived = Navarra.project_types.config.heatmap_field;
-        if (heatmap_actived != ''){
-          Navarra.geomaps.heatmap_data();
-        }
+      size_box=[];
+      init_kpi();
+      init_chart_doughnut();
+      var heatmap_actived = Navarra.project_types.config.heatmap_field;
+      if (heatmap_actived != ''){
+        Navarra.geomaps.heatmap_data();
+      }
     })
 
   }//end function init
@@ -262,12 +261,15 @@ Navarra.geomaps = function (){
     return bounds;
   }
   function show_kpis(){
-    size=[];
-    size_box = mymap.getBounds();
-    Navarra.dashboards.config.size_box = size_box;
-    init_kpi();
-    init_chart_doughnut();
-
+    if(Navarra.dashboards.config.size_polygon.length == 0){
+      Navarra.dashboards.config.size_box = mymap.getBounds();
+      init_kpi();
+      init_chart_doughnut();
+    }else{
+      size_polygon = Navarra.dashboards.config.size_polygon;
+      init_kpi(size_polygon);
+      init_chart_doughnut(size_polygon);
+    }
   }
   var LatLngToCoords = function (LatLng, reverse) { // (LatLng, Boolean) -> Array
     var lat = parseFloat(LatLng.lat),
@@ -288,7 +290,6 @@ Navarra.geomaps = function (){
   }
   function onMapZoomedMoved(e) {
     checked = Navarra.dashboards.config.draw_disabled;
-    console.log(checked);
     if(checked){
       show_kpis();
     }
@@ -362,12 +363,7 @@ Navarra.geomaps = function (){
         }
         project_current.addTo(mymap);
       }
-
-    checked = $('#select').hasClass('active');
-    if (!checked){
-      init_kpi();
-      init_chart_doughnut();
-    }
+    show_kpis();
   }
 
   function point_colors_data(){
@@ -476,14 +472,13 @@ Navarra.geomaps = function (){
         ss = [];
       }
     }
-    init_kpi();
-    init_chart_doughnut();
+    show_kpis();
   }
 
   function heatmap_data(){
 
     var type_box = 'extent';
-    size_box = Navarra.dashboards.config.size_box;
+    size_box = Navarra.dashboards.config.size_polygon;
     var data_conditions = {}
     if (size_box.length > 0 ){
       var type_box = 'polygon';

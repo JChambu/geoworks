@@ -37,6 +37,7 @@ Navarra.dashboards.config = {
   "graph_id":'',
   draw_disabled: true,
   size_box: [],
+  size_polygon: [],
   name_layer: '',
   type_geometry: '',
   current_tenement: '',
@@ -117,7 +118,6 @@ Navarra.dashboards.action_show = function(){
       if (heatmap_actived != ''){
         Navarra.geomaps.heatmap_data();
       }
-      //init_chart_doughnut();
 
       resize_graphics();
     });
