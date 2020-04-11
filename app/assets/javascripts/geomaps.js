@@ -7,14 +7,14 @@ Navarra.geomaps = function (){
   var size_box = [];
   var init= function() {
 
-  url = window.location.hostname;
-  var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    url = window.location.hostname;
+    var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       updateWhenIdle: true,
       reuseTiles: true
     });
 
-  var grayscale =L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    var grayscale =L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
       attribution: '',
       id: 'mapbox.light',
       accessToken: 'pk.eyJ1IjoiZmxhdmlhYXJpYXMiLCJhIjoiY2ppY2NzMm55MTN6OTNsczZrcGFkNHpoOSJ9.cL-mifEoJa6szBQUGnLmrA',
@@ -22,11 +22,11 @@ Navarra.geomaps = function (){
       reuseTiles: true
     });
 
-  var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     });
 
-  var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 19
@@ -87,6 +87,112 @@ Navarra.geomaps = function (){
     });
     rose.addTo(mymap)
 
+    var editableLayers = new L.FeatureGroup();
+    mymap.addLayer(editableLayers);
+    var drawControl = new L.Control.Draw({
+      draw: {
+        polygon: true,
+        rectangle: false,
+        polyline: false,
+        circle: false,
+        marker: false
+
+      },
+      edit: {
+        featureGroup: editableLayers,
+        edit: false,
+        remove: true
+
+      }
+    });
+    L.drawLocal = {
+      draw: {
+        toolbar: {
+          actions: {
+            title: 'Cancel drawing',
+            text: 'Cancelar'
+          },
+          finish: {
+            title: 'Finish drawing',
+            text: 'Finalizar'
+          },
+          undo: {
+            title: 'Delete last point drawn',
+            text: 'Eliminar el último punto'
+          },
+          buttons: {
+            polygon: 'Polígono',
+          }
+        },
+        handlers: {
+          circle: {
+            tooltip: {
+              start: 'Haga click en el mapa y arrastre para dibujar un círculo.'
+            },
+            radius: 'Radio'
+          },
+          polygon: {
+            tooltip: {
+              start: 'Haga click para comenzar a dibujar el polígono.',
+              cont: 'Haga click para continuar dibujando el polígono.',
+              end: 'Haga click en el primer punto para cerrar este polígono.'
+            }
+          },
+          polyline: {
+            error: '<strong>Error:</strong> los bordes del polígono no pueden cruzarse.',
+            tooltip: {
+              start: 'Click to start drawing line.',
+              cont: 'Click to continue drawing line.',
+              end: 'Click last point to finish line.'
+            }
+          },
+          rectangle: {
+            tooltip: {
+              start: 'Click and drag to draw rectangle.'
+            }
+          },
+          simpleshape: {
+            tooltip: {
+              end: 'Suelte el mouse para terminar de dibujar.'
+            }
+          }
+        }
+      },
+      edit: {
+        toolbar: {
+          actions: {
+            save: {
+              title: 'Save changes',
+              text: 'Guardar'
+            },
+            cancel: {
+              title: 'Cancel editing, discards all changes',
+              text: 'Cancelar'
+            },
+            clearAll: {
+              title: 'Clear all layers',
+              text: 'Limpiar todo'
+            }
+          },
+          buttons: {
+            edit: 'Editar',
+            editDisabled: 'Nada para editar',
+            editRemove: 'Eliminar'
+          }
+        },
+        handlers: {
+          edit: {
+            tooltip: {
+              text: 'Drag handles or markers to edit features.',
+              subtext: 'Click cancel to undo changes.'
+            }
+          }
+        }
+      }
+    };
+
+    mymap.addControl(drawControl);
+
     // Agrega el zoom al mapa
     L.control.zoom({
       position:'bottomright'
@@ -110,22 +216,36 @@ Navarra.geomaps = function (){
     if (markers !=undefined){
       mymap.removeLayer(markers);
     }
+    mymap.on('draw:drawstart', function(e){
+      Navarra.dashboards.config.draw_disabled = false;
+      editableLayers.eachLayer(function(layer){
+            editableLayers.removeLayer(layer);
+      })
+    })
+    mymap.on('draw:created', function(e) {
+      console.log(e);
 
-    $('#select').on('click', function(event) {
-      checked = $('#select').hasClass('active');
+      var size_box=[];
+      var arr1 = []
+      var type = e.layerType,
+        layer = e.layer;
+      polygon = layer.getLatLngs();
+      editableLayers.addLayer(layer);
+      arr1 = LatLngsToCoords(polygon[0]);
+      arr1.push(arr1[0])
+      size_box.push(arr1);
+      init_kpi(size_box);
+      init_chart_doughnut(size_box);
+      Navarra.dashboards.config.size_box = size_box;
+      var heatmap_actived = Navarra.project_types.config.heatmap_field;
+      if (heatmap_actived != ''){
+        Navarra.geomaps.heatmap_data();
+      }
+    })
 
-
-      if (checked){
-        Navarra.dashboards.config.draw_disabled = true;
-
-        $('#select').removeClass('active');
-        $(".fa-draw-polygon").css("color", "#9b9b9b");
-
-        editableLayers.eachLayer(function (layer) {
-          mymap.removeLayer(layer);
-        });
-        HandlerPolygon.disable();
-         Navarra.dashboards.config.size_box = mymap.getBounds();
+    mymap.on('draw:deleted', function(e){
+        Navarra.dashboards.config.size_box = mymap.getBounds();
+      Navarra.dashboards.config.draw_disabled = true;
         size_box=[];
         init_kpi();
         init_chart_doughnut();
@@ -133,42 +253,7 @@ Navarra.geomaps = function (){
         if (heatmap_actived != ''){
           Navarra.geomaps.heatmap_data();
         }
-
-      }else{
-
-        Navarra.dashboards.config.draw_disabled = false;
-        $('#select').addClass('active');
-        $(".fa-draw-polygon").css("color", "#d3d800");
-
-        size_box = [];
-        // Initialise the draw control and pass it the FeatureGroup of editable layers
-        editableLayers = new L.FeatureGroup();
-        mymap.addLayer(editableLayers);
-        mymap.doubleClickZoom.disable();
-        poly();
-        mymap.on('draw:created', function(e) {
-        Navarra.dashboards.config.draw_disabled = true;
-          var arr1 = []
-          var type = e.layerType,
-            layer = e.layer;
-          polygon = layer.getLatLngs();
-          editableLayers.addLayer(layer);
-          arr1 = LatLngsToCoords(polygon[0]);
-          arr1.push(arr1[0])
-          size_box.push(arr1);
-          init_kpi(size_box);
-          init_chart_doughnut(size_box);
-          // poly();
-          Navarra.dashboards.config.size_box = size_box;
-          var heatmap_actived = Navarra.project_types.config.heatmap_field;
-          if (heatmap_actived != ''){
-            Navarra.geomaps.heatmap_data();
-          }
-        })
-
-      }
-    });
-
+    })
 
   }//end function init
 
@@ -183,15 +268,6 @@ Navarra.geomaps = function (){
     init_kpi();
     init_chart_doughnut();
 
-  }
-  function poly(){
-    HandlerPolygon = new L.Draw.Polygon(mymap, OpcionesPoligono);
-    HandlerPolygon.enable();
-  }
-  var OpcionesPoligono={
-    shapeOptions: {
-      color: '#d3d800',
-    }
   }
   var LatLngToCoords = function (LatLng, reverse) { // (LatLng, Boolean) -> Array
     var lat = parseFloat(LatLng.lat),
@@ -211,8 +287,9 @@ Navarra.geomaps = function (){
     return coords;
   }
   function onMapZoomedMoved(e) {
-    checked = $('#select').hasClass('active');
-    if(!checked){
+    checked = Navarra.dashboards.config.draw_disabled;
+    console.log(checked);
+    if(checked){
       show_kpis();
     }
   }
@@ -238,25 +315,25 @@ Navarra.geomaps = function (){
         Navarra.geomaps.heatmap_data();
       }
 
-    var owner = Navarra.project_types.config.owner;
-    var user_name = Navarra.dashboards.config.user_name;
-    if (owner == true){
-      cql_filter += " and app_usuario='"+user_name +"'";
-    }
+      var owner = Navarra.project_types.config.owner;
+      var user_name = Navarra.dashboards.config.user_name;
+      if (owner == true){
+        cql_filter += " and app_usuario='"+user_name +"'";
+      }
       var point_color = Navarra.project_types.config.field_point_colors;
-    switch (type_geometry) {
-      case 'Point':
-        style = 'poi_new';
-        break;
-      case 'LineString':
-        style = 'line';
-        break;
-      case 'Polygon':
-        style = 'polygon_new';
-        break;
-      default:
-        style = 'poi_new';
-    }
+      switch (type_geometry) {
+        case 'Point':
+          style = 'poi_new';
+          break;
+        case 'LineString':
+          style = 'line';
+          break;
+        case 'Polygon':
+          style = 'polygon_new';
+          break;
+        default:
+          style = 'poi_new';
+      }
 
       if(point_color != ''){
         if(typeof(projectss)!=='undefined'){
@@ -313,7 +390,7 @@ Navarra.geomaps = function (){
         }).addTo(mymap);
         ss = [];
       }
-    
+
       if(typeof(projectss)!=='undefined'){
         mymap.removeLayer(projectss);
       }
@@ -335,8 +412,8 @@ Navarra.geomaps = function (){
           });
         }
         var env_f = "color:" + col ;
-          current_tenement = Navarra.dashboards.config.current_tenement;
-          layer_current= current_tenement +":"+ name_layer;
+        current_tenement = Navarra.dashboards.config.current_tenement;
+        layer_current= current_tenement +":"+ name_layer;
         var options = {
 
 
@@ -492,7 +569,7 @@ Navarra.geomaps = function (){
   }
 
   function current_layer(){
-    
+
     name_layer = Navarra.dashboards.config.name_layer;
     var labelLayer;
     $.ajax({

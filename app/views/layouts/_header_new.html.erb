@@ -121,7 +121,6 @@
               <i class="fas fa-globe-americas align-middle" style="font-size: 24px"></i>
             </a>
             <div class="dropdown-menu custom-menu" aria-labelledby="gis_dropdown">
-              <%= link_to "#", class: 'dropdown-item custom-item', id: "select" do %> <i class="fas fa-draw-polygon align-middle" title="Dibujar Polígono" style="font-size: 20px"></i> <% end %>
               <%= link_to project_type_filters_path(@project_type.id), class: 'dropdown-item custom-item', id: "filter",:remote => true do %> <i class="fas fa-filter align-middle" title="Filtrar" style="font-size: 20px"></i> <% end %>
               <%= link_to project_type_heatmap_path(@project_type.id), class: 'dropdown-item custom-item', id: "heatmap", :remote=> true do %> <i class="fas fa-fire align-middle" title="Mapa de Calor" style="font-size: 20px"></i> <% end %>
               <%= link_to project_type_point_colors_path(@project_type.id), class: 'dropdown-item custom-item', id: "point_colors", :remote=> true do %> <i class="fas fa-spinner align-middle" title="Puntos de Colores" style="font-size: 20px"></i> <% end %>
