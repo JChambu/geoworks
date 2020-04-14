@@ -91,7 +91,11 @@ Navarra.geomaps = function (){
     mymap.addLayer(editableLayers);
     var drawControl = new L.Control.Draw({
       draw: {
-        polygon: true,
+        polygon: {
+        	shapeOptions: {
+            	color: '#d3d800'
+            }
+        },
         rectangle: false,
         polyline: false,
         circle: false,
