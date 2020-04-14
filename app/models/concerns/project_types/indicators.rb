@@ -213,17 +213,17 @@ module ProjectTypes::Indicators
               data = query_draw_polygon  size_box, project_type_id
             end
 
-        if !chart.sql_sentence.blank?
-
-          field_select = chart.sql_sentence
-        else
-          field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
-
-          conditions_field = chart.condition_field
-        end
+            if chart.advanced_kpi == true
+              if !chart.sql_sentence.blank?
+                field_select = chart.sql_sentence
+              end
+            else
+              field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
+              conditions_field = chart.condition_field
+            end
         data = filters_on_the_fly data, data_conditions
         if !conditions_field.blank?
-          data =  data.where(" properties->>'" + conditions_field.name + "' " + chart.filter_input + "'#{chart.input_value}'")
+          data =  data.where(" properties->>'" + conditions_field.key + "' " + chart.filter_input + "'#{chart.input_value}'")
         end
         data=   data.select(field_select)
         querys << { "title":"#{chart.title}", "description":"kpi_sin grafico", "data":data, "id": chart.id}
