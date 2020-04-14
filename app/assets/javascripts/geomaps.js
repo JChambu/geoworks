@@ -105,7 +105,7 @@ Navarra.geomaps = function (){
       edit: {
         featureGroup: editableLayers,
         edit: false,
-        remove: false
+        remove: true
       }
     });
     L.drawLocal = {
