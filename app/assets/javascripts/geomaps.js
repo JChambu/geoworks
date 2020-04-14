@@ -101,8 +101,7 @@ Navarra.geomaps = function (){
       edit: {
         featureGroup: editableLayers,
         edit: false,
-        remove: true
-
+        remove: false
       }
     });
     L.drawLocal = {
@@ -715,7 +714,7 @@ Navarra.geomaps = function (){
         if (draw_disabled){
 
           var cc = JSON.parse(info);
-          if (cc['features'].length > 0){ 
+          if (cc['features'].length > 0){
             var prop = cc['features'][0]['properties'];
             project_name_feature = cc['features'][0]['id'];
             project_name = project_name_feature.split('.fid')[0];
