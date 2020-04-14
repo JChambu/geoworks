@@ -5,22 +5,21 @@ module Projects::Scopes
 
     def search_value_for_fields params
       @d = []
-      field = ProjectField.find_by(key: params['project_field_id']) if params['project_field_id'] != 'app_usuario' && params['project_field_id'] !='app_estado'
-      select = "projects.properties->>'#{field.key}' as p_name" if params['project_field_id'] != 'app_usuario' && params['project_field_id'] !='app_estado'
-      select = "users.name as p_name"  if params['project_field_id'] == 'app_usuario' 
-      select = "project_statuses.name as p_name" if params['project_field_id'] == 'app_estado'
+      field = ProjectField.where(key: params['project_field_id']).where( project_type_id: params[:project_type_id]).first if params['project_field_id'] != 'app_usuario' && params['project_field_id'] !='app_estado'
+      if field.field_type.name == 'Listado (opción multiple)'
+        @d = ChoiceListItem.where(choice_list_id: field.choice_list_id).select('name as p_name')
+      else
+        select = "projects.properties->>'#{field.key}' as p_name" if params['project_field_id'] != 'app_usuario' && params['project_field_id'] !='app_estado'
+        select = "users.name as p_name"  if params['project_field_id'] == 'app_usuario' 
+        select = "project_statuses.name as p_name" if params['project_field_id'] == 'app_estado'
 
-      @ss = select
-      @pp = params
-      ddata = Project.joins(:user, :project_status).
-        where(project_type_id: params[:project_type_id]).
-        select(select).
-        group('p_name').
-        order('p_name')
-      ddata.each do |d|
-        @d.push(d)
+        @d = Project.joins(:user, :project_status).
+          where(project_type_id: params[:project_type_id]).
+          select(select).
+          group('p_name').
+          order('p_name')
       end
-      @d
+      @d 
     end
 
     def search_properties_data_for_tenant params
