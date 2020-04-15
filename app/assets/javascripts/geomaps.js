@@ -158,7 +158,7 @@ Navarra.geomaps = function (){
           },
           rectangle: {
             tooltip: {
-              start: 'Click and drag to draw rectangle.'
+              start: 'Haga click en el mapa y arrastre para dibujar un rectángulo.'
             }
           },
           simpleshape: {
@@ -172,11 +172,11 @@ Navarra.geomaps = function (){
         toolbar: {
           actions: {
             save: {
-              title: 'Save changes',
-              text: 'Guardar'
+              title: 'Aplicar cambios',
+              text: 'Aplicar'
             },
             cancel: {
-              title: 'Cancel editing, discards all changes',
+              title: 'Cancelar cambios',
               text: 'Cancelar'
             },
             clearAll: {
@@ -187,7 +187,8 @@ Navarra.geomaps = function (){
           buttons: {
             edit: 'Editar',
             editDisabled: 'Nada para editar',
-            editRemove: 'Eliminar'
+            remove: 'Eliminar',
+            removeDisabled: 'Nada para eliminar'
           }
         },
         handlers: {
@@ -196,7 +197,12 @@ Navarra.geomaps = function (){
               text: 'Drag handles or markers to edit features.',
               subtext: 'Click cancel to undo changes.'
             }
-          }
+          },
+          remove: {
+    				tooltip: {
+    					text: 'Haga click en una geometría para eliminarla.'
+    				}
+    			}
         }
       }
     };
