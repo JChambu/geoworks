@@ -220,8 +220,7 @@ div.custom-menu.show {
   overflow: auto;
 }
 .leaflet-control-layers {
-  border: 2px solid rgba(0, 0, 0, 0.2) !important;
-  background: rgba(58, 63, 68, 0.5) !important;
+  background-color: rgba(58, 63, 68, 0.5) !important;
 }
 .leaflet-control-layers-toggle {
 	background-image: url(asset_path("leaflet/layers.png")) !important;
