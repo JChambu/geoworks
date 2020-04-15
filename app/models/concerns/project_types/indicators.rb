@@ -93,6 +93,7 @@ module ProjectTypes::Indicators
         data =  data.where("#{condition_field_custom } #{chart.filter_input}  '#{chart.input_value}'")
       end
 
+      data = data.where(validate_type_field(chart.group_field, 'group') + " is not null ")
       if chart.group_field.key == 'app_estado'
         @field_group = "project_statuses.name "
         @field_select += ', project_statuses.name  as name'
