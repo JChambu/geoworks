@@ -97,11 +97,14 @@ Navarra.geomaps = function (){
             	color: '#d3d800'
             }
         },
-        rectangle: false,
+        rectangle: {
+        	shapeOptions: {
+            	color: '#d3d800'
+            }
+        },
         polyline: false,
-        circle: false,
-        marker: false
-
+        circle: true,
+        marker: true
       },
       edit: {
         featureGroup: editableLayers,
@@ -126,6 +129,9 @@ Navarra.geomaps = function (){
           },
           buttons: {
             polygon: 'Polígono',
+            rectangle: 'Rectángulo (En desarrollo)',
+            circle: 'Círculo (En desarrollo)',
+            marker: 'Punto (En desarrollo)',
           }
         },
         handlers: {
