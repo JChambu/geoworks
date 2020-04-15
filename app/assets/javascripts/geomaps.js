@@ -129,9 +129,9 @@ Navarra.geomaps = function (){
           },
           buttons: {
             polygon: 'Polígono',
-            rectangle: 'Rectángulo (En desarrollo)',
-            circle: 'Círculo (En desarrollo)',
-            marker: 'Punto (En desarrollo)',
+            rectangle: 'Rectángulo',
+            circle: 'Círculo',
+            marker: 'Punto',
           }
         },
         handlers: {
@@ -202,6 +202,10 @@ Navarra.geomaps = function (){
     };
 
     mymap.addControl(drawControl);
+
+    // Deshabilita los botones Círculo y Marker del toolbar
+    $('.leaflet-draw-draw-circle').addClass('unselectable')
+    $('.leaflet-draw-draw-marker').addClass('unselectable')
 
     // Agrega el zoom al mapa
     L.control.zoom({
