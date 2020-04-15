@@ -209,6 +209,11 @@ Navarra.geomaps = function (){
 
     mymap.addControl(drawControl);
 
+    // Elimina la opción "Eliminar último punto" del toolbar
+    $('.leaflet-draw-draw-polygon').on('click', function() {
+      $('.leaflet-draw-actions > li:nth-child(1) > a').remove()
+    });
+
     // Deshabilita los botones Círculo y Marker del toolbar
     $('.leaflet-draw-draw-circle').addClass('unselectable')
     $('.leaflet-draw-draw-marker').addClass('unselectable')
