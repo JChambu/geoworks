@@ -267,6 +267,9 @@ Navarra.geomaps = function (){
     })
 
     mymap.on('draw:deleted', function(e){
+      editableLayers.eachLayer(function(layer){
+        editableLayers.removeLayer(layer);
+      })
       Navarra.dashboards.config.size_box = mymap.getBounds();
       Navarra.dashboards.config.size_polygon = [];
       Navarra.dashboards.config.draw_disabled = true;
