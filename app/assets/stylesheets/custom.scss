@@ -244,6 +244,11 @@ div.custom-menu.show {
   background-color: rgba(58, 63, 68, 0.5) !important;
 }
 
+/* Modifica el margen del norte de Leaflet */
+.leaflet-rose {
+  margin-right: 3px !important;
+}
+
 /* Modifica el estilo del zoom de Leaflet*/
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
