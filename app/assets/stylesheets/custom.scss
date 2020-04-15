@@ -223,6 +223,23 @@ div.custom-menu.show {
   border: 2px solid rgba(0, 0, 0, 0.2) !important;
   background: rgba(58, 63, 68, 0.5) !important;
 }
+/* Modifica el estilo del toolbar de Leaflet */
+.leaflet-draw-toolbar a {
+	background-image: url(asset_path("leaflet/spritesheet.png")) !important;
+	background-repeat: no-repeat;
+}
+.leaflet-draw-toolbar a:hover {
+	background-image: url(asset_path("leaflet/spritesheet-hover.png")) !important;
+	background-repeat: no-repeat;
+}
+.leaflet-draw-draw-polygon,
+.leaflet-draw-draw-rectangle,
+.leaflet-draw-draw-circle,
+.leaflet-draw-draw-marker,
+.leaflet-draw-edit-edit,
+.leaflet-draw-edit-remove {
+  background-color: rgba(58, 63, 68, 0.5) !important;
+}
 
 /* Modifica el estilo del zoom de Leaflet*/
 .leaflet-control-zoom-in,
