@@ -7,17 +7,18 @@ module Projects::Scopes
       @d = []
       field = ProjectField.where(key: params['project_field_id']).where( project_type_id: params[:project_type_id]).first if params['project_field_id'] != 'app_usuario' && params['project_field_id'] !='app_estado'
       if field.field_type.name == 'Listado (opción multiple)'
-        @d = ChoiceListItem.where(choice_list_id: field.choice_list_id).select('name as p_name')
+        @d.push({field_type_name: field.field_type.name, values: ChoiceListItem.where(choice_list_id: field.choice_list_id).select('name as p_name')})
       else
         select = "projects.properties->>'#{field.key}' as p_name" if params['project_field_id'] != 'app_usuario' && params['project_field_id'] !='app_estado'
         select = "users.name as p_name"  if params['project_field_id'] == 'app_usuario' 
         select = "project_statuses.name as p_name" if params['project_field_id'] == 'app_estado'
 
-        @d = Project.joins(:user, :project_status).
+        query = Project.joins(:user, :project_status).
           where(project_type_id: params[:project_type_id]).
           select(select).
           group('p_name').
           order('p_name')
+        @d.push({field_type_name: field.field_type.name, values: query}) 
       end
       @d 
     end
