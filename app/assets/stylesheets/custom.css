@@ -167,11 +167,6 @@ div.custom-menu.show {
   background-color: rgba(58, 63, 68, 0.4);
 }
 
-/* Modifica el texto del grid de time_slider */
-.irs--flat .irs-grid-text {
-  color: #e8ebef !important;
-  text-shadow: 1px 1px 1px #2c2e34;
-}
 
 /* Indicadores de texto */
 .tile_count {
@@ -308,4 +303,33 @@ div.custom-menu.show {
 .table-tbody-scroll thead, .table-tbody-scroll tbody tr {
   display: table;
   width: 100%;
+}
+
+/* Modifica el estilo del time_slider */
+.irs--flat .irs-from, .irs--flat .irs-to, .irs--flat .irs-single { /* label */
+  color: #484b4f !important;
+  background-color: #d3d800 !important;
+}
+.irs--flat .irs-bar { /* barra */
+  background-color: #d3d800 !important;
+}
+.irs--flat .irs-grid-text { /* texto */
+  color: #e8ebef !important;
+  text-shadow: 1px 1px 1px #2c2e34;
+}
+.irs--flat .irs-grid-pol { /* regla */
+  background-color: #e8ebef !important;
+}
+.irs--flat .irs-line { /* barra fondo */
+  background-color: #e8ebef !important;
+}
+.irs--flat .irs-min, .irs--flat .irs-max { /* label fondo */
+  color: #798088 !important;
+  background-color: #e8ebef !important;
+}
+.irs--flat .irs-handle>i:first-child { /* límite */
+  background-color: #bfc400 !important;
+}
+.irs--flat .irs-from:before, .irs--flat .irs-to:before, .irs--flat .irs-single:before { /* label triángulo */
+  border-top-color: #d3d800 !important;
 }
