@@ -48,7 +48,7 @@ class ProjectType < ApplicationRecord
 
 
   def create_project_statuses
-    ProjectStatus.create(name: 'default', color:"#ff00ee", project_type_id: self.id)
+    ProjectStatus.create(name: 'Default', color:"#f34c48", project_type_id: self.id)
   end
 
   def new_dashboard
