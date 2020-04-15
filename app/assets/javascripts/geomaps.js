@@ -90,6 +90,7 @@ Navarra.geomaps = function (){
     editableLayers = new L.FeatureGroup();
     mymap.addLayer(editableLayers);
     var drawControl = new L.Control.Draw({
+      position: 'topright',
       draw: {
         polygon: {
         	shapeOptions: {
