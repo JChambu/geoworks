@@ -244,7 +244,9 @@ Navarra.geomaps = function (){
     mymap.on('draw:drawstart', function(e){
       const btn_cl = window.document.querySelector('.leaflet-draw-actions li:last-child a' );
       btn_cl.addEventListener('click',function(e){
-        Navarra.dashboards.config.draw_disabled = true;
+      Navarra.dashboards.config.draw_disabled = true;
+      init_kpi();
+      init_chart_doughnut();
       });
 
       Navarra.dashboards.config.draw_disabled = false;
