@@ -5,7 +5,7 @@ module Projects::Scopes
 
     def search_value_for_fields params
       @d = []
-      field = ProjectField.where(key: params['project_field_id']).where( project_type_id: params[:project_type_id]).first if params['project_field_id'] != 'app_usuario' && params['project_field_id'] !='app_estado'
+      field = ProjectField.where(key: params['project_field_id']).where( project_type_id: params[:project_type_id]).first
       if field.field_type.name == 'Listado (opción multiple)'
         @d.push({field_type_name: field.field_type.name, values: ChoiceListItem.where(choice_list_id: field.choice_list_id).select('name as p_name')})
       else
