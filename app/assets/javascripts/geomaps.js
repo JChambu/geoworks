@@ -242,11 +242,17 @@ Navarra.geomaps = function (){
       mymap.removeLayer(markers);
     }
     mymap.on('draw:drawstart', function(e){
+      const btn_cl = window.document.querySelector('.leaflet-draw-actions li:last-child a' );
+      btn_cl.addEventListener('click',function(e){
+        Navarra.dashboards.config.draw_disabled = true;
+      });
+
       Navarra.dashboards.config.draw_disabled = false;
       editableLayers.eachLayer(function(layer){
         editableLayers.removeLayer(layer);
       })
     })
+    
     mymap.on('draw:created', function(e) {
       size_box = [];
       var arr1 = []
