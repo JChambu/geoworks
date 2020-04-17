@@ -242,17 +242,18 @@ Navarra.geomaps = function (){
       mymap.removeLayer(markers);
     }
     mymap.on('draw:drawstart', function(e){
-      const btn_cl = window.document.querySelector('.leaflet-draw-actions li:last-child a' );
-      btn_cl.addEventListener('click',function(e){
-      Navarra.dashboards.config.draw_disabled = true;
-      init_kpi();
-      init_chart_doughnut();
-      });
-
       Navarra.dashboards.config.draw_disabled = false;
       editableLayers.eachLayer(function(layer){
         editableLayers.removeLayer(layer);
       })
+      const btn_cl = window.document.querySelector('.leaflet-draw-actions li:last-child a' );
+      btn_cl.addEventListener('click',function(e){
+      Navarra.dashboards.config.draw_disabled = true;
+      Navarra.dashboards.config.size_box = mymap.getBounds();
+      Navarra.dashboards.config.size_polygon = [];
+      init_kpi();
+      init_chart_doughnut();
+      });
     })
     
     mymap.on('draw:created', function(e) {
