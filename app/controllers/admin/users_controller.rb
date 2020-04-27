@@ -47,19 +47,19 @@ class Admin::UsersController < ApplicationController
   def edit
     @user_customer =  UserCustomer.where(user_id: params[:id]).first
     params['customer_id']  = @user_customer.customer_id
-    @roles = search_roles 
+    @roles = search_roles
   end
 
   # POST /users
   # POST /users.json
   def create
     respond_to do |format|
-      if @user.save      
+      if @user.save
         @user_customers = UserCustomer.new
         @user_customers[:user_id] = @user.id
         @current_tenant = params[:user][:customer_id]
         @customer = Customer.where(subdomain: @current_tenant).first
-        @user_customers[:customer_id] = @customer.id
+        @user_customers[:customer_id] = @current_tenant.to_i
         @user_customers[:role_id] = params[:role_id]['id'].to_i
         @user_customers.save!
         params[:id] = @user.id
