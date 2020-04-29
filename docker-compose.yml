@@ -1,0 +1,14 @@
+version: '3'
+services:
+  db:
+    build: ./postgres
+    image: gw-db
+    container_name: gw-db
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    ports:
+      - "5555:5432"
+    env_file:
+      - docker-env/db.env
+volumes:
+  dbdata:
