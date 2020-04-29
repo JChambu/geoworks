@@ -10,6 +10,17 @@ services:
       - "5555:5432"
     env_file:
       - docker-env/db.env
+  geoserver:
+    image: kartoza/geoserver:2.15.0
+    container_name: gw-geoserver
+    volumes:
+      - ./geoserver/data_dir/:/opt/geoserver/data_dir/
+    ports:
+      - "8600:8080"
+    env_file:
+      - docker-env/geoserver.env
+    depends_on:
+      - db
   app:
     build: .
     image: gw-app
