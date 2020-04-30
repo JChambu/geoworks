@@ -255,7 +255,7 @@ Navarra.geomaps = function (){
       init_chart_doughnut();
       });
     })
-    
+
     mymap.on('draw:created', function(e) {
       size_box = [];
       var arr1 = []
