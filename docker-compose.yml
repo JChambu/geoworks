@@ -16,7 +16,7 @@ services:
     volumes:
       - ./geoserver/data_dir/:/opt/geoserver/data_dir/
     ports:
-      - "8600:8080"
+      - "8080:8080"
     env_file:
       - docker-env/geoserver.env
     depends_on:
