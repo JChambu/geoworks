@@ -21,8 +21,8 @@ POSTGRES_PASSWORD=<your-password>
 
 config/application.yml
 ```
-geoserver_user: <your-user>
-geoserver_password: <your-password>
+GEOSERVER_USER: <your-user>
+GEOSERVER_PASSWORD: <your-password>
 DB_HOST: 'gw-db'
 USER_NAME: <your-user>
 USER_EMAIL: <your-email>
