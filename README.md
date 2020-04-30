@@ -10,23 +10,26 @@ MAX_FILTER_RULES=20
 OPTIMIZE_LINE_WIDTH=false
 FOOTPRINTS_DATA_DIR=/opt/footprints_dir
 GEOWEBCACHE_CACHE_DIR=/opt/geoserver/data_dir/gwc
-GEOSERVER_ADMIN_PASSWORD=<your-password>
+GEOSERVER_ADMIN_PASSWORD=<your-geoserver-password>
 ```
 
 docker-env/db.env
 ```
-POSTGRES_USER=<your-user>
-POSTGRES_PASSWORD=<your-password>
+POSTGRES_USER=<your-postgres-user>
+POSTGRES_PASSWORD=<your-postgres-password>
 ```
 
 config/application.yml
 ```
-GEOSERVER_USER: <your-user>
-GEOSERVER_PASSWORD: <your-password>
-DB_HOST: 'gw-db'
-USER_NAME: <your-user>
-USER_EMAIL: <your-email>
-USER_PASSWORD: <your-password>
+GEOSERVER_USER: '<your-geoserver-user>'
+GEOSERVER_PASSWORD: '<your-geoserver-password>'
+GEOSERVER_HOST: 'gw-geoserver'
+POSTGRES_USER: '<your-postgres-user>'
+POSTGRES_PASSWORD: '<your-postgres-password>'
+POSTGRES_HOST: 'gw-db'
+USER_NAME: '<your-user>'
+USER_EMAIL: '<your-email>'
+USER_PASSWORD: '<your-password>'
 ```
 
 ### Desde el root del proyecto:
