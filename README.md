@@ -202,26 +202,3 @@ PostGIS - PostGIS Database
   </NamedLayer>
 </StyledLayerDescriptor>
 ```
-
-### Fix temporal para cuando no se crea la capa correspondiente al proyecto
-
-Ir a Capas
-
-**Agregar nuevo recurso**
-
-Agregar capa de `geoworks:geoworks`
-
-Elegir el nombre de la capa en la lista y seleccionar "Publicación"
-
-En la pestaña **Datos**
-
-**Encuadres**
-
-- Calcular desde los datos
-- Calcular desde el encuadre nativo
-
-En la pestaña **Publicación**
-
-**Configuración WMS**
-
-- Estilo por defecto: `geoworks:poi_new`
