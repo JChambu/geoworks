@@ -75,7 +75,7 @@ module ProjectTypes::GeoJson
       items = {}
       st1 = JSON.parse(File.read("#{@directory[0]}/#{file_name}.geojson"))
       data = RGeo::GeoJSON.decode(st1, :json_parser => :json)
-      project_status = ProjectStatus.where(project_type_id: self.id, name: 'default').first
+      project_status = ProjectStatus.where(project_type_id: self.id, name: 'Default').first
       data.each do |a|
         if a.geometry.geometry_type.to_s.downcase == self.type_geometry.downcase
           properties = a.properties
