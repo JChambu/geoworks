@@ -19,7 +19,7 @@ default: &default
   postgis_extension: true
   schema_search_path: public, postgis
   encoding: unicode
-  host: <%= ENV['POSTGRES_HOST'] %>
+  host: localhost
   username: postgres
   password: postgres
   # For details on connection pooling, see rails configuration guide
