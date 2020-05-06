@@ -327,13 +327,13 @@ ActiveRecord::Schema.define(version: 20200403175842) do
     t.integer "project_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.point "the_geom"
     t.jsonb "properties_original"
     t.bigint "project_status_id"
-    t.datetime "status_update_at", default: "2020-03-26 03:37:01"
+    t.datetime "status_update_at", default: "2020-04-30 15:48:09"
     t.bigint "user_id"
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
-    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["user_id"], name: "index_projects_on_user_id"

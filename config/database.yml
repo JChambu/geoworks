@@ -17,11 +17,11 @@
 default: &default
   adapter: postgis
   postgis_extension: true
-  schema_search_path: public, postgis 
+  schema_search_path: public, postgis
   encoding: unicode
-  host: localhost
-  username: postgres
-  password: postgres
+  host: <%= ENV['POSTGRES_HOST'] %>
+  username: <%= ENV['POSTGRES_USER'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
@@ -89,5 +89,3 @@ test:
 production:
   <<: *default
   database: geoworks
-  username: postgres
-  password: postgres

@@ -255,7 +255,7 @@ Navarra.geomaps = function (){
       init_chart_doughnut();
       });
     })
-    
+
     mymap.on('draw:created', function(e) {
       size_box = [];
       var arr1 = []
@@ -381,7 +381,7 @@ Navarra.geomaps = function (){
       }else{
         current_tenement = Navarra.dashboards.config.current_tenement;
         layer_current= current_tenement +":"+ name_layer;
-        projectFilterLayer = new MySource("http://"+url+":8080/geoserver/wms", {
+        projectFilterLayer = new MySource("http://"+url+":8080/geoserver/wms", { // TODO: Agregar variable para puerto geoserver
           layers: layer_current,//nombre de la capa (ver get capabilities)
           format: 'image/png',
           transparent: 'true',
@@ -462,7 +462,7 @@ Navarra.geomaps = function (){
           format_options: 'callback:getJson',
           CQL_FILTER: value_filter
         };
-        source = new L.tileLayer.betterWms("http://"+url+":8080/geoserver/wms", options);
+        source = new L.tileLayer.betterWms("http://"+url+":8080/geoserver/wms", options); // TODO: Agregar variable para puerto geoserver
         ss.push(source);
 
         var htmlLegend1and2 = L.control.htmllegend({
@@ -640,7 +640,7 @@ Navarra.geomaps = function (){
     }
     current_tenement = Navarra.dashboards.config.current_tenement;
     layer_current= current_tenement +":"+ name_layer;
-    layerProjects = new MySource("http://"+url+":8080/geoserver/wms", {
+    layerProjects = new MySource("http://"+url+":8080/geoserver/wms", { // TODO: Agregar variable para puerto geoserver
       layers: layer_current,//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
@@ -693,7 +693,7 @@ Navarra.geomaps = function (){
 
             current_tenement = Navarra.dashboards.config.current_tenement;
             layer_current= current_tenement +":"+ sub_layer;
-            layerSubProjects = new MySource("http://"+url+":8080/geoserver/wms", {
+            layerSubProjects = new MySource("http://"+url+":8080/geoserver/wms", { // TODO: Agregar variable para puerto geoserver
               layers: layer_current,//nombre de la capa (ver get capabilities)
               format: 'image/png',
               transparent: 'true',
