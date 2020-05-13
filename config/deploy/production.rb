@@ -11,7 +11,7 @@
   set :rails_env, 'production'
   #set :default_env, { 'NODE_ENV' => 'production' }
 
-  server 'gis_staging.com', user: 'deployer', roles: %w{ web app}, my_property: :my_value
+  server 'geoworks.com.ar', user: 'deployer', roles: %w{ web app}, my_property: :my_value
 # role-based syntax
 # ==================
 
@@ -21,9 +21,9 @@
 # Don't use `:all`, it's a meta role.
 
   #set :rbenv_ruby, '2.3.0'
-  role :app, %w{deployer@gis_staging.com}
-  role :web, %w{deployer@gis_staging.com}
-  role :db,  %w{deployer@gis_staging.com}
+  role :app, %w{deployer@geoworks.com.ar}
+  role :web, %w{deployer@geoworks.com.ar}
+  role :db,  %w{deployer@geoworks.com.ar}
 
 
 # role-based syntax
