@@ -21,15 +21,18 @@ POSTGRES_PASSWORD=<your-postgres-password>
 
 config/application.yml
 ```
-GEOSERVER_USER: '<your-geoserver-user>'
-GEOSERVER_PASSWORD: '<your-geoserver-password>'
-GEOSERVER_HOST: 'gw-geoserver'
-POSTGRES_USER: '<your-postgres-user>'
-POSTGRES_PASSWORD: '<your-postgres-password>'
-POSTGRES_HOST: 'gw-db'
-USER_NAME: '<your-user>'
-USER_EMAIL: '<your-email>'
-USER_PASSWORD: '<your-password>'
+DOMAIN: geoworks.com.ar
+MAIL: geoworks.lite@gmail.com
+PASSWORD: <password>
+GEOSERVER_USER: <your-geoserver-user>
+GEOSERVER_PASSWORD: <your-geoserver-password>
+GEOSERVER_HOST: gw-geoserver
+POSTGRES_USER: <your-postgres-user>
+POSTGRES_PASSWORD: <your-postgres-password>
+POSTGRES_HOST: gw-db
+USER_NAME: <your-user>
+USER_EMAIL: <your-email>
+USER_PASSWORD: <your-password>
 ```
 
 ### Desde el root del proyecto:
