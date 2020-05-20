@@ -233,7 +233,7 @@ class ProjectTypesController < ApplicationController
 
         HasProjectType.create(user_id: current_user.id, project_type_id: @project_type.id)
         ProjectType.add_layer_geoserver(params[:project_type][:name_layer])
-        format.html { redirect_to root_path(), notice: 'Project type was successfully created.' }
+        format.html { redirect_to root_path(), notice: 'El proyecto se creó correctamente.' }
         format.json { render :show, status: :created, location: @project_type }
       else
         format.html { render :new, status: :no_created}
@@ -248,7 +248,7 @@ class ProjectTypesController < ApplicationController
     respond_to do |format|
       if @project_type.update(project_type_params)
         ProjectType.exist_layer_rgeoserver @project_type.name_layer
-        format.html { redirect_to edit_project_type_path(@project_type), notice: 'Project type was successfully updated.' }
+        format.html { redirect_to edit_project_type_path(@project_type), notice: 'Los cambios se guardaron correctamente.' }
         format.json { render :show, status: :ok, location: @project_type }
       else
         format.html { render :edit }
