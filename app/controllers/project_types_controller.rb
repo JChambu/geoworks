@@ -99,8 +99,8 @@ class ProjectTypesController < ApplicationController
 
   def create_point_colors
     field_name = "properties->>'#{params[:q][:project_field]}'"
-    field_name = "project_statuses.name" if params[:q][:project_field] == 'app_estado' 
-    field_name = "users.name" if params[:q][:project_field] == 'app_usuario' 
+    field_name = "project_statuses.name" if params[:q][:project_field] == 'app_estado'
+    field_name = "users.name" if params[:q][:project_field] == 'app_usuario'
     @query_point = Project.joins(:user, :project_status).
       where(project_type_id: params[:project_type_id]).
       select("#{field_name} as name").
@@ -118,7 +118,7 @@ class ProjectTypesController < ApplicationController
 
     @data_conditions = params[:conditions]
     if !params[:heatmap_indicator].empty?
-      
+
       @query_h = ProjectType.indicator_heatmap(params[:project_type_id], params[:heatmap_indicator], params[:size_box], params[:type_box], @data_conditions, current_user.id)
     else
       project_type_id = params[:project_type_id]
@@ -269,7 +269,7 @@ class ProjectTypesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_project_type
     @project_type = ProjectType.find(params[:id])
-    @project_fields = @project_type.project_fields.order(:sort) 
+    @project_fields = @project_type.project_fields.order(:sort)
 
   end
 
