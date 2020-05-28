@@ -169,7 +169,14 @@ Navarra.dashboards.action_show = function(){
           project_type_id = Navarra.dashboards.config.project_type_id;
           dashboard_id = Navarra.dashboards.config.dashboard_id;
           graphic_id = value_graph.split('canvas');
-          $.getScript("/project_types/"+ project_type_id+"/dashboards/"+dashboard_id+"/graphics/"+graphic_id[1]+"/edit");
+          //$.getScript("/project_types/"+ project_type_id+"/dashboards/"+dashboard_id+"/graphics/"+graphic_id[1]+"/edit");
+          $.ajax({
+            url: "/project_types/"+ project_type_id+"/dashboards/"+dashboard_id+"/graphics/"+graphic_id[1]+"/edit",
+            dataType: "script",
+            success: function(data){
+              console.log('edit');
+            }
+          });
         });
     Navarra.geomaps.init();
   }
