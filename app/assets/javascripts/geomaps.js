@@ -15,6 +15,10 @@ Navarra.geomaps = function (){
       port = 8600
     }
 
+    console.log(url);
+    console.log(protocol);
+    console.log(port);
+
     var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       updateWhenIdle: true,
