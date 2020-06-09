@@ -9,7 +9,7 @@ Navarra.geomaps = function (){
 
     url = window.location.hostname;
     protocol = window.location.protocol;
-    if (protocol == 'https') {
+    if (protocol == 'https:') {
       port = 443
     } else {
       port = 8600
