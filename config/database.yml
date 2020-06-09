@@ -19,9 +19,9 @@ default: &default
   postgis_extension: true
   schema_search_path: public, postgis
   encoding: unicode
-  host: localhost
-  username: postgres
-  password: postgres
+  host: <%= ENV.fetch("POSTGRES_HOST") { "localhost" } %>
+  username: <%= ENV.fetch("POSTGRES_USER") { "postgres" } %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD") { "postgres" } %>
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
