@@ -1,7 +1,7 @@
 Navarra.namespace("geomaps");
 
 Navarra.geomaps = function (){
-  var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl, url, type_geometry;
+  var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant , popUpDiv, div, layerControl, url, protocol, port, type_geometry;
   var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current, current_tenement;
   var ss = [];
   var size_box = [];
@@ -9,6 +9,11 @@ Navarra.geomaps = function (){
 
     url = window.location.hostname;
     protocol = window.location.protocol;
+    if (protocol == 'https') {
+      port = 443
+    } else {
+      port = 8600
+    }
 
     var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -383,7 +388,7 @@ Navarra.geomaps = function (){
       }else{
         current_tenement = Navarra.dashboards.config.current_tenement;
         layer_current= current_tenement +":"+ name_layer;
-        projectFilterLayer = new MySource(protocol+"//"+url+":443/geoserver/wms", { // TODO: Agregar variable para puerto geoserver
+        projectFilterLayer = new MySource(protocol+"//"+url+":"+port+"/geoserver/wms", {
           layers: layer_current,//nombre de la capa (ver get capabilities)
           format: 'image/png',
           transparent: 'true',
@@ -464,7 +469,7 @@ Navarra.geomaps = function (){
           format_options: 'callback:getJson',
           CQL_FILTER: value_filter
         };
-        source = new L.tileLayer.betterWms(protocol+"//"+url+":443/geoserver/wms", options); // TODO: Agregar variable para puerto geoserver
+        source = new L.tileLayer.betterWms(protocol+"//"+url+":"+port+"/geoserver/wms", options);
         ss.push(source);
 
         var htmlLegend1and2 = L.control.htmllegend({
@@ -642,7 +647,7 @@ Navarra.geomaps = function (){
     }
     current_tenement = Navarra.dashboards.config.current_tenement;
     layer_current= current_tenement +":"+ name_layer;
-    layerProjects = new MySource(protocol+"//"+url+":443/geoserver/wms", { // TODO: Agregar variable para puerto geoserver
+    layerProjects = new MySource(protocol+"//"+url+":"+port+"/geoserver/wms", {
       layers: layer_current,//nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
@@ -695,7 +700,7 @@ Navarra.geomaps = function (){
 
             current_tenement = Navarra.dashboards.config.current_tenement;
             layer_current= current_tenement +":"+ sub_layer;
-            layerSubProjects = new MySource(protocol+"//"+url+":443/geoserver/wms", { // TODO: Agregar variable para puerto geoserver
+            layerSubProjects = new MySource(protocol+"//"+url+":"+port+"/geoserver/wms", {
               layers: layer_current,//nombre de la capa (ver get capabilities)
               format: 'image/png',
               transparent: 'true',
