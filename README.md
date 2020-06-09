@@ -1,56 +1,74 @@
-# Deployar con Docker:
+# Deploy con Docker
 
-### Creamos las variables de entorno:
+### Creamos las variables de entorno
 
-docker-env/geoserver.env
+.env
 ```
+# Geoserver
+GEOSERVER_HOST=gw-geoserver
+GEOSERVER_PORT=<8600/443>
+GEOSERVER_ADMIN_PASSWORD=<geoserver-admin-password>
 GEOSERVER_DATA_DIR=/opt/geoserver/data_dir
 ENABLE_JSONP=true
 MAX_FILTER_RULES=20
 OPTIMIZE_LINE_WIDTH=false
 FOOTPRINTS_DATA_DIR=/opt/footprints_dir
 GEOWEBCACHE_CACHE_DIR=/opt/geoserver/data_dir/gwc
-GEOSERVER_ADMIN_PASSWORD=<your-geoserver-password>
-```
 
-docker-env/db.env
-```
-POSTGRES_USER=<your-postgres-user>
-POSTGRES_PASSWORD=<your-postgres-password>
+# Postgres
+POSTGRES_HOST=gw-db
+POSTGRES_USER=<postgres-user>
+POSTGRES_PASSWORD=<postgres-password>
+
+# App
+APP_PORT=80
 ```
 
 config/application.yml
-```
-DOMAIN: geoworks.com.ar
-MAIL: geoworks.lite@gmail.com
-PASSWORD: <password>
-GEOSERVER_USER: <your-geoserver-user>
-GEOSERVER_PASSWORD: <your-geoserver-password>
-GEOSERVER_HOST: gw-geoserver
-POSTGRES_USER: <your-postgres-user>
-POSTGRES_PASSWORD: <your-postgres-password>
-POSTGRES_HOST: gw-db
+``` yml
+MAILER_DOMAIN: geoworks.com.ar
+MAILER_USERNAME: geoworks.lite@gmail.com
+MAILER_PASSWORD: <mailer-password>
 USER_NAME: <your-user>
 USER_EMAIL: <your-email>
 USER_PASSWORD: <your-password>
 ```
 
-### Desde el root del proyecto:
+### Deployamos
 
-Creamos las imagenes: `sudo docker-compose build`
+``` sh
+sh deploy.sh
+```
 
-Arrancamos los contenedores: `sudo docker-compose up -d`
+Ahora deberíamos poder acceder a la aplicación desde `<host>:<app-port>`
 
-Creamos la base de datos: `sudo docker exec -it gw-app rake db:create db:migrate db:seed`
+#### Alternativamente podemos ejecutar los comandos de `deploy.sh` por separado:
 
-### Fix temporal para el bug en la columna `the_geom`:
+Creamos las imágenes:
 
-Entramos a la db: `sudo docker exec -it gw-db psql -U postgres geoworks_development`
+``` sh
+sudo docker-compose build
+```
 
-- `ALTER TABLE public.projects DROP COLUMN the_geom;`
-- `ALTER TABLE public.projects ADD COLUMN the_geom geometry(Geometry,4326);`
+Creamos y levantamos los contenedores:
+``` sh
+sudo docker-compose up -d
+```
 
-Ahora deberíamos poder acceder a la aplicación desde `<host>:3000`
+Creamos la base de datos:
+
+``` sh
+sudo docker exec -it gw-app rake db:create db:migrate db:seed
+```
+
+Ejecutamos el fix temporal para el bug en la columna `the_geom`:
+
+``` sh
+sudo docker exec -i gw-db psql --username postgres --dbname geoworks_development <<-EOSQL
+  ALTER TABLE public.projects DROP COLUMN the_geom;
+  ALTER TABLE public.projects ADD COLUMN the_geom geometry(Geometry,4326);
+EOSQL
+```
 
 # Configurar geoserver:
 
@@ -82,10 +100,10 @@ PostGIS - PostGIS Database
 
 - host: `gw-db`
 - port: `5432`
-- database: `<db_name>`
+- database: `geoworks_development`
 - schema: `public`
-- user: `<db_user>`
-- password: `<db_password>`
+- user: `<postgres-user>`
+- password: `<postgres-password>`
 
 ### Agregar un nuevo estilo
 
