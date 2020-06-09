@@ -30,8 +30,10 @@
 /node_modules
 yarn-debug.log*
 .yarn-integrity
-docker-env/*
+
+# Variables de entorno
 config/application.yml
+.env
 
 # Volúmen de geoserver
 /geoserver/data_dir
