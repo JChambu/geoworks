@@ -9,16 +9,16 @@ services:
     ports:
       - "5555:5432"
     env_file:
-      - docker-env/db.env
+      - .env
   geoserver:
     image: kartoza/geoserver:2.15.0
     container_name: gw-geoserver
     volumes:
       - ./geoserver/data_dir/:/opt/geoserver/data_dir/
     ports:
-      - "8080:8080"
+      - "$GEOSERVER_PORT:8080"
     env_file:
-      - docker-env/geoserver.env
+      - .env
     depends_on:
       - db
   app:
@@ -26,10 +26,12 @@ services:
     image: gw-app
     container_name: gw-app
     ports:
-      - "3000:3000"
+      - "$APP_PORT:3000"
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
      - .:/opt/geoworks
+    env_file:
+      - .env
     depends_on:
       - db
 volumes:
