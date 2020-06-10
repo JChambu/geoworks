@@ -2,7 +2,8 @@
 
 ### Creamos las variables de entorno
 
-.env
+*geoworks/.env*
+
 ```
 # Geoserver
 GEOSERVER_HOST=gw-geoserver
@@ -24,7 +25,8 @@ POSTGRES_PASSWORD=<postgres-password>
 APP_PORT=80
 ```
 
-config/application.yml
+*geoworks/config/application.yml*
+
 ``` yml
 MAILER_DOMAIN: geoworks.com.ar
 MAILER_USERNAME: geoworks.lite@gmail.com
@@ -42,7 +44,7 @@ sh deploy.sh
 
 Ahora deberíamos poder acceder a la aplicación desde `<host>:<app-port>`
 
-#### Alternativamente podemos ejecutar los comandos de `deploy.sh` por separado:
+##### Alternativamente podemos ejecutar los comandos de `deploy.sh` por separado:
 
 Creamos las imágenes:
 
@@ -70,7 +72,22 @@ sudo docker exec -i gw-db psql --username postgres --dbname geoworks_development
 EOSQL
 ```
 
-# Configurar geoserver:
+### Comandos útiles de Docker:
+
+- Listar los contenedores: `sudo docker ps -a` ([+info](https://docs.docker.com/engine/reference/commandline/ps/))
+
+- Arrancar un contenedor: `sudo docker start <nombre-contenedor>` ([+info](https://docs.docker.com/engine/reference/commandline/start/))
+
+- Detener un contenedor: `sudo docker stop <nombre-contenedor>` ([+info](https://docs.docker.com/engine/reference/commandline/stop/))
+
+- Capturar los logs de un contenedor: `sudo docker logs <nombre-contenedor>` ([+info](https://docs.docker.com/engine/reference/commandline/logs/))
+
+- Seguir los logs con docker-compose: `sudo docker-compose logs -f` ([+info](https://docs.docker.com/compose/reference/logs/))
+
+- Listar los volúmenes: `sudo docker volume ls` ([+info](https://docs.docker.com/engine/reference/commandline/volume/))
+
+
+# Configurar Geoserver
 
 Ir a `<host>:8600/geoserver/web/`
 
