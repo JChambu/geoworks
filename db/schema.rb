@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200403175842) do
+ActiveRecord::Schema.define(version: 20200611162423) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,7 +51,8 @@ ActiveRecord::Schema.define(version: 20200403175842) do
     t.text "group_sql"
     t.boolean "children", default: false
     t.string "conditions_sql"
-    t.boolean "advanced_kpi", default: false
+    t.string "kpi_type"
+    t.string "sql_full"
     t.index ["analysis_type_id"], name: "index_analytics_dashboards_on_analysis_type_id"
     t.index ["chart_id"], name: "index_analytics_dashboards_on_chart_id"
     t.index ["project_type_id"], name: "index_analytics_dashboards_on_project_type_id"
@@ -330,7 +331,7 @@ ActiveRecord::Schema.define(version: 20200403175842) do
     t.point "the_geom"
     t.jsonb "properties_original"
     t.bigint "project_status_id"
-    t.datetime "status_update_at", default: "2020-04-30 15:48:09"
+    t.datetime "status_update_at", default: "2020-06-11 16:28:41"
     t.bigint "user_id"
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
