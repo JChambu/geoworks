@@ -10,12 +10,16 @@
       </div>
 
       <div class="modal-body">
-    <div class="notice">
-      <span id="helpBlock" class="help-block"></span>
-    </div>
+        <div class="notice">
+          <span id="helpBlock" class="help-block"></span>
+        </div>
+
         <ul class="nav nav-pills nav-fill" role="tablist">
           <li class="nav-item">
-            <a class="nav-link py-1 active" id="simple-tab" data-toggle="tab" href="#simple" role="tab" aria-controls="simple" aria-selected="true">Simple</a>
+            <a class="nav-link py-1 active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">Básico</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link py-1" id="complex-tab" data-toggle="tab" href="#complex" role="tab" aria-controls="complex" aria-selected="false">Complejo</a>
           </li>
           <li class="nav-item">
             <a class="nav-link py-1" id="advanced-tab" data-toggle="tab" href="#advanced" role="tab" aria-controls="advanced" aria-selected="false">Avanzado</a>
@@ -23,14 +27,16 @@
         </ul>
 
         <div class="tab-content">
-          <div class="tab-pane fade show active" id="simple" role="tabpanel" aria-labelledby="simple-tab">
-            <%= render 'simple' %>
+          <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
+            <%= render 'basic' %>
+          </div>
+          <div class="tab-pane fade" id="complex" role="tabpanel" aria-labelledby="complex-tab">
+            <%= render 'complex' %>
           </div>
           <div class="tab-pane fade" id="advanced" role="tabpanel" aria-labelledby="advanced-tab">
             <%= render 'advanced' %>
           </div>
         </div>
-
       </div>
 
     </div>

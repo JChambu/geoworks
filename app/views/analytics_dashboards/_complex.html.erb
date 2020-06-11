@@ -11,18 +11,34 @@
 
   <br>
   <div class="form-group">
-    <%= f.input :kpi_type, as: :hidden, input_html: {value: 'advanced'} %>
     <%= f.input :title, label: "Nombre", input_html: {class:"form-control form-control-sm"} %>
   </div>
 
   <div class="form-group">
-    <%= f.label :sql_full, 'Sentencia SQL' %>
-    <%= f.text_area :sql_full, rows: 5, class:"form-control form-control-sm" %>
+    <%= f.input :kpi_type, as: :hidden, input_html: {value: 'complex'} %>
+    <%= f.label :sql_sentence, 'Sentencia (SELECT)' %>
+    <%=f.text_area :sql_sentence, rows: 1, class:"form-control form-control-sm" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :conditions_sql, 'Condición (WHERE)' %>
+    <%=f.text_area :conditions_sql, rows: 1, class:"form-control form-control-sm" %>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <%= f.label :group_sql, 'Agrupar (GROUP BY)' %>
+      <%=f.text_area :group_sql, rows: 1, class:"form-control form-control-sm" %>
+    </div>
+    <div class="form-group col-md-6">
+      <%= f.label :order_sql, 'Odenar (ORDER BY)' %>
+      <%=f.text_area :order_sql, rows: 1, class:"form-control form-control-sm" %>
+    </div>
   </div>
 
   <div class="form-group">
     <%= f.label :description, 'Descripción' %>
-    <%= f.text_area :description, rows: 3, class:"form-control form-control-sm" %>
+    <%= f.text_area :description, rows: 1, class:"form-control form-control-sm" %>
   </div>
 
   <div class="form-row">
@@ -30,6 +46,12 @@
       <div class="form-check">
         <%= f.check_box :graph, class:"form-check-input" %>
         <%= f.label :graph, "Graficar", class: 'form-check-label' %>
+      </div>
+    </div>
+    <div class="form-group col-6">
+      <div class="form-check">
+        <%= f.check_box :children, class:"form-check-input" %>
+        <%= f.label :children, "Subformulario", class: 'form-check-label' %>
       </div>
     </div>
   </div>
