@@ -164,11 +164,13 @@ module ProjectTypes::Indicators
             end
 
             conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id
-            if chart.advanced_kpi == true
 
+            if chart.kpi_type == 'basic'
+              filters_simple = filters_simple @data, chart, project_type_id
+            elsif chart.kpi_type == 'complex'
               filters_for_sql = filters_for_sql @data, chart
             else
-              filters_simple = filters_simple @data, chart, project_type_id
+              @data = ActiveRecord::Base.connection.execute(chart.sql_full)
             end
 
             conditions_on_the_fly =  filters_on_the_fly @data, data_conditions
@@ -218,7 +220,7 @@ module ProjectTypes::Indicators
               data = query_draw_polygon  size_box, project_type_id
             end
 
-            if chart.advanced_kpi == true
+            if chart.kpi_type == 'complex' # TODO agregar otro else para sql libre
               if !chart.sql_sentence.blank?
                 field_select = chart.sql_sentence
               end
