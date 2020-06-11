@@ -120,10 +120,10 @@ module ProjectTypes::Indicators
         return "projects.properties->>'#{field.key}'"
       end
     end
-        
+
     def filters_on_the_fly data, data_conditions
       if !data_conditions.blank?
-        data_conditions.each do |key| 
+        data_conditions.each do |key|
           @s = key.split('|')
           @field = @s[0]
           @filter = @s[1]
@@ -156,17 +156,21 @@ module ProjectTypes::Indicators
           @analytics_charts = AnalyticsDashboard.where(id: graph.analytics_dashboard_id)
           @analytics_charts.each do |chart|
             @items = {}
+
             if type_box == 'extent'
               @data = query_extent size_box, project_type_id, chart.children
             else
               @data = query_draw_polygon  size_box, project_type_id, chart.children
             end
+
             conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id
             if chart.advanced_kpi == true
+
               filters_for_sql = filters_for_sql @data, chart
             else
               filters_simple = filters_simple @data, chart, project_type_id
             end
+
             conditions_on_the_fly =  filters_on_the_fly @data, data_conditions
             @items["serie#{i}"] = @data
             @option_graph = graph
@@ -193,13 +197,13 @@ module ProjectTypes::Indicators
               @data_fixed = query_draw_polygon  size_box, project_type_id
             end
 
-      @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id 
+      @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id
       @data_fixed = filters_on_the_fly @data_fixed, data_conditions
       @total_row = Project.where(project_type_id: project_type_id).where(row_active: true)
- 
-      @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id 
+
+      @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id
       @total_row = @ctotal.count
-      @row_selected = @data_fixed.count 
+      @row_selected = @data_fixed.count
       @avg_selected = [{ "count": ((@row_selected.to_f / @total_row.to_f) * 100).round(2)} ]
       querys << { "title":"Total", "description":"Total", "data":[{"count":@total_row}], "id": 1000}
       querys << { "title":"Selecionado", "description":"select", "data":[{"count":@row_selected}], "id": 1001}
@@ -207,7 +211,7 @@ module ProjectTypes::Indicators
 
       @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
       @analytics_charts.each do |chart|
-        
+
             if type_box == 'extent'
               data = query_extent size_box, project_type_id
             else
@@ -233,15 +237,15 @@ module ProjectTypes::Indicators
     end
 
   def indicator_heatmap project_type_id, indicator_id, size_box, type_box, conditions, user_id
-      
+
     dashboard = AnalyticsDashboard.find(indicator_id)
     @q =  kpi_new(project_type_id, true, size_box, type_box, dashboard.dashboard_id, conditions, user_id)
-    @querys = @q[0]['it0'][:description].select("st_x(the_geom) as lng, st_y(the_geom) as lat").group(:the_geom) 
+    @querys = @q[0]['it0'][:description].select("st_x(the_geom) as lng, st_y(the_geom) as lat").group(:the_geom)
 @querys
   end
 
     def analysis_type(type, field, project_type_id)
-   
+
       type_field = ProjectField.where(name: field, project_type_id: project_type_id).first
       if !type_field.nil? && (type_field.field_type.name =='Listado (opción multiple)' || type_field.field_type.name == 'Texto')
         field = ' count(*)'
