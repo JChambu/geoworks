@@ -3,7 +3,19 @@
     <div class="modal-content">
 
       <div class="modal-header py-2">
-        <h5 class="modal-title">Indicador</h5>
+        <% if @analytics_dashboard.kpi_type==nil%> 
+          <h5 class="modal-title">Nuevo Indicador</h5>
+        <% end %>
+         <% if @analytics_dashboard.kpi_type=='basic'%> 
+          <h5 class="modal-title">Indicador Básico</h5>
+        <% end %>
+         <% if @analytics_dashboard.kpi_type=='complex'%> 
+          <h5 class="modal-title">Indicador Complejo</h5>
+        <% end %>
+         <% if @analytics_dashboard.kpi_type=='advanced'%> 
+          <h5 class="modal-title">Indicador Avanzado</h5>
+        <% end %>
+          
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -14,28 +26,47 @@
           <span id="helpBlock" class="help-block"></span>
         </div>
 
-        <ul class="nav nav-pills nav-fill" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link py-1 active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">Básico</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link py-1" id="complex-tab" data-toggle="tab" href="#complex" role="tab" aria-controls="complex" aria-selected="false">Complejo</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link py-1" id="advanced-tab" data-toggle="tab" href="#advanced" role="tab" aria-controls="advanced" aria-selected="false">Avanzado</a>
-          </li>
-        </ul>
+        <% if @analytics_dashboard.kpi_type==nil%>
+          <ul class="nav nav-pills nav-fill" role="tablist">
+            <li class="nav-item">  
+             <a class="nav-link py-1 active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">Básico</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link py-1" id="complex-tab" data-toggle="tab" href="#complex" role="tab" aria-controls="complex" aria-selected="false">Complejo</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link py-1" id="advanced-tab" data-toggle="tab" href="#advanced" role="tab" aria-controls="advanced" aria-selected="false">Avanzado</a>
+            </li>
+          </ul>
+        <% end %>
 
         <div class="tab-content">
-          <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
-            <%= render 'basic' %>
-          </div>
-          <div class="tab-pane fade" id="complex" role="tabpanel" aria-labelledby="complex-tab">
-            <%= render 'complex' %>
-          </div>
-          <div class="tab-pane fade" id="advanced" role="tabpanel" aria-labelledby="advanced-tab">
-            <%= render 'advanced' %>
-          </div>
+          <% if @analytics_dashboard.kpi_type==nil%>
+            <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
+              <%= render 'basic' %>
+            </div>
+            <div class="tab-pane fade" id="complex" role="tabpanel" aria-labelledby="complex-tab">
+              <%= render 'complex' %>
+            </div>
+            <div class="tab-pane fade" id="advanced" role="tabpanel" aria-labelledby="advanced-tab">
+              <%= render 'advanced' %>
+            </div>
+           <% end %> 
+           <% if @analytics_dashboard.kpi_type=='basic'%>
+            <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
+              <%= render 'basic' %>
+            </div>
+           <% end %>
+           <% if @analytics_dashboard.kpi_type=='complex'%>
+            <div class="tab-pane fade show active" id="complex" role="tabpanel" aria-labelledby="complex-tab">
+              <%= render 'complex' %>
+            </div>
+           <% end %>
+           <% if @analytics_dashboard.kpi_type=='advanced'%>
+            <div class="tab-pane fade show active" id="advanced" role="tabpanel" aria-labelledby="advanced-tab">
+              <%= render 'advanced' %>
+            </div>
+           <% end %>
         </div>
       </div>
 
