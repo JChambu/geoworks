@@ -26,7 +26,8 @@ module ProjectTypes::Indicators
       @data
     end
 
-    def query_draw_polygon size_box, project_type_id, children=false
+    def query_draw_polygon size_box, project_type_id, children=false, sql_full
+
       arr1 = []
       size_box.each do |a,x|
         z = []
@@ -39,14 +40,21 @@ module ProjectTypes::Indicators
         end
         arr1.push([z])
       end
-      @data = Project.joins(:project_status, :user).
-        where(project_type_id: project_type_id).
-        where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom})").
-        where(row_active: true)
 
-      if children == true
-        @data = @data.left_outer_joins(:project_data_child)
+      # Aplica st_contains a indicadores basic y complex
+      if sql_full.blank?
+        @data = Project.joins(:project_status, :user).
+          where(project_type_id: project_type_id).
+          where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom})").
+          where(row_active: true)
+        if children == true
+          @data = @data.left_outer_joins(:project_data_child)
+        end
+      # Aplica st_contains a indicadores advanced
+      else
+        @data = sql_full.sub('where_clause', " st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom}) AND ")
       end
+      
       @data
     end
 
@@ -167,7 +175,7 @@ module ProjectTypes::Indicators
             if type_box == 'extent'
               @data = query_extent size_box, project_type_id, chart.children, chart.sql_full
             else
-              @data = query_draw_polygon  size_box, project_type_id, chart.children
+              @data = query_draw_polygon  size_box, project_type_id, chart.children, chart.sql_full
             end
 
             conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id
