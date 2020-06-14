@@ -2,20 +2,27 @@ module ProjectTypes::Indicators
   extend ActiveSupport::Concern
   module ClassMethods
 
-    def query_extent size_box, project_type_id, children=false
+    def query_extent size_box, project_type_id, children=false, sql_full
 
       minx = size_box[0].to_f if !size_box.nil?
       miny = size_box[1].to_f if !size_box.nil?
       maxx = size_box[2].to_f if !size_box.nil?
       maxy = size_box[3].to_f if !size_box.nil?
 
-      @data = Project.joins(:project_status, :user).
-        where(project_type_id: project_type_id).
-        where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})").
-        where(row_active: true)
-      if children == true
-        @data = @data.left_outer_joins(:project_data_child)
+      if sql_full.blank?
+        # Aplica st_contains a indicadores basic y complex
+        @data = Project.joins(:project_status, :user).
+          where(project_type_id: project_type_id).
+          where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})").
+          where(row_active: true)
+          if children == true
+            @data = @data.left_outer_joins(:project_data_child)
+          end
+      else
+        # Aplica st_contains a indicadores advanced
+        @data = sql_full.sub('where_clause', " #{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom}) AND ")
       end
+
       @data
     end
 
@@ -158,7 +165,7 @@ module ProjectTypes::Indicators
             @items = {}
 
             if type_box == 'extent'
-              @data = query_extent size_box, project_type_id, chart.children
+              @data = query_extent size_box, project_type_id, chart.children, chart.sql_full
             else
               @data = query_draw_polygon  size_box, project_type_id, chart.children
             end
@@ -170,7 +177,7 @@ module ProjectTypes::Indicators
             elsif chart.kpi_type == 'complex'
               filters_for_sql = filters_for_sql @data, chart
             else
-              @data = ActiveRecord::Base.connection.execute(chart.sql_full)
+              @data = ActiveRecord::Base.connection.execute(@data)
             end
 
             conditions_on_the_fly =  filters_on_the_fly @data, data_conditions
