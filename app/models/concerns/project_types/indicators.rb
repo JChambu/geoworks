@@ -20,7 +20,7 @@ module ProjectTypes::Indicators
           end
       else
         # Aplica st_contains a indicadores advanced
-        @data = sql_full.sub('where_clause', " #{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom}) AND ")
+        @data = sql_full.sub('where_clause', "where_clause #{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom}) AND ")
       end
 
       @data
@@ -52,9 +52,9 @@ module ProjectTypes::Indicators
         end
       # Aplica st_contains a indicadores advanced
       else
-        @data = sql_full.sub('where_clause', " st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom}) AND ")
+        @data = sql_full.sub('where_clause', "where_clause st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom}) AND ")
       end
-      
+
       @data
     end
 
@@ -136,23 +136,42 @@ module ProjectTypes::Indicators
       end
     end
 
-    def filters_on_the_fly data, data_conditions
-      if !data_conditions.blank?
-        data_conditions.each do |key|
-          @s = key.split('|')
-          @field = @s[0]
-          @filter = @s[1]
-          @value = @s[2]
-          if @field == 'app_usuario'
+    def filters_on_the_fly data, data_conditions, sql_full
+
+      data_conditions.each do |key|
+
+        @s = key.split('|')
+        @field = @s[0]
+        @filter = @s[1]
+        @value = @s[2]
+
+        # Aplica filtro por campo usuario
+        if @field == 'app_usuario'
+          if sql_full.blank?
             data =  data.where(" users.name " + @filter + " #{@value}")
-          end
-          if @field == 'app_estado'
-            data =  data.where(" project_statuses.name " + @filter + " #{@value} ")
-          end
-          if @field != 'app_usuario' && @field != 'app_estado'
-            data =  data.where(" projects.properties->>'" + @field +"'" +  @filter +" #{@value} ")
+          else
+            data = data.sub('where_clause', "where_clause users.name #{@filter} #{@value} AND ")
           end
         end
+
+        # Aplica filtro por campo estado
+        if @field == 'app_estado'
+          if sql_full.blank?
+            data =  data.where(" project_statuses.name " + @filter + " #{@value} ")
+          else
+            data = data.sub('where_clause', "where_clause project_statuses.name #{@filter} #{@value} AND ")
+          end
+        end
+
+        # Aplica filtro por otro campo
+        if @field != 'app_usuario' && @field != 'app_estado'
+          if sql_full.blank?
+            data =  data.where(" projects.properties->>'" + @field +"'" +  @filter +" #{@value} ")
+          else
+            data = data.sub('where_clause', "where_clause (projects.properties->>'#{@field}' #{@filter} #{@value}) AND ")
+          end
+        end
+
       end
       @data = data
     end
@@ -180,15 +199,20 @@ module ProjectTypes::Indicators
 
             conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id
 
+            # Aplica los filtros
+            if !data_conditions.blank?
+              conditions_on_the_fly =  filters_on_the_fly @data, data_conditions, chart.sql_full
+            end
+
             if chart.kpi_type == 'basic'
               filters_simple = filters_simple @data, chart, project_type_id
             elsif chart.kpi_type == 'complex'
               filters_for_sql = filters_for_sql @data, chart
             else
+              @data = @data.sub('where_clause', "")
               @data = ActiveRecord::Base.connection.execute(@data)
             end
 
-            conditions_on_the_fly =  filters_on_the_fly @data, data_conditions
             @items["serie#{i}"] = @data
             @option_graph = graph
             chart_type = graph.chart.name
