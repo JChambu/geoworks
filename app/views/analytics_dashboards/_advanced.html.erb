@@ -10,6 +10,13 @@
   <% end %>
 
   <br>
+  <p>
+    <i class="fas fa-exclamation-circle"></i> Agregar la palabra <kbd>where_clause</kbd> luego del <kbd>WHERE</kbd> principal
+    <br>
+    <i class="fas fa-exclamation-circle"></i> Indicador gráfico debe devolver los alias <kbd>count</kbd> y <kbd>name</kbd>
+    <br>
+    <i class="fas fa-exclamation-circle"></i> Indicador numérico debe devolver el alias <kbd>count</kbd>
+  </p>
   <div class="form-group">
     <%= f.input :kpi_type, as: :hidden, input_html: {value: 'advanced'} %>
     <%= f.input :title, label: "Nombre", input_html: {class:"form-control form-control-sm"} %>
@@ -22,7 +29,7 @@
 
   <div class="form-group">
     <%= f.label :description, 'Descripción' %>
-    <%= f.text_area :description, rows: 3, class:"form-control form-control-sm" %>
+    <%= f.text_area :description, rows: 1, class:"form-control form-control-sm" %>
   </div>
 
   <div class="form-row">
