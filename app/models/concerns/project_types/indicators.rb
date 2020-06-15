@@ -232,14 +232,22 @@ module ProjectTypes::Indicators
       @data_fixed = ''
       @op = option_graph
       @ct = Apartment::Tenant.current
-            if type_box == 'extent'
-              @data_fixed = query_extent size_box, project_type_id
-            else
-              @data_fixed = query_draw_polygon  size_box, project_type_id
-            end
+
+      sql_full = ''
+
+      if type_box == 'extent'
+        @data_fixed = query_extent size_box, project_type_id, sql_full
+      else
+        @data_fixed = query_draw_polygon  size_box, project_type_id, sql_full
+      end
 
       @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id
-      @data_fixed = filters_on_the_fly @data_fixed, data_conditions
+
+      # Aplica los filtros
+      if !data_conditions.blank?
+        @data_fixed = filters_on_the_fly @data_fixed, data_conditions, sql_full
+      end
+
       @total_row = Project.where(project_type_id: project_type_id).where(row_active: true)
 
       @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id
@@ -253,25 +261,37 @@ module ProjectTypes::Indicators
       @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
       @analytics_charts.each do |chart|
 
-            if type_box == 'extent'
-              data = query_extent size_box, project_type_id
-            else
-              data = query_draw_polygon  size_box, project_type_id
-            end
+        if type_box == 'extent'
+          data = query_extent size_box, project_type_id, chart.sql_full
+        else
+          data = query_draw_polygon  size_box, project_type_id, chart.sql_full
+        end
 
-            if chart.kpi_type == 'complex' # TODO agregar otro else para sql libre
-              if !chart.sql_sentence.blank?
-                field_select = chart.sql_sentence
-              end
-            else
-              field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
-              conditions_field = chart.condition_field
-            end
-        data = filters_on_the_fly data, data_conditions
+        if chart.kpi_type == 'basic'
+          field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
+          conditions_field = chart.condition_field
+        elsif chart.kpi_type == 'complex'
+          if !chart.sql_sentence.blank?
+            field_select = chart.sql_sentence
+          end
+        else
+          data = data.sub('where_clause', "")
+          data = ActiveRecord::Base.connection.execute(data)
+        end
+
+        # Aplica los filtros
+        if !data_conditions.blank?
+          data = filters_on_the_fly data, data_conditions, chart.sql_full
+        end
+
         if !conditions_field.blank?
           data =  data.where(" properties->>'" + conditions_field.key + "' " + chart.filter_input + "'#{chart.input_value}'")
         end
-        data=   data.select(field_select)
+
+        if chart.kpi_type != 'advanced'
+          data = data.select(field_select)
+        end
+
         querys << { "title":"#{chart.title}", "description":"kpi_sin grafico", "data":data, "id": chart.id}
       end
       querys
