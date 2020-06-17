@@ -22,9 +22,6 @@
       </div>
 
       <div class="modal-body">
-        <div class="notice">
-          <span id="helpBlock" class="help-block"></span>
-        </div>
 
         <% if @analytics_dashboard.kpi_type==nil%>
           <ul class="nav nav-pills nav-fill" role="tablist">
@@ -39,6 +36,10 @@
             </li>
           </ul>
         <% end %>
+
+        <div class="notice">
+          <span id="helpBlock" class="help-block"></span>
+        </div>
 
         <div class="tab-content">
           <% if @analytics_dashboard.kpi_type==nil%>
