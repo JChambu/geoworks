@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+
   include Users::Scopes
 
   # Include default devise modules. Others available are:
@@ -12,6 +13,7 @@ class User < ApplicationRecord
   accepts_nested_attributes_for :user_customers, allow_destroy: true
 
   belongs_to :role
+
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
   #  :timeoutable, :omniauthable,
@@ -23,11 +25,11 @@ class User < ApplicationRecord
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
   validates :email, :email_format => {:message => I18n.t("activerecord.errors.messages.invalid_email")}
-  #validates :role, presence: true
+  # validates :role, presence: true
   validates :password, length: { minimum: 6 }, unless: -> { !:password.blank? }
   validates :password, confirmation: {case_sensitive: true}
-  #validate :is_role_valid?
-  #before_destroy :has_related_pois?
+  # validate :is_role_valid?
+  # before_destroy :has_related_pois?
   before_create :generate_token, on: :create
 
   attr_accessor :customer_id, :project
@@ -45,9 +47,9 @@ class User < ApplicationRecord
       self.authentication_token =  SecureRandom.base64(15)
   end
 
-   def is_active?
-     return User.find(self.id).active
-   end
+  def is_active?
+   return User.find(self.id).active
+  end
 
   def exist_user_in_user_customers
     if !self.email == 'super@admin.com'
@@ -58,22 +60,23 @@ class User < ApplicationRecord
   end
 
   def active_for_authentication?
-   super && is_active?
-   super && is_validated?
- end
-def inactive_message
-    is_active? ? :is_locked :  super
-end
-
- def is_validated?
-
-   current_tenant = Apartment::Tenant.current
-   @customer_id = Customer.where(subdomain: current_tenant)
-    @user = UserCustomer.where(user_id: self.id, customer_id: @customer_id )
-      return true if @user.present?
-      return false
+    super && is_active?
+    super && is_validated?
   end
 
+  def inactive_message
+      is_active? ? :is_locked :  super
+  end
+
+  def is_validated?
+
+
+    current_tenant = Apartment::Tenant.current
+    @customer_id = Customer.where(subdomain: current_tenant)
+    @user = UserCustomer.where(user_id: self.id, customer_id: @customer_id )
+    return true if @user.present?
+    return false
+  end
 
   # def self.user_role
   #   index = ROLES.find_index "User"

@@ -7,9 +7,10 @@ class Admin::UsersController < ApplicationController
   # GET /users.json
 
   def search_projects
-    @p = ProjectType.search_projects_for_tenant  params 
+    @p = ProjectType.search_projects_for_tenant  params
   end
 
+  # Busca los roles luego de seleccionar la corporación
   def search_roles
     @r = Role.search_roles_for_tenant params['customer_id']
   end
@@ -24,7 +25,7 @@ class Admin::UsersController < ApplicationController
 
   def index
     Apartment::Tenant.switch! 'public'
-    
+
     @users = User.all
     if params[:email].present? || params[:name].present?
       @users = @users.where(" email ilike ?", "%#{params[:email]}%") unless params[:email].blank?
@@ -71,7 +72,7 @@ class Admin::UsersController < ApplicationController
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
-  end 
+  end
 
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
