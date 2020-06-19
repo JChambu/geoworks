@@ -2,8 +2,6 @@ class User < ApplicationRecord
 
   include Users::Scopes
 
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
   has_many :has_project_types
   has_many :project_types, through: :has_project_types
   has_many :user_customers
@@ -14,11 +12,9 @@ class User < ApplicationRecord
 
   belongs_to :role
 
-  # Include default devise modules. Others available are:
-  # :token_authenticatable, :confirmable,
-  #  :timeoutable, :omniauthable,
-  # :recoverable, :registerable,
-  devise :database_authenticatable, :rememberable, :trackable, :lockable, :confirmable
+  # Include devise modules. Others available are:
+  # :confirmable, :validatable :registerable, :timeoutable and :omniauthable
+  devise :database_authenticatable, :rememberable, :trackable, :lockable, :confirmable, :recoverable
 
   before_create :generate_password, on: :create
 
