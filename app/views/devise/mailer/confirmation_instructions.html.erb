@@ -11,11 +11,9 @@
     <td align="center" bgcolor="#e8ebef">
       <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
         <tr>
-          <td align="center" bgcolor="#ffffff" valign="top" style="border-top: 3px solid #d4dadf; border-left: 3px solid #d4dadf; border-right: 3px solid #d4dadf; border-top-right-radius: 10px; border-top-left-radius: 10px;">
+          <td align="center" bgcolor="#e8ebef" style="padding: 0px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
             <a href="http://www.gisworking.com/" target="_blank" style="padding: 10; display: inline-block;">
-              <%= image_tag attachments['geoworks_mail_logo.png'].url, border: 0, style:"display: block; width: 60%;" %>
-              <br>
-              <%= image_tag attachments['geoworks_mail_dispositivos.png'].url, border: 0, style:"display: block; width: 40%;" %>
+              <%= image_tag attachments['geoworks_2.png'].url, border: 0, style:"display: block; width: 100%;" %>
             </a>
           </td>
         </tr>
@@ -28,20 +26,14 @@
     <td align="center" bgcolor="#e8ebef">
       <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
 
-        <!-- Saludo Inicial -->
+        <!-- Párrafo Incial -->
         <tr>
-          <td align="left" bgcolor="#ffffff" style="padding: 0px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; border-left: 3px solid #d4dadf; border-right: 3px solid #d4dadf;">
-            <h3 style="margin: 0; font-size: 25px; font-weight: 500; letter-spacing: -1px; line-height: 48px;">Hola <%= @user.name %></h3>
-          </td>
-        </tr>
-
-        <!-- Párrafo -->
-        <tr>
-          <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-left: 3px solid #d4dadf; border-right: 3px solid #d4dadf;">
+          <td align="left" bgcolor="#ffffff" valign="top" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; color: #484b4f; line-height: 24px; border-top: 3px solid #d4dadf; border-left: 3px solid #d4dadf; border-right: 3px solid #d4dadf; border-top-right-radius: 10px; border-top-left-radius: 10px;">
+            <p style="font-size: 20px; margin: 0; padding-bottom: 10px;">Hola <%= @resource.name %>,</p>
+            <br>
             <p style="margin: 0; padding-bottom: 10px;">Estas son las credenciales con las que vas a poder acceder a nuestra plataforma:</p>
             <p style="margin: 0; padding-bottom: 10px;"><b>E-mail: </b><%= @email %><br><b>Contraseña: </b><%= @resource.password %></p>
-            <p style="margin: 0;">Para activar tu cuenta de Geoworks, haz clic en el siguiente botón:</p>
-          </td>
+            <p style="margin: 0;">Para activar tu cuenta de Geoworks, haz clic en el siguiente botón:</p>          </td>
         </tr>
 
         <!-- Botón Confirmar -->
@@ -59,9 +51,11 @@
 
         <!-- Despedida -->
         <tr>
-          <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf; border-left: 3px solid #d4dadf; border-right: 3px solid #d4dadf; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
+          <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #484b4f; line-height: 24px; border-bottom: 3px solid #d4dadf; border-left: 3px solid #d4dadf; border-right: 3px solid #d4dadf; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
+            <!--
             <p style="margin: 0;">Pronto recibirás un mail explicativo y datos de tu interés.</p>
             <br>
+            -->
             <p style="margin: 0;">Atte.<br>Equipo de Geoworks</p>
           </td>
         </tr>
@@ -74,15 +68,6 @@
   <tr>
     <td align="center" bgcolor="#e8ebef" style="padding: 24px;">
       <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
-
-        <!-- Link auxiliar
-        <tr>
-          <td align="center" bgcolor="#e8ebef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-            <p style="margin: 0;">Si el botón no te redirige a la web copiá y pegá la siguiente URL en tu navegador:</p>
-            <p style="margin: 0;"></p>
-          </td>
-        </tr>
-        -->
 
         <!-- Aclaración final -->
         <tr>
