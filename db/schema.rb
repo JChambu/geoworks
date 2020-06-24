@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200611162423) do
+ActiveRecord::Schema.define(version: 20200618144736) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -233,6 +233,7 @@ ActiveRecord::Schema.define(version: 20200611162423) do
     t.bigint "user_id"
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
+    t.boolean "current_season", default: true
     t.index ["user_id"], name: "index_project_data_children_on_user_id"
   end
 
@@ -328,13 +329,14 @@ ActiveRecord::Schema.define(version: 20200611162423) do
     t.integer "project_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.point "the_geom"
     t.jsonb "properties_original"
     t.bigint "project_status_id"
-    t.datetime "status_update_at", default: "2020-06-11 16:28:41"
+    t.datetime "status_update_at", default: "2020-06-12 00:29:31"
     t.bigint "user_id"
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
+    t.boolean "current_season", default: true
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["user_id"], name: "index_projects_on_user_id"
@@ -388,6 +390,8 @@ ActiveRecord::Schema.define(version: 20200611162423) do
     t.string "unconfirmed_email"
     t.boolean "active"
     t.bigint "role_id"
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["role_id"], name: "index_users_on_role_id"
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true

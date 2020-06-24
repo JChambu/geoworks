@@ -1,11 +1,18 @@
-<h2>Change your password</h2>
+<div class="simple_form form-signin card p-5">
+<center>
+  <h2 style="line-height: 30px">Cambio de contraseña</h2>
+  <%=image_tag 'logo_gw_ver_2.png', class:'mb-2', width:"252"%>
+</center>
 
+<br />
 <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= devise_error_messages! %>
-  <%= f.hidden_field :reset_password_token %>
+<div style="color: red">
+    <%= devise_error_messages!, class:'' %>
+</div>
+ <%= f.hidden_field :reset_password_token %>
 
-  <div class="field">
-    <%= f.label :password, "New password" %><br />
+<div class="field">
+    <%= f.label :password, "Nueva contraseña" %><br />
     <% if @minimum_password_length %>
       <em>(<%= @minimum_password_length %> characters minimum)</em><br />
     <% end %>
@@ -13,13 +20,14 @@
   </div>
 
   <div class="field">
-    <%= f.label :password_confirmation, "Confirm new password" %><br />
+    <%= f.label :password_confirmation, "Confirmar nueva contraseña" %><br />
     <%= f.password_field :password_confirmation, autocomplete: "off" %>
   </div>
 
   <div class="actions">
-    <%= f.submit "Change my password" %>
+    <%= f.submit "Cambiar contraseña" %>
   </div>
 <% end %>
-
+<br/>
 <%= render "devise/shared/links" %>
+</div>
