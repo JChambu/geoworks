@@ -1,33 +1,28 @@
 <div class="simple_form form-signin card p-5">
 <center>
-  <h2 style="line-height: 30px">Cambio de contraseña</h2>
   <%=image_tag 'logo_gw_ver_2.png', class:'mb-2', width:"252"%>
 </center>
 
 <br />
 <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-<div style="color: red">
-    <%= devise_error_messages!, class:'' %>
-</div>
+
  <%= f.hidden_field :reset_password_token %>
 
 <div class="field">
-    <%= f.label :password, "Nueva contraseña" %><br />
     <% if @minimum_password_length %>
       <em>(<%= @minimum_password_length %> characters minimum)</em><br />
     <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "off" %>
+    <%= f.password_field :password, autofocus: true, autocomplete: "off" , class: "form-control", placeholder: "Ingrese nueva contraseña" %>
   </div>
 
   <div class="field">
-    <%= f.label :password_confirmation, "Confirmar nueva contraseña" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "off" %>
+    <%= f.password_field :password_confirmation, autocomplete: "off" , class: "form-control", placeholder: "Confirme nueva contraseña" %>
   </div>
 
   <div class="actions">
-    <%= f.submit "Cambiar contraseña" %>
+    <%= f.submit "Cambiar contraseña" ,class: 'btn btn-lg btn-primary btn-block mb-2' %>
   </div>
+   <%= render "devise/shared/error_messages", resource: resource %>
 <% end %>
-<br/>
 <%= render "devise/shared/links" %>
 </div>
