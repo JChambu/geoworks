@@ -11,9 +11,12 @@ es:
       invalid_token: "Cadena de autenticación invalida."
       locked: "Tu cuenta está bloqueada."
       not_found_in_database: "Correo o contraseña inválidos."
+      last_attempt: "Queda un intento más antes de que tu cuenta quede bloqueada."
       timeout: "Tu sesión ha expirado, por favor identifícate de nuevo para continuar."
-      unauthenticated: "Necesitas iniciar sesión o registrarte para continuar."
-      unconfirmed: "Debes de confirmar tu cuenta para continuar."
+      unauthenticated: ""
+      unconfirmed: "Debes confirmar tu cuenta para continuar."
+      user:
+          is_locked: "Usuario bloqueado"
     mailer:
       confirmation_instructions:
         subject: "Confirma tu cuenta de Geoworks"
