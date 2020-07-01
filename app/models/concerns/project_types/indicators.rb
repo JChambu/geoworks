@@ -168,7 +168,7 @@ module ProjectTypes::Indicators
           if sql_full.blank?
             data =  data.where(" projects.properties->>'" + @field +"'" +  @filter +" #{@value} ")
           else
-            data = data.sub('where_clause', "where_clause (projects.properties->>'#{@field}' #{@filter} #{@value}) AND ")
+            data = data.sub('where_clause', "where_clause (main.properties->>'#{@field}' #{@filter} #{@value}) AND ")
           end
         end
 
