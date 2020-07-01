@@ -20,7 +20,7 @@ module ProjectTypes::Indicators
           end
       else
         # Aplica st_contains a indicadores advanced
-        @data = sql_full.sub('where_clause', "where_clause #{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom}) AND ")
+        @data = sql_full.sub('where_clause', "where_clause #{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), main.#{:the_geom}) AND ")
       end
 
       @data
@@ -52,7 +52,7 @@ module ProjectTypes::Indicators
         end
       # Aplica st_contains a indicadores advanced
       else
-        @data = sql_full.sub('where_clause', "where_clause st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom}) AND ")
+        @data = sql_full.sub('where_clause', "where_clause st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), main.#{:the_geom}) AND ")
       end
 
       @data
