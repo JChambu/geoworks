@@ -297,13 +297,13 @@ module ProjectTypes::Indicators
       querys
     end
 
-  def indicator_heatmap project_type_id, indicator_id, size_box, type_box, conditions, user_id
+    def indicator_heatmap project_type_id, indicator_id, size_box, type_box, conditions, user_id
 
-    dashboard = AnalyticsDashboard.find(indicator_id)
-    @q =  kpi_new(project_type_id, true, size_box, type_box, dashboard.dashboard_id, conditions, user_id)
-    @querys = @q[0]['it0'][:description].select("st_x(the_geom) as lng, st_y(the_geom) as lat").group(:the_geom)
-@querys
-  end
+      dashboard = AnalyticsDashboard.find(indicator_id)
+      @q =  kpi_new(project_type_id, true, size_box, type_box, dashboard.dashboard_id, conditions, user_id)
+      @querys = @q[0]['it0'][:description].select("st_x(the_geom) as lng, st_y(the_geom) as lat").group(:the_geom)
+      @querys
+    end
 
     def analysis_type(type, field, project_type_id)
 
