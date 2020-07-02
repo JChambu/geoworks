@@ -1,13 +1,9 @@
 <%= simple_form_for @customer do |f| %>
+
   <% if customer.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(customer.errors.count, "error") %> prohibited this customer from being saved:</h2>
-
-      <ul>
-      <% customer.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+      <ul><% customer.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
     </div>
   <% end %>
 
@@ -22,10 +18,20 @@
   </div>
 
   <div class="field">
-    <%= f.input :supplier_map, collection: maps_for_select, prompt: 'selecciones mapap' %>
-    
+    <%= f.input :url %>
   </div>
+
+  <div class="field">
+    <%= f.input :supplier_map, collection: maps_for_select, prompt: 'selecciones mapap' %>
+  </div>
+
+  <div class="field">
+    <%= f.label :logo %>
+    <%= f.file_field(:logo, multiple: false, class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '') %>
+  </div>
+
   <div class="actions">
     <%= f.submit %>
   </div>
+  
 <% end %>
