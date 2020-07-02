@@ -4,8 +4,8 @@ class Customer < ApplicationRecord
   has_many :user_customers 
   has_many :users, through: :user_customers
 
-  validates :name, :subdomain, presence: true
-  validates :subdomain, uniqueness: true 
+  validates :name, :subdomain, :url, presence: true
+  validates :subdomain, :url, uniqueness: true
 
   after_create :create_tenant 
 
