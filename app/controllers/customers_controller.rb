@@ -28,8 +28,7 @@ class CustomersController < ApplicationController
 
     respond_to do |format|
       if @customer.save
-        format.html { redirect_to @customer, notice: 'Customer was successfully created.' }
-        format.json { render :show, status: :created, location: @customer }
+        format.html { redirect_to customers_url, notice: 'La corporación se creó correctamente.' }
       else
         format.html { render :new }
         format.json { render json: @customer.errors, status: :unprocessable_entity }
@@ -42,8 +41,7 @@ class CustomersController < ApplicationController
   def update
     respond_to do |format|
       if @customer.update(customer_params)
-        format.html { redirect_to @customer, notice: 'Customer was successfully updated.' }
-        format.json { render :show, status: :ok, location: @customer }
+        format.html { redirect_to customers_url, notice: 'La corporación se actualizó correctamente.' }
       else
         format.html { render :edit }
         format.json { render json: @customer.errors, status: :unprocessable_entity }
