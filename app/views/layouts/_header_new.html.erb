@@ -167,6 +167,7 @@
         <% if can? :layers, :visualizer %>
           <%= link_to 'Capas Externas', layers_path, class: "dropdown-item" %>
         <% end %>
+        <%= link_to 'Corporaciones', customers_path, class: "dropdown-item" %>
         <%- if user_signed_in? %>
           <%= link_to "Editar Usuario", edit_user_path(current_user.id), class: "dropdown-item" %>
           <%= link_to 'Cerrar Sesión', destroy_user_session_path, class: "dropdown-item", method: :delete %>
