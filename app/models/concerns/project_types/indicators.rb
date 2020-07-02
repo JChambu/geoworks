@@ -323,8 +323,8 @@ module ProjectTypes::Indicators
         query = " #{type}(( #{field} )::numeric) "
       when 'max'
         query = " #{type}(( #{field} )::numeric) "
-      when 'weighted_average'
-        query = "case sum((properties->>'oferta')::numeric) when 0 then 0 else  sum((properties->>'" + field+ "')::numeric * (properties->>'oferta')::numeric) / sum((properties->>'oferta')::numeric) end "
+      # when 'weighted_average'
+      #   query = "case sum((properties->>'oferta')::numeric) when 0 then 0 else  sum((properties->>'" + field+ "')::numeric * (properties->>'oferta')::numeric) / sum((properties->>'oferta')::numeric) end "
       end
     end
     end
