@@ -59,6 +59,9 @@
     </div>
   </div>
 
+  <%= f.file_field(:cover, multiple: false, class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '') %>
+  <%= f.input :geo_restriction %>
+
   <% if can? :attributes, :edit %>
     <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
       <div class="table-responsive">
