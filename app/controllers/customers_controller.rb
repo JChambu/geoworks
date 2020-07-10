@@ -24,6 +24,8 @@ class CustomersController < ApplicationController
   # POST /customers
   # POST /customers.json
   def create
+
+    encode_image
     @customer = Customer.new(customer_params)
 
     respond_to do |format|
@@ -39,6 +41,8 @@ class CustomersController < ApplicationController
   # PATCH/PUT /customers/1
   # PATCH/PUT /customers/1.json
   def update
+
+    encode_image
     respond_to do |format|
       if @customer.update(customer_params)
         format.html { redirect_to customers_url, notice: 'La corporación se actualizó correctamente.' }
@@ -47,6 +51,7 @@ class CustomersController < ApplicationController
         format.json { render json: @customer.errors, status: :unprocessable_entity }
       end
     end
+
   end
 
   # DELETE /customers/1
@@ -63,6 +68,10 @@ class CustomersController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_customer
       @customer = Customer.find(params[:id])
+    end
+
+    def encode_image
+      params[:customer][:logo] = Base64.encode64(File.read(params[:customer][:logo].path))
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
