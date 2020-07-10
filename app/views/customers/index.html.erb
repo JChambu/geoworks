@@ -1,27 +1,41 @@
 <p id="notice"><%= notice %></p>
+<div class="card m-2 shadow">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <h1>Corporaciones</h1>
+      </div>
+      <div class="col-md-6 text-right">
+        <%= link_to 'Nuevo', new_customer_path, class: "btn btn-primary" %>
+      </div>      
+    </div>
+  </div>
+</div>
 
-<h1>Customers</h1>
-
-<table class="table">
+<table class="table table-hover table-striped m-0">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Subdomain</th>
-      <th>Supplier_map</th>
+      <th class="w-20">Nombre</th>
+      <th>Subdominio</th>
+      <th>Mapa Base</th>
       <th>URL</th>
-      <th colspan="2">Acciones</th>
+      <th colspan="2" class="text-center">Acciones</th>
     </tr>
   </thead>
 
-  <tbody>
+  <tbody class="sortable ui-sortable">
     <% @customers.each do |customer| %>
-      <tr>
+      <tr class="ui-sortable-handle">
         <td><%= customer.name %></td>
         <td><%= customer.subdomain %></td>
         <td><%= customer.supplier_map %></td>
         <td><%= customer.url %></td>
-        <td><%= link_to 'Edit', edit_customer_path(customer) %></td>
-        <td><%= link_to 'Destroy', customer, method: :delete, data: { confirm: '¿Está seguro?' } %></td>
+        <td class="text-center">
+          <%= link_to '<i class="fas fa-edit"></i>'.html_safe, edit_customer_path(customer) %>
+        </td>
+        <td class="text-center">    
+          <%= link_to '<i class="fas fa-trash-alt" title="Eliminar atributo"></i>'.html_safe, customer, method: :delete, data: { confirm: '¿Está seguro?' } %>
+        </td>
       </tr>
     <% end %>
   </tbody>
@@ -29,4 +43,4 @@
 
 <br>
 
-<%= link_to 'New Customer', new_customer_path %>
+

@@ -1,4 +1,7 @@
-<%= simple_form_for @customer do |f| %>
+<div class="offset-md-3 col-md-6">
+  <div class="card m-2 shadow">
+    <div class="card-body">
+<%= simple_form_for @customer , class: "simple_form edit_choice_list" do |f| %>
 
   <% if customer.errors.any? %>
     <div id="error_explanation">
@@ -6,32 +9,43 @@
       <ul><% customer.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
     </div>
   <% end %>
-
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
+<div class="row justify-content-center">
+  <%= f.label :name, "Nombre" , class: "col-md-3 text-left col-form-label"%>
+  <div class="col-md-6 pt-1">
+    <%= f.text_field :name , class: "form-control form-control-sm" , placeholder: "Ingrese el Nombre"%>
   </div>
-
-  <div class="field">
-    <%= f.label :subdomain %>
-    <%= f.text_field :subdomain %>
+</div>
+<div class="row justify-content-center">
+  <%= f.label :subdomain , "Subdominio" ,class: "col-md-3 text-left col-form-label" %>
+  <div class="col-md-6 pt-1">
+    <%= f.text_field :subdomain , class: "form-control form-control-sm" , placeholder: "Ingrese el Subdominio" %>
   </div>
-
-  <div class="field">
-    <%= f.input :url %>
+</div>
+<div class="row justify-content-center">
+  <%= f.label :url , "URL" ,class: "col-md-3 text-left col-form-label" %>
+  <div class="col-md-6 pt-1">
+    <%= f.text_field :url, class: "form-control form-control-sm" , placeholder: "Ingrese la URL" %>
   </div>
-
-  <div class="field">
-    <%= f.input :supplier_map, collection: maps_for_select, prompt: 'selecciones mapap' %>
+</div>
+<div class="row justify-content-center">
+  <%= f.label :supplier_map , "Mapa Base" ,class: "col-md-3 text-left col-form-label" %>
+  <div class="col-md-6 pt-1">
+    <%= f.input :supplier_map, label: false, collection: maps_for_select, prompt: 'seleccione el mapa base', input_html: {class: 'typef form-control form-control-sm'}  %>
   </div>
-
-  <div class="field">
-    <%= f.label :logo %>
+</div>
+<div class="row justify-content-center">
+  <%= f.label :logo , "Logo" ,class: "col-md-3 text-left col-form-label" %>
+  <div class="col-md-6 pt-1">
     <%= f.file_field(:logo, multiple: false, class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '') %>
   </div>
+</div>
 
-  <div class="actions">
-    <%= f.submit %>
+  <div class="col-md-14 row justify-content-center mt-4">
+    <%= link_to 'Volver', customers_path , class: 'btn btn-sm btn-secondary mr-1' %>
+    <%= f.submit class: 'enviar btn btn-sm btn-primary' , value: "Guardar"%>
   </div>
   
 <% end %>
+</div>
+</div>
+</div>
