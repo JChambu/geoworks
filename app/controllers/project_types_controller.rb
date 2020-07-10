@@ -1,9 +1,6 @@
 class ProjectTypesController < ApplicationController
   before_action :set_project_type, only: [:show, :edit, :update, :destroy]
 
-  # GET /project_types
-  # GET /project_types.json
-
   def search
     @project = ProjectType.all
     render json: {"data": @project}
@@ -92,7 +89,6 @@ class ProjectTypesController < ApplicationController
 
   def heatmap
   end
-
 
   def point_colors
   end
@@ -186,6 +182,8 @@ class ProjectTypesController < ApplicationController
     end
   end
 
+  # GET /project_types
+  # GET /project_types.json
   def index
 
     @has_project_types = HasProjectType.where(user_id: current_user.id).select(:project_type_id)
@@ -195,9 +193,8 @@ class ProjectTypesController < ApplicationController
     if !params[:search_project].nil? || !params[:search_project].blank?
       @project_types = @project_types.where("name ILIKE :name", name: "%#{params[:search_project]}%")
     end
-
-
     @project_types = @project_types.paginate(:page => params[:page])
+
   end
 
   # GET /project_types/1
@@ -207,6 +204,7 @@ class ProjectTypesController < ApplicationController
 
   # GET /project_types/new
   def new
+
     authorize! :project_types, :new
     @project_type = ProjectType.new
     @project_field=[]
@@ -218,6 +216,7 @@ class ProjectTypesController < ApplicationController
 
   # GET /project_types/1/edit
   def edit
+
     authorize! :project_types, :edit
     @dashboard = @project_type.dashboards.first if @dashboard.nil?
 
@@ -226,10 +225,12 @@ class ProjectTypesController < ApplicationController
   # POST /project_types
   # POST /project_types.json
   def create
+
     params[:project_type][:name_layer] = params[:project_type][:name].gsub(/\s+/, '_').downcase
 
     encode_image
     @project_type = ProjectType.new(project_type_params)
+
     respond_to do |format|
       if @project_type.save
 
@@ -242,6 +243,7 @@ class ProjectTypesController < ApplicationController
         format.json { render json: @project_type.errors, status: :unprocessable_entity }
       end
     end
+
   end
 
   # PATCH/PUT /project_types/1
@@ -271,6 +273,7 @@ class ProjectTypesController < ApplicationController
   end
 
   private
+
   # Use callbacks to share common setup or constraints between actions.
   def set_project_type
     @project_type = ProjectType.find(params[:id])
