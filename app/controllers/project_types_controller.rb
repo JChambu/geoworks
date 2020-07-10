@@ -227,6 +227,8 @@ class ProjectTypesController < ApplicationController
   # POST /project_types.json
   def create
     params[:project_type][:name_layer] = params[:project_type][:name].gsub(/\s+/, '_').downcase
+
+    encode_image
     @project_type = ProjectType.new(project_type_params)
     respond_to do |format|
       if @project_type.save
@@ -245,6 +247,9 @@ class ProjectTypesController < ApplicationController
   # PATCH/PUT /project_types/1
   # PATCH/PUT /project_types/1.json
   def update
+
+    encode_image
+
     respond_to do |format|
       if @project_type.update(project_type_params)
         ProjectType.exist_layer_rgeoserver @project_type.name_layer
@@ -270,7 +275,10 @@ class ProjectTypesController < ApplicationController
   def set_project_type
     @project_type = ProjectType.find(params[:id])
     @project_fields = @project_type.project_fields.order(:sort)
+  end
 
+  def encode_image
+    params[:project_type][:cover] = Base64.encode64(File.read(params[:project_type][:cover].path))
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
