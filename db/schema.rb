@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200618144736) do
+ActiveRecord::Schema.define(version: 20200709222457) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -92,6 +92,7 @@ ActiveRecord::Schema.define(version: 20200618144736) do
     t.string "supplier_map", default: "osm"
     t.string "url"
     t.integer "role_id"
+    t.text "logo"
   end
 
   create_table "dashboards", force: :cascade do |t|
@@ -321,6 +322,8 @@ ActiveRecord::Schema.define(version: 20200618144736) do
     t.string "type_geometry"
     t.boolean "syncronization_data", default: true
     t.boolean "tracking", default: false
+    t.integer "geo_restriction"
+    t.text "cover"
     t.index ["user_id"], name: "index_project_types_on_user_id"
   end
 
@@ -331,12 +334,12 @@ ActiveRecord::Schema.define(version: 20200618144736) do
     t.datetime "updated_at", null: false
     t.jsonb "properties_original"
     t.bigint "project_status_id"
-    t.datetime "status_update_at", default: "2020-06-12 00:29:31"
+    t.datetime "status_update_at", default: "2020-06-18 16:04:25"
     t.bigint "user_id"
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
-    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
     t.boolean "current_season", default: true
+    t.point "the_geom"
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["user_id"], name: "index_projects_on_user_id"
