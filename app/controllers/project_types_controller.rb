@@ -281,7 +281,7 @@ class ProjectTypesController < ApplicationController
   end
 
   def encode_image
-    params[:project_type][:cover] = Base64.encode64(File.read(params[:project_type][:cover].path))
+    params[:project_type][:cover] = Base64.strict_encode64(File.read(params[:project_type][:cover].path))
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.
