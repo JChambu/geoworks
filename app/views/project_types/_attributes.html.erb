@@ -27,41 +27,50 @@
     </div>
   <% end %>
 
-  <div class="form-group row">
+  <div class="form-group row m-0">
+    <div class="col-md-3 row">
+      <%= f.label :name, 'Nombre:', class:'col-md-5 text-right col-form-label-sm' %>
+      <div class="col-md-7">
+        <%= f.text_field :name, class: 'form-control form-control-sm' %>
+      </div>
+    </div>
 
-    <%= f.label :name, 'Nombre:', class:'col-md-1 text-right col-form-label-sm' %>
-    <div class="col-md-2">
-      <%= f.text_field :name, class: 'form-control form-control-sm' %>
+    <div class="col-md-1 row">
+        <%= f.select :type_geometry, options_for_select(['Point', 'Polygon'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
     </div>
 
     <div class="col-md-3 row">
-      <%= f.label :type_geometry, 'Tipo de Geometría:', class:'col-md-6 text-right col-form-label-sm' %>
-      <div class="col-md-6">
-        <%= f.select :type_geometry, options_for_select(['Point', 'Polygon'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
-      </div>
-    </div>
-
-    <div class="col-md-4 row">
-      <%= f.label :enabled_as_layer, "¿Recorido?:", class:'col-md-4 text-right col-form-label-sm' %>
-      <div class="col-md-2">
+      <%= f.label :enabled_as_layer, "Recorido", class:'col-md-4 text-right col-form-label-sm' %>
+      <div class="col-md-1 pt-1">
         <%= f.check_box :tracking %>
       </div>
 
-      <%= f.label :enabled_as_layer, "¿Capa?:", class:'col-md-4 text-right col-form-label-sm' %>
-      <div class="col-md-2">
+      <%= f.label :enabled_as_layer, "Capa", class:'col-md-4 text-right col-form-label-sm' %>
+      <div class="col-md-1 pt-1">
         <%= f.check_box :enabled_as_layer %>
       </div>
     </div>
 
-    <%= f.label :layer_color, 'Color Capa:', class:'col-md-1 text-right col-form-label-sm' %>
-    <div class="col-md-1">
-      <%= f.color_field :layer_color, class: 'form-control form-control-sm' %>
+    <div class="col-md-3 row">
+     <div class="col-md-3">
+       <%= f.color_field :layer_color, class: 'form-control form-control-sm' %>
+      </div>
+      <div class="col-md-9 mt-n2">
+        <%= f.file_field(:cover, multiple: false, class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '' , input_html: {class: 'd-none'}) %>
+      </div>
+
     </div>
+
+    <div class="col-md-3 row">
+      <%= f.label :geo_restriction, 'Restricción (m):', class:'col-md-8 text-right col-form-label-sm' %>
+      <div class="col-md-4">
+        <%= f.input :geo_restriction, label: false, input_html: {class: 'form-control form-control-sm'} %>
+      </div>
+    </div>
+    
   </div>
 
-  <%= f.file_field(:cover, multiple: false, class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '') %>
-  <%= f.input :geo_restriction %>
-
+  
   <% if can? :attributes, :edit %>
     <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
       <div class="table-responsive">

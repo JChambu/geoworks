@@ -1,5 +1,4 @@
 
-
   <% if params[:controller] == 'devise/passwords'%>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark invisible pb-3">
   <% else %>
@@ -37,6 +36,11 @@
 
       <!-- Capas Externas -->
       <% if params[:controller] == 'layers' && params[:action] == 'index' %>
+        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
+      <% end %>
+
+      <!-- Corporaciones -->
+      <% if params[:controller] == 'customers' && params[:action] == 'index' %>
         <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
       <% end %>
 

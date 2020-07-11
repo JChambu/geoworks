@@ -10,39 +10,39 @@
     </div>
   <% end %>
 <div class="row justify-content-center">
-  <%= f.label :name, "Nombre" , class: "col-md-3 text-left col-form-label"%>
+  <%= f.label :name, "Nombre" , class: "col-md-3 text-left col-form-label text-right"%>
   <div class="col-md-6 pt-1">
     <%= f.text_field :name , class: "form-control form-control-sm" , placeholder: "Ingrese el Nombre"%>
   </div>
 </div>
 <div class="row justify-content-center">
-  <%= f.label :subdomain , "Subdominio" ,class: "col-md-3 text-left col-form-label" %>
+  <%= f.label :subdomain , "Subdominio" ,class: "col-md-3 text-left col-form-label text-right" %>
   <div class="col-md-6 pt-1">
     <%= f.text_field :subdomain , class: "form-control form-control-sm" , placeholder: "Ingrese el Subdominio" %>
   </div>
 </div>
 <div class="row justify-content-center">
-  <%= f.label :url , "URL" ,class: "col-md-3 text-left col-form-label" %>
+  <%= f.label :url , "URL" ,class: "col-md-3 text-left col-form-label text-right" %>
   <div class="col-md-6 pt-1">
     <%= f.text_field :url, class: "form-control form-control-sm" , placeholder: "Ingrese la URL" %>
   </div>
 </div>
 <div class="row justify-content-center">
-  <%= f.label :supplier_map , "Mapa Base" ,class: "col-md-3 text-left col-form-label" %>
+  <%= f.label :supplier_map , "Mapa Base" ,class: "col-md-3 text-left col-form-label text-right" %>
   <div class="col-md-6 pt-1">
     <%= f.input :supplier_map, label: false, collection: maps_for_select, prompt: 'seleccione el mapa base', input_html: {class: 'typef form-control form-control-sm'}  %>
   </div>
 </div>
 <div class="row justify-content-center">
-  <%= f.label :logo , "Logo" ,class: "col-md-3 text-left col-form-label" %>
+  <%= f.label :logo , "Logo" ,class: "col-md-3 text-left col-form-label text-right" %>
   <div class="col-md-6 pt-1">
     <%= f.file_field(:logo, multiple: false, class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '') %>
   </div>
 </div>
 
   <div class="col-md-14 row justify-content-center mt-4">
-    <%= link_to 'Volver', customers_path , class: 'btn btn-sm btn-secondary mr-1' %>
-    <%= f.submit class: 'enviar btn btn-sm btn-primary' , value: "Guardar"%>
+    <%= link_to 'Cancelar', customers_path , class: 'btn btn-secondary mr-1' %>
+    <%= f.submit class: 'btn btn-primary' , value: "Guardar"%>
   </div>
   
 <% end %>
