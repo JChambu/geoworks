@@ -71,7 +71,7 @@ class CustomersController < ApplicationController
     end
 
     def encode_image
-      params[:customer][:logo] = Base64.encode64(File.read(params[:customer][:logo].path))
+      params[:customer][:logo] = Base64.strict_encode64(File.read(params[:customer][:logo].path))
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
