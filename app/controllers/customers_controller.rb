@@ -25,7 +25,10 @@ class CustomersController < ApplicationController
   # POST /customers.json
   def create
 
-    encode_image
+    if params[:customer][:cover].present?
+      encode_image
+    end
+
     @customer = Customer.new(customer_params)
 
     respond_to do |format|
@@ -42,7 +45,10 @@ class CustomersController < ApplicationController
   # PATCH/PUT /customers/1.json
   def update
 
-    encode_image
+    if params[:customer][:cover].present?
+      encode_image
+    end
+
     respond_to do |format|
       if @customer.update(customer_params)
         format.html { redirect_to customers_url, notice: 'La corporación se actualizó correctamente.' }
