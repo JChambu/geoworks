@@ -25,7 +25,7 @@ class CustomersController < ApplicationController
   # POST /customers.json
   def create
 
-    if params[:customer][:cover].present?
+    if params[:customer][:logo].present?
       encode_image
     end
 
@@ -45,7 +45,7 @@ class CustomersController < ApplicationController
   # PATCH/PUT /customers/1.json
   def update
 
-    if params[:customer][:cover].present?
+    if params[:customer][:logo].present?
       encode_image
     end
 
