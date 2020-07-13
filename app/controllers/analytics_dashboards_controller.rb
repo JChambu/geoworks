@@ -64,10 +64,16 @@ class AnalyticsDashboardsController < ApplicationController
   # DELETE /analytics_dashboards/1.json
   def destroy
     authorize! :indicators, :destroy
-    @analytics_dashboard.destroy
+    @graphics_properties = GraphicsProperty.where(analytics_dashboard_id: @analytics_dashboard.id)
     respond_to do |format|
-      format.html {redirect_to project_type_dashboard_analytics_dashboards_path(@project_type, @dashboard) , notice: 'Analytics dashboard was successfully destroyed.' }
-      format.json { head :no_content }
+      if @graphics_properties.any?
+        format.html { redirect_to project_type_dashboard_analytics_dashboards_path(@project_type, @dashboard), notice: 'El indicador está siendo utilizado por un gráfico.' }
+        format.json { render json: @analytics_dashboard.errors, status: :unprocessable_entity }
+      else
+        @analytics_dashboard.destroy
+        format.html { redirect_to project_type_dashboard_analytics_dashboards_path(@project_type, @dashboard), notice: 'El indicador se eliminó correctamente.' }
+        format.json { head :no_content }
+      end
     end
   end
 
