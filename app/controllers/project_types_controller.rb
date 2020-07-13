@@ -228,7 +228,10 @@ class ProjectTypesController < ApplicationController
 
     params[:project_type][:name_layer] = params[:project_type][:name].gsub(/\s+/, '_').downcase
 
-    encode_image
+    if params[:project_type][:cover].present?
+      encode_image
+    end
+
     @project_type = ProjectType.new(project_type_params)
 
     respond_to do |format|
@@ -250,7 +253,9 @@ class ProjectTypesController < ApplicationController
   # PATCH/PUT /project_types/1.json
   def update
 
-    encode_image
+    if params[:project_type][:cover].present?
+      encode_image
+    end
 
     respond_to do |format|
       if @project_type.update(project_type_params)
