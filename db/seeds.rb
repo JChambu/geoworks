@@ -12,7 +12,7 @@ ActiveRecord::Base.transaction do
 
   @role = Role.where(name: 'superadmin').first_or_create!
 
-  @customer = Customer.where(name: 'public').where(subdomain: 'public').first_or_create!
+  @customer = Customer.where(name: 'public').where(subdomain: 'public').where(url: 'http://public.api.geoworks.com.ar/api/v1').first_or_create!
 
   if !@user.nil? and !@customer.nil? and !@role.nil?
     UserCustomer.where(user_id: @user.id).where(customer_id: @customer.id).where(role_id: @role.id).first_or_create!
