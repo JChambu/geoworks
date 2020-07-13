@@ -18,7 +18,6 @@ class AnalyticsDashboardsController < ApplicationController
   def new
     authorize! :indicators, :new
     @analytics_dashboard = @dashboard.analytics_dashboards.new
-
   end
 
   # GET /analytics_dashboards/1/edit
@@ -32,15 +31,13 @@ class AnalyticsDashboardsController < ApplicationController
     @analytics_dashboard = @dashboard.analytics_dashboards.new(analytics_dashboard_params)
     @analytics_dashboard[:project_type_id] = params[:project_type_id]
 
-
     respond_to do |format|
       if @analytics_dashboard.save
         format.js
         format.html { redirect_to project_type_dashboard_analytics_dashboards_path(@project_type, @dashboard), notice: 'Analytics dashboard was successfully created.' }
         format.json { render :show, status: :created, location: @analytics_dashboard }
-
       else
-        format.js { render :new}
+        format.js { render :new }
       end
     end
   end
@@ -86,11 +83,11 @@ class AnalyticsDashboardsController < ApplicationController
   end
 
   def set_analytics_dashboard
-      @analytics_dashboard = AnalyticsDashboard.find(params[:id])
-    end
+    @analytics_dashboard = AnalyticsDashboard.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def analytics_dashboard_params
-      params.require(:analytics_dashboard).permit(:title, :description, :project_field_id, :analysis_type_id, :chart_id, :graph, :card, :group_field_id, :condition_field_id, :filter_input, :input_value, :const_field, :project_type_id, :sql_sentence, :order_sql, :group_sql, :children, :conditions_sql, :sql_full, :kpi_type)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def analytics_dashboard_params
+    params.require(:analytics_dashboard).permit(:title, :description, :project_field_id, :analysis_type_id, :chart_id, :graph, :card, :group_field_id, :condition_field_id, :filter_input, :input_value, :const_field, :project_type_id, :sql_sentence, :order_sql, :group_sql, :children, :conditions_sql, :sql_full, :kpi_type)
+  end
 end
