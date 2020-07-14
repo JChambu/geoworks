@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200709222457) do
+ActiveRecord::Schema.define(version: 20200714003750) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -322,8 +322,8 @@ ActiveRecord::Schema.define(version: 20200709222457) do
     t.string "type_geometry"
     t.boolean "syncronization_data", default: true
     t.boolean "tracking", default: false
-    t.integer "geo_restriction"
     t.text "cover"
+    t.integer "geo_restriction", default: 0, null: false
     t.index ["user_id"], name: "index_project_types_on_user_id"
   end
 
