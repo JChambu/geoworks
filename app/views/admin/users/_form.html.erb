@@ -36,7 +36,7 @@
             <div class="row justify-content-center">
               <%= f.label 'Corporación', class:'col-md-4 text-right col-form-label' %>
               <div class="col-md-6">
-                <%= f.input :customer_name, label: false, input_html: {value: @user_customer.customer.name} %>
+                <%= f.input :customer_name, readonly: true, label: false, input_html: {class: 'form-control form-control-sm', value: @user_customer.customer.name} %>
                 <%= f.input :customer_id, as: :hidden,  input_html: {value: @user_customer.customer_id } %>
               </div>
             </div>
