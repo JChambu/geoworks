@@ -14,10 +14,10 @@ has_paper_trail
 
     @bounds =  Project.
       where(project_type_id: project_type_id).
-      select("public.st_Xmin(public.st_collect(the_geom)) as minx, 
-                        public.st_Ymin(public.st_collect(the_geom)) as miny,
-                        public.st_Xmax(public.st_collect(the_geom)) as maxx,
-                        public.st_Ymax(public.st_collect(the_geom)) as maxy").
+      select("shared_extensions.st_Xmin(shared_extensions.st_collect(the_geom)) as minx,
+                        shared_extensions.st_Ymin(shared_extensions.st_collect(the_geom)) as miny,
+                        shared_extensions.st_Xmax(shared_extensions.st_collect(the_geom)) as maxx,
+                        shared_extensions.st_Ymax(shared_extensions.st_collect(the_geom)) as maxy").
     group(:project_type_id)
 
 
@@ -44,7 +44,7 @@ has_paper_trail
           reg = RegexpType.find(field.regexp_type_id)
           regexp_type = /#{reg.expresion}/
           data_field = properties[field.name]
-          regexp_data = regexp_type.match(data_field) 
+          regexp_data = regexp_type.match(data_field)
           self.properties[new_field] = regexp_data[1] if !regexp_data.nil?
         end
       end
@@ -55,8 +55,8 @@ has_paper_trail
 
     attributes = ProjectField.where(project_type_id: 6).select(:name)
 
-    @at = [] 
-    attributes.each do |a| 
+    @at = []
+    attributes.each do |a|
       @at << a.name
     end
 
@@ -65,7 +65,7 @@ has_paper_trail
       @all = all
       all.each do |product|
         p product
-        csv << @at.map { |attr|  product.send(attr) } 
+        csv << @at.map { |attr|  product.send(attr) }
       end
     end
   end
@@ -76,7 +76,7 @@ has_paper_trail
     @properties = Project.where(project_type_id: 32).select("properties->>'form_values'")
 
     #   @data = JSON.parse(@properties.to_h)
-    #@properties.each do |row|  
+    #@properties.each do |row|
     #
 
 
