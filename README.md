@@ -18,7 +18,7 @@ GEOWEBCACHE_CACHE_DIR=/opt/geoserver/data_dir/gwc
 
 # Postgres
 POSTGRES_HOST=gw-db
-POSTGRES_DATABASE: <database name, eg. geoworks_development>
+POSTGRES_DATABASE=<database name, eg. geoworks_development>
 POSTGRES_USER=<postgres-user>
 POSTGRES_PASSWORD=<postgres-password>
 
