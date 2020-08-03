@@ -18,6 +18,7 @@ GEOWEBCACHE_CACHE_DIR=/opt/geoserver/data_dir/gwc
 
 # Postgres
 POSTGRES_HOST=gw-db
+POSTGRES_DATABASE: <database name, eg. geoworks_development>
 POSTGRES_USER=<postgres-user>
 POSTGRES_PASSWORD=<postgres-password>
 
@@ -60,7 +61,7 @@ sudo docker-compose up -d
 Creamos la base de datos:
 
 ``` sh
-sudo docker exec -it gw-app rake db:create db:migrate db:seed
+sudo docker exec -it gw-app rake db:create db:schema:load db:seed
 ```
 
 ### Comandos útiles de Docker:
@@ -85,13 +86,13 @@ Ir a `<host>:8600/geoserver/web/`
 ### Agregar un nuevo espacio de trabajo
 
 - Nombre: `geoworks`
-- URI del espacio de nombres: `localhost`
+- URI del espacio de nombres: `geoworks`
 - Habilitar "Espacio de trabajo por defecto"
 
 Abrir el espacio de trabajo creado
 
 - Habilitar el espacio de trabajo
-- Habilitar los servicios `WCS`, `WFS` y `WMS`
+- Habilitar el servicio `WMS`
 
 ### Agregar nuevo almacén de datos
 
@@ -102,13 +103,13 @@ PostGIS - PostGIS Database
 **Información básica del almacén:**
 
 - Espacio de trabajo: `geoworks`
-- Nombre del origen de datos: `geoworks`
+- Nombre del origen de datos: `public`
 
 **Parametros de conexión:**
 
 - host: `gw-db`
 - port: `5432`
-- database: `geoworks_development`
+- database: `<postgres-database, eg. geoworks_development>`
 - schema: `public`
 - user: `<postgres-user>`
 - password: `<postgres-password>`
