@@ -40,7 +40,7 @@ USER_PASSWORD: <your-password>
 ### Deployamos
 
 ``` sh
-sh deploy.sh
+sudo sh deploy.sh
 ```
 
 Ahora deberíamos poder acceder a la aplicación desde `<host>:<app-port>`
