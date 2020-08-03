@@ -63,15 +63,6 @@ Creamos la base de datos:
 sudo docker exec -it gw-app rake db:create db:migrate db:seed
 ```
 
-Ejecutamos el fix temporal para el bug en la columna `the_geom`:
-
-``` sh
-sudo docker exec -i gw-db psql --username postgres --dbname geoworks_development <<-EOSQL
-  ALTER TABLE public.projects DROP COLUMN the_geom;
-  ALTER TABLE public.projects ADD COLUMN the_geom geometry(Geometry,4326);
-EOSQL
-```
-
 ### Comandos útiles de Docker:
 
 - Listar los contenedores: `sudo docker ps -a` ([+info](https://docs.docker.com/engine/reference/commandline/ps/))
