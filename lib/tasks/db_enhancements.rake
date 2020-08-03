@@ -14,13 +14,12 @@ namespace :db do
   task :extensions => :environment  do
     # Create Schema
     ActiveRecord::Base.connection.execute 'CREATE SCHEMA IF NOT EXISTS shared_extensions;'
-    ActiveRecord::Base.connection.execute 'CREATE SCHEMA IF NOT EXISTS postgis;'
-    # Enable Hstore
-    ActiveRecord::Base.connection.execute 'CREATE EXTENSION IF NOT EXISTS HSTORE SCHEMA shared_extensions;'
     # Enable Postgis
-    ActiveRecord::Base.connection.execute 'CREATE EXTENSION IF NOT EXISTS postgis SCHEMA postgis ;'
-    # Enable UUID-OSSP
-    ActiveRecord::Base.connection.execute 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA shared_extensions;'
+    ActiveRecord::Base.connection.execute 'CREATE EXTENSION IF NOT EXISTS postgis SCHEMA shared_extensions;'
+    # Grant usage to public
+    ActiveRecord::Base.connection.execute 'GRANT usage ON SCHEMA shared_extensions to public;'
+    # Update search_path
+    ActiveRecord::Base.connection.execute "ALTER DATABASE #{ENV.fetch("POSTGRES_DATABASE")} SET search_path = public, shared_extensions;"
   end
 end
 

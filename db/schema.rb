@@ -332,6 +332,7 @@ ActiveRecord::Schema.define(version: 20200714003750) do
     t.integer "project_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
     t.jsonb "properties_original"
     t.bigint "project_status_id"
     t.datetime "status_update_at", default: "2020-06-18 16:04:25"
@@ -339,7 +340,6 @@ ActiveRecord::Schema.define(version: 20200714003750) do
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
     t.boolean "current_season", default: true
-    t.point "the_geom"
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["user_id"], name: "index_projects_on_user_id"

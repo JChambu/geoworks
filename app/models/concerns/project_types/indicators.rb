@@ -13,14 +13,14 @@ module ProjectTypes::Indicators
         # Aplica st_contains a indicadores basic y complex
         @data = Project.joins(:project_status, :user).
           where(project_type_id: project_type_id).
-          where("#{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})").
+          where("shared_extensions.st_contains(shared_extensions.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})").
           where(row_active: true)
           if children == true
             @data = @data.left_outer_joins(:project_data_child)
           end
       else
         # Aplica st_contains a indicadores advanced
-        @data = sql_full.sub('where_clause', "where_clause #{@ct}.st_contains(#{@ct}.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), main.#{:the_geom}) AND ")
+        @data = sql_full.sub('where_clause', "where_clause shared_extensions.st_contains(shared_extensions.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), main.#{:the_geom}) AND ")
       end
 
       @data

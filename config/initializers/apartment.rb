@@ -68,9 +68,7 @@ Apartment.configure do |config|
   # e.g when using a PostgreSQL extension like hstore.
   # Any schemas added here will be available along with your selected Tenant.
   #
-  # config.persistent_schemas = %w{ hstore }
-   config.persistent_schemas = %w{  postgis }
-  #config.persistent_schemas = %w{ shared_extensions }
+  config.persistent_schemas = ['shared_extensions']
   config.default_schema = "public"
   # <== PostgreSQL only options
   #
@@ -93,8 +91,8 @@ end
 #Rails.application.config.middleware.use 'Apartment::Elevators::Subdomain'
 
 
-Rails.application.config.middleware.insert_before Warden::Manager, Apartment::Elevators::Subdomain 
+Rails.application.config.middleware.insert_before Warden::Manager, Apartment::Elevators::Subdomain
 Rails.application.config.middleware.use Apartment::Elevators::Subdomain
 #Ok
-#Rails.application.config.middleware.insert_before Warden::Manager, Apartment::Elevators::FirstSubdomain 
+#Rails.application.config.middleware.insert_before Warden::Manager, Apartment::Elevators::FirstSubdomain
 #Rails.application.config.middleware.use Apartment::Elevators::FirstSubdomain
