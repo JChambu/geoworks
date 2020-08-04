@@ -89,11 +89,6 @@ Ir a `<host>:8600/geoserver/web/`
 - URI del espacio de nombres: `geoworks`
 - Habilitar "Espacio de trabajo por defecto"
 
-Abrir el espacio de trabajo creado
-
-- Habilitar el espacio de trabajo
-- Habilitar el servicio `WMS`
-
 ### Agregar nuevo almacén de datos
 
 **Origen de datos vectoriales:**
@@ -103,7 +98,7 @@ PostGIS - PostGIS Database
 **Información básica del almacén:**
 
 - Espacio de trabajo: `geoworks`
-- Nombre del origen de datos: `public`
+- Nombre del origen de datos: `geoworks`
 
 **Parametros de conexión:**
 
