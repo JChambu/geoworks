@@ -6,7 +6,7 @@ class Customer < ApplicationRecord
   validates :name, :subdomain, presence: true
   validates :subdomain, uniqueness: true
 
-  after_create :create_tenant, :create_workspace_geoserver, :create_datastore_geoserver
+  after_create :create_tenant, :create_workspace_geoserver, :create_datastore_geoserver, :add_url
 
   MAPS = %w[here osm]
 
@@ -52,6 +52,13 @@ class Customer < ApplicationRecord
       http.request(request)
     end
     return [response.body, response.code]
+
+  end
+
+  def add_url
+
+    self.url = "http://#{subdomain}.api.geoworks.com.ar/api/v1"
+    save!
 
   end
 end
