@@ -6,7 +6,7 @@ class Customer < ApplicationRecord
   validates :name, :subdomain, presence: true
   validates :subdomain, uniqueness: true
 
-  after_create :create_tenant, :create_workspace_geoserver, :create_datastore_geoserver, :add_url, :create_user_customer
+  after_create :create_tenant, :create_workspace_geoserver, :create_datastore_geoserver, :add_url, :create_user_customer, :create_role
 
   MAPS = %w[here osm]
 
@@ -66,6 +66,15 @@ class Customer < ApplicationRecord
 
     @user_customer = UserCustomer.new(user_id: 1, customer_id: self.id, role_id: 1)
     @user_customer.save
+
+  end
+
+  def create_role
+
+    Apartment::Tenant.switch subdomain do
+      @role = Role.new(name: 'superadmin')
+      @role.save
+    end
 
   end
 
