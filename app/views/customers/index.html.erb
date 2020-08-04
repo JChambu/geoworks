@@ -7,7 +7,7 @@
       </div>
       <div class="col-md-6 text-right">
         <%= link_to 'Nuevo', new_customer_path, class: "btn btn-primary" %>
-      </div>      
+      </div>
     </div>
   </div>
 </div>
@@ -25,18 +25,17 @@
             <th colspan="2" class="text-center">Acciones</th>
           </tr>
         </thead>
-      
+
         <tbody class="sortable ui-sortable">
           <% @customers.each do |customer| %>
             <tr class="ui-sortable-handle">
               <td><%= customer.name %></td>
               <td><%= customer.subdomain %></td>
-              <td><%= customer.supplier_map %></td>
               <td><%= customer.url %></td>
               <td class="text-center">
                 <%= link_to '<i class="fas fa-edit"></i>'.html_safe, edit_customer_path(customer) %>
               </td>
-              <td class="text-center">    
+              <td class="text-center">
           <%= link_to '<i class="fas fa-trash-alt" title="Eliminar atributo"></i>'.html_safe,       customer, method: :delete, data: { confirm: '¿Está seguro?' } %>
               </td>
             </tr>
@@ -47,5 +46,3 @@
   </div>
 </div>
 <br>
-
-
