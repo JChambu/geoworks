@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200714003750) do
+ActiveRecord::Schema.define(version: 20200804202613) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -414,7 +414,6 @@ ActiveRecord::Schema.define(version: 20200714003750) do
   add_foreign_key "analytics_dashboards", "charts"
   add_foreign_key "analytics_dashboards", "project_types"
   add_foreign_key "has_project_types", "project_types"
-  add_foreign_key "has_project_types", "users"
   add_foreign_key "permissions", "events"
   add_foreign_key "permissions", "model_types"
   add_foreign_key "permissions", "roles"
@@ -423,7 +422,6 @@ ActiveRecord::Schema.define(version: 20200714003750) do
   add_foreign_key "project_filters", "project_types"
   add_foreign_key "project_filters", "users"
   add_foreign_key "project_statuses", "project_types"
-  add_foreign_key "project_types", "users"
   add_foreign_key "projects", "project_statuses"
   add_foreign_key "projects", "project_types"
   add_foreign_key "users", "roles"
