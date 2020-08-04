@@ -6,7 +6,7 @@ class Customer < ApplicationRecord
   validates :name, :subdomain, presence: true
   validates :subdomain, uniqueness: true
 
-  after_create :create_tenant, :create_workspace_geoserver, :create_datastore_geoserver, :add_url
+  after_create :create_tenant, :create_workspace_geoserver, :create_datastore_geoserver, :add_url, :create_user_customer
 
   MAPS = %w[here osm]
 
@@ -61,4 +61,12 @@ class Customer < ApplicationRecord
     save!
 
   end
+
+  def create_user_customer
+
+    @user_customer = UserCustomer.new(user_id: 1, customer_id: self.id, role_id: 1)
+    @user_customer.save
+
+  end
+
 end
