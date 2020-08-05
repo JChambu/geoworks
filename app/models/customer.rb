@@ -7,7 +7,7 @@ class Customer < ApplicationRecord
   validates :subdomain, uniqueness: true
 
   after_create :create_tenant, :create_workspace_geoserver, :create_datastore_geoserver, :add_url, :create_user_customer, :create_role
-  before_destroy :drop_tenant, :destroy_workspace_geoserver
+  before_destroy :drop_tenant, :destroy_workspace_geoserver, :destroy_user_customer
 
   MAPS = %w[here osm]
 
@@ -100,4 +100,9 @@ class Customer < ApplicationRecord
     return response.code
 
   end
+
+  def destroy_user_customer
+    UserCustomer.where(customer_id: self.id).destroy_all
+  end
+
 end
