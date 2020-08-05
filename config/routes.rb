@@ -8,8 +8,8 @@ Rails.application.routes.draw do
   get 'project_types/filter_heatmap' => 'project_types#filter_heatmap'
   get 'project_types/graph3' => 'project_types#graph2'
   get 'project_types/project_type_layers' => 'project_types#project_type_layers'
-  get 'layers/find' => 'layers#find' 
-  get 'project_fields/field_popup' => 'project_fields#field_popup' 
+  get 'layers/find' => 'layers#find'
+  get 'project_fields/field_popup' => 'project_fields#field_popup'
   get 'project_types/create_share' => 'project_types#create_share', as: :create_share
   get 'projects/search_data' => 'projects#search_data'
 
@@ -32,7 +32,7 @@ Rails.application.routes.draw do
     resources :regexp_types
     resources :events
     resources :model_types
-    
+
 
     namespace :admin do
       post 'users/search_projects'
@@ -49,10 +49,10 @@ Rails.application.routes.draw do
       root 'dashboards#index'
     end
 
-    resources :project_types do 
+    resources :project_types do
       resources :dashboards do
         get 'create_graph'
-        resources :graphics 
+        resources :graphics
         resources :graphics_properties
         resources :analytics_dashboards
       end
@@ -72,7 +72,7 @@ Rails.application.routes.draw do
           put :update_multiple
         end
       end
-    
+
     get 'project_types/share' => 'project_types#share', as: :share
     get 'project_types/filters' => 'project_types#filters', as: :filters
     get 'project_types/create_filters' => 'project_types#create_filters', as: :create_filters
