@@ -1,39 +1,39 @@
 <div class="offset-md-3 col-md-6">
   <div class="card m-2 shadow">
     <div class="card-body">
-<%= simple_form_for @customer , class: "simple_form edit_choice_list" do |f| %>
+      <%= simple_form_for @customer , class: "simple_form edit_choice_list" do |f| %>
 
-  <% if customer.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(customer.errors.count, "error") %> prohibited this customer from being saved:</h2>
-      <ul><% customer.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
+        <% if customer.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(customer.errors.count, "error") %> prohibited this customer from being saved:</h2>
+            <ul><% customer.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
+          </div>
+        <% end %>
+        <div class="row justify-content-center">
+          <%= f.label :name, "Nombre:" , class: "col-md-3 text-left col-form-label text-right"%>
+          <div class="col-md-6 pt-1">
+            <%= f.text_field :name , class: "form-control form-control-sm" , placeholder: "Ingrese el Nombre"%>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <%= f.label :subdomain , "Subdominio:" ,class: "col-md-3 text-left col-form-label text-right" %>
+          <div class="col-md-6 pt-1">
+            <%= f.text_field :subdomain , class: "form-control form-control-sm" , placeholder: "Ingrese el Subdominio" %>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <%= f.label :logo , "Logo:" ,class: "col-md-3 text-left col-form-label text-right" %>
+          <div class="col-md-6 pt-1">
+            <%= f.file_field(:logo, multiple: false, class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '') %>
+          </div>
+        </div>
+
+        <div class="col-md-14 row justify-content-center mt-4">
+          <%= link_to 'Cancelar', customers_path , class: 'btn btn-secondary mr-1' %>
+          <%= f.submit class: 'btn btn-primary' , value: "Guardar"%>
+        </div>
+
+      <% end %>
     </div>
-  <% end %>
-<div class="row justify-content-center">
-  <%= f.label :name, "Nombre" , class: "col-md-3 text-left col-form-label text-right"%>
-  <div class="col-md-6 pt-1">
-    <%= f.text_field :name , class: "form-control form-control-sm" , placeholder: "Ingrese el Nombre"%>
   </div>
-</div>
-<div class="row justify-content-center">
-  <%= f.label :subdomain , "Subdominio" ,class: "col-md-3 text-left col-form-label text-right" %>
-  <div class="col-md-6 pt-1">
-    <%= f.text_field :subdomain , class: "form-control form-control-sm" , placeholder: "Ingrese el Subdominio" %>
-  </div>
-</div>
-<div class="row justify-content-center">
-  <%= f.label :logo , "Logo" ,class: "col-md-3 text-left col-form-label text-right" %>
-  <div class="col-md-6 pt-1">
-    <%= f.file_field(:logo, multiple: false, class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '') %>
-  </div>
-</div>
-
-  <div class="col-md-14 row justify-content-center mt-4">
-    <%= link_to 'Cancelar', customers_path , class: 'btn btn-secondary mr-1' %>
-    <%= f.submit class: 'btn btn-primary' , value: "Guardar"%>
-  </div>
-
-<% end %>
-</div>
-</div>
 </div>
