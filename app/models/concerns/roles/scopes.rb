@@ -1,6 +1,6 @@
 module Roles::Scopes
   extend ActiveSupport::Concern
-  
+
   module ClassMethods
     def search_roles_for_tenant customer_id
       @r = []
