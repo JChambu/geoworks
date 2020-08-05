@@ -18,25 +18,21 @@
       <table class="table table-hover table-striped table-bordered m-0">
         <thead>
           <tr>
-            <th class="w-20">Nombre</th>
+            <th>Nombre</th>
             <th>Subdominio</th>
-            <th>Mapa Base</th>
-            <th>URL</th>
             <th colspan="2" class="text-center">Acciones</th>
           </tr>
         </thead>
-
-        <tbody class="sortable ui-sortable">
+        <tbody>
           <% @customers.each do |customer| %>
-            <tr class="ui-sortable-handle">
+            <tr>
               <td><%= customer.name %></td>
               <td><%= customer.subdomain %></td>
-              <td><%= customer.url %></td>
               <td class="text-center">
-                <%= link_to '<i class="fas fa-edit"></i>'.html_safe, edit_customer_path(customer) %>
+                <%= link_to edit_customer_path(customer) do %><i class="fas fa-edit"></i><% end %>
               </td>
               <td class="text-center">
-          <%= link_to '<i class="fas fa-trash-alt" title="Eliminar atributo"></i>'.html_safe,       customer, method: :delete, data: { confirm: '¿Está seguro?' } %>
+                <%= link_to customer, method: :delete, data: { confirm: '¿Está seguro?' } do %><i class="fas fa-trash-alt"></i><% end %>
               </td>
             </tr>
           <% end %>
