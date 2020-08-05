@@ -7,6 +7,7 @@ class Customer < ApplicationRecord
   validates :subdomain, uniqueness: true
 
   after_create :create_tenant, :create_workspace_geoserver, :create_datastore_geoserver, :add_url, :create_user_customer, :create_role
+  before_destroy :drop_tenant
 
   MAPS = %w[here osm]
 
@@ -76,6 +77,11 @@ class Customer < ApplicationRecord
       @role.save
     end
 
+  end
+
+  def drop_tenant
+    return if subdomain == 'public'
+    Apartment::Tenant.drop(subdomain)
   end
 
 end
