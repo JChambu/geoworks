@@ -5,6 +5,7 @@ class Customer < ApplicationRecord
 
   validates :name, :subdomain, presence: true
   validates :subdomain, uniqueness: true
+  validates_format_of :subdomain, :with => /\A[a-zA-Z0-9]+\z/
 
   after_create :create_tenant, :create_workspace_geoserver, :create_datastore_geoserver, :add_url, :create_user_customer, :create_role
   before_destroy :drop_tenant, :destroy_workspace_geoserver, :destroy_user_customer
