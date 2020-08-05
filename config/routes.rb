@@ -30,7 +30,6 @@ Rails.application.routes.draw do
     resources :charts
     resources :analysis_types
     resources :regexp_types
-    resources :customers
     resources :events
     resources :model_types
     
@@ -45,6 +44,7 @@ Rails.application.routes.draw do
       get 'users/search_fields'
       resources :users
       resources :roles
+      resources :customers
       get 'dashboards/index'
       root 'dashboards#index'
     end

@@ -39,11 +39,6 @@
         <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
       <% end %>
 
-      <!-- Corporaciones -->
-      <% if params[:controller] == 'customers' && params[:action] == 'index' %>
-        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
-      <% end %>
-
       <!-- Editar Usuario -->
       <% if params[:controller] == 'users' && params[:action] == 'edit' %>
         <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
@@ -171,7 +166,6 @@
         <% if can? :layers, :visualizer %>
           <%= link_to 'Capas Externas', layers_path, class: "dropdown-item" %>
         <% end %>
-        <!--<%= link_to 'Corporaciones', customers_path, class: "dropdown-item" %>-->
         <%- if user_signed_in? %>
           <%= link_to "Editar Usuario", edit_user_path(current_user.id), class: "dropdown-item" %>
           <%= link_to 'Cerrar Sesión', destroy_user_session_path, class: "dropdown-item", method: :delete %>

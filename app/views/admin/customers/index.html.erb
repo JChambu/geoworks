@@ -6,7 +6,7 @@
         <h1>Corporaciones</h1>
       </div>
       <div class="col-md-6 text-right">
-        <%= link_to 'Nuevo', new_customer_path, class: "btn btn-primary" %>
+        <%= link_to 'Nuevo', new_admin_customer_path, class: "btn btn-primary" %>
       </div>
     </div>
   </div>
@@ -29,10 +29,10 @@
               <td><%= customer.name %></td>
               <td><%= customer.subdomain %></td>
               <td class="text-center">
-                <%= link_to edit_customer_path(customer) do %><i class="fas fa-edit"></i><% end %>
+                <%= link_to edit_admin_customer_path(customer) do %><i class="fas fa-edit"></i><% end %>
               </td>
               <td class="text-center">
-                <%= link_to customer, method: :delete, data: { confirm: '¿Está seguro?' } do %><i class="fas fa-trash-alt"></i><% end %>
+                <%= link_to admin_customer_path(customer), method: :delete, data: { confirm: '¿Está seguro?' } do %><i class="fas fa-trash-alt"></i><% end %>
               </td>
             </tr>
           <% end %>

@@ -1,5 +1,6 @@
-class CustomersController < ApplicationController
+class Admin::CustomersController < ApplicationController
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
+  layout 'admin'
 
   # GET /customers
   # GET /customers.json
@@ -33,7 +34,7 @@ class CustomersController < ApplicationController
 
     respond_to do |format|
       if @customer.save
-        format.html { redirect_to customers_url, notice: 'La corporación se creó correctamente.' }
+        format.html { redirect_to admin_customers_url, notice: 'La corporación se creó correctamente.' }
       else
         format.html { render :new }
         format.json { render json: @customer.errors, status: :unprocessable_entity }
@@ -51,7 +52,7 @@ class CustomersController < ApplicationController
 
     respond_to do |format|
       if @customer.update(customer_params)
-        format.html { redirect_to customers_url, notice: 'La corporación se actualizó correctamente.' }
+        format.html { redirect_to admin_customers_url, notice: 'La corporación se actualizó correctamente.' }
       else
         format.html { render :edit }
         format.json { render json: @customer.errors, status: :unprocessable_entity }
@@ -65,7 +66,7 @@ class CustomersController < ApplicationController
   def destroy
     @customer.destroy
     respond_to do |format|
-      format.html { redirect_to customers_url, notice: 'La corporación se eliminó correctamente.' }
+      format.html { redirect_to admin_customers_url, notice: 'La corporación se eliminó correctamente.' }
       format.json { head :no_content }
     end
   end
