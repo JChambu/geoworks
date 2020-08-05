@@ -7,7 +7,7 @@ class Customer < ApplicationRecord
   validates :subdomain, uniqueness: true
 
   after_create :create_tenant, :create_workspace_geoserver, :create_datastore_geoserver, :add_url, :create_user_customer, :create_role
-  before_destroy :drop_tenant
+  before_destroy :drop_tenant, :destroy_workspace_geoserver
 
   MAPS = %w[here osm]
 
@@ -84,4 +84,20 @@ class Customer < ApplicationRecord
     Apartment::Tenant.drop(subdomain)
   end
 
+  def destroy_workspace_geoserver
+
+    require 'net/http'
+    require 'uri'
+    uri = URI.parse("http://#{ENV['GEOSERVER_HOST']}:8080/geoserver/rest/workspaces/#{subdomain}?recurse=true")
+    request = Net::HTTP::Delete.new(uri)
+    request.basic_auth('admin', ENV['GEOSERVER_ADMIN_PASSWORD'])
+    req_options = {
+      use_ssl: uri.scheme == "https",
+    }
+    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      http.request(request)
+    end
+    return response.code
+
+  end
 end
