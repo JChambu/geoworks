@@ -278,8 +278,7 @@ Navarra.geomaps = function (){
       arr1.push(arr1[0])
       size_box.push(arr1);
       Navarra.dashboards.config.size_polygon.push(arr1);
-      init_kpi(size_box);
-      init_chart_doughnut(size_box);
+      show_kpis()
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
       if (heatmap_actived != ''){
         Navarra.geomaps.heatmap_data();
