@@ -45,14 +45,14 @@ module ProjectTypes::Indicators
       if sql_full.blank?
         @data = Project.joins(:project_status, :user).
           where(project_type_id: project_type_id).
-          where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom})").
+          where("shared_extensions.st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom})").
           where(row_active: true)
         if children == true
           @data = @data.left_outer_joins(:project_data_child)
         end
       # Aplica st_contains a indicadores advanced
       else
-        @data = sql_full.sub('where_clause', "where_clause st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), main.#{:the_geom}) AND ")
+        @data = sql_full.sub('where_clause', "where_clause shared_extensions.st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), main.#{:the_geom}) AND ")
       end
 
       @data
