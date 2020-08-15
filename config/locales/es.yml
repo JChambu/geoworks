@@ -17,6 +17,8 @@ es:
   dashboards: 'Tableros'
   project_types: 'Proyectos'
   layers: 'Capas Externas'
+  name: "Nombre"
+  subdomain: "subdominio"
   regexp: 'Expresiones Regulares'
   exception_handler:
     not_found: "Página no encontrada"
@@ -377,6 +379,9 @@ es:
         role: "Rol"
         password: "Contraseña"
         remember_me: "Recuérdame"
+      customers:
+        name: "Nombre"
+        subdomain: "subdominio"
       chain:
         id: "ID"
         name: "Nombre"
@@ -572,4 +577,9 @@ es:
         children: "Subformulario"
         sql_full: "Sentencia SQL"
     errors:
+      models:
+        customers:
+          attributes:
+            name: nombre
+            subdomain: subdominio
       <<: *errors

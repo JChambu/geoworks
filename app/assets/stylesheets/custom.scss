@@ -368,3 +368,17 @@ div.custom-menu.show {
 .irs--flat .irs-from:before, .irs--flat .irs-to:before, .irs--flat .irs-single:before { /* label triángulo */
   border-top-color: #d3d800 !important;
 }
+.custom-checkbox .custom-control-input:checked~.custom-control-label::before{
+  background-color:#d3d800;
+}
+.img-project{
+  width:10%; height: 56px;background-position: 100% 50%; background-size: contain;background-repeat: no-repeat; position: absolute; margin-top: -18px; left: 89%; transition:1s; z-index:300
+}
+.img-project:hover{
+  width:60%; height: 60vh; left: 39%;
+}
+.field_with_errors {
+    display: inline-block;
+    color: red;
+    white-space: nowrap;
+}

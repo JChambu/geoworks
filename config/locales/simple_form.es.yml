@@ -11,6 +11,10 @@ es:
       # html: '<abbr title="required">*</abbr>'
     error_notification:
       default_message: 'Se ha producido los siguientes errores:'
+      labels:
+        customers:
+          name: "Nombre"
+          subdomain: "subdominio"
     # Labels and hints examples
     # labels:
     #   defaults:

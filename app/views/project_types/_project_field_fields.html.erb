@@ -1,14 +1,49 @@
 <tr>
-  <td style="width: 3%; font-size: 0.8em"><%= f.object.id %></td>
+  <td class="pt-3 pr-0" style="width: 5%; font-size: 0.8em"><%= f.object.id %></td>
 
-  <td style="width: 17%"><%= f.text_field :name, class: "form-control form-control-sm" %></td>
-  <td style="width: 3%"><%= f.check_box :required %></td>
-  <td style="width: 3%"><%= f.check_box :hidden %></td>
-  <td style="width: 3%"><%= f.check_box :read_only %></td>
-  <td style="width: 3%"><%= f.check_box :popup %></td>
-  <td style="width: 3%"><%= f.check_box :filter_field %></td>
-  <td style="width: 3%"><%= f.check_box :heatmap_field %></td>
-  <td style="width: 3%"><%= f.check_box :colored_points_field %></td>
+  <td class="pl-0" style="width: 17%"><%= f.text_field :name, class: "form-control form-control-sm" %></td>
+  <td style="width: 3; padding-right: 0px">
+     <div class="custom-control custom-checkbox">
+      <%= f.check_box :required,class:'custom-control-input', id: 'customCheckField1'.concat(f.object.id.to_s) %>
+      <%= f.label:" ", class:'custom-control-label', for:'customCheckField1'.concat(f.object.id.to_s)%>
+    </div>
+  </td>
+  <td style="width: 3%; padding-right: 0px">
+     <div class="custom-control custom-checkbox">
+      <%= f.check_box :hidden,class:'custom-control-input', id: 'customCheckField2'.concat(f.object.id.to_s) %>
+      <%= f.label:" ", class:'custom-control-label', for:'customCheckField2'.concat(f.object.id.to_s)%>
+    </div>
+  </td>
+  <td style="width: 3%; padding-right: 0px">
+     <div class="custom-control custom-checkbox">
+      <%= f.check_box :read_only,class:'custom-control-input', id: 'customCheckField3'.concat(f.object.id.to_s) %>
+      <%= f.label:" ", class:'custom-control-label', for:'customCheckField3'.concat(f.object.id.to_s)%>
+    </div>
+  </td>
+  <td style="width: 3%; padding-right: 0px">
+     <div class="custom-control custom-checkbox">
+      <%= f.check_box :popup,class:'custom-control-input', id: 'customCheckField4'.concat(f.object.id.to_s) %>
+      <%= f.label:" ", class:'custom-control-label', for:'customCheckField4'.concat(f.object.id.to_s)%>
+    </div>
+  </td>
+  <td style="width: 3%; padding-right: 0px">
+     <div class="custom-control custom-checkbox">
+      <%= f.check_box :filter_field,class:'custom-control-input', id: 'customCheckField5'.concat(f.object.id.to_s) %>
+      <%= f.label:" ", class:'custom-control-label', for:'customCheckField5'.concat(f.object.id.to_s)%>
+    </div>
+  </td>
+  <td style="width: 3%; padding-right: 0px">
+     <div class="custom-control custom-checkbox">
+      <%= f.check_box :heatmap_field,class:'custom-control-input', id: 'customCheckField6'.concat(f.object.id.to_s) %>
+      <%= f.label:" ", class:'custom-control-label', for:'customCheckField6'.concat(f.object.id.to_s)%>
+    </div>
+  </td>
+  <td style="width: 3%; padding-right: 0px">
+     <div class="custom-control custom-checkbox">
+      <%= f.check_box :colored_points_field,class:'custom-control-input', id: 'customCheckField7'.concat(f.object.id.to_s) %>
+      <%= f.label:" ", class:'custom-control-label', for:'customCheckField7'.concat(f.object.id.to_s)%>
+    </div>
+  </td>
   <td style="width: 12%"><%= f.text_field :calculated_field, class: "form-control form-control-sm" %></td>
   <td style="width: 12%"><%= f.text_field :data_script, class: "form-control form-control-sm" %></td>
   <td style="width: 11%"><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {include_blank: ''}, {class: 'typef form-control form-control-sm' } %></td>

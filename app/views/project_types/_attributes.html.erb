@@ -53,49 +53,53 @@
     </div>
   <% end %>
 
-  <div class="form-group row m-0">
-    <div class="col-md-3 row">
-      <%= f.label :name, 'Nombre:', class:'col-md-5 text-right col-form-label-sm' %>
-      <div class="col-md-7">
-        <%= f.text_field :name, class: 'form-control form-control-sm' %>
+  <div class="d-flex justify-content-around align-items-center">
+    <div class="d-flex mr-2">
+      <%= f.label :name, 'Nombre:', class:'col-form-label-sm text-right mr-1' %>
+      <%= f.text_field :name, class: 'form-control form-control-sm' %>
+    </div>
+
+    <div class="d-flex mr-2">
+      <%= f.label :type_geometry, 'Tipo:', class:'col-form-label-sm text-right mr-1' %>
+      <%= f.select :type_geometry, options_for_select(['Point', 'Polygon'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
+    </div>
+
+    <div class="d-flex mr-2 align-items-center">
+      <%= f.label :tracking, "Recorido", class:'col-form-label-sm text-right mr-2' %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :tracking, class:'custom-control-input', id:'customCheck1' %>
+        <label class="custom-control-label" for="customCheck1"></label>
       </div>
     </div>
 
-    <div class="col-md-1 row">
-        <%= f.select :type_geometry, options_for_select(['Point', 'Polygon'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
+    <div class="d-flex mr-2 align-items-center">
+      <%= f.label :enabled_as_layer, "Capa", class:'col-form-label-sm text-right mr-2' %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :enabled_as_layer , class:'custom-control-input', id:'customCheck2'%>
+        <label class="custom-control-label" for="customCheck2"></label>
+      </div>
+      <%= f.color_field :layer_color, class: 'form-control form-control-sm mb-2', style:'width:30px; padding:1px' %>
     </div>
 
-    <div class="col-md-3 row">
-      <%= f.label :enabled_as_layer, "Recorido", class:'col-md-4 text-right col-form-label-sm' %>
-      <div class="col-md-1 pt-1">
-        <%= f.check_box :tracking %>
-      </div>
-
-      <%= f.label :enabled_as_layer, "Capa", class:'col-md-4 text-right col-form-label-sm' %>
-      <div class="col-md-1 pt-1">
-        <%= f.check_box :enabled_as_layer %>
-      </div>
-    </div>
-
-    <div class="col-md-4 row">
-     <div class="col-md-3">
-       <%= f.color_field :layer_color, class: 'form-control form-control-sm' %>
-      </div>
-      <div class="col-md-2">
+    <div class="d-flex mr-2 align-items-center">
+      <%= f.label :cover, "Imagen", class:'col-form-label-sm text-right mr-2' %>
         <%= f.file_field(:cover, multiple: false,id:"file-input", :onchange=>"loadFile(event)" , class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '' , 'data-size':'sm' , 'data-input':false , 'data-badge':'false') %>
-      </div>
-      <div class="col-md-7">
-          <p id="error_text" class="h6 position-absolute"></p>
-        </div>
+      <p id="error_text" class="h6 ml-2 mb-2 text-nowrap"></p>
     </div>
 
-    <div class="col-md-2 row">
-      <%= f.label :geo_restriction, 'Restricción (m):', class:'col-md-8 text-right col-form-label-sm' %>
-      <div class="col-md-4">
-        <%= f.input :geo_restriction, label: false, input_html: {class: 'form-control form-control-sm'} %>
+
+    <div class="d-flex mr-2">
+      <%= f.label :geo_restriction, 'Restricción (m):', class:'col-form-label-sm text-right mr-2' %>
+      <%= f.text_field :geo_restriction, class: 'form-control form-control-sm d-flex', style:'width: 50px' %>
+    </div>
+
+    <div class="d-flex mr-2 align-items-center">
+      <%= f.label :multiple_edition, "Edición Multiple", class:'col-form-label-sm text-right mr-2' %>
+        <div class="custom-control custom-checkbox mb-2">
+          <%= f.check_box :tracking , class:'custom-control-input', id:'customCheck2'%>
+        <label class="custom-control-label" for="customCheck2"></label>
       </div>
     </div>
-    
   </div>
 
   
@@ -111,7 +115,7 @@
                   <%= link_to_add_fields "<i class='fas fa-plus' title='Agregar atributo'></i>".html_safe, f, :project_fields, class: 'table_father' %>
                 <% end %>
               </th>
-              <th style="width: 14%">Nombre</th>
+              <th style="width: 15.5%">Nombre</th>
               <th class="text-center px-0" style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Requerido">R</th>
               <th class="text-center px-0" style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Oculto">O</th>
               <th class="text-center px-0" style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Sólo Lectura">SL</th>
@@ -119,7 +123,7 @@
               <th class="text-center px-0" style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Filtro/Indicadores">F/I</th>
               <th class="text-center px-0" style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Mapa de Calor">MC</th>
               <th class="text-center px-0" style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Colorear Puntos">CP</th>
-              <th class="text-center px-0" style="width: 12%">Cálculo</th>
+              <th class="text-center px-0" style="width: 10.5%">Cálculo</th>
               <th class="text-center px-0" style="width: 12%">Script</th>
               <th class="text-center px-0" style="width: 11%">Tipo de Campo</th>
               <th class="text-center px-0" style="width: 11%"></th>
