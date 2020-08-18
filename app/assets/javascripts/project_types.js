@@ -197,7 +197,7 @@ Navarra.project_types.action_new = function(){
 
 $(window).on('resize', function() {
   var height_browser = window.innerHeight
-  var height_table = height_browser - 315 - $("#attributes-tab").height*1.8
+  var height_table = height_browser - 315 - parseInt($("#attributes-tab").height())*1.8
   $(".table-tbody-scroll, tbody").css("height", height_table);
 });
 
