@@ -570,5 +570,9 @@ es:
         order_sql: "Odenar (ORDER BY)"
         children: "Subformulario"
         sql_full: "Sentencia SQL"
+      customer:
+        name: "Nombre:"
+        subdomain: "Subdominio:"
+        logo: "Logo:"
     errors:
       <<: *errors
