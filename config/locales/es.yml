@@ -17,8 +17,6 @@ es:
   dashboards: 'Tableros'
   project_types: 'Proyectos'
   layers: 'Capas Externas'
-  name: "Nombre"
-  subdomain: "subdominio"
   regexp: 'Expresiones Regulares'
   exception_handler:
     not_found: "Página no encontrada"
@@ -379,9 +377,6 @@ es:
         role: "Rol"
         password: "Contraseña"
         remember_me: "Recuérdame"
-      customers:
-        name: "Nombre"
-        subdomain: "subdominio"
       chain:
         id: "ID"
         name: "Nombre"
@@ -514,7 +509,6 @@ es:
         available_disabled_space: Disponible Espacio para Discapacitados
         machine_readable: Maquina
         maximum_duration: Maxima Duracion
-
       poi_address:
         city_id: Ciudad
         street: Nombre de Calle
@@ -577,9 +571,4 @@ es:
         children: "Subformulario"
         sql_full: "Sentencia SQL"
     errors:
-      models:
-        customers:
-          attributes:
-            name: nombre
-            subdomain: subdominio
       <<: *errors
