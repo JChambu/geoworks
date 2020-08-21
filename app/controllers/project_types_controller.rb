@@ -289,8 +289,18 @@ class ProjectTypesController < ApplicationController
     params[:project_type][:cover] = Base64.strict_encode64(File.read(params[:project_type][:cover].path))
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
   def project_type_params
-    params.require(:project_type).permit(:name, :type_file,  :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color, :cover, :geo_restriction, :type_geometry, {file:[]}, :tracking, :kind_file, project_fields_attributes: [:id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, {role:[]}, :sort, :key, :_destroy, :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,  project_subfields_attributes: [:id, :field_type_id, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id, :sort, :_destroy, :key, :choice_list_id, :hidden, :read_only, :popup, :calculated_field, {role:[]}, :data_script, :key]]).merge(user_id: current_user.id)
+    params.require(:project_type).permit(
+      :name, :type_file, :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color,
+      :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction,
+      project_fields_attributes: [
+        :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { role: [] }, :sort, :_destroy,
+        :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,
+        project_subfields_attributes: [
+          :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { role: [] }, :sort, :_destroy,
+          :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script
+        ]
+      ]
+    ).merge(user_id: current_user.id)
   end
 end
