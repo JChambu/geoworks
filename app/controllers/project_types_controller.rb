@@ -292,7 +292,7 @@ class ProjectTypesController < ApplicationController
   def project_type_params
     params.require(:project_type).permit(
       :name, :type_file, :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color,
-      :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction,
+      :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition,
       project_fields_attributes: [
         :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { role: [] }, :sort, :_destroy,
         :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,
