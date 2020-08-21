@@ -95,14 +95,14 @@
 
     <div class="d-flex mr-2 align-items-center">
       <%= f.label :multiple_edition, "Edición Multiple", class:'col-form-label-sm text-right mr-2' %>
-        <div class="custom-control custom-checkbox mb-2">
-          <%= f.check_box :tracking , class:'custom-control-input', id:'customCheck2'%>
-        <label class="custom-control-label" for="customCheck2"></label>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :multiple_edition , class:'custom-control-input', id:'customCheck3'%>
+        <label class="custom-control-label" for="customCheck3"></label>
       </div>
     </div>
   </div>
 
-  
+
   <% if can? :attributes, :edit %>
     <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
       <div class="table-responsive">
