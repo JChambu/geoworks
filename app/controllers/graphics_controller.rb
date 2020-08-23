@@ -82,10 +82,10 @@ class GraphicsController < ApplicationController
     @project_type = ProjectType.find(params[:project_type_id])
     @dashboard = Dashboard.find(params[:dashboard_id])
   end
-  
+
   def set_graphic
-      @graphic = Graphic.find(params[:id])
-    end
+    @graphic = Graphic.find(params[:id])
+  end
 
   def graphic_params
     params.require(:graphic).permit(:token, :dashboard_id, :title, :width, :legend_display, :label_x_axis, :label_y_axis_left,
