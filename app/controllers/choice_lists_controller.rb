@@ -17,7 +17,7 @@ class ChoiceListsController < ApplicationController
   def new
     authorize! :choice_lists, :new
     @choice_list = ChoiceList.new
-    @choice_list_item = @choice_list.choice_list_items.build 
+    @choice_list_item = @choice_list.choice_list_items.build
   end
 
   # GET /choice_lists/1/edit
