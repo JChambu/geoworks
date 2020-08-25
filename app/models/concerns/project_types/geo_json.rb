@@ -13,9 +13,9 @@ module ProjectTypes::GeoJson
   def self.build_geom(address, department, province, country)
 
     @street = address
-    @city = department  
-    @province = province 
-    @country = country 
+    @city = department
+    @province = province
+    @country = country
     @address_complete = [[@street], @city, @province, @country].join(', ')
     geocode = Geocoder.coordinates(@address_complete)
     geom = "POINT(#{geocode[1]} #{geocode[0]})" if !geocode.nil?
@@ -26,7 +26,7 @@ module ProjectTypes::GeoJson
 
     if self.kind_file == 'true'
       if self.file.nil?
-        self.errors.add(:file, "no puede ser vacío") 
+        self.errors.add(:file, "no puede ser vacío")
         return false
       end
     end
@@ -38,8 +38,8 @@ module ProjectTypes::GeoJson
     if self.kind_file == 'true'
         self.file.each do |f| @f = f.content_type
         begin
-          if @f == "application/geo+json" || @f =="application/octet-stream" 
-            valid = f.content_type 
+          if @f == "application/geo+json" || @f =="application/octet-stream"
+            valid = f.content_type
           end
         rescue
           valid = false
@@ -54,7 +54,7 @@ module ProjectTypes::GeoJson
     def load_file
       a = []
       self.file.each do |f|
-          if @f == "application/geo+json" || @f =="application/octet-stream" 
+          if @f == "application/geo+json" || @f =="application/octet-stream"
             load_geojson(self.id, self.name_layer, self.type_geometry, self.user_id)
           end
       end
@@ -104,6 +104,6 @@ module ProjectTypes::GeoJson
           count_errors += count_errors
         end
       end
-      return count_errors, count_insert 
+      return count_errors, count_insert
     end
   end
