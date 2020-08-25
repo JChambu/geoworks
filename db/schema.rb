@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200821160714) do
+ActiveRecord::Schema.define(version: 20200825145513) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -235,6 +235,7 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
     t.boolean "current_season", default: true
+    t.datetime "gwm_created_at"
     t.index ["user_id"], name: "index_project_data_children_on_user_id"
   end
 
@@ -341,6 +342,8 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
     t.boolean "current_season", default: true
+    t.datetime "gwm_created_at"
+    t.datetime "gwm_updated_at"
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["user_id"], name: "index_projects_on_user_id"
