@@ -211,6 +211,8 @@ class ProjectTypesController < ApplicationController
     @project_field.push(@project_type.project_fields.build({name: 'app_id', field_type_id: '1', hidden: true, read_only: true}))
     @project_field.push(@project_type.project_fields.build({name: 'app_estado', 'field_type_id': '1', hidden: true, read_only: true}))
     @project_field.push(@project_type.project_fields.build({name: 'app_usuario', 'field_type_id': '1', hidden: true, read_only: true}))
+    @project_field.push(@project_type.project_fields.build({name: 'gwm_created_at', field_type_id: '3', hidden: true, read_only: true}))
+    @project_field.push(@project_type.project_fields.build({name: 'gwm_updated_at', field_type_id: '3', hidden: true, read_only: true}))
 
   end
 
