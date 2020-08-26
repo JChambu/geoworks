@@ -47,11 +47,7 @@
               <% else %>
                 <td><a class="unselectable" href="#">Datos</a></td>
               <% end %>
-              <% if can? :dashboards, :visualizer %>
-                <td><%= link_to 'Tableros', project_type_dashboards_path(project_type.id) %></td>
-              <% else %>
-                <td><a class="unselectable" href="#">Tableros</a></td>
-              <% end %>
+              
               <% if can? :statuses, :visualizer %>
                 <td><%= link_to 'Estados', project_type_project_statuses_path(project_type) %></td>
               <% else %>
