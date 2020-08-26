@@ -160,6 +160,7 @@
         <i class="fas fa-bars align-middle" title="Menú" style="font-size: 22px"></i>
       </a>
       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+        <%= link_to "Proyectos",project_types_path, class: "dropdown-item" %>
         <% if can? :choice_lists, :visualizer %>
           <%= link_to 'Listados', choice_lists_path, class: "dropdown-item" %>
         <% end %>
