@@ -1,16 +1,23 @@
-<h2>Resend unlock instructions</h2>
+<div class="simple_form form-signin card p-5">
+<center>
+	<h2 style="line-height: 30px">Desbloquear usuario</h2>
+	<%=image_tag 'logo_gw_ver_2.png', class:'mb-2', width:"252"%>
+</center>
 
+<br />
 <%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f| %>
-  <%= devise_error_messages! %>
+<div style="color: red">
+	  <%= devise_error_messages! %>
+</div>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Resend unlock instructions" %>
-  </div>
+<div class="field">
+  <%= f.email_field :email, autofocus: true , class: "form-control", placeholder: "Ingrese su correo registrado" %>
+</div>
+<br />
+<div>
+  <%= f.submit "Enviar instrucciones" , class: 'btn btn-lg btn-primary btn-block mb-2'%>
+</div>
 <% end %>
-
+<br/>
 <%= render "devise/shared/links" %>
+</div>

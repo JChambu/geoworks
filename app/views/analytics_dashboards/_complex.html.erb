@@ -1,0 +1,64 @@
+<%= simple_form_for([@project_type, @dashboard, @analytics_dashboard], html: {role: :form, remote: true, class:'form'}) do |f| %>
+
+  <div id="alert-success"></div>
+
+  <% if @analytics_dashboard.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@analytics_dashboard.errors.count, "error") %> prohibited this analytics_dashboard from being saved:</h2>
+      <ul><% @analytics_dashboard.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
+    </div>
+  <% end %>
+
+  <br>
+  <div class="form-group">
+    <%= f.input :title, label: "Nombre", input_html: {class:"form-control form-control-sm"} %>
+  </div>
+
+  <div class="form-group">
+    <%= f.input :kpi_type, as: :hidden, input_html: {value: 'complex'} %>
+    <%= f.label :sql_sentence %>
+    <%=f.text_area :sql_sentence, rows: 1, class:"form-control form-control-sm" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :conditions_sql %>
+    <%=f.text_area :conditions_sql, rows: 1, class:"form-control form-control-sm" %>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <%= f.label :group_sql %>
+      <%=f.text_area :group_sql, rows: 1, class:"form-control form-control-sm" %>
+    </div>
+    <div class="form-group col-md-6">
+      <%= f.label :order_sql %>
+      <%=f.text_area :order_sql, rows: 1, class:"form-control form-control-sm" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description %>
+    <%= f.text_area :description, rows: 1, class:"form-control form-control-sm" %>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-6">
+      <div class="form-check">
+        <%= f.check_box :graph, class:"form-check-input" %>
+        <%= f.label :graph, class: 'form-check-label' %>
+      </div>
+    </div>
+    <div class="form-group col-6">
+      <div class="form-check">
+        <%= f.check_box :children, class:"form-check-input" %>
+        <%= f.label :children, class: 'form-check-label' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <button type="button" class="btn btn-sm btn-secondary mr-1" data-dismiss="modal">Cancelar</button>
+    <%= f.submit class: 'btn btn-sm btn-primary', value: "Guardar" %>
+  </div>
+
+<% end %>

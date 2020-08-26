@@ -94,8 +94,8 @@ class ProjectType < ApplicationRecord
     vv += " project_statuses.name as app_estado, "
     vv += " projects.id as app_id, "
     vv += " projects.project_type_id, "
-    vv += " st_y(the_geom),  " if type_geometry != 'Polygon'
-    vv += " st_x(the_geom), "if type_geometry != 'Polygon'
+    vv += " shared_extensions.st_y(the_geom),  " if type_geometry != 'Polygon'
+    vv += " shared_extensions.st_x(the_geom), "if type_geometry != 'Polygon'
     vv += " project_statuses.color, "
     vv += " the_geom "
     vv += " FROM #{current_tenant}.projects "

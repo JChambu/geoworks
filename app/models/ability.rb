@@ -2,16 +2,29 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    #user ||= User.new # guest user (not logged in)
-   current_tenant = Apartment::Tenant.current
-   @customer = Customer.where(name: current_tenant).first
-   @user_c =  UserCustomer.where(user_id: user.id).where(customer_id: @customer.id).first
-    @user_c.role.permissions.each do |permission|
-      can permission.model_type.name.to_sym, permission.event.name.to_sym 
+
+    # user ||= User.new # guest user (not logged in)
+
+    if user.nil?
+
+      # Permite resetear la contraseña
+      can :update, User
+
+    else
+
+      current_tenant = Apartment::Tenant.current
+      @customer = Customer.where(subdomain: current_tenant).first
+      @user_c =  UserCustomer.where(user_id: user.id).where(customer_id: @customer.id).first
+      @user_c.role.permissions.each do |permission|
+        can permission.model_type.name.to_sym, permission.event.name.to_sym
+      end
+
+      if @user_c.role.name == "superadmin"
+        can :manage, :all
+      end
+
     end
-     if @user_c.role.name == "superadmin"
-       can :manage, :all
-     end
+
 
     # if user.is? "Moderator"
     #   can :manage, :all
@@ -26,12 +39,12 @@ class Ability
     #     can :read, :all
     #   end
     #
-    # The first argument to `can` is the action you are giving the user 
+    # The first argument to `can` is the action you are giving the user
     # permission to do.
     # If you pass :manage it will apply to every action. Other common actions
     # here are :read, :create, :update and :destroy.
     #
-    # The second argument is the resource the user can perform the action on. 
+    # The second argument is the resource the user can perform the action on.
     # If you pass :all it will apply to every resource. Otherwise pass a Ruby
     # class of the resource.
     #

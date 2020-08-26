@@ -1,7 +1,7 @@
 <%= form_for(regexp_type) do |f| %>
   <% if regexp_type.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(regexp_type.errors.count, "error") %> prohibited this regexp_type from being saved:</h2>
+      <h3><%= pluralize(regexp_type.errors.count, "error") %> prohibited this regexp_type from being saved:</h3>
 
       <ul>
       <% regexp_type.errors.full_messages.each do |message| %>

@@ -93,16 +93,25 @@ function init_chart_doughnut(size_box = null){
 
     $(".chart_container").remove();
 
-    var type_box = 'polygon';
-    if (size_box== null){
+    // Establece el size_box para extent
+    if (Navarra.dashboards.config.size_polygon.length == 0) {
+
       size_box = [];
-      type_box = 'extent';
+      var type_box = 'extent';
       size_ext = Navarra.dashboards.config.size_box;
       size_box[0] = size_ext['_southWest']['lng'];
       size_box[1] = size_ext['_southWest']['lat'];
       size_box[2] = size_ext['_northEast']['lng'];
       size_box[3] = size_ext['_northEast']['lat'];
+
+    // Establece el size_box para polygon
+    } else {
+
+      var type_box = 'polygon';
+      size_box = size_polygon
+
     }
+
     var data_id = Navarra.dashboards.config.project_type_id;
     var dashboard_id = Navarra.dashboards.config.dashboard_id;
     var conditions = Navarra.project_types.config.filter_kpi

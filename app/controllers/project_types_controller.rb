@@ -1,9 +1,6 @@
 class ProjectTypesController < ApplicationController
   before_action :set_project_type, only: [:show, :edit, :update, :destroy]
 
-  # GET /project_types
-  # GET /project_types.json
-
   def search
     @project = ProjectType.all
     render json: {"data": @project}
@@ -93,7 +90,6 @@ class ProjectTypesController < ApplicationController
   def heatmap
   end
 
-
   def point_colors
   end
 
@@ -141,7 +137,7 @@ class ProjectTypesController < ApplicationController
 
         data = Project.
           where(project_type_id: project_type_id).
-          where("st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})").
+          where("shared_extensions.st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})").
           where(row_active: true)
       else
         data = Project.
@@ -186,6 +182,8 @@ class ProjectTypesController < ApplicationController
     end
   end
 
+  # GET /project_types
+  # GET /project_types.json
   def index
 
     @has_project_types = HasProjectType.where(user_id: current_user.id).select(:project_type_id)
@@ -195,9 +193,8 @@ class ProjectTypesController < ApplicationController
     if !params[:search_project].nil? || !params[:search_project].blank?
       @project_types = @project_types.where("name ILIKE :name", name: "%#{params[:search_project]}%")
     end
-
-
     @project_types = @project_types.paginate(:page => params[:page])
+
   end
 
   # GET /project_types/1
@@ -207,6 +204,7 @@ class ProjectTypesController < ApplicationController
 
   # GET /project_types/new
   def new
+
     authorize! :project_types, :new
     @project_type = ProjectType.new
     @project_field=[]
@@ -218,6 +216,7 @@ class ProjectTypesController < ApplicationController
 
   # GET /project_types/1/edit
   def edit
+
     authorize! :project_types, :edit
     @dashboard = @project_type.dashboards.first if @dashboard.nil?
 
@@ -226,8 +225,15 @@ class ProjectTypesController < ApplicationController
   # POST /project_types
   # POST /project_types.json
   def create
+
     params[:project_type][:name_layer] = params[:project_type][:name].gsub(/\s+/, '_').downcase
+
+    if params[:project_type][:cover].present?
+      encode_image
+    end
+
     @project_type = ProjectType.new(project_type_params)
+
     respond_to do |format|
       if @project_type.save
 
@@ -240,11 +246,17 @@ class ProjectTypesController < ApplicationController
         format.json { render json: @project_type.errors, status: :unprocessable_entity }
       end
     end
+
   end
 
   # PATCH/PUT /project_types/1
   # PATCH/PUT /project_types/1.json
   def update
+
+    if params[:project_type][:cover].present?
+      encode_image
+    end
+
     respond_to do |format|
       if @project_type.update(project_type_params)
         ProjectType.exist_layer_rgeoserver @project_type.name_layer
@@ -266,15 +278,29 @@ class ProjectTypesController < ApplicationController
   end
 
   private
+
   # Use callbacks to share common setup or constraints between actions.
   def set_project_type
     @project_type = ProjectType.find(params[:id])
     @project_fields = @project_type.project_fields.order(:sort)
-
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
+  def encode_image
+    params[:project_type][:cover] = Base64.strict_encode64(File.read(params[:project_type][:cover].path))
+  end
+
   def project_type_params
-    params.require(:project_type).permit(:name, :type_file,  :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color, :type_geometry, {file:[]}, :tracking, :kind_file, project_fields_attributes: [:id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, {role:[]}, :sort, :key, :_destroy, :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,  project_subfields_attributes: [:id, :field_type_id, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id, :sort, :_destroy, :key, :choice_list_id, :hidden, :read_only, :popup, :calculated_field, {role:[]}, :data_script, :key]]).merge(user_id: current_user.id)
+    params.require(:project_type).permit(
+      :name, :type_file, :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color,
+      :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition,
+      project_fields_attributes: [
+        :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { role: [] }, :sort, :_destroy,
+        :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,
+        project_subfields_attributes: [
+          :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { role: [] }, :sort, :_destroy,
+          :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script
+        ]
+      ]
+    ).merge(user_id: current_user.id)
   end
 end

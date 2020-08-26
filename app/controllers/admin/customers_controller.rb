@@ -1,5 +1,9 @@
-class CustomersController < ApplicationController
+class Admin::CustomersController < ApplicationController
+
+  load_and_authorize_resource
+
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
+  layout 'admin'
 
   # GET /customers
   # GET /customers.json
@@ -24,12 +28,16 @@ class CustomersController < ApplicationController
   # POST /customers
   # POST /customers.json
   def create
+
+    if params[:customer][:logo].present?
+      encode_image
+    end
+
     @customer = Customer.new(customer_params)
 
     respond_to do |format|
       if @customer.save
-        format.html { redirect_to @customer, notice: 'Customer was successfully created.' }
-        format.json { render :show, status: :created, location: @customer }
+        format.html { redirect_to admin_customers_url, notice: 'La corporación se creó correctamente.' }
       else
         format.html { render :new }
         format.json { render json: @customer.errors, status: :unprocessable_entity }
@@ -40,15 +48,20 @@ class CustomersController < ApplicationController
   # PATCH/PUT /customers/1
   # PATCH/PUT /customers/1.json
   def update
+
+    if params[:customer][:logo].present?
+      encode_image
+    end
+
     respond_to do |format|
       if @customer.update(customer_params)
-        format.html { redirect_to @customer, notice: 'Customer was successfully updated.' }
-        format.json { render :show, status: :ok, location: @customer }
+        format.html { redirect_to admin_customers_url, notice: 'La corporación se actualizó correctamente.' }
       else
         format.html { render :edit }
         format.json { render json: @customer.errors, status: :unprocessable_entity }
       end
     end
+
   end
 
   # DELETE /customers/1
@@ -56,7 +69,7 @@ class CustomersController < ApplicationController
   def destroy
     @customer.destroy
     respond_to do |format|
-      format.html { redirect_to customers_url, notice: 'Customer was successfully destroyed.' }
+      format.html { redirect_to admin_customers_url, notice: 'La corporación se eliminó correctamente.' }
       format.json { head :no_content }
     end
   end
@@ -67,8 +80,12 @@ class CustomersController < ApplicationController
       @customer = Customer.find(params[:id])
     end
 
+    def encode_image
+      params[:customer][:logo] = Base64.strict_encode64(File.read(params[:customer][:logo].path))
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def customer_params
-      params.require(:customer).permit(:name, :subdomain, :supplier_map)
+      params.require(:customer).permit(:name, :subdomain, :logo)
     end
 end

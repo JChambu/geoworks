@@ -1,7 +1,7 @@
 <%= form_with(model: model_type, local: true) do |form| %>
   <% if model_type.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(model_type.errors.count, "error") %> prohibited this model_type from being saved:</h2>
+      <h3><%= pluralize(model_type.errors.count, "error") %> prohibited this model_type from being saved:</h3>
 
       <ul>
       <% model_type.errors.full_messages.each do |message| %>

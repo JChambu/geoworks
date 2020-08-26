@@ -252,6 +252,7 @@ Navarra.geomaps = function (){
     if (markers !=undefined){
       mymap.removeLayer(markers);
     }
+
     mymap.on('draw:drawstart', function(e){
       Navarra.dashboards.config.draw_disabled = false;
       editableLayers.eachLayer(function(layer){
@@ -278,12 +279,17 @@ Navarra.geomaps = function (){
       arr1.push(arr1[0])
       size_box.push(arr1);
       Navarra.dashboards.config.size_polygon.push(arr1);
-      init_kpi(size_box);
-      init_chart_doughnut(size_box);
+      show_kpis()
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
       if (heatmap_actived != ''){
         Navarra.geomaps.heatmap_data();
       }
+      Navarra.dashboards.config.draw_disabled = true;
+    })
+
+    // Desactiva el popup mientras se elimina la selección por polígono
+    mymap.on('draw:deletestart', function(e){
+      Navarra.dashboards.config.draw_disabled = false;
     })
 
     mymap.on('draw:deleted', function(e){

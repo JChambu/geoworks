@@ -11,36 +11,36 @@
 
   <br>
   <div class="form-group">
-    <%= f.input :advanced_kpi, as: :hidden, input_html: {value: false} %>
-    <%= f.input :title, label: "Nombre", input_html: {class:"form-control form-control-sm"} %>
+    <%= f.input :kpi_type, as: :hidden, input_html: {value: 'basic'} %>
+    <%= f.input :title, input_html: {class:"form-control form-control-sm"} %>
   </div>
 
   <div class="form-row">
     <div class="form-group col-md-4">
-      <%= f.input :analysis_type_id, :collection => analysis_types_for_select, label: "Análisis", input_html: {class:"form-control form-control-sm"}%>
+      <%= f.input :analysis_type_id, :collection => analysis_types_for_select, input_html: {class:"form-control form-control-sm"}%>
     </div>
     <div class="form-group col-md-4">
-      <%= f.input :project_field_id, :collection => filter_field_for_indicator_select, label: "Campo", input_html: {class:"form-control form-control-sm"} %>
+      <%= f.input :project_field_id, :collection => filter_field_for_indicator_select, input_html: {class:"form-control form-control-sm"} %>
     </div>
     <div class="form-group col-md-4">
-      <%= f.input :group_field_id, :collection => filter_field_for_indicator_select, label: "Agrupar", input_html: {class:"form-control form-control-sm"}%>
+      <%= f.input :group_field_id, :collection => filter_field_for_indicator_select, input_html: {class:"form-control form-control-sm"}%>
     </div>
   </div>
 
   <div class="form-row">
     <div class="form-group col-md-4">
-      <%= f.input :condition_field_id, :collection => filter_field_for_indicator_select, label: 'Campo', input_html: {class:"form-control form-control-sm"} %>
+      <%= f.input :condition_field_id, :collection => filter_field_for_indicator_select, input_html: {class:"form-control form-control-sm"} %>
     </div>
     <div class="form-group col-md-4">
-      <%= f.input :filter_input, label: 'Operador', collection: ProjectType::FILTERS, input_html: {class: 'form-control form-control-sm'} %>
+      <%= f.input :filter_input, collection: ProjectType::FILTERS, input_html: {class: 'form-control form-control-sm'} %>
     </div>
     <div class="form-group col-md-4">
-      <%= f.input :input_value, label: 'Valor', input_html: {class: 'form-control form-control-sm'} %>
+      <%= f.input :input_value, input_html: {class: 'form-control form-control-sm'} %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :description, 'Descripción' %>
+    <%= f.label :description %>
     <%= f.text_area :description, rows: 3, class:"form-control form-control-sm" %>
   </div>
 
@@ -48,7 +48,7 @@
     <div class="form-group col-6">
       <div class="form-check">
         <%= f.check_box :graph, class:"form-check-input" %>
-        <%= f.label :graph, "Graficar", class: 'form-check-label' %>
+        <%= f.label :graph, class: 'form-check-label' %>
       </div>
     </div>
   </div>

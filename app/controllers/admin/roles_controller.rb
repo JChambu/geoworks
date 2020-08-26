@@ -1,4 +1,7 @@
 class Admin::RolesController < ApplicationController
+
+  load_and_authorize_resource
+
   before_action :set_role, only: [:show, :edit, :update, :destroy]
   layout 'admin'
   # GET /roles
@@ -31,15 +34,15 @@ class Admin::RolesController < ApplicationController
       if @role.save
         if !params[:permissions].nil?
         params[:permissions].each do |a|
-          params[:permissions][a].each do |r| 
+          params[:permissions][a].each do |r|
             @a = Permission.new
             @a['event_id'] = r.to_i
             @a['model_type_id'] = a.to_i
             @a['role_id'] = @role.id
             @a.save!
-          end 
-        end 
-        end 
+          end
+        end
+        end
         format.html { redirect_to admin_roles_path, notice: 'Role was successfully created.' }
         format.json { render :show, status: :created, location: @role }
       else
@@ -63,9 +66,9 @@ class Admin::RolesController < ApplicationController
             @a['model_type_id'] = a.to_i
             @a['role_id'] = @role.id
             @a.save!
-          end 
-        end 
-        end 
+          end
+        end
+        end
          format.html { redirect_to admin_roles_path, notice: 'Role was successfully updated.' }
          format.json { render :show, status: :ok, location: @role }
        else

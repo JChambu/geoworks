@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <%= link_to root_path() do %> <%= image_tag "geoworks_brand.png", class: 'mr-4', height:"40" %> <% end %>
+  <%= link_to root_path() do %> <%= image_tag "logo_gw_hor_2.png", class: 'mr-4', height:"40" %> <% end %>
   <div class="collapse navbar-collapse" id="navbarColor02">
 
     <ul class="navbar-nav mr-auto">
@@ -9,6 +9,9 @@
       </li>
       <li class="nav-item">
         <%= link_to "Roles", admin_roles_path(), class: 'nav-link' %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Corporaciones", admin_customers_path(), class: 'nav-link' %>
       </li>
     </ul>
 

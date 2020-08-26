@@ -2,19 +2,20 @@
   <div class="card-body p-3">
 
     <ul class="nav nav-pills nav-fill" id="myTab" role="tablist">
-      <% if can? :attributes, :edit %>
+      <% if params[:controller] == 'project_types' && (params[:action] == 'new' || params[:action] == 'create') %>
         <li class="nav-item">
           <a class="nav-link active" id="attributes-tab" data-toggle="tab" href="#attributes" role="tab" aria-controls="attributes" aria-selected="true">Por Atributos</a>
         </li>
-      <% end %>
-      <% if params[:controller] == 'project_types' && (params[:action] == 'new' || params[:action] == 'create') %>
       <li class="nav-item">
         <a class="nav-link" id="file-tab" data-toggle="tab" href="#file" role="tab" aria-controls="file" aria-selected="false">Por Archivos</a>
       </li>
     <% end %>
+    <% if can? :attributes, :edit %>
+          <a class="d-none" id="attributes-tab" data-toggle="tab" href="#attributes" role="tab" aria-controls="attributes" aria-selected="true">Por Atributos</a>
+    <% end %>
     </ul>
 
-    <div class="tab-content pt-3" id="myTabContent">
+    <div class="tab-content mt-2" id="myTabContent">
       <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
         <%= render 'attributes' %>
       </div>

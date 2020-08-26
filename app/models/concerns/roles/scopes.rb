@@ -1,10 +1,10 @@
 module Roles::Scopes
   extend ActiveSupport::Concern
-  
+
   module ClassMethods
     def search_roles_for_tenant customer_id
       @r = []
-      customer_name = Customer.where(id: customer_id).pluck(:name).first
+      customer_name = Customer.where(id: customer_id).pluck(:subdomain).first
       Apartment::Tenant.switch customer_name do
         roles = Role.all
         roles.each do |role|

@@ -1,11 +1,16 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <%= link_to root_path() do %> <%= image_tag "geoworks_brand.png", class: 'mr-4', height:"40" %> <% end %>
+  <%= link_to root_path() do %> <%= image_tag "logo_gw_hor_2.png", class: 'mr-4', height:"40" %> <% end %>
   <div class="collapse navbar-collapse" id="navbarColor02">
 
     <ul class="navbar-nav mr-auto">
 
       <!-- Nuevo Proyecto -->
       <% if params[:controller] == 'project_types' && params[:action] == 'new' %>
+        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
+      <% end %>
+
+      <!-- Proyectos -->
+      <% if params[:controller] == 'project_types' && params[:action] == 'index' %>
         <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
       <% end %>
 
@@ -155,14 +160,20 @@
         <i class="fas fa-bars align-middle" title="Menú" style="font-size: 22px"></i>
       </a>
       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+        <%= link_to "Proyectos",project_types_path, class: "dropdown-item" %>
         <% if can? :choice_lists, :visualizer %>
           <%= link_to 'Listados', choice_lists_path, class: "dropdown-item" %>
         <% end %>
         <% if can? :layers, :visualizer %>
           <%= link_to 'Capas Externas', layers_path, class: "dropdown-item" %>
         <% end %>
-        <%= link_to "Editar Usuario", edit_user_path(current_user.id), class: "dropdown-item" %>
-        <%= link_to 'Cerrar Sesión', destroy_user_session_path, class: "dropdown-item", method: :delete %>
+        <%- if user_signed_in? %>
+          <% if current_user.name == 'superadmin' %>
+            <%= link_to 'Administración', admin_root_path, class: "dropdown-item" %>
+          <% end %>
+          <%= link_to "Editar Usuario", edit_user_path(current_user.id), class: "dropdown-item" %>
+          <%= link_to 'Cerrar Sesión', destroy_user_session_path, class: "dropdown-item", method: :delete %>
+        <% end %>
       </div>
     </div>
 

@@ -39,12 +39,12 @@
               <td><%= layer.description %></td>
               <td class="text-center">
                 <% if can? :layers, :edit %>
-                  <%= link_to edit_layer_path(layer) do %> <i class="fas fa-edit"></i><%end%>
+                  <%= link_to edit_layer_path(layer) do %> <i class="fas fa-edit"></i><% end %>
                 <% end %>
               </td>
               <td class="text-center">
                 <% if can? :layers, :destroy %>
-                  <%= link_to layer, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%>
+                  <%= link_to layer, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <% end %>
                 <% end %>
               </td>
             </tr>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200403175842) do
+ActiveRecord::Schema.define(version: 20200821160714) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,7 +51,8 @@ ActiveRecord::Schema.define(version: 20200403175842) do
     t.text "group_sql"
     t.boolean "children", default: false
     t.string "conditions_sql"
-    t.boolean "advanced_kpi", default: false
+    t.string "kpi_type"
+    t.string "sql_full"
     t.index ["analysis_type_id"], name: "index_analytics_dashboards_on_analysis_type_id"
     t.index ["chart_id"], name: "index_analytics_dashboards_on_chart_id"
     t.index ["project_type_id"], name: "index_analytics_dashboards_on_project_type_id"
@@ -91,6 +92,7 @@ ActiveRecord::Schema.define(version: 20200403175842) do
     t.string "supplier_map", default: "osm"
     t.string "url"
     t.integer "role_id"
+    t.text "logo"
   end
 
   create_table "dashboards", force: :cascade do |t|
@@ -232,6 +234,7 @@ ActiveRecord::Schema.define(version: 20200403175842) do
     t.bigint "user_id"
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
+    t.boolean "current_season", default: true
     t.index ["user_id"], name: "index_project_data_children_on_user_id"
   end
 
@@ -319,6 +322,9 @@ ActiveRecord::Schema.define(version: 20200403175842) do
     t.string "type_geometry"
     t.boolean "syncronization_data", default: true
     t.boolean "tracking", default: false
+    t.text "cover"
+    t.integer "geo_restriction", default: 0, null: false
+    t.boolean "multiple_edition", default: false
     t.index ["user_id"], name: "index_project_types_on_user_id"
   end
 
@@ -327,13 +333,14 @@ ActiveRecord::Schema.define(version: 20200403175842) do
     t.integer "project_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.point "the_geom"
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
     t.jsonb "properties_original"
     t.bigint "project_status_id"
-    t.datetime "status_update_at", default: "2020-04-30 15:48:09"
+    t.datetime "status_update_at", default: "2020-06-18 16:04:25"
     t.bigint "user_id"
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
+    t.boolean "current_season", default: true
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["user_id"], name: "index_projects_on_user_id"
@@ -387,6 +394,8 @@ ActiveRecord::Schema.define(version: 20200403175842) do
     t.string "unconfirmed_email"
     t.boolean "active"
     t.bigint "role_id"
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["role_id"], name: "index_users_on_role_id"
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
@@ -406,16 +415,12 @@ ActiveRecord::Schema.define(version: 20200403175842) do
   add_foreign_key "analytics_dashboards", "charts"
   add_foreign_key "analytics_dashboards", "project_types"
   add_foreign_key "has_project_types", "project_types"
-  add_foreign_key "has_project_types", "users"
-  add_foreign_key "permissions", "events"
-  add_foreign_key "permissions", "model_types"
   add_foreign_key "permissions", "roles"
   add_foreign_key "photo_children", "project_data_children"
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_filters", "project_types"
   add_foreign_key "project_filters", "users"
   add_foreign_key "project_statuses", "project_types"
-  add_foreign_key "project_types", "users"
   add_foreign_key "projects", "project_statuses"
   add_foreign_key "projects", "project_types"
   add_foreign_key "users", "roles"

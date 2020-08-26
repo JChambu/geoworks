@@ -220,7 +220,7 @@ es:
       empty: no puede estar vacío
       equal_to: debe ser igual a %{count}
       even: debe ser par
-      exclusion: está reservado
+      exclusion: contiene un valor no permitido
       greater_than: debe ser mayor que %{count}
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
       inclusion: no está incluido en la lista
@@ -509,7 +509,6 @@ es:
         available_disabled_space: Disponible Espacio para Discapacitados
         machine_readable: Maquina
         maximum_duration: Maxima Duracion
-
       poi_address:
         city_id: Ciudad
         street: Nombre de Calle
@@ -555,11 +554,25 @@ es:
         key: "Key"
         field_type_id: "Tipo de Campo"
       analytics_dashboard:
-        title: "Titulo"
-        description: "Descripcion"
+        title: "Nombre"
+        description: "Descripción"
         project_field_id: "Campo"
-        analysis_type_id: "Tipo de Analisis"
+        analysis_type_id: "Análisis"
         chart_id: "Tipo de Grafico"
         group_field_id: "Agrupar"
+        condition_field_id: "Campo"
+        filter_input: "Operador"
+        input_value: "Valor"
+        graph: "Graficar"
+        sql_sentence: "Sentencia (SELECT)"
+        conditions_sql: "Condición (WHERE)"
+        group_sql: "Agrupar (GROUP BY)"
+        order_sql: "Odenar (ORDER BY)"
+        children: "Subformulario"
+        sql_full: "Sentencia SQL"
+      customer:
+        name: "Nombre:"
+        subdomain: "Subdominio:"
+        logo: "Logo:"
     errors:
       <<: *errors
