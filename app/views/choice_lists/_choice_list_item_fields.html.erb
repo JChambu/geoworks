@@ -5,6 +5,7 @@
       <%= f.input :name, label: false, input_html: {class: 'form-control form-control-sm'}%>
       <%= f.hidden_field :_destroy%>
     </div>
+    <%= f.input :nested_list_id, collection: choice_list_for_select %>
     <div class="col-md-1">
       <%= link_to '#', class: "remove" do %><i class="fas fa-trash-alt" title="Eliminar atributo"></i><% end %>
     </div>
