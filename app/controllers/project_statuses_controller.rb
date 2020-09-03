@@ -76,6 +76,6 @@ class ProjectStatusesController < ApplicationController
   end
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_status_params
-    params.require(:project_status).permit(:name, :color)
+    params.require(:project_status).permit(:name, :color, :status_type, :priority, :timer, :inherit_project_type_id, :inherit_status_id)
   end
 end
