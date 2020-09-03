@@ -25,6 +25,9 @@
           </div>
         </div>
 
+        <%= form.select :status_type, options_for_select(['Asignable', 'Heredable', 'Predeterminado']) %>
+        <%= form.select :timer, options_for_select(['week', 'month', 'year']) %>
+
         <div id="project_types">
           <%= form.collection_select(:inherit_project_type_id, @project_types, :id, :name, prompt: "Seleciona proyecto") %>
         </div>
