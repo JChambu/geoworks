@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get 'project_fields/field_popup' => 'project_fields#field_popup'
   get 'project_types/create_share' => 'project_types#create_share', as: :create_share
   get 'projects/search_data' => 'projects#search_data'
+  post 'project_statuses/options', as: 'project_statuses_options'
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 

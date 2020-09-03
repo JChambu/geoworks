@@ -25,6 +25,11 @@
           </div>
         </div>
 
+        <div id="project_types">
+          <%= form.collection_select(:inherit_project_type_id, @project_types, :id, :name, prompt: "Seleciona proyecto") %>
+        </div>
+        <div id="project_statuses"></div>
+
         <div class="row justify-content-center">
           <%= link_to t('.cancel', :default => t("helpers.links.cancel")), project_type_project_statuses_path(@project_type), :class => 'btn btn-secondary' %>
           <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
@@ -35,3 +40,15 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#project_status_inherit_project_type_id').on('change', function() {
+      $.ajax({
+        url:  "<%= project_statuses_options_path %>",
+        type: "POST",
+        data: { project_type_id: $(this).val() }
+      });
+    });
+  });
+</script>

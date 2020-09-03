@@ -15,6 +15,7 @@ class ProjectStatusesController < ApplicationController
   # GET /project_statuses/new
   def new
     @project_status = @project_type.project_statuses.new
+    @project_types = ProjectType.all
   end
 
   # GET /project_statuses/1/edit
@@ -64,6 +65,13 @@ class ProjectStatusesController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+
+  # Busca los estados luego de seleccionar el proyecto
+  def options
+    @project_statuses = ProjectStatus.where(project_type_id: params[:project_type_id])
+  end
+
 
   private
   # Use callbacks to share common setup or constraints between actions.
