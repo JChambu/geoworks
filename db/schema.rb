@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200821160714) do
+ActiveRecord::Schema.define(version: 20200827233006) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -283,6 +283,11 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.string "color"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status_type"
+    t.integer "priority"
+    t.string "timer"
+    t.integer "inherit_project_type_id"
+    t.integer "inherit_status_id"
     t.index ["project_type_id"], name: "index_project_statuses_on_project_type_id"
   end
 
@@ -325,6 +330,7 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.text "cover"
     t.integer "geo_restriction", default: 0, null: false
     t.boolean "multiple_edition", default: false
+    t.integer "level"
     t.index ["user_id"], name: "index_project_types_on_user_id"
   end
 
