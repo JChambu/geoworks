@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(version: 20200825145514) do
     t.bigint "choice_list_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "nested_list_id"
     t.index ["choice_list_id"], name: "index_choice_list_items_on_choice_list_id"
   end
 
@@ -151,6 +152,7 @@ ActiveRecord::Schema.define(version: 20200825145514) do
     t.boolean "data_labelling", default: false
     t.integer "chart_id"
     t.decimal "scale", default: "1.0"
+    t.boolean "legend_display", default: false
     t.index ["dashboard_id"], name: "index_graphics_on_dashboard_id"
   end
 

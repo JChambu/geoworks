@@ -2,7 +2,7 @@
   <td class="pt-3 pr-0" style="width: 5%; font-size: 0.8em"><%= f.object.id %></td>
 
   <td class="pl-0" style="width: 17%"><%= f.text_field :name, class: "form-control form-control-sm" %></td>
-  <td style="width: 3; padding-right: 0px">
+  <td style="width: 3%; padding-right: 0px">
      <div class="custom-control custom-checkbox">
       <%= f.check_box :required,class:'custom-control-input', id: 'customCheckField1'.concat(f.object.id.to_s) %>
       <%= f.label:" ", class:'custom-control-label', for:'customCheckField1'.concat(f.object.id.to_s)%>

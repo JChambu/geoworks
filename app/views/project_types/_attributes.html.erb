@@ -28,9 +28,7 @@
         return false;
     }
      var sizeByte = fileInput.files[0].size;
-     console.log(sizeByte)
      var sizekiloByte = parseInt(sizeByte / 1024);
-     console.log(sizekiloByte)
      if(sizekiloByte > 300){
         document.getElementById('error_text').innerHTML='Máx. permitido 300Kb';
         document.getElementById('error_text').classList.remove('text-secondary');
