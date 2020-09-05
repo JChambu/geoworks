@@ -189,12 +189,11 @@ class ProjectTypesController < ApplicationController
     @has_project_types = HasProjectType.where(user_id: current_user.id).select(:project_type_id)
     @p =[]
     @has_project_types.each do |s| @p.push(s.project_type_id) end
-    @project_types = ProjectType.where(id: @p)
+    @project_types = ProjectType.order(:level).where(id: @p)
     if !params[:search_project].nil? || !params[:search_project].blank?
       @project_types = @project_types.where("name ILIKE :name", name: "%#{params[:search_project]}%")
     end
     @project_types = @project_types.paginate(:page => params[:page])
-
   end
 
   # GET /project_types/1
@@ -245,6 +244,17 @@ class ProjectTypesController < ApplicationController
         format.html { render :new, status: :no_created}
         format.json { render json: @project_type.errors, status: :unprocessable_entity }
       end
+    end
+
+  end
+
+  # Actualiza el level del proyecto
+  def update_level
+
+    level = params[:level_data]
+    level.each do |p, l|
+      @project_type = ProjectType.find(p)
+      @project_type.update_level!(l)
     end
 
   end
