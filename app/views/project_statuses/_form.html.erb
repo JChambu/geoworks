@@ -40,7 +40,7 @@
             <%= form.label :inherit_project_type_id,'Proyecto', class:'col-md-2 text-right col-form-label' %>
             <div class="col-md-5">
               <div id="project_types">
-                <%= form.collection_select(:inherit_project_type_id, @project_types, :id, :name , {prompt: "Selecccione un Proyecto"}, {class: 'form-control form-control-sm'})  %>
+                <%= form.collection_select(:inherit_project_type_id, @inherit_project_types, :id, :name, {prompt: "Selecccione un Proyecto"}, {class: 'form-control form-control-sm'})  %>
               </div>
             </div>
           </div>

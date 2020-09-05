@@ -17,12 +17,13 @@ class ProjectStatusesController < ApplicationController
   # GET /project_statuses/new
   def new
     @project_status = @project_type.project_statuses.new
-    @project_types = ProjectType.all
+    @inherit_project_types = ProjectType.where("level < ?", @project_type.level)
   end
 
   # GET /project_statuses/1/edit
   def edit
     @project_status = @project_type.project_statuses.find(params[:id])
+    @inherit_project_types = ProjectType.where("level < ?", @project_type.level)
   end
 
   # POST /project_statuses
