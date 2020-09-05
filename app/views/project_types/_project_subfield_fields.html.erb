@@ -1,14 +1,31 @@
 <tr>
-  <td style="width: 3%; font-size: 0.8em""><%= f.object.id  %></td>
-  <td style="width: 3%"><i class="fas fa-long-arrow-alt-right"></i></td>
-  <td style="width: 14%"><%= f.text_field :name, class: "form-control form-control-sm" %></td>
-  <td style="width: 3%"><%= f.check_box :required %></td>
-  <td style="width: 3%"><%= f.check_box :hidden %></td>
-  <td style="width: 3%"><%= f.check_box :read_only %></td>
-  <td style="width: 3%"></td>
-  <td style="width: 3%"></td>
-  <td style="width: 3%"></td>
-  <td style="width: 3%"></td>
+  <td class="pt-3 pr-0" style="width: 5%; font-size: 0.8em;padding-right:0px; padding-left: 1%"><%= f.object.id  %></td>
+  <td class="pl-0" style="width: 17%">
+      <i class="fas fa-long-arrow-alt-right"; style="width: 10%"></i>
+      <%= f.text_field :name, class: "form-control form-control-sm", style:"width: 86%; display: inline-block" %> 
+  </td>
+  <td style="width: 3%; padding-right: 0px">
+    <div class="custom-control custom-checkbox">
+      <%= f.check_box :required,class:'custom-control-input', id: 'customCheckSubField1'.concat(f.object.id.to_s) %>
+      <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField1'.concat(f.object.id.to_s)%>
+    </div>
+  </td>
+  <td style="width: 3%; padding-right: 0px">
+    <div class="custom-control custom-checkbox">
+      <%= f.check_box :hidden,class:'custom-control-input', id: 'customCheckSubField2'.concat(f.object.id.to_s) %>
+      <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField2'.concat(f.object.id.to_s)%>
+    </div>
+  </td>
+  <td style="width: 3%; padding-right: 0px">
+    <div class="custom-control custom-checkbox">
+      <%= f.check_box :read_only, class:'custom-control-input', id: 'customCheckSubField3'.concat(f.object.id.to_s) %>
+      <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField3'.concat(f.object.id.to_s)%>
+    </div>
+  </td>
+  <td style="width: 3%; padding-right: 0px"><div class="custom-control custom-checkbox"></div></td>
+  <td style="width: 3%; padding-right: 0px"><div class="custom-control custom-checkbox"></div></td>
+  <td style="width: 3%; padding-right: 0px"><div class="custom-control custom-checkbox"></div></td>
+  <td style="width: 3%; padding-right: 0px"><div class="custom-control custom-checkbox"></div></td>
   <td style="width: 12%"><%= f.text_field :calculated_field, class: "form-control form-control-sm" %></td>
   <td style="width: 12%; text-align: center"><%= f.text_field :data_script, class: "form-control form-control-sm" %></td>
   <td style="width: 11%"><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control form-control-sm' } %></td>

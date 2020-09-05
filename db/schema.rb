@@ -152,6 +152,7 @@ ActiveRecord::Schema.define(version: 20200824223144) do
     t.boolean "data_labelling", default: false
     t.integer "chart_id"
     t.decimal "scale", default: "1.0"
+    t.boolean "legend_display", default: false
     t.index ["dashboard_id"], name: "index_graphics_on_dashboard_id"
   end
 
