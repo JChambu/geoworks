@@ -20,17 +20,33 @@
           <div class="row justify-content-center">
             <%= form.label :color, class:'col-md-2 text-right col-form-label' %>
             <div class="col-md-5">
-              <%= form.color_field :color, id: :project_status_color %>
+              <%= form.color_field :color, id: :project_status_color, style:'width:30px; height:30px; padding:1px' %>
+            </div>
+          </div>
+          <div class="row justify-content-center">
+            <%= form.label :status_type,'Tipo', class:'col-md-2 text-right col-form-label' %>
+            <div class="col-md-5">
+              <%= form.select :status_type, options_for_select(['Asignable', 'Heredable', 'Predeterminado']) ,  {:include_blank => false}, {class: 'form-control form-control-sm'} %>
+            </div>
+          </div>
+          <div class="row justify-content-center">
+            <%= form.label :status_type,'Tiempo', class:'col-md-2 text-right col-form-label' %>
+            <div class="col-md-5">
+              <%= form.select :timer, options_for_select(['semana', 'mes', 'año']) ,  {:include_blank => false}, {class: 'form-control form-control-sm'} %>
+            </div>
+          </div>
+           <div class="row justify-content-center">
+            <%= form.label :status_type,'Proyecto', class:'col-md-2 text-right col-form-label' %>
+            <div class="col-md-5">
+              <div id="project_types">
+                <%= form.collection_select(:inherit_project_type_id, @project_types, :id, :name , {prompt: "Selecccione un Proyecto"}, {class: 'form-control form-control-sm'})  %>
+                
+              </div>
             </div>
           </div>
         </div>
 
-        <%= form.select :status_type, options_for_select(['Asignable', 'Heredable', 'Predeterminado']) %>
-        <%= form.select :timer, options_for_select(['week', 'month', 'year']) %>
-
-        <div id="project_types">
-          <%= form.collection_select(:inherit_project_type_id, @project_types, :id, :name, prompt: "Seleciona proyecto") %>
-        </div>
+        
         <div id="project_statuses"></div>
 
         <div class="row justify-content-center">
