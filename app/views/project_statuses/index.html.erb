@@ -24,9 +24,9 @@
             <th colspan="3" class="text-center">Acciones</th>
           </tr>
         </thead>
-        <tbody>
-          <% @project_statuses.each do |project_status| %>
-            <tr>
+        <tbody class="sortable">
+          <% @project_statuses.each_with_sortable_id do |project_status, sortable_id| %>
+            <tr id="<%= sortable_id %>">
               <td><%= project_status.name %></td>
               <td><div class="col-md-3" style="width: 30px; height: 30px; border:solid 1px white; padding: 1px; background-color: <%= project_status.color %>"></div></td>
               <td class="text-center"><%= link_to edit_project_type_project_status_path(project_status.project_type_id, project_status) do %><i class="fas fa-edit"></i><% end %></td>
@@ -37,3 +37,23 @@
     </div>
   </div>
 </div>
+<script type="text/javascript">
+  $(function() {
+    $('.sortable').railsSortable({
+      update: function( event, ui ) {
+        var data = {}
+        $(".sortable").find('tr').each(function(index) {
+          var project_status_id = $(this).attr("id").replace(/ProjectStatus_/g, '');
+          var priority = index + 1
+          data[project_status_id] = priority
+        })
+        console.log(data);
+        $.ajax({
+          url:  "<%= project_statuses_update_priority_path %>",
+          type: "POST",
+          data: { priority_data: data }
+        });
+      }
+    });
+  });
+</script>

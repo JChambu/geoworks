@@ -1,10 +1,12 @@
 class ProjectStatusesController < ApplicationController
+
   before_action :set_project_status, only: [:destroy]
-  before_action :load_project_types
+  before_action :load_project_types, except: :update_priority
+
   # GET /project_statuses
   # GET /project_statuses.json
   def index
-    @project_statuses = @project_type.project_statuses.all
+    @project_statuses = @project_type.project_statuses.order(:priority).all
   end
 
   # GET /project_statuses/1
@@ -52,6 +54,17 @@ class ProjectStatusesController < ApplicationController
         format.json { render json: @project_status.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  # Actualiza el priority del proyecto
+  def update_priority
+
+    priority = params[:priority_data]
+    priority.each do |s, p|
+      @project_status = ProjectStatus.find(s)
+      @project_status.update_priority!(p)
+    end
+
   end
 
   # DELETE /project_statuses/1
