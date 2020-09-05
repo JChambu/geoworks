@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(version: 20200827220626) do
     t.bigint "choice_list_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "nested_list_id"
     t.index ["choice_list_id"], name: "index_choice_list_items_on_choice_list_id"
   end
 
@@ -151,6 +152,7 @@ ActiveRecord::Schema.define(version: 20200827220626) do
     t.boolean "data_labelling", default: false
     t.integer "chart_id"
     t.decimal "scale", default: "1.0"
+    t.boolean "legend_display", default: false
     t.index ["dashboard_id"], name: "index_graphics_on_dashboard_id"
   end
 
@@ -235,6 +237,8 @@ ActiveRecord::Schema.define(version: 20200827220626) do
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
     t.boolean "current_season", default: true
+    t.datetime "gwm_created_at"
+    t.datetime "gwm_updated_at"
     t.index ["user_id"], name: "index_project_data_children_on_user_id"
   end
 
@@ -343,6 +347,8 @@ ActiveRecord::Schema.define(version: 20200827220626) do
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
     t.boolean "current_season", default: true
+    t.datetime "gwm_created_at"
+    t.datetime "gwm_updated_at"
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["user_id"], name: "index_projects_on_user_id"

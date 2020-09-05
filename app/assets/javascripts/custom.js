@@ -190,7 +190,7 @@ function init_chart_doughnut(size_box = null){
           var datasets = [];
           var width;
           var aspectR;
-          var legend_display = false;
+          var legend_display;
           var label_x_axis;
           var label_y_axis_left;
           var label_y_axis_right;
@@ -225,6 +225,7 @@ function init_chart_doughnut(size_box = null){
                 options = value;
                 graphic_id = value['graphic_id'];
                 color = value['color'];
+
                 label_datasets = value['label_datasets'];
                 // el campo está mal cargado en la db ARREGLAR
                 right_y_axis = value['left_y_axis'];
@@ -241,6 +242,7 @@ function init_chart_doughnut(size_box = null){
               if(index == 'graphics_options'){
                 title = value['title'];
                 width = value['width'];
+                legend_display = value['legend_display'];
                 label_x_axis = value['label_x_axis'];
                 label_y_axis_left = value['label_y_axis_left'];
                 label_y_axis_right = value['label_y_axis_right'];
@@ -480,6 +482,7 @@ function init_chart_doughnut(size_box = null){
                   labels: lab,
                   datasets: datasets
                 }
+                console.log(datasets)
 
               } //cierra if data
             }) //cierra each b
@@ -554,7 +557,7 @@ function init_chart_doughnut(size_box = null){
               }
 
               $('#chart_container' + graphic_id).addClass('col-md-' + width);
-              legend_display = false;
+              //legend_display = false;
 
 
             } else { // Expanded
@@ -570,7 +573,7 @@ function init_chart_doughnut(size_box = null){
               }
 
               $('#chart_container' + graphic_id).addClass('col-md-' + width);
-              legend_display = false;
+              //legend_display = false;
 
             }
 
@@ -582,6 +585,11 @@ function init_chart_doughnut(size_box = null){
                 legend: {
                   display: legend_display,
                   position: 'bottom',
+                  labels: {
+                    boxWidth: 40,
+                    padding: 10,
+                    usePointStyle: true,
+                  }
                 },
                 tooltips: {
                   callbacks: {
