@@ -1,0 +1,2 @@
+var html = "<div class='row justify-content-center'><label class='col-md-2 text-right col-form-label'>Estado</label><div class='col-md-5'><%= j(collection_select(:project_status, :inherit_status_id, @project_statuses, :id, :name, {}, {class: 'form-control form-control-sm'})) %></div></div>";
+$('#project_statuses').html(html);

@@ -6,6 +6,9 @@ class ProjectType < ApplicationRecord
   include ProjectTypes::Validations
   include ProjectTypes::GeoJson
 
+  include RailsSortable::Model
+  set_sortable :level
+
   has_paper_trail
 
   require 'rgeo/shapefile'
@@ -45,7 +48,11 @@ class ProjectType < ApplicationRecord
     return false
   end
 
-
+  # Actualiza el level del proyecto
+  def update_level! level
+    self.level = level
+    save
+  end
 
   def create_project_statuses
     ProjectStatus.create(name: 'Default', color:"#f34c48", project_type_id: self.id)
