@@ -61,8 +61,9 @@
   </td>
   <%= f.hidden_field :sort, class: 'project_fields_current_position form-control form-control-sm', readonly: true %>
   <%= f.hidden_field :_destroy%>
-  <td style="width: 11%"><%= f.collection_select :role, Role.order(:name), :id, :name, {selected: role_selected(f.object.role)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></td>
-  <td style="width: 3%">
+  <td style="width: 5%"><%= f.collection_select :roles_read, Role.order(:name), :id, :name, {selected: role_selected(f.object.roles_read)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></td>
+  <td style="width: 5%"><%= f.collection_select :roles_edit, Role.order(:name), :id, :name, {selected: role_selected(f.object.roles_edit)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></td>
+  <td style="width: 4%">
     <% if can? :attributes, :destroy %>
       <%= link_to '#', class: "remove_fields_2" do  %> <i class="fas fa-trash-alt" title="Eliminar atributo"></i> <% end %>
     <% end %>

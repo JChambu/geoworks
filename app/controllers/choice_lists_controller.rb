@@ -17,7 +17,7 @@ class ChoiceListsController < ApplicationController
   def new
     authorize! :choice_lists, :new
     @choice_list = ChoiceList.new
-    @choice_list_item = @choice_list.choice_list_items.build 
+    @choice_list_item = @choice_list.choice_list_items.build
   end
 
   # GET /choice_lists/1/edit
@@ -32,7 +32,7 @@ class ChoiceListsController < ApplicationController
 
     respond_to do |format|
       if @choice_list.save
-        format.html { redirect_to choice_lists_path, notice: 'Choice list was successfully created.' }
+        format.html { redirect_to choice_lists_path, notice: 'Listado creado correctamente' }
         format.json { render :show, status: :created, location: @choice_list }
       else
         format.html { render :new }
@@ -46,7 +46,7 @@ class ChoiceListsController < ApplicationController
   def update
     respond_to do |format|
       if @choice_list.update(choice_list_params)
-        format.html { redirect_to choice_lists_path, notice: 'Choice list was successfully updated.' }
+        format.html { redirect_to choice_lists_path, notice: 'Listado modificado correctamente' }
         format.json { render :show, status: :ok, location: @choice_list }
       else
         format.html { render :edit }
@@ -61,7 +61,7 @@ class ChoiceListsController < ApplicationController
     authorize! :choice_lists, :destroy
     @choice_list.destroy
     respond_to do |format|
-      format.html { redirect_to choice_lists_url, notice: 'Choice list was successfully destroyed.' }
+      format.html { redirect_to choice_lists_url, notice: 'Listado eliminado correctamente.' }
       format.json { head :no_content }
     end
   end
@@ -74,6 +74,10 @@ class ChoiceListsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def choice_list_params
-      params.require(:choice_list).permit(:name, :key, :value, :label, :_destroy, choice_list_items_attributes: [:id,:name, :_destroy])
+      params.require(:choice_list).permit(:name, :key, :value, :label, :_destroy,
+        choice_list_items_attributes: [
+          :id, :name, :nested_list_id, :_destroy
+        ]
+      )
     end
 end

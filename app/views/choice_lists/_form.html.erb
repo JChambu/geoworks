@@ -5,7 +5,6 @@
       <%= simple_form_for(choice_list) do |f| %>
         <% if choice_list.errors.any? %>
           <div id="error_explanation">
-            <h2><%= pluralize(choice_list.errors.count, "error") %> prohibited this choice_list from being saved:</h2>
             <ul><% choice_list.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
           </div>
         <% end %>

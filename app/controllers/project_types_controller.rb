@@ -208,8 +208,10 @@ class ProjectTypesController < ApplicationController
     @project_type = ProjectType.new
     @project_field=[]
     @project_field.push(@project_type.project_fields.build({name: 'app_id', field_type_id: '1', hidden: true, read_only: true}))
-    @project_field.push(@project_type.project_fields.build({name: 'app_estado', 'field_type_id': '1', hidden: true, read_only: true}))
-    @project_field.push(@project_type.project_fields.build({name: 'app_usuario', 'field_type_id': '1', hidden: true, read_only: true}))
+    @project_field.push(@project_type.project_fields.build({name: 'app_estado', field_type_id: '1', hidden: true, read_only: true}))
+    @project_field.push(@project_type.project_fields.build({name: 'app_usuario', field_type_id: '1', hidden: true, read_only: true}))
+    @project_field.push(@project_type.project_fields.build({name: 'gwm_created_at', field_type_id: '3', hidden: true, read_only: true}))
+    @project_field.push(@project_type.project_fields.build({name: 'gwm_updated_at', field_type_id: '3', hidden: true, read_only: true}))
 
   end
 
@@ -304,10 +306,10 @@ class ProjectTypesController < ApplicationController
       :name, :type_file, :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color,
       :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition,
       project_fields_attributes: [
-        :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { role: [] }, :sort, :_destroy,
+        :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
         :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,
         project_subfields_attributes: [
-          :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { role: [] }, :sort, :_destroy,
+          :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
           :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script
         ]
       ]
