@@ -138,11 +138,13 @@ class ProjectTypesController < ApplicationController
         data = Project.
           where(project_type_id: project_type_id).
           where("shared_extensions.st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})").
-          where(row_active: true)
+          where(row_active: true).
+          where(current_season: true)
       else
         data = Project.
           where(project_type_id: project_type_id).
-          where(row_active: true)
+          where(row_active: true).
+          where(current_season: true)
       end
       condition = params[:conditions]
       if !condition.blank?
