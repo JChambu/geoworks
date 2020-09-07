@@ -55,7 +55,7 @@ class ProjectType < ApplicationRecord
   end
 
   def create_project_statuses
-    ProjectStatus.create(name: 'Default', color:"#f34c48", project_type_id: self.id)
+    ProjectStatus.create(name: 'Default', color:"#f34c48", project_type_id: self.id, status_type: 'Asignable', priority: 1)
   end
 
   def new_dashboard
