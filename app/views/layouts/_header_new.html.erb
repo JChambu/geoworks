@@ -20,7 +20,7 @@
       <% end %>
 
       <!-- Estados -->
-      <% if params[:controller] == 'project_statuses' && params[:action] == 'index' %>
+      <% if params[:controller] == 'project_statuses' && (params[:action] == 'index' || params[:action] == 'new') %>
         <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
       <% end %>
 
