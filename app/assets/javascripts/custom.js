@@ -589,6 +589,7 @@ function init_chart_doughnut(size_box = null){
                     boxWidth: 40,
                     padding: 10,
                     usePointStyle: true,
+                    fontColor: '#fff',
                   }
                 },
                 tooltips: {
@@ -727,6 +728,7 @@ function init_chart_doughnut(size_box = null){
                     boxWidth: 40,
                     padding: 10,
                     usePointStyle: true,
+                    fontColor: '#fff',
                   }
                 },
                 scales: {
@@ -817,6 +819,7 @@ function init_chart_doughnut(size_box = null){
                     fontColor: '#3d4046',
                     fontSize: 12,
                     usePointStyle: true,
+                    fontColor: '#fff',
                   }
                 },
                 tooltips: {
@@ -890,6 +893,7 @@ function init_chart_doughnut(size_box = null){
                     boxWidth: 40,
                     padding: 10,
                     usePointStyle: true,
+                    fontColor: '#fff',
                   }
                 },
                 scales: {
