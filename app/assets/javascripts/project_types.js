@@ -28,11 +28,11 @@ $(document).ready(function() {
   $('.rol_select').multiselect({
     maxHeight: 500,
     buttonClass: 'form-control form-control-sm',
-    buttonWidth: '100%',
+    buttonWidth: '100px',
     nonSelectedText: 'Seleccionar',
     allSelectedText: 'Todos',
     numberDisplayed: 1,
-    nSelectedText: 'seleccionados',
+    nSelectedText: 'roles',
     enableFiltering: true,
     enableCaseInsensitiveFiltering: true,
     filterPlaceholder: 'Buscar',
