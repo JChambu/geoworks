@@ -29,7 +29,11 @@
             <tr id="<%= sortable_id %>">
               <td><%= project_status.name %></td>
               <td><div class="col-md-3" style="width: 30px; height: 30px; border:solid 1px white; padding: 1px; background-color: <%= project_status.color %>"></div></td>
-              <td class="text-center"><%= link_to edit_project_type_project_status_path(project_status.project_type_id, project_status) do %><i class="fas fa-edit"></i><% end %></td>
+              <td class="text-center">
+                <% if can? :statuses, :edit %>
+                  <%= link_to edit_project_type_project_status_path(project_status.project_type_id, project_status) do %><i class="fas fa-edit"></i><% end %>
+                <% end %>
+              </td>
             </tr>
           <% end %>
         </tbody>
