@@ -55,4 +55,5 @@ ActiveRecord::Base.transaction do
   ModelType.where(name: 'attributes').first_or_create!
   ModelType.where(name: 'layers').first_or_create!
   ModelType.where(name: 'choice_lists').first_or_create!
+  ModelType.where(name: 'graphics').first_or_create!
 end
