@@ -17,6 +17,7 @@ es:
   dashboards: 'Tableros'
   project_types: 'Proyectos'
   layers: 'Capas Externas'
+  statuses: 'Estados'
   regexp: 'Expresiones Regulares'
   exception_handler:
     not_found: "Página no encontrada"
