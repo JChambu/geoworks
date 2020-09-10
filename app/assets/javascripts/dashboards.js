@@ -48,7 +48,7 @@ resize_graphics = function(){
   // Modificamos el alto de graphics según el alto de filter_container
   var sidebar_height = $(".sidebar").height()
   var filter_container_height = $("#filter-container").height()
-  var height_graphics = sidebar_height - filter_container_height - 10
+  var height_graphics = sidebar_height - filter_container_height - 20
   $(".graphics").css("height", height_graphics);
 }
 
