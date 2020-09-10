@@ -17,6 +17,7 @@ es:
   dashboards: 'Tableros'
   project_types: 'Proyectos'
   layers: 'Capas Externas'
+  graphics: 'Gráficos'
   statuses: 'Estados'
   regexp: 'Expresiones Regulares'
   exception_handler:
