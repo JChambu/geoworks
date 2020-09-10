@@ -71,6 +71,14 @@ Navarra.geomaps = function (){
     maxx = Navarra.dashboards.config.maxx;
     maxy = Navarra.dashboards.config.maxy;
 
+    // Sino hay existe un proyecto hace zoom a la posición del dispositivo
+    if (type_geometry == '') {
+      mymap.locate({
+        setView: true,
+        maxZoom: 13
+      });
+    }
+
     mymap.fitBounds([
       [ miny, minx],
       [ maxy ,maxx]
