@@ -133,17 +133,20 @@
           </li>
 
           <!-- Creador de gráficos -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle nocaret nav-link-width" href="#" id="chart_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fas fa-chart-pie align-middle" style="font-size: 24px"></i>
-            </a>
-            <div class="dropdown-menu custom-menu" aria-labelledby="chart_dropdown">
-              <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-pie chart-modal align-middle" style="font-size: 20px" id="doughnut" title="Dona"></i> <% end %>
-              <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-bar chart-modal align-middle" style="font-size: 20px" id="bar" title="Barra"></i> <% end %>
-              <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-align-left chart-modal align-middle" style="font-size: 20px" id="horizontalBar" title="Barra Horizontal"></i> <% end %>
-              <!--<%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-ellipsis-h chart-modal align-middle" style="font-size: 20px" id="bubble" title="Burbuja"></i> <% end %>-->
-            </div>
-          </li>
+          <% if can? :graphics, :new %>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle nocaret nav-link-width" href="#" id="chart_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-chart-pie align-middle" style="font-size: 24px"></i>
+              </a>
+              <div class="dropdown-menu custom-menu" aria-labelledby="chart_dropdown">
+                <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-pie chart-modal align-middle" style="font-size: 20px" id="doughnut" title="Dona"></i> <% end %>
+                <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-bar chart-modal align-middle" style="font-size: 20px" id="bar" title="Barra"></i> <% end %>
+                <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-align-left chart-modal align-middle" style="font-size: 20px" id="horizontalBar" title="Barra Horizontal"></i> <% end %>
+                <!--<%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-ellipsis-h chart-modal align-middle" style="font-size: 20px" id="bubble" title="Burbuja"></i> <% end %>-->
+              </div>
+            </li>
+          <% end %>
+
 
           <!-- Indicadores de texto -->
           <li class="tile_count row m-0"></li>
