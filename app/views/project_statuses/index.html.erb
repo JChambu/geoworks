@@ -7,7 +7,9 @@
         <h1 class="m-0">Estados</h1>
       </div>
       <div class="col-md-6 text-right">
-        <%= link_to 'Nuevo', new_project_type_project_status_path(@project_type), class: "btn btn-primary" %>
+        <% if can? :statuses, :new %>
+          <%= link_to 'Nuevo', new_project_type_project_status_path(@project_type), class: "btn btn-primary" %>
+        <% end %>
       </div>
     </div>
   </div>
