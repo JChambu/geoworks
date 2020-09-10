@@ -68,7 +68,9 @@
       </div>
     </div>
 
-    <div class="graphics d-flex align-content-start flex-wrap"></div>
+    <% if can? :graphics, :visualizer %>
+      <div class="graphics d-flex align-content-start flex-wrap"></div>
+    <% end %>
 
     <i class="fas fa-arrow-alt-circle-left" id="view"></i>
 
