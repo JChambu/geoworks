@@ -14,7 +14,8 @@ module ProjectTypes::Indicators
         @data = Project.joins(:project_status, :user).
           where(project_type_id: project_type_id).
           where("shared_extensions.st_contains(shared_extensions.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})").
-          where(row_active: true)
+          where(row_active: true).
+          where(current_season: true)
           if children == true
             @data = @data.left_outer_joins(:project_data_child)
           end
@@ -46,7 +47,8 @@ module ProjectTypes::Indicators
         @data = Project.joins(:project_status, :user).
           where(project_type_id: project_type_id).
           where("shared_extensions.st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom})").
-          where(row_active: true)
+          where(row_active: true).
+          where(current_season: true)
         if children == true
           @data = @data.left_outer_joins(:project_data_child)
         end
@@ -248,7 +250,7 @@ module ProjectTypes::Indicators
         @data_fixed = filters_on_the_fly @data_fixed, data_conditions, sql_full
       end
 
-      @total_row = Project.where(project_type_id: project_type_id).where(row_active: true)
+      @total_row = Project.where(project_type_id: project_type_id).where(row_active: true).where(current_season: true)
 
       @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id
       @total_row = @ctotal.count
