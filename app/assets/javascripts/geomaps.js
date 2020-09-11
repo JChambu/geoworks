@@ -629,6 +629,9 @@ Navarra.geomaps = function (){
       datatype: 'json',
       success: function(data){
         labelLayer = data['data'][0];
+        if (labelLayer == undefined) {
+          labelLayer = 'Predeterminada'
+        }
       }
     })
     var filter_option = Navarra.project_types.config.filter_option;
