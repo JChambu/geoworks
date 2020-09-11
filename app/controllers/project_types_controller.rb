@@ -12,7 +12,12 @@ class ProjectTypesController < ApplicationController
   end
 
   def project_type_layers
-    @projects = ProjectType.where.not(name_layer: params[:name_projects]).where(enabled_as_layer: true)
+    @projects = ProjectType
+      .joins(:has_project_types)
+      .where.not(name_layer: params[:name_projects])
+      .where(enabled_as_layer: true)
+      .where(has_project_types: {user_id: current_user.id})
+      .ordered
     render json: {"data": @projects}
   end
 
