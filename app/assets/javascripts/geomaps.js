@@ -17,10 +17,6 @@ Navarra.geomaps = function() {
       port = 8600
     }
 
-    console.log(url);
-    console.log(protocol);
-    console.log(port);
-
     var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       updateWhenIdle: true,
@@ -373,11 +369,21 @@ Navarra.geomaps = function() {
     var cql_filter = 'project_type_id=' + Navarra.dashboards.config.project_type_id;
     var filter_option = Navarra.project_types.config.filter_option;
 
+    console.log(' --- filter_option / wms_filter --- ')
+    console.log(filter_option);
+    console.log(' -------------------------------- ')
+
+
     if (filter_option.length > 0) {
       $.each(filter_option, function(a, b) {
         data_filter = b.split('|');
         cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
       });
+
+      console.log(' --- cql_filter / wms_filter --- ')
+      console.log(cql_filter);
+      console.log(' ----------------------------- ')
+
 
       mymap.removeLayer(project_current);
       if (typeof(projectss) !== 'undefined') {

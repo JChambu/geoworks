@@ -6,6 +6,17 @@ var filter_option = '<%= params[:q][:project_field].downcase %>|' +'<%=raw  para
 var filter_kpi = '<%= params[:q][:project_field]%>|' + ' <%= raw params[:q][:filters] %>'+ "|'<%= params[:q][:input_value] %>'";
 var filter_view = field  + ' <%= params[:q][:filters] %> '+ "'<%= params[:q][:input_value] %>'";
 
+console.log( ' --- field / create_filters --- ');
+console.log(field);
+console.log( ' --- value / create_filters --- ');
+console.log(value);
+console.log( ' --- filter_option / create_filters --- ');
+console.log(filter_option);
+console.log( ' --- filter_kpi / create_filters --- ');
+console.log(filter_kpi);
+console.log( ' --- filter_view / create_filters --- ');
+console.log(filter_view);
+
 Navarra.project_types.config.filter_option.push(filter_option);
 Navarra.project_types.config.filter_kpi.push(filter_kpi);
 

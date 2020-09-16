@@ -31,8 +31,10 @@ function init_kpi(size_box = null) {
   // }
   var data_id = Navarra.dashboards.config.project_type_id;
   var dashboard_id = Navarra.dashboards.config.dashboard_id;
-  //  var conditions = Navarra.project_types.config.filter_kpi
   var conditions = Navarra.project_types.config.filter_kpi;
+
+  console.log(' --- filter_kpi / init_kpi --- ');
+  console.log(conditions);
 
   $.ajax({
     type: 'GET',
