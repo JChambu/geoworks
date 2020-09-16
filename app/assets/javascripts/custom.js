@@ -483,7 +483,6 @@ function init_chart_doughnut(size_box = null){
                   labels: lab,
                   datasets: datasets
                 }
-                console.log(datasets)
 
               } //cierra if data
             }) //cierra each b
