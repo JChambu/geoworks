@@ -62,7 +62,7 @@ $select_field.on('change', function() {
         $.each(data['data'][0]['values'], function(value, a) {
           let opt = document.createElement("option");
           opt.value = `${a.p_name}`;
-          opt.text = `${a.p_name}`;
+          opt.text = `${a.p_name}`.replace(/[\[\]\"]/g, "");
           $select_value.add(opt);
         })
       }
