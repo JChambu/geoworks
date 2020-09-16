@@ -24,28 +24,33 @@
     <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary", value: 'Guardar' %>
   </div>
 <% end %>
-<script>
-  var $select_field = $('#q_project_field');
-$select_field.on('change', function(){
+
+<script>var $select_field = $('#q_project_field');
+$select_field.on('change', function() {
 
   $.ajax({
-    url:  "/projects/search_data.json",
+    url: "/projects/search_data.json",
     type: "GET",
-    data: { project_field_id: $(this).val(), project_type_id: <%= params[:project_type_id] %> },
-    success: function(data){
-      if (data['data'][0]['field_type_name'] == 'Listado (opción multiple)'){
+    data: {
+      project_field_id: $(this).val(),
+      project_type_id: <%= params[:project_type_id] %>
+    },
+    success: function(data) {
+
+      if (data['data'][0]['field_type_name'] == 'Listado (opción multiple)') {
         const field_input = document.createElement('input');
         field_input.name = 'q[input_value]';
         field_input.id = 'q_input_value';
-        field_input.className= 'form-control';
+        field_input.className = 'form-control';
         let field_value = document.querySelector('.field_value');
         let select_value = field_value.querySelector('select').remove();
         field_value.append(field_input);
 
-      }else{
+      } else {
+
         let field_value = document.querySelector('.field_value');
         field_value.querySelector('#q_input_value').remove();
-        
+
         let $select_value = document.createElement('select');
         $select_value.id = 'q_input_value';
         $select_value.name = 'q[input_value]';
@@ -53,16 +58,15 @@ $select_field.on('change', function(){
 
         field_value.append($select_value);
         $select_value.append('<option>Select</option>');
-        $.each(data['data'][0]['values'], function(value, a){
+
+        $.each(data['data'][0]['values'], function(value, a) {
           let opt = document.createElement("option");
           opt.value = `${a.p_name}`;
           opt.text = `${a.p_name}`;
           $select_value.add(opt);
-
         })
       }
     }
   });
-
 })
 </script>
