@@ -355,7 +355,7 @@ function init_chart_doughnut(size_box = null){
 
                       } else {
 
-                        lab.push(v['name'].replace("[","").replace("]",""));
+                        lab.push(v['name']);
                         da.push(v['count']);
 
                       }
