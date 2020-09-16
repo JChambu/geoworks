@@ -673,6 +673,12 @@ Navarra.geomaps = function() {
     var filter_option = Navarra.project_types.config.filter_option;
     cql_filter = "1 = 1";
     if (filter_option.length > 0) {
+
+      // Si encuentra un &quot; lo reemplaza por \"
+      if (filter_option[2].match(/&quot;/g) != null) {
+        filter_option[2] = filter_option[2].replace(/&quot;/g, '\"')
+      }
+
       cql_filter += " and " + filter_option[0] + " " + filter_option[1] + " '" + filter_option[2] + "'";
     }
     var owner = Navarra.project_types.config.owner;
