@@ -710,13 +710,12 @@ Navarra.geomaps = function() {
     cql_filter = "1 = 1";
     if (filter_option.length > 0) {
 
-      // Si encuentra un &quot; lo reemplaza por \"
-      if (filter_option[2].match(/&quot;/g) != null) {
-        filter_option[2] = filter_option[2].replace(/&quot;/g, '\"')
-      }
-
-      cql_filter += " and " + filter_option[0] + " " + filter_option[1] + " '" + filter_option[2] + "'";
+      $.each(filter_option, function(a, b) {
+        data_filter = b.split('|');
+        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
+      });
     }
+
     var owner = Navarra.project_types.config.owner;
     var user_name = Navarra.dashboards.config.user_name;
     if (owner == true) {
