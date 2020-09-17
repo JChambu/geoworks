@@ -116,12 +116,13 @@ PostGIS - PostGIS Database
 
 ```
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<StyledLayerDescriptor version="1.0.0"
-    xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"
-    xmlns="http://www.opengis.net/sld"
-    xmlns:ogc="http://www.opengis.net/ogc"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<StyledLayerDescriptor
+  version="1.0.0"
+  xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"
+  xmlns="http://www.opengis.net/sld"
+  xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <NamedLayer>
     <Name>Zoom-based point</Name>
     <UserStyle>
@@ -136,7 +137,7 @@ PostGIS - PostGIS Database
                 <WellKnownName>circle</WellKnownName>
                 <Fill>
                   <CssParameter name="fill">
-                  	<ogc:PropertyName>color</ogc:PropertyName>
+                    <ogc:PropertyName>color</ogc:PropertyName>
                   </CssParameter>
                 </Fill>
               </Mark>
@@ -154,7 +155,7 @@ PostGIS - PostGIS Database
                 <WellKnownName>circle</WellKnownName>
                 <Fill>
                   <CssParameter name="fill">
-                  	<ogc:PropertyName>color</ogc:PropertyName>
+                    <ogc:PropertyName>color</ogc:PropertyName>
                   </CssParameter>
                 </Fill>
               </Mark>
@@ -171,7 +172,7 @@ PostGIS - PostGIS Database
                 <WellKnownName>circle</WellKnownName>
                 <Fill>
                   <CssParameter name="fill">
-                  	<ogc:PropertyName>color</ogc:PropertyName>
+                    <ogc:PropertyName>color</ogc:PropertyName>
                   </CssParameter>
                 </Fill>
               </Mark>
@@ -189,17 +190,18 @@ PostGIS - PostGIS Database
 - Estilo:
 ```
 <?xml version="1.0" encoding="UTF-8"?>
-<StyledLayerDescriptor version="1.0.0"
- xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"
- xmlns="http://www.opengis.net/sld"
- xmlns:ogc="http://www.opengis.net/ogc"
- xmlns:xlink="http://www.w3.org/1999/xlink"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<StyledLayerDescriptor
+  version="1.0.0"
+  xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"
+  xmlns="http://www.opengis.net/sld"
+  xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <!-- a Named Layer is the basic building block of an SLD document -->
   <NamedLayer>
     <Name>default_polygon</Name>
     <UserStyle>
-    <!-- Styles can have names, titles and abstracts -->
+      <!-- Styles can have names, titles and abstracts -->
       <Title>Default Polygon</Title>
       <Abstract>A sample style that draws a polygon</Abstract>
       <!-- FeatureTypeStyles describe how to render different features -->
@@ -212,7 +214,7 @@ PostGIS - PostGIS Database
           <PolygonSymbolizer>
             <Fill>
               <CssParameter name="fill">
-              <ogc:PropertyName>color</ogc:PropertyName>
+                <ogc:PropertyName>color</ogc:PropertyName>
               </CssParameter>
               <CssParameter name="fill-opacity">0.4</CssParameter>
             </Fill>
