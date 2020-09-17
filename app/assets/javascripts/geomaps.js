@@ -369,9 +369,9 @@ Navarra.geomaps = function() {
     var cql_filter = 'project_type_id=' + Navarra.dashboards.config.project_type_id;
     var filter_option = Navarra.project_types.config.filter_option;
 
-    console.log(' --- filter_option / wms_filter --- ')
-    console.log(filter_option);
-    console.log(' -------------------------------- ')
+    // console.log(' --- filter_option / wms_filter --- ')
+    // console.log(filter_option);
+    // console.log(' -------------------------------- ')
 
 
     if (filter_option.length > 0) {
@@ -380,9 +380,9 @@ Navarra.geomaps = function() {
         cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
       });
 
-      console.log(' --- cql_filter / wms_filter --- ')
-      console.log(cql_filter);
-      console.log(' ----------------------------- ')
+      // console.log(' --- cql_filter / wms_filter --- ')
+      // console.log(cql_filter);
+      // console.log(' ----------------------------- ')
 
 
       mymap.removeLayer(project_current);
@@ -450,8 +450,22 @@ Navarra.geomaps = function() {
   function point_colors_data() {
 
     field_point = Navarra.project_types.config.field_point_colors;
+    // bedroom
     data_point = Navarra.project_types.config.data_point_colors;
+
     var filter_option = Navarra.project_types.config.filter_option;
+
+    console.log(' --- field_point / point_colors_data --- ')
+    console.log(field_point);
+    console.log(' --------------------------------------- ')
+
+    console.log(' --- data_point / point_colors_data --- ')
+    console.log(data_point);
+    console.log(' -------------------------------------- ')
+
+    console.log(' --- filter_option / point_colors_data --- ')
+    console.log(filter_option);
+    console.log(' ----------------------------------------- ')
 
     if (field_point != '') {
       mymap.removeLayer(project_current);
@@ -476,8 +490,18 @@ Navarra.geomaps = function() {
       $.each(data_point, function(a, b) {
 
         var cql_name = b['name'];
+
+        console.log(' --- cql_name --- ')
+        console.log(cql_name);
+        console.log(' ---------------- ')
+
         var col;
         var value_filter = cql_project_type + " and " + field_point + "='" + cql_name + "' ";
+
+        console.log(' --- value_filter --- ')
+        console.log(value_filter);
+        console.log(' -------------------- ')
+
         col = randomColor({
           format: 'hex'
         });
@@ -488,12 +512,12 @@ Navarra.geomaps = function() {
             value_filter += " and " + data_filter[0] + data_filter[1] + data_filter[2];
           });
         }
+
         var env_f = "color:" + col;
         current_tenement = Navarra.dashboards.config.current_tenement;
         layer_current = current_tenement + ":" + name_layer;
+
         var options = {
-
-
           layers: layer_current, //nombre de la capa (ver get capabilities)
           format: 'image/png',
           transparent: 'true',
@@ -506,6 +530,7 @@ Navarra.geomaps = function() {
           format_options: 'callback:getJson',
           CQL_FILTER: value_filter
         };
+
         source = new L.tileLayer.betterWms(protocol + "//" + url + ":" + port + "/geoserver/wms", options);
         ss.push(source);
 
