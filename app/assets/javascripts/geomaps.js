@@ -534,10 +534,15 @@ Navarra.geomaps = function() {
         source = new L.tileLayer.betterWms(protocol + "//" + url + ":" + port + "/geoserver/wms", options);
         ss.push(source);
 
+        // Elimina corchetes y comillas para leyenda
+        if (cql_name !=  null) {
+          cql_name = cql_name.replace(/[\[\]\"]/g, "")
+        }
+
         var htmlLegend1and2 = L.control.htmllegend({
           position: 'bottomleft',
           legends: [{
-            name: cql_name.replace(/[\[\]\"]/g, ""),
+            name: cql_name,
             layer: source,
             elements: [{
               label: '',
