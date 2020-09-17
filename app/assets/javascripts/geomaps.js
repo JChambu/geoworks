@@ -537,7 +537,7 @@ Navarra.geomaps = function() {
         var htmlLegend1and2 = L.control.htmllegend({
           position: 'bottomleft',
           legends: [{
-            name: cql_name,
+            name: cql_name.replace(/[\[\]\"]/g, ""),
             layer: source,
             elements: [{
               label: '',
