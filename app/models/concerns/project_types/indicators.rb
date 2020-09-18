@@ -281,6 +281,9 @@ module ProjectTypes::Indicators
           data = query_draw_polygon  size_box, project_type_id, chart.sql_full
         end
 
+        # Aplica filtro por atributos y owner
+        data = conditions_for_attributes_and_owner data, user_id, project_type_id, chart.sql_full
+
         if chart.kpi_type == 'basic'
           field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
           conditions_field = chart.condition_field
