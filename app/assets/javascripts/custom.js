@@ -31,7 +31,6 @@ function init_kpi(size_box = null) {
   // }
   var data_id = Navarra.dashboards.config.project_type_id;
   var dashboard_id = Navarra.dashboards.config.dashboard_id;
-  //  var conditions = Navarra.project_types.config.filter_kpi
   var conditions = Navarra.project_types.config.filter_kpi;
 
   $.ajax({
@@ -355,7 +354,7 @@ function init_chart_doughnut(size_box = null){
 
                       } else {
 
-                        lab.push(v['name']);
+                        lab.push(v['name'].replace(/[\[\]\"]/g, ""));
                         da.push(v['count']);
 
                       }
@@ -481,7 +480,6 @@ function init_chart_doughnut(size_box = null){
                   labels: lab,
                   datasets: datasets
                 }
-                console.log(datasets)
 
               } //cierra if data
             }) //cierra each b
