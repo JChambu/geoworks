@@ -369,21 +369,13 @@ Navarra.geomaps = function() {
     var cql_filter = 'project_type_id=' + Navarra.dashboards.config.project_type_id;
     var filter_option = Navarra.project_types.config.filter_option;
 
-    // console.log(' --- filter_option / wms_filter --- ')
-    // console.log(filter_option);
-    // console.log(' -------------------------------- ')
-
-
     if (filter_option.length > 0) {
+
+      // Aplica filtro por atributo y filros generados por el usuario
       $.each(filter_option, function(a, b) {
         data_filter = b.split('|');
         cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
       });
-
-      // console.log(' --- cql_filter / wms_filter --- ')
-      // console.log(cql_filter);
-      // console.log(' ----------------------------- ')
-
 
       mymap.removeLayer(project_current);
       if (typeof(projectss) !== 'undefined') {
@@ -395,18 +387,17 @@ Navarra.geomaps = function() {
         Navarra.geomaps.heatmap_data();
       }
 
+      // Aplica filtro owner
       var owner = Navarra.project_types.config.owner;
       var user_name = Navarra.dashboards.config.user_name;
       if (owner == true) {
         cql_filter += " and app_usuario='" + user_name + "'";
       }
+
       var point_color = Navarra.project_types.config.field_point_colors;
       switch (type_geometry) {
         case 'Point':
           style = 'poi_new';
-          break;
-        case 'LineString':
-          style = 'line';
           break;
         case 'Polygon':
           style = 'polygon_new';
@@ -450,22 +441,8 @@ Navarra.geomaps = function() {
   function point_colors_data() {
 
     field_point = Navarra.project_types.config.field_point_colors;
-    // bedroom
     data_point = Navarra.project_types.config.data_point_colors;
-
     var filter_option = Navarra.project_types.config.filter_option;
-
-    console.log(' --- field_point / point_colors_data --- ')
-    console.log(field_point);
-    console.log(' --------------------------------------- ')
-
-    console.log(' --- data_point / point_colors_data --- ')
-    console.log(data_point);
-    console.log(' -------------------------------------- ')
-
-    console.log(' --- filter_option / point_colors_data --- ')
-    console.log(filter_option);
-    console.log(' ----------------------------------------- ')
 
     if (field_point != '') {
       mymap.removeLayer(project_current);
@@ -491,21 +468,14 @@ Navarra.geomaps = function() {
 
         var cql_name = b['name'];
 
-        console.log(' --- cql_name --- ')
-        console.log(cql_name);
-        console.log(' ---------------- ')
-
         var col;
         var value_filter = cql_project_type + " and " + field_point + "='" + cql_name + "' ";
-
-        console.log(' --- value_filter --- ')
-        console.log(value_filter);
-        console.log(' -------------------- ')
 
         col = randomColor({
           format: 'hex'
         });
 
+        // Aplica filtro por atributo y filros generados por el usuario
         if (filter_option != '') {
           $.each(filter_option, function(a, b) {
             data_filter = b.split('|');
@@ -706,16 +676,18 @@ Navarra.geomaps = function() {
         }
       }
     })
+
+    // Aplica filtro por atributo y filros generados por el usuario
     var filter_option = Navarra.project_types.config.filter_option;
     cql_filter = "1 = 1";
     if (filter_option.length > 0) {
-
       $.each(filter_option, function(a, b) {
         data_filter = b.split('|');
         cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
       });
     }
 
+    // Aplica filtro owner
     var owner = Navarra.project_types.config.owner;
     var user_name = Navarra.dashboards.config.user_name;
     if (owner == true) {
@@ -726,15 +698,13 @@ Navarra.geomaps = function() {
       case 'Point':
         style = 'poi_new';
         break;
-      case 'LineString':
-        style = 'line';
-        break;
       case 'Polygon':
         style = 'polygon_new';
         break;
       default:
         style = 'poi_new';
     }
+
     current_tenement = Navarra.dashboards.config.current_tenement;
     layer_current = current_tenement + ":" + name_layer;
     layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
@@ -779,9 +749,6 @@ Navarra.geomaps = function() {
             switch (y.type_geometry) {
               case 'Point':
                 style = 'poi_new';
-                break;
-              case 'LineString':
-                style = 'line';
                 break;
               case 'Polygon':
                 style = 'polygon_new';
