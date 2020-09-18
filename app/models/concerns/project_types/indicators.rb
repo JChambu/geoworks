@@ -60,18 +60,30 @@ module ProjectTypes::Indicators
       @data
     end
 
-    def conditions_for_attributes_and_owner data, user_id, project_type_id
+    def conditions_for_attributes_and_owner data, user_id, project_type_id, sql_full
 
       project_filters = ProjectFilter.where(user_id: user_id).where(project_type_id: project_type_id).first
 
       if !project_filters.nil?
+
+        # Aplica filtro por atributo
         project_filters.properties.to_a.each do |prop|
-          data =  data.where(" projects.properties->>'" + prop[0] +"' = '#{prop[1]}'")
+          if sql_full.blank?
+            data = data.where(" projects.properties->>'#{prop[0]}' = '#{prop[1]}'")
+          else
+            data = data.sub('where_clause', "where_clause (main.properties->>'#{prop[0]}' = '#{prop[1]}') AND ")
+          end
         end
 
+        # Aplica filtro owner
         if project_filters.owner == true
-          data = data.where(user_id: user_id)
+          if sql_full.blank?
+            data = data.where(user_id: user_id)
+          else
+            data = data.sub('where_clause', "where_clause (main.user_id = #{user_id}) AND ")
+          end
         end
+
       end
       @data = data
     end
@@ -193,15 +205,17 @@ module ProjectTypes::Indicators
           @analytics_charts.each do |chart|
             @items = {}
 
+            # Consulta los registros según filtro geográfico
             if type_box == 'extent'
               @data = query_extent size_box, project_type_id, chart.children, chart.sql_full
             else
               @data = query_draw_polygon  size_box, project_type_id, chart.children, chart.sql_full
             end
 
-            conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id
+            # Aplica filtro por atributos y owner
+            conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id, chart.sql_full
 
-            # Aplica los filtros
+            # Aplica filtros generados por el usuario
             if !data_conditions.blank?
               conditions_on_the_fly =  filters_on_the_fly @data, data_conditions, chart.sql_full
             end
@@ -234,25 +248,28 @@ module ProjectTypes::Indicators
       @data_fixed = ''
       @op = option_graph
       @ct = Apartment::Tenant.current
-
       sql_full = ''
 
+      # Indicadores generados por defecto
+      # # # # # # # # # # # # # # # # # #
+
+      # Consulta los registros según filtro geográfico
       if type_box == 'extent'
         @data_fixed = query_extent size_box, project_type_id, sql_full
       else
         @data_fixed = query_draw_polygon  size_box, project_type_id, sql_full
       end
 
-      @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id
+      @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id, sql_full
 
-      # Aplica los filtros
+      # Aplica filtros generados por el usuario
       if !data_conditions.blank?
         @data_fixed = filters_on_the_fly @data_fixed, data_conditions, sql_full
       end
 
       @total_row = Project.where(project_type_id: project_type_id).where(row_active: true).where(current_season: true)
 
-      @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id
+      @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id, sql_full
       @total_row = @ctotal.count
       @row_selected = @data_fixed.count
       @avg_selected = [{ "count": ((@row_selected.to_f / @total_row.to_f) * 100).round(2)} ]
@@ -260,13 +277,26 @@ module ProjectTypes::Indicators
       querys << { "title":"Selecionado", "description":"select", "data":[{"count":@row_selected}], "id": 1001}
       querys << { "title":"% del Total", "description":"AVG", "data":@avg_selected, "id": 1002}
 
+      # Indicadores generados por el usuario
+      # # # # # # # # # # # # # # # # # # # #
+
       @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
+
       @analytics_charts.each do |chart|
 
+        # Consulta los registros según filtro geográfico
         if type_box == 'extent'
           data = query_extent size_box, project_type_id, chart.sql_full
         else
           data = query_draw_polygon  size_box, project_type_id, chart.sql_full
+        end
+
+        # Aplica filtro por atributos y owner
+        data = conditions_for_attributes_and_owner data, user_id, project_type_id, chart.sql_full
+
+        # Aplica filtros generados por el usuario
+        if !data_conditions.blank?
+          data = filters_on_the_fly data, data_conditions, chart.sql_full
         end
 
         if chart.kpi_type == 'basic'
@@ -281,11 +311,6 @@ module ProjectTypes::Indicators
           data = ActiveRecord::Base.connection.execute(data)
         end
 
-        # Aplica los filtros
-        if !data_conditions.blank?
-          data = filters_on_the_fly data, data_conditions, chart.sql_full
-        end
-
         if !conditions_field.blank?
           data =  data.where(" properties->>'" + conditions_field.key + "' " + chart.filter_input + "'#{chart.input_value}'")
         end
@@ -294,7 +319,7 @@ module ProjectTypes::Indicators
           data = data.select(field_select)
         end
 
-        querys << { "title":"#{chart.title}", "description":"kpi_sin grafico", "data":data, "id": chart.id}
+        querys << { "title": "#{chart.title}", "description": "kpi_sin grafico", "data": data, "id": chart.id }
       end
       querys
     end
