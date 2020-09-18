@@ -60,18 +60,30 @@ module ProjectTypes::Indicators
       @data
     end
 
-    def conditions_for_attributes_and_owner data, user_id, project_type_id
+    def conditions_for_attributes_and_owner data, user_id, project_type_id, sql_full
 
       project_filters = ProjectFilter.where(user_id: user_id).where(project_type_id: project_type_id).first
 
       if !project_filters.nil?
+
+        # Aplica filtro por atributo
         project_filters.properties.to_a.each do |prop|
-          data =  data.where(" projects.properties->>'" + prop[0] +"' = '#{prop[1]}'")
+          if sql_full.blank?
+            data = data.where(" projects.properties->>'#{prop[0]}' = '#{prop[1]}'")
+          else
+            data = data.sub('where_clause', "where_clause (main.properties->>'#{prop[0]}' = '#{prop[1]}') AND ")
+          end
         end
 
+        # Aplica filtro owner
         if project_filters.owner == true
-          data = data.where(user_id: user_id)
+          if sql_full.blank?
+            data = data.where(user_id: user_id)
+          else
+            data = data.sub('where_clause', "where_clause (main.user_id = #{user_id}) AND ")
+          end
         end
+
       end
       @data = data
     end
@@ -199,7 +211,7 @@ module ProjectTypes::Indicators
               @data = query_draw_polygon  size_box, project_type_id, chart.children, chart.sql_full
             end
 
-            conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id
+            conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id, chart.sql_full
 
             # Aplica los filtros
             if !data_conditions.blank?
@@ -243,7 +255,7 @@ module ProjectTypes::Indicators
         @data_fixed = query_draw_polygon  size_box, project_type_id, sql_full
       end
 
-      @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id
+      @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id, sql_full
 
       # Aplica los filtros
       if !data_conditions.blank?
@@ -252,7 +264,7 @@ module ProjectTypes::Indicators
 
       @total_row = Project.where(project_type_id: project_type_id).where(row_active: true).where(current_season: true)
 
-      @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id
+      @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id, sql_full
       @total_row = @ctotal.count
       @row_selected = @data_fixed.count
       @avg_selected = [{ "count": ((@row_selected.to_f / @total_row.to_f) * 100).round(2)} ]
