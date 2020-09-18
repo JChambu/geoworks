@@ -205,15 +205,17 @@ module ProjectTypes::Indicators
           @analytics_charts.each do |chart|
             @items = {}
 
+            # Consulta los registros según filtro geográfico
             if type_box == 'extent'
               @data = query_extent size_box, project_type_id, chart.children, chart.sql_full
             else
               @data = query_draw_polygon  size_box, project_type_id, chart.children, chart.sql_full
             end
 
+            # Aplica filtro por atributos y owner
             conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id, chart.sql_full
 
-            # Aplica los filtros
+            # Aplica filtros generados por el usuario
             if !data_conditions.blank?
               conditions_on_the_fly =  filters_on_the_fly @data, data_conditions, chart.sql_full
             end
@@ -246,9 +248,12 @@ module ProjectTypes::Indicators
       @data_fixed = ''
       @op = option_graph
       @ct = Apartment::Tenant.current
-
       sql_full = ''
 
+      # Indicadores generados por defecto
+      # # # # # # # # # # # # # # # # # #
+
+      # Consulta los registros según filtro geográfico
       if type_box == 'extent'
         @data_fixed = query_extent size_box, project_type_id, sql_full
       else
@@ -257,7 +262,7 @@ module ProjectTypes::Indicators
 
       @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id, sql_full
 
-      # Aplica los filtros
+      # Aplica filtros generados por el usuario
       if !data_conditions.blank?
         @data_fixed = filters_on_the_fly @data_fixed, data_conditions, sql_full
       end
@@ -272,9 +277,14 @@ module ProjectTypes::Indicators
       querys << { "title":"Selecionado", "description":"select", "data":[{"count":@row_selected}], "id": 1001}
       querys << { "title":"% del Total", "description":"AVG", "data":@avg_selected, "id": 1002}
 
+      # Indicadores generados por el usuario
+      # # # # # # # # # # # # # # # # # # # #
+
       @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
+
       @analytics_charts.each do |chart|
 
+        # Consulta los registros según filtro geográfico
         if type_box == 'extent'
           data = query_extent size_box, project_type_id, chart.sql_full
         else
@@ -283,6 +293,11 @@ module ProjectTypes::Indicators
 
         # Aplica filtro por atributos y owner
         data = conditions_for_attributes_and_owner data, user_id, project_type_id, chart.sql_full
+
+        # Aplica filtros generados por el usuario
+        if !data_conditions.blank?
+          data = filters_on_the_fly data, data_conditions, chart.sql_full
+        end
 
         if chart.kpi_type == 'basic'
           field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
@@ -296,11 +311,6 @@ module ProjectTypes::Indicators
           data = ActiveRecord::Base.connection.execute(data)
         end
 
-        # Aplica los filtros
-        if !data_conditions.blank?
-          data = filters_on_the_fly data, data_conditions, chart.sql_full
-        end
-
         if !conditions_field.blank?
           data =  data.where(" properties->>'" + conditions_field.key + "' " + chart.filter_input + "'#{chart.input_value}'")
         end
@@ -309,7 +319,7 @@ module ProjectTypes::Indicators
           data = data.select(field_select)
         end
 
-        querys << { "title":"#{chart.title}", "description":"kpi_sin grafico", "data":data, "id": chart.id}
+        querys << { "title": "#{chart.title}", "description": "kpi_sin grafico", "data": data, "id": chart.id }
       end
       querys
     end
