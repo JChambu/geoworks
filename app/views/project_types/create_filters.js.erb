@@ -11,15 +11,6 @@ if (value.match(/&quot;/g) != null) {
   value_view = value
 }
 
-console.log( ' --- field_name / create_filters --- ');
-console.log(field_name);
-console.log( ' --- field_key / create_filters --- ');
-console.log(field_key);
-console.log( ' --- value / create_filters --- ');
-console.log(value);
-console.log( ' --- filter_view / create_filters --- ');
-console.log(filter_view);
-
 var filter = field_key + '|' + operator + '|\'' + value + '\'';
 var filter_view = field_name  + " " + operator + " " + value_view;
 

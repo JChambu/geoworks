@@ -33,9 +33,6 @@ function init_kpi(size_box = null) {
   var dashboard_id = Navarra.dashboards.config.dashboard_id;
   var conditions = Navarra.project_types.config.filter_kpi;
 
-  console.log(' --- filter_kpi / init_kpi --- ');
-  console.log(conditions);
-
   $.ajax({
     type: 'GET',
     url: '/project_types/kpi.json',
