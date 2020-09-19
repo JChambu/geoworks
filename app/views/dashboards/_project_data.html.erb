@@ -1,0 +1,58 @@
+<script type="text/javascript">
+  $(document).ready(function () {
+    var ftds = document.querySelectorAll("td:nth-child(1)");
+    console.log(ftds)
+  choose = document.getElementById("choose");
+
+choose.addEventListener("change", function isChosen(e) {
+  ftds.forEach(function(ftd) {
+    if(ftd.textContent.indexOf(e.target.value)>0){
+      ftd.parentElement.classList.add("found")
+    } else{
+      ftd.parentElement.classList.remove("found");
+    }
+  });
+});
+});
+</script>
+<style type="text/css">
+  .found {
+  background: red;
+}
+</style>
+<p id="notice"><%= notice %></p>
+<label for="choose">Search ID:</label>
+<input id="choose" required>
+<div style="overflow-x: scroll;">
+      <table  class="table table-hover table-sm m-0 card-body" style="text-align: center; font-size: 0.8em; width: 600px; overflow-x: scroll;">
+        <thead style="display: table;">
+          <tr style="display: table; width: 100%">
+            <th style="width: 15%">#</th>
+            <% @fields.each do |field|  %>
+              <th><h6><%= field.name %></h6></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody style="height: 300px; overflow-y: scroll; display: block;">
+          <% @projects_data.each do |project | %>
+            <tr style="display: table; width: 100%">
+              <td style="width: 15%"><%= project.id %></td>
+                <% @fields.each do |field|  %>
+                  <td style="width: 15%">
+                    <% if field.field_type_id == 7  %>
+                      
+                    <% else %>
+                      <%= project.properties[field.key] if !project.properties[field.key].blank?%>
+                    <% end %>
+                  </td>
+                <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+        </div>
+      </table>
+  </div>
+    <div class="pt-3">
+
+    </div>
+

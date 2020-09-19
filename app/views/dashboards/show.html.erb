@@ -55,7 +55,6 @@
   </div>
 
   <div class="sidebar pt-2 px-2">
-
     <div class="card text-light chart-bg-transparent mb-2" id="filter-container">
       <div class="card-header chart-header-bg-transparent py-1 px-2">
         <button class="close" type="button" data-toggle="collapse" data-target="#collapse_filter" aria-expanded="true" aria-controls="collapse_filter">
@@ -74,6 +73,16 @@
 
     <i class="fas fa-arrow-alt-circle-left" id="view"></i>
 
+  </div>
+
+  <div class="sidebar pt-2 px-2" style="position: absolute;top: 60px; left: 5%; width: 62%;height: auto;background: transparent;">
+     
+    <div class="card text-light chart-bg-transparent mb-2" id="collapse_data">
+      <div class="card-header chart-header-bg-transparent py-1 px-2">
+        Datos
+      </div>
+          <%= render :partial =>'project_data' %>
+    </div>
   </div>
 
 <% end %>
