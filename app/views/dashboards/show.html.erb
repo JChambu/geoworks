@@ -75,13 +75,10 @@
 
   </div>
 
-  <div class="sidebar pt-2 px-2" style="position: absolute;top: 60px; left: 5%; width: 62%;height: auto;background: transparent;">
+  <div class="sidebar pt-2 px-2" style="position: absolute;top: 50vh; left: 0%; width: 70%;height: auto;">
      
     <div class="card text-light chart-bg-transparent mb-2" id="collapse_data">
-      <div class="card-header chart-header-bg-transparent py-1 px-2">
-        Datos
-      </div>
-        <%= render :partial =>'project_data' %>
+        <%= render :partial =>'project_data', :locals=>{:projects_data_local => @projects} %>
       </div>
           
     </div>

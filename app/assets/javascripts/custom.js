@@ -47,9 +47,6 @@ function init_kpi(size_box = null) {
     },
     dashboard_id: dashboard_id,
     success: function(data) {
-
-      console.log(data);
-
       data.forEach(function(element) {
 
         var count_element = element['data'][0]['count'];
@@ -168,8 +165,6 @@ function init_chart_doughnut(size_box = null){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
       success: function(data){
-
-        console.log(data);
 
         // Aplicamos drag and drop
         dragula({
@@ -481,7 +476,6 @@ function init_chart_doughnut(size_box = null){
                   labels: lab,
                   datasets: datasets
                 }
-                console.log(datasets)
 
               } //cierra if data
             }) //cierra each b
@@ -951,4 +945,9 @@ function init_chart_doughnut(size_box = null){
     }) //cierra ajax
   } //cierra if graphics
   $('.modal-backdrop').remove() ;
+
 } //cierra function init_chart_doughnut
+
+
+ 
+

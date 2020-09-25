@@ -28,7 +28,7 @@
 }
 
 .leaflet-html-legend {
-    background: #FFF;
+    background: red;
     border: 0px solid #FFF;
     padding: 6px;
     max-height: 250px;
