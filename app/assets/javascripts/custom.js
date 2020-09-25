@@ -354,7 +354,13 @@ function init_chart_doughnut(size_box = null){
 
                       } else {
 
-                        lab.push(v['name'].replace(/[\[\]\"]/g, ""));
+                        // Elimina los corchetes del name
+                        lab_final = v['name']
+                        if (lab_final != null) {
+                          lab_final = lab_final.replace(/[\[\]\"]/g, "")
+                        }
+
+                        lab.push(lab_final);
                         da.push(v['count']);
 
                       }
