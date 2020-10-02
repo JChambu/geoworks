@@ -26,20 +26,11 @@ class DashboardsController < ApplicationController
   def show
     @extent = []
     if !@project_type.nil?
-      @projects = Project.where(project_type_id: @project_type.id).limit(20)
+      @projects = Project.where(project_type_id: @project_type.id).limit(30)
       @extent = Project.geometry_bounds(@project_type.id, current_user.id)
       @current_tenant = Apartment::Tenant.current
       @project_filters = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id)
-      @search = @project_type.projects.all
-      @search = @search.search(params[:q])
-     # @projects_data = @search.result.paginate(:page => params[:page], per_page: 50)
-      @projects_data = Project.where(project_type_id: @project_type.id).limit(params[:project_type_id])
       @fields = ProjectField.where(project_type_id: params[:project_type_id])
-      @project_type = ProjectType.find(params[:project_type_id])
-      respond_to do |format|
-        format.html
-        format.csv { send_data @projects_data.to_csv, filename: "users-#{Date.today}.csv" }
-          end
     end
   end
 

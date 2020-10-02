@@ -894,3 +894,38 @@ Navarra.geomaps = function() {
   }
 }();
 
+function show_geometry_in_map(geometry,index,data_text, multi){
+  if (circleLayer==undefined){
+     circleLayer = new L.featureGroup;
+     circleLayer.addTo(mymap);
+  }
+  if(!multi){remove_geometry_in_map();}
+  geometry=geometry.substring(7,geometry.length-1);
+  lat_geometry = geometry.split(' ')[1];
+  lon_geometry = geometry.split(' ')[0];
+  var myPopup = L.DomUtil.create('div', 'infoWindow');
+  myPopup.innerHTML = "<div onclick='show_detail_popup(event)' style='cursor:pointer' id="+index+"_divpopup><p id="+index+"_titlepopup style='text-align:center; margin:10px'>#" + index + "</p>"+
+  "<p id="+index+"_detailpopup style='display:none'>" + data_text+ "</p></div>"
+
+  circle_data = L.circle([lat_geometry, lon_geometry], {
+    color: '#d3d800',
+    fillColor: '#d3d800',
+    fillOpacity: 0.5,
+    radius: 50
+  }).addTo(circleLayer).bindPopup(myPopup, {autoClose:false} ).openPopup();
+}
+function show_detail_popup(e){
+  id_popup=e.target.id.split('_')[0];
+  if(document.getElementById(id_popup+'_detailpopup').style.display=='block'){
+    document.getElementById(id_popup+'_detailpopup').style.display='none';
+  }else{
+    document.getElementById(id_popup+'_detailpopup').style.display='block';
+  }
+}
+function remove_geometry_in_map(){
+  if(circleLayer!==undefined){
+    mymap.removeLayer(circleLayer);
+    circleLayer = new L.featureGroup;
+    circleLayer.addTo(mymap);
+  }
+}

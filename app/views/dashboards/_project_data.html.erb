@@ -9,40 +9,116 @@ $(document).ready(function () {
 $(".option_perpage").click(function(){
   var selText = $(this).text();
   $(".select_perpage").html(selText+' <span class="caret"></span>');
-  init_data_dashboard(10);
+  var total_selected=parseInt($('.kpi_1001').html().replace(".",""));
+  data_pagination(total_selected,1);
+  init_data_dashboard();
 });
 
-
-
-    var ftds = document.querySelectorAll("td:nth-child(1)");
-  choose = document.getElementById("choose");
-
-choose.addEventListener("change", function isChosen(e) {
-  ftds.forEach(function(ftd) {
-    if(ftd.textContent.indexOf(e.target.value)>0){
-      ftd.parentElement.classList.add("found")
-    } else{
-      ftd.parentElement.classList.remove("found");
-    }
-  });
-});
-
+//movimiento de header columnas
 $(".th-hover").hover(function(){
     $(this).css("top", "-25px");
     }, function(){
     $(this).css("top", "0px");
   });
+
+  //busqueda por columna al hacer click
+  $('#choose').keydown(function(e){
+    if(e.keyCode == 13){
+        search_column_value();
+      }
+  })
+
 });
+
+//ordena descendente y ascendente
+function order_column(index){
+  var column_order=($('.table_scroll tr th:nth-child('+index+')').text()).replace(/ /g,'');
+  $('.order_by_column').val(column_order);
+}
+
+//abre buscar x  columna
+function search_column(index){
+  $('#choose').val('');
+  index+=2;
+  var texto_buscar=" "+($('.table_scroll tr th:nth-child('+index+')').text()).replace(/ /g,'')+" ";
+ $('#choose').attr("placeholder", "Buscar "+texto_buscar);
+ $('#choose').css("width","25%");
+ $('#choose').removeClass("p-0");
+ $('#choose').focus();
+ $('.choose_column').val(index);
+}
+
+//busca x  columna
+function search_column_value(){
+  remove_geometry_in_map();
+  var search_value=$('#choose').val();
+  var index=$('.choose_column').val();
+  var ftds = document.querySelectorAll('.table_scroll tr td:nth-child('+index+')');
+  var i=0;
+  ftds.forEach(function(ftd) {
+    if(ftd.textContent.toUpperCase().indexOf(search_value.toUpperCase())>0){
+      ftd.parentElement.classList.add("found");
+      show_geometry(i, true);
+    } else{
+      ftd.parentElement.classList.remove("found");
+    }
+    i++;
+  });
+}
+
+//oculta columnas
 function hide_column(index){
   index+=2;
  $('table tr td:nth-child('+index+')').hide()
  $('table tr th:nth-child('+index+')').hide();
+ $('.addcolumns a:nth-child('+(index-1)+')').removeClass("d-none");
+ $('.fa-plus').removeClass("d-none");
+}
+
+//muestra columnas
+function show_column(index){
+  index+=2;
+ $('table tr td:nth-child('+index+')').show()
+ $('table tr th:nth-child('+index+')').show();
+ $('.addcolumns a:nth-child('+(index-1)+')').addClass("d-none");
+ if($(".addcolumns").children().length == $(".column_data.d-none").length){
+   $('.fa-plus').addClass("d-none");
+ }
+}
+
+//mostrar dato en el mapa
+function show_item(index){
+ if($('table tbody tr:nth-child('+(index+1)+')').hasClass('found')){
+  $('table tbody tr:nth-child('+(index+1)+')').removeClass('found')
+  remove_geometry_in_map();
+ }else{
+   show_geometry(index,false);
+   $('table tbody tr').removeClass('found');
+   $('table tbody tr:nth-child('+(index+1)+')').addClass('found');
+  }
+}
+
+function show_geometry(index, multi){
+  var geometry= $('.geometry').eq(index).html();
+   var cols = document.querySelectorAll( '.table_scroll table tbody tr:nth-child('+(index+1)+') td');
+   data_text="";
+   var i=0;
+   cols.forEach(function(col){
+    i++;
+     if(col.innerText!="" && i!=1 && i<cols.length){
+     var head = $('.table_scroll table thead tr th:nth-child('+(i)+'');
+     if(head.is(":visible")){
+       data_text+=head.text()+": "+col.textContent+'<br/>';
+     }
+    }
+   })
+   show_geometry_in_map(geometry,(index+1),data_text,multi);
 }
 
 </script>
 <style type="text/css">
   .found {
-  background: red;
+  background: #d3d80080!important;
 }
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no_scroll::-webkit-scrollbar {
@@ -59,10 +135,6 @@ function hide_column(index){
   height: 5px;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
-.scroll {
-  
-}
 .icons{
   color: inherit!important;
   display: inline-block;
@@ -75,13 +147,23 @@ function hide_column(index){
 
 
 </style>
-<label for="choose" style="display: none;">Search ID:</label>
-<input id="choose" style="display: none;" required >
-<div class="card-header chart-header-bg-transparent py-1 px-2">
+<div class="card-header chart-header-bg-transparent py-1 px-2 card_data">
   Datos
+  <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown-columns">
+    <i class="fas fa-plus ml-3 d-none" style="font-size: 0.8em; cursor: pointer;"></i>
+  </a>
+  <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; overflow-y: auto;">
+    <% @fields.each_with_index do |field, index|  %>
+      <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>      
+    <% end %>
+  </div>
+  <input id="choose" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0" placeholder="Buscar" style="width: 0%; transition:1.5s;"  >
+  <input type="text" class="choose_column d-none">
+  <input type="text" class="order_by_column d-none">
+  
   <div class="" style="float: right;">
     <div class="dropdown" style="display: inline-block;">
-      <h6 class="dropdown-toggle select_perpage m-0 mr-3" type="button" id="dropdownMenuButton" data-toggle   ="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 0.8em">
+      <h6 class="dropdown-toggle select_perpage m-0 mr-3"  id="dropdownMenuButton" data-toggle   ="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 0.8em; cursor: pointer;">
         20/pág
       </h6>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -91,28 +173,12 @@ function hide_column(index){
         <a class="dropdown-item option_perpage" href="#">mostrar todo</a>
       </div>
     </div>
-      <nav aria-label="Page navigation example" style="display: inline-block;">
-        <ul class="pagination pagination-sm m-0">
-          <li class="">
-            <a class="" href="#" aria-label="Previous">
-              <span aria-hidden="true">&laquo;</span>
-              <span class="sr-only">Previous</span>
-            </a>
-          </li>
-          <li><a class="" href="#">1</a></li>
-          <li><a class="" href="#">2</a></li>
-          <li><a class="" href="#">3</a></li>
-          <li class="">
-            <a class="" href="#" aria-label="Next">
-              <span aria-hidden="true">&raquo;</span>
-              <span class="sr-only">Next</span>
-            </a>
-          </li>
-        </ul>
+      <nav style="display: inline-block;">
+        <ul class="pagination pagination-sm m-0" id="page_numbers"></ul>
       </nav>
   </div>
 </div>
-<div class="table-responsive div_table no_scroll" style="height: 30px; overflow-y: hidden; border-bottom: solid 2px rgba(0,0,0,0.6);">
+<div class="table-responsive div_table no_scroll" style="height: 30px; overflow-y: hidden; border-bottom: solid 2px rgba(0,0,0,0.6); background: rgba(81, 89, 96, 0.4);">
       <table class="table table-hover m-0 card-body" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
         <thead>
           <tr>
@@ -123,9 +189,9 @@ function hide_column(index){
                 <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
                 <p style="color:white; margin-bottom: 0px"><%= field.name %></p>
                 <div style="padding-top: 10px; padding-bottom:20px">
-                  <i class="fas fa-sort-alpha-down icons"></i>
-                  <i class="fas fa-search icons"></i>
-                  <i class="fas fa-times icons" onclick="hide_column(<%=index%>)" id=<%="re"+field.name %>></i>
+                  <i class="fas fa-sort-alpha-down icons" onclick="order_column(<%=index%>)"></i>
+                  <i class="fas fa-search icons" onclick="search_column(<%=index%>)"></i>
+                  <i class="fas fa-times icons" onclick="hide_column(<%=index%>)"></i>
                 </div>
                 </div>
                 </th>
@@ -133,10 +199,10 @@ function hide_column(index){
           </tr>
         </thead>
         <tbody style="visibility: hidden;">
-          <% projects_data_local.each do |project | %>
+          <% projects_data_local.each_with_index do |project, index | %>
             <tr>
               <td style="line-height: normal;padding: 2px; vertical-align: middle;">
-                <%= project.id %></td>
+                <%=index+1%></td>
                 <% @fields.each do |field|  %>
                   <td style="line-height: normal;padding: 2px; vertical-align: middle;">
                     <% if field.field_type_id == 7  %>
@@ -151,7 +217,7 @@ function hide_column(index){
         </tbody>
       </table>
 </div>
-<div class="table-responsive div_table scroll"  style="height: 38vh; position: relative; z-index: 10">
+<div class="table-responsive div_table scroll table_scroll"  style="position: relative; z-index: 10; transition: 1s; background: rgba(81, 89, 96, 0.4);">
       <table class="table table-hover m-0 card-body" style="font-size: 0.8em; position: relative;top: -45px; text-align: center;">
         <thead style="visibility: hidden; border-bottom: solid transparent">
           <tr>
@@ -163,10 +229,10 @@ function hide_column(index){
         </thead>
         <tbody style="border-top: solid 2px transparent" class="project_data_div">
           
-          <% projects_data_local.each do |project | %>
-            <tr>
+          <% projects_data_local.each_with_index do |project, index| %>
+            <tr style="cursor: pointer;" onclick="show_item(<%=index%>)">
               <td style="line-height: normal;padding: 2px; vertical-align: middle;">
-                <%= project.id %></td>
+                <%=index+1%></td>
                 <% @fields.each do |field|  %>
                   <td style="line-height: normal;padding: 2px; vertical-align: middle;">
                     <% if field.field_type_id == 7  %>
@@ -176,11 +242,11 @@ function hide_column(index){
                     <% end %>
                   </td>
                 <% end %>
+                <td class="d-none geometry"><%= project.the_geom %></td>
             </tr>
           <% end %>
          
         </tbody>
       </table>
     </div>
-    
 
