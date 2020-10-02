@@ -257,7 +257,7 @@ module ProjectTypes::Indicators
       @row_selected = @data_fixed.count
       @avg_selected = [{ "count": ((@row_selected.to_f / @total_row.to_f) * 100).round(2)} ]
       querys << { "title":"Total", "description":"Total", "data":[{"count":@total_row}], "id": 1000}
-      querys << { "title":"Selecionado", "description":"select", "data":[{"count":@row_selected}], "id": 1001}
+      querys << { "title":"Seleccionado", "description":"select", "data":[{"count":@row_selected}], "id": 1001}
       querys << { "title":"% del Total", "description":"AVG", "data":@avg_selected, "id": 1002}
 
       @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
