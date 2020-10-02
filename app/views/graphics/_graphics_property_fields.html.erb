@@ -4,7 +4,7 @@
       <%= f.input :label_datasets, input_html: {class: 'form-control form-control-sm'}, label: "Nombre" %>
     </div>
     <div class="form-group mb-0 col-md-2">
-      <%= f.input :chart_id, input_html: {class: 'form-control form-control-sm'}, collection: chart_types_for_select, label: "Tipo de Gráfico" %>
+      <%= f.input :chart_id, input_html: {class: 'form-control form-control-sm chart_serie_type', onchange:"change_type()"}, collection: chart_types_for_select, label: "Tipo de Gráfico" %>
     </div>
     <div class="form-group mb-0 col-md-3">
       <%= f.input :analytics_dashboard_id, label: "Indicador", input_html: {class: 'form-control form-control-sm'},collection: kpi_for_select, include_blank: true %>
