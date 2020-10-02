@@ -957,21 +957,27 @@ function init_chart_doughnut(size_box = null){
 // Función para traer todos los datos de los registros contenidos y filtrados
 function init_data_dashboard(){
   var per_page = $(".select_perpage").html();
-  var selValue = parseInt(per_page);
-  if(!isNaN(selValue)){
+  var per_page_value = parseInt(per_page);
+  if(!isNaN(per_page_value)){
     if($(".active_page").length==0){
       var active_page=1
     } else{
      var active_page=parseInt($(".active_page").html());
     }
-    var offset_rows=selValue*active_page;
+    var offset_rows=per_page_value*active_page;
     // Agregar paginación en la sentencia sql
-    // Ej: SELECT * FROM TableName ORDER BY id OFFSET offset_rows ROWS FETCH NEXT selValue ROWS ONLY;
+    // Ej: SELECT * FROM TableName ORDER BY id OFFSET offset_rows ROWS FETCH NEXT per_page_value ROWS ONLY;
   } 
-    var filter_by_column=parseInt($("#choose").val();
-    var order_by_column=parseInt($(".order_by_column").html());
+    var filter_value=$("#choose").val();
+    var filter_by_column=$(".filter_by_column").val();
+    var order_by_column=$(".order_by_column").val();
+    console.log(per_page_value);
+    console.log(active_page);
+    console.log(filter_value);
+    console.log(filter_by_column);
+    console.log(order_by_column);
 
-    // Agregar filtro like filter_by_column y order by en la setencia sql
+    // Agregar filtro properties->filter_by_column like (filter_value) y order by en la setencia sql
 
     // Establece el size_box para extent
     if (Navarra.dashboards.config.size_polygon.length == 0) {
@@ -1012,15 +1018,15 @@ function init_data_dashboard(){
 //función para paginar datos
 function data_pagination(selected, active_page){
   var per_page = $('.select_perpage').html();
-  var selValue = parseInt(per_page);
-  if(!isNaN(selValue)){
+  var per_page_value = parseInt(per_page);
+  if(!isNaN(per_page_value)){
     var numbers='';
     if(active_page!=1){
       numbers+='<li class="page_back" style="cursor:pointer"><a><</a></li>';
     } else {
       numbers+='<li class="page_back invisible"><a><</a></li>';
     }
-    var total_page=Math.ceil(selected/selValue);
+    var total_page=Math.ceil(selected/per_page_value);
     var page_hide=false;
     var page_hide1=false;
     for(i=1;i<=total_page;i++){

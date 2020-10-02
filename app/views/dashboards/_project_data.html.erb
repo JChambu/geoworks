@@ -32,6 +32,7 @@ $(".th-hover").hover(function(){
 
 //ordena descendente y ascendente
 function order_column(index){
+  index+=2;
   var column_order=($('.table_scroll tr th:nth-child('+index+')').text()).replace(/ /g,'');
   $('.order_by_column').val(column_order);
 }
@@ -40,8 +41,9 @@ function order_column(index){
 function search_column(index){
   $('#choose').val('');
   index+=2;
-  var texto_buscar=" "+($('.table_scroll tr th:nth-child('+index+')').text()).replace(/ /g,'')+" ";
+  var texto_buscar=($('.table_scroll tr th:nth-child('+index+')').text()).replace(/ /g,'');
  $('#choose').attr("placeholder", "Buscar "+texto_buscar);
+ $('.filter_by_column').val(texto_buscar);
  $('#choose').css("width","25%");
  $('#choose').removeClass("p-0");
  $('#choose').focus();
@@ -159,6 +161,7 @@ function show_geometry(index, multi){
   </div>
   <input id="choose" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0" placeholder="Buscar" style="width: 0%; transition:1.5s;"  >
   <input type="text" class="choose_column d-none">
+  <input type="text" class="filter_by_column d-none">
   <input type="text" class="order_by_column d-none">
   
   <div class="" style="float: right;">
