@@ -1,7 +1,8 @@
 Navarra.namespace("geomaps");
-
+var mymap;
+var circleLayer;
 Navarra.geomaps = function() {
-  var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
+  var markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
   var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current, current_tenement;
   var ss = [];
   var size_box = [];
@@ -96,6 +97,7 @@ Navarra.geomaps = function() {
       collapsed: true
     }).addTo(mymap);
 
+    /*
     var rose = L.control.rose('rose', {
       position: 'topright',
       icon: 'default',
@@ -103,7 +105,13 @@ Navarra.geomaps = function() {
       opacity: 0.5
     });
     rose.addTo(mymap)
+    */
 
+    // Agrega el zoom al mapa
+    L.control.zoom({
+      position: 'topright'
+    }).addTo(mymap);
+    
     editableLayers = new L.FeatureGroup();
     mymap.addLayer(editableLayers);
     var drawControl = new L.Control.Draw({
@@ -235,10 +243,6 @@ Navarra.geomaps = function() {
     $('.leaflet-draw-draw-circle').addClass('unselectable')
     $('.leaflet-draw-draw-marker').addClass('unselectable')
 
-    // Agrega el zoom al mapa
-    L.control.zoom({
-      position: 'bottomright'
-    }).addTo(mymap);
 
     // Agrega la escala al mapa
     L.control.scale({
@@ -889,3 +893,4 @@ Navarra.geomaps = function() {
     popup: popup
   }
 }();
+

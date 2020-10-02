@@ -51,6 +51,8 @@ function init_kpi(size_box = null) {
 
         var count_element = element['data'][0]['count'];
 
+        if(element['title'] == 'Seleccionado'){data_pagination(element['data'][0]['count'],1);}
+
         if (element['title'] == '% del Total') {
           data_cont = (Number(count_element)).format(2, 3, '.', ',');
         } else {
@@ -533,9 +535,11 @@ function init_chart_doughnut(size_box = null){
             )
 
             //Chequeamos el estado de view
-            status_view = $('#view').hasClass('active');
+            status_view = $('#view').hasClass('view-normal');
+            status_view_expanded = $('#view').hasClass('view-expanded');
+            status_view_right = $('#view').hasClass('view-normal-right');
 
-            if (!status_view) { // Default
+            if (status_view || status_view_right) { // Default
 
               if (width == 3) {
                 width = 6;
@@ -553,7 +557,8 @@ function init_chart_doughnut(size_box = null){
               //legend_display = false;
 
 
-            } else { // Expanded
+            } 
+            if(status_view_expanded) { // Expanded
 
               if (width == 3) {
                 aspectR = "1";
@@ -949,5 +954,115 @@ function init_chart_doughnut(size_box = null){
 } //cierra function init_chart_doughnut
 
 
+// Función para traer todos los datos de los registros contenidos y filtrados
+function init_data_dashboard(){
+  var per_page = $(".select_perpage").html();
+  var selValue = parseInt(per_page);
+  if(!isNaN(selValue)){
+    if($(".active_page").length==0){
+      var active_page=1
+    } else{
+     var active_page=parseInt($(".active_page").html());
+    }
+    var offset_rows=selValue*active_page;
+    // Agregar paginación en la sentencia sql
+    // Ej: SELECT * FROM TableName ORDER BY id OFFSET offset_rows ROWS FETCH NEXT selValue ROWS ONLY;
+  } 
+    var filter_by_column=parseInt($("#choose").val();
+    var order_by_column=parseInt($(".order_by_column").html());
+
+    // Agregar filtro like filter_by_column y order by en la setencia sql
+
+    // Establece el size_box para extent
+    if (Navarra.dashboards.config.size_polygon.length == 0) {
+
+      size_box = [];
+      var type_box = 'extent';
+      size_ext = Navarra.dashboards.config.size_box;
+      size_box[0] = size_ext['_southWest']['lng'];
+      size_box[1] = size_ext['_southWest']['lat'];
+      size_box[2] = size_ext['_northEast']['lng'];
+      size_box[3] = size_ext['_northEast']['lat'];
+
+    // Establece el size_box para polygon
+    } else {
+
+      var type_box = 'polygon';
+      size_box = size_polygon
+
+    }
+
+    var data_id = Navarra.dashboards.config.project_type_id;
+    var dashboard_id = Navarra.dashboards.config.dashboard_id;
+    var conditions = Navarra.project_types.config.filter_kpi
+
+//Cambiar esta petición para buscar los datos de los registros contenidos y filtrados
+    $.ajax({
+      type: 'GET',
+      url: '/project_types/kpi.json',
+      datatype: 'json',
+      data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
+      success: function(data){
+        console.log(data)
+        // aqui luego le voy a agregar el llenado de la tabla
+        }
+  })
+}
+
+//función para paginar datos
+function data_pagination(selected, active_page){
+  var per_page = $('.select_perpage').html();
+  var selValue = parseInt(per_page);
+  if(!isNaN(selValue)){
+    var numbers='';
+    if(active_page!=1){
+      numbers+='<li class="page_back" style="cursor:pointer"><a><</a></li>';
+    } else {
+      numbers+='<li class="page_back invisible"><a><</a></li>';
+    }
+    var total_page=Math.ceil(selected/selValue);
+    var page_hide=false;
+    var page_hide1=false;
+    for(i=1;i<=total_page;i++){
+      if(i<=3||i>total_page-1 || i==active_page-1 || i==active_page || i==active_page+1){
+        if(i==active_page){ 
+          numbers+='<li><a class="page_data page_active">'+i+'</a></li>'
+        } else{
+          numbers+='<li><a class="page_data">'+i+'</a></li>'
+        }
+      } else{
+        if(i<total_page-1 && !page_hide){
+          numbers+='<h6 class="p-0 m-0">..</h6>';
+          page_hide=true;
+        }
+        if(i==total_page-1 && !page_hide1){
+          numbers+='<h6 class="p-0 m-0">..</h6>';
+          page_hide1=true;
+        }
+      }
+    }
+    if(active_page!=total_page){
+      numbers+='<li class="page_foward" style="cursor:pointer"><a>></a></li>';
+    } else {
+      numbers+='<li class="page_foward invisible"><a>></a></li>';
+    }
+    $('#page_numbers').replaceWith('<ul class="pagination pagination-sm m-0" id="page_numbers">'+numbers+'</ul>');
+    } else{
+    $('#page_numbers').replaceWith('<ul class="pagination pagination-sm m-0" id="page_numbers"></ul>');
+    } 
+  //Pagina activa
+  $(".page_data").click(function(){
+    active_page=parseInt($(this).html());
+    data_pagination(selected,active_page);
+  });   
+  $(".page_back").click(function(){
+      active_page--;
+      data_pagination(selected, active_page);
+  });    
+  $(".page_foward").click(function(){
+      active_page++;
+      data_pagination(selected, active_page);
+  });        
+}
  
 
