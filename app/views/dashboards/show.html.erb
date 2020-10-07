@@ -48,6 +48,46 @@
   </div>
 </div>
 
+<div id="time-slider-modal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="chartModalLabel"> Time Slider </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="col-md-6">
+            <label class="string optional control-label" for="time_slider_step">Intervalo</label>
+            <select class="form-control form-control-sm" id="time_slider_step" onchange="change_step_time_slider()" style="cursor:pointer;">
+              <option value="day" label="Día"></option>
+              <option value="week" label="Semana"></option>
+              <option value="month" label="Mes"></option>
+              <option value="year" label="Año"></option>
+            </select>
+          </div>
+        </div>  
+        <div class="form-row mt-3">
+          <div class="col-md-6">
+            <label class="string optional control-label" for="time_slider_from">Desde</label>
+            <input class="string optional form-control form-control-sm" type="text" id="time_slider_from" style="cursor:pointer">
+          </div>
+          <div class="col-md-6">
+            <label class="string optional control-label" for="time_slider_to">Hasta</label>
+            <input class="string optional form-control form-control-sm" type="text" id="time_slider_to" style="cursor: pointer;">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <input type="button"  value="Guardar" onclick="set_time_slider()" class="btn btn-primary">
+      </div>
+    </div>
+  </div>
+</div>
+
 <%= form_for :q, :html => {:class => 'd-flex justify-content-end', :method => :get} do |f| %>
 
   <div id="map">
@@ -63,7 +103,10 @@
         Filtros Activos
       </div>
       <div class="collapse show" id="collapse_filter">
-        <div class="card-body" id="filter-body"></div>
+        <div class="card-body" id="filter-body">
+          <input type="text" class="d-none" id="time-slider-from-value">
+          <input type="text" class="d-none" id="time-slider-to-value">
+        </div>
       </div>
     </div>
 
