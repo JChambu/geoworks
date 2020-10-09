@@ -7,6 +7,11 @@ class ProjectsController < ApplicationController
     render json: {data: @user}
   end
 
+  def search_statuses
+    @project_statuses_data = ProjectStatus.where(project_type_id: params[:project_type_id])
+    render json: {data: @project_statuses_data}
+  end
+
   def popup
     project_data = Project.find(params['project_id'].to_i)
      render json: {data: project_data }

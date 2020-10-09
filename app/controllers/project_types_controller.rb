@@ -76,6 +76,14 @@ class ProjectTypesController < ApplicationController
 
   end
 
+  def create_quick_filters
+    @field = "field"
+    respond_to do |format|
+      format.js
+    end
+
+  end
+
   def dashboard
   end
 

@@ -420,3 +420,12 @@ div.custom-menu.show {
 .page_data{
   cursor:pointer;
 }
+.circle_status{
+  width:15px;
+  height:15px;
+  background: red;
+  display:inline-block;
+  vertical-align:middle;
+  border-radius: 50%;
+  margin: 0px 10px;
+}

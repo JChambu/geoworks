@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get 'project_fields/field_popup' => 'project_fields#field_popup'
   get 'project_types/create_share' => 'project_types#create_share', as: :create_share
   get 'projects/search_data' => 'projects#search_data'
+  get 'projects/search_statuses' => 'projects#search_statuses'
   post 'project_statuses/options', as: 'project_statuses_options'
   post 'project_types/update_level', as: 'project_types_update_level'
   post 'project_statuses/update_priority', as: 'project_statuses_update_priority'
@@ -78,7 +79,9 @@ Rails.application.routes.draw do
 
     get 'project_types/share' => 'project_types#share', as: :share
     get 'project_types/filters' => 'project_types#filters', as: :filters
+    get 'project_types/quick_filters' => 'project_types#quick_filters', as: :quick_filters
     get 'project_types/create_filters' => 'project_types#create_filters', as: :create_filters
+    get 'project_types/create_quick_filters' => 'project_types#create_quick_filters', as: :create_quick_filters
     get 'project_types/heatmap' => 'project_types#heatmap', as: :heatmap
     get 'project_types/create_heatmap' => 'project_types#create_heatmap', as: :create_heatmap
     get 'project_types/point_colors' => 'project_types#point_colors', as: :point_colors
