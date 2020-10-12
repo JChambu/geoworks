@@ -47,7 +47,7 @@ function init_kpi(size_box = null) {
     dashboard_id: dashboard_id,
     success: function(data) {
 
-      console.log(data);
+
 
       data.forEach(function(element) {
 
@@ -168,7 +168,7 @@ function init_chart_doughnut(size_box = null){
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
       success: function(data){
 
-        console.log(data);
+  
 
         // Aplicamos drag and drop
         dragula({
@@ -207,6 +207,11 @@ function init_chart_doughnut(size_box = null){
           var bubble_dataset_y = [];
           var scale;
 
+          // Agrupamos los labels y los datos para luego poder ajustar las series con los mismos valores en el eje x
+          var lab_all=[];//variable que agrupa los labels de cada serie
+          var da_all=[];//Variable que agrupa los datos de cada serie
+          var lab_acumulado=[];//variable que acumula todos los labels de todas las series
+          
           // Separamos las series
           $.each(reg, function(a, b){
 
@@ -216,47 +221,6 @@ function init_chart_doughnut(size_box = null){
               // Extraemos tipo de gráfico
               if(index == 'chart_type'){
                 type_chart = value;
-              }
-
-              // Extraemos propiedades del gráfico
-              if(index == 'chart_properties'){
-                options = value;
-                graphic_id = value['graphic_id'];
-                color = value['color'];
-
-                label_datasets = value['label_datasets'];
-                // el campo está mal cargado en la db ARREGLAR
-                right_y_axis = value['left_y_axis'];
-                if (right_y_axis == true) {
-                  display_right_y_axis = true;
-                  position_y_axis = 'right-y-axis';
-                } else {
-                  position_y_axis = 'left-y-axis';
-                };
-                point_style = value['point_type']
-              }
-
-              // Extraemos las opciones del gráfico
-              if(index == 'graphics_options'){
-                title = value['title'];
-                width = value['width'];
-                legend_display = value['legend_display'];
-                label_x_axis = value['label_x_axis'];
-                label_y_axis_left = value['label_y_axis_left'];
-                label_y_axis_right = value['label_y_axis_right'];
-                stacked = value['stack'];
-                data_labelling = value['data_labelling'];
-                scale = value['scale'];
-                tick_min_left = value['tick_x_min'];
-                tick_max_left = value['tick_x_max'];
-                tick_min_right = value['tick_y_min'];
-                tick_max_right = value['tick_y_max'];
-
-                tick_step_left = value['step_x'];
-                if (tick_step_left == null) {
-                  tick_step_left = 0;
-                }
-
               }
 
               // Extraemos el array con los datos de la serie
@@ -269,7 +233,9 @@ function init_chart_doughnut(size_box = null){
                 $.each(data_general, function(idx, vax){
 
                   // Burbuja
+                  //Cuidado no está corregido para agrupar las series y chequear que los valores de y coincidan para todas la series
                   if (type_chart == 'bubble') {
+                    //
                     $.each(vax, function(i, v) {
                       if (count_series == 0) {
                         bubble_dataset_x.push(v['count']);
@@ -351,6 +317,7 @@ function init_chart_doughnut(size_box = null){
 
                         da = daa;
                         lab = labb;
+                        lab_acumulado.push(lab);
 
                       } else {
 
@@ -361,17 +328,103 @@ function init_chart_doughnut(size_box = null){
                         }
 
                         lab.push(lab_final);
+                        lab_acumulado.push(lab_final);
                         da.push(v['count']);
-
                       }
                     })
                   }
+                  lab_all.push(lab);
+                  da_all.push(da);
 
+                }); //cierra each data_general
+
+              } //cierra if data
+            }) //cierra each b
+          }) //cierra each reg
+
+            //Verifica valores del label en el eje x
+            Array.prototype.unique=function(a){
+              return function(){return this.filter(a)}}(function(a,b,c){return c.indexOf(a,b+1)<0
+            });
+            
+            lab_acumulado=lab_acumulado.unique();//elimina valores duplicados
+            lab_acumulado=lab_acumulado.sort(function (a, b) {
+              return a.localeCompare(b);
+              });//lo ordena en español
+            for(var l=0;l<lab_all.length;l++){//búsqueda para todas las series
+             for(var a=0;a<lab_acumulado.length;a++){
+                if(lab_all[l][a]!=lab_acumulado[a]){
+                    lab_all[l].splice(a,0,lab_acumulado[a]);// si no encuentra el label lo agrega en el eje x
+                    da_all[l].splice(a,0,0);//y agrega valor 0 para el eje y
+                }
+              }
+            }
+
+          // Arranca armando series
+          $.each(reg, function(a, b){
+
+            // Extraemos los datos de cada serie
+            $.each(b, function(index, value){
+
+              // Extraemos tipo de gráfico
+              if(index == 'chart_type'){
+                type_chart = value;
+              }
+
+              // Extraemos propiedades del gráfico
+              if(index == 'chart_properties'){
+                options = value;
+                graphic_id = value['graphic_id'];
+                color = value['color'];
+
+                label_datasets = value['label_datasets'];
+                // el campo está mal cargado en la db ARREGLAR
+                right_y_axis = value['left_y_axis'];
+                if (right_y_axis == true) {
+                  display_right_y_axis = true;
+                  position_y_axis = 'right-y-axis';
+                } else {
+                  position_y_axis = 'left-y-axis';
+                };
+                point_style = value['point_type']
+              }
+
+              // Extraemos las opciones del gráfico
+              if(index == 'graphics_options'){
+                title = value['title'];
+                width = value['width'];
+                legend_display = value['legend_display'];
+                label_x_axis = value['label_x_axis'];
+                label_y_axis_left = value['label_y_axis_left'];
+                label_y_axis_right = value['label_y_axis_right'];
+                stacked = value['stack'];
+                data_labelling = value['data_labelling'];
+                scale = value['scale'];
+                tick_min_left = value['tick_x_min'];
+                tick_max_left = value['tick_x_max'];
+                tick_min_right = value['tick_y_min'];
+                tick_max_right = value['tick_y_max'];
+
+                tick_step_left = value['step_x'];
+                if (tick_step_left == null) {
+                  tick_step_left = 0;
+                }
+
+              }
+
+              if (index == 'data'){
+                data_general = value;
+                
+
+                // Extraemos los datos del array de la serie
+                $.each(data_general, function(idx, vax){
+                  var idx_index=idx.substring(5)
+    
                   // BAR & LINE datasets
                   if (type_chart == 'bar' || type_chart == 'line') {
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       yAxisID: position_y_axis,
                       fill: false,
                       lineTension: 0,
@@ -391,7 +444,7 @@ function init_chart_doughnut(size_box = null){
                   if (type_chart == 'area') {
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       yAxisID: position_y_axis,
                       fill: true,
                       lineTension: 0,
@@ -411,7 +464,7 @@ function init_chart_doughnut(size_box = null){
                   if (type_chart == 'point') {
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       yAxisID: position_y_axis,
                       fill: true,
                       pointStyle: point_style,
@@ -432,7 +485,7 @@ function init_chart_doughnut(size_box = null){
                   if (type_chart == 'horizontalBar') {
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       fill: false,
                       backgroundColor: color,
                       borderColor: color,
@@ -446,7 +499,7 @@ function init_chart_doughnut(size_box = null){
 
                   // DOUGHNUT datasets
                   if (type_chart == 'doughnut') {
-                    cantidad = da.length;
+                    cantidad = da_all[idx_index].length;
                     rancolor = randomColor({
                       count: cantidad,
                       hue: color,
@@ -455,7 +508,7 @@ function init_chart_doughnut(size_box = null){
                     })
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       backgroundColor: rancolor,
                       borderColor: 'white',
                       borderWidth: 2,
@@ -482,8 +535,9 @@ function init_chart_doughnut(size_box = null){
 
                 }); //cierra each data_general
 
+                console.log(datasets)
                 data_gx = {
-                  labels: lab,
+                  labels: lab_acumulado,
                   datasets: datasets
                 }
 
