@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200827233006) do
+ActiveRecord::Schema.define(version: 20201012233507) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -215,6 +215,7 @@ ActiveRecord::Schema.define(version: 20200827233006) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "row_active", default: true
+    t.datetime "gwm_created_at"
     t.index ["project_data_child_id"], name: "index_photo_children_on_project_data_child_id"
   end
 
@@ -225,6 +226,7 @@ ActiveRecord::Schema.define(version: 20200827233006) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "row_active", default: true
+    t.datetime "gwm_created_at"
   end
 
   create_table "project_data_children", force: :cascade do |t|
