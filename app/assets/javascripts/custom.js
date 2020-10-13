@@ -167,8 +167,7 @@ function init_chart_doughnut(size_box = null){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
       success: function(data){
-      console.log("Datos que llegan")
-      console.log(data)
+        console.log(data)
 
         // Aplicamos drag and drop
         dragula({
@@ -317,9 +316,7 @@ function init_chart_doughnut(size_box = null){
 
                         da = daa;
                         lab = labb;
-                        console.log("es fecha")
                         lab_acumulado.push(lab);
-                        console.log("Acumula otro lab "+lab_acumulado)
 
                       } else {
 
@@ -328,29 +325,16 @@ function init_chart_doughnut(size_box = null){
                         if (lab_final != null) {
                           lab_final = lab_final.replace(/[\[\]\"]/g, "")
                         }
-                        console.log("No es fecha")
-                        console.log("lab antes "+lab)
-                        console.log(lab)
                         lab.push(lab_final);
-                        
-                        console.log("lab final"+lab_final);
-                        console.log("lab después "+lab)
-                        console.log(lab)
-                        console.log("longitud"+lab.length)
+
                         lab_acumulado.push(lab_final);
-                        console.log("Acumula otro lab "+lab_acumulado)
 
                         da.push(v['count']);
                       }
                     })
                   }
-                  console.log("Datos y labels antes")
-                  console.log(lab_all)
                   lab_all.push(lab);
                   da_all.push(da);
-                  console.log("Datos y labels")
-                  console.log(lab_all)
-                  console.log(da_all)
 
                 }); //cierra each data_general
 
@@ -362,27 +346,17 @@ function init_chart_doughnut(size_box = null){
             Array.prototype.unique=function(a){
               return function(){return this.filter(a)}}(function(a,b,c){return c.indexOf(a,b+1)<0
             });
-            
-            console.log("Acumulado")
-            console.log(lab_acumulado)
+
             lab_acumulado=lab_acumulado.unique();//elimina valores duplicados
-            console.log(lab_acumulado)
             lab_acumulado=lab_acumulado.sort(function (a, b) {
               return a.localeCompare(b);
               });//lo ordena en español
-            console.log(lab_acumulado)
             for(var l=0;l<lab_all.length;l++){//búsqueda para todas las series
-             for(var a=0;a<lab_acumulado.length;a++){
+              
+              for(var a=0;a<lab_acumulado.length;a++){
                 if(lab_all[l][a]!=lab_acumulado[a]){
-                  console.log("Agrega el dato faltante")
-                  console.log("Antes")
-                  console.log(lab_all)
-                  console.log(da_all)
                     lab_all[l].splice(a,0,lab_acumulado[a]);// si no encuentra el label lo agrega en el eje x
                     da_all[l].splice(a,0,0);//y agrega valor 0 para el eje y
-                    console.log("Despues")
-                    console.log(lab_all)
-                    console.log(da_all)
                 }
               }
             }
@@ -562,7 +536,6 @@ function init_chart_doughnut(size_box = null){
 
                 }); //cierra each data_general
 
-                console.log(datasets)
                 data_gx = {
                   labels: lab_acumulado,
                   datasets: datasets
