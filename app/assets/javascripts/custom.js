@@ -335,6 +335,9 @@ function init_chart_doughnut(size_box = null){
                   }
                   lab_all.push(lab);
                   da_all.push(da);
+                  console.log("Datos y labels")
+                  console.log(lab_all)
+                  console.log(da_all)
 
                 }); //cierra each data_general
 
@@ -347,15 +350,26 @@ function init_chart_doughnut(size_box = null){
               return function(){return this.filter(a)}}(function(a,b,c){return c.indexOf(a,b+1)<0
             });
             
+            console.log("Acumulado")
+            console.log(lab_acumulado)
             lab_acumulado=lab_acumulado.unique();//elimina valores duplicados
+            console.log(lab_acumulado)
             lab_acumulado=lab_acumulado.sort(function (a, b) {
               return a.localeCompare(b);
               });//lo ordena en español
+            console.log(lab_acumulado)
             for(var l=0;l<lab_all.length;l++){//búsqueda para todas las series
              for(var a=0;a<lab_acumulado.length;a++){
                 if(lab_all[l][a]!=lab_acumulado[a]){
+                  console.log("Agrega el dato faltante")
+                  console.log("Antes")
+                  console.log(lab_all)
+                  console.log(da_all)
                     lab_all[l].splice(a,0,lab_acumulado[a]);// si no encuentra el label lo agrega en el eje x
                     da_all[l].splice(a,0,0);//y agrega valor 0 para el eje y
+                    console.log("Despues")
+                    console.log(lab_all)
+                    console.log(da_all)
                 }
               }
             }
