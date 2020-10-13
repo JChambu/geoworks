@@ -328,9 +328,12 @@ function init_chart_doughnut(size_box = null){
                         if (lab_final != null) {
                           lab_final = lab_final.replace(/[\[\]\"]/g, "")
                         }
-
-                        lab.push(lab_final);
                         console.log("No es fecha")
+                        console.log("lab antes "+lab)
+                        lab.push(lab_final);
+                        
+                        console.log("lab final"+lab_final);
+                        console.log("lab después "+lab)
                         lab_acumulado.push(lab_final);
                         console.log("Acumula otro lab "+lab_acumulado)
 
