@@ -167,8 +167,8 @@ function init_chart_doughnut(size_box = null){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
       success: function(data){
-
-  
+      console.log("Datos que llegan")
+      console.log(data)
 
         // Aplicamos drag and drop
         dragula({
@@ -317,7 +317,9 @@ function init_chart_doughnut(size_box = null){
 
                         da = daa;
                         lab = labb;
+                        console.log("es fecha")
                         lab_acumulado.push(lab);
+                        console.log("Acumula otro lab "+lab_acumulado)
 
                       } else {
 
@@ -328,7 +330,10 @@ function init_chart_doughnut(size_box = null){
                         }
 
                         lab.push(lab_final);
+                        console.log("No es fecha")
                         lab_acumulado.push(lab_final);
+                        console.log("Acumula otro lab "+lab_acumulado)
+
                         da.push(v['count']);
                       }
                     })
