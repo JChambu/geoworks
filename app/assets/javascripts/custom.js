@@ -330,10 +330,12 @@ function init_chart_doughnut(size_box = null){
                         }
                         console.log("No es fecha")
                         console.log("lab antes "+lab)
+                        console.log(lab)
                         lab.push(lab_final);
                         
                         console.log("lab final"+lab_final);
                         console.log("lab después "+lab)
+                        console.log(lab)
                         lab_acumulado.push(lab_final);
                         console.log("Acumula otro lab "+lab_acumulado)
 
@@ -341,6 +343,8 @@ function init_chart_doughnut(size_box = null){
                       }
                     })
                   }
+                  console.log("Datos y labels antes")
+                  console.log(lab_all)
                   lab_all.push(lab);
                   da_all.push(da);
                   console.log("Datos y labels")
