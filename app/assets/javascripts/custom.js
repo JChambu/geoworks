@@ -336,6 +336,7 @@ function init_chart_doughnut(size_box = null){
                         console.log("lab final"+lab_final);
                         console.log("lab después "+lab)
                         console.log(lab)
+                        console.log("longitud"+lab.length)
                         lab_acumulado.push(lab_final);
                         console.log("Acumula otro lab "+lab_acumulado)
 
