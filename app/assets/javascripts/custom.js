@@ -167,7 +167,6 @@ function init_chart_doughnut(size_box = null){
       datatype: 'json',
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
       success: function(data){
-        console.log(data)
 
         // Aplicamos drag and drop
         dragula({
@@ -352,7 +351,22 @@ function init_chart_doughnut(size_box = null){
               return a.localeCompare(b);
               });//lo ordena en español
             for(var l=0;l<lab_all.length;l++){//búsqueda para todas las series
-              
+              //Ordenamos el array traído de la base de datos porque sql ordena diferente los acentos
+              var lab_temporal_ordenado=lab_all[l].sort(function (a, b) {return a.localeCompare(b);});//lo ordena en español
+              var lab_temporal=[];
+              var da_temporal=[];
+              for(var t=0;t<lab_temporal_ordenado.length;t++){
+                for(var tt=0;tt<lab_all[l].length;tt++){
+                  if(lab_temporal_ordenado[t]==lab_all[l][tt]){
+                    lab_temporal.push(lab_all[l][tt]);
+                    da_temporal.push(da_all[l][tt]);
+                  }
+                }
+              }
+              lab_all[l]=lab_temporal;
+              console.log("Lab temporal "+lab_temporal)
+              console.log("Lab  "+lab_all[l])
+              da_all[l]=da_temporal;
               for(var a=0;a<lab_acumulado.length;a++){
                 if(lab_all[l][a]!=lab_acumulado[a]){
                     lab_all[l].splice(a,0,lab_acumulado[a]);// si no encuentra el label lo agrega en el eje x
