@@ -47,7 +47,6 @@
               <% else %>
                 <td><a class="unselectable" href="#">Datos</a></td>
               <% end %>
-
               <% if can? :statuses, :visualizer %>
                 <td><%= link_to 'Estados', project_type_project_statuses_path(project_type) %></td>
               <% else %>

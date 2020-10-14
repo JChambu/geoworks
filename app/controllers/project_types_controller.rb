@@ -201,6 +201,7 @@ class ProjectTypesController < ApplicationController
       @project_types = @project_types.where("name ILIKE :name", name: "%#{params[:search_project]}%")
     end
     @project_types = @project_types.paginate(:page => params[:page])
+
   end
 
   # GET /project_types/1
@@ -265,6 +266,7 @@ class ProjectTypesController < ApplicationController
       @project_type = ProjectType.find(p)
       @project_type.update_level!(l)
     end
+
 
   end
 

@@ -259,6 +259,7 @@ Navarra.geomaps = function() {
       mymap.removeLayer(markers);
     }
 
+
     mymap.on('draw:drawstart', function(e) {
       Navarra.dashboards.config.draw_disabled = false;
       editableLayers.eachLayer(function(layer) {

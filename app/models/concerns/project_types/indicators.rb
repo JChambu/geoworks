@@ -16,6 +16,7 @@ module ProjectTypes::Indicators
           where("shared_extensions.st_contains(shared_extensions.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})").
           where(row_active: true).
           where(current_season: true)
+
           if children == true
             @data = @data.left_outer_joins(:project_data_child)
           end
@@ -49,6 +50,7 @@ module ProjectTypes::Indicators
           where("shared_extensions.st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom})").
           where(row_active: true).
           where(current_season: true)
+
         if children == true
           @data = @data.left_outer_joins(:project_data_child)
         end
@@ -268,7 +270,6 @@ module ProjectTypes::Indicators
       end
 
       @total_row = Project.where(project_type_id: project_type_id).where(row_active: true).where(current_season: true)
-
       @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id, sql_full
       @total_row = @ctotal.count
       @row_selected = @data_fixed.count
@@ -299,6 +300,7 @@ module ProjectTypes::Indicators
           data = filters_on_the_fly data, data_conditions, chart.sql_full
         end
 
+
         if chart.kpi_type == 'basic'
           field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
           conditions_field = chart.condition_field
@@ -320,6 +322,7 @@ module ProjectTypes::Indicators
         end
 
         querys << { "title": "#{chart.title}", "description": "kpi_sin grafico", "data": data, "id": chart.id }
+
       end
       querys
     end
