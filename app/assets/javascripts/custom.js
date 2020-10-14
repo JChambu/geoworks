@@ -31,7 +31,6 @@ function init_kpi(size_box = null) {
   // }
   var data_id = Navarra.dashboards.config.project_type_id;
   var dashboard_id = Navarra.dashboards.config.dashboard_id;
-  //  var conditions = Navarra.project_types.config.filter_kpi
   var conditions = Navarra.project_types.config.filter_kpi;
 
   $.ajax({
@@ -89,6 +88,52 @@ function init_chart_doughnut(size_box = null){
 
   if( typeof(Chart) === 'undefined'){ return; }
 
+  // Agrega el time_slider al card de filtros
+  if ($('#time_slider').length == 0) {
+
+    $('#filter-body').prepend(
+      $('<div>', {
+        'id': 'time_slider_item'
+      }).append(
+        $("<input>", {
+          'id': 'time_slider'
+        }),
+        $("<div>", {
+          'class': 'dropdown-divider',
+        })
+      )
+    )
+
+    var lang = "es-AR";
+    var year = 2019;
+
+    function dateToTS(date) {
+      return date.valueOf();
+    }
+
+    function tsToDate(ts) {
+      var d = new Date(ts);
+
+      return d.toLocaleDateString(lang, {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
+      });
+    }
+
+    $("#time_slider").ionRangeSlider({
+      skin: "flat",
+      type: "double",
+      grid: true,
+      min: dateToTS(new Date(year, 10, 1)),
+      max: dateToTS(new Date(year, 11, 1)),
+      from: dateToTS(new Date(year, 10, 8)),
+      to: dateToTS(new Date(year, 10, 23)),
+      prettify: tsToDate
+    });
+
+  }
+
   if ($('.graphics').length){
 
     $(".chart_container").remove();
@@ -125,53 +170,6 @@ function init_chart_doughnut(size_box = null){
 
         console.log(data);
 
-        // Agrega el time_slider al card de filtros
-        if ($('#time_slider').length == 0) {
-
-          $('#filter-body').prepend(
-            $('<div>', {
-              'id': 'time_slider_item'
-            }).append(
-              $("<input>", {
-                'id': 'time_slider'
-              }),
-              $("<div>", {
-                'class': 'dropdown-divider',
-              })
-            )
-          )
-
-          var lang = "es-AR";
-          var year = 2019;
-
-          function dateToTS(date) {
-            return date.valueOf();
-          }
-
-          function tsToDate(ts) {
-            var d = new Date(ts);
-
-            return d.toLocaleDateString(lang, {
-              year: 'numeric',
-              month: 'numeric',
-              day: 'numeric'
-            });
-          }
-
-          $("#time_slider").ionRangeSlider({
-            skin: "flat",
-            type: "double",
-            grid: true,
-            min: dateToTS(new Date(year, 10, 1)),
-            max: dateToTS(new Date(year, 11, 1)),
-            from: dateToTS(new Date(year, 10, 8)),
-            to: dateToTS(new Date(year, 10, 23)),
-            prettify: tsToDate
-          });
-
-          resize_graphics();
-        }
-
         // Aplicamos drag and drop
         dragula({
           containers: Array.prototype.slice.call($('.graphics')),
@@ -190,7 +188,7 @@ function init_chart_doughnut(size_box = null){
           var datasets = [];
           var width;
           var aspectR;
-          var legend_display = false;
+          var legend_display;
           var label_x_axis;
           var label_y_axis_left;
           var label_y_axis_right;
@@ -225,6 +223,7 @@ function init_chart_doughnut(size_box = null){
                 options = value;
                 graphic_id = value['graphic_id'];
                 color = value['color'];
+
                 label_datasets = value['label_datasets'];
                 // el campo está mal cargado en la db ARREGLAR
                 right_y_axis = value['left_y_axis'];
@@ -241,6 +240,7 @@ function init_chart_doughnut(size_box = null){
               if(index == 'graphics_options'){
                 title = value['title'];
                 width = value['width'];
+                legend_display = value['legend_display'];
                 label_x_axis = value['label_x_axis'];
                 label_y_axis_left = value['label_y_axis_left'];
                 label_y_axis_right = value['label_y_axis_right'];
@@ -354,7 +354,13 @@ function init_chart_doughnut(size_box = null){
 
                       } else {
 
-                        lab.push(v['name']);
+                        // Elimina los corchetes del name
+                        lab_final = v['name']
+                        if (lab_final != null) {
+                          lab_final = lab_final.replace(/[\[\]\"]/g, "")
+                        }
+
+                        lab.push(lab_final);
                         da.push(v['count']);
 
                       }
@@ -554,7 +560,7 @@ function init_chart_doughnut(size_box = null){
               }
 
               $('#chart_container' + graphic_id).addClass('col-md-' + width);
-              legend_display = false;
+              //legend_display = false;
 
 
             } else { // Expanded
@@ -570,7 +576,7 @@ function init_chart_doughnut(size_box = null){
               }
 
               $('#chart_container' + graphic_id).addClass('col-md-' + width);
-              legend_display = false;
+              //legend_display = false;
 
             }
 
@@ -582,6 +588,12 @@ function init_chart_doughnut(size_box = null){
                 legend: {
                   display: legend_display,
                   position: 'bottom',
+                  labels: {
+                    boxWidth: 40,
+                    padding: 10,
+                    usePointStyle: true,
+                    fontColor: '#fff',
+                  }
                 },
                 tooltips: {
                   callbacks: {
@@ -719,6 +731,7 @@ function init_chart_doughnut(size_box = null){
                     boxWidth: 40,
                     padding: 10,
                     usePointStyle: true,
+                    fontColor: '#fff',
                   }
                 },
                 scales: {
@@ -809,6 +822,7 @@ function init_chart_doughnut(size_box = null){
                     fontColor: '#3d4046',
                     fontSize: 12,
                     usePointStyle: true,
+                    fontColor: '#fff',
                   }
                 },
                 tooltips: {
@@ -882,6 +896,7 @@ function init_chart_doughnut(size_box = null){
                     boxWidth: 40,
                     padding: 10,
                     usePointStyle: true,
+                    fontColor: '#fff',
                   }
                 },
                 scales: {

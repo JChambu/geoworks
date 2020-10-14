@@ -18,18 +18,31 @@
       Navarra.dashboards.config.maxx = <%= @extent[0].maxx  %>
       Navarra.dashboards.config.maxy = <%= @extent[0].maxy %>
     <% end %>
+
+    // Carga filtro por atributos y owner
     <% if @project_filters %>
       <% @project_filters.each do |s| %>
         <% if !s.properties.nil? %>
-          <% s.properties.each do |p|  %>
-            Navarra.project_types.config.filter_option.push('<%= p[0] %>');
-            Navarra.project_types.config.filter_option.push('=');
-            Navarra.project_types.config.filter_option.push('<%= p[1] %>');
+          <% s.properties.each do |p| %>
+
+            var field_key = '<%= p[0] %>';
+            var operator = '=';
+            var value = '<%= p[1] %>';
+
+            // Aplica modificaciones si el value es array
+            if (value.match(/&quot;/g) != null) {
+              value = value.replace(/&quot;/g, '\"')
+            }
+
+            var filter = field_key + '|' + operator + '|\'' + value + '\'';
+            Navarra.project_types.config.filter_option.push(filter);
+
           <% end %>
         <% end %>
         Navarra.project_types.config.owner = <%= s.owner %>;
       <% end %>
     <% end %>
+
   </script>
 
 <% end %>
@@ -68,7 +81,9 @@
       </div>
     </div>
 
-    <div class="graphics d-flex align-content-start flex-wrap"></div>
+    <% if can? :graphics, :visualizer %>
+      <div class="graphics d-flex align-content-start flex-wrap"></div>
+    <% end %>
 
     <i class="fas fa-arrow-alt-circle-left" id="view"></i>
 

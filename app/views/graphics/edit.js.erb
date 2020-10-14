@@ -1,20 +1,24 @@
-$("#modal-window").find(".modal-content").html("<%= j (render 'form') %>");
+<% if can? :graphics, :edit %>
 
-// Oculta los elementos por defecto
-$('.hide-div').hide();
+  $("#modal-window").find(".modal-content").html("<%= j (render 'form') %>");
 
-// Muestra los que corresponden al tipo de gráfico
-var graph = '<%= @chart_type%>'
-if (graph == 'line' || graph == 'area' || graph == 'point') {
-    graph = 'bar'
-}
-$('.'+graph).show();
+  // Oculta los elementos por defecto
+  $('.hide-div').hide();
 
-// Modifica los labels de los ejes para horizontalBar
-if (graph == 'horizontalBar') {
-  $('#eje_vertical').text('Eje X:');
-  $('#eje_horizontal').text('Eje Y:');
-}
+  // Muestra los que corresponden al tipo de gráfico
+  var graph = '<%= @chart_type%>'
+  if (graph == 'line' || graph == 'area' || graph == 'point') {
+      graph = 'bar'
+  }
+  $('.'+graph).show();
 
-// Lanza el modal
-$("#modal-window").modal();
+  // Modifica los labels de los ejes para horizontalBar
+  if (graph == 'horizontalBar') {
+    $('#eje_vertical').text('Eje X:');
+    $('#eje_horizontal').text('Eje Y:');
+  }
+
+  // Lanza el modal
+  $("#modal-window").modal();
+
+<% end %>

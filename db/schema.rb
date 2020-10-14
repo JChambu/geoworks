@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200821160714) do
+ActiveRecord::Schema.define(version: 20201012233507) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.bigint "choice_list_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "nested_list_id"
     t.index ["choice_list_id"], name: "index_choice_list_items_on_choice_list_id"
   end
 
@@ -151,6 +152,7 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.boolean "data_labelling", default: false
     t.integer "chart_id"
     t.decimal "scale", default: "1.0"
+    t.boolean "legend_display", default: false
     t.index ["dashboard_id"], name: "index_graphics_on_dashboard_id"
   end
 
@@ -213,6 +215,7 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "row_active", default: true
+    t.datetime "gwm_created_at"
     t.index ["project_data_child_id"], name: "index_photo_children_on_project_data_child_id"
   end
 
@@ -223,6 +226,7 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "row_active", default: true
+    t.datetime "gwm_created_at"
   end
 
   create_table "project_data_children", force: :cascade do |t|
@@ -235,6 +239,8 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
     t.boolean "current_season", default: true
+    t.datetime "gwm_created_at"
+    t.datetime "gwm_updated_at"
     t.index ["user_id"], name: "index_project_data_children_on_user_id"
   end
 
@@ -257,11 +263,12 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.boolean "read_only", default: false
     t.boolean "popup", default: false
     t.string "calculated_field"
-    t.string "role"
+    t.string "roles_read"
     t.text "data_script"
     t.boolean "filter_field", default: false
     t.boolean "heatmap_field", default: false
     t.boolean "colored_points_field", default: false
+    t.string "roles_edit"
     t.index ["project_type_id"], name: "index_project_fields_on_project_type_id"
   end
 
@@ -283,6 +290,11 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.string "color"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status_type"
+    t.integer "priority"
+    t.string "timer"
+    t.integer "inherit_project_type_id"
+    t.integer "inherit_status_id"
     t.index ["project_type_id"], name: "index_project_statuses_on_project_type_id"
   end
 
@@ -300,9 +312,10 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.boolean "read_only", default: false
     t.boolean "popup", default: false
     t.string "calculated_field"
-    t.string "role"
+    t.string "roles_read"
     t.integer "sort"
     t.text "data_script"
+    t.string "roles_edit"
     t.index ["choice_list_id"], name: "index_project_subfields_on_choice_list_id"
     t.index ["field_type_id"], name: "index_project_subfields_on_field_type_id"
     t.index ["project_field_id"], name: "index_project_subfields_on_project_field_id"
@@ -325,6 +338,7 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.text "cover"
     t.integer "geo_restriction", default: 0, null: false
     t.boolean "multiple_edition", default: false
+    t.integer "level"
     t.index ["user_id"], name: "index_project_types_on_user_id"
   end
 
@@ -341,6 +355,8 @@ ActiveRecord::Schema.define(version: 20200821160714) do
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
     t.boolean "current_season", default: true
+    t.datetime "gwm_created_at"
+    t.datetime "gwm_updated_at"
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["user_id"], name: "index_projects_on_user_id"

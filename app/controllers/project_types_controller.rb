@@ -12,7 +12,12 @@ class ProjectTypesController < ApplicationController
   end
 
   def project_type_layers
-    @projects = ProjectType.where.not(name_layer: params[:name_projects]).where(enabled_as_layer: true)
+    @projects = ProjectType
+      .joins(:has_project_types)
+      .where.not(name_layer: params[:name_projects])
+      .where(enabled_as_layer: true)
+      .where(has_project_types: {user_id: current_user.id})
+      .ordered
     render json: {"data": @projects}
   end
 
@@ -138,11 +143,13 @@ class ProjectTypesController < ApplicationController
         data = Project.
           where(project_type_id: project_type_id).
           where("shared_extensions.st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{@arr1}}'),4326), #{:the_geom})").
-          where(row_active: true)
+          where(row_active: true).
+          where(current_season: true)
       else
         data = Project.
           where(project_type_id: project_type_id).
-          where(row_active: true)
+          where(row_active: true).
+          where(current_season: true)
       end
       condition = params[:conditions]
       if !condition.blank?
@@ -189,7 +196,7 @@ class ProjectTypesController < ApplicationController
     @has_project_types = HasProjectType.where(user_id: current_user.id).select(:project_type_id)
     @p =[]
     @has_project_types.each do |s| @p.push(s.project_type_id) end
-    @project_types = ProjectType.where(id: @p)
+    @project_types = ProjectType.order(:level).where(id: @p)
     if !params[:search_project].nil? || !params[:search_project].blank?
       @project_types = @project_types.where("name ILIKE :name", name: "%#{params[:search_project]}%")
     end
@@ -209,8 +216,10 @@ class ProjectTypesController < ApplicationController
     @project_type = ProjectType.new
     @project_field=[]
     @project_field.push(@project_type.project_fields.build({name: 'app_id', field_type_id: '1', hidden: true, read_only: true}))
-    @project_field.push(@project_type.project_fields.build({name: 'app_estado', 'field_type_id': '1', hidden: true, read_only: true}))
-    @project_field.push(@project_type.project_fields.build({name: 'app_usuario', 'field_type_id': '1', hidden: true, read_only: true}))
+    @project_field.push(@project_type.project_fields.build({name: 'app_estado', field_type_id: '1', hidden: true, read_only: true}))
+    @project_field.push(@project_type.project_fields.build({name: 'app_usuario', field_type_id: '1', hidden: true, read_only: true}))
+    @project_field.push(@project_type.project_fields.build({name: 'gwm_created_at', field_type_id: '3', hidden: true, read_only: true}))
+    @project_field.push(@project_type.project_fields.build({name: 'gwm_updated_at', field_type_id: '3', hidden: true, read_only: true}))
 
   end
 
@@ -246,6 +255,18 @@ class ProjectTypesController < ApplicationController
         format.json { render json: @project_type.errors, status: :unprocessable_entity }
       end
     end
+
+  end
+
+  # Actualiza el level del proyecto
+  def update_level
+
+    level = params[:level_data]
+    level.each do |p, l|
+      @project_type = ProjectType.find(p)
+      @project_type.update_level!(l)
+    end
+
 
   end
 
@@ -294,10 +315,10 @@ class ProjectTypesController < ApplicationController
       :name, :type_file, :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color,
       :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition,
       project_fields_attributes: [
-        :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { role: [] }, :sort, :_destroy,
+        :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
         :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,
         project_subfields_attributes: [
-          :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { role: [] }, :sort, :_destroy,
+          :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
           :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script
         ]
       ]

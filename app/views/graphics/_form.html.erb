@@ -21,8 +21,15 @@
         <%= form.input :title, label: "Título", input_html: {class: 'form-control form-control-sm form-control form-control-sm-sm'} %>
         <%= form.hidden_field :dashboard_id, id: :graphic_dashboard_id %>
       </div>
-      <div class="form-group col-md-6">
+      <div class="form-group col-md-4">
         <%= form.input :width, as: :range, input_html: {min: "3", max: "12", step: "3", class: 'custom-range'}, label: "Ancho" %>
+      </div>
+      <div class="form-group col-md-2">
+        <label>Leyenda</label>
+        <div class="custom-control custom-checkbox mb-2">
+          <%= form.check_box :legend_display, class:'custom-control-input', id:'legend_display_id' %>
+          <label class="custom-control-label" for="legend_display_id"></label>
+        </div>
       </div>
     </div>
 
@@ -46,14 +53,20 @@
       <div class="form-group hide-div bar horizontalBar bubble col-md-2 mb-0">
         <%= form.label :data_labelling, "Mostrar valores" %>
         <br>
-        <%= form.check_box :data_labelling, input_html: {class:"form-check"}%>
+        <div class="custom-control custom-checkbox mb-2">
+          <%= form.check_box :data_labelling, class:'custom-control-input', id:'data_labelling_id' %>
+          <label class="custom-control-label" for="data_labelling_id"></label>
+        </div>
         <br><br>
       </div>
 
       <div class="form-group hide-div bar horizontalBar col-md-2 mb-0">
         <%= form.label :stack, "Apilar" %>
         <br>
-        <%= form.check_box :stack, input_html: {class:"form-check"}%>
+        <div class="custom-control custom-checkbox mb-2">
+          <%= form.check_box :stack, class:'custom-control-input', id:'stack_id' %>
+          <label class="custom-control-label" for="stack_id"></label>
+        </div>
         <br><br>
       </div>
       <div class="form-group hide-div bubble col-md-2">
@@ -103,7 +116,9 @@
       <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
       <%= form.submit class: 'btn btn-primary', value: "Guardar" %>
       <% if params[:action] == 'edit' %>
-        <%= link_to project_type_dashboard_graphic_path(@project_type.id,@dashboard, @graphic ), method: :delete, data: { confirm: '¿Está seguro?'}, :remote => true do  %> <i class="fas fa-trash-alt" title="Eliminar Gráfico" style="font-size: 2em"></i> <%end %>
+        <% if can? :graphics, :destroy %>
+          <%= link_to project_type_dashboard_graphic_path(@project_type.id,@dashboard, @graphic ), method: :delete, data: { confirm: '¿Está seguro?'}, :remote => true do  %> <i class="fas fa-trash-alt" title="Eliminar Gráfico" style="font-size: 2em"></i> <%end %>
+        <% end %>
       <% end %>
     </div>
   </div>

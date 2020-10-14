@@ -20,10 +20,35 @@
           <div class="row justify-content-center">
             <%= form.label :color, class:'col-md-2 text-right col-form-label' %>
             <div class="col-md-5">
-              <%= form.color_field :color, id: :project_status_color %>
+              <%= form.color_field :color, id: :project_status_color, style:'width:30px; height:30px; padding:1px' %>
             </div>
           </div>
+          <div class="row justify-content-center">
+            <%= form.label :status_type,'Tipo', class:'col-md-2 text-right col-form-label' %>
+            <div class="col-md-5">
+              <%= form.select :status_type, options_for_select(['Asignable', 'Heredable', 'Predeterminado']) ,  {:include_blank => false}, {class: 'form-control form-control-sm'} %>
+            </div>
+          </div>
+          <div id="heredable_block">
+          <div class="row justify-content-center">
+            <%= form.label :timer,'Tiempo', class:'col-md-2 text-right col-form-label' %>
+            <div class="col-md-5">
+              <%= form.select :timer, options_for_select(['No', 'Semana', 'Mes', 'Año']), {:include_blank => false}, {class: 'form-control form-control-sm'} %>
+            </div>
+          </div>
+           <div class="row justify-content-center">
+            <%= form.label :inherit_project_type_id,'Proyecto', class:'col-md-2 text-right col-form-label' %>
+            <div class="col-md-5">
+              <div id="project_types">
+                <%= form.collection_select(:inherit_project_type_id, @inherit_project_types, :id, :name, {prompt: "Selecccione un Proyecto"}, {class: 'form-control form-control-sm'})  %>
+              </div>
+            </div>
+          </div>
+
+          <div id="project_statuses"></div>
+          </div>
         </div>
+
 
         <div class="row justify-content-center">
           <%= link_to t('.cancel', :default => t("helpers.links.cancel")), project_type_project_statuses_path(@project_type), :class => 'btn btn-secondary' %>
@@ -35,3 +60,32 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#project_status_inherit_project_type_id').on('change', function() {
+      $.ajax({
+        url:  "<%= project_statuses_options_path %>",
+        type: "POST",
+        data: { project_type_id: $(this).val() }
+      });
+    });
+
+    $('#project_status_status_type').on('change', function() {
+      if(project_status_status_type.options[project_status_status_type.selectedIndex].text=='Heredable'){
+        document.getElementById('heredable_block').style.display='block';
+      } else{
+        document.getElementById('heredable_block').style.display='none';
+      }
+    });
+
+    heredable_block();
+    function heredable_block() {
+      if(project_status_status_type.options[project_status_status_type.selectedIndex].text=='Heredable'){
+        document.getElementById('heredable_block').style.display='block';
+      } else{
+        document.getElementById('heredable_block').style.display='none';
+      }
+    }
+  });
+</script>

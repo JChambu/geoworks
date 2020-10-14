@@ -1,4 +1,4 @@
-<p id="notice"><%= notice %></p>
+<p class="pl-3" id="notice"><%= notice %></p>
 
 <div class="card m-2 shadow">
   <div class="card-body">
@@ -29,9 +29,11 @@
           <% @choice_lists.each do |choice_list| %>
             <tr>
               <td><%= choice_list.name %></td>
-              <% if can? :choice_lists, :edit %>
-                <td class="text-center"><%= link_to edit_choice_list_path(choice_list) do %> <i class="fas fa-edit"></i><%end%></td>
-              <% end %>
+              <td class="text-center">
+                <% if can? :choice_lists, :edit %>
+                  <%= link_to edit_choice_list_path(choice_list) do %> <i class="fas fa-edit"></i><% end %>
+                <% end %>
+              </td>
               <% if can? :choice_lists, :destroy %>
                 <td class="text-center"><%= link_to choice_list, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
               <% end %>
