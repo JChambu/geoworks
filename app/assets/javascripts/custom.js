@@ -229,7 +229,6 @@ function init_chart_doughnut(size_box = null){
 
                 // Extraemos los datos del array de la serie
                 $.each(data_general, function(idx, vax){
-
                   // Burbuja
                   //Cuidado no está corregido para agrupar las series y chequear que los valores de y coincidan para todas la series
                   if (type_chart == 'bubble') {
@@ -266,7 +265,6 @@ function init_chart_doughnut(size_box = null){
 
                       // Si es fecha le da el formato correcto
                       if (isdate == true) {
-
                         // Agrega los ceros faltantes a los días y meses
                         var no_zero_day_regexp = /^(\d{1})\/(\d{1,2})\/(\d{4})/g;
                         var no_zero_month_regexp = /^(\d{1,2})\/(\d{1})\/(\d{4})/g;
@@ -315,7 +313,7 @@ function init_chart_doughnut(size_box = null){
 
                         da = daa;
                         lab = labb;
-                        lab_acumulado.push(lab);
+                        lab_acumulado=lab;
 
                       } else {
 
@@ -341,18 +339,31 @@ function init_chart_doughnut(size_box = null){
             }) //cierra each b
           }) //cierra each reg
 
-            //Verifica valores del label en el eje x
+            //Verifica valores del label en el eje x si hay más de una serie
+            if(lab_all.length>1){
             Array.prototype.unique=function(a){
               return function(){return this.filter(a)}}(function(a,b,c){return c.indexOf(a,b+1)<0
             });
 
             lab_acumulado=lab_acumulado.unique();//elimina valores duplicados
+            lab_acumulado=lab_acumulado.sort();//ordena con sort, lo que coloca los null al final
             lab_acumulado=lab_acumulado.sort(function (a, b) {
-              return a.localeCompare(b);
-              });//lo ordena en español
+              if(a!=null){
+                return a.localeCompare(b);
+              }              
+              });//lo ordena en español para colocar la ñ en su lugar. sort() la coloca al final
+            var indexnull=lab_acumulado.indexOf(null);
+            if(indexnull>=0){lab_acumulado[indexnull]='sin datos'}
             for(var l=0;l<lab_all.length;l++){//búsqueda para todas las series
-              //Ordenamos el array traído de la base de datos porque sql ordena diferente los acentos
-              var lab_temporal_ordenado=lab_all[l].sort(function (a, b) {return a.localeCompare(b);});//lo ordena en español
+              //Ordenamos el array traído de la base de datos
+              var lab_temporal_ordenado=lab_all[l].sort();
+              var lab_temporal_ordenado=lab_temporal_ordenado.sort(function (a, b) {
+                if(a!=null){return a.localeCompare(b);}     
+              });//lo ordena en español
+              var indexnull=lab_temporal_ordenado.indexOf(null);
+              if(indexnull>=0){lab_temporal_ordenado[indexnull]='sin datos'}
+              var indexnull=lab_all[l].indexOf(null);
+              if(indexnull>=0){lab_all[l][indexnull]='sin datos'}
               var lab_temporal=[];
               var da_temporal=[];
               for(var t=0;t<lab_temporal_ordenado.length;t++){
@@ -364,8 +375,6 @@ function init_chart_doughnut(size_box = null){
                 }
               }
               lab_all[l]=lab_temporal;
-              console.log("Lab temporal "+lab_temporal)
-              console.log("Lab  "+lab_all[l])
               da_all[l]=da_temporal;
               for(var a=0;a<lab_acumulado.length;a++){
                 if(lab_all[l][a]!=lab_acumulado[a]){
@@ -374,6 +383,7 @@ function init_chart_doughnut(size_box = null){
                 }
               }
             }
+          }// fin de unificación de labels en el eje x para varias series
 
           // Arranca armando series
           $.each(reg, function(a, b){
