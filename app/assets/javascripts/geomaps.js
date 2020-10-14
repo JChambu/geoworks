@@ -59,7 +59,7 @@ Navarra.geomaps = function() {
       center: [-33.113399134183744, -69.69339599609376],
       zoomControl: false,
       zoomAnimation: false,
-      layers: [grayscale]
+      layers: [streets]
     });
 
 
@@ -85,7 +85,7 @@ Navarra.geomaps = function() {
     baseMaps = {
       "Calles": streets,
       "Satelital": satellite,
-      "Claro": grayscale,
+      // "Claro": grayscale,
       "Oscuro": CartoDB_DarkMatter
     };
 
