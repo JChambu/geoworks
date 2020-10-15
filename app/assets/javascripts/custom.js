@@ -356,7 +356,7 @@ function init_chart_doughnut(size_box = null){
             if(indexnull>=0){lab_acumulado[indexnull]='sin datos'}
             for(var l=0;l<lab_all.length;l++){//búsqueda para todas las series
               //Ordenamos el array traído de la base de datos
-              var lab_temporal_ordenado=lab_all[l].sort();
+              var lab_temporal_ordenado=lab_all[l].slice().sort();
               var lab_temporal_ordenado=lab_temporal_ordenado.sort(function (a, b) {
                 if(a!=null){return a.localeCompare(b);}     
               });//lo ordena en español
@@ -374,8 +374,8 @@ function init_chart_doughnut(size_box = null){
                   }
                 }
               }
-              lab_all[l]=lab_temporal;
-              da_all[l]=da_temporal;
+              lab_all[l]=lab_temporal.slice();
+              da_all[l]=da_temporal.slice();
               for(var a=0;a<lab_acumulado.length;a++){
                 if(lab_all[l][a]!=lab_acumulado[a]){
                     lab_all[l].splice(a,0,lab_acumulado[a]);// si no encuentra el label lo agrega en el eje x
