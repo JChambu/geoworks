@@ -11,15 +11,16 @@ module ProjectTypes::Indicators
 
       if sql_full.blank?
         # Aplica st_contains a indicadores basic y complex
-        @data = Project.joins(:project_status, :user).
-          where(project_type_id: project_type_id).
-          where("shared_extensions.st_contains(shared_extensions.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})").
-          where(row_active: true).
-          where(current_season: true)
+        @data = Project
+          .joins(:project_status, :user)
+          .where(project_type_id: project_type_id)
+          .where("shared_extensions.st_contains(shared_extensions.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
+          .where(row_active: true)
+          .where(current_season: true)
 
-          if children == true
-            @data = @data.left_outer_joins(:project_data_child)
-          end
+        if children == true
+          @data = @data.left_outer_joins(:project_data_child)
+        end
       else
         # Aplica st_contains a indicadores advanced
         @data = sql_full.sub('where_clause', "where_clause shared_extensions.st_contains(shared_extensions.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), main.#{:the_geom}) AND ")
@@ -45,11 +46,12 @@ module ProjectTypes::Indicators
 
       # Aplica st_contains a indicadores basic y complex
       if sql_full.blank?
-        @data = Project.joins(:project_status, :user).
-          where(project_type_id: project_type_id).
-          where("shared_extensions.st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom})").
-          where(row_active: true).
-          where(current_season: true)
+        @data = Project
+          .joins(:project_status, :user)
+          .where(project_type_id: project_type_id)
+          .where("shared_extensions.st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom})")
+          .where(row_active: true)
+          .where(current_season: true)
 
         if children == true
           @data = @data.left_outer_joins(:project_data_child)
@@ -116,27 +118,27 @@ module ProjectTypes::Indicators
         @field_select = analysis_type(chart.analysis_type.name, 'users.name', project_type_id) + ' as count'
       end
 
-      if chart.project_field.key != 'app_usuario' && chart.project_field.key !='app_estado'
+      if chart.project_field.key != 'app_usuario' && chart.project_field.key != 'app_estado'
         @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
       end
       if !chart.condition_field.blank?
         condition_field_custom =  validate_type_field(chart.condition_field)
-        data =  data.where("#{condition_field_custom } #{chart.filter_input}  '#{chart.input_value}'")
+        data = data.where("#{condition_field_custom } #{chart.filter_input} '#{chart.input_value}'")
       end
 
       data = data.where(validate_type_field(chart.group_field) + " is not null ")
       if chart.group_field.key == 'app_estado'
         @field_group = "project_statuses.name "
-        @field_select += ', project_statuses.name  as name'
+        @field_select += ', project_statuses.name as name'
       end
       if chart.group_field.key == 'app_usuario'
         @field_group = "users.name"
-        @field_select += ', users.name  as name'
+        @field_select += ', users.name as name'
       end
 
       if chart.group_field.key != 'app_usuario' && chart.group_field.key !='app_estado'
         @field_group = validate_type_field(chart.group_field, 'group')
-        @field_select +=", " +  validate_type_field(chart.group_field, 'group') + " as name "
+        @field_select +=", " + validate_type_field(chart.group_field, 'group') + " as name "
       end
       data =  data.select(@field_select).group(@field_group).order(@field_group)
       @data = data
@@ -211,7 +213,7 @@ module ProjectTypes::Indicators
             if type_box == 'extent'
               @data = query_extent size_box, project_type_id, chart.children, chart.sql_full
             else
-              @data = query_draw_polygon  size_box, project_type_id, chart.children, chart.sql_full
+              @data = query_draw_polygon size_box, project_type_id, chart.children, chart.sql_full
             end
 
             # Aplica filtro por atributos y owner
@@ -234,7 +236,7 @@ module ProjectTypes::Indicators
             @items["serie#{i}"] = @data
             @option_graph = graph
             chart_type = graph.chart.name
-            ch["it#{i}"] = { "description":@data, "chart_type":chart_type, "group_field":@field_group,"chart_properties": @option_graph, "data":@items, "graphics_options": g}
+            ch["it#{i}"] = { "description": @data, "chart_type": chart_type, "group_field": @field_group, "chart_properties": @option_graph, "data": @items, "graphics_options": g }
           end
           ch
         end
@@ -259,7 +261,7 @@ module ProjectTypes::Indicators
       if type_box == 'extent'
         @data_fixed = query_extent size_box, project_type_id, sql_full
       else
-        @data_fixed = query_draw_polygon  size_box, project_type_id, sql_full
+        @data_fixed = query_draw_polygon size_box, project_type_id, sql_full
       end
 
       @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id, sql_full
@@ -273,10 +275,10 @@ module ProjectTypes::Indicators
       @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id, sql_full
       @total_row = @ctotal.count
       @row_selected = @data_fixed.count
-      @avg_selected = [{ "count": ((@row_selected.to_f / @total_row.to_f) * 100).round(2)} ]
-      querys << { "title":"Total", "description":"Total", "data":[{"count":@total_row}], "id": 1000}
-      querys << { "title":"Selecionado", "description":"select", "data":[{"count":@row_selected}], "id": 1001}
-      querys << { "title":"% del Total", "description":"AVG", "data":@avg_selected, "id": 1002}
+      @avg_selected = [{ "count": ((@row_selected.to_f / @total_row.to_f) * 100).round(2) }]
+      querys << { "title": 'Total', "description": 'Total', "data": [{ "count": @total_row }], "id": 1000 }
+      querys << { "title": 'Selecionado', "description": 'select', "data": [{ "count": @row_selected }], "id": 1001 }
+      querys << { "title": '% del Total', "description": 'AVG', "data": @avg_selected, "id": 1002 }
 
       # Indicadores generados por el usuario
       # # # # # # # # # # # # # # # # # # # #
@@ -314,7 +316,7 @@ module ProjectTypes::Indicators
         end
 
         if !conditions_field.blank?
-          data =  data.where(" properties->>'" + conditions_field.key + "' " + chart.filter_input + "'#{chart.input_value}'")
+          data = data.where(" properties->>'" + conditions_field.key + "' " + chart.filter_input + "'#{chart.input_value}'")
         end
 
         if chart.kpi_type != 'advanced'
