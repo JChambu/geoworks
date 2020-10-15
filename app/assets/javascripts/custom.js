@@ -47,7 +47,7 @@ function init_kpi(size_box = null) {
     dashboard_id: dashboard_id,
     success: function(data) {
 
-      console.log(data);
+
 
       data.forEach(function(element) {
 
@@ -168,8 +168,6 @@ function init_chart_doughnut(size_box = null){
       data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
       success: function(data){
 
-        console.log(data);
-
         // Aplicamos drag and drop
         dragula({
           containers: Array.prototype.slice.call($('.graphics')),
@@ -207,7 +205,187 @@ function init_chart_doughnut(size_box = null){
           var bubble_dataset_y = [];
           var scale;
 
+          // Agrupamos los labels y los datos para luego poder ajustar las series con los mismos valores en el eje x
+          var lab_all=[];//variable que agrupa los labels de cada serie
+          var da_all=[];//Variable que agrupa los datos de cada serie
+          var lab_acumulado=[];//variable que acumula todos los labels de todas las series
+          
           // Separamos las series
+          $.each(reg, function(a, b){
+
+            // Extraemos los datos de cada serie
+            $.each(b, function(index, value){
+
+              // Extraemos tipo de gráfico
+              if(index == 'chart_type'){
+                type_chart = value;
+              }
+
+              // Extraemos el array con los datos de la serie
+              if (index == 'data'){
+                data_general = value;
+                var lab = [];
+                var da = [];
+
+                // Extraemos los datos del array de la serie
+                $.each(data_general, function(idx, vax){
+                  // Burbuja
+                  //Cuidado no está corregido para agrupar las series y chequear que los valores de y coincidan para todas la series
+                  if (type_chart == 'bubble') {
+                    //
+                    $.each(vax, function(i, v) {
+                      if (count_series == 0) {
+                        bubble_dataset_x.push(v['count']);
+                      } else {
+                        bubble_dataset_y.push(v['count']);
+                      }
+                    })
+
+                    if (count_series == 1) {
+                      for (var b = 0; b < vax.length; b++) {
+                        r = (parseFloat(bubble_dataset_y[b]) * parseFloat(bubble_dataset_x)) * scale;
+                        bubble_dataset.push({
+                          "x": bubble_dataset_x[b],
+                          "y": bubble_dataset_y[b],
+                          "r": r
+                        });
+                      }
+                    }
+                    count_series = 1;
+
+                  // Resto de los gráficos
+                  } else {
+
+                    $.each(vax, function(i, v) {
+
+                      // Verifica si el dato es un fecha
+                      var date_regexp = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/g;
+                      var string = v['name'];
+                      var isdate = date_regexp.test(string)
+
+                      // Si es fecha le da el formato correcto
+                      if (isdate == true) {
+                        // Agrega los ceros faltantes a los días y meses
+                        var no_zero_day_regexp = /^(\d{1})\/(\d{1,2})\/(\d{4})/g;
+                        var no_zero_month_regexp = /^(\d{1,2})\/(\d{1})\/(\d{4})/g;
+
+                        var day_zero_fail = no_zero_day_regexp.test(string)
+                        var month_zero_fail = no_zero_month_regexp.test(string)
+
+                        if (day_zero_fail == true) {
+                          var string = string.split('/')
+                          string[0] = '0' + string[0]
+                          string = string.join('/')
+                        };
+
+                        if (month_zero_fail == true) {
+                          var string = string.split('/')
+                          string[1] = '0' + string[1]
+                          string = string.join('/')
+                        };
+
+                        // Invierte el orden de la fecha y lo separa con guiones
+                        var stringdate = string.split('/').reverse().join('-');
+
+                        // Armamos los arrays de label y count
+                        lab.push(stringdate);
+                        da.push(v['count']);
+
+                        // Unimos el label con el count
+                        var row_array = [];
+                        for (var i = 0; i < lab.length; i++) {
+                          var row = lab[i] + '|' + da[i]
+                          row_array.push(row)
+                        }
+
+                        // Ordenamos las fechas (label unido a count)
+                        row_array.sort();
+
+                        var labb = [];
+                        var daa = [];
+
+                        // Separamos el label del count y armamos los arrays nuevamente
+                        for (var i = 0; i < row_array.length; i++) {
+                          var abierto = row_array[i].split("|")
+                          labb.push(abierto[0]);
+                          daa.push(abierto[1]);
+                        }
+
+                        da = daa;
+                        lab = labb;
+                        lab_acumulado=lab;
+
+                      } else {
+
+                        // Elimina los corchetes del name
+                        lab_final = v['name']
+                        if (lab_final != null) {
+                          lab_final = lab_final.replace(/[\[\]\"]/g, "")
+                        }
+                        lab.push(lab_final);
+
+                        lab_acumulado.push(lab_final);
+
+                        da.push(v['count']);
+                      }
+                    })
+                  }
+                  lab_all.push(lab);
+                  da_all.push(da);
+
+                }); //cierra each data_general
+
+              } //cierra if data
+            }) //cierra each b
+          }) //cierra each reg
+
+            //Verifica valores del label en el eje x si hay más de una serie
+            if(lab_all.length>1){
+            Array.prototype.unique=function(a){
+              return function(){return this.filter(a)}}(function(a,b,c){return c.indexOf(a,b+1)<0
+            });
+
+            lab_acumulado=lab_acumulado.unique();//elimina valores duplicados
+            lab_acumulado=lab_acumulado.sort();//ordena con sort, lo que coloca los null al final
+            lab_acumulado=lab_acumulado.sort(function (a, b) {
+              if(a!=null){
+                return a.localeCompare(b);
+              }              
+              });//lo ordena en español para colocar la ñ en su lugar. sort() la coloca al final
+            var indexnull=lab_acumulado.indexOf(null);
+            if(indexnull>=0){lab_acumulado[indexnull]='sin datos'}
+            for(var l=0;l<lab_all.length;l++){//búsqueda para todas las series
+              //Ordenamos el array traído de la base de datos
+              var lab_temporal_ordenado=lab_all[l].slice().sort();
+              var lab_temporal_ordenado=lab_temporal_ordenado.sort(function (a, b) {
+                if(a!=null){return a.localeCompare(b);}     
+              });//lo ordena en español
+              var indexnull=lab_temporal_ordenado.indexOf(null);
+              if(indexnull>=0){lab_temporal_ordenado[indexnull]='sin datos'}
+              var indexnull=lab_all[l].indexOf(null);
+              if(indexnull>=0){lab_all[l][indexnull]='sin datos'}
+              var lab_temporal=[];
+              var da_temporal=[];
+              for(var t=0;t<lab_temporal_ordenado.length;t++){
+                for(var tt=0;tt<lab_all[l].length;tt++){
+                  if(lab_temporal_ordenado[t]==lab_all[l][tt]){
+                    lab_temporal.push(lab_all[l][tt]);
+                    da_temporal.push(da_all[l][tt]);
+                  }
+                }
+              }
+              lab_all[l]=lab_temporal.slice();
+              da_all[l]=da_temporal.slice();
+              for(var a=0;a<lab_acumulado.length;a++){
+                if(lab_all[l][a]!=lab_acumulado[a]){
+                    lab_all[l].splice(a,0,lab_acumulado[a]);// si no encuentra el label lo agrega en el eje x
+                    da_all[l].splice(a,0,0);//y agrega valor 0 para el eje y
+                }
+              }
+            }
+          }// fin de unificación de labels en el eje x para varias series
+
+          // Arranca armando series
           $.each(reg, function(a, b){
 
             // Extraemos los datos de cada serie
@@ -259,119 +437,19 @@ function init_chart_doughnut(size_box = null){
 
               }
 
-              // Extraemos el array con los datos de la serie
               if (index == 'data'){
                 data_general = value;
-                var lab = [];
-                var da = [];
+                
 
                 // Extraemos los datos del array de la serie
                 $.each(data_general, function(idx, vax){
-
-                  // Burbuja
-                  if (type_chart == 'bubble') {
-                    $.each(vax, function(i, v) {
-                      if (count_series == 0) {
-                        bubble_dataset_x.push(v['count']);
-                      } else {
-                        bubble_dataset_y.push(v['count']);
-                      }
-                    })
-
-                    if (count_series == 1) {
-                      for (var b = 0; b < vax.length; b++) {
-                        r = (parseFloat(bubble_dataset_y[b]) * parseFloat(bubble_dataset_x)) * scale;
-                        bubble_dataset.push({
-                          "x": bubble_dataset_x[b],
-                          "y": bubble_dataset_y[b],
-                          "r": r
-                        });
-                      }
-                    }
-                    count_series = 1;
-
-                  // Resto de los gráficos
-                  } else {
-
-                    $.each(vax, function(i, v) {
-
-                      // Verifica si el dato es un fecha
-                      var date_regexp = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/g;
-                      var string = v['name'];
-                      var isdate = date_regexp.test(string)
-
-                      // Si es fecha le da el formato correcto
-                      if (isdate == true) {
-
-                        // Agrega los ceros faltantes a los días y meses
-                        var no_zero_day_regexp = /^(\d{1})\/(\d{1,2})\/(\d{4})/g;
-                        var no_zero_month_regexp = /^(\d{1,2})\/(\d{1})\/(\d{4})/g;
-
-                        var day_zero_fail = no_zero_day_regexp.test(string)
-                        var month_zero_fail = no_zero_month_regexp.test(string)
-
-                        if (day_zero_fail == true) {
-                          var string = string.split('/')
-                          string[0] = '0' + string[0]
-                          string = string.join('/')
-                        };
-
-                        if (month_zero_fail == true) {
-                          var string = string.split('/')
-                          string[1] = '0' + string[1]
-                          string = string.join('/')
-                        };
-
-                        // Invierte el orden de la fecha y lo separa con guiones
-                        var stringdate = string.split('/').reverse().join('-');
-
-                        // Armamos los arrays de label y count
-                        lab.push(stringdate);
-                        da.push(v['count']);
-
-                        // Unimos el label con el count
-                        var row_array = [];
-                        for (var i = 0; i < lab.length; i++) {
-                          var row = lab[i] + '|' + da[i]
-                          row_array.push(row)
-                        }
-
-                        // Ordenamos las fechas (label unido a count)
-                        row_array.sort();
-
-                        var labb = [];
-                        var daa = [];
-
-                        // Separamos el label del count y armamos los arrays nuevamente
-                        for (var i = 0; i < row_array.length; i++) {
-                          var abierto = row_array[i].split("|")
-                          labb.push(abierto[0]);
-                          daa.push(abierto[1]);
-                        }
-
-                        da = daa;
-                        lab = labb;
-
-                      } else {
-
-                        // Elimina los corchetes del name
-                        lab_final = v['name']
-                        if (lab_final != null) {
-                          lab_final = lab_final.replace(/[\[\]\"]/g, "")
-                        }
-
-                        lab.push(lab_final);
-                        da.push(v['count']);
-
-                      }
-                    })
-                  }
-
+                  var idx_index=idx.substring(5)
+    
                   // BAR & LINE datasets
                   if (type_chart == 'bar' || type_chart == 'line') {
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       yAxisID: position_y_axis,
                       fill: false,
                       lineTension: 0,
@@ -391,7 +469,7 @@ function init_chart_doughnut(size_box = null){
                   if (type_chart == 'area') {
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       yAxisID: position_y_axis,
                       fill: true,
                       lineTension: 0,
@@ -411,7 +489,7 @@ function init_chart_doughnut(size_box = null){
                   if (type_chart == 'point') {
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       yAxisID: position_y_axis,
                       fill: true,
                       pointStyle: point_style,
@@ -432,7 +510,7 @@ function init_chart_doughnut(size_box = null){
                   if (type_chart == 'horizontalBar') {
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       fill: false,
                       backgroundColor: color,
                       borderColor: color,
@@ -446,7 +524,7 @@ function init_chart_doughnut(size_box = null){
 
                   // DOUGHNUT datasets
                   if (type_chart == 'doughnut') {
-                    cantidad = da.length;
+                    cantidad = da_all[idx_index].length;
                     rancolor = randomColor({
                       count: cantidad,
                       hue: color,
@@ -455,7 +533,7 @@ function init_chart_doughnut(size_box = null){
                     })
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       backgroundColor: rancolor,
                       borderColor: 'white',
                       borderWidth: 2,
@@ -483,7 +561,7 @@ function init_chart_doughnut(size_box = null){
                 }); //cierra each data_general
 
                 data_gx = {
-                  labels: lab,
+                  labels: lab_acumulado,
                   datasets: datasets
                 }
 
