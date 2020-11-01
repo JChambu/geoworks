@@ -177,6 +177,7 @@ module ProjectTypes::Indicators
     end
 
     def filters_simple data, chart, project_type_id
+
       if chart.project_field.key == 'app_estado'
         @field_select = analysis_type(chart.analysis_type.name, 'project_statuses.name', project_type_id) + ' as count'
       end
@@ -188,16 +189,19 @@ module ProjectTypes::Indicators
       if chart.project_field.key != 'app_usuario' && chart.project_field.key != 'app_estado'
         @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
       end
+
       if !chart.condition_field.blank?
         condition_field_custom = validate_type_field(chart.condition_field)
         data = data.where("#{condition_field_custom } #{chart.filter_input} '#{chart.input_value}'")
       end
 
       data = data.where(validate_type_field(chart.group_field) + " is not null ")
+
       if chart.group_field.key == 'app_estado'
         @field_group = "project_statuses.name "
         @field_select += ', project_statuses.name as name'
       end
+
       if chart.group_field.key == 'app_usuario'
         @field_group = "users.name"
         @field_select += ', users.name as name'
@@ -223,6 +227,7 @@ module ProjectTypes::Indicators
     end
 
     def filters_on_the_fly data, data_conditions, sql_full
+
 
       data_conditions.each do |key|
 
@@ -284,7 +289,7 @@ module ProjectTypes::Indicators
               @data = query_draw_polygon size_box, project_type_id, chart.children, chart.sql_full
             end
 
-            # Aplica filtro por atributos y owner
+            # Aplica filtros owner, atributo e intercapa
             conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id, chart.sql_full
 
             # Aplica filtros generados por el usuario
@@ -333,6 +338,7 @@ module ProjectTypes::Indicators
         @data_fixed = query_draw_polygon size_box, project_type_id, sql_full
       end
 
+      # Aplica filtros owner, atributo e intercapa a "Seleccionado" y "% del Total"
       @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id, sql_full
 
       # Aplica filtros generados por el usuario
@@ -416,8 +422,10 @@ module ProjectTypes::Indicators
 
     def analysis_type(type, field, project_type_id)
 
+      # REVIEW: Esta parte porque busca el field en el name y el resultado tiende a ser nil
       type_field = ProjectField.where(name: field, project_type_id: project_type_id).first
 
+      # REVIEW: Esta condición deja pasar los valores nil, cuando no debería ser así
       if !type_field.nil? && (type_field.field_type.name =='Listado (opción multiple)' || type_field.field_type.name == 'Texto')
 
         field = 'count(DISTINCT main.*)'
