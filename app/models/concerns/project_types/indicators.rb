@@ -75,6 +75,7 @@ module ProjectTypes::Indicators
       @data
     end
 
+    # Aplica filtros owner, atributo e intercapa
     def conditions_for_attributes_and_owner data, user_id, project_type_id, sql_full
 
       project_filter = ProjectFilter.where(user_id: user_id).where(project_type_id: project_type_id).first
@@ -100,9 +101,58 @@ module ProjectTypes::Indicators
             end
           end
         end
+
+        # Aplica filtro intercapa
+        if !project_filter.cross_layer_filter_id.nil?
+
+          cross_layer_filter = ProjectFilter.where(user_id: user_id).where(id: project_filter.cross_layer_filter_id).first
+
           if sql_full.blank?
+
+            # Cruza la capa del principal que contiene los hijos con la capa secunadaria
+            data = data
+              .except(:from).from('projects main CROSS JOIN projects sec')
+              .where('shared_extensions.ST_Intersects(main.the_geom, sec.the_geom)')
+              .where('sec.project_type_id = ?', cross_layer_filter.project_type_id)
+              .where('sec.row_active = ?', true)
+              .where('sec.current_season = ?', true)
+
+            # Aplica filtro por owner a capa secundaria
+            if cross_layer_filter.owner == true
+              data = data.where('sec.user_id = ?', user_id)
+            end
+
+            # Aplica filtro por atributo a capa secundaria
+            if !cross_layer_filter.properties.nil?
+              cross_layer_filter.properties.to_a.each do |prop|
+                data = data.where("sec.properties->>'#{prop[0]}' = '#{prop[1]}'")
+              end
+            end
+
           else
+
+            # Cruza la capa del principal que contiene los hijos con la capa secunadaria
+            data = data.sub('from_clause', "CROSS JOIN projects sec")
+            data = data.sub('where_clause', "where_clause (shared_extensions.ST_Intersects(main.the_geom, sec.the_geom))
+              AND sec.project_type_id = #{cross_layer_filter.project_type_id}
+              AND sec.row_active = true
+              AND sec.current_season = true
+              AND ")
+
+            # Aplica filtro por owner a capa secundaria
+            if cross_layer_filter.owner == true
+              data = data.sub('where_clause', "where_clause (sec.user_id = #{user_id}) AND ")
+            end
+
+            # Aplica filtro por atributo a capa secundaria
+            if !cross_layer_filter.properties.nil?
+              cross_layer_filter.properties.to_a.each do |prop|
+                data = data.sub('where_clause', "where_clause (sec.properties->>'#{prop[0]}' = '#{prop[1]}') AND ")
+              end
+            end
+
           end
+
         end
 
       end
