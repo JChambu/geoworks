@@ -10,20 +10,26 @@ module ProjectTypes::Indicators
       maxy = size_box[3].to_f if !size_box.nil?
 
       if sql_full.blank?
-        # Aplica st_contains a indicadores basic y complex
+
+        # Arma el primer query para indicadores basic y complex y aplica ST_Contains por extent
         @data = Project
-          .joins(:project_status, :user)
-          .where(project_type_id: project_type_id)
-          .where("shared_extensions.st_contains(shared_extensions.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), #{:the_geom})")
-          .where(row_active: true)
-          .where(current_season: true)
+          .select('DISTINCT main.*')
+          .from('projects main')
+          .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
+          .joins('INNER JOIN public.users ON users.id = main.user_id')
+          .where('main.row_active = ?', true)
+          .where('main.current_season = ?', true)
+          .where('main.project_type_id = ?', project_type_id)
+          .where("shared_extensions.ST_Contains(shared_extensions.ST_MakeEnvelope(#{minx}, #{maxy}, #{maxx}, #{miny}, 4326), main.#{:the_geom})")
 
         if children == true
           @data = @data.left_outer_joins(:project_data_child)
         end
+
       else
-        # Aplica st_contains a indicadores advanced
-        @data = sql_full.sub('where_clause', "where_clause shared_extensions.st_contains(shared_extensions.st_makeenvelope(#{minx}, #{maxy},#{maxx},#{miny},4326), main.#{:the_geom}) AND ")
+        @data = ''
+        # Aplica ST_Contains por extent al query de indicadores advanced
+        @data = sql_full.sub('where_clause', "where_clause shared_extensions.ST_Contains(shared_extensions.ST_MakeEnvelope(#{minx}, #{maxy}, #{maxx}, #{miny}, 4326), main.#{:the_geom}) AND ")
       end
 
       @data
@@ -44,21 +50,26 @@ module ProjectTypes::Indicators
         arr1.push([z])
       end
 
-      # Aplica st_contains a indicadores basic y complex
+      # Arma el primer query para indicadores basic y complex y aplica ST_Contains por polygon
       if sql_full.blank?
         @data = Project
-          .joins(:project_status, :user)
-          .where(project_type_id: project_type_id)
-          .where("shared_extensions.st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), #{:the_geom})")
-          .where(row_active: true)
-          .where(current_season: true)
+          .select('DISTINCT main.*')
+          .from('projects main')
+          .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
+          .joins('INNER JOIN public.users ON users.id = main.user_id')
+          .where('main.row_active = true')
+          .where('main.current_season = true')
+          .where('main.project_type_id = ?', project_type_id)
+          .where("shared_extensions.ST_Contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'), 4326), main.#{:the_geom})")
+
 
         if children == true
           @data = @data.left_outer_joins(:project_data_child)
         end
-      # Aplica st_contains a indicadores advanced
       else
-        @data = sql_full.sub('where_clause', "where_clause shared_extensions.st_contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'),4326), main.#{:the_geom}) AND ")
+        @data = ''
+        # Aplica ST_Contains por polygon al query de indicadores advanced
+        @data = sql_full.sub('where_clause', "where_clause shared_extensions.ST_Contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'), 4326), main.#{:the_geom}) AND ")
       end
 
       @data
@@ -66,25 +77,31 @@ module ProjectTypes::Indicators
 
     def conditions_for_attributes_and_owner data, user_id, project_type_id, sql_full
 
-      project_filters = ProjectFilter.where(user_id: user_id).where(project_type_id: project_type_id).first
+      project_filter = ProjectFilter.where(user_id: user_id).where(project_type_id: project_type_id).first
 
-      if !project_filters.nil?
+      if !project_filter.nil?
 
-        # Aplica filtro por atributo
-        project_filters.properties.to_a.each do |prop|
+        # Aplica filtro owner
+        if project_filter.owner == true
           if sql_full.blank?
-            data = data.where(" projects.properties->>'#{prop[0]}' = '#{prop[1]}'")
+            data = data.where('main.user_id = ?', user_id)
           else
-            data = data.sub('where_clause', "where_clause (main.properties->>'#{prop[0]}' = '#{prop[1]}') AND ")
+            data = data.sub('where_clause', "where_clause (main.user_id = #{user_id}) AND ")
           end
         end
 
-        # Aplica filtro owner
-        if project_filters.owner == true
+        # Aplica filtro por atributo
+        if !project_filter.properties.nil?
+          project_filter.properties.to_a.each do |prop|
+            if sql_full.blank?
+              data = data.where("main.properties ->> '#{prop[0]}' = '#{prop[1]}'")
+            else
+              data = data.sub('where_clause', "where_clause (main.properties ->> '#{prop[0]}' = '#{prop[1]}') AND ")
+            end
+          end
+        end
           if sql_full.blank?
-            data = data.where(user_id: user_id)
           else
-            data = data.sub('where_clause', "where_clause (main.user_id = #{user_id}) AND ")
           end
         end
 
@@ -122,7 +139,7 @@ module ProjectTypes::Indicators
         @field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
       end
       if !chart.condition_field.blank?
-        condition_field_custom =  validate_type_field(chart.condition_field)
+        condition_field_custom = validate_type_field(chart.condition_field)
         data = data.where("#{condition_field_custom } #{chart.filter_input} '#{chart.input_value}'")
       end
 
@@ -140,17 +157,18 @@ module ProjectTypes::Indicators
         @field_group = validate_type_field(chart.group_field, 'group')
         @field_select +=", " + validate_type_field(chart.group_field, 'group') + " as name "
       end
-      data =  data.select(@field_select).group(@field_group).order(@field_group)
+
+      data = data.except(:select).select(@field_select).group(@field_group).order(@field_group)
       @data = data
     end
 
     def validate_type_field(field, method = nil)
       if field.field_type.name == 'Numerico'
-        return "(projects.properties->>'#{field.key}')::numeric"
+        return "(main.properties->>'#{field.key}')::numeric"
       elsif field.field_type.name == 'Listado (opción multiple)' && method == 'group'
-        return "jsonb_array_elements_text(projects.properties->'#{field.key}')"
+        return "jsonb_array_elements_text(main.properties->'#{field.key}')"
       else
-        return "projects.properties->>'#{field.key}'"
+        return "main.properties->>'#{field.key}'"
       end
     end
 
@@ -166,7 +184,7 @@ module ProjectTypes::Indicators
         # Aplica filtro por campo usuario
         if @field == 'app_usuario'
           if sql_full.blank?
-            data =  data.where(" users.name " + @filter + " #{@value}")
+            data =  data.where("users.name " + @filter + " #{@value}")
           else
             data = data.sub('where_clause', "where_clause users.name #{@filter} #{@value} AND ")
           end
@@ -175,7 +193,7 @@ module ProjectTypes::Indicators
         # Aplica filtro por campo estado
         if @field == 'app_estado'
           if sql_full.blank?
-            data =  data.where(" project_statuses.name " + @filter + " #{@value} ")
+            data =  data.where("project_statuses.name " + @filter + " #{@value} ")
           else
             data = data.sub('where_clause', "where_clause project_statuses.name #{@filter} #{@value} AND ")
           end
@@ -184,7 +202,7 @@ module ProjectTypes::Indicators
         # Aplica filtro por otro campo
         if @field != 'app_usuario' && @field != 'app_estado'
           if sql_full.blank?
-            data =  data.where(" projects.properties->>'" + @field +"'" +  @filter +" #{@value} ")
+            data =  data.where("main.properties->>'" + @field +"'" +  @filter +" #{@value} ")
           else
             data = data.sub('where_clause', "where_clause (main.properties->>'#{@field}' #{@filter} #{@value}) AND ")
           end
@@ -230,6 +248,7 @@ module ProjectTypes::Indicators
               filters_for_sql = filters_for_sql @data, chart
             else
               @data = @data.sub('where_clause', "")
+              @data = @data.sub('from_clause', "")
               @data = ActiveRecord::Base.connection.execute(@data)
             end
 
@@ -248,7 +267,7 @@ module ProjectTypes::Indicators
 
     def kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id)
 
-      querys=[]
+      querys = []
       @data_fixed = ''
       @op = option_graph
       @ct = Apartment::Tenant.current
@@ -271,8 +290,16 @@ module ProjectTypes::Indicators
         @data_fixed = filters_on_the_fly @data_fixed, data_conditions, sql_full
       end
 
-      @total_row = Project.where(project_type_id: project_type_id).where(row_active: true).where(current_season: true)
+      @total_row = Project
+        .select('DISTINCT main.*')
+        .from('projects main')
+        .where('main.project_type_id = ?', project_type_id)
+        .where('main.row_active = ?', true)
+        .where('main.current_season = ?', true)
+
+      # Aplica filtros owner, atributo e intercapa al "Total"
       @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id, sql_full
+
       @total_row = @ctotal.count
       @row_selected = @data_fixed.count
       @avg_selected = [{ "count": ((@row_selected.to_f / @total_row.to_f) * 100).round(2) }]
@@ -316,11 +343,11 @@ module ProjectTypes::Indicators
         end
 
         if !conditions_field.blank?
-          data = data.where(" properties->>'" + conditions_field.key + "' " + chart.filter_input + "'#{chart.input_value}'")
+          data = data.where("main.properties->>'" + conditions_field.key + "' " + chart.filter_input + "'#{chart.input_value}'")
         end
 
         if chart.kpi_type != 'advanced'
-          data = data.select(field_select)
+          data = data.except(:select).select(field_select)
         end
 
         querys << { "title": "#{chart.title}", "description": "kpi_sin grafico", "data": data, "id": chart.id }
@@ -340,25 +367,30 @@ module ProjectTypes::Indicators
     def analysis_type(type, field, project_type_id)
 
       type_field = ProjectField.where(name: field, project_type_id: project_type_id).first
+
       if !type_field.nil? && (type_field.field_type.name =='Listado (opción multiple)' || type_field.field_type.name == 'Texto')
-        field = ' count(*)'
+
+        field = 'count(DISTINCT main.*)'
+
       else
-        field = "projects.properties->>'#{field}'"
-      case type
-      when 'sum'
-        query = " #{type}(( #{field} )::numeric) "
-      when 'count'
-        query = " #{type}(( #{field } )) "
-      when 'avg'
-        query = " #{type}(( #{field} )::numeric) "
-      when 'min'
-        query = " #{type}(( #{field} )::numeric) "
-      when 'max'
-        query = " #{type}(( #{field} )::numeric) "
-      # when 'weighted_average'
-      #   query = "case sum((properties->>'oferta')::numeric) when 0 then 0 else  sum((properties->>'" + field+ "')::numeric * (properties->>'oferta')::numeric) / sum((properties->>'oferta')::numeric) end "
+
+        field = "main.properties->>'#{field}'"
+
+        case type
+          when 'sum'
+            query = " #{type}(DISTINCT( #{field} )::numeric) "
+          when 'count'
+            query = " #{type}(DISTINCT( #{field } )) "
+          when 'avg'
+            query = " #{type}(DISTINCT( #{field} )::numeric) "
+          when 'min'
+            query = " #{type}(DISTINCT( #{field} )::numeric) "
+          when 'max'
+            query = " #{type}(DISTINCT( #{field} )::numeric) "
+          # when 'weighted_average'
+          #   query = "case sum((properties->>'oferta')::numeric) when 0 then 0 else  sum((properties->>'" + field+ "')::numeric * (properties->>'oferta')::numeric) / sum((properties->>'oferta')::numeric) end "
+        end
       end
-    end
     end
   end
 end
