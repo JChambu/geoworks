@@ -766,7 +766,12 @@ Navarra.geomaps = function() {
       },
       success: function(data) {
 
+        console.log('-- data capas_internas:');
+        console.log(data);
+
         $.each(data, function(lay, dat) {
+
+          console.log('capa: -------------------------------------------------------- '+lay);
 
           let layer = dat.layer
           let label_layer = dat.name;
@@ -792,12 +797,16 @@ Navarra.geomaps = function() {
           if (dat.layer_filters.attribute_filter) {
             data_filter = dat.layer_filters.attribute_filter.split('|');
             cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
+            console.log('///////// FILTRO POR ATRIBUTO');
+            console.log(cql_filter);
           }
 
           // Aplica filtro por owner de la capa
           if (dat.layer_filters.owner_filter) {
             var user_name = Navarra.dashboards.config.user_name;
             cql_filter += " and app_usuario='" + user_name + "'";
+            console.log('///////// FILTRO POR OWNER');
+            console.log(cql_filter);
           }
 
           // Aplica filtro intercapa
@@ -809,21 +818,29 @@ Navarra.geomaps = function() {
             // Aplica filtro intercapa por atributo
             if (dat.layer_filters.cl_filter.cl_attribute_filter) {
               c_filter = dat.layer_filters.cl_filter.cl_attribute_filter.split('|');
-              // cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + cl_name + "', 'the_geom', '" + c_filter[0] + " = '" + c_filter[2] +"' ')))"
               cl_clasue += " and " + c_filter[0] +" = '" + c_filter[2] + "'"
+              console.log('///////// FILTRO INTERCAPA POR ATRIBUTO');
+              console.log(cl_clasue);
             }
 
             // Aplica filtro intercapa por owner
             if (dat.layer_filters.cl_filter.cl_owner_filter) {
               var user_name = Navarra.dashboards.config.user_name;
               cl_clasue += " and app_usuario = ''" + user_name + "''"
+              console.log('///////// FILTRO INTERCAPA POR OWNER');
+              console.log(cl_clasue);
             }
 
             cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + cl_name + "', 'the_geom', '" + cl_clasue + "')))"
+            console.log('///////// FILTRO INTERCAPA FINAL');
+            console.log(cql_filter);
 
           }
 
           layer_current = workspace + ":" + layer;
+
+          console.log('///////// CQL FILTER FINAL');
+          console.log(cql_filter);
 
           layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
             layers: layer_current, //nombre de la capa (ver get capabilities)
