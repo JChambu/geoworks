@@ -678,9 +678,11 @@ Navarra.geomaps = function() {
       }
     })
 
+    workspace = Navarra.dashboards.config.current_tenement;
+    cql_filter = "1 = 1";
+
     // Aplica filtro por atributo y filros generados por el usuario
     var filter_option = Navarra.project_types.config.filter_option;
-    cql_filter = "1 = 1";
     if (filter_option.length > 0) {
       $.each(filter_option, function(a, b) {
         data_filter = b.split('|');
@@ -695,21 +697,43 @@ Navarra.geomaps = function() {
       cql_filter += " and app_usuario='" + user_name + "'";
     }
 
-    switch (type_geometry) {
-      case 'Point':
-        style = 'poi_new';
-        break;
-      case 'Polygon':
-        style = 'polygon_new';
-        break;
-      default:
-        style = 'poi_new';
+    // Aplica filtro intercapa
+    var cross_layer_filter = Navarra.project_types.config.cross_layer_filter;
+    var cross_layer_owner = Navarra.project_types.config.cross_layer_owner;
+
+    if (cross_layer_filter.length > 0 || cross_layer_owner == true) {
+
+      let cl_name = Navarra.project_types.config.cross_layer
+      let cl_clasue = '1 = 1'
+
+      // Aplica filtro intercapa por atributo
+      if (cross_layer_filter.length > 0) {
+        c_filter = cross_layer_filter[0].split('|');
+        cl_clasue += " and " + c_filter[0] +" = '" + c_filter[2] + "'"
+      }
+
+      // Aplica filtro intercapa por owner
+      if (cross_layer_owner == true) {
+        var user_name = Navarra.dashboards.config.user_name;
+        cl_clasue += " and app_usuario = ''" + user_name + "''"
+      }
+
+      cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + cl_name + "', 'the_geom', '" + cl_clasue + "')))"
+
     }
 
-    current_tenement = Navarra.dashboards.config.current_tenement;
-    layer_current = current_tenement + ":" + name_layer;
+    // Aplica estilo según tipo de geometría
+    let style
+    if (type_geometry == 'Point') {
+      style = 'poi_new';
+    } else {
+      style = 'polygon_new';
+    }
+
+    current_layer = workspace + ":" + name_layer;
+
     layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
-      layers: layer_current, //nombre de la capa (ver get capabilities)
+      layers: current_layer, //nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
@@ -721,7 +745,7 @@ Navarra.geomaps = function() {
       CQL_FILTER: cql_filter
     })
 
-    project_current = layerProjects.getLayer(layer_current).addTo(mymap);
+    project_current = layerProjects.getLayer(current_layer).addTo(mymap);
     layerControl.addOverlay(project_current, labelLayer, null, {
       sortLayers: false
     });

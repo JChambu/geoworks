@@ -30,6 +30,18 @@ class DashboardsController < ApplicationController
       @extent = Project.geometry_bounds(@project_type.id, current_user.id)
       @current_tenant = Apartment::Tenant.current
       @project_filters = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id)
+
+      if !@project_filters.nil?
+
+        @project_filters.each do |p_filter|
+          @cross_layer_filter = ProjectFilter.where(id: p_filter.cross_layer_filter_id).where(user_id: current_user.id)
+
+          @cross_layer_filter.each do |cl_filter|
+            @cross_layer = ProjectType.where(id: cl_filter.project_type_id).pluck(:name_layer).first
+          end
+        end
+
+      end
     end
 
   end
