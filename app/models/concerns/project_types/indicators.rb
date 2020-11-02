@@ -395,6 +395,7 @@ module ProjectTypes::Indicators
           end
         else
           data = data.sub('where_clause', "")
+          data = data.sub('from_clause', "")
           data = ActiveRecord::Base.connection.execute(data)
         end
 
