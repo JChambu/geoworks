@@ -36,7 +36,10 @@ class ProjectTypesController < ApplicationController
       Rails.logger.debug ' ******************************************************** '
       Rails.logger.debug ''
 
-      project_filters = ProjectFilter.where(project_type_id: project.id).first
+      project_filters = ProjectFilter
+        .where(project_type_id: project.id)
+        .where(user_id: current_user.id)
+        .first
 
       Rails.logger.debug  ''
       Rails.logger.debug  ' ******************* filtros de la capa ******************* '
@@ -60,7 +63,10 @@ class ProjectTypesController < ApplicationController
 
           cl_filter = {}
 
-          cross_layer_filter = ProjectFilter.where(id: project_filters.cross_layer_filter_id).first
+          cross_layer_filter = ProjectFilter
+            .where(id: project_filters.cross_layer_filter_id)
+            .where(user_id: current_user.id)
+            .first
 
           Rails.logger.debug  ''
           Rails.logger.debug  ' ******************* cross_layer_filter ******************* '
