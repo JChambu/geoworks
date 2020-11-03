@@ -27,25 +27,10 @@ class ProjectTypesController < ApplicationController
     @projects.each do |project|
 
       layer_filters = {}
-
-      Rails.logger.debug ''
-
-      Rails.logger.debug ''
-      Rails.logger.debug ' ************************* capa ************************* '
-      Rails.logger.debug project
-      Rails.logger.debug ' ******************************************************** '
-      Rails.logger.debug ''
-
       project_filters = ProjectFilter
         .where(project_type_id: project.id)
         .where(user_id: current_user.id)
         .first
-
-      Rails.logger.debug  ''
-      Rails.logger.debug  ' ******************* filtros de la capa ******************* '
-      Rails.logger.debug  project_filters
-      Rails.logger.debug  ' ********************************************************** '
-      Rails.logger.debug  ''
 
       if !project_filters.nil?
 
@@ -68,12 +53,6 @@ class ProjectTypesController < ApplicationController
             .where(user_id: current_user.id)
             .first
 
-          Rails.logger.debug  ''
-          Rails.logger.debug  ' ******************* cross_layer_filter ******************* '
-          Rails.logger.debug  cross_layer_filter
-          Rails.logger.debug  ' ********************************************************** '
-          Rails.logger.debug  ''
-
           cl_name = ProjectType.where(id: cross_layer_filter.project_type_id).pluck(:name_layer).first
           cl_filter[:cl_name] = cl_name
 
@@ -91,12 +70,6 @@ class ProjectTypesController < ApplicationController
 
         end
 
-        Rails.logger.debug  ''
-        Rails.logger.debug  ' ******************* json con filtros finales ******************* '
-        Rails.logger.debug layer_filters
-        Rails.logger.debug  ' **************************************************************** '
-        Rails.logger.debug  ''
-
       end
 
       layers["layer_#{project.name_layer}"] = {
@@ -107,12 +80,6 @@ class ProjectTypesController < ApplicationController
         "color": project.layer_color,
         "layer_filters": layer_filters
       }
-
-      Rails.logger.debug  ''
-      Rails.logger.debug  ' ******************* layers internal ******************* '
-      Rails.logger.debug layers
-      Rails.logger.debug  ' ******************************************************* '
-      Rails.logger.debug  ''
 
     end
 
