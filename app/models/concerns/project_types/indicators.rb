@@ -161,7 +161,7 @@ module ProjectTypes::Indicators
 
     def filters_for_sql data, chart
       if !chart.sql_sentence.blank?
-        data = data.select(chart.sql_sentence)
+        data = data.except(:select).select(chart.sql_sentence)
       end
       if chart.conditions_sql.blank?
         data = data.where(chart.conditions_sql)
