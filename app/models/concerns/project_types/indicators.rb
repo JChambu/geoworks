@@ -417,7 +417,7 @@ module ProjectTypes::Indicators
 
       dashboard = AnalyticsDashboard.find(indicator_id)
       @q =  kpi_new(project_type_id, true, size_box, type_box, dashboard.dashboard_id, conditions, user_id)
-      @querys = @q[0]['it0'][:description].select("st_x(the_geom) as lng, st_y(the_geom) as lat").group(:the_geom)
+      @querys = @q[0]['it0'][:description].select("st_x(main.the_geom) as lng, st_y(main.the_geom) as lat").group('main.the_geom')
       @querys
     end
 
