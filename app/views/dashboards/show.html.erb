@@ -43,6 +43,33 @@
       <% end %>
     <% end %>
 
+    <% if @cross_layer_filter %>
+      <% @cross_layer_filter.each do |cf| %>
+        <% if !cf.properties.nil? %>
+          <% cf.properties.each do |f| %>
+
+          var field_key = '<%= f[0] %>';
+          var operator = '=';
+          var value = '<%= f[1] %>';
+
+          // Aplica modificaciones si el value es array
+          if (value.match(/&quot;/g) != null) {
+            value = value.replace(/&quot;/g, '\"')
+          }
+
+          var contained_filter = field_key + '|' + operator + '|\'' + value + '\'';
+          Navarra.project_types.config.cross_layer_filter.push(contained_filter);
+
+          <% end %>
+        <% end %>
+        Navarra.project_types.config.cross_layer_owner = <%= cf.owner %>;
+      <% end %>
+    <% end %>
+
+    <% if @cross_layer %>
+      Navarra.project_types.config.cross_layer = '<%= @cross_layer %>';
+    <% end %>
+
   </script>
 
 <% end %>

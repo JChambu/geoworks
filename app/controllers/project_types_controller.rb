@@ -12,13 +12,78 @@ class ProjectTypesController < ApplicationController
   end
 
   def project_type_layers
+
+    # Busca todas las capas
     @projects = ProjectType
       .joins(:has_project_types)
-      .where.not(name_layer: params[:name_projects])
+      .where.not(name_layer: params[:current_layer])
       .where(enabled_as_layer: true)
       .where(has_project_types: {user_id: current_user.id})
       .ordered
-    render json: {"data": @projects}
+
+    layers = {}
+
+    # Cicla las capas y levanta los filtros
+    @projects.each do |project|
+
+      layer_filters = {}
+      project_filters = ProjectFilter
+        .where(project_type_id: project.id)
+        .where(user_id: current_user.id)
+        .first
+
+      if !project_filters.nil?
+
+        if !project_filters.properties.nil?
+          project_filters.properties.each do |f|
+            layer_filters[:attribute_filter] = "#{f[0]}|=|'#{f[1]}'"
+          end
+        end
+
+        if project_filters.owner == true
+          layer_filters[:owner_filter] = project_filters.owner
+        end
+
+        if !project_filters.cross_layer_filter_id.nil?
+
+          cl_filter = {}
+
+          cross_layer_filter = ProjectFilter
+            .where(id: project_filters.cross_layer_filter_id)
+            .where(user_id: current_user.id)
+            .first
+
+          cl_name = ProjectType.where(id: cross_layer_filter.project_type_id).pluck(:name_layer).first
+          cl_filter[:cl_name] = cl_name
+
+          if !cross_layer_filter.properties.nil?
+            cross_layer_filter.properties.each do |f|
+              cl_filter[:cl_attribute_filter] = "#{f[0]}|=|'#{f[1]}'"
+            end
+          end
+
+          if cross_layer_filter.owner == true
+            cl_filter[:cl_owner_filter] = cross_layer_filter.owner
+          end
+
+          layer_filters[:cl_filter] = cl_filter
+
+        end
+
+      end
+
+      layers["layer_#{project.name_layer}"] = {
+        "name": project.name,
+        "layer": project.name_layer,
+        "level": project.level,
+        "type_geometry": project.type_geometry,
+        "color": project.layer_color,
+        "layer_filters": layer_filters
+      }
+
+    end
+
+    render json: layers
   end
 
   def share
