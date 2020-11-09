@@ -11,6 +11,9 @@ $(window).on('resize', function() {
   var height_dashboard = height_browser - 60
   $("#map").css("height", height_dashboard);
   $(".sidebar").css("height", height_dashboard);
+  var height_card=$(".card_data").innerHeight()
+  var height_table = height_browser/2 - height_card -50
+  $(".table_scroll").css("height", height_table);
   resize_graphics()
 });
 
@@ -20,6 +23,9 @@ $(document).ready(function() {
   var height_dashboard = height_browser - 60
   $("#map").css("height", height_dashboard);
   $(".sidebar").css("height", height_dashboard);
+  var height_card=$(".card_data").innerHeight()
+  var height_table = height_browser/2 - height_card -50
+  $(".table_scroll").css("height", height_table);
 });
 
 Navarra.namespace("dashboards.action_show");
@@ -131,22 +137,132 @@ Navarra.dashboards.action_show = function(){
     $("#view").on("click", function() {
 
       // Chequeamos el estado de view
-      status_view = $('#view').hasClass('active');
-
-      if (!status_view) { // Default
-        $('#view').addClass('active');
+      status_view = $('#view').hasClass('view-normal');
+      status_view_expanded = $('#view').hasClass('view-expanded');
+      status_view_right = $('#view').hasClass('view-normal-right');
+      status_view_condensed = $('#view').hasClass('view-condensed');
+      if (status_view) { // Default
+        $('#view').addClass('view-expanded');
+        $('#view').removeClass('view-normal');
         $('#view').removeClass('fa-arrow-alt-circle-left');
         $('#view').addClass('fa-arrow-alt-circle-right');
+        $(".sidebar").css("transition-delay", "0.2s");
         $(".sidebar").css("width", "60%");
+        $(".table_data_container").css("transition-delay", "0s");
+        $(".table_data_container").css("width", "40%");
         $(".leaflet-right").css("margin-right", "60%");
         init_chart_doughnut();
-      } else { // Expanded
-        $('#view').removeClass('active');
-        $('#view').removeClass('fa-arrow-alt-circle-right');
-        $('#view').addClass('fa-arrow-alt-circle-left');
+      } 
+      if (status_view_expanded) { // Expanded
+        $('#view').removeClass('view-expanded');
+        $('#view').addClass('view-normal-right');
+        $(".sidebar").css("transition-delay", "0s");
         $(".sidebar").css("width", "30%");
         $(".leaflet-right").css("margin-right", "30%");
+        $(".table_data_container").css("transition-delay", "0.2s");
+        $(".table_data_container").css("width", "70%");
         init_chart_doughnut();
+      }
+      if (status_view_right) { // Normal Right
+        $('#view').removeClass('view-normal-right');
+        $('#view').addClass('view-condensed');
+        $('#view').removeClass('fa-arrow-alt-circle-right');
+        $('#view').addClass('fa-arrow-alt-circle-left');
+        $("#view").css("left", "-1%");
+        $(".sidebar").css("transition-delay", "0s");
+        $(".sidebar").css("width", "1%");
+        $("#filter-container").css("transition", "0s");
+        $(".graphics").css("transition", "0s");
+        $("#filter-container").css("transition-delay", "0s");
+        $(".graphics").css("transition-delay", "0s");
+        $("#filter-container").css("transform", "scale(0)");
+        $(".graphics").css("transform", "scale(0)");
+        $(".leaflet-right").css("margin-right", "1%");
+        $(".table_data_container").css("transition-delay", "0.2s");
+        $(".table_data_container").css("width", "99%");
+        init_chart_doughnut();
+      }
+      if (status_view_condensed) { // Condensed
+        $('#view').removeClass('view-condensed');
+        $('#view').addClass('view-normal');
+        $("#view").css("left", "0%");
+        $(".sidebar").css("transition-delay", "0.2s");
+        $(".sidebar").css("width", "30%");
+        $(".leaflet-right").css("margin-right", "30%");
+        $(".table_data_container").css("transition-delay", "0s");
+        $(".table_data_container").css("width", "70%");
+        $("#filter-container").css("transition", "2s");
+        $(".graphics").css("transition", "1s");
+        $("#filter-container").css("transition-delay", "0.3s");
+        $(".graphics").css("transition-delay", "0.3s");
+        $("#filter-container").css("transform", "scale(1)");
+        $(".graphics").css("transform", "scale(1)");
+        init_chart_doughnut();
+      }
+    });
+
+    //Ventana inferior datos
+    $("#view-data").on("click", function() {
+
+      // Chequeamos el estado de view
+      status_view = $('#view-data').hasClass('view-normal');
+      status_view_expanded = $('#view-data').hasClass('view-expanded');
+      status_view_right = $('#view-data').hasClass('view-normal-right');
+      status_view_condensed = $('#view-data').hasClass('view-condensed');
+      if (status_view) { // Default
+        $('#view-data').addClass('view-expanded');
+        $('#view-data').removeClass('view-normal');
+        $('#view-data').removeClass('fa-arrow-alt-circle-up');
+        $('#view-data').addClass('fa-arrow-alt-circle-down');
+        $(".table_data_container").css("transition-delay", "0s");
+        $(".table_data_container").css("top", "8vh");
+        $(".leaflet-right").css("display", "none");
+        $(".leaflet-left").css("display", "none");
+        var height_browser = window.innerHeight
+        var height_card=$(".card_data").innerHeight()
+        var height_table = height_browser*.92 - height_card -50
+        console.log(height_table)
+        $(".table_scroll").css("height", height_table);
+      } 
+      if (status_view_expanded) { // Expanded
+        $('#view-data').removeClass('view-expanded');
+        $('#view-data').addClass('view-normal-right');
+        $(".leaflet-right").css("display", "block");
+        $(".leaflet-left").css("display", "block");
+        $(".table_data_container").css("transition-delay", "0s");
+        $(".table_data_container").css("top", "50vh");
+        var height_browser = window.innerHeight
+        var height_card=$(".card_data").innerHeight()
+        var height_table = height_browser*.5 - height_card -50
+        $(".table_scroll").css("height", height_table);
+
+      }
+      if (status_view_right) { // Normal Down
+        $('#view-data').removeClass('view-normal-right');
+        $('#view-data').addClass('view-condensed');
+        $('#view-data').removeClass('fa-arrow-alt-circle-down');
+        $('#view-data').addClass('fa-arrow-alt-circle-up');
+        $('#view-data').css("top","-3vh");
+        $(".table_data_container").css("transition-delay", "0.3s");
+        $(".table_data_container").css("top", "97.5vh");  
+        $("#collapse_data").css("max-height", "0vh");
+        $("#collapse_data").css("transition", "0.8s");
+        $("#collapse_data").css("border", "none");
+      }
+      if (status_view_condensed) { // Condensed
+        $('#view-data').removeClass('view-condensed');
+        $('#view-data').addClass('view-normal');
+        $('#view-data').css("top","-10px");
+        $(".table_data_container").css("transition-delay", "0s");
+        $(".table_data_container").css("top", "50%");
+        var height_browser = window.innerHeight
+        var height_card=$(".card_data").innerHeight()
+        var height_table = height_browser*.5 - height_card -50
+        $(".table_scroll").css("height", height_table);
+        $("#collapse_data").css("max-height", "100vh");
+        $("#collapse_data").css("transition", "2.5s");
+        $("#collapse_data").css("transition-delay", "0.3s");
+        $("#collapse_data").css("border", "1px solid rgba(0,0,0,0.6)");
       }
     });
 

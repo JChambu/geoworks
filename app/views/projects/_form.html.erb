@@ -13,6 +13,7 @@
   <%= f.hidden_field :project_type_id %>
 
   <%= f.fields_for :properties, OpenStruct.new(@project.properties)  do |builder| %>
+  <p>aqui van los nuevos proyectos</p>
     <% @project.project_type.fields.each do |field| %>
       <%= render "projects/fields/#{field.field_type}", field: field, f: builder %>
     <% end %>

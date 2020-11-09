@@ -18,3 +18,28 @@ $("#modal-window").modal();
 
 // Cierra dropdown
 $('#chart_dropdown').dropdown('toggle')
+
+
+function change_type(ev){
+    var graph_selected = $('.chart_serie_type').first().find('option:selected').text();
+    if (graph_selected == 'line' || graph_selected == 'area' || graph_selected == 'point') {
+      graph_selected = 'bar'
+    }
+    $('.hide-div').hide();
+    $('.'+graph_selected).show();
+    if (graph_selected == 'horizontalBar') {
+      $('#eje_vertical').text('Eje X:');
+      $('#eje_horizontal').text('Eje Y:');
+    }
+    $('.chart_serie_type').each(function(index, element) {
+    	var graph_selected_each = $(element).find('option:selected').text();
+    	if (graph_selected_each == 'line' || graph_selected_each == 'area' || graph_selected_each == 'point') {
+      	graph_selected_each = 'bar'
+    	}
+    	if(graph_selected!=graph_selected_each){
+    		$(element).val("")
+    	}
+ })
+}
+
+

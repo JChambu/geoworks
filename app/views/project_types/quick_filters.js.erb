@@ -1,0 +1,6 @@
+$(".quick_filters_container").html("<%= j render 'quick_filters' %>");
+$(".quick_filters_container").css("display","block");
+$(".close_quick_filters").click(function(){
+	$(".quick_filters_container").css("display","none")
+})
+

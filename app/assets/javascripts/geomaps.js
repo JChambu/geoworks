@@ -1,7 +1,8 @@
 Navarra.namespace("geomaps");
-
+var mymap;
+var circleLayer;
 Navarra.geomaps = function() {
-  var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
+  var markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
   var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current, current_tenement;
   var ss = [];
   var size_box = [];
@@ -96,6 +97,7 @@ Navarra.geomaps = function() {
       collapsed: true
     }).addTo(mymap);
 
+    /*
     var rose = L.control.rose('rose', {
       position: 'topright',
       icon: 'default',
@@ -103,7 +105,13 @@ Navarra.geomaps = function() {
       opacity: 0.5
     });
     rose.addTo(mymap)
+    */
 
+    // Agrega el zoom al mapa
+    L.control.zoom({
+      position: 'topright'
+    }).addTo(mymap);
+    
     editableLayers = new L.FeatureGroup();
     mymap.addLayer(editableLayers);
     var drawControl = new L.Control.Draw({
@@ -235,10 +243,6 @@ Navarra.geomaps = function() {
     $('.leaflet-draw-draw-circle').addClass('unselectable')
     $('.leaflet-draw-draw-marker').addClass('unselectable')
 
-    // Agrega el zoom al mapa
-    L.control.zoom({
-      position: 'bottomright'
-    }).addTo(mymap);
 
     // Agrega la escala al mapa
     L.control.scale({
@@ -679,6 +683,7 @@ Navarra.geomaps = function() {
     })
 
     workspace = Navarra.dashboards.config.current_tenement;
+
     cql_filter = "1 = 1";
 
     // Aplica filtro por atributo y filros generados por el usuario
@@ -952,3 +957,39 @@ Navarra.geomaps = function() {
     popup: popup
   }
 }();
+
+function show_geometry_in_map(geometry,index,data_text, multi){
+  if (circleLayer==undefined){
+     circleLayer = new L.featureGroup;
+     circleLayer.addTo(mymap);
+  }
+  if(!multi){remove_geometry_in_map();}
+  geometry=geometry.substring(7,geometry.length-1);
+  lat_geometry = geometry.split(' ')[1];
+  lon_geometry = geometry.split(' ')[0];
+  var myPopup = L.DomUtil.create('div', 'infoWindow');
+  myPopup.innerHTML = "<div onclick='show_detail_popup(event)' style='cursor:pointer' id="+index+"_divpopup><p id="+index+"_titlepopup style='text-align:center; margin:10px'>#" + index + "</p>"+
+  "<p id="+index+"_detailpopup style='display:none'>" + data_text+ "</p></div>"
+
+  circle_data = L.circle([lat_geometry, lon_geometry], {
+    color: '#d3d800',
+    fillColor: '#d3d800',
+    fillOpacity: 0.5,
+    radius: 50
+  }).addTo(circleLayer).bindPopup(myPopup, {autoClose:false} ).openPopup();
+}
+function show_detail_popup(e){
+  id_popup=e.target.id.split('_')[0];
+  if(document.getElementById(id_popup+'_detailpopup').style.display=='block'){
+    document.getElementById(id_popup+'_detailpopup').style.display='none';
+  }else{
+    document.getElementById(id_popup+'_detailpopup').style.display='block';
+  }
+}
+function remove_geometry_in_map(){
+  if(circleLayer!==undefined){
+    mymap.removeLayer(circleLayer);
+    circleLayer = new L.featureGroup;
+    circleLayer.addTo(mymap);
+  }
+}

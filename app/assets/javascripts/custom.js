@@ -47,11 +47,11 @@ function init_kpi(size_box = null) {
     dashboard_id: dashboard_id,
     success: function(data) {
 
-
-
       data.forEach(function(element) {
 
         var count_element = element['data'][0]['count'];
+
+        if(element['title'] == 'Seleccionado'){data_pagination(element['data'][0]['count'],1);}
 
         if (element['title'] == '% del Total') {
           data_cont = (Number(count_element)).format(2, 3, '.', ',');
@@ -90,48 +90,7 @@ function init_chart_doughnut(size_box = null){
 
   // Agrega el time_slider al card de filtros
   if ($('#time_slider').length == 0) {
-
-    $('#filter-body').prepend(
-      $('<div>', {
-        'id': 'time_slider_item'
-      }).append(
-        $("<input>", {
-          'id': 'time_slider'
-        }),
-        $("<div>", {
-          'class': 'dropdown-divider',
-        })
-      )
-    )
-
-    var lang = "es-AR";
-    var year = 2019;
-
-    function dateToTS(date) {
-      return date.valueOf();
-    }
-
-    function tsToDate(ts) {
-      var d = new Date(ts);
-
-      return d.toLocaleDateString(lang, {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric'
-      });
-    }
-
-    $("#time_slider").ionRangeSlider({
-      skin: "flat",
-      type: "double",
-      grid: true,
-      min: dateToTS(new Date(year, 10, 1)),
-      max: dateToTS(new Date(year, 11, 1)),
-      from: dateToTS(new Date(year, 10, 8)),
-      to: dateToTS(new Date(year, 10, 23)),
-      prettify: tsToDate
-    });
-
+    init_time_slider();
   }
 
   if ($('.graphics').length){
@@ -621,9 +580,11 @@ function init_chart_doughnut(size_box = null){
             )
 
             //Chequeamos el estado de view
-            status_view = $('#view').hasClass('active');
+            status_view = $('#view').hasClass('view-normal');
+            status_view_expanded = $('#view').hasClass('view-expanded');
+            status_view_right = $('#view').hasClass('view-normal-right');
 
-            if (!status_view) { // Default
+            if (status_view || status_view_right) { // Default
 
               if (width == 3) {
                 width = 6;
@@ -641,7 +602,8 @@ function init_chart_doughnut(size_box = null){
               //legend_display = false;
 
 
-            } else { // Expanded
+            } 
+            if(status_view_expanded) { // Expanded
 
               if (width == 3) {
                 aspectR = "1";
@@ -1033,4 +995,448 @@ function init_chart_doughnut(size_box = null){
     }) //cierra ajax
   } //cierra if graphics
   $('.modal-backdrop').remove() ;
+
 } //cierra function init_chart_doughnut
+
+//****** FUNCIONES PARA TABLA DE DATOS*****
+// Función para traer todos los datos de los registros contenidos y filtrados
+function init_data_dashboard(){
+  var per_page = $(".select_perpage").html();
+  var per_page_value = parseInt(per_page);
+  if(!isNaN(per_page_value)){
+    if($(".active_page").length==0){
+      var active_page=1
+    } else{
+     var active_page=parseInt($(".active_page").html());
+    }
+    var offset_rows=per_page_value*active_page;
+    // Agregar paginación en la sentencia sql
+    // Ej: SELECT * FROM TableName ORDER BY id OFFSET offset_rows ROWS FETCH NEXT per_page_value ROWS ONLY;
+  } 
+    var filter_value=$("#choose").val();
+    var filter_by_column=$(".filter_by_column").val();
+    var order_by_column=$(".order_by_column").val();
+    console.log(per_page_value);
+    console.log(active_page);
+    console.log(filter_value);
+    console.log(filter_by_column);
+    console.log(order_by_column);
+
+    // Agregar filtro properties->filter_by_column like (filter_value) y order by en la setencia sql
+
+    // Establece el size_box para extent
+    if (Navarra.dashboards.config.size_polygon.length == 0) {
+
+      size_box = [];
+      var type_box = 'extent';
+      size_ext = Navarra.dashboards.config.size_box;
+      size_box[0] = size_ext['_southWest']['lng'];
+      size_box[1] = size_ext['_southWest']['lat'];
+      size_box[2] = size_ext['_northEast']['lng'];
+      size_box[3] = size_ext['_northEast']['lat'];
+
+    // Establece el size_box para polygon
+    } else {
+
+      var type_box = 'polygon';
+      size_box = size_polygon
+
+    }
+
+    var data_id = Navarra.dashboards.config.project_type_id;
+    var dashboard_id = Navarra.dashboards.config.dashboard_id;
+    var conditions = Navarra.project_types.config.filter_kpi
+
+//Cambiar esta petición para buscar los datos de los registros contenidos y filtrados
+    $.ajax({
+      type: 'GET',
+      url: '/project_types/kpi.json',
+      datatype: 'json',
+      data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
+      success: function(data){
+        console.log(data)
+        // aqui luego le voy a agregar el llenado de la tabla
+        }
+  })
+}
+
+//función para paginar datos
+function data_pagination(selected, active_page){
+  var per_page = $('.select_perpage').html();
+  var per_page_value = parseInt(per_page);
+  if(!isNaN(per_page_value)){
+    var numbers='';
+    if(active_page!=1){
+      numbers+='<li class="page_back" style="cursor:pointer"><a><</a></li>';
+    } else {
+      numbers+='<li class="page_back invisible"><a><</a></li>';
+    }
+    var total_page=Math.ceil(selected/per_page_value);
+    var page_hide=false;
+    var page_hide1=false;
+    for(i=1;i<=total_page;i++){
+      if(i<=3||i>total_page-1 || i==active_page-1 || i==active_page || i==active_page+1){
+        if(i==active_page){ 
+          numbers+='<li><a class="page_data page_active">'+i+'</a></li>'
+        } else{
+          numbers+='<li><a class="page_data">'+i+'</a></li>'
+        }
+      } else{
+        if(i<total_page-1 && !page_hide){
+          numbers+='<h6 class="p-0 m-0">..</h6>';
+          page_hide=true;
+        }
+        if(i==total_page-1 && !page_hide1){
+          numbers+='<h6 class="p-0 m-0">..</h6>';
+          page_hide1=true;
+        }
+      }
+    }
+    if(active_page!=total_page){
+      numbers+='<li class="page_foward" style="cursor:pointer"><a>></a></li>';
+    } else {
+      numbers+='<li class="page_foward invisible"><a>></a></li>';
+    }
+    $('#page_numbers').replaceWith('<ul class="pagination pagination-sm m-0" id="page_numbers">'+numbers+'</ul>');
+    } else{
+    $('#page_numbers').replaceWith('<ul class="pagination pagination-sm m-0" id="page_numbers"></ul>');
+    } 
+  //Pagina activa
+  $(".page_data").click(function(){
+    active_page=parseInt($(this).html());
+    data_pagination(selected,active_page);
+  });   
+  $(".page_back").click(function(){
+      active_page--;
+      data_pagination(selected, active_page);
+  });    
+  $(".page_foward").click(function(){
+      active_page++;
+      data_pagination(selected, active_page);
+  });        
+}
+//****** TERMINAN FUNCIONES PARA TABLA DE DATOS*****
+
+
+//****** FUNCIONES PARA TIMESLIDER***** 
+
+// Función para iniciar por primera vez el timeslider
+function init_time_slider(){
+  var milisec_day=86400000;
+  var today= new Date();
+  var min_date=dateToTS(today)-15*milisec_day;
+  var max_date=dateToTS(today)+15*milisec_day;
+  var from_date= dateToTS(today)-2*milisec_day;
+  var to_date= dateToTS(today)+2*milisec_day;  
+  create_time_slider(min_date,max_date,from_date,to_date);
+  // arma datetimepicker con formato incial por día y le manda los datos del timeslider
+  $('#time_slider_from').datetimepicker({
+    format      :   "DD/MM/YYYY",
+    viewMode    :   "days", 
+  });
+  $('#time_slider_to').datetimepicker({
+    format      :   "DD/MM/YYYY",
+    viewMode    :   "days", 
+  });
+  $('#time_slider_from').val(tsToDate(min_date));
+  $('#time_slider_to').val(tsToDate(max_date));
+}
+//Función para crear el time-slider al inciar y al cambiar la configuración
+function create_time_slider(min_date,max_date,from_date,to_date){
+  $('#filter-body').prepend(
+      $('<div>', {
+        'id': 'time_slider_item',
+      }).append(
+        $("<input>", {
+          'id': 'time_slider'
+        }),
+        $("<div>", {
+          'class': 'dropdown-divider',
+        })
+      )
+    )
+  $('#filter-body').prepend(
+      $("<i>", {
+        'id':'time_slider_item-save',
+        'class': 'fas fa-calendar-check float-right',
+        'style': 'margin-top: -16px; margin-right:4px; color: rgba(250,250,250,0.8); cursor:pointer',
+        'onclick': 'set_time_slider_filter()',
+      })
+    )
+  $('#filter-body').prepend(
+      $("<i>", {
+        'id':'time_slider_item-clear',
+        'class': 'fas fa-calendar-times float-right',
+        'style': 'margin-top: -16px; margin-right:-16px; color: rgba(250,250,250,0.8); cursor:pointer',
+        'onclick': 'clear_time_slider_filter()',
+      })
+    )
+  $("#time_slider").ionRangeSlider({
+      skin: "flat",
+      type: "double",
+      step: 1,
+      grid: true,
+      min: min_date,
+      max: max_date,
+      from: from_date,
+      to: to_date,
+      prettify: tsToDate,
+      onChange: function (data) {
+          set_time_slider_color();
+        },
+      onFinish: function (data) {
+          set_time_slider_values(data);
+        },
+      onStart: function (data) {
+          set_time_slider_values(data);
+        },  
+    });
+
+    $('.irs-min , .irs-max  ').css("cursor", "pointer");
+    $('.irs-min , .irs-max  ').attr("data-toggle","modal");
+    $('.irs-min , .irs-max  ').attr("data-target","#time-slider-modal");
+    set_time_slider_color();
+}
+
+//Función que cambia el estilo del datetimepicker según la selección por día,seman,mes o año
+function change_step_time_slider(){
+  if($('#time_slider_step').val()=='day'){
+    $("#time_slider_from , #time_slider_to").each(function(){
+      $(this).val('');
+      $(this).off('dp.change');
+      $(this).data('DateTimePicker').destroy(); 
+      $(this).datetimepicker({
+        format      :   "DD/MM/YYYY",
+        viewMode    :   "days", 
+      });
+    })
+  }
+  if($('#time_slider_step').val()=='week'){
+    $("#time_slider_from , #time_slider_to").each(function(){
+      $(this).val('');
+      $(this).data('DateTimePicker').destroy(); 
+      $(this).datetimepicker({
+        format      :   "DD/MM/YYYY",
+        viewMode    :   "days", 
+        calendarWeeks: true,
+      });
+      $(this).on('dp.change', function (e) {
+        value = $(this).val();
+        dateObject=changeformatDate(value, 'day');
+        number_of_week=getWeekNumber(dateObject)
+        $(this).val(number_of_week[0]+'-Sem '+number_of_week[1]);
+      });
+    })
+  }
+  if($('#time_slider_step').val()=='month'){
+    $("#time_slider_from , #time_slider_to").each(function(){
+      $(this).val('');
+      $(this).data('DateTimePicker').destroy(); 
+      $(this).datetimepicker({
+        format      :   "MM/YYYY",
+        viewMode    :   "months", 
+      });
+      $(this).off('dp.change');
+    }) 
+  }
+  if($('#time_slider_step').val()=='year'){
+    $("#time_slider_from , #time_slider_to").each(function(){
+      $(this).val('');
+      $(this).off('dp.change');
+      $(this).data('DateTimePicker').destroy();
+      $(this).datetimepicker({
+        format      :   "YYYY",
+        viewMode    :   "years", 
+      });
+    })
+  }
+}
+
+// Función que manda los valores del modal datetimepicker al timeslider
+function set_time_slider(){
+  if($("#time_slider_from").val()=='' || $("#time_slider_to").val()==''){return}
+  var step_date=$('#time_slider_step').val();
+  if(step_date=='day' || step_date=='month'){
+    var min_date=dateToTS(new Date(changeformatDate($('#time_slider_from').val(),step_date)));
+    var max_date=dateToTS(new Date(changeformatDate($('#time_slider_to').val(),step_date)));
+  }
+  if(step_date=='week'){
+    min_date=dateToTS(getDateOfISOWeek(($('#time_slider_from').val().split('-')[1]).substring(4),$('#time_slider_from').val().split('-')[0]));
+    max_date=dateToTS(getDateOfISOWeek(($('#time_slider_to').val().split('-')[1]).substring(4),$('#time_slider_to').val().split('-')[0]));
+  }
+
+  if(step_date=='day' || step_date=='month' || step_date=='week'){
+    if(step_date=='day'){range=2}
+    if(step_date=='week'){range=10}
+    if(step_date=='month'){range=45}
+    var middle_date=new Date((dateToTS(min_date)+dateToTS(max_date))/2);
+    var milisec_day=86400000;
+    var from_date=dateToTS(middle_date)-range*milisec_day;
+    var to_date=dateToTS(middle_date)+range*milisec_day;
+  }
+  
+  if(step_date=='year'){
+    min_date=$('#time_slider_from').val();
+    max_date=$('#time_slider_to').val();
+    from_date=Math.floor((parseInt($('#time_slider_from').val())+parseInt($('#time_slider_to').val()))/2);
+    to_date=Math.ceil((parseInt($('#time_slider_from').val())+parseInt($('#time_slider_to').val()))/2);
+  }
+  if(max_date<=min_date){return}
+  $('#time_slider_item').remove();
+  $('#time_slider_item-save').remove();
+  $('#time_slider_item-clear').remove();
+  $('#time-slider-modal').modal('toggle');
+  clear_time_slider_filter();
+  create_time_slider(min_date,max_date,dateToTS(from_date),dateToTS(to_date));
+}
+
+// función que toma el dato y lo convierte en formato "prety" para colocarlo en las etiquetas del timeslider
+function tsToDate(ts) {
+  var step_date=$('#time_slider_step').val();
+  if(step_date=='day' || step_date=='month' || step_date=='week'){
+    var lang = "es-AR";
+    var d = new Date(ts);
+    var d_year=d.getFullYear();
+    var d_month=d.getMonth()+1;
+    var d_day=d.getDate();
+    if(step_date=='day'){
+      var d_format = d_day+'/'+d_month+'/'+d_year;
+    }
+    if(step_date=='month'){
+      var month_names=['ene','feb','mar','abr','may','jun','jul','ago','set','oct','nov','dic'];
+      var d_format =month_names[d_month-1]+'/'+d_year;
+    }
+    if(step_date=='week'){
+      number_of_week=getWeekNumber(d);
+      var d_format =number_of_week[0]+'-Sem '+number_of_week[1];
+    }
+  } else{
+    d_format=ts
+  }
+    return d_format;  
+}
+
+// Función para colocar el timeslider en gris (no aplicado)
+function set_time_slider_color(){
+  var colored_element=['.irs-bar','.irs-from', '.irs-to','.irs-single', '.irs-handle>i:first-child'];
+    colored_element.forEach(function(element){
+      $(element).addClass('time-slider-inactive');
+      $(element).removeClass('time-slider-active');
+    })
+}
+
+//Función para tomar los datos del from y del to y convertirlos en fechas
+function set_time_slider_values(data){
+  var from_pretty= data.from_pretty;
+  var to_pretty=data.to_pretty;
+  var step_date=$('#time_slider_step').val();
+  if(step_date=='day'){
+    from_pretty=from_pretty.split('/')[2]+'-'+from_pretty.split('/')[1]+'-'+from_pretty.split('/')[0];
+    to_pretty=to_pretty.split('/')[2]+'-'+to_pretty.split('/')[1]+'-'+to_pretty.split('/')[0];
+  }
+  if(step_date=='week'){
+    var dateofweek=getDateOfISOWeek((from_pretty.split('-')[1]).substring(4),from_pretty.split('-')[0])
+    from_pretty=dateofweek.getFullYear()+'-'+(dateofweek.getMonth()+1)+'-'+dateofweek.getDate();
+    var dateofweek=getDateOfISOWeek((to_pretty.split('-')[1]).substring(4),to_pretty.split('-')[0])
+    //+6días
+    var milisec_day=86400000;
+    var lastdayofweek= new Date(dateToTS(dateofweek)+6*milisec_day);
+    to_pretty=lastdayofweek.getFullYear()+'-'+(lastdayofweek.getMonth()+1)+'-'+lastdayofweek.getDate();
+  }
+  if(step_date=='month'){
+    var month_names=['ene','feb','mar','abr','may','jun','jul','ago','set','oct','nov','dic'];
+    from_pretty=from_pretty.split('/')[1]+'-'+(jQuery.inArray(from_pretty.split('/')[0], month_names)+1)+'-1';
+    last_day=new Date(to_pretty.split('/')[1], (jQuery.inArray(to_pretty.split('/')[0], month_names)+1), 0);
+    last_day=last_day.getDate();
+    to_pretty=to_pretty.split('/')[1]+'-'+(jQuery.inArray(to_pretty.split('/')[0], month_names)+1)+'-'+last_day;
+  }
+  if(step_date=='year'){
+    from_pretty=from_pretty+'-1-1';
+    to_pretty=to_pretty+'-12-31';
+  }
+  from_pretty+=' 00:00';
+  to_pretty+=' 23:59:59.99';
+  $('time-slider-from-value').val(from_pretty);
+  $('time-slider-to-value').val(to_pretty);
+  console.log(from_pretty)
+  console.log(to_pretty)
+}
+
+//Función para aplicar el timeslider como filtro 
+function set_time_slider_filter(){
+  var colored_element=['.irs-bar','.irs-from', '.irs-to','.irs-single', '.irs-handle>i:first-child'];
+  colored_element.forEach(function(element){
+    $(element).addClass('time-slider-active');
+    $(element).removeClass('time-slider-inactive');
+  });
+  if($('#prev_bar')!=undefined)($('#prev_bar').remove());
+  var width_clone = ( 100 * parseFloat($('.irs-bar').css('width')) / parseFloat($('.irs-bar').parent().css('width')) ) + '%';
+  var left_clone = ( 100 * parseFloat($('.irs-bar').css('left')) / parseFloat($('.irs-bar').parent().css('width')) ) + '%';
+  var prev_bar=$('.irs-bar').clone();
+  prev_bar.attr('id','prev_bar');
+  prev_bar.appendTo('.irs--flat');
+  var styletext='background:#d3d800!important;left:'+left_clone+';width:'+width_clone;
+  $('#prev_bar').attr('style',styletext);
+  
+  //toma los valores from y to
+  var from_value_filter = $('time-slider-from-value').val();
+  var to_value_filter = $('time-slider-to-value').val();
+    /*
+    agregar aquí el filtro para búsqueda por fechas
+    */
+}
+
+//Función para eliminar el timeslider como filtro 
+function clear_time_slider_filter(){
+  if($('#prev_bar')!=undefined)($('#prev_bar').remove());
+  set_time_slider_color();
+  /*
+    agregar aquí la eliminación del filtro para búsqueda por fechas
+  */
+}
+
+
+// Funciones para manejo de fechas
+//Devuelve el valor timestamp tipo numerico desde una fecha dada
+function dateToTS(date) {
+  return date.valueOf();
+}
+//funcion para obtener el número de semana a partir de una fecha. Las semanas comienzan los lunes
+function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    // Set to nearest Thursday: current date + 4 - current day number
+    // Make Sunday's day number 7
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+    // Get first day of year
+    var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    // Calculate full weeks to nearest Thursday
+    var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+    // Return array of year and week number
+    return [d.getUTCFullYear(), weekNo];
+}
+
+//función para devolver una fecha dada un número de semana y un año
+function getDateOfISOWeek(w, y) {
+  var simple = new Date(y, 0, 1 + (w - 1) * 7);
+  var dow = simple.getDay();
+  var ISOweekStart = simple;
+  if (dow <= 4)
+    ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+  else
+    ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+  return ISOweekStart;
+}
+
+//función para obtener una objeto fecha cuando el dato está en el formato dd/mm/yyyy o mm/yyyy
+function changeformatDate(d,type){
+  var dateParts = d.split("/");
+  if(type=='day'){
+    var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]); 
+  }
+  if(type=='month'){
+    var dateObject = new Date(+dateParts[1], dateParts[0] - 1, +'1'); 
+  }
+  return dateObject;
+}
+
+//********TERMINAN FUNCIONES PARA TIMESLIDER*******

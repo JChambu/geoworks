@@ -26,7 +26,7 @@ class DashboardsController < ApplicationController
   def show
     @extent = []
     if !@project_type.nil?
-      @projects = Project.where(project_type_id: @project_type.id)
+      @projects = Project.where(project_type_id: @project_type.id).limit(30)
       @extent = Project.geometry_bounds(@project_type.id, current_user.id)
       @current_tenant = Apartment::Tenant.current
       @project_filters = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id)
@@ -42,8 +42,8 @@ class DashboardsController < ApplicationController
         end
 
       end
-    end
 
+    end
   end
 
   # GET /dashboards/new
