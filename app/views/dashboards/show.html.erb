@@ -19,51 +19,50 @@
       Navarra.dashboards.config.maxy = <%= @extent[0].maxy %>
     <% end %>
 
+    // TODO: Ahora que se aplican los filtros en los datos esta lógica
+    // se está duplicando hay que unficarla con el controlador
+
     // Carga filtro por atributos y owner
-    <% if @project_filters %>
-      <% @project_filters.each do |s| %>
-        <% if !s.properties.nil? %>
-          <% s.properties.each do |p| %>
+    <% if @project_filter %>
+      <% if !@project_filter.properties.nil? %>
+        <% @project_filter.properties.each do |p| %>
 
-            var field_key = '<%= p[0] %>';
-            var operator = '=';
-            var value = '<%= p[1] %>';
-
-            // Aplica modificaciones si el value es array
-            if (value.match(/&quot;/g) != null) {
-              value = value.replace(/&quot;/g, '\"')
-            }
-
-            var filter = field_key + '|' + operator + '|\'' + value + '\'';
-            Navarra.project_types.config.filter_option.push(filter);
-
-          <% end %>
-        <% end %>
-        Navarra.project_types.config.owner = <%= s.owner %>;
-      <% end %>
-    <% end %>
-
-    <% if @cross_layer_filter %>
-      <% @cross_layer_filter.each do |cf| %>
-        <% if !cf.properties.nil? %>
-          <% cf.properties.each do |f| %>
-
-          var field_key = '<%= f[0] %>';
+          var field_key = '<%= p[0] %>';
           var operator = '=';
-          var value = '<%= f[1] %>';
+          var value = '<%= p[1] %>';
 
           // Aplica modificaciones si el value es array
           if (value.match(/&quot;/g) != null) {
             value = value.replace(/&quot;/g, '\"')
           }
 
-          var contained_filter = field_key + '|' + operator + '|\'' + value + '\'';
-          Navarra.project_types.config.cross_layer_filter.push(contained_filter);
+          var filter = field_key + '|' + operator + '|\'' + value + '\'';
+          Navarra.project_types.config.filter_option.push(filter);
 
-          <% end %>
         <% end %>
-        Navarra.project_types.config.cross_layer_owner = <%= cf.owner %>;
+        Navarra.project_types.config.owner = <%= @project_filter.owner %>;
       <% end %>
+    <% end %>
+
+    <% if @cross_layer_filter %>
+      <% if !@cross_layer_filter.properties.nil? %>
+        <% @cross_layer_filter.properties.each do |f| %>
+
+        var field_key = '<%= f[0] %>';
+        var operator = '=';
+        var value = '<%= f[1] %>';
+
+        // Aplica modificaciones si el value es array
+        if (value.match(/&quot;/g) != null) {
+          value = value.replace(/&quot;/g, '\"')
+        }
+
+        var contained_filter = field_key + '|' + operator + '|\'' + value + '\'';
+        Navarra.project_types.config.cross_layer_filter.push(contained_filter);
+
+        <% end %>
+      <% end %>
+      Navarra.project_types.config.cross_layer_owner = <%= @cross_layer_filter.owner %>;
     <% end %>
 
     <% if @cross_layer %>
@@ -108,7 +107,7 @@
               <option value="year" label="Año"></option>
             </select>
           </div>
-        </div>  
+        </div>
         <div class="form-row mt-3">
           <div class="col-md-6">
             <label class="string optional control-label" for="time_slider_from">Desde</label>
