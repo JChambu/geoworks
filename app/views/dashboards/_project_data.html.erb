@@ -155,15 +155,17 @@ function show_geometry(index, multi){
     <i class="fas fa-plus ml-3 d-none" style="font-size: 0.8em; cursor: pointer;"></i>
   </a>
   <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; overflow-y: auto;">
-    <% @fields.each_with_index do |field, index|  %>
-      <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>      
+    <% if !@fields.nil? %>
+      <% @fields.each_with_index do |field, index|  %>
+        <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>
+      <% end %>
     <% end %>
   </div>
   <input id="choose" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0" placeholder="Buscar" style="width: 0%; transition:1.5s;"  >
   <input type="text" class="choose_column d-none">
   <input type="text" class="filter_by_column d-none">
   <input type="text" class="order_by_column d-none">
-  
+
   <div class="" style="float: right;">
     <div class="dropdown" style="display: inline-block;">
       <h6 class="dropdown-toggle select_perpage m-0 mr-3"  id="dropdownMenuButton" data-toggle   ="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 0.8em; cursor: pointer;">
@@ -176,80 +178,88 @@ function show_geometry(index, multi){
         <a class="dropdown-item option_perpage" href="#">mostrar todo</a>
       </div>
     </div>
-      <nav style="display: inline-block;">
-        <ul class="pagination pagination-sm m-0" id="page_numbers"></ul>
-      </nav>
+    <nav style="display: inline-block;">
+      <ul class="pagination pagination-sm m-0" id="page_numbers"></ul>
+    </nav>
   </div>
 </div>
 <div class="table-responsive div_table no_scroll" style="height: 30px; overflow-y: hidden; border-bottom: solid 2px rgba(0,0,0,0.6); background: rgba(81, 89, 96, 0.4);">
-      <table class="table table-hover m-0 card-body" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
-        <thead>
-          <tr>
-            <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
-              <p style="color:white; margin-bottom: 0px">#</p></th>
-            <% @fields.each_with_index do |field, index|  %>
-              <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor: pointer;" id=<%="columnfake_"+field.name %>>
-                <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
+  <table class="table table-hover m-0 card-body" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
+    <thead>
+      <tr>
+        <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
+          <p style="color:white; margin-bottom: 0px">#</p>
+        </th>
+        <% if !@fields.nil? %>
+          <% @fields.each_with_index do |field, index|  %>
+            <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor: pointer;" id=<%="columnfake_"+field.name %>>
+              <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
                 <p style="color:white; margin-bottom: 0px"><%= field.name %></p>
                 <div style="padding-top: 10px; padding-bottom:20px">
                   <i class="fas fa-sort-alpha-down icons" onclick="order_column(<%=index%>)"></i>
                   <i class="fas fa-search icons" onclick="search_column(<%=index%>)"></i>
                   <i class="fas fa-times icons" onclick="hide_column(<%=index%>)"></i>
                 </div>
-                </div>
-                </th>
+              </div>
+            </th>
+          <% end %>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody style="visibility: hidden;">
+      <% if !@fields.nil? %>
+        <% projects_data_local.each_with_index do |project, index | %>
+          <tr>
+            <td style="line-height: normal;padding: 2px; vertical-align: middle;">
+              <%=index+1%>
+            </td>
+            <% @fields.each do |field|  %>
+              <td style="line-height: normal;padding: 2px; vertical-align: middle;">
+                <% if field.field_type_id == 7  %>
+
+                <% else %>
+                  <%= project.properties[field.key] if !project.properties[field.key].blank?%>
+                <% end %>
+              </td>
             <% end %>
           </tr>
-        </thead>
-        <tbody style="visibility: hidden;">
-          <% projects_data_local.each_with_index do |project, index | %>
-            <tr>
-              <td style="line-height: normal;padding: 2px; vertical-align: middle;">
-                <%=index+1%></td>
-                <% @fields.each do |field|  %>
-                  <td style="line-height: normal;padding: 2px; vertical-align: middle;">
-                    <% if field.field_type_id == 7  %>
-                     
-                    <% else %>
-                      <%= project.properties[field.key] if !project.properties[field.key].blank?%>
-                    <% end %>
-                  </td>
-                <% end %>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
 </div>
 <div class="table-responsive div_table scroll table_scroll"  style="position: relative; z-index: 10; transition: 1s; background: rgba(81, 89, 96, 0.4);">
-      <table class="table table-hover m-0 card-body" style="font-size: 0.8em; position: relative;top: -45px; text-align: center;">
-        <thead style="visibility: hidden; border-bottom: solid transparent">
-          <tr>
-            <th>#</th>
+  <table class="table table-hover m-0 card-body" style="font-size: 0.8em; position: relative;top: -45px; text-align: center;">
+    <thead style="visibility: hidden; border-bottom: solid transparent">
+      <tr>
+        <th>#</th>
+        <% if !@fields.nil? %>
+        <% @fields.each do |field|  %>
+          <th style="min-width: 100px" id=<%="column_"+field.name %>><%= field.name %></th>
+        <% end %>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody style="border-top: solid 2px transparent" class="project_data_div">
+      <% if !@fields.nil? %>
+        <% projects_data_local.each_with_index do |project, index| %>
+          <tr style="cursor: pointer;" onclick="show_item(<%=index%>)">
+            <td style="line-height: normal;padding: 2px; vertical-align: middle;">
+              <%=index+1%>
+            </td>
             <% @fields.each do |field|  %>
-              <th style="min-width: 100px" id=<%="column_"+field.name %>><%= field.name %></th>
-            <% end %>
-          </tr>
-        </thead>
-        <tbody style="border-top: solid 2px transparent" class="project_data_div">
-          
-          <% projects_data_local.each_with_index do |project, index| %>
-            <tr style="cursor: pointer;" onclick="show_item(<%=index%>)">
               <td style="line-height: normal;padding: 2px; vertical-align: middle;">
-                <%=index+1%></td>
-                <% @fields.each do |field|  %>
-                  <td style="line-height: normal;padding: 2px; vertical-align: middle;">
-                    <% if field.field_type_id == 7  %>
-                     
-                    <% else %>
-                      <%= project.properties[field.key] if !project.properties[field.key].blank?%>
-                    <% end %>
-                  </td>
-                <% end %>
-                <td class="d-none geometry"><%= project.the_geom %></td>
-            </tr>
-          <% end %>
-         
-        </tbody>
-      </table>
-    </div>
+                <% if field.field_type_id == 7  %>
 
+                <% else %>
+                  <%= project.properties[field.key] if !project.properties[field.key].blank?%>
+                <% end %>
+              </td>
+            <% end %>
+            <td class="d-none geometry"><%= project.the_geom %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
