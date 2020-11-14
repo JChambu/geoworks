@@ -1001,6 +1001,8 @@ function init_chart_doughnut(size_box = null){
 //****** FUNCIONES PARA TABLA DE DATOS*****
 // Función para traer todos los datos de los registros contenidos y filtrados
 function init_data_dashboard(){
+
+  var project_type_id = Navarra.dashboards.config.project_type_id;
   var per_page = $(".select_perpage").html();
   var per_page_value = parseInt(per_page);
   if(!isNaN(per_page_value)){
@@ -1010,54 +1012,35 @@ function init_data_dashboard(){
      var active_page=parseInt($(".active_page").html());
     }
     var offset_rows=per_page_value*active_page;
-    // Agregar paginación en la sentencia sql
-    // Ej: SELECT * FROM TableName ORDER BY id OFFSET offset_rows ROWS FETCH NEXT per_page_value ROWS ONLY;
   } 
     var filter_value=$("#choose").val();
     var filter_by_column=$(".filter_by_column").val();
     var order_by_column=$(".order_by_column").val();
+
+    // TODO: order_by_column siempre contener un dato, por defecto "id"
+
     console.log(per_page_value);
     console.log(active_page);
     console.log(filter_value);
     console.log(filter_by_column);
     console.log(order_by_column);
 
-    // Agregar filtro properties->filter_by_column like (filter_value) y order by en la setencia sql
-
-    // Establece el size_box para extent
-    if (Navarra.dashboards.config.size_polygon.length == 0) {
-
-      size_box = [];
-      var type_box = 'extent';
-      size_ext = Navarra.dashboards.config.size_box;
-      size_box[0] = size_ext['_southWest']['lng'];
-      size_box[1] = size_ext['_southWest']['lat'];
-      size_box[2] = size_ext['_northEast']['lng'];
-      size_box[3] = size_ext['_northEast']['lat'];
-
-    // Establece el size_box para polygon
-    } else {
-
-      var type_box = 'polygon';
-      size_box = size_polygon
-
-    }
-
-    var data_id = Navarra.dashboards.config.project_type_id;
-    var dashboard_id = Navarra.dashboards.config.dashboard_id;
-    var conditions = Navarra.project_types.config.filter_kpi
-
-//Cambiar esta petición para buscar los datos de los registros contenidos y filtrados
     $.ajax({
       type: 'GET',
-      url: '/project_types/kpi.json',
+      url: '/project_types/search_data_dashboard',
       datatype: 'json',
-      data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
-      success: function(data){
-        console.log(data)
-        // aqui luego le voy a agregar el llenado de la tabla
-        }
-  })
+      data: {
+        filter_value: filter_value,
+        filter_by_column: filter_by_column,
+        order_by_column: order_by_column,
+        project_type_id: project_type_id,
+        offset_rows: offset_rows,
+        per_page_value: per_page_value,
+      },
+      success: function(data) {
+        console.log(data);
+      }
+    })
 }
 
 //función para paginar datos
