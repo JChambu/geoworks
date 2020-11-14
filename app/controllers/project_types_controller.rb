@@ -165,6 +165,76 @@ class ProjectTypesController < ApplicationController
     end
   end
 
+  def search_data_dashboard
+
+    project_type_id = params[:project_type_id]
+    offset_rows = params[:offset_rows]
+    per_page_value = params[:per_page_value]
+    filter_value = params[:filter_value]
+    filter_by_column = params[:filter_by_column]
+    order_by_column = params[:order_by_column]
+
+    data = Project
+      .select('DISTINCT main.*')
+      .from('projects main')
+      .where('main.project_type_id = ?', project_type_id.to_i)
+      .where('main.row_active = ?', true)
+      .where('main.current_season = ?', true)
+      .order("main.#{order_by_column}")
+      .offset(offset_rows.to_i)
+      .limit(per_page_value.to_i)
+
+    @project_filter = ProjectFilter.where(project_type_id: project_type_id.to_i).where(user_id: current_user.id).first
+
+    if !@project_filter.nil?
+
+      # Aplica filtro owner
+      if @project_filter.owner == true
+        data = data.where('main.user_id = ?', current_user.id)
+      end
+
+      # Aplica filtro por atributo a la capa principal
+      if !@project_filter.properties.nil?
+        @project_filter.properties.to_a.each do |prop|
+          data = data.where("main.properties ->> '#{prop[0]}' = '#{prop[1]}'")
+        end
+      end
+
+      # Aplica filtro intercapa
+      if !@project_filter.cross_layer_filter_id.nil?
+
+        @cross_layer_filter = ProjectFilter.where(id: @project_filter.cross_layer_filter_id).where(user_id: current_user.id).first
+
+        # Cruza la capa principal con la capa secunadaria
+        data = data
+          .except(:from).from('projects main CROSS JOIN projects sec')
+          .where('shared_extensions.ST_Intersects(main.the_geom, sec.the_geom)')
+          .where('sec.project_type_id = ?', @cross_layer_filter.project_type_id)
+          .where('sec.row_active = ?', true)
+          .where('sec.current_season = ?', true)
+
+        # Aplica filtro por owner a la capa secundaria
+        if @cross_layer_filter.owner == true
+          data = data.where('sec.user_id = ?', current_user.id)
+        end
+
+        # Aplica filtro por atributo a la capa secundaria
+        if !@cross_layer_filter.properties.nil?
+          @cross_layer_filter.properties.to_a.each do |prop|
+            data = data.where("sec.properties->>'#{prop[0]}' = '#{prop[1]}'")
+          end
+        end
+      end
+    end
+
+    # Aplica búsqueda del usuario
+    if !filter_by_column.blank? && !filter_value.blank?
+      data = data.where("main.properties ->> '#{filter_by_column}' ILIKE '#{filter_value}'")
+    end
+
+    render json: {"data": data}
+  end
+
   def heatmap
   end
 
