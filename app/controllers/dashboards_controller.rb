@@ -29,16 +29,16 @@ class DashboardsController < ApplicationController
 
     if !@project_type.nil?
 
+      @fields = ProjectField.where(project_type_id: @project_type.id)
+      @extent = Project.geometry_bounds(@project_type.id, current_user.id)
+      @current_tenant = Apartment::Tenant.current
+
       @projects = Project
         .select('DISTINCT main.*')
         .from('projects main')
         .where('main.project_type_id = ?', @project_type.id)
         .where('main.row_active = ?', true)
         .where('main.current_season = ?', true)
-
-      @fields = ProjectField.where(project_type_id: @project_type.id)
-      @extent = Project.geometry_bounds(@project_type.id, current_user.id)
-      @current_tenant = Apartment::Tenant.current
 
       @project_filter = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id).first
 
