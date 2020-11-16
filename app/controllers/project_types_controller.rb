@@ -180,9 +180,6 @@ class ProjectTypesController < ApplicationController
       .where('main.project_type_id = ?', project_type_id.to_i)
       .where('main.row_active = ?', true)
       .where('main.current_season = ?', true)
-      .order("main.#{order_by_column}")
-      .offset(offset_rows.to_i)
-      .limit(per_page_value.to_i)
 
     @project_filter = ProjectFilter.where(project_type_id: project_type_id.to_i).where(user_id: current_user.id).first
 
@@ -230,6 +227,22 @@ class ProjectTypesController < ApplicationController
     # Aplica búsqueda del usuario
     if !filter_by_column.blank? && !filter_value.blank?
       data = data.where("main.properties ->> '#{filter_by_column}' ILIKE '#{filter_value}'")
+    end
+
+    # Aplica órden de los registros
+    if !order_by_column.blank?
+      data = data
+        .except(:select).select("DISTINCT main.*, main.properties ->> '#{order_by_column}' AS order")
+        .order("main.properties ->> '#{order_by_column}'")
+    else
+      data = data.order("main.id")
+    end
+
+    # Aplica limit y offset para paginar
+    if !offset_rows.blank? && !per_page_value.blank?
+      data = data
+        .offset(offset_rows.to_i)
+        .limit(per_page_value.to_i)
     end
 
     render json: {"data": data}
