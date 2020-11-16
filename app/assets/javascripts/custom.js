@@ -1016,14 +1016,7 @@ function init_data_dashboard(){
     var filter_value=$("#choose").val();
     var filter_by_column=$(".filter_by_column").val();
     var order_by_column=$(".order_by_column").val();
-
-    // TODO: order_by_column siempre contener un dato, por defecto "id"
-
-    console.log(per_page_value);
-    console.log(active_page);
-    console.log(filter_value);
-    console.log(filter_by_column);
-    console.log(order_by_column);
+    if(order_by_column==""){order_by_column="id";}
 
     $.ajax({
       type: 'GET',
@@ -1037,8 +1030,56 @@ function init_data_dashboard(){
         offset_rows: offset_rows,
         per_page_value: per_page_value,
       },
+      error: function (xhr, ajaxOptions, thrownError) {
+           console.log(xhr.status);
+           console.log(xhr.responseText);
+           console.log(thrownError);
+       },
       success: function(data) {
-        console.log(data);
+        var fields = document.querySelectorAll(".data_fields th");
+        var data_dashboard=data.data
+        console.log(data_dashboard)
+  
+      // borramos los datos anteriores
+        document.getElementById("tbody_visible").remove();
+        var new_body=document.createElement("TBODY");
+        new_body.style.visibility="hidden";
+        new_body.id="tbody_hidden";
+        document.getElementById("table_hidden").appendChild(new_body);
+        document.getElementById("tbody_hidden").remove();
+        var new_body=document.createElement("TBODY");
+        new_body.style.className="project_data_div";
+        new_body.id="tbody_visible";
+        document.getElementById("table_visible").appendChild(new_body);
+
+        // llenado de la tabla de datos
+        data_dashboard.forEach(function(element, index) {
+          var new_row = document.createElement("TR");
+          new_row.style.cursor = "pointer";
+          new_row.className="row_data";
+          var data_properties = element.properties;
+          fields.forEach(function(column){
+            var column_name=column.innerHTML;
+            var new_celd = document.createElement("TD");
+            if(column.innerHTML=="#"){
+              new_celd.innerHTML=(index+1);
+            } else{
+                if(data_properties[column_name]!=undefined){
+                    new_celd.innerHTML=data_properties[column_name];
+                }              
+            } 
+            new_celd.className="custom_row";
+            new_row.appendChild(new_celd);
+          });
+          //columna de geometria
+           var new_celd = document.createElement("TD");
+           new_celd.innerHTML=element.the_geom;
+           new_celd.style.display="none";
+           new_row.appendChild(new_celd);
+           document.getElementById("tbody_visible").appendChild(new_row.cloneNode(true));
+           document.getElementById("tbody_hidden").appendChild(new_row);
+          });
+         
       }
     })
 }

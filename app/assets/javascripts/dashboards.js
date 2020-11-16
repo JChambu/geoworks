@@ -202,7 +202,14 @@ Navarra.dashboards.action_show = function(){
     });
 
     //Ventana inferior datos
+    var first_open=true;
     $("#view-data").on("click", function() {
+      //traermos los datos
+      if(first_open){
+        init_data_dashboard();
+        first_open=false;
+      }
+      
 
       // Chequeamos el estado de view
       status_view = $('#view-data').hasClass('view-normal');

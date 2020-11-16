@@ -1,4 +1,5 @@
 <script type="text/javascript">
+
 //scroll de ambas tablas simultáneamente
 $(document).ready(function () {
     $(".div_table").on("scroll", function() {
@@ -35,6 +36,7 @@ function order_column(index){
   index+=2;
   var column_order=($('.table_scroll tr th:nth-child('+index+')').text()).replace(/ /g,'');
   $('.order_by_column').val(column_order);
+  init_data_dashboard();
 }
 
 //abre buscar x  columna
@@ -184,7 +186,7 @@ function show_geometry(index, multi){
   </div>
 </div>
 <div class="table-responsive div_table no_scroll" style="height: 30px; overflow-y: hidden; border-bottom: solid 2px rgba(0,0,0,0.6); background: rgba(81, 89, 96, 0.4);">
-  <table class="table table-hover m-0 card-body" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
+  <table class="table table-hover m-0 card-body" id="table_hidden" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
     <thead>
       <tr>
         <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
@@ -206,7 +208,7 @@ function show_geometry(index, multi){
         <% end %>
       </tr>
     </thead>
-    <tbody style="visibility: hidden;">
+    <tbody id="tbody_hidden" style="visibility: hidden;">
       <% if !@fields.nil? %>
         <% projects_data_local.each_with_index do |project, index | %>
           <tr>
@@ -229,9 +231,9 @@ function show_geometry(index, multi){
   </table>
 </div>
 <div class="table-responsive div_table scroll table_scroll"  style="position: relative; z-index: 10; transition: 1s; background: rgba(81, 89, 96, 0.4);">
-  <table class="table table-hover m-0 card-body" style="font-size: 0.8em; position: relative;top: -45px; text-align: center;">
+  <table class="table table-hover m-0 card-body" id="table_visible" style="font-size: 0.8em; position: relative;top: -45px; text-align: center;">
     <thead style="visibility: hidden; border-bottom: solid transparent">
-      <tr>
+      <tr class="data_fields">
         <th>#</th>
         <% if !@fields.nil? %>
         <% @fields.each do |field|  %>
@@ -240,7 +242,7 @@ function show_geometry(index, multi){
         <% end %>
       </tr>
     </thead>
-    <tbody style="border-top: solid 2px transparent" class="project_data_div">
+    <tbody id="tbody_visible" class="project_data_div">
       <% if !@fields.nil? %>
         <% projects_data_local.each_with_index do |project, index| %>
           <tr style="cursor: pointer;" onclick="show_item(<%=index%>)">
