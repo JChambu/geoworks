@@ -60,9 +60,9 @@ function search_column_value(){
   var ftds = document.querySelectorAll('.table_scroll tr td:nth-child('+index+')');
   var i=0;
   ftds.forEach(function(ftd) {
-    if(ftd.textContent.toUpperCase().indexOf(search_value.toUpperCase())>0){
+    if(ftd.textContent.toUpperCase().indexOf(search_value.toUpperCase())>=0){
       ftd.parentElement.classList.add("found");
-      show_geometry(i, true);
+     // show_geometry(i, true);
     } else{
       ftd.parentElement.classList.remove("found");
     }

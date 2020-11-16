@@ -1129,14 +1129,17 @@ function data_pagination(selected, active_page){
   $(".page_data").click(function(){
     active_page=parseInt($(this).html());
     data_pagination(selected,active_page);
+    init_data_dashboard();
   });   
   $(".page_back").click(function(){
       active_page--;
       data_pagination(selected, active_page);
+      init_data_dashboard();
   });    
   $(".page_foward").click(function(){
       active_page++;
       data_pagination(selected, active_page);
+      init_data_dashboard();
   });        
 }
 //****** TERMINAN FUNCIONES PARA TABLA DE DATOS*****
