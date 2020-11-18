@@ -12,7 +12,7 @@ $(".option_perpage").click(function(){
   $(".select_perpage").html(selText+' <span class="caret"></span>');
   var total_selected=parseInt($('.kpi_1001').html().replace(".",""));
   data_pagination(total_selected,1);
-  init_data_dashboard();
+  init_data_dashboard(false);
 });
 
 //movimiento de header columnas
@@ -25,10 +25,9 @@ $(".th-hover").hover(function(){
   //busqueda por columna al hacer click
   $('#choose').keydown(function(e){
     if(e.keyCode == 13){
-        search_column_value();
+        init_data_dashboard(true);
       }
   })
-
 });
 
 //ordena descendente y ascendente
@@ -36,7 +35,7 @@ function order_column(index){
   index+=2;
   var column_order=($('.table_scroll tr th:nth-child('+index+')').text()).replace(/ /g,'');
   $('.order_by_column').val(column_order);
-  init_data_dashboard();
+  init_data_dashboard(false);
 }
 
 //abre buscar x  columna
@@ -52,23 +51,6 @@ function search_column(index){
  $('.choose_column').val(index);
 }
 
-//busca x  columna
-function search_column_value(){
-  remove_geometry_in_map();
-  var search_value=$('#choose').val();
-  var index=$('.choose_column').val();
-  var ftds = document.querySelectorAll('.table_scroll tr td:nth-child('+index+')');
-  var i=0;
-  ftds.forEach(function(ftd) {
-    if(ftd.textContent.toUpperCase().indexOf(search_value.toUpperCase())>=0){
-      ftd.parentElement.classList.add("found");
-     // show_geometry(i, true);
-    } else{
-      ftd.parentElement.classList.remove("found");
-    }
-    i++;
-  });
-}
 
 //oculta columnas
 function hide_column(index){
@@ -80,7 +62,7 @@ function hide_column(index){
 }
 
 //muestra columnas
-function show_column(index){
+function show_column(index,){
   index+=2;
  $('table tr td:nth-child('+index+')').show()
  $('table tr th:nth-child('+index+')').show();
@@ -91,15 +73,16 @@ function show_column(index){
 }
 
 //mostrar dato en el mapa
-function show_item(index){
+function show_item(index, appid_selected){
+  console.log("click en item")
  if($('table tbody tr:nth-child('+(index+1)+')').hasClass('found')){
   $('table tbody tr:nth-child('+(index+1)+')').removeClass('found')
-  remove_geometry_in_map();
  }else{
-   show_geometry(index,false);
    $('table tbody tr').removeClass('found');
    $('table tbody tr:nth-child('+(index+1)+')').addClass('found');
   }
+  Navarra.project_types.config.data_dashboard=[appid_selected];
+  Navarra.geomaps.current_layer();
 }
 
 function show_geometry(index, multi){
@@ -116,7 +99,6 @@ function show_geometry(index, multi){
      }
     }
    })
-   show_geometry_in_map(geometry,(index+1),data_text,multi);
 }
 
 </script>
@@ -209,24 +191,6 @@ function show_geometry(index, multi){
       </tr>
     </thead>
     <tbody id="tbody_hidden" style="visibility: hidden;">
-      <% if !@fields.nil? %>
-        <% projects_data_local.each_with_index do |project, index | %>
-          <tr>
-            <td style="line-height: normal;padding: 2px; vertical-align: middle;">
-              <%=index+1%>
-            </td>
-            <% @fields.each do |field|  %>
-              <td style="line-height: normal;padding: 2px; vertical-align: middle;">
-                <% if field.field_type_id == 7  %>
-
-                <% else %>
-                  <%= project.properties[field.key] if !project.properties[field.key].blank?%>
-                <% end %>
-              </td>
-            <% end %>
-          </tr>
-        <% end %>
-      <% end %>
     </tbody>
   </table>
 </div>
@@ -243,25 +207,6 @@ function show_geometry(index, multi){
       </tr>
     </thead>
     <tbody id="tbody_visible" class="project_data_div">
-      <% if !@fields.nil? %>
-        <% projects_data_local.each_with_index do |project, index| %>
-          <tr style="cursor: pointer;" onclick="show_item(<%=index%>)">
-            <td style="line-height: normal;padding: 2px; vertical-align: middle;">
-              <%=index+1%>
-            </td>
-            <% @fields.each do |field|  %>
-              <td style="line-height: normal;padding: 2px; vertical-align: middle;">
-                <% if field.field_type_id == 7  %>
-
-                <% else %>
-                  <%= project.properties[field.key] if !project.properties[field.key].blank?%>
-                <% end %>
-              </td>
-            <% end %>
-            <td class="d-none geometry"><%= project.the_geom %></td>
-          </tr>
-        <% end %>
-      <% end %>
     </tbody>
   </table>
 </div>

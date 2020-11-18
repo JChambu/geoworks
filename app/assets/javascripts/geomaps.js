@@ -1,9 +1,10 @@
 Navarra.namespace("geomaps");
 var mymap;
 var circleLayer;
+first_layer=false;
 Navarra.geomaps = function() {
   var markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
-  var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current, current_tenement;
+  var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current,project_current_selected,current_tenement;
   var ss = [];
   var size_box = [];
 
@@ -383,6 +384,7 @@ Navarra.geomaps = function() {
       });
 
       mymap.removeLayer(project_current);
+      mymap.removeLayer(project_current_selected);
       if (typeof(projectss) !== 'undefined') {
         mymap.removeLayer(projectss);
       }
@@ -451,6 +453,7 @@ Navarra.geomaps = function() {
 
     if (field_point != '') {
       mymap.removeLayer(project_current);
+      mymap.removeLayer(project_current_selected);
 
       if (ss.length > 0) {
         $.each(ss, function(id, layer) {
@@ -547,6 +550,7 @@ Navarra.geomaps = function() {
         });
         mymap.removeControl(layerControl);
         mymap.removeLayer(project_current);
+        mymap.removeLayer(project_current_selected);
         layerControl = L.control.layers(baseMaps, overlayMaps, {
           position: 'topleft',
           collapsed: true
@@ -663,7 +667,6 @@ Navarra.geomaps = function() {
 
 
   function current_layer() {
-
     name_layer = Navarra.dashboards.config.name_layer;
     var labelLayer;
     $.ajax({
@@ -726,6 +729,36 @@ Navarra.geomaps = function() {
       cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + cl_name + "', 'the_geom', '" + cl_clasue + "')))"
 
     }
+    // Aplica filtro de elementos seleccionados en la tabla
+
+    var cql_filter_data_not_selected = "";
+    var cql_filter_data_selected = "1 = 2 ";
+    var cql_filter_data_ids = "";
+    var data_from_navarra = Navarra.project_types.config.data_dashboard;
+
+    for(x=0; x< data_from_navarra.length; x++){
+      cql_filter_data_ids+=" '"+data_from_navarra[x]+"'";
+     // cql_filter_data_selected+=" or app_id = '"+data_from_navarra[x]+"'";
+      if(x==data_from_navarra.length-1){
+        cql_filter_data_not_selected=" and NOT (app_id IN ("+cql_filter_data_ids+") )";
+        cql_filter_data_selected+=" or app_id IN ("+cql_filter_data_ids+") ";
+      } else{
+        cql_filter_data_ids+=" , ";
+      }
+   }
+
+    
+   cql_filter +=cql_filter_data_not_selected;
+   console.log(cql_filter)
+
+   //elimina los puntos dibujados de la capa
+    if(first_layer){
+      mymap.removeLayer(project_current);
+      mymap.removeLayer(project_current_selected);
+    }
+     first_layer=true;
+    
+    current_layer = workspace + ":" + name_layer;
 
     // Aplica estilo según tipo de geometría
     let style
@@ -735,8 +768,7 @@ Navarra.geomaps = function() {
       style = 'polygon_new';
     }
 
-    current_layer = workspace + ":" + name_layer;
-
+    // agrega registros NO seleccionados en la tabla
     layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
       layers: current_layer, //nombre de la capa (ver get capabilities)
       format: 'image/png',
@@ -755,6 +787,35 @@ Navarra.geomaps = function() {
       sortLayers: false
     });
 
+
+     // agrega registros seleccionados en la tabla
+
+    let style_selected
+    if (type_geometry == 'Point') {
+      style = 'poi_new_selected';
+    } else {
+      style = 'polygon_new_selected';
+    }
+
+    layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
+      layers: current_layer, //nombre de la capa (ver get capabilities)
+      format: 'image/png',
+      transparent: 'true',
+      opacity: 1,
+      version: '1.0.0', //wms version (ver get capabilities)
+      tiled: true,
+      styles: style,
+      INFO_FORMAT: 'application/json',
+      format_options: 'callback:getJson',
+      CQL_FILTER: cql_filter_data_selected
+    })
+
+    project_current_selected = layerProjects.getLayer(current_layer).addTo(mymap);
+    layerControl.addOverlay(project_current_selected, labelLayer, null, {
+      sortLayers: false
+    });
+    
+    
   }
 
 

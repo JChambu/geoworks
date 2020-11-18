@@ -1000,8 +1000,7 @@ function init_chart_doughnut(size_box = null){
 
 //****** FUNCIONES PARA TABLA DE DATOS*****
 // Función para traer todos los datos de los registros contenidos y filtrados
-function init_data_dashboard(){
-
+function init_data_dashboard(haschange){
   var project_type_id = Navarra.dashboards.config.project_type_id;
   var per_page = $(".select_perpage").html();
   var per_page_value = parseInt(per_page);
@@ -1016,7 +1015,7 @@ function init_data_dashboard(){
     var filter_value=$("#choose").val();
     var filter_by_column=$(".filter_by_column").val();
     var order_by_column=$(".order_by_column").val();
-    if(order_by_column==""){order_by_column="id";}
+    var data_to_navarra=[];
 
     $.ajax({
       type: 'GET',
@@ -1030,15 +1029,10 @@ function init_data_dashboard(){
         offset_rows: offset_rows,
         per_page_value: per_page_value,
       },
-      error: function (xhr, ajaxOptions, thrownError) {
-           console.log(xhr.status);
-           console.log(xhr.responseText);
-           console.log(thrownError);
-       },
+    
       success: function(data) {
         var fields = document.querySelectorAll(".data_fields th");
         var data_dashboard=data.data
-        console.log(data_dashboard)
   
       // borramos los datos anteriores
         document.getElementById("tbody_visible").remove();
@@ -1053,6 +1047,7 @@ function init_data_dashboard(){
         document.getElementById("table_visible").appendChild(new_body);
 
         // llenado de la tabla de datos
+        var appid_selected=0;
         data_dashboard.forEach(function(element, index) {
           var new_row = document.createElement("TR");
           new_row.style.cursor = "pointer";
@@ -1066,22 +1061,54 @@ function init_data_dashboard(){
             } else{
                 if(data_properties[column_name]!=undefined){
                     new_celd.innerHTML=data_properties[column_name];
+                    if(column.innerHTML=="app_id"){
+                      appid_selected=data_properties[column_name];
+                    }
                 }              
             } 
+            new_row.setAttribute('onclick','show_item('+index+','+appid_selected+')');
             new_celd.className="custom_row";
             new_row.appendChild(new_celd);
           });
-          //columna de geometria
-           var new_celd = document.createElement("TD");
-           new_celd.innerHTML=element.the_geom;
-           new_celd.style.display="none";
-           new_row.appendChild(new_celd);
            document.getElementById("tbody_visible").appendChild(new_row.cloneNode(true));
            document.getElementById("tbody_hidden").appendChild(new_row);
           });
-         
       }
     })
+
+    //trae todos los datos si hay un filtro activo
+    if(filter_value!=""){
+        if(haschange){
+          $.ajax({
+          type: 'GET',
+          url: '/project_types/search_data_dashboard',
+          datatype: 'json',
+          data: {
+            filter_value: filter_value,
+            filter_by_column: filter_by_column,
+            order_by_column: order_by_column,
+            project_type_id: project_type_id,
+            offset_rows: 0,
+            per_page_value: 200,
+          },
+        
+          success: function(data) {
+            var data_dashboard=data.data
+            data_dashboard.forEach(function(element, index) {
+            var data_properties_appid = element.properties.app_id;
+              data_to_navarra.push(data_properties_appid);        
+            });
+            Navarra.project_types.config.data_dashboard=data_to_navarra;
+              Navarra.geomaps.current_layer(); 
+          }
+          });
+       }
+    } else{
+      if(Navarra.project_types.config.data_dashboard.length>0){
+      Navarra.project_types.config.data_dashboard=[];
+      Navarra.geomaps.current_layer();
+    }          
+  }
 }
 
 //función para paginar datos
@@ -1129,17 +1156,17 @@ function data_pagination(selected, active_page){
   $(".page_data").click(function(){
     active_page=parseInt($(this).html());
     data_pagination(selected,active_page);
-    init_data_dashboard();
+    init_data_dashboard(false);
   });   
   $(".page_back").click(function(){
       active_page--;
       data_pagination(selected, active_page);
-      init_data_dashboard();
+      init_data_dashboard(false);
   });    
   $(".page_foward").click(function(){
       active_page++;
       data_pagination(selected, active_page);
-      init_data_dashboard();
+      init_data_dashboard(false);
   });        
 }
 //****** TERMINAN FUNCIONES PARA TABLA DE DATOS*****

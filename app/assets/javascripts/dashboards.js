@@ -206,7 +206,7 @@ Navarra.dashboards.action_show = function(){
     $("#view-data").on("click", function() {
       //traermos los datos
       if(first_open){
-        init_data_dashboard();
+        init_data_dashboard(false);
         first_open=false;
       }
       
