@@ -1010,6 +1010,7 @@ function init_data_dashboard(haschange){
     } else{
      var active_page=parseInt($(".active_page").html());
     }
+    console.log("pagina activa "+active_page)
     var offset_rows=per_page_value*(active_page-1);
   } 
     var filter_value=$("#choose").val();
@@ -1057,7 +1058,7 @@ function init_data_dashboard(haschange){
             var column_name=column.innerHTML;
             var new_celd = document.createElement("TD");
             if(column.innerHTML=="#"){
-              new_celd.innerHTML=(index+1);
+              new_celd.innerHTML=(index+1)+(active_page-1)*per_page_value;
             } else{
                 if(data_properties[column_name]!=undefined){
                     new_celd.innerHTML=data_properties[column_name];
@@ -1128,7 +1129,7 @@ function data_pagination(selected, active_page){
     for(i=1;i<=total_page;i++){
       if(i<=3||i>total_page-1 || i==active_page-1 || i==active_page || i==active_page+1){
         if(i==active_page){ 
-          numbers+='<li><a class="page_data page_active">'+i+'</a></li>'
+          numbers+='<li><a class="page_data active_page">'+i+'</a></li>'
         } else{
           numbers+='<li><a class="page_data">'+i+'</a></li>'
         }
