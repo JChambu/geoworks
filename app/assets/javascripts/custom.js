@@ -1010,7 +1010,7 @@ function init_data_dashboard(haschange){
     } else{
      var active_page=parseInt($(".active_page").html());
     }
-    var offset_rows=per_page_value*active_page;
+    var offset_rows=per_page_value*(active_page-1);
   } 
     var filter_value=$("#choose").val();
     var filter_by_column=$(".filter_by_column").val();
