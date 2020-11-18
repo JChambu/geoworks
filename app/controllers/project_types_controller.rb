@@ -173,6 +173,8 @@ class ProjectTypesController < ApplicationController
     filter_value = params[:filter_value]
     filter_by_column = params[:filter_by_column]
     order_by_column = params[:order_by_column]
+    type_box = params[:type_box]
+    size_box = params[:size_box]
 
     data = Project
       .select('DISTINCT main.*')
@@ -180,6 +182,34 @@ class ProjectTypesController < ApplicationController
       .where('main.project_type_id = ?', project_type_id.to_i)
       .where('main.row_active = ?', true)
       .where('main.current_season = ?', true)
+    # Aplica filtro geográfico
+    if !type_box.blank? && !size_box.blank?
+
+      if type_box == 'extent'
+
+        minx = size_box[0].to_f if !size_box.nil?
+        miny = size_box[1].to_f if !size_box.nil?
+        maxx = size_box[2].to_f if !size_box.nil?
+        maxy = size_box[3].to_f if !size_box.nil?
+        data = data.where("shared_extensions.ST_Contains(shared_extensions.ST_MakeEnvelope(#{minx}, #{maxy}, #{maxx}, #{miny}, 4326), main.#{:the_geom})")
+
+      else
+
+        arr1 = []
+        size_box.each do |a,x|
+          z = []
+          @a = a
+          @x = x
+          x.each do |b,y|
+            @b = b
+            @y = y
+            z.push(y)
+          end
+          arr1.push([z])
+        end
+        data = data.where("shared_extensions.ST_Contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'), 4326), main.#{:the_geom})")
+      end
+    end
 
     @project_filter = ProjectFilter.where(project_type_id: project_type_id.to_i).where(user_id: current_user.id).first
 
