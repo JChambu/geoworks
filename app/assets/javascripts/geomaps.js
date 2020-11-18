@@ -733,18 +733,11 @@ Navarra.geomaps = function() {
 
     var cql_filter_data_not_selected = "";
     var cql_filter_data_selected = "1 = 2 ";
-    var cql_filter_data_ids = "";
     var data_from_navarra = Navarra.project_types.config.data_dashboard;
 
-    for(x=0; x< data_from_navarra.length; x++){
-      cql_filter_data_ids+=" '"+data_from_navarra[x]+"'";
-     // cql_filter_data_selected+=" or app_id = '"+data_from_navarra[x]+"'";
-      if(x==data_from_navarra.length-1){
-        cql_filter_data_not_selected=" and NOT (app_id IN ("+cql_filter_data_ids+") )";
-        cql_filter_data_selected+=" or app_id IN ("+cql_filter_data_ids+") ";
-      } else{
-        cql_filter_data_ids+=" , ";
-      }
+    if(data_from_navarra!=""){
+        cql_filter_data_not_selected=" and NOT ("+data_from_navarra+" )";
+        cql_filter_data_selected+=" or "+data_from_navarra;
    }
 
     

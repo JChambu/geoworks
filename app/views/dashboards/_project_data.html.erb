@@ -81,7 +81,7 @@ function show_item(index, appid_selected){
    $('table tbody tr').removeClass('found');
    $('table tbody tr:nth-child('+(index+1)+')').addClass('found');
   }
-  Navarra.project_types.config.data_dashboard=[appid_selected];
+  Navarra.project_types.config.data_dashboard="app_id = '"+appid_selected+"'";
   Navarra.geomaps.current_layer();
 }
 

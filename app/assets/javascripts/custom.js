@@ -1016,7 +1016,6 @@ function init_data_dashboard(haschange){
     var filter_value=$("#choose").val();
     var filter_by_column=$(".filter_by_column").val();
     var order_by_column=$(".order_by_column").val();
-    var data_to_navarra=[];
 
     $.ajax({
       type: 'GET',
@@ -1080,36 +1079,15 @@ function init_data_dashboard(haschange){
     //trae todos los datos si hay un filtro activo
     if(filter_value!=""){
         if(haschange){
-          $.ajax({
-          type: 'GET',
-          url: '/project_types/search_data_dashboard',
-          datatype: 'json',
-          data: {
-            filter_value: filter_value,
-            filter_by_column: filter_by_column,
-            order_by_column: order_by_column,
-            project_type_id: project_type_id,
-            offset_rows: 0,
-            per_page_value: 200,
-          },
-        
-          success: function(data) {
-            var data_dashboard=data.data
-            data_dashboard.forEach(function(element, index) {
-            var data_properties_appid = element.properties.app_id;
-              data_to_navarra.push(data_properties_appid);        
-            });
-            Navarra.project_types.config.data_dashboard=data_to_navarra;
-              Navarra.geomaps.current_layer(); 
-          }
-          });
-       }
-    } else{
-      if(Navarra.project_types.config.data_dashboard.length>0){
-      Navarra.project_types.config.data_dashboard=[];
-      Navarra.geomaps.current_layer();
-    }          
-  }
+            Navarra.project_types.config.data_dashboard="strToLowerCase("+filter_by_column+") like '%"+filter_value.toLowerCase()+"%'";
+            Navarra.geomaps.current_layer();
+        } else{
+          if(Navarra.project_types.config.data_dashboard.length!=""){
+            Navarra.project_types.config.data_dashboard="";
+            Navarra.geomaps.current_layer();
+          }          
+        }
+    }
 }
 
 //función para paginar datos
