@@ -1006,6 +1006,20 @@ function init_chart_doughnut(size_box = null){
 //****** FUNCIONES PARA TABLA DE DATOS*****
 // Función para traer todos los datos de los registros contenidos y filtrados
 function init_data_dashboard(haschange){
+  var type_box = 'polygon';
+  var size_box = Navarra.dashboards.config.size_polygon;
+  if (size_box.length==0) {
+    var size_box = [];
+    type_box = 'extent';
+    size_ext = Navarra.dashboards.config.size_box;
+    size_box[0] = size_ext['_southWest']['lng'];
+    size_box[1] = size_ext['_southWest']['lat'];
+    size_box[2] = size_ext['_northEast']['lng'];
+    size_box[3] = size_ext['_northEast']['lat'];
+  }
+
+  var conditions = Navarra.project_types.config.filter_kpi;
+
   var project_type_id = Navarra.dashboards.config.project_type_id;
   var per_page = $(".select_perpage").html();
   var per_page_value = parseInt(per_page);
@@ -1015,7 +1029,6 @@ function init_data_dashboard(haschange){
     } else{
      var active_page=parseInt($(".active_page").html());
     }
-    console.log("pagina activa "+active_page)
     var offset_rows=per_page_value*(active_page-1);
   } 
     var filter_value=$("#choose").val();
@@ -1033,6 +1046,9 @@ function init_data_dashboard(haschange){
         project_type_id: project_type_id,
         offset_rows: offset_rows,
         per_page_value: per_page_value,
+        type_box: type_box,
+        size_box: size_box,
+        data_conditions: conditions
       },
     
       success: function(data) {
@@ -1085,12 +1101,13 @@ function init_data_dashboard(haschange){
       }
     })
 
-    //trae todos los datos si hay un filtro activo
+    //Si hay cambios en los datos, recalcula el search
     if(haschange){
-      if(filter_value!=""){        
+      if(filter_value!=""){ // si hay una búsqueda en el search    
             Navarra.project_types.config.data_dashboard="strToLowerCase("+filter_by_column+") like '%"+filter_value.toLowerCase()+"%'";
             Navarra.geomaps.current_layer();
 
+            //clacula paginación de la busqueda e indicador de cantidad sobre el total
             $.ajax({
               type: 'GET',
               url: '/project_types/search_data_dashboard',
@@ -1102,20 +1119,28 @@ function init_data_dashboard(haschange){
                 project_type_id: project_type_id,
                 offset_rows: 0,
                 per_page_value: 100000000,
+                type_box: type_box,
+                size_box: size_box,
+                data_conditions: conditions
               },
             
               success: function(data) {
                 var totalfiles_selected=data.data.length;
+                // pagina teniendo en cuenta solo lo buscado en el search
                 data_pagination(totalfiles_selected,1);
+                //calcula y muestra el indicador del total buscado sobre el total en el mapa
                 var percentage_selected = parseInt(totalfiles_selected/$('.total_files').val()*10000)/100;
                 $('.selected_files_from_total').html(totalfiles_selected+"/"+$('.total_files').val()+" ("+percentage_selected+"%)");
               }
             });
         } else{
-          if(Navarra.project_types.config.data_dashboard.length!=""){
+          if(Navarra.project_types.config.data_dashboard.length!=""){// si no hay búsqueda pero había algo filtrado desde la tabla previamente
+            //borra la selección previa
             Navarra.project_types.config.data_dashboard="";
             Navarra.geomaps.current_layer();
+            // reinicia paginacion
             data_pagination($('.total_files').val(),1);
+            //elimina el indicador de total buscado
             $('.selected_files_from_total').html("");
           }          
         }
@@ -1421,10 +1446,8 @@ function set_time_slider_values(data){
   }
   from_pretty+=' 00:00';
   to_pretty+=' 23:59:59.99';
-  $('time-slider-from-value').val(from_pretty);
-  $('time-slider-to-value').val(to_pretty);
-  console.log(from_pretty)
-  console.log(to_pretty)
+  $('#time-slider-from-value').val(from_pretty);
+  $('#time-slider-to-value').val(to_pretty);
 }
 
 //Función para aplicar el timeslider como filtro 
@@ -1444,8 +1467,9 @@ function set_time_slider_filter(){
   $('#prev_bar').attr('style',styletext);
   
   //toma los valores from y to
-  var from_value_filter = $('time-slider-from-value').val();
-  var to_value_filter = $('time-slider-to-value').val();
+  var from_value_filter = $('#time-slider-from-value').val();
+  var to_value_filter = $('#time-slider-to-value').val();
+
     /*
     agregar aquí el filtro para búsqueda por fechas
     */

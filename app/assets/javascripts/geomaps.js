@@ -292,6 +292,7 @@ Navarra.geomaps = function() {
       size_box.push(arr1);
       Navarra.dashboards.config.size_polygon.push(arr1);
       show_kpis()
+      show_data_dashboard();
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
       if (heatmap_actived != '') {
         Navarra.geomaps.heatmap_data();
@@ -313,6 +314,7 @@ Navarra.geomaps = function() {
       Navarra.dashboards.config.draw_disabled = true;
       size_box = [];
       init_kpi();
+      init_data_dashboard();
       init_chart_doughnut();
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
       if (heatmap_actived != '') {
@@ -342,6 +344,12 @@ Navarra.geomaps = function() {
   }
 
 
+  function show_data_dashboard() {
+      Navarra.dashboards.config.size_box = mymap.getBounds();
+      init_data_dashboard(true);
+  }
+
+
   var LatLngToCoords = function(LatLng, reverse) { // (LatLng, Boolean) -> Array
     var lat = parseFloat(LatLng.lat),
       lng = parseFloat(LatLng.lng);
@@ -366,6 +374,7 @@ Navarra.geomaps = function() {
     checked = Navarra.dashboards.config.draw_disabled;
     if (checked) {
       show_kpis();
+      show_data_dashboard();
     }
   }
 
@@ -442,6 +451,7 @@ Navarra.geomaps = function() {
       project_current.addTo(mymap);
     }
     show_kpis();
+    show_data_dashboard();
   }
 
 
@@ -732,17 +742,19 @@ Navarra.geomaps = function() {
     // Aplica filtro de elementos seleccionados en la tabla
 
     var cql_filter_data_not_selected = "";
-    var cql_filter_data_selected = "1 = 2 ";
+    var cql_filter_data_selected = "and 1 = 2 ";
     var data_from_navarra = Navarra.project_types.config.data_dashboard;
 
     if(data_from_navarra!=""){
         cql_filter_data_not_selected=" and NOT ("+data_from_navarra+" )";
-        cql_filter_data_selected+=" or "+data_from_navarra;
+        cql_filter_data_selected="and "+data_from_navarra;
    }
 
     
-   cql_filter +=cql_filter_data_not_selected;
-   console.log(cql_filter)
+   cql_filter_not_selected = cql_filter + cql_filter_data_not_selected;
+   console.log(cql_filter_not_selected)
+   cql_filter_selected = cql_filter + cql_filter_data_selected;
+   console.log(cql_filter_selected)
 
    //elimina los puntos dibujados de la capa
     if(first_layer){
@@ -772,7 +784,7 @@ Navarra.geomaps = function() {
       styles: style,
       INFO_FORMAT: 'application/json',
       format_options: 'callback:getJson',
-      CQL_FILTER: cql_filter
+      CQL_FILTER: cql_filter_not_selected
     })
 
     project_current = layerProjects.getLayer(current_layer).addTo(mymap);
@@ -800,7 +812,7 @@ Navarra.geomaps = function() {
       styles: style,
       INFO_FORMAT: 'application/json',
       format_options: 'callback:getJson',
-      CQL_FILTER: cql_filter_data_selected
+      CQL_FILTER: cql_filter_selected
     })
 
     project_current_selected = layerProjects.getLayer(current_layer).addTo(mymap);
