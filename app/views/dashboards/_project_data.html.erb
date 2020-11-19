@@ -26,6 +26,10 @@ $(".th-hover").hover(function(){
   $('#choose').keydown(function(e){
     if(e.keyCode == 13){
         init_data_dashboard(true);
+        if($('#choose').val()==""){
+          $('#choose').addClass("d-none");
+          $('#choose').removeClass("d-inline");
+        }
       }
   })
 });
@@ -149,6 +153,8 @@ function show_geometry(index, multi){
   <input type="text" class="choose_column d-none">
   <input type="text" class="filter_by_column d-none">
   <input type="text" class="order_by_column d-none">
+  <input type="text" class="total_files d-none">
+  <h6 type="text" class="selected_files_from_total d-inline"></h6>
 
   <div class="" style="float: right;">
     <div class="dropdown" style="display: inline-block;">

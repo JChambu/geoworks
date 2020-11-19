@@ -51,7 +51,12 @@ function init_kpi(size_box = null) {
 
         var count_element = element['data'][0]['count'];
 
-        if(element['title'] == 'Seleccionado'){data_pagination(element['data'][0]['count'],1);}
+        if(element['title'] == 'Seleccionado'){
+          if($("#choose").val()==""){
+             data_pagination(element['data'][0]['count'],1);
+          }
+          $('.total_files').val(element['data'][0]['count']);
+        }
 
         if (element['title'] == '% del Total') {
           data_cont = (Number(count_element)).format(2, 3, '.', ',');
@@ -1057,7 +1062,11 @@ function init_data_dashboard(haschange){
             var column_name=column.innerHTML;
             var new_celd = document.createElement("TD");
             if(column.innerHTML=="#"){
-              new_celd.innerHTML=(index+1)+(active_page-1)*per_page_value;
+              if(isNaN(per_page_value)){
+                new_celd.innerHTML=(index+1);
+              }else{
+                new_celd.innerHTML=(index+1)+(active_page-1)*per_page_value;
+              }
             } else{
                 if(data_properties[column_name]!=undefined){
                     new_celd.innerHTML=data_properties[column_name];
@@ -1077,14 +1086,37 @@ function init_data_dashboard(haschange){
     })
 
     //trae todos los datos si hay un filtro activo
-    if(filter_value!=""){
-        if(haschange){
+    if(haschange){
+      if(filter_value!=""){        
             Navarra.project_types.config.data_dashboard="strToLowerCase("+filter_by_column+") like '%"+filter_value.toLowerCase()+"%'";
             Navarra.geomaps.current_layer();
+
+            $.ajax({
+              type: 'GET',
+              url: '/project_types/search_data_dashboard',
+              datatype: 'json',
+              data: {
+                filter_value: filter_value,
+                filter_by_column: filter_by_column,
+                order_by_column: order_by_column,
+                project_type_id: project_type_id,
+                offset_rows: 0,
+                per_page_value: 100000000,
+              },
+            
+              success: function(data) {
+                var totalfiles_selected=data.data.length;
+                data_pagination(totalfiles_selected,1);
+                var percentage_selected = parseInt(totalfiles_selected/$('.total_files').val()*10000)/100;
+                $('.selected_files_from_total').html(totalfiles_selected+"/"+$('.total_files').val()+" ("+percentage_selected+"%)");
+              }
+            });
         } else{
           if(Navarra.project_types.config.data_dashboard.length!=""){
             Navarra.project_types.config.data_dashboard="";
             Navarra.geomaps.current_layer();
+            data_pagination($('.total_files').val(),1);
+            $('.selected_files_from_total').html("");
           }          
         }
     }
