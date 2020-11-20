@@ -79,14 +79,14 @@ function show_column(index,){
 
 //mostrar dato en el mapa
 function show_item(index, appid_selected){
-  console.log("click en item")
  if($('table tbody tr:nth-child('+(index+1)+')').hasClass('found')){
-  $('table tbody tr:nth-child('+(index+1)+')').removeClass('found')
+  $('table tbody tr:nth-child('+(index+1)+')').removeClass('found');
+  Navarra.project_types.config.data_dashboard="";
  }else{
    $('table tbody tr').removeClass('found');
    $('table tbody tr:nth-child('+(index+1)+')').addClass('found');
+   Navarra.project_types.config.data_dashboard="app_id = '"+appid_selected+"'";
   }
-  Navarra.project_types.config.data_dashboard="app_id = '"+appid_selected+"'";
   Navarra.geomaps.current_layer();
 }
 
