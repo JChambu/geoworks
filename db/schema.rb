@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20201022022614) do
+ActiveRecord::Schema.define(version: 20201115013232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -241,6 +241,8 @@ ActiveRecord::Schema.define(version: 20201022022614) do
     t.boolean "current_season", default: true
     t.datetime "gwm_created_at"
     t.datetime "gwm_updated_at"
+    t.boolean "row_enabled", default: true
+    t.datetime "disabled_at"
     t.index ["user_id"], name: "index_project_data_children_on_user_id"
   end
 
@@ -340,6 +342,7 @@ ActiveRecord::Schema.define(version: 20201022022614) do
     t.integer "geo_restriction", default: 0, null: false
     t.boolean "multiple_edition", default: false
     t.integer "level"
+    t.string "enable_period"
     t.index ["user_id"], name: "index_project_types_on_user_id"
   end
 
@@ -358,6 +361,8 @@ ActiveRecord::Schema.define(version: 20201022022614) do
     t.boolean "current_season", default: true
     t.datetime "gwm_created_at"
     t.datetime "gwm_updated_at"
+    t.boolean "row_enabled", default: true
+    t.datetime "disabled_at"
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["user_id"], name: "index_projects_on_user_id"
