@@ -78,7 +78,7 @@ module ProjectTypes::Indicators
     # Aplica filtro de time_slider
     def apply_time_slider_filter data, from_date, to_date, sql_full
 
-      if !from_date.nil? || !to_date.nil?
+      if !from_date.blank? || !to_date.blank?
 
         if sql_full.blank?
           data = data
