@@ -260,7 +260,7 @@ class ProjectTypesController < ApplicationController
     end
 
     # Aplica filtro de time_slider
-    if !from_date.nil? || !to_date.nil?
+    if !from_date.blank? || !to_date.blank?
       data = data
         .where("main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}'")
         .where("main.row_enabled = true OR NOT(main.disabled_at BETWEEN '#{from_date}' AND '#{to_date}')")
