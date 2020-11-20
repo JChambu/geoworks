@@ -276,6 +276,7 @@ Navarra.geomaps = function() {
         Navarra.dashboards.config.size_box = mymap.getBounds();
         Navarra.dashboards.config.size_polygon = [];
         init_kpi();
+        init_data_dashboard(true);
         init_chart_doughnut();
       });
     })
@@ -314,7 +315,7 @@ Navarra.geomaps = function() {
       Navarra.dashboards.config.draw_disabled = true;
       size_box = [];
       init_kpi();
-      init_data_dashboard();
+      init_data_dashboard(true);
       init_chart_doughnut();
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
       if (heatmap_actived != '') {
@@ -759,7 +760,9 @@ Navarra.geomaps = function() {
    //elimina los puntos dibujados de la capa
     if(first_layer){
       mymap.removeLayer(project_current);
+      layerControl.removeLayer(project_current);
       mymap.removeLayer(project_current_selected);
+      layerControl.removeLayer(project_current_selected);
     }
      first_layer=true;
     
@@ -816,9 +819,11 @@ Navarra.geomaps = function() {
     })
 
     project_current_selected = layerProjects.getLayer(current_layer).addTo(mymap);
-    layerControl.addOverlay(project_current_selected, labelLayer, null, {
-      sortLayers: false
-    });
+    if(data_from_navarra!=""){
+      layerControl.addOverlay(project_current_selected, labelLayer+" seleccionados", null, {
+        sortLayers: false
+      });
+    }
     
     
   }
