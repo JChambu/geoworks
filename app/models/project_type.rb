@@ -91,9 +91,7 @@ class ProjectType < ApplicationRecord
     fields.each do |field|
       if field.key != ''
         if field.key != 'app_estado' && field.key != 'app_usuario' && field.key != 'app_id' && field.key != 'gwm_created_at' && field.key != 'gwm_updated_at'
-          if field.popup == true || field.filter_field == true || field.heatmap_field == true || field.colored_points_field == true
-            vv += " properties->>'#{field.key}' as #{field.key}, "
-          end
+          vv += " properties->>'#{field.key}' as #{field.key}, "
         end
       end
     end
