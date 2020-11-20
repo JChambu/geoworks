@@ -24,7 +24,9 @@ Navarra.project_types.config = {
   heatmap_field: '',
   heatmap_indicator: '',
   owner: false,
-  data_dashboard:''
+  data_dashboard:'',
+  from_date: '',
+  to_date: '',
 }
 
 // Select para roles

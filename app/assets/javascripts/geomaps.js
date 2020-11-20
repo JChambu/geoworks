@@ -597,6 +597,8 @@ Navarra.geomaps = function() {
     var data_id = Navarra.dashboards.config.project_type_id;
     var heatmap_field = Navarra.project_types.config.heatmap_field;
     var heatmap_indicator = Navarra.project_types.config.heatmap_indicator;
+    var from_date = Navarra.project_types.config.from_date;
+    var to_date = Navarra.project_types.config.to_date;
 
     $.ajax({
       type: 'GET',
@@ -608,7 +610,9 @@ Navarra.geomaps = function() {
         heatmap_field: heatmap_field,
         size_box: size_box,
         type_box: type_box,
-        heatmap_indicator: heatmap_indicator
+        heatmap_indicator: heatmap_indicator,
+        from_date: from_date,
+        to_date: to_date
       },
       success: function(data) {
         count_row = []
@@ -753,9 +757,7 @@ Navarra.geomaps = function() {
 
     
    cql_filter_not_selected = cql_filter + cql_filter_data_not_selected;
-   console.log(cql_filter_not_selected)
    cql_filter_selected = cql_filter + cql_filter_data_selected;
-   console.log(cql_filter_selected)
 
    //elimina los puntos dibujados de la capa
     if(first_layer){
@@ -1023,6 +1025,7 @@ Navarra.geomaps = function() {
     remove_heatmap: remove_heatmap,
     point_colors_data: point_colors_data,
     current_layer: current_layer,
+    show_kpis: show_kpis,
     layers_internal: layers_internal,
     layers_external: layers_external,
     popup: popup

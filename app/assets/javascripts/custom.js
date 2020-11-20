@@ -32,6 +32,8 @@ function init_kpi(size_box = null) {
   var data_id = Navarra.dashboards.config.project_type_id;
   var dashboard_id = Navarra.dashboards.config.dashboard_id;
   var conditions = Navarra.project_types.config.filter_kpi;
+  var from_date = Navarra.project_types.config.from_date;
+  var to_date = Navarra.project_types.config.to_date;
 
   $.ajax({
     type: 'GET',
@@ -42,7 +44,9 @@ function init_kpi(size_box = null) {
       size_box: size_box,
       graph: false,
       type_box: type_box,
-      data_conditions: conditions
+      data_conditions: conditions,
+      from_date: from_date,
+      to_date: to_date,
     },
     dashboard_id: dashboard_id,
     success: function(data) {
@@ -123,13 +127,24 @@ function init_chart_doughnut(size_box = null){
 
     var data_id = Navarra.dashboards.config.project_type_id;
     var dashboard_id = Navarra.dashboards.config.dashboard_id;
-    var conditions = Navarra.project_types.config.filter_kpi
+    var conditions = Navarra.project_types.config.filter_kpi;
+    var from_date = Navarra.project_types.config.from_date;
+    var to_date = Navarra.project_types.config.to_date;
 
     $.ajax({
       type: 'GET',
       url: '/project_types/kpi.json',
       datatype: 'json',
-      data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
+      data: {
+        data_id: data_id, 
+        size_box: size_box, 
+        graph: true, 
+        type_box: type_box, 
+        dashboard_id: dashboard_id, 
+        data_conditions: conditions,
+        from_date: from_date,
+        to_date: to_date
+      },
       success: function(data){
 
         // Aplicamos drag and drop
@@ -1034,6 +1049,8 @@ function init_data_dashboard(haschange){
     var filter_value=$("#choose").val();
     var filter_by_column=$(".filter_by_column").val();
     var order_by_column=$(".order_by_column").val();
+    var from_date = Navarra.project_types.config.from_date;
+    var to_date = Navarra.project_types.config.to_date;
 
     $.ajax({
       type: 'GET',
@@ -1048,7 +1065,9 @@ function init_data_dashboard(haschange){
         per_page_value: per_page_value,
         type_box: type_box,
         size_box: size_box,
-        data_conditions: conditions
+        data_conditions: conditions,
+        from_date: from_date,
+        to_date: to_date
       },
     
       success: function(data) {
@@ -1121,7 +1140,9 @@ function init_data_dashboard(haschange){
                 per_page_value: 100000000,
                 type_box: type_box,
                 size_box: size_box,
-                data_conditions: conditions
+                data_conditions: conditions,
+                from_date: from_date,
+                to_date: to_date
               },
             
               success: function(data) {
@@ -1129,8 +1150,12 @@ function init_data_dashboard(haschange){
                 // pagina teniendo en cuenta solo lo buscado en el search
                 data_pagination(totalfiles_selected,1);
                 //calcula y muestra el indicador del total buscado sobre el total en el mapa
-                var percentage_selected = parseInt(totalfiles_selected/$('.total_files').val()*10000)/100;
-                $('.selected_files_from_total').html(totalfiles_selected+"/"+$('.total_files').val()+" ("+percentage_selected+"%)");
+                if($('.total_files').val()>0){
+                  var percentage_selected = parseInt(totalfiles_selected/$('.total_files').val()*10000)/100;
+                  $('.selected_files_from_total').html(totalfiles_selected+"/"+$('.total_files').val()+" ("+percentage_selected+"%)");
+                } else{
+                  $('.selected_files_from_total').html("");
+                }
               }
             });
         } else{
@@ -1466,22 +1491,31 @@ function set_time_slider_filter(){
   var styletext='background:#d3d800!important;left:'+left_clone+';width:'+width_clone;
   $('#prev_bar').attr('style',styletext);
   
-  //toma los valores from y to
-  var from_value_filter = $('#time-slider-from-value').val();
-  var to_value_filter = $('#time-slider-to-value').val();
+  //toma los valores from y to y los asigna a las variables globales
+  Navarra.project_types.config.from_date = $('#time-slider-from-value').val();
+  Navarra.project_types.config.to_date = $('#time-slider-to-value').val();
 
-    /*
-    agregar aquí el filtro para búsqueda por fechas
-    */
+  // actualiza datos y mapa
+  init_data_dashboard(true);
+  Navarra.geomaps.current_layer();
+  Navarra.geomaps.show_kpis();
+  var heatmap_actived = Navarra.project_types.config.heatmap_field;
+  if (heatmap_actived != '') {
+    Navarra.geomaps.heatmap_data();
+  }
 }
 
 //Función para eliminar el timeslider como filtro 
 function clear_time_slider_filter(){
   if($('#prev_bar')!=undefined)($('#prev_bar').remove());
   set_time_slider_color();
-  /*
-    agregar aquí la eliminación del filtro para búsqueda por fechas
-  */
+  init_data_dashboard(true);
+  Navarra.geomaps.current_layer();
+  Navarra.geomaps.show_kpis();
+  var heatmap_actived = Navarra.project_types.config.heatmap_field;
+  if (heatmap_actived != '') {
+    Navarra.geomaps.heatmap_data();
+  }
 }
 
 
