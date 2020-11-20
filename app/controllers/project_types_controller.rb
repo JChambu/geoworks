@@ -178,6 +178,8 @@ class ProjectTypesController < ApplicationController
     type_box = params[:type_box]
     size_box = params[:size_box]
     condition = params[:data_conditions]
+    from_date = params[:from_date]
+    to_date = params[:to_date]
 
     data = Project
       .select('DISTINCT main.*')
@@ -255,6 +257,13 @@ class ProjectTypesController < ApplicationController
           end
         end
       end
+    end
+
+    # Aplica filtro de time_slider
+    if !from_date.nil? || !to_date.nil?
+      data = data
+        .where("main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}'")
+        .where("main.row_enabled = true OR NOT(main.disabled_at BETWEEN '#{from_date}' AND '#{to_date}')")
     end
 
     # Aplica filtros generados por el usuario
