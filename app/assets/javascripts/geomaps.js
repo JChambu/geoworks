@@ -258,6 +258,7 @@ Navarra.geomaps = function() {
     layers_internal();
     layers_external();
     show_kpis();
+    init_time_slider();
 
     mymap.on('moveend', onMapZoomedMoved);
     if (markers != undefined) {
@@ -822,7 +823,7 @@ Navarra.geomaps = function() {
 
     project_current_selected = layerProjects.getLayer(current_layer).addTo(mymap);
     if(data_from_navarra!=""){
-      layerControl.addOverlay(project_current_selected, labelLayer+" seleccionados", null, {
+      layerControl.addOverlay(project_current_selected, " seleccionados", null, {
         sortLayers: false
       });
     }
@@ -1037,7 +1038,6 @@ function show_geometry_in_map(geometry,index,data_text, multi){
      circleLayer = new L.featureGroup;
      circleLayer.addTo(mymap);
   }
-  if(!multi){remove_geometry_in_map();}
   geometry=geometry.substring(7,geometry.length-1);
   lat_geometry = geometry.split(' ')[1];
   lon_geometry = geometry.split(' ')[0];
@@ -1058,12 +1058,5 @@ function show_detail_popup(e){
     document.getElementById(id_popup+'_detailpopup').style.display='none';
   }else{
     document.getElementById(id_popup+'_detailpopup').style.display='block';
-  }
-}
-function remove_geometry_in_map(){
-  if(circleLayer!==undefined){
-    mymap.removeLayer(circleLayer);
-    circleLayer = new L.featureGroup;
-    circleLayer.addTo(mymap);
   }
 }

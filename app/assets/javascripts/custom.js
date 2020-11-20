@@ -90,7 +90,7 @@ function capitalize(s){
   return s.toLowerCase().replace( /\b./g, function(a){ return a.toUpperCase(); } );
 };
 
-function init_chart_doughnut(size_box = null){
+function init_chart_doughnut(size_box = null, create_time_s=true){
 
   // Guardamos la posición del scroll
   var scroll = $('.graphics').scrollTop();
@@ -98,8 +98,8 @@ function init_chart_doughnut(size_box = null){
   if( typeof(Chart) === 'undefined'){ return; }
 
   // Agrega el time_slider al card de filtros
-  if ($('#time_slider').length == 0) {
-    init_time_slider();
+  if ($('#time_slider').length == 0 && create_time_s) {
+ //   init_time_slider();
   }
 
   if ($('.graphics').length){
@@ -1136,8 +1136,8 @@ function init_data_dashboard(haschange){
                 filter_by_column: filter_by_column,
                 order_by_column: order_by_column,
                 project_type_id: project_type_id,
-                offset_rows: 0,
-                per_page_value: 100000000,
+                offset_rows: '',
+                per_page_value: '',
                 type_box: type_box,
                 size_box: size_box,
                 data_conditions: conditions,
