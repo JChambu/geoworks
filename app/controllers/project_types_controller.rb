@@ -273,7 +273,7 @@ class ProjectTypesController < ApplicationController
 
     # Aplica búsqueda del usuario
     if !filter_by_column.blank? && !filter_value.blank?
-      data = data.where("main.properties ->> '#{filter_by_column}' ILIKE '#{filter_value}'")
+      data = data.where("main.properties ->> '#{filter_by_column}' ILIKE '%#{filter_value}%'")
     end
 
     # Aplica órden de los registros
