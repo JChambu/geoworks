@@ -255,21 +255,20 @@ class ProjectTypesController < ApplicationController
       end
     end
 
-    #Aplica filtros
-    
+    # Aplica filtros generados por el usuario
     if !condition.blank?
-        condition.each do |key|
-          @s = key.split('|')
-          @field = @s[0]
-          @filter = @s[1]
-          @value = @s[2]
-          if (@filter == '<' || @filter == '>' || @filter == '>=' || @filter == '<=' )
-            data =  data.where(" (properties->>'" + @field +"')::numeric" +  @filter +"#{@value}")
-          else
-            data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
-          end
+      condition.each do |key|
+        @s = key.split('|')
+        @field = @s[0]
+        @filter = @s[1]
+        @value = @s[2]
+        if (@filter == '<' || @filter == '>' || @filter == '>=' || @filter == '<=')
+          data = data.where("(properties->>'" + @field +"')::numeric" + @filter + "#{@value}")
+        else
+          data = data.where("properties->>'" + @field + "'" + @filter + "#{@value}")
         end
       end
+    end
 
     # Aplica búsqueda del usuario
     if !filter_by_column.blank? && !filter_value.blank?
