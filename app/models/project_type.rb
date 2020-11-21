@@ -98,8 +98,10 @@ class ProjectType < ApplicationRecord
     vv += " users.name as app_usuario, "
     vv += " project_statuses.name as app_estado, "
     vv += " projects.id as app_id, "
-    vv += " projects.gwm_created_at as gwm_created_at, "
-    vv += " projects.gwm_updated_at as gwm_updated_at, "
+    vv += " projects.gwm_created_at, "
+    vv += " projects.gwm_updated_at, "
+    vv += " projects.row_enabled, "
+    vv += " projects.disabled_at, "
     vv += " projects.project_type_id, "
     vv += " shared_extensions.st_y(the_geom),  " if type_geometry != 'Polygon'
     vv += " shared_extensions.st_x(the_geom), "if type_geometry != 'Polygon'
