@@ -97,11 +97,6 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
 
   if( typeof(Chart) === 'undefined'){ return; }
 
-  // Agrega el time_slider al card de filtros
-  if ($('#time_slider').length == 0 && create_time_s) {
- //   init_time_slider();
-  }
-
   if ($('.graphics').length){
 
     $(".chart_container").remove();
@@ -1093,7 +1088,7 @@ function init_data_dashboard(haschange){
           new_row.style.cursor = "pointer";
           new_row.className="row_data";
           var data_properties = element.properties;
-          fields.forEach(function(column){
+          fields.forEach(function(column, indexColumn){
             var column_name=column.innerHTML;
             var new_celd = document.createElement("TD");
             if(column.innerHTML=="#"){
@@ -1112,6 +1107,9 @@ function init_data_dashboard(haschange){
             } 
             new_row.setAttribute('onclick','show_item('+index+','+appid_selected+')');
             new_celd.className="custom_row";
+            if($('#table_hidden th:nth-child('+(indexColumn+1)+')').is(':hidden')){
+              new_celd.style.display="none";
+            };
             new_row.appendChild(new_celd);
           });
            document.getElementById("tbody_visible").appendChild(new_row.cloneNode(true));
@@ -1261,6 +1259,7 @@ function create_time_slider(min_date,max_date,from_date,to_date){
   $('#filter-body').prepend(
       $('<div>', {
         'id': 'time_slider_item',
+        'style': 'margin-top:10px',
       }).append(
         $("<input>", {
           'id': 'time_slider'
@@ -1274,7 +1273,7 @@ function create_time_slider(min_date,max_date,from_date,to_date){
       $("<i>", {
         'id':'time_slider_item-save',
         'class': 'fas fa-calendar-check float-right',
-        'style': 'margin-top: -16px; margin-right:4px; color: rgba(250,250,250,0.8); cursor:pointer',
+        'style': 'font-size: 1.5em ; margin-top: -16px; margin-right:4px; color: rgba(250,250,250,0.8); cursor:pointer',
         'onclick': 'set_time_slider_filter()',
       })
     )
@@ -1282,7 +1281,7 @@ function create_time_slider(min_date,max_date,from_date,to_date){
       $("<i>", {
         'id':'time_slider_item-clear',
         'class': 'fas fa-calendar-times float-right',
-        'style': 'margin-top: -16px; margin-right:-16px; color: rgba(250,250,250,0.8); cursor:pointer',
+        'style': 'font-size: 1.5em; margin-top: -16px; margin-right:-16px; color: rgba(250,250,250,0.8); cursor:pointer',
         'onclick': 'clear_time_slider_filter()',
       })
     )
@@ -1291,6 +1290,7 @@ function create_time_slider(min_date,max_date,from_date,to_date){
       type: "double",
       step: 1,
       grid: true,
+      grid_snap: true,
       min: min_date,
       max: max_date,
       from: from_date,
