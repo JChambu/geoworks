@@ -1237,11 +1237,14 @@ function data_pagination(selected, active_page){
 function init_time_slider(){
   var milisec_day=86400000;
   var today= new Date();
-  var min_date=dateToTS(today)-15*milisec_day;
-  var max_date=dateToTS(today)+15*milisec_day;
-  var from_date= dateToTS(today)-2*milisec_day;
-  var to_date= dateToTS(today)+2*milisec_day;  
-  create_time_slider(min_date,max_date,from_date,to_date);
+  var today_string=today.getDate()+"/"+(today.getMonth()-1)+"/"+today.getFullYear();
+  var today_format= changeformatDate(today_string,"day");
+  var min_date=dateToTS(today_format)-5*milisec_day;
+  var max_date=dateToTS(today_format)+5*milisec_day;
+  var from_date= dateToTS(today_format)-2*milisec_day;
+  var to_date= dateToTS(today_format)+2*milisec_day;  
+  var step_time_slider=milisec_day;
+  create_time_slider(min_date,max_date,from_date,to_date, step_time_slider);
   // arma datetimepicker con formato incial por día y le manda los datos del timeslider
   $('#time_slider_from').datetimepicker({
     format      :   "DD/MM/YYYY",
@@ -1255,7 +1258,7 @@ function init_time_slider(){
   $('#time_slider_to').val(tsToDate(max_date));
 }
 //Función para crear el time-slider al inciar y al cambiar la configuración
-function create_time_slider(min_date,max_date,from_date,to_date){
+function create_time_slider(min_date,max_date,from_date,to_date, step_time_slider){
   $('#filter-body').prepend(
       $('<div>', {
         'id': 'time_slider_item',
@@ -1288,7 +1291,7 @@ function create_time_slider(min_date,max_date,from_date,to_date){
   $("#time_slider").ionRangeSlider({
       skin: "flat",
       type: "double",
-      step: 1,
+      step: step_time_slider,
       grid: true,
       grid_snap: true,
       min: min_date,
@@ -1381,20 +1384,30 @@ function set_time_slider(){
   }
 
   if(step_date=='day' || step_date=='month' || step_date=='week'){
-    if(step_date=='day'){range=2}
-    if(step_date=='week'){range=10}
-    if(step_date=='month'){range=45}
-    var middle_date=new Date((dateToTS(min_date)+dateToTS(max_date))/2);
     var milisec_day=86400000;
-    var from_date=dateToTS(middle_date)-range*milisec_day;
-    var to_date=dateToTS(middle_date)+range*milisec_day;
+    if(step_date=='day'){
+      range=1;
+      var step_time_slider=milisec_day;
+    }
+    if(step_date=='week'){
+      range=7;
+      var step_time_slider=milisec_day*7;
+    }
+    if(step_date=='month'){
+      range=31;
+      var step_time_slider=milisec_day*31;
+    }    
+    var total_range=(dateToTS(max_date)-dateToTS(min_date))/(milisec_day*range);
+    var from_date=dateToTS(min_date)+range*milisec_day;
+    var to_date=dateToTS(min_date)+Math.floor(total_range)*31*milisec_day;
   }
   
   if(step_date=='year'){
     min_date=$('#time_slider_from').val();
     max_date=$('#time_slider_to').val();
-    from_date=Math.floor((parseInt($('#time_slider_from').val())+parseInt($('#time_slider_to').val()))/2);
-    to_date=Math.ceil((parseInt($('#time_slider_from').val())+parseInt($('#time_slider_to').val()))/2);
+    from_date=parseInt(min_date)+1;
+    to_date=parseInt(max_date)-1;
+    var step_time_slider=1;
   }
   if(max_date<=min_date){return}
   $('#time_slider_item').remove();
@@ -1402,7 +1415,7 @@ function set_time_slider(){
   $('#time_slider_item-clear').remove();
   $('#time-slider-modal').modal('toggle');
   clear_time_slider_filter();
-  create_time_slider(min_date,max_date,dateToTS(from_date),dateToTS(to_date));
+  create_time_slider(min_date,max_date,dateToTS(from_date),dateToTS(to_date), step_time_slider);
 }
 
 // función que toma el dato y lo convierte en formato "prety" para colocarlo en las etiquetas del timeslider
