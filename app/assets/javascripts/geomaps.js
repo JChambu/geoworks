@@ -754,6 +754,23 @@ Navarra.geomaps = function() {
     if(data_from_navarra!=""){
         cql_filter_data_not_selected=" and NOT ("+data_from_navarra+" )";
         cql_filter_data_selected="and "+data_from_navarra;
+        var geometry_draw_array = Navarra.dashboards.config.size_polygon;
+        if(geometry_draw_array.length>0){
+           geometry_draw = "MULTIPOLYGON(";
+           for (xx = 0; xx < geometry_draw_array.length; xx++) {
+             if(xx>0){geometry_draw += ",((";}else{geometry_draw += "((";}
+            for (x = 0; x < geometry_draw_array[xx].length; x++) {
+              if (x > 0) {
+                geometry_draw += " , ";
+              }
+              geometry_draw += geometry_draw_array[xx][x][0] + " " + geometry_draw_array[xx][x][1];
+              }
+              geometry_draw += "))";
+            }
+            geometry_draw += ")";
+            cql_filter_data_selected+= " and WITHIN(the_geom, "+geometry_draw+")";
+            cql_filter_data_not_selected=" and (NOT ("+data_from_navarra+" ) or NOT( WITHIN(the_geom, "+geometry_draw+")))";
+        }
    }
 
     
