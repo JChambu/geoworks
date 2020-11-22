@@ -82,10 +82,12 @@ function show_item(index, appid_selected){
  if($('table tbody tr:nth-child('+(index+1)+')').hasClass('found')){
   $('table tbody tr:nth-child('+(index+1)+')').removeClass('found');
   Navarra.project_types.config.data_dashboard="";
+  Navarra.project_types.config.item_selected="";
  }else{
    $('table tbody tr').removeClass('found');
    $('table tbody tr:nth-child('+(index+1)+')').addClass('found');
    Navarra.project_types.config.data_dashboard="app_id = '"+appid_selected+"'";
+   Navarra.project_types.config.item_selected= appid_selected;
   }
   Navarra.geomaps.current_layer();
 }

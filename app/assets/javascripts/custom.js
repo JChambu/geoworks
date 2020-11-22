@@ -1082,6 +1082,7 @@ function init_data_dashboard(haschange){
         document.getElementById("table_visible").appendChild(new_body);
 
         // llenado de la tabla de datos
+        var found_id=-1;
         var appid_selected=0;
         data_dashboard.forEach(function(element, index) {
           var new_row = document.createElement("TR");
@@ -1102,6 +1103,10 @@ function init_data_dashboard(haschange){
                     new_celd.innerHTML=data_properties[column_name];
                     if(column.innerHTML=="app_id"){
                       appid_selected=data_properties[column_name];
+                      if(Navarra.project_types.config.item_selected==data_properties[column_name]){
+                        found_id=index+1;
+                        Navarra.project_types.config.data_dashboard="app_id = '"+appid_selected+"'";
+                      }
                     }
                 }              
             } 
@@ -1114,6 +1119,10 @@ function init_data_dashboard(haschange){
           });
            document.getElementById("tbody_visible").appendChild(new_row.cloneNode(true));
            document.getElementById("tbody_hidden").appendChild(new_row);
+           $('table tbody tr:nth-child('+(found_id)+')').addClass('found');
+           if(found_id>=0){
+            Navarra.geomaps.current_layer();
+           }
           });
       }
     })
