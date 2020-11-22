@@ -412,6 +412,13 @@ Navarra.geomaps = function() {
         cql_filter += " and app_usuario='" + user_name + "'";
       }
 
+      //Aplica filtro del Time Slider
+      var from_date = Navarra.project_types.config.from_date;
+      var to_date = Navarra.project_types.config.to_date;
+      if(from_date!=""){
+        cql_filter += " AND (gwm_created_at BETWEEN '"+from_date+"' AND '"+to_date+"') AND (row_enabled = true OR NOT (disabled_at BETWEEN '"+from_date+"' AND '"+to_date+"') )"
+      }
+
       var point_color = Navarra.project_types.config.field_point_colors;
       switch (type_geometry) {
         case 'Point':
@@ -502,6 +509,13 @@ Navarra.geomaps = function() {
             value_filter += " and " + data_filter[0] + data_filter[1] + data_filter[2];
           });
         }
+
+       //Aplica filtro del Time Slider
+      var from_date = Navarra.project_types.config.from_date;
+      var to_date = Navarra.project_types.config.to_date;
+      if(from_date!=""){
+        value_filter += " AND (gwm_created_at BETWEEN '"+from_date+"' AND '"+to_date+"') AND (row_enabled = true OR NOT (disabled_at BETWEEN '"+from_date+"' AND '"+to_date+"') )"
+      }
 
         var env_f = "color:" + col;
         current_tenement = Navarra.dashboards.config.current_tenement;
@@ -745,8 +759,16 @@ Navarra.geomaps = function() {
       cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + cl_name + "', 'the_geom', '" + cl_clasue + "')))"
 
     }
-    // Aplica filtro de elementos seleccionados en la tabla
 
+    //Aplica filtro del Time Slider
+      var from_date = Navarra.project_types.config.from_date;
+      var to_date = Navarra.project_types.config.to_date;
+      if(from_date!=""){
+        cql_filter += " AND (gwm_created_at BETWEEN '"+from_date+"' AND '"+to_date+"') AND (row_enabled = true OR NOT (disabled_at BETWEEN '"+from_date+"' AND '"+to_date+"') )"
+      }
+
+
+    // Aplica filtro de elementos seleccionados en la tabla
     var cql_filter_data_not_selected = "";
     var cql_filter_data_selected = "and 1 = 2 ";
     var data_from_navarra = Navarra.project_types.config.data_dashboard;
@@ -915,8 +937,14 @@ Navarra.geomaps = function() {
             }
 
             cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + cl_name + "', 'the_geom', '" + cl_clasue + "')))"
-
           }
+
+          //Aplica filtro del Time Slider
+            var from_date = Navarra.project_types.config.from_date;
+            var to_date = Navarra.project_types.config.to_date;
+            if(from_date!=""){
+              cql_filter += " AND (gwm_created_at BETWEEN '"+from_date+"' AND '"+to_date+"') AND (row_enabled = true OR NOT (disabled_at BETWEEN '"+from_date+"' AND '"+to_date+"') )"
+            }
 
           layer_current = workspace + ":" + layer;
 

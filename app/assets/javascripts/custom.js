@@ -1516,10 +1516,16 @@ function set_time_slider_filter(){
   if (heatmap_actived != '') {
     Navarra.geomaps.heatmap_data();
   }
+   var wms_filter_options = Navarra.project_types.config.filter_option;
+  if(wms_filter_options!= ''){
+    Navarra.geomaps.wms_filter();
+  }
 }
 
 //Función para eliminar el timeslider como filtro 
 function clear_time_slider_filter(){
+  Navarra.project_types.config.from_date = "";
+  Navarra.project_types.config.to_date = "";
   if($('#prev_bar')!=undefined)($('#prev_bar').remove());
   set_time_slider_color();
   init_data_dashboard(true);
@@ -1528,6 +1534,10 @@ function clear_time_slider_filter(){
   var heatmap_actived = Navarra.project_types.config.heatmap_field;
   if (heatmap_actived != '') {
     Navarra.geomaps.heatmap_data();
+  }
+  var wms_filter_options = Navarra.project_types.config.filter_option;
+  if(wms_filter_options!= ''){
+    Navarra.geomaps.wms_filter();
   }
 }
 
