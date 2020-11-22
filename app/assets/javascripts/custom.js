@@ -1066,6 +1066,10 @@ function init_data_dashboard(haschange){
       },
     
       success: function(data) {
+
+        console.log('Pantalla de datos:');
+        console.log(data);
+
         var fields = document.querySelectorAll(".data_fields th");
         var data_dashboard=data.data
   
