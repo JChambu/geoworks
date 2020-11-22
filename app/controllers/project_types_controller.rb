@@ -288,9 +288,18 @@ class ProjectTypesController < ApplicationController
 
     # Aplica órden de los registros
     if !order_by_column.blank?
-      data = data
-        .except(:select).select("DISTINCT main.*, main.properties ->> '#{order_by_column}' AS order")
-        .order("main.properties ->> '#{order_by_column}'")
+      field = ProjectField.where(name: order_by_column, project_type_id: project_type_id).first
+
+      # TODO: se deben corregir los errores ortográficos almacenados en la db
+      if field.field_type.name == 'Numerico'
+        data = data
+          .except(:select).select("DISTINCT main.*, (main.properties ->> '#{order_by_column}')::numeric AS order")
+          .order("(main.properties ->> '#{order_by_column}')::numeric")
+      else
+        data = data
+          .except(:select).select("DISTINCT main.*, main.properties ->> '#{order_by_column}' AS order")
+          .order("main.properties ->> '#{order_by_column}'")
+      end
     else
       data = data.order("main.id")
     end
