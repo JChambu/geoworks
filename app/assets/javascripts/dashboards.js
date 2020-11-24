@@ -228,8 +228,9 @@ Navarra.dashboards.action_show = function(){
         var height_browser = window.innerHeight
         var height_card=$(".card_data").innerHeight()
         var height_table = height_browser*.92 - height_card -50
-        console.log(height_table)
         $(".table_scroll").css("height", height_table);
+        $(".leaflet-control-scale-line").css("display", "none");
+        $(".leaflet-control-attribution").css("display", "none");
       } 
       if (status_view_expanded) { // Expanded
         $('#view-data').removeClass('view-expanded');
@@ -238,10 +239,12 @@ Navarra.dashboards.action_show = function(){
         $(".leaflet-left").css("display", "block");
         $(".table_data_container").css("transition-delay", "0s");
         $(".table_data_container").css("top", "50vh");
-        var height_browser = window.innerHeight
+        var height_browser = window.innerHeight;
         var height_card=$(".card_data").innerHeight()
         var height_table = height_browser*.5 - height_card -50
         $(".table_scroll").css("height", height_table);
+        $(".leaflet-control-scale-line").css("display", "none");
+        $(".leaflet-control-attribution").css("display", "none");
 
       }
       if (status_view_right) { // Normal Down
@@ -255,6 +258,8 @@ Navarra.dashboards.action_show = function(){
         $("#collapse_data").css("max-height", "0vh");
         $("#collapse_data").css("transition", "0.8s");
         $("#collapse_data").css("border", "none");
+        $(".leaflet-control-scale-line").css("display", "block");
+        $(".leaflet-control-attribution").css("display", "block");
       }
       if (status_view_condensed) { // Condensed
         $('#view-data').removeClass('view-condensed');
@@ -270,6 +275,8 @@ Navarra.dashboards.action_show = function(){
         $("#collapse_data").css("transition", "2.5s");
         $("#collapse_data").css("transition-delay", "0.3s");
         $("#collapse_data").css("border", "1px solid rgba(0,0,0,0.6)");
+        $(".leaflet-control-scale-line").css("display", "none");
+        $(".leaflet-control-attribution").css("display", "none");
       }
     });
 
