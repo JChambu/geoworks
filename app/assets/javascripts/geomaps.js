@@ -1041,9 +1041,9 @@ Navarra.geomaps = function() {
                     // Valida si el valor no es nulo
                     if (val != null && val != 'null') {
                       // Elimina los corchetes y comillas del valor (en caso que contenga)
-                      val = val.toString().replace('/\[|\]|\"', '');
+                      val = val.toString().replace(/\[|\]|\"/g, '');
+                      x.push('<b>' + label + ': </b> ' + val);
                     }
-                    x.push('<b>' + label + ': </b> ' + val);
                   });
                   z.innerHTML = x.join(" <br>");
                   inn = document.body.appendChild(z);
