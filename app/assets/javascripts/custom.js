@@ -1097,7 +1097,7 @@ function init_data_dashboard(haschange){
           fields.forEach(function(column, indexColumn){
             var column_name=column.value;
             var new_celd = document.createElement("TD");
-            if(column.innerHTML=="#"){
+            if(column.value=="#"){
               if(isNaN(per_page_value)){
                 new_celd.innerHTML=(index+1);
               }else{

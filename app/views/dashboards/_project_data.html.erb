@@ -185,16 +185,18 @@ function show_geometry(index, multi){
         </th>
         <% if !@fields.nil? %>
           <% @fields.each_with_index do |field, index|  %>
-            <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor: pointer;" id=<%="columnfake_"+field.name %>>
-              <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
-                <p style="color:white; margin-bottom: 0px; white-space: nowrap;"><%= field.name %></p>
-                <div style="padding-top: 10px; padding-bottom:20px">
-                  <i class="fas fa-sort-alpha-down icons" onclick="order_column(<%=index%>)"></i>
-                  <i class="fas fa-search icons" onclick="search_column(<%=index%>)"></i>
-                  <i class="fas fa-times icons" onclick="hide_column(<%=index%>)"></i>
+            <% if field.field_type_id != 8 && field.field_type_id != 6 && !field.hidden %>
+              <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" id=<%="columnfake_"+field.name %>>
+                <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
+                  <p style="color:white; margin-bottom: 0px; white-space: nowrap;"><%= field.name %></p>
+                  <div style="padding-top: 10px; padding-bottom:20px">
+                    <i class="fas fa-sort-alpha-down icons" onclick="order_column(<%=index%>)"></i>
+                    <i class="fas fa-search icons" onclick="search_column(<%=index%>)"></i>
+                    <i class="fas fa-times icons" onclick="hide_column(<%=index%>)"></i>
+                  </div>
                 </div>
-              </div>
-            </th>
+              </th>
+            <% end %>
           <% end %>
         <% end %>
       </tr>
@@ -211,8 +213,10 @@ function show_geometry(index, multi){
         <input type="text" class="d-none field_key" value="#">
         <% if !@fields.nil? %>
         <% @fields.each do |field|  %>
-          <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.name %>><%= field.name %></th>
-          <input type="text" class="d-none field_key" value=<%= field.key %>>
+          <% if field.field_type_id != 8 && field.field_type_id != 6 && !field.hidden %>
+            <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.name %>><%= field.name %></th>
+            <input type="text" class="d-none field_key" value=<%= field.key %>>
+          <% end %>
         <% end %>
         <% end %>
       </tr>
