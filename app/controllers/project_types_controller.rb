@@ -306,6 +306,10 @@ class ProjectTypesController < ApplicationController
         data = data
           .except(:select).select("DISTINCT main.*, (main.properties ->> '#{order_by_column}')::numeric AS order")
           .order("(main.properties ->> '#{order_by_column}')::numeric")
+      elsif field.field_type.name == 'Fecha'
+        data = data
+          .except(:select).select("DISTINCT main.*, (main.properties ->> '#{order_by_column}')::date AS order")
+          .order("(main.properties ->> '#{order_by_column}')::date")
       else
         data = data
           .except(:select).select("DISTINCT main.*, main.properties ->> '#{order_by_column}' AS order")
