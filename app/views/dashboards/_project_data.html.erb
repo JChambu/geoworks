@@ -37,8 +37,8 @@ $(".th-hover").hover(function(){
 
 //ordena descendente y ascendente
 function order_column(index){
-  index+=2;
-  var column_order=($('.table_scroll tr th:nth-child('+index+')').text()).replace(/ /g,'');
+  var column_order=$('#field_key'+index).val();
+  console.log("Texto ordenar "+column_order)
   $('.order_by_column').val(column_order);
   init_data_dashboard(false);
 }
@@ -46,8 +46,8 @@ function order_column(index){
 //abre buscar x  columna
 function search_column(index){
   $('#choose').val('');
-  index+=2;
-  var texto_buscar=($('.table_scroll tr th:nth-child('+index+')').text()).replace(/ /g,'');
+  var texto_buscar=$('#field_key'+index).val();
+  console.log("Texto buscar "+texto_buscar)
  $('#choose').attr("placeholder", "Buscar "+texto_buscar);
  $('.filter_by_column').val(texto_buscar);
  $('#choose').css("width","25%");
@@ -59,7 +59,7 @@ function search_column(index){
 
 //oculta columnas
 function hide_column(index){
-  index+=2;
+  index+=1;
  $('table tr td:nth-child('+index+')').hide()
  $('table tr th:nth-child('+index+')').hide();
  $('.addcolumns a:nth-child('+(index-1)+')').removeClass("d-none");
@@ -68,7 +68,7 @@ function hide_column(index){
 
 //muestra columnas
 function show_column(index,){
-  index+=2;
+  index+=1;
  $('table tr td:nth-child('+index+')').show()
  $('table tr th:nth-child('+index+')').show();
  $('.addcolumns a:nth-child('+(index-1)+')').addClass("d-none");
@@ -147,8 +147,12 @@ function show_geometry(index, multi){
   </a>
   <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; overflow-y: auto;">
     <% if !@fields.nil? %>
-      <% @fields.each_with_index do |field, index|  %>
-        <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>
+    <% index = 0 %>
+      <% @fields.each do |field|  %>
+        <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+        <% index=index+1 %>
+          <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>
+        <% end %>  
       <% end %>
     <% end %>
   </div>
@@ -182,10 +186,13 @@ function show_geometry(index, multi){
       <tr>
         <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
           <p style="color:white; margin-bottom: 0px">#</p>
+          <input type="text" class="d-none field_key" value="#">
         </th>
         <% if !@fields.nil? %>
-          <% @fields.each_with_index do |field, index|  %>
-            <% if field.field_type_id != 8 && field.field_type_id != 6 && !field.hidden %>
+        <% index = 0 %>
+          <% @fields.each do |field|  %>
+            <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+            <% index=index+1 %>
               <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" id=<%="columnfake_"+field.name %>>
                 <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
                   <p style="color:white; margin-bottom: 0px; white-space: nowrap;"><%= field.name %></p>
@@ -193,9 +200,11 @@ function show_geometry(index, multi){
                     <i class="fas fa-sort-alpha-down icons" onclick="order_column(<%=index%>)"></i>
                     <i class="fas fa-search icons" onclick="search_column(<%=index%>)"></i>
                     <i class="fas fa-times icons" onclick="hide_column(<%=index%>)"></i>
+                    <input type="text" class="d-none field_key" id=<%= "field_key"+index.to_s %> value=<%= field.key %>>
                   </div>
                 </div>
               </th>
+              <% else %>
             <% end %>
           <% end %>
         <% end %>
@@ -210,12 +219,10 @@ function show_geometry(index, multi){
     <thead style="visibility: hidden; border-bottom: solid transparent">
       <tr class="data_fields">
         <th>#</th>
-        <input type="text" class="d-none field_key" value="#">
         <% if !@fields.nil? %>
         <% @fields.each do |field|  %>
-          <% if field.field_type_id != 8 && field.field_type_id != 6 && !field.hidden %>
+          <% if field.field_type_id != 11 && field.field_type_id != 7  %>
             <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.name %>><%= field.name %></th>
-            <input type="text" class="d-none field_key" value=<%= field.key %>>
           <% end %>
         <% end %>
         <% end %>
