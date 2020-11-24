@@ -288,7 +288,7 @@ class ProjectTypesController < ApplicationController
 
     # Aplica órden de los registros
     if !order_by_column.blank?
-      field = ProjectField.where(name: order_by_column, project_type_id: project_type_id).first
+      field = ProjectField.where(key: order_by_column, project_type_id: project_type_id).first
 
       Rails.logger.debug ''
       Rails.logger.debug ' ********************* ORDER BY field_type ********************* '
