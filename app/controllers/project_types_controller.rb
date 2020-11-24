@@ -291,7 +291,7 @@ class ProjectTypesController < ApplicationController
       field = ProjectField.where(name: order_by_column, project_type_id: project_type_id).first
 
       # TODO: se deben corregir los errores ortográficos almacenados en la db
-      if field.field_type.name == 'Numerico'
+      if field.field_type.name == 'Numérico' || field.field_type.name == 'Numerico'
         data = data
           .except(:select).select("DISTINCT main.*, (main.properties ->> '#{order_by_column}')::numeric AS order")
           .order("(main.properties ->> '#{order_by_column}')::numeric")
