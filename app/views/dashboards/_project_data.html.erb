@@ -208,9 +208,11 @@ function show_geometry(index, multi){
     <thead style="visibility: hidden; border-bottom: solid transparent">
       <tr class="data_fields">
         <th>#</th>
+        <input type="text" class="d-none field_key" value="#">
         <% if !@fields.nil? %>
         <% @fields.each do |field|  %>
           <th style="min-width: 100px" id=<%="column_"+field.name %>><%= field.name %></th>
+          <input type="text" class="d-none field_key" value=<%= field.key %>>
         <% end %>
         <% end %>
       </tr>

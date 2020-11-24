@@ -1070,7 +1070,8 @@ function init_data_dashboard(haschange){
         console.log('Pantalla de datos:');
         console.log(data);
 
-        var fields = document.querySelectorAll(".data_fields th");
+        var fields = document.querySelectorAll(".field_key");
+        console.log(fields)
         var data_dashboard=data.data
   
       // borramos los datos anteriores
@@ -1094,7 +1095,7 @@ function init_data_dashboard(haschange){
           new_row.className="row_data";
           var data_properties = element.properties;
           fields.forEach(function(column, indexColumn){
-            var column_name=column.innerHTML;
+            var column_name=column.value;
             var new_celd = document.createElement("TD");
             if(column.innerHTML=="#"){
               if(isNaN(per_page_value)){
