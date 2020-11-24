@@ -187,7 +187,7 @@ function show_geometry(index, multi){
           <% @fields.each_with_index do |field, index|  %>
             <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor: pointer;" id=<%="columnfake_"+field.name %>>
               <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
-                <p style="color:white; margin-bottom: 0px"><%= field.name %></p>
+                <p style="color:white; margin-bottom: 0px; white-space: nowrap;"><%= field.name %></p>
                 <div style="padding-top: 10px; padding-bottom:20px">
                   <i class="fas fa-sort-alpha-down icons" onclick="order_column(<%=index%>)"></i>
                   <i class="fas fa-search icons" onclick="search_column(<%=index%>)"></i>
@@ -211,7 +211,7 @@ function show_geometry(index, multi){
         <input type="text" class="d-none field_key" value="#">
         <% if !@fields.nil? %>
         <% @fields.each do |field|  %>
-          <th style="min-width: 100px" id=<%="column_"+field.name %>><%= field.name %></th>
+          <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.name %>><%= field.name %></th>
           <input type="text" class="d-none field_key" value=<%= field.key %>>
         <% end %>
         <% end %>
