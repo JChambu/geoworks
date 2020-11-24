@@ -1108,7 +1108,6 @@ function init_data_dashboard(haschange){
             } else{
                 if(data_properties[column_name]!=undefined){
                     new_celd.innerHTML=data_properties[column_name];
-                    console.log("Columna !!!!! "+column.value)
                     if(column.value=="app_id"){
                       appid_selected=data_properties[column_name];
                       if(Navarra.project_types.config.item_selected==data_properties[column_name]){

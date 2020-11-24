@@ -143,15 +143,19 @@ function show_geometry(index, multi){
 <div class="card-header chart-header-bg-transparent py-1 px-2 card_data">
   Datos
   <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown-columns">
-    <i class="fas fa-plus ml-3 d-none" style="font-size: 0.8em; cursor: pointer;"></i>
+    <i class="fas fa-plus ml-3" style="font-size: 0.8em; cursor: pointer;"></i>
   </a>
   <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; overflow-y: auto;">
     <% if !@fields.nil? %>
     <% index = 0 %>
       <% @fields.each do |field|  %>
         <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-        <% index=index+1 %>
-          <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>
+          <% index=index+1 %>
+          <% if field.name == "app_id" || field.name == "app_estado" || field.name == "app_usuario" || field.name == "gwm_updated_at" || field.name == "created_at" || field.hidden %>
+            <a class="dropdown-item column_data" onclick="show_column(<%=index%>)"><%= field.name %></a>
+          <% else %>
+            <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>
+          <% end %>  
         <% end %>  
       <% end %>
     <% end %>
@@ -193,7 +197,11 @@ function show_geometry(index, multi){
           <% @fields.each do |field|  %>
             <% if field.field_type_id != 11 && field.field_type_id != 7  %>
             <% index=index+1 %>
+            <% if field.name == "app_id" || field.name == "app_estado" || field.name == "app_usuario" || field.name == "gwm_updated_at" || field.name == "created_at" || field.hidden %>
+              <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" class="d-none" id=<%="columnfake_"+field.name %>>
+            <% else %>
               <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" id=<%="columnfake_"+field.name %>>
+            <% end %>    
                 <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
                   <p style="color:white; margin-bottom: 0px; white-space: nowrap;"><%= field.name %></p>
                   <div style="padding-top: 10px; padding-bottom:20px">
@@ -222,7 +230,11 @@ function show_geometry(index, multi){
         <% if !@fields.nil? %>
         <% @fields.each do |field|  %>
           <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+           <% if field.name == "app_id" || field.name == "app_estado" || field.name == "app_usuario" || field.name == "gwm_updated_at" || field.name == "created_at" || field.hidden %>
+            <th style="min-width: 100px; white-space: nowrap;" class="d-none"> id=<%="column_"+field.name %>><%= field.name %></th>
+           <% else %>
             <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.name %>><%= field.name %></th>
+           <% end %> 
           <% end %>
         <% end %>
         <% end %>
