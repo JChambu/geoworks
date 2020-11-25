@@ -1042,9 +1042,7 @@ function init_data_dashboard(haschange){
     var offset_rows=per_page_value*(active_page-1);
   } 
     var filter_value=$("#choose").val();
-    console.log("filtro valor"+filter_value)
     var filter_by_column=$(".filter_by_column").val();
-    console.log("filtro columna "+filter_by_column)
     var order_by_column=$(".order_by_column").val();
     var from_date = Navarra.project_types.config.from_date;
     var to_date = Navarra.project_types.config.to_date;
@@ -1069,11 +1067,7 @@ function init_data_dashboard(haschange){
     
       success: function(data) {
 
-        console.log('Pantalla de datos:');
-        console.log(data);
-
         var fields = document.querySelectorAll(".field_key");
-        console.log(fields)
         var data_dashboard=data.data
   
       // borramos los datos anteriores
@@ -1253,7 +1247,7 @@ function data_pagination(selected, active_page){
 function init_time_slider(){
   var milisec_day=86400000;
   var today= new Date();
-  var today_string=today.getDate()+"/"+(today.getMonth()-1)+"/"+today.getFullYear();
+  var today_string=today.getDate()+"/"+(today.getMonth()+1)+"/"+today.getFullYear();
   var today_format= changeformatDate(today_string,"day");
   var min_date=dateToTS(today_format)-5*milisec_day;
   var max_date=dateToTS(today_format)+5*milisec_day;
