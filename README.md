@@ -141,7 +141,7 @@ PostGIS - PostGIS Database
                   </CssParameter>
                 </Fill>
               </Mark>
-              <Size>10</Size>
+              <Size>12</Size>
             </Graphic>
           </PointSymbolizer>
         </Rule>
@@ -159,7 +159,7 @@ PostGIS - PostGIS Database
                   </CssParameter>
                 </Fill>
               </Mark>
-              <Size>8</Size>
+              <Size>10</Size>
             </Graphic>
           </PointSymbolizer>
         </Rule>
@@ -176,7 +176,50 @@ PostGIS - PostGIS Database
                   </CssParameter>
                 </Fill>
               </Mark>
-              <Size>6</Size>
+              <Size>8</Size>
+            </Graphic>
+          </PointSymbolizer>
+        </Rule>
+      </FeatureTypeStyle>
+    </UserStyle>
+  </NamedLayer>
+</StyledLayerDescriptor>
+```
+
+- Nombre: `poi_new_selected`
+- Estilo:
+
+```
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<StyledLayerDescriptor
+  version="1.0.0"
+  xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"
+  xmlns="http://www.opengis.net/sld"
+  xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NamedLayer>
+    <Name>Zoom-based point</Name>
+    <UserStyle>
+      <Title>GeoServer SLD Cook Book: Zoom-based point</Title>
+      <FeatureTypeStyle>
+        <Rule>
+          <Name>Small</Name>
+          <PointSymbolizer>
+            <Graphic>
+              <Mark>
+                <WellKnownName>Circle</WellKnownName>
+                <Fill>
+                  <CssParameter name="fill">
+                    <ogc:PropertyName>"#d3d800"</ogc:PropertyName>
+                  </CssParameter>
+                </Fill>
+                <Stroke>
+                  <CssParameter name="stroke">#454545</CssParameter>
+                  <CssParameter name="stroke-width">1</CssParameter>
+                </Stroke>
+              </Mark>
+              <Size>12</Size>
             </Graphic>
           </PointSymbolizer>
         </Rule>
@@ -221,6 +264,51 @@ PostGIS - PostGIS Database
             <Stroke>
               <CssParameter name="stroke">#000000</CssParameter>
               <CssParameter name="stroke-width">1</CssParameter>
+            </Stroke>
+          </PolygonSymbolizer>
+        </Rule>
+      </FeatureTypeStyle>
+    </UserStyle>
+  </NamedLayer>
+</StyledLayerDescriptor>
+```
+
+- Nombre: `polygon_new_selected`
+- Estilo:
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<StyledLayerDescriptor
+  version="1.0.0"
+  xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"
+  xmlns="http://www.opengis.net/sld"
+  xmlns:ogc="http://www.opengis.net/ogc"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <!-- a Named Layer is the basic building block of an SLD document -->
+  <NamedLayer>
+    <Name>default_polygon</Name>
+    <UserStyle>
+      <!-- Styles can have names, titles and abstracts -->
+      <Title>Default Polygon</Title>
+      <Abstract>A sample style that draws a polygon</Abstract>
+      <!-- FeatureTypeStyles describe how to render different features -->
+      <!-- A FeatureTypeStyle for rendering polygons -->
+      <FeatureTypeStyle>
+        <Rule>
+          <Name>rule1</Name>
+          <Title>Gray Polygon with Black Outline</Title>
+          <Abstract>A polygon with a gray fill and a 1 pixel black outline</Abstract>
+          <PolygonSymbolizer>
+            <Fill>
+              <CssParameter name="fill">
+                <ogc:PropertyName>"#d3d800"</ogc:PropertyName>
+              </CssParameter>
+              <CssParameter name="fill-opacity">0.6</CssParameter>
+            </Fill>
+            <Stroke>
+              <CssParameter name="stroke">#d3d800</CssParameter>
+              <CssParameter name="stroke-width">2</CssParameter>
             </Stroke>
           </PolygonSymbolizer>
         </Rule>
