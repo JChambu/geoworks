@@ -60,8 +60,8 @@ function search_column(index){
 //oculta columnas
 function hide_column(index){
   index+=1;
- $('table tr td:nth-child('+index+')').hide()
- $('table tr th:nth-child('+index+')').hide();
+ $('table tr td:nth-child('+index+')').hide();
+ $('table tr th:nth-child('+index+')').addClass("d-none");
  $('.addcolumns a:nth-child('+(index-1)+')').removeClass("d-none");
  $('.fa-plus').removeClass("d-none");
 }
@@ -70,7 +70,7 @@ function hide_column(index){
 function show_column(index,){
   index+=1;
  $('table tr td:nth-child('+index+')').show()
- $('table tr th:nth-child('+index+')').show();
+ $('table tr th:nth-child('+index+')').removeClass("d-none")
  $('.addcolumns a:nth-child('+(index-1)+')').addClass("d-none");
  if($(".addcolumns").children().length == $(".column_data.d-none").length){
    $('.fa-plus').addClass("d-none");
@@ -151,7 +151,7 @@ function show_geometry(index, multi){
       <% @fields.each do |field|  %>
         <% if field.field_type_id != 11 && field.field_type_id != 7  %>
           <% index=index+1 %>
-          <% if field.name == "app_id" || field.name == "app_estado" || field.name == "app_usuario" || field.name == "gwm_updated_at" || field.name == "created_at" || field.hidden %>
+          <% if !field.popup %>
             <a class="dropdown-item column_data" onclick="show_column(<%=index%>)"><%= field.name %></a>
           <% else %>
             <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>
@@ -197,7 +197,7 @@ function show_geometry(index, multi){
           <% @fields.each do |field|  %>
             <% if field.field_type_id != 11 && field.field_type_id != 7  %>
             <% index=index+1 %>
-            <% if field.name == "app_id" || field.name == "app_estado" || field.name == "app_usuario" || field.name == "gwm_updated_at" || field.name == "created_at" || field.hidden %>
+            <% if !field.popup %>
               <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" class="d-none" id=<%="columnfake_"+field.name %>>
             <% else %>
               <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" id=<%="columnfake_"+field.name %>>
@@ -230,8 +230,8 @@ function show_geometry(index, multi){
         <% if !@fields.nil? %>
         <% @fields.each do |field|  %>
           <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-           <% if field.name == "app_id" || field.name == "app_estado" || field.name == "app_usuario" || field.name == "gwm_updated_at" || field.name == "created_at" || field.hidden %>
-            <th style="min-width: 100px; white-space: nowrap;" class="d-none"> id=<%="column_"+field.name %>><%= field.name %></th>
+           <% if !field.popup %>
+            <th style="min-width: 100px; white-space: nowrap;" class="d-none" id=<%="column_"+field.name %>><%= field.name %></th>
            <% else %>
             <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.name %>><%= field.name %></th>
            <% end %> 
