@@ -177,13 +177,15 @@ class ProjectTypesController < ApplicationController
     order_by_column = params[:order_by_column]
     type_box = params[:type_box]
     size_box = params[:size_box]
-    condition = params[:data_conditions]
+    data_conditions = params[:data_conditions]
     from_date = params[:from_date]
     to_date = params[:to_date]
 
     data = Project
       .select('DISTINCT main.*')
       .from('projects main')
+      .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
+      .joins('INNER JOIN public.users ON users.id = main.user_id')
       .where('main.project_type_id = ?', project_type_id.to_i)
       .where('main.row_active = ?', true)
       .where('main.current_season = ?', true)
@@ -267,18 +269,31 @@ class ProjectTypesController < ApplicationController
     end
 
     # Aplica filtros generados por el usuario
-    if !condition.blank?
-      condition.each do |key|
+    if !data_conditions.blank?
+
+      data_conditions.each do |key|
+
         @s = key.split('|')
         @field = @s[0]
         @filter = @s[1]
         @value = @s[2]
-        if (@filter == '<' || @filter == '>' || @filter == '>=' || @filter == '<=')
-          data = data.where("(properties->>'" + @field +"')::numeric" + @filter + "#{@value}")
-        else
+
+        # Aplica filtro por campo usuario
+        if @field == 'app_usuario'
+          data =  data.where("users.name " + @filter + " #{@value}")
+        end
+
+        # Aplica filtro por campo estado
+        if @field == 'app_estado'
+          data =  data.where("project_statuses.name " + @filter + " #{@value} ")
+        end
+
+        # Aplica filtro por otro campo
+        if @field != 'app_usuario' && @field != 'app_estado'
           data = data.where("properties->>'" + @field + "'" + @filter + "#{@value}")
         end
       end
+
     end
 
     # Aplica búsqueda del usuario
