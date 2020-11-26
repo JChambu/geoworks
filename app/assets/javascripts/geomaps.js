@@ -112,7 +112,7 @@ Navarra.geomaps = function() {
     L.control.zoom({
       position: 'topright'
     }).addTo(mymap);
-    
+
     editableLayers = new L.FeatureGroup();
     mymap.addLayer(editableLayers);
     var drawControl = new L.Control.Draw({
@@ -801,7 +801,7 @@ Navarra.geomaps = function() {
         }
    }
 
-    
+
    cql_filter_not_selected = cql_filter + cql_filter_data_not_selected;
    cql_filter_selected = cql_filter + cql_filter_data_selected;
 
@@ -813,7 +813,7 @@ Navarra.geomaps = function() {
       layerControl.removeLayer(project_current_selected);
     }
      first_layer=true;
-    
+
     current_layer = workspace + ":" + name_layer;
 
     // Aplica estilo según tipo de geometría
@@ -872,8 +872,8 @@ Navarra.geomaps = function() {
         sortLayers: false
       });
     }
-    
-    
+
+
   }
 
 
