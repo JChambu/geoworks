@@ -412,11 +412,13 @@ Navarra.geomaps = function() {
         cql_filter += " and app_usuario='" + user_name + "'";
       }
 
-      //Aplica filtro del Time Slider
+      // Aplica filtro de time_slider
       var from_date = Navarra.project_types.config.from_date;
       var to_date = Navarra.project_types.config.to_date;
-      if(from_date!=""){
-        cql_filter += " AND (gwm_created_at BETWEEN '"+from_date+"' AND '"+to_date+"') AND (row_enabled = true OR NOT (disabled_at BETWEEN '"+from_date+"' AND '"+to_date+"') )"
+      if (from_date != '' || to_date != '') {
+        cql_filter += " AND (gwm_created_at BETWEEN '" + from_date + "' AND '" + to_date + "')"
+      } else {
+        cql_filter += ' AND row_enabled = true'
       }
 
       var point_color = Navarra.project_types.config.field_point_colors;
@@ -510,12 +512,14 @@ Navarra.geomaps = function() {
           });
         }
 
-       //Aplica filtro del Time Slider
-      var from_date = Navarra.project_types.config.from_date;
-      var to_date = Navarra.project_types.config.to_date;
-      if(from_date!=""){
-        value_filter += " AND (gwm_created_at BETWEEN '"+from_date+"' AND '"+to_date+"') AND (row_enabled = true OR NOT (disabled_at BETWEEN '"+from_date+"' AND '"+to_date+"') )"
-      }
+        // Aplica filtro de time_slider
+        var from_date = Navarra.project_types.config.from_date;
+        var to_date = Navarra.project_types.config.to_date;
+        if (from_date != '' || to_date != '') {
+          cql_filter += " AND (gwm_created_at BETWEEN '" + from_date + "' AND '" + to_date + "')"
+        } else {
+          cql_filter += ' AND row_enabled = true'
+        }
 
         var env_f = "color:" + col;
         current_tenement = Navarra.dashboards.config.current_tenement;
@@ -760,12 +764,14 @@ Navarra.geomaps = function() {
 
     }
 
-    //Aplica filtro del Time Slider
-      var from_date = Navarra.project_types.config.from_date;
-      var to_date = Navarra.project_types.config.to_date;
-      if(from_date!=""){
-        cql_filter += " AND (gwm_created_at BETWEEN '"+from_date+"' AND '"+to_date+"') AND (row_enabled = true OR NOT (disabled_at BETWEEN '"+from_date+"' AND '"+to_date+"') )"
-      }
+    // Aplica filtro de time_slider
+    var from_date = Navarra.project_types.config.from_date;
+    var to_date = Navarra.project_types.config.to_date;
+    if (from_date != '' || to_date != '') {
+      cql_filter += " AND (gwm_created_at BETWEEN '" + from_date + "' AND '" + to_date + "')"
+    } else {
+      cql_filter += ' AND row_enabled = true'
+    }
 
 
     // Aplica filtro de elementos seleccionados en la tabla
@@ -939,12 +945,14 @@ Navarra.geomaps = function() {
             cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + cl_name + "', 'the_geom', '" + cl_clasue + "')))"
           }
 
-          //Aplica filtro del Time Slider
-            var from_date = Navarra.project_types.config.from_date;
-            var to_date = Navarra.project_types.config.to_date;
-            if(from_date!=""){
-              cql_filter += " AND (gwm_created_at BETWEEN '"+from_date+"' AND '"+to_date+"') AND (row_enabled = true OR NOT (disabled_at BETWEEN '"+from_date+"' AND '"+to_date+"') )"
-            }
+          // Aplica filtro de time_slider
+          var from_date = Navarra.project_types.config.from_date;
+          var to_date = Navarra.project_types.config.to_date;
+          if (from_date != '' || to_date != '') {
+            cql_filter += " AND (gwm_created_at BETWEEN '" + from_date + "' AND '" + to_date + "')"
+          } else {
+            cql_filter += ' AND row_enabled = true'
+          }
 
           layer_current = workspace + ":" + layer;
 

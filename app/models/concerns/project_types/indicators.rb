@@ -81,13 +81,17 @@ module ProjectTypes::Indicators
       if !from_date.blank? || !to_date.blank?
 
         if sql_full.blank?
-          data = data
-            .where("main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}'")
-            .where("main.row_enabled = true OR NOT(main.disabled_at BETWEEN '#{from_date}' AND '#{to_date}')")
+          data = data.where("main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}'")
         else
-          data = data.sub('where_clause', "where_clause (main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}')
-            AND (main.row_enabled = true OR NOT (main.disabled_at BETWEEN '#{from_date}' AND '#{to_date}'))
-            AND ")
+          data = data.sub('where_clause', "where_clause (main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}') AND ")
+        end
+
+      else
+
+        if sql_full.blank?
+          data = data.where('main.row_enabled = ?', true)
+        else
+          data = data.sub('where_clause', "where_clause main.row_enabled = true AND ")
         end
 
       end
