@@ -37,9 +37,9 @@
           <th colspan="2">Detalle</th>
           <th class="text-center" colspan="3">Acciones</th>
         </thead>
-        <tbody class="sortable">
-          <% @project_types.each_with_sortable_id do |project_type, sortable_id| %>
-            <tr id="<%= sortable_id %>">
+        <tbody>
+          <% @project_types.each do |project_type| %>
+            <tr>
               <td><%= project_type.name %></td>
               <td><%= project_type.projects.count %></td>
               <% if can? :projects, :visualizer %>
@@ -75,22 +75,3 @@
     </div>
   </div>
 </div>
-<script type="text/javascript">
-  $(function() {
-    $('.sortable').railsSortable({
-      update: function( event, ui ) {
-        var data = {}
-        $(".sortable").find('tr').each(function(index) {
-          var project_type_id = $(this).attr("id").replace(/ProjectType_/g, '');
-          var level = index + 1
-          data[project_type_id] = level
-        })
-        $.ajax({
-          url:  "<%= project_types_update_level_path %>",
-          type: "POST",
-          data: {level_data: data}
-        });
-      }
-    });
-  });
-</script>

@@ -15,7 +15,6 @@ Rails.application.routes.draw do
   get 'projects/search_data' => 'projects#search_data'
   get 'projects/search_statuses' => 'projects#search_statuses'
   post 'project_statuses/options', as: 'project_statuses_options'
-  post 'project_types/update_level', as: 'project_types_update_level'
   post 'project_statuses/update_priority', as: 'project_statuses_update_priority'
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do

@@ -510,17 +510,6 @@ class ProjectTypesController < ApplicationController
 
   end
 
-  # Actualiza el level del proyecto
-  def update_level
-
-    level = params[:level_data]
-    level.each do |p, l|
-      @project_type = ProjectType.find(p)
-      @project_type.update_level!(l)
-    end
-
-
-  end
 
   # PATCH/PUT /project_types/1
   # PATCH/PUT /project_types/1.json
