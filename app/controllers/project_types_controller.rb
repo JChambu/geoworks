@@ -75,7 +75,6 @@ class ProjectTypesController < ApplicationController
       layers["layer_#{project.name_layer}"] = {
         "name": project.name,
         "layer": project.name_layer,
-        "level": project.level,
         "type_geometry": project.type_geometry,
         "color": project.layer_color,
         "layer_filters": layer_filters
