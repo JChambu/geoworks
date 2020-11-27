@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20201115013232) do
+ActiveRecord::Schema.define(version: 20201127205548) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -341,7 +341,7 @@ ActiveRecord::Schema.define(version: 20201115013232) do
     t.text "cover"
     t.integer "geo_restriction", default: 0, null: false
     t.boolean "multiple_edition", default: false
-    t.integer "level"
+    t.integer "level", default: 1
     t.string "enable_period"
     t.index ["user_id"], name: "index_project_types_on_user_id"
   end
