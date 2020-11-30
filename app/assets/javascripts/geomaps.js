@@ -776,12 +776,12 @@ Navarra.geomaps = function() {
 
     // Aplica filtro de elementos seleccionados en la tabla
     var cql_filter_data_not_selected = "";
-    var cql_filter_data_selected = "and 1 = 2 ";
+    var cql_filter_data_selected = " and 1 = 2";
     var data_from_navarra = Navarra.project_types.config.data_dashboard;
 
     if(data_from_navarra!=""){
         cql_filter_data_not_selected=" and NOT ("+data_from_navarra+" )";
-        cql_filter_data_selected="and "+data_from_navarra;
+        cql_filter_data_selected=" and "+data_from_navarra;
         var geometry_draw_array = Navarra.dashboards.config.size_polygon;
         if(geometry_draw_array.length>0){
            geometry_draw = "MULTIPOLYGON(";
