@@ -304,17 +304,6 @@ class ProjectTypesController < ApplicationController
     if !order_by_column.blank?
       field = ProjectField.where(key: order_by_column, project_type_id: project_type_id).first
 
-      Rails.logger.debug ''
-      Rails.logger.debug ' ********************* ORDER BY field_type ********************* '
-      Rails.logger.debug 'field'
-      Rails.logger.debug field
-      Rails.logger.debug 'field.field_type.name'
-      Rails.logger.debug field.field_type.name
-      Rails.logger.debug 'order_by_column'
-      Rails.logger.debug order_by_column
-      Rails.logger.debug ' *************************************************************** '
-      Rails.logger.debug ''
-
       # TODO: se deben corregir los errores ortográficos almacenados en la db
       if field.field_type.name == 'Numérico' || field.field_type.name == 'Numerico'
         data = data
