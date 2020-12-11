@@ -90,6 +90,8 @@ module ProjectTypes::GeoJson
           ProjectField.where(name: 'gwm_updated_at', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Fecha').pluck(:id))).first_or_create!
           fields['app_usuario'] = user_id
           fields['app_estado'] = project_status.id
+          fields['gwm_created_at'] = Date.current
+          fields['gwm_updated_at'] = Date.current
 
           the_geom = a.geometry.as_text
           row = Project.create(
