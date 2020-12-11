@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20201127205548) do
+ActiveRecord::Schema.define(version: 20201211140918) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,6 +83,16 @@ ActiveRecord::Schema.define(version: 20201127205548) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "color"
+  end
+
+  create_table "crono_jobs", force: :cascade do |t|
+    t.string "job_id", null: false
+    t.text "log"
+    t.datetime "last_performed_at"
+    t.boolean "healthy"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["job_id"], name: "index_crono_jobs_on_job_id", unique: true
   end
 
   create_table "customers", id: :serial, force: :cascade do |t|
@@ -342,7 +352,7 @@ ActiveRecord::Schema.define(version: 20201127205548) do
     t.integer "geo_restriction", default: 0, null: false
     t.boolean "multiple_edition", default: false
     t.integer "level", default: 1
-    t.string "enable_period"
+    t.string "enable_period", default: "Nunca"
     t.index ["user_id"], name: "index_project_types_on_user_id"
   end
 
