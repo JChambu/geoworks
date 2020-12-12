@@ -1,9 +1,7 @@
 Navarra.namespace("geomaps");
-var mymap;
-var circleLayer;
-first_layer=false;
+var first_layer=false;
 Navarra.geomaps = function() {
-  var markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
+  var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
   var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current,project_current_selected,current_tenement;
   var ss = [];
   var size_box = [];
@@ -97,16 +95,6 @@ Navarra.geomaps = function() {
       position: 'topleft',
       collapsed: true
     }).addTo(mymap);
-
-    /*
-    var rose = L.control.rose('rose', {
-      position: 'topright',
-      icon: 'default',
-      iSize: 'small',
-      opacity: 0.5
-    });
-    rose.addTo(mymap)
-    */
 
     // Agrega el zoom al mapa
     L.control.zoom({
@@ -1085,31 +1073,3 @@ Navarra.geomaps = function() {
     popup: popup
   }
 }();
-
-function show_geometry_in_map(geometry,index,data_text, multi){
-  if (circleLayer==undefined){
-     circleLayer = new L.featureGroup;
-     circleLayer.addTo(mymap);
-  }
-  geometry=geometry.substring(7,geometry.length-1);
-  lat_geometry = geometry.split(' ')[1];
-  lon_geometry = geometry.split(' ')[0];
-  var myPopup = L.DomUtil.create('div', 'infoWindow');
-  myPopup.innerHTML = "<div onclick='show_detail_popup(event)' style='cursor:pointer' id="+index+"_divpopup><p id="+index+"_titlepopup style='text-align:center; margin:10px'>#" + index + "</p>"+
-  "<p id="+index+"_detailpopup style='display:none'>" + data_text+ "</p></div>"
-
-  circle_data = L.circle([lat_geometry, lon_geometry], {
-    color: '#d3d800',
-    fillColor: '#d3d800',
-    fillOpacity: 0.5,
-    radius: 50
-  }).addTo(circleLayer).bindPopup(myPopup, {autoClose:false} ).openPopup();
-}
-function show_detail_popup(e){
-  id_popup=e.target.id.split('_')[0];
-  if(document.getElementById(id_popup+'_detailpopup').style.display=='block'){
-    document.getElementById(id_popup+'_detailpopup').style.display='none';
-  }else{
-    document.getElementById(id_popup+'_detailpopup').style.display='block';
-  }
-}
