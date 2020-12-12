@@ -1,7 +1,7 @@
 <div class="card m-2 shadow">
   <div class="card-body p-3">
 
-    <ul class="nav nav-pills nav-fill" id="myTab" role="tablist">
+    <ul class="nav nav-pills nav-fill mb-2" id="myTab" role="tablist">
       <% if params[:controller] == 'project_types' && (params[:action] == 'new' || params[:action] == 'create') %>
         <li class="nav-item">
           <a class="nav-link active" id="attributes-tab" data-toggle="tab" href="#attributes" role="tab" aria-controls="attributes" aria-selected="true">Por Atributos</a>
@@ -15,7 +15,7 @@
     <% end %>
     </ul>
 
-    <div class="tab-content mt-2" id="myTabContent">
+    <div class="tab-content" id="myTabContent">
       <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
         <%= render 'attributes' %>
       </div>
