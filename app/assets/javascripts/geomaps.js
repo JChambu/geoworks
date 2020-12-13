@@ -23,9 +23,9 @@ Navarra.geomaps = function() {
       reuseTiles: true
     });
 
-    var grayscale = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    var grayscale = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
       attribution: '',
-      id: 'mapbox.light',
+      id: 'mapbox/light-v10',
       accessToken: 'pk.eyJ1IjoiZmxhdmlhYXJpYXMiLCJhIjoiY2ppY2NzMm55MTN6OTNsczZrcGFkNHpoOSJ9.cL-mifEoJa6szBQUGnLmrA',
       updateWhenIdle: true,
       reuseTiles: true
@@ -85,7 +85,7 @@ Navarra.geomaps = function() {
     baseMaps = {
       "Calles": streets,
       "Satelital": satellite,
-      // "Claro": grayscale,
+      "Claro": grayscale,
       "Oscuro": CartoDB_DarkMatter
     };
 
