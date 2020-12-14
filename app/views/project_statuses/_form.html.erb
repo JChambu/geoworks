@@ -26,14 +26,14 @@
           <div class="row justify-content-center">
             <%= form.label :status_type,'Tipo', class:'col-md-2 text-right col-form-label' %>
             <div class="col-md-5">
-              <%= form.select :status_type, options_for_select(['Asignable', 'Heredable', 'Predeterminado']) ,  {:include_blank => false}, {class: 'form-control form-control-sm'} %>
+              <%= form.select :status_type, options_for_select(['Asignable', 'Heredable', 'Predeterminado'] , selected: @project_status.status_type) ,  {:include_blank => false}, {class: 'form-control form-control-sm'} %>
             </div>
           </div>
           <div id="heredable_block">
           <div class="row justify-content-center">
             <%= form.label :timer,'Tiempo', class:'col-md-2 text-right col-form-label' %>
             <div class="col-md-5">
-              <%= form.select :timer, options_for_select(['No', 'Semana', 'Mes', 'Año']), {:include_blank => false}, {class: 'form-control form-control-sm'} %>
+              <%= form.select :timer, options_for_select(['No', 'Semana', 'Mes', 'Año'] , selected: @project_status.timer), {:include_blank => false}, {class: 'form-control form-control-sm'} %>
             </div>
           </div>
            <div class="row justify-content-center">
@@ -56,7 +56,6 @@
         </div>
 
       <% end %>
-
     </div>
   </div>
 </div>
@@ -64,27 +63,36 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $('#project_status_inherit_project_type_id').on('change', function() {
-      $.ajax({
-        url:  "<%= project_statuses_options_path %>",
-        type: "POST",
-        data: { project_type_id: $(this).val() }
-      });
+     search_inherit_proyect_status(true);
     });
 
     $('#project_status_status_type').on('change', function() {
-      if(project_status_status_type.options[project_status_status_type.selectedIndex].text=='Heredable'){
-        document.getElementById('heredable_block').style.display='block';
-      } else{
-        document.getElementById('heredable_block').style.display='none';
-      }
+      heredable_block();
     });
-
     heredable_block();
+    search_inherit_proyect_status(false);
+    function search_inherit_proyect_status(change){
+       $.ajax({
+        url:  "<%= project_statuses_options_path %>",
+        type: "POST",
+        data: { 
+          project_type_id: $('#project_status_inherit_project_type_id').val(),
+         },
+        success: function(data) {
+          if(!change){
+             $('#project_status_inherit_status_id').val(<%= @project_status.inherit_status_id %>)
+          }
+        }
+      });
+    }
     function heredable_block() {
       if(project_status_status_type.options[project_status_status_type.selectedIndex].text=='Heredable'){
         document.getElementById('heredable_block').style.display='block';
       } else{
         document.getElementById('heredable_block').style.display='none';
+        $('#project_status_timer').val("No");
+        document.getElementById('project_status_inherit_project_type_id').selectedIndex=-1;
+        document.getElementById('project_status_inherit_status_id').selectedIndex=-1;
       }
     }
   });

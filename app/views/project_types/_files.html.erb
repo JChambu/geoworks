@@ -1,27 +1,27 @@
 <script>
-  var loadFile = function(event) {
-    var fileInput = document.getElementById('file-input');
+  var loadFile_files = function(event) {
+    var fileInput = document.getElementById('file-input_file');
     var filePath = fileInput.value;
     var allowedExtensions = /(.jpg|.jpeg|.png|.gif)$/i;
     if(!allowedExtensions.exec(filePath)){
-        document.getElementById('error_text').innerHTML='Extensión no permitida';
-        document.getElementById('error_text').classList.remove('text-secondary');
-        document.getElementById('error_text').classList.add('text-danger');
+        document.getElementById('error_text_file').innerHTML='Extensión no permitida';
+        document.getElementById('error_text_file').classList.remove('text-secondary');
+        document.getElementById('error_text_file').classList.add('text-danger');
         fileInput.value = '';
         return false;
     }
      var sizeByte = fileInput.files[0].size;
      var sizekiloByte = parseInt(sizeByte / 1024);
      if(sizekiloByte > 300){
-        document.getElementById('error_text').innerHTML='Máx. permitido 300Kb';
-        document.getElementById('error_text').classList.remove('text-secondary');
-        document.getElementById('error_text').classList.add('text-danger');
+        document.getElementById('error_text_file').innerHTML='Máx. permitido 300Kb';
+        document.getElementById('error_text_file').classList.remove('text-secondary');
+        document.getElementById('error_text_file').classList.add('text-danger');
         fileInput.value = '';
         return false;
      }
-     document.getElementById('error_text').innerHTML=fileInput.files[0].name;
-     document.getElementById('error_text').classList.add('text-secondary');
-     document.getElementById('error_text').classList.remove('text-danger');
+     document.getElementById('error_text_file').innerHTML=fileInput.files[0].name;
+     document.getElementById('error_text_file').classList.add('text-secondary');
+     document.getElementById('error_text_file').classList.remove('text-danger');
   };
 </script>
 <%= simple_form_for @project_type, html: {multipart: true}  do |f| %>
@@ -35,7 +35,7 @@
 
   <p id="notice"><%= notice %></p>
 
-   <div class="d-flex justify-content-around align-items-center">
+   <div class="d-flex justify-content-around align-items-center mb-2">
      <%= f.input :kind_file, as: :hidden, input_html: {value: 'true' } , wrapper_html: { class: 'd-none' }%>
     <div class="d-flex mr-2">
       <%= f.label :name, 'Nombre:', class:'col-form-label-sm text-right mr-1' %>
@@ -66,14 +66,19 @@
 
     <div class="d-flex mr-2 align-items-center">
       <%= f.label :cover, "Imagen", class:'col-form-label-sm text-right mr-2' %>
-        <%= f.file_field(:cover, multiple: false,id:"file-input", :onchange=>"loadFile(event)" , class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '' , 'data-size':'sm' , 'data-input':false , 'data-badge':'false') %>
-      <p id="error_text" class="h6 ml-2 mb-2 text-nowrap"></p>
+        <%= f.file_field(:cover, multiple: false,id:"file-input_file", :onchange=>"loadFile_files(event)" , class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '' , 'data-size':'sm' , 'data-input':false , 'data-badge':'false') %>
+      <p class="h6 text-nowrap position-absolute mt-3"><small id="error_text_file"></small></p>
     </div>
 
 
     <div class="d-flex mr-2">
       <%= f.label :geo_restriction, 'Restricción (m):', class:'col-form-label-sm text-right mr-2' %>
       <%= f.text_field :geo_restriction, class: 'form-control form-control-sm d-flex', style:'width: 50px' %>
+    </div>
+
+    <div class="d-flex mr-2">
+      <%= f.label :level, 'Nivel:', class:'col-form-label-sm text-right mr-2' %>
+      <%= f.text_field :level, class: 'form-control form-control-sm d-flex', style:'width: 50px' %>
     </div>
 
     <div class="d-flex mr-2 align-items-center">
@@ -83,6 +88,12 @@
         <label class="custom-control-label" for="customCheck3"></label>
       </div>
     </div>
+
+    <div class="d-flex mr-2">
+      <%= f.label :enable_period, 'Deshabilitar:', class:'col-form-label-sm text-right mr-1' %>
+      <%= f.select :enable_period, options_for_select(['Nunca', 'Semana', 'Mes' , 'Año'], selected: @project_type.enable_period), {:include_blank => false}, {class: 'form-control form-control-sm'} %>
+    </div>
+
   </div>
 
   <div class="row justify-content-center my-4">

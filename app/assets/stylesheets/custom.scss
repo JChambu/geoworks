@@ -12,6 +12,7 @@ body {
   position: absolute;
   z-index: 401;
   background-color: rgba(0, 0, 0, 0.2);
+  transition:1s;
 }
 .graphics {
   overflow-y: scroll;
@@ -152,6 +153,22 @@ div.custom-menu.show {
   border-radius: 50%;
   border-style: solid;
 }
+#view-data {
+  cursor: pointer;
+  position:absolute;
+  top:-3vh;
+  left: 50%;
+  z-index: 402 !important;
+  font-size: 20px;
+  color: #e8ebef;
+  background: rgba(58, 63, 68, 0.5);
+  transform: translate(-50%);
+  border-width: 5px;
+  border-color: transparent;
+  border-radius: 50%;
+  border-style: solid;
+  transition:1s;
+}
 
 /* Gráficos */
 .handle {
@@ -225,6 +242,8 @@ div.custom-menu.show {
 }
 .leaflet-control-layers-toggle {
 	background-image: url(asset_path("leaflet/layers.png")) !important;
+  width:31px!important;
+  height:31px!important;
 }
 
 /* Modifica el estilo del toolbar de Leaflet */
@@ -245,11 +264,6 @@ div.custom-menu.show {
   background-color: rgba(58, 63, 68, 0.5) !important;
 }
 
-/* Modifica el margen del norte de Leaflet */
-.leaflet-rose {
-  margin-right: 3px !important;
-}
-
 /* Modifica el estilo del zoom de Leaflet*/
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
@@ -262,16 +276,18 @@ div.custom-menu.show {
   color: #d3d800 !important;
 }
 
+/*Elimina la marca*/
+.leaflet-control-attribution a{
+  display:none!important;
+}
 /* Modifica el estilo de la escala de Leaflet*/
 .leaflet-control-scale-line {
-  background-color: rgba(58, 63, 68, 0.5) !important;
-  color: #e8ebef !important;
-  text-shadow: 1px 1px 1px #2c2e34;
+  background-color: transparent !important;
   border: none !important;
+  border-bottom: 1px solid !important;
   border-radius: 2px;
 }
 .leaflet-control-scale {
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
   border-radius: 2px;
 }
 
@@ -302,10 +318,15 @@ div.custom-menu.show {
   color: #FFFFFF !important;
   text-shadow: 1px 1px 1px #2c2e34;
 }
+.leaflet-popup-content {
+  margin:8px!important;
+  width:fit-content!important;
+}
 
 /* Evita los elementos de leaflet de la derecha se superpongan con el sidebar */
 .leaflet-right {
   margin-right: 30%;
+  transition:1s;
 }
 
 /* Modifica el scroll del navagador */
@@ -341,33 +362,39 @@ div.custom-menu.show {
 }
 
 /* Modifica el estilo del time_slider */
-.irs--flat .irs-from, .irs--flat .irs-to, .irs--flat .irs-single { /* label */
-  color: #484b4f !important;
-  background-color: #d3d800 !important;
-}
-.irs--flat .irs-bar { /* barra */
-  background-color: #d3d800 !important;
+.irs-from ,.irs-to ,.irs-single {
+  margin-top:5px;
 }
 .irs--flat .irs-grid-text { /* texto */
   color: #e8ebef !important;
-  text-shadow: 1px 1px 1px #2c2e34;
+ // text-shadow: 1px 1px 1px #2c2e34;
 }
 .irs--flat .irs-grid-pol { /* regla */
-  background-color: #e8ebef !important;
+  background-color: #e8ebefCC !important;
 }
 .irs--flat .irs-line { /* barra fondo */
-  background-color: #e8ebef !important;
+  background-color: #e8ebefCC !important;
 }
 .irs--flat .irs-min, .irs--flat .irs-max { /* label fondo */
   color: #798088 !important;
-  background-color: #e8ebef !important;
+  background-color: #e8ebefCC !important;
+  margin-top:5px;
 }
-.irs--flat .irs-handle>i:first-child { /* límite */
-  background-color: #bfc400 !important;
+.time-slider-inactive{
+  background-color: #272B3099 !important;
 }
-.irs--flat .irs-from:before, .irs--flat .irs-to:before, .irs--flat .irs-single:before { /* label triángulo */
+.time-slider-inactive:before{
+  border-top-color: #272B3099 !important;
+}
+.time-slider-active{
+  background-color: #d3d800 !important;
+  color: #484b4f !important;
+}
+.time-slider-active:before{
   border-top-color: #d3d800 !important;
 }
+
+/*custom checkbox*/
 .custom-checkbox .custom-control-input:checked~.custom-control-label::before{
   background-color:#d3d800;
 }
@@ -381,4 +408,27 @@ div.custom-menu.show {
     display: inline-block;
     color: red;
     white-space: nowrap;
+}
+.page_active {
+  border-bottom:solid 1px white;
+}
+.page_data{
+  cursor:pointer;
+}
+.circle_status{
+  width:15px;
+  height:15px;
+  background: red;
+  display:inline-block;
+  vertical-align:middle;
+  border-radius: 50%;
+  margin: 0px 10px;
+}
+.custom_row{
+  line-height: normal;
+  padding: 2px !important; 
+  vertical-align: middle !important;
+}
+.project_data_div{
+  border-top: solid 2px transparent;
 }

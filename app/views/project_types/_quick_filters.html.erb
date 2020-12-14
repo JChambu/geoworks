@@ -1,0 +1,66 @@
+<%= form_tag project_type_create_quick_filters_path, :remote => true, :method => :get do |f| %>
+<div class="modal-header">
+  <h4 class="modal-title"> Filtro por Estado </h4>
+  <button type="button" class="close close_quick_filters" ><span>&times;</span></button>
+</div>
+  <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+    <div class="quick_filters_div">
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary close_quick_filters" >Cancelar</button>
+    <%= submit_tag :enviar, id: "quick_filtro", class: "envf btn btn-primary", value: 'Aplicar' %>
+  </div>
+<% end %>
+
+<script>
+  $(document).ready(function(){
+  $.ajax({
+    //url:  "/projects/search_data.json",
+    url:  "/projects/search_statuses.json",
+    type: "GET",
+    //data: { project_field_id: 'app_estado', project_type_id: <%= params[:project_type_id] %> },
+    data: { project_type_id: <%= params[:project_type_id] %> },
+    success: function(data){
+        let parent_div=$('.quick_filters_div').parent();
+        $('.quick_filters_div').remove();
+        
+        let $quick_filters_div = document.createElement('DIV');
+        $quick_filters_div.className = 'quick_filters_div';
+        
+        $.each(data['data'], function(value, a){
+          let container = document.createElement("DIV");
+          container.className="";
+            let opt_check= document.createElement("DIV");
+            opt_check.className="custom-control custom-checkbox d-inline";
+            let opt_check_input1= document.createElement("INPUT");
+              opt_check_input1.type="hidden";
+              opt_check.append(opt_check_input1)
+              let opt_check_input= document.createElement("INPUT");
+              opt_check_input.className="custom-control-input";
+              opt_check_input.id='checkbox'+`${a.name}`;
+              opt_check_input.type="checkbox";
+              opt_check.append(opt_check_input)
+              let opt_check_label= document.createElement("LABEL");
+              opt_check_label.className="string optional control-label custom-control-label";
+              opt_check_label.htmlFor='checkbox'+`${a.name}`;
+              opt_check.append(opt_check_label)
+            container.append(opt_check);
+
+            let opt_circle = document.createElement("DIV");
+                opt_circle.className='circle_status' ;
+                opt_circle.style.background=`${a.color}`
+            container.append(opt_circle);
+            let opt = document.createElement("h6");
+            opt.className='d-inline';
+            opt.innerHTML = `${a.name}`;  
+            container.append(opt);
+          $quick_filters_div.append(container);
+        })
+        parent_div.append($quick_filters_div);        
+    }
+  });
+
+})
+</script>

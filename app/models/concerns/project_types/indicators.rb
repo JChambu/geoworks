@@ -75,6 +75,29 @@ module ProjectTypes::Indicators
       @data
     end
 
+    # Aplica filtro de time_slider
+    def apply_time_slider_filter data, from_date, to_date, sql_full
+
+      if !from_date.blank? || !to_date.blank?
+
+        if sql_full.blank?
+          data = data.where("main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}'")
+        else
+          data = data.sub('where_clause', "where_clause (main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}') AND ")
+        end
+
+      else
+
+        if sql_full.blank?
+          data = data.where('main.row_enabled = ?', true)
+        else
+          data = data.sub('where_clause', "where_clause main.row_enabled = true AND ")
+        end
+
+      end
+      @data = data
+    end
+
     # Aplica filtros owner, atributo e intercapa
     def conditions_for_attributes_and_owner data, user_id, project_type_id, sql_full
 
@@ -267,7 +290,8 @@ module ProjectTypes::Indicators
       @data = data
     end
 
-    def kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id)
+    def kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id, from_date, to_date)
+
       querys=[]
       @op = option_graph
       @dashboard_id = dashboard_id
@@ -291,6 +315,9 @@ module ProjectTypes::Indicators
 
             # Aplica filtros owner, atributo e intercapa
             conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id, chart.sql_full
+
+            # Aplica filtro time_slider
+            @data = apply_time_slider_filter @data, from_date, to_date, chart.sql_full
 
             # Aplica filtros generados por el usuario
             if !data_conditions.blank?
@@ -320,7 +347,7 @@ module ProjectTypes::Indicators
       querys
     end
 
-    def kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id)
+    def kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id, from_date, to_date)
 
       querys = []
       @data_fixed = ''
@@ -341,6 +368,9 @@ module ProjectTypes::Indicators
       # Aplica filtros owner, atributo e intercapa a "Seleccionado" y "% del Total"
       @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id, sql_full
 
+      # Aplica filtro time_slider
+      @data_fixed = apply_time_slider_filter @data_fixed, from_date, to_date, sql_full
+
       # Aplica filtros generados por el usuario
       if !data_conditions.blank?
         @data_fixed = filters_on_the_fly @data_fixed, data_conditions, sql_full
@@ -356,11 +386,14 @@ module ProjectTypes::Indicators
       # Aplica filtros owner, atributo e intercapa al "Total"
       @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id, sql_full
 
+      # Aplica filtro time_slider
+      @ctotal = apply_time_slider_filter @ctotal, from_date, to_date, sql_full
+
       @total_row = @ctotal.count
       @row_selected = @data_fixed.count
       @avg_selected = [{ "count": ((@row_selected.to_f / @total_row.to_f) * 100).round(2) }]
       querys << { "title": 'Total', "description": 'Total', "data": [{ "count": @total_row }], "id": 1000 }
-      querys << { "title": 'Selecionado', "description": 'select', "data": [{ "count": @row_selected }], "id": 1001 }
+      querys << { "title": 'Seleccionado', "description": 'select', "data": [{ "count": @row_selected }], "id": 1001 }
       querys << { "title": '% del Total', "description": 'AVG', "data": @avg_selected, "id": 1002 }
 
       # Indicadores generados por el usuario
@@ -379,6 +412,9 @@ module ProjectTypes::Indicators
 
         # Aplica filtro por atributos y owner
         data = conditions_for_attributes_and_owner data, user_id, project_type_id, chart.sql_full
+
+        # Aplica filtro time_slider
+        data = apply_time_slider_filter data, from_date, to_date, chart.sql_full
 
         # Aplica filtros generados por el usuario
         if !data_conditions.blank?

@@ -1,0 +1,246 @@
+<script type="text/javascript">
+
+//scroll de ambas tablas simultáneamente
+$(document).ready(function () {
+    $(".div_table").on("scroll", function() {
+      $(".div_table").scrollLeft($(this).scrollLeft());
+    });
+
+//Selector cantidad por página
+$(".option_perpage").click(function(){
+  var selText = $(this).text();
+  $(".select_perpage").html(selText+' <span class="caret"></span>');
+  var total_selected=parseInt($('.kpi_1001').html().replace(".",""));
+  data_pagination(total_selected,1);
+  init_data_dashboard(false);
+});
+
+//movimiento de header columnas
+$(".th-hover").hover(function(){
+    $(this).css("top", "-25px");
+    }, function(){
+    $(this).css("top", "0px");
+  });
+
+  //busqueda por columna al hacer click
+  $('#choose').keydown(function(e){
+    if(e.keyCode == 13){
+        init_data_dashboard(true);
+        if($('#choose').val()==""){
+          $('#choose').css("width","0%");
+          $('#choose').addClass("p-0");
+          $('#choose').blur();
+        }
+      }
+  })
+});
+
+//ordena descendente y ascendente
+function order_column(index){
+  var column_order=$('#field_key'+index).val();
+  console.log("Texto ordenar "+column_order)
+  $('.order_by_column').val(column_order);
+  init_data_dashboard(false);
+}
+
+//abre buscar x  columna
+function search_column(index){
+  $('#choose').val('');
+  var texto_buscar=$('#field_key'+index).val();
+  console.log("Texto buscar "+texto_buscar)
+ $('#choose').attr("placeholder", "Buscar "+texto_buscar);
+ $('.filter_by_column').val(texto_buscar);
+ $('#choose').css("width","25%");
+ $('#choose').removeClass("p-0");
+ $('#choose').focus();
+ $('.choose_column').val(index);
+}
+
+
+//oculta columnas
+function hide_column(index){
+  index+=1;
+ $('table tr td:nth-child('+index+')').hide();
+ $('table tr th:nth-child('+index+')').addClass("d-none");
+ $('.addcolumns a:nth-child('+(index-1)+')').removeClass("d-none");
+ $('.fa-plus').removeClass("d-none");
+}
+
+//muestra columnas
+function show_column(index,){
+  index+=1;
+ $('table tr td:nth-child('+index+')').show()
+ $('table tr th:nth-child('+index+')').removeClass("d-none")
+ $('.addcolumns a:nth-child('+(index-1)+')').addClass("d-none");
+ if($(".addcolumns").children().length == $(".column_data.d-none").length){
+   $('.fa-plus').addClass("d-none");
+ }
+}
+
+//mostrar dato en el mapa
+function show_item(index, appid_selected){
+ if($('table tbody tr:nth-child('+(index+1)+')').hasClass('found')){
+  $('table tbody tr:nth-child('+(index+1)+')').removeClass('found');
+  Navarra.project_types.config.data_dashboard="";
+  Navarra.project_types.config.item_selected="";
+ }else{
+   $('table tbody tr').removeClass('found');
+   $('table tbody tr:nth-child('+(index+1)+')').addClass('found');
+   Navarra.project_types.config.data_dashboard="app_id = '"+appid_selected+"'";
+   Navarra.project_types.config.item_selected= appid_selected;
+  }
+  Navarra.geomaps.current_layer();
+}
+
+function show_geometry(index, multi){
+  var geometry= $('.geometry').eq(index).html();
+   var cols = document.querySelectorAll( '.table_scroll table tbody tr:nth-child('+(index+1)+') td');
+   data_text="";
+   var i=0;
+   cols.forEach(function(col){
+    i++;
+     if(col.innerText!="" && i!=1 && i<cols.length){
+     var head = $('.table_scroll table thead tr th:nth-child('+(i)+'');
+     if(head.is(":visible")){
+       data_text+=head.text()+": "+col.textContent+'<br/>';
+     }
+    }
+   })
+}
+
+</script>
+<style type="text/css">
+  .found {
+  background: #d3d80080!important;
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no_scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no_scroll {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.icons{
+  color: inherit!important;
+  display: inline-block;
+  width: auto;
+  padding: 0px 2px;
+}
+.icons:hover{
+  background: none;
+}
+
+
+</style>
+<div class="card-header chart-header-bg-transparent py-1 px-2 card_data">
+  Datos
+  <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown-columns">
+    <i class="fas fa-plus ml-3" style="font-size: 0.8em; cursor: pointer;"></i>
+  </a>
+  <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; overflow-y: auto;">
+    <% if !@fields.nil? %>
+    <% index = 0 %>
+      <% @fields.each do |field|  %>
+        <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+          <% index=index+1 %>
+          <% if !field.popup %>
+            <a class="dropdown-item column_data" onclick="show_column(<%=index%>)"><%= field.name %></a>
+          <% else %>
+            <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>
+          <% end %>  
+        <% end %>  
+      <% end %>
+    <% end %>
+  </div>
+  <input id="choose" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0" placeholder="Buscar" style="width: 0%; transition:1.5s;"  >
+  <input type="text" class="choose_column d-none">
+  <input type="text" class="filter_by_column d-none">
+  <input type="text" class="order_by_column d-none">
+  <input type="text" class="total_files d-none">
+  <h6 type="text" class="selected_files_from_total d-inline"></h6>
+
+  <div class="" style="float: right;">
+    <div class="dropdown" style="display: inline-block;">
+      <h6 class="dropdown-toggle select_perpage m-0 mr-3"  id="dropdownMenuButton" data-toggle   ="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 0.8em; cursor: pointer;">
+        20/pág
+      </h6>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item option_perpage" href="#">20/pág</a>
+        <a class="dropdown-item option_perpage" href="#">50/pág</a>
+        <a class="dropdown-item option_perpage" href="#">100/pág.</a>
+        <a class="dropdown-item option_perpage" href="#">mostrar todo</a>
+      </div>
+    </div>
+    <nav style="display: inline-block;">
+      <ul class="pagination pagination-sm m-0" id="page_numbers"></ul>
+    </nav>
+  </div>
+</div>
+<div class="table-responsive div_table no_scroll" style="height: 30px; overflow-y: hidden; border-bottom: solid 2px rgba(0,0,0,0.6); background: rgba(81, 89, 96, 0.4);">
+  <table class="table table-hover m-0 card-body" id="table_hidden" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
+    <thead>
+      <tr>
+        <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
+          <p style="color:white; margin-bottom: 0px">#</p>
+          <input type="text" class="d-none field_key" value="#">
+        </th>
+        <% if !@fields.nil? %>
+        <% index = 0 %>
+          <% @fields.each do |field|  %>
+            <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+            <% index=index+1 %>
+            <% if !field.popup %>
+              <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" class="d-none" id=<%="columnfake_"+field.name %>>
+            <% else %>
+              <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" id=<%="columnfake_"+field.name %>>
+            <% end %>    
+                <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
+                  <p style="color:white; margin-bottom: 0px; white-space: nowrap;"><%= field.name %></p>
+                  <div style="padding-top: 10px; padding-bottom:20px">
+                    <i class="fas fa-sort-alpha-down icons" onclick="order_column(<%=index%>)"></i>
+                    <i class="fas fa-search icons" onclick="search_column(<%=index%>)"></i>
+                    <i class="fas fa-times icons" onclick="hide_column(<%=index%>)"></i>
+                    <input type="text" class="d-none field_key" id=<%= "field_key"+index.to_s %> value=<%= field.key %>>
+                  </div>
+                </div>
+              </th>
+              <% else %>
+            <% end %>
+          <% end %>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody id="tbody_hidden" style="visibility: hidden;">
+    </tbody>
+  </table>
+</div>
+<div class="table-responsive div_table scroll table_scroll"  style="position: relative; z-index: 10; transition: 1s; background: rgba(81, 89, 96, 0.4);">
+  <table class="table table-hover m-0 card-body" id="table_visible" style="font-size: 0.8em; position: relative;top: -45px; text-align: center;">
+    <thead style="visibility: hidden; border-bottom: solid transparent">
+      <tr class="data_fields">
+        <th>#</th>
+        <% if !@fields.nil? %>
+        <% @fields.each do |field|  %>
+          <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+           <% if !field.popup %>
+            <th style="min-width: 100px; white-space: nowrap;" class="d-none" id=<%="column_"+field.name %>><%= field.name %></th>
+           <% else %>
+            <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.name %>><%= field.name %></th>
+           <% end %> 
+          <% end %>
+        <% end %>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody id="tbody_visible" class="project_data_div">
+    </tbody>
+  </table>
+</div>
