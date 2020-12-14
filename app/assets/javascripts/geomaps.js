@@ -59,7 +59,7 @@ Navarra.geomaps = function() {
       center: [-33.113399134183744, -69.69339599609376],
       zoomControl: false,
       zoomAnimation: false,
-      layers: [streets]
+      layers: [grayscale]
     });
 
 
