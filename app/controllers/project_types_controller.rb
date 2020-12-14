@@ -545,7 +545,7 @@ class ProjectTypesController < ApplicationController
       :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition, :enable_period, :level,
       project_fields_attributes: [
         :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
-        :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,
+        :choice_list_id, :hidden, :read_only, :popup, :data_table, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,
         project_subfields_attributes: [
           :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
           :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script
