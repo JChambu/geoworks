@@ -11,7 +11,7 @@ services:
     env_file:
       - .env
   geoserver:
-    image: kartoza/geoserver:2.15.0
+    image: kartoza/geoserver:2.18.0
     container_name: gw-geoserver
     volumes:
       - ./geoserver/data_dir/:/opt/geoserver/data_dir/

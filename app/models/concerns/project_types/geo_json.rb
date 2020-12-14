@@ -62,7 +62,7 @@ module ProjectTypes::GeoJson
     end
 
     def load_geojson project_type_id, name_layer, type_geometry, user_id
-      
+
       require 'rgeo/geo_json'
 
       @directory = save_file
@@ -90,9 +90,19 @@ module ProjectTypes::GeoJson
           ProjectField.where(name: 'gwm_updated_at', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Fecha').pluck(:id))).first_or_create!
           fields['app_usuario'] = user_id
           fields['app_estado'] = project_status.id
+          fields['gwm_created_at'] = Date.current
+          fields['gwm_updated_at'] = Date.current
 
           the_geom = a.geometry.as_text
-          row = Project.create(properties: fields, project_type_id: project_type_id, the_geom:the_geom, user_id: user_id, project_status_id: project_status.id )
+          row = Project.create(
+            properties: fields,
+            project_type_id: project_type_id,
+            the_geom:the_geom,
+            user_id: user_id,
+            project_status_id: project_status.id,
+            gwm_created_at: Time.zone.now,
+            gwm_updated_at: Time.zone.now
+          )
           if row.valid?
             row.properties.merge!('app_id': row.id)
             row.save

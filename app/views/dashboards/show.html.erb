@@ -19,28 +19,54 @@
       Navarra.dashboards.config.maxy = <%= @extent[0].maxy %>
     <% end %>
 
+    // TODO: Ahora que se aplican los filtros en los datos esta lógica
+    // se está duplicando hay que unficarla con el controlador
+
     // Carga filtro por atributos y owner
-    <% if @project_filters %>
-      <% @project_filters.each do |s| %>
-        <% if !s.properties.nil? %>
-          <% s.properties.each do |p| %>
+    <% if @project_filter %>
+      <% if !@project_filter.properties.nil? %>
+        <% @project_filter.properties.each do |p| %>
 
-            var field_key = '<%= p[0] %>';
-            var operator = '=';
-            var value = '<%= p[1] %>';
+          var field_key = '<%= p[0] %>';
+          var operator = '=';
+          var value = '<%= p[1] %>';
 
-            // Aplica modificaciones si el value es array
-            if (value.match(/&quot;/g) != null) {
-              value = value.replace(/&quot;/g, '\"')
-            }
+          // Aplica modificaciones si el value es array
+          if (value.match(/&quot;/g) != null) {
+            value = value.replace(/&quot;/g, '\"')
+          }
 
-            var filter = field_key + '|' + operator + '|\'' + value + '\'';
-            Navarra.project_types.config.filter_option.push(filter);
+          var filter = field_key + '|' + operator + '|\'' + value + '\'';
+          Navarra.project_types.config.filter_option.push(filter);
 
-          <% end %>
         <% end %>
-        Navarra.project_types.config.owner = <%= s.owner %>;
+        Navarra.project_types.config.owner = <%= @project_filter.owner %>;
       <% end %>
+    <% end %>
+
+    <% if @cross_layer_filter %>
+      <% if !@cross_layer_filter.properties.nil? %>
+        <% @cross_layer_filter.properties.each do |f| %>
+
+        var field_key = '<%= f[0] %>';
+        var operator = '=';
+        var value = '<%= f[1] %>';
+
+        // Aplica modificaciones si el value es array
+        if (value.match(/&quot;/g) != null) {
+          value = value.replace(/&quot;/g, '\"')
+        }
+
+        var contained_filter = field_key + '|' + operator + '|\'' + value + '\'';
+        Navarra.project_types.config.cross_layer_filter.push(contained_filter);
+
+        <% end %>
+      <% end %>
+      Navarra.project_types.config.cross_layer_owner = <%= @cross_layer_filter.owner %>;
+    <% end %>
+
+    <% if @cross_layer %>
+      Navarra.project_types.config.cross_layer = '<%= @cross_layer %>';
     <% end %>
 
   </script>
@@ -61,14 +87,52 @@
   </div>
 </div>
 
+<div id="time-slider-modal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="chartModalLabel"> Time Slider </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="col-md-6">
+            <label class="string optional control-label" for="time_slider_step">Intervalo</label>
+            <select class="form-control form-control-sm" id="time_slider_step" onchange="change_step_time_slider()" style="cursor:pointer;">
+              <option value="day" label="Día"></option>
+              <option value="week" label="Semana"></option>
+              <option value="month" label="Mes"></option>
+              <option value="year" label="Año"></option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row mt-3">
+          <div class="col-md-6">
+            <label class="string optional control-label" for="time_slider_from">Desde</label>
+            <input class="string optional form-control form-control-sm" type="text" id="time_slider_from" style="cursor:pointer">
+          </div>
+          <div class="col-md-6">
+            <label class="string optional control-label" for="time_slider_to">Hasta</label>
+            <input class="string optional form-control form-control-sm" type="text" id="time_slider_to" style="cursor: pointer;">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <input type="button"  value="Guardar" onclick="set_time_slider()" class="btn btn-primary">
+      </div>
+    </div>
+  </div>
+</div>
+
 <%= form_for :q, :html => {:class => 'd-flex justify-content-end', :method => :get} do |f| %>
 
   <div id="map">
-    <div id="rose"></div>
   </div>
 
   <div class="sidebar pt-2 px-2">
-
     <div class="card text-light chart-bg-transparent mb-2" id="filter-container">
       <div class="card-header chart-header-bg-transparent py-1 px-2">
         <button class="close" type="button" data-toggle="collapse" data-target="#collapse_filter" aria-expanded="true" aria-controls="collapse_filter">
@@ -76,8 +140,11 @@
         </button>
         Filtros Activos
       </div>
-      <div class="collapse show" id="collapse_filter">
-        <div class="card-body" id="filter-body"></div>
+      <div class="collapse show" id="collapse_filter" style="overflow-x: hidden;">
+        <div class="card-body" id="filter-body">
+          <input type="text" class="d-none" id="time-slider-from-value">
+          <input type="text" class="d-none" id="time-slider-to-value">
+        </div>
       </div>
     </div>
 
@@ -85,8 +152,14 @@
       <div class="graphics d-flex align-content-start flex-wrap"></div>
     <% end %>
 
-    <i class="fas fa-arrow-alt-circle-left" id="view"></i>
+    <i class="fas fa-arrow-alt-circle-left view-normal" id="view"></i>
 
   </div>
 
+  <div class="pt-2 px-2 table_data_container position-absolute" style="top: 97.5vh; left: 0%; width: 70%; z-index: 401; background-color: rgba(0, 0, 0, 0.2); transition: 1s; transition-delay: 0.3s">
+    <i class="fas fa-arrow-alt-circle-up view-condensed" id="view-data"></i>
+    <div class="card text-light chart-bg-transparent mb-2" id="collapse_data" style="overflow-y: hidden; max-height: 0vh; transition:0.8s; border: none;">
+        <%= render :partial =>'project_data', :locals=>{:projects_data_local => []} %>
+    </div>
+  </div>
 <% end %>

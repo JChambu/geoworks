@@ -3,7 +3,6 @@ var count = '<%= @analytics_dashboard.errors.count %>';
 if (count > 0){
   $('#helpBlock').empty();
   <% @analytics_dashboard.errors.full_messages.each do |msg| %>
-      console.log('<%= msg %>');
     $('#helpBlock').append('<div><%= msg %></div>');
   <% end %>
 }else{

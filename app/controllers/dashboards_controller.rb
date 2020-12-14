@@ -24,14 +24,67 @@ class DashboardsController < ApplicationController
   # GET /dashboards/1
   # GET /dashboards/1.json
   def show
+
     @extent = []
+
     if !@project_type.nil?
-      @projects = Project.where(project_type_id: @project_type.id)
+
+      @fields = ProjectField.where(project_type_id: @project_type.id)
       @extent = Project.geometry_bounds(@project_type.id, current_user.id)
       @current_tenant = Apartment::Tenant.current
-      @project_filters = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id)
-    end
 
+      @projects = Project
+        .select('DISTINCT main.*')
+        .from('projects main')
+        .where('main.project_type_id = ?', @project_type.id)
+        .where('main.row_active = ?', true)
+        .where('main.current_season = ?', true)
+
+      @project_filter = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id).first
+
+      if !@project_filter.nil?
+
+        # Aplica filtro owner
+        if @project_filter.owner == true
+          @projects = @projects.where('main.user_id = ?', current_user.id)
+        end
+
+        # Aplica filtro por atributo a la capa principal
+        if !@project_filter.properties.nil?
+          @project_filter.properties.to_a.each do |prop|
+            @projects = @projects.where("main.properties ->> '#{prop[0]}' = '#{prop[1]}'")
+          end
+        end
+
+        # Aplica filtro intercapa
+        if !@project_filter.cross_layer_filter_id.nil?
+
+          @cross_layer_filter = ProjectFilter.where(id: @project_filter.cross_layer_filter_id).where(user_id: current_user.id).first
+
+          # Cruza la capa principal con la capa secunadaria
+          @projects = @projects
+            .except(:from).from('projects main CROSS JOIN projects sec')
+            .where('shared_extensions.ST_Intersects(main.the_geom, sec.the_geom)')
+            .where('sec.project_type_id = ?', @cross_layer_filter.project_type_id)
+            .where('sec.row_active = ?', true)
+            .where('sec.current_season = ?', true)
+
+          # Aplica filtro por owner a la capa secundaria
+          if @cross_layer_filter.owner == true
+            @projects = @projects.where('sec.user_id = ?', current_user.id)
+          end
+
+          # Aplica filtro por atributo a la capa secundaria
+          if !@cross_layer_filter.properties.nil?
+            @cross_layer_filter.properties.to_a.each do |prop|
+              @projects = @projects.where("sec.properties->>'#{prop[0]}' = '#{prop[1]}'")
+            end
+          end
+
+          @cross_layer = ProjectType.where(id: @cross_layer_filter.project_type_id).pluck(:name_layer).first
+        end
+      end
+    end
   end
 
   # GET /dashboards/new
@@ -91,7 +144,7 @@ class DashboardsController < ApplicationController
       @project_type = ProjectType.joins(:has_project_types).where(id: params[:project_type_id]).where(has_project_types: {user_id: current_user.id}).first
         session[:project_type_id] = @project_type.id if !@project_type.nil?
     else
-        if session.has_key? :project_type_id 
+        if session.has_key? :project_type_id
           @project_type = ProjectType.joins(:has_project_types).where(id: session[:project_type_id]).where(has_project_types: { user_id: current_user.id}).first
           @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).last if @project_type.nil?
         else

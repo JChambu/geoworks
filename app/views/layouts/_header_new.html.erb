@@ -1,3 +1,9 @@
+<script type="text/javascript">
+$(document).ready(function(){
+ 
+});
+</script>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <%= link_to root_path() do %> <%= image_tag "logo_gw_hor_2.png", class: 'mr-4', height:"40" %> <% end %>
   <div class="collapse navbar-collapse" id="navbarColor02">
@@ -85,66 +91,45 @@
         </li>
       <% end %>
 
-      <!-- Proyecto Actual -->
-      <% if !@project_type.nil? && !@project_type.new_record?%>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle nocaret nav-link-width" href="#" id="project_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-clipboard-list align-middle" style="font-size: 24px"></i>
-          </a>
-          <div class="dropdown-menu" id="current_project_menu" aria-labelledby="project_dropdown">
-
-            <% if can? :data, :visualizer%>
-              <%= link_to 'Datos', project_type_projects_path(@project_type.id), class: "dropdown-item" %>
-            <% end %>
-            <% if can? :statuses, :visualizer %>
-              <%= link_to 'Estados', project_type_project_statuses_path(@project_type.id), class: "dropdown-item" %>
-            <% end %>
-            <% if can? :project_types, :share%>
-              <%= link_to 'Compartir', project_type_share_path(@project_type.id), remote:true,remote:true, class: "dropdown-item" %>
-            <% end %>
-            <% if can? :project_types, :edit%>
-              <%= link_to 'Editar', edit_project_type_path(@project_type.id), class: "dropdown-item" %>
-            <% end %>
-            <% if can? :project_types, :destroy%>
-              <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, id: 'project_del_button', class: "dropdown-item" %>
-            <% end %>
-          </div>
-        </li>
-      <% end %>
-
       <% if !@dashboard.nil? %>
-        <!-- Indicadores -->
-        <% if can? :indicators, :visualizer%>
-          <li class="nav-item">
-            <%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, @dashboard.id), class: 'nav-link nav-link-width' do %> <i class="fas fa-database align-middle" title="Crear Indicador" style="font-size: 23px"></i> <% end %>
-          </li>
-        <% end %>
 
         <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
 
           <!-- Herramientas geográficas -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle nocaret nav-link-width" href="#" id="gis_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fas fa-globe-americas align-middle" style="font-size: 24px"></i>
+              <i class="fas fa-search-location align-middle" style="font-size: 24px"></i>
             </a>
-            <div class="dropdown-menu custom-menu" aria-labelledby="gis_dropdown">
+            <div class="dropdown-menu custom-menu" aria-labelledby="gis_dropdown" style="min-width: auto">
+                <%= link_to project_type_quick_filters_path(@project_type.id), class: 'dropdown-item custom-item d-none', id: "filter",:remote => true do %> <i class="fas fa-bell" title="Filtrar por Estado" style="font-size: 20px"></i> <% end %>
+
+                <%= link_to project_type_quick_filters_path(@project_type.id), class: 'dropdown-item custom-item d-none', id: "filter",:remote => true do %> <i class="fas fa-user-alt" title="Filtrar por Estado" style="font-size: 20px"></i> <% end %>
+
+                <div class="modal-content quick_filters_container " style="top: 0px; left:105%; width:max-content; position: absolute;">
+                  </div>
+
               <%= link_to project_type_filters_path(@project_type.id), class: 'dropdown-item custom-item', id: "filter",:remote => true do %> <i class="fas fa-filter align-middle" title="Filtrar" style="font-size: 20px"></i> <% end %>
+              <div class="dropdown-divider"></div>
               <%= link_to project_type_heatmap_path(@project_type.id), class: 'dropdown-item custom-item', id: "heatmap", :remote=> true do %> <i class="fas fa-fire align-middle" title="Mapa de Calor" style="font-size: 20px"></i> <% end %>
-              <%= link_to project_type_point_colors_path(@project_type.id), class: 'dropdown-item custom-item', id: "point_colors", :remote=> true do %> <i class="fas fa-spinner align-middle" title="Puntos de Colores" style="font-size: 20px"></i> <% end %>
+              <!--<%= link_to project_type_point_colors_path(@project_type.id), class: 'dropdown-item custom-item', id: "point_colors", :remote=> true do %> <i class="fas fa-spinner align-middle" title="Colorear Puntos" style="font-size: 20px"></i> <% end %>-->
             </div>
           </li>
 
           <!-- Creador de gráficos -->
-          <% if can? :graphics, :new %>
+          <% if can? :graphics, :new or can? :indicators, :visualizer %>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle nocaret nav-link-width" href="#" id="chart_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-chart-pie align-middle" style="font-size: 24px"></i>
+                <i class="fas fa-chart-bar align-middle" style="font-size: 24px"></i>
               </a>
               <div class="dropdown-menu custom-menu" aria-labelledby="chart_dropdown">
-                <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-pie chart-modal align-middle" style="font-size: 20px" id="doughnut" title="Dona"></i> <% end %>
-                <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-bar chart-modal align-middle" style="font-size: 20px" id="bar" title="Barra"></i> <% end %>
-                <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-align-left chart-modal align-middle" style="font-size: 20px" id="horizontalBar" title="Barra Horizontal"></i> <% end %>
-                <!--<%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-ellipsis-h chart-modal align-middle" style="font-size: 20px" id="bubble" title="Burbuja"></i> <% end %>-->
+                <!-- Indicadores -->
+                <% if can? :indicators, :visualizer%>
+                  <%= link_to project_type_dashboard_analytics_dashboards_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item' do %> <i class="fas fa-database align-middle" title="Crear Indicador" style="font-size: 23px"></i> <% end %>
+                <% end %>
+
+              <% if can? :graphics, :new %>
+                <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-pie chart-modal align-middle" style="font-size: 20px" title="Crear Gráfico"></i> <% end %>
+                <% end %>    
               </div>
             </li>
           <% end %>
@@ -165,7 +150,26 @@
         <i class="fas fa-bars align-middle" title="Menú" style="font-size: 22px"></i>
       </a>
       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-        <%= link_to "Proyectos",project_types_path, class: "dropdown-item" %>
+
+      <!-- Proyecto Actual -->
+      <% if !@project_type.nil? && !@project_type.new_record?%>
+         <% if can? :data, :visualizer%>
+            <%= link_to 'Datos', project_type_projects_path(@project_type.id), class: "dropdown-item" %>
+          <% end %>
+          <% if can? :statuses, :visualizer %>
+            <%= link_to 'Estados', project_type_project_statuses_path(@project_type.id), class: "dropdown-item" %>
+           <% end %>
+           <% if can? :project_types, :share%>
+            <%= link_to 'Compartir', project_type_share_path(@project_type.id), remote:true,remote:true, class: "dropdown-item" %>
+          <% end %>
+          <% if can? :project_types, :edit%>
+            <%= link_to 'Editar', edit_project_type_path(@project_type.id), class: "dropdown-item" %>
+          <% end %>
+          <% if can? :project_types, :destroy%>
+            <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, id: 'project_del_button', class: "dropdown-item" %>
+          <% end %>
+        <% end %>  
+
         <% if can? :choice_lists, :visualizer %>
           <%= link_to 'Listados', choice_lists_path, class: "dropdown-item" %>
         <% end %>

@@ -32,6 +32,8 @@ function init_kpi(size_box = null) {
   var data_id = Navarra.dashboards.config.project_type_id;
   var dashboard_id = Navarra.dashboards.config.dashboard_id;
   var conditions = Navarra.project_types.config.filter_kpi;
+  var from_date = Navarra.project_types.config.from_date;
+  var to_date = Navarra.project_types.config.to_date;
 
   $.ajax({
     type: 'GET',
@@ -42,16 +44,23 @@ function init_kpi(size_box = null) {
       size_box: size_box,
       graph: false,
       type_box: type_box,
-      data_conditions: conditions
+      data_conditions: conditions,
+      from_date: from_date,
+      to_date: to_date,
     },
     dashboard_id: dashboard_id,
     success: function(data) {
 
-      console.log(data);
-
       data.forEach(function(element) {
 
         var count_element = element['data'][0]['count'];
+
+        if(element['title'] == 'Seleccionado'){
+          if($("#choose").val()==""){
+             data_pagination(element['data'][0]['count'],1);
+          }
+          $('.total_files').val(element['data'][0]['count']);
+        }
 
         if (element['title'] == '% del Total') {
           data_cont = (Number(count_element)).format(2, 3, '.', ',');
@@ -81,58 +90,12 @@ function capitalize(s){
   return s.toLowerCase().replace( /\b./g, function(a){ return a.toUpperCase(); } );
 };
 
-function init_chart_doughnut(size_box = null){
+function init_chart_doughnut(size_box = null, create_time_s=true){
 
   // Guardamos la posición del scroll
   var scroll = $('.graphics').scrollTop();
 
   if( typeof(Chart) === 'undefined'){ return; }
-
-  // Agrega el time_slider al card de filtros
-  if ($('#time_slider').length == 0) {
-
-    $('#filter-body').prepend(
-      $('<div>', {
-        'id': 'time_slider_item'
-      }).append(
-        $("<input>", {
-          'id': 'time_slider'
-        }),
-        $("<div>", {
-          'class': 'dropdown-divider',
-        })
-      )
-    )
-
-    var lang = "es-AR";
-    var year = 2019;
-
-    function dateToTS(date) {
-      return date.valueOf();
-    }
-
-    function tsToDate(ts) {
-      var d = new Date(ts);
-
-      return d.toLocaleDateString(lang, {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric'
-      });
-    }
-
-    $("#time_slider").ionRangeSlider({
-      skin: "flat",
-      type: "double",
-      grid: true,
-      min: dateToTS(new Date(year, 10, 1)),
-      max: dateToTS(new Date(year, 11, 1)),
-      from: dateToTS(new Date(year, 10, 8)),
-      to: dateToTS(new Date(year, 10, 23)),
-      prettify: tsToDate
-    });
-
-  }
 
   if ($('.graphics').length){
 
@@ -159,16 +122,25 @@ function init_chart_doughnut(size_box = null){
 
     var data_id = Navarra.dashboards.config.project_type_id;
     var dashboard_id = Navarra.dashboards.config.dashboard_id;
-    var conditions = Navarra.project_types.config.filter_kpi
+    var conditions = Navarra.project_types.config.filter_kpi;
+    var from_date = Navarra.project_types.config.from_date;
+    var to_date = Navarra.project_types.config.to_date;
 
     $.ajax({
       type: 'GET',
       url: '/project_types/kpi.json',
       datatype: 'json',
-      data: {data_id: data_id, size_box: size_box, graph: true, type_box: type_box, dashboard_id: dashboard_id, data_conditions: conditions},
+      data: {
+        data_id: data_id,
+        size_box: size_box,
+        graph: true,
+        type_box: type_box,
+        dashboard_id: dashboard_id,
+        data_conditions: conditions,
+        from_date: from_date,
+        to_date: to_date
+      },
       success: function(data){
-
-        console.log(data);
 
         // Aplicamos drag and drop
         dragula({
@@ -207,7 +179,187 @@ function init_chart_doughnut(size_box = null){
           var bubble_dataset_y = [];
           var scale;
 
+          // Agrupamos los labels y los datos para luego poder ajustar las series con los mismos valores en el eje x
+          var lab_all=[];//variable que agrupa los labels de cada serie
+          var da_all=[];//Variable que agrupa los datos de cada serie
+          var lab_acumulado=[];//variable que acumula todos los labels de todas las series
+
           // Separamos las series
+          $.each(reg, function(a, b){
+
+            // Extraemos los datos de cada serie
+            $.each(b, function(index, value){
+
+              // Extraemos tipo de gráfico
+              if(index == 'chart_type'){
+                type_chart = value;
+              }
+
+              // Extraemos el array con los datos de la serie
+              if (index == 'data'){
+                data_general = value;
+                var lab = [];
+                var da = [];
+
+                // Extraemos los datos del array de la serie
+                $.each(data_general, function(idx, vax){
+                  // Burbuja
+                  //Cuidado no está corregido para agrupar las series y chequear que los valores de y coincidan para todas la series
+                  if (type_chart == 'bubble') {
+                    //
+                    $.each(vax, function(i, v) {
+                      if (count_series == 0) {
+                        bubble_dataset_x.push(v['count']);
+                      } else {
+                        bubble_dataset_y.push(v['count']);
+                      }
+                    })
+
+                    if (count_series == 1) {
+                      for (var b = 0; b < vax.length; b++) {
+                        r = (parseFloat(bubble_dataset_y[b]) * parseFloat(bubble_dataset_x)) * scale;
+                        bubble_dataset.push({
+                          "x": bubble_dataset_x[b],
+                          "y": bubble_dataset_y[b],
+                          "r": r
+                        });
+                      }
+                    }
+                    count_series = 1;
+
+                  // Resto de los gráficos
+                  } else {
+
+                    $.each(vax, function(i, v) {
+
+                      // Verifica si el dato es un fecha
+                      var date_regexp = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/g;
+                      var string = v['name'];
+                      var isdate = date_regexp.test(string)
+
+                      // Si es fecha le da el formato correcto
+                      if (isdate == true) {
+                        // Agrega los ceros faltantes a los días y meses
+                        var no_zero_day_regexp = /^(\d{1})\/(\d{1,2})\/(\d{4})/g;
+                        var no_zero_month_regexp = /^(\d{1,2})\/(\d{1})\/(\d{4})/g;
+
+                        var day_zero_fail = no_zero_day_regexp.test(string)
+                        var month_zero_fail = no_zero_month_regexp.test(string)
+
+                        if (day_zero_fail == true) {
+                          var string = string.split('/')
+                          string[0] = '0' + string[0]
+                          string = string.join('/')
+                        };
+
+                        if (month_zero_fail == true) {
+                          var string = string.split('/')
+                          string[1] = '0' + string[1]
+                          string = string.join('/')
+                        };
+
+                        // Invierte el orden de la fecha y lo separa con guiones
+                        var stringdate = string.split('/').reverse().join('-');
+
+                        // Armamos los arrays de label y count
+                        lab.push(stringdate);
+                        da.push(v['count']);
+
+                        // Unimos el label con el count
+                        var row_array = [];
+                        for (var i = 0; i < lab.length; i++) {
+                          var row = lab[i] + '|' + da[i]
+                          row_array.push(row)
+                        }
+
+                        // Ordenamos las fechas (label unido a count)
+                        row_array.sort();
+
+                        var labb = [];
+                        var daa = [];
+
+                        // Separamos el label del count y armamos los arrays nuevamente
+                        for (var i = 0; i < row_array.length; i++) {
+                          var abierto = row_array[i].split("|")
+                          labb.push(abierto[0]);
+                          daa.push(abierto[1]);
+                        }
+
+                        da = daa;
+                        lab = labb;
+                        lab_acumulado=lab;
+
+                      } else {
+
+                        // Elimina los corchetes del name
+                        lab_final = v['name']
+                        if (lab_final != null) {
+                          lab_final = lab_final.replace(/[\[\]\"]/g, "")
+                        }
+                        lab.push(lab_final);
+
+                        lab_acumulado.push(lab_final);
+
+                        da.push(v['count']);
+                      }
+                    })
+                  }
+                  lab_all.push(lab);
+                  da_all.push(da);
+
+                }); //cierra each data_general
+
+              } //cierra if data
+            }) //cierra each b
+          }) //cierra each reg
+
+            //Verifica valores del label en el eje x si hay más de una serie
+            if(lab_all.length>1){
+            Array.prototype.unique=function(a){
+              return function(){return this.filter(a)}}(function(a,b,c){return c.indexOf(a,b+1)<0
+            });
+
+            lab_acumulado=lab_acumulado.unique();//elimina valores duplicados
+            lab_acumulado=lab_acumulado.sort();//ordena con sort, lo que coloca los null al final
+            lab_acumulado=lab_acumulado.sort(function (a, b) {
+              if(a!=null){
+                return a.localeCompare(b);
+              }
+              });//lo ordena en español para colocar la ñ en su lugar. sort() la coloca al final
+            var indexnull=lab_acumulado.indexOf(null);
+            if(indexnull>=0){lab_acumulado[indexnull]='sin datos'}
+            for(var l=0;l<lab_all.length;l++){//búsqueda para todas las series
+              //Ordenamos el array traído de la base de datos
+              var lab_temporal_ordenado=lab_all[l].slice().sort();
+              var lab_temporal_ordenado=lab_temporal_ordenado.sort(function (a, b) {
+                if(a!=null){return a.localeCompare(b);}
+              });//lo ordena en español
+              var indexnull=lab_temporal_ordenado.indexOf(null);
+              if(indexnull>=0){lab_temporal_ordenado[indexnull]='sin datos'}
+              var indexnull=lab_all[l].indexOf(null);
+              if(indexnull>=0){lab_all[l][indexnull]='sin datos'}
+              var lab_temporal=[];
+              var da_temporal=[];
+              for(var t=0;t<lab_temporal_ordenado.length;t++){
+                for(var tt=0;tt<lab_all[l].length;tt++){
+                  if(lab_temporal_ordenado[t]==lab_all[l][tt]){
+                    lab_temporal.push(lab_all[l][tt]);
+                    da_temporal.push(da_all[l][tt]);
+                  }
+                }
+              }
+              lab_all[l]=lab_temporal.slice();
+              da_all[l]=da_temporal.slice();
+              for(var a=0;a<lab_acumulado.length;a++){
+                if(lab_all[l][a]!=lab_acumulado[a]){
+                    lab_all[l].splice(a,0,lab_acumulado[a]);// si no encuentra el label lo agrega en el eje x
+                    da_all[l].splice(a,0,0);//y agrega valor 0 para el eje y
+                }
+              }
+            }
+          }// fin de unificación de labels en el eje x para varias series
+
+          // Arranca armando series
           $.each(reg, function(a, b){
 
             // Extraemos los datos de cada serie
@@ -259,119 +411,19 @@ function init_chart_doughnut(size_box = null){
 
               }
 
-              // Extraemos el array con los datos de la serie
               if (index == 'data'){
                 data_general = value;
-                var lab = [];
-                var da = [];
+
 
                 // Extraemos los datos del array de la serie
                 $.each(data_general, function(idx, vax){
-
-                  // Burbuja
-                  if (type_chart == 'bubble') {
-                    $.each(vax, function(i, v) {
-                      if (count_series == 0) {
-                        bubble_dataset_x.push(v['count']);
-                      } else {
-                        bubble_dataset_y.push(v['count']);
-                      }
-                    })
-
-                    if (count_series == 1) {
-                      for (var b = 0; b < vax.length; b++) {
-                        r = (parseFloat(bubble_dataset_y[b]) * parseFloat(bubble_dataset_x)) * scale;
-                        bubble_dataset.push({
-                          "x": bubble_dataset_x[b],
-                          "y": bubble_dataset_y[b],
-                          "r": r
-                        });
-                      }
-                    }
-                    count_series = 1;
-
-                  // Resto de los gráficos
-                  } else {
-
-                    $.each(vax, function(i, v) {
-
-                      // Verifica si el dato es un fecha
-                      var date_regexp = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/g;
-                      var string = v['name'];
-                      var isdate = date_regexp.test(string)
-
-                      // Si es fecha le da el formato correcto
-                      if (isdate == true) {
-
-                        // Agrega los ceros faltantes a los días y meses
-                        var no_zero_day_regexp = /^(\d{1})\/(\d{1,2})\/(\d{4})/g;
-                        var no_zero_month_regexp = /^(\d{1,2})\/(\d{1})\/(\d{4})/g;
-
-                        var day_zero_fail = no_zero_day_regexp.test(string)
-                        var month_zero_fail = no_zero_month_regexp.test(string)
-
-                        if (day_zero_fail == true) {
-                          var string = string.split('/')
-                          string[0] = '0' + string[0]
-                          string = string.join('/')
-                        };
-
-                        if (month_zero_fail == true) {
-                          var string = string.split('/')
-                          string[1] = '0' + string[1]
-                          string = string.join('/')
-                        };
-
-                        // Invierte el orden de la fecha y lo separa con guiones
-                        var stringdate = string.split('/').reverse().join('-');
-
-                        // Armamos los arrays de label y count
-                        lab.push(stringdate);
-                        da.push(v['count']);
-
-                        // Unimos el label con el count
-                        var row_array = [];
-                        for (var i = 0; i < lab.length; i++) {
-                          var row = lab[i] + '|' + da[i]
-                          row_array.push(row)
-                        }
-
-                        // Ordenamos las fechas (label unido a count)
-                        row_array.sort();
-
-                        var labb = [];
-                        var daa = [];
-
-                        // Separamos el label del count y armamos los arrays nuevamente
-                        for (var i = 0; i < row_array.length; i++) {
-                          var abierto = row_array[i].split("|")
-                          labb.push(abierto[0]);
-                          daa.push(abierto[1]);
-                        }
-
-                        da = daa;
-                        lab = labb;
-
-                      } else {
-
-                        // Elimina los corchetes del name
-                        lab_final = v['name']
-                        if (lab_final != null) {
-                          lab_final = lab_final.replace(/[\[\]\"]/g, "")
-                        }
-
-                        lab.push(lab_final);
-                        da.push(v['count']);
-
-                      }
-                    })
-                  }
+                  var idx_index=idx.substring(5)
 
                   // BAR & LINE datasets
                   if (type_chart == 'bar' || type_chart == 'line') {
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       yAxisID: position_y_axis,
                       fill: false,
                       lineTension: 0,
@@ -391,7 +443,7 @@ function init_chart_doughnut(size_box = null){
                   if (type_chart == 'area') {
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       yAxisID: position_y_axis,
                       fill: true,
                       lineTension: 0,
@@ -411,7 +463,7 @@ function init_chart_doughnut(size_box = null){
                   if (type_chart == 'point') {
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       yAxisID: position_y_axis,
                       fill: true,
                       pointStyle: point_style,
@@ -432,7 +484,7 @@ function init_chart_doughnut(size_box = null){
                   if (type_chart == 'horizontalBar') {
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       fill: false,
                       backgroundColor: color,
                       borderColor: color,
@@ -446,7 +498,7 @@ function init_chart_doughnut(size_box = null){
 
                   // DOUGHNUT datasets
                   if (type_chart == 'doughnut') {
-                    cantidad = da.length;
+                    cantidad = da_all[idx_index].length;
                     rancolor = randomColor({
                       count: cantidad,
                       hue: color,
@@ -455,7 +507,7 @@ function init_chart_doughnut(size_box = null){
                     })
                     datasets.push({
                       label: label_datasets,
-                      data: da,
+                      data: da_all[idx_index],
                       backgroundColor: rancolor,
                       borderColor: 'white',
                       borderWidth: 2,
@@ -483,7 +535,7 @@ function init_chart_doughnut(size_box = null){
                 }); //cierra each data_general
 
                 data_gx = {
-                  labels: lab,
+                  labels: lab_acumulado,
                   datasets: datasets
                 }
 
@@ -543,9 +595,11 @@ function init_chart_doughnut(size_box = null){
             )
 
             //Chequeamos el estado de view
-            status_view = $('#view').hasClass('active');
+            status_view = $('#view').hasClass('view-normal');
+            status_view_expanded = $('#view').hasClass('view-expanded');
+            status_view_right = $('#view').hasClass('view-normal-right');
 
-            if (!status_view) { // Default
+            if (status_view || status_view_right) { // Default
 
               if (width == 3) {
                 width = 6;
@@ -563,7 +617,8 @@ function init_chart_doughnut(size_box = null){
               //legend_display = false;
 
 
-            } else { // Expanded
+            }
+            if(status_view_expanded) { // Expanded
 
               if (width == 3) {
                 aspectR = "1";
@@ -955,4 +1010,589 @@ function init_chart_doughnut(size_box = null){
     }) //cierra ajax
   } //cierra if graphics
   $('.modal-backdrop').remove() ;
+
 } //cierra function init_chart_doughnut
+
+//****** FUNCIONES PARA TABLA DE DATOS*****
+// Función para traer todos los datos de los registros contenidos y filtrados
+function init_data_dashboard(haschange){
+  var type_box = 'polygon';
+  var size_box = Navarra.dashboards.config.size_polygon;
+  if (size_box.length==0) {
+    var size_box = [];
+    type_box = 'extent';
+    size_ext = Navarra.dashboards.config.size_box;
+    size_box[0] = size_ext['_southWest']['lng'];
+    size_box[1] = size_ext['_southWest']['lat'];
+    size_box[2] = size_ext['_northEast']['lng'];
+    size_box[3] = size_ext['_northEast']['lat'];
+  }
+
+  var conditions = Navarra.project_types.config.filter_kpi;
+
+  var project_type_id = Navarra.dashboards.config.project_type_id;
+  var per_page = $(".select_perpage").html();
+  var per_page_value = parseInt(per_page);
+  if(!isNaN(per_page_value)){
+    if($(".active_page").length==0){
+      var active_page=1
+    } else{
+     var active_page=parseInt($(".active_page").html());
+    }
+    var offset_rows=per_page_value*(active_page-1);
+  }
+    var filter_value=$("#choose").val();
+    var filter_by_column=$(".filter_by_column").val();
+    var order_by_column=$(".order_by_column").val();
+    var from_date = Navarra.project_types.config.from_date;
+    var to_date = Navarra.project_types.config.to_date;
+
+    $.ajax({
+      type: 'GET',
+      url: '/project_types/search_data_dashboard',
+      datatype: 'json',
+      data: {
+        filter_value: filter_value,
+        filter_by_column: filter_by_column,
+        order_by_column: order_by_column,
+        project_type_id: project_type_id,
+        offset_rows: offset_rows,
+        per_page_value: per_page_value,
+        type_box: type_box,
+        size_box: size_box,
+        data_conditions: conditions,
+        from_date: from_date,
+        to_date: to_date
+      },
+
+      success: function(data) {
+
+        var fields = document.querySelectorAll(".field_key");
+        var data_dashboard=data.data
+
+      // borramos los datos anteriores
+        document.getElementById("tbody_visible").remove();
+        var new_body=document.createElement("TBODY");
+        new_body.style.visibility="hidden";
+        new_body.id="tbody_hidden";
+        document.getElementById("table_hidden").appendChild(new_body);
+        document.getElementById("tbody_hidden").remove();
+        var new_body=document.createElement("TBODY");
+        new_body.style.className="project_data_div";
+        new_body.id="tbody_visible";
+        document.getElementById("table_visible").appendChild(new_body);
+
+        // llenado de la tabla de datos
+        var found_id=-1;
+        var appid_selected=0;
+        data_dashboard.forEach(function(element, index) {
+          var new_row = document.createElement("TR");
+          new_row.style.cursor = "pointer";
+          new_row.className="row_data";
+          var data_properties = element.properties;
+          fields.forEach(function(column, indexColumn){
+            var column_name=column.value;
+            var new_celd = document.createElement("TD");
+            if(column.value=="#"){
+              if(isNaN(per_page_value)){
+                new_celd.innerHTML=(index+1);
+              }else{
+                new_celd.innerHTML=(index+1)+(active_page-1)*per_page_value;
+              }
+            } else{
+                if(data_properties[column_name]!=undefined){
+                    new_celd.innerHTML=data_properties[column_name];
+                    if(column.value=="app_id"){
+                      appid_selected=data_properties[column_name];
+                      if(Navarra.project_types.config.item_selected==data_properties[column_name]){
+                        found_id=index+1;
+                        Navarra.project_types.config.data_dashboard="app_id = '"+appid_selected+"'";
+                      }
+                    }
+                }
+            }
+            new_row.setAttribute('onclick','show_item('+index+','+appid_selected+')');
+            new_celd.className="custom_row";
+            if($('#table_hidden th:nth-child('+(indexColumn+1)+')').is(':hidden')){
+              new_celd.style.display="none";
+            };
+            new_row.appendChild(new_celd);
+          });
+           document.getElementById("tbody_visible").appendChild(new_row.cloneNode(true));
+           document.getElementById("tbody_hidden").appendChild(new_row);
+           $('table tbody tr:nth-child('+(found_id)+')').addClass('found');
+           if(found_id>=0){
+            Navarra.geomaps.current_layer();
+           }
+          });
+      }
+    })
+
+    //Si hay cambios en los datos, recalcula el search
+    if(haschange){
+      if(filter_value!=""){ // si hay una búsqueda en el search
+            Navarra.project_types.config.data_dashboard="strToLowerCase("+filter_by_column+") like '%"+filter_value.toLowerCase()+"%'";
+            Navarra.geomaps.current_layer();
+
+            //clacula paginación de la busqueda e indicador de cantidad sobre el total
+            $.ajax({
+              type: 'GET',
+              url: '/project_types/search_data_dashboard',
+              datatype: 'json',
+              data: {
+                filter_value: filter_value,
+                filter_by_column: filter_by_column,
+                order_by_column: order_by_column,
+                project_type_id: project_type_id,
+                offset_rows: '',
+                per_page_value: '',
+                type_box: type_box,
+                size_box: size_box,
+                data_conditions: conditions,
+                from_date: from_date,
+                to_date: to_date
+              },
+
+              success: function(data) {
+                var totalfiles_selected=data.data.length;
+                // pagina teniendo en cuenta solo lo buscado en el search
+                data_pagination(totalfiles_selected,1);
+                //calcula y muestra el indicador del total buscado sobre el total en el mapa
+                if($('.total_files').val()>0){
+                  var percentage_selected = parseInt(totalfiles_selected/$('.total_files').val()*10000)/100;
+                  $('.selected_files_from_total').html(totalfiles_selected+"/"+$('.total_files').val()+" ("+percentage_selected+"%)");
+                } else{
+                  $('.selected_files_from_total').html("");
+                }
+              }
+            });
+        } else{
+          if(Navarra.project_types.config.data_dashboard.length!=""){// si no hay búsqueda pero había algo filtrado desde la tabla previamente
+            //borra la selección previa
+            Navarra.project_types.config.data_dashboard="";
+            Navarra.geomaps.current_layer();
+            // reinicia paginacion
+            data_pagination($('.total_files').val(),1);
+            //elimina el indicador de total buscado
+            $('.selected_files_from_total').html("");
+          }
+        }
+    }
+}
+
+//función para paginar datos
+function data_pagination(selected, active_page){
+  var per_page = $('.select_perpage').html();
+  var per_page_value = parseInt(per_page);
+  if(!isNaN(per_page_value)){
+    var numbers='';
+    if(active_page!=1){
+      numbers+='<li class="page_back" style="cursor:pointer"><a><</a></li>';
+    } else {
+      numbers+='<li class="page_back invisible"><a><</a></li>';
+    }
+    var total_page=Math.ceil(selected/per_page_value);
+    var page_hide=false;
+    var page_hide1=false;
+    for(i=1;i<=total_page;i++){
+      if(i<=3||i>total_page-1 || i==active_page-1 || i==active_page || i==active_page+1){
+        if(i==active_page){
+          numbers+='<li><a class="page_data active_page">'+i+'</a></li>'
+        } else{
+          numbers+='<li><a class="page_data">'+i+'</a></li>'
+        }
+      } else{
+        if(i<total_page-1 && !page_hide){
+          numbers+='<h6 class="p-0 m-0">..</h6>';
+          page_hide=true;
+        }
+        if(i==total_page-1 && !page_hide1){
+          numbers+='<h6 class="p-0 m-0">..</h6>';
+          page_hide1=true;
+        }
+      }
+    }
+    if(active_page!=total_page){
+      numbers+='<li class="page_foward" style="cursor:pointer"><a>></a></li>';
+    } else {
+      numbers+='<li class="page_foward invisible"><a>></a></li>';
+    }
+    $('#page_numbers').replaceWith('<ul class="pagination pagination-sm m-0" id="page_numbers">'+numbers+'</ul>');
+    } else{
+    $('#page_numbers').replaceWith('<ul class="pagination pagination-sm m-0" id="page_numbers"></ul>');
+    }
+  //Pagina activa
+  $(".page_data").click(function(){
+    active_page=parseInt($(this).html());
+    data_pagination(selected,active_page);
+    init_data_dashboard(false);
+  });
+  $(".page_back").click(function(){
+      active_page--;
+      data_pagination(selected, active_page);
+      init_data_dashboard(false);
+  });
+  $(".page_foward").click(function(){
+      active_page++;
+      data_pagination(selected, active_page);
+      init_data_dashboard(false);
+  });
+}
+//****** TERMINAN FUNCIONES PARA TABLA DE DATOS*****
+
+
+//****** FUNCIONES PARA TIMESLIDER*****
+
+// Función para iniciar por primera vez el timeslider
+function init_time_slider(){
+  var milisec_day=86400000;
+  var today= new Date();
+  var today_string=today.getDate()+"/"+(today.getMonth()+1)+"/"+today.getFullYear();
+  var today_format= changeformatDate(today_string,"day");
+  var min_date=dateToTS(today_format)-5*milisec_day;
+  var max_date=dateToTS(today_format)+5*milisec_day;
+  var from_date= dateToTS(today_format)-2*milisec_day;
+  var to_date= dateToTS(today_format)+2*milisec_day;
+  var step_time_slider=milisec_day;
+  create_time_slider(min_date,max_date,from_date,to_date, step_time_slider);
+  // arma datetimepicker con formato incial por día y le manda los datos del timeslider
+  $('#time_slider_from').datetimepicker({
+    format      :   "DD/MM/YYYY",
+    viewMode    :   "days",
+  });
+  $('#time_slider_to').datetimepicker({
+    format      :   "DD/MM/YYYY",
+    viewMode    :   "days",
+  });
+  $('#time_slider_from').val(tsToDate(min_date));
+  $('#time_slider_to').val(tsToDate(max_date));
+}
+//Función para crear el time-slider al inciar y al cambiar la configuración
+function create_time_slider(min_date,max_date,from_date,to_date, step_time_slider){
+  $('#filter-body').prepend(
+      $('<div>', {
+        'id': 'time_slider_item',
+        'style': 'margin-top:10px',
+      }).append(
+        $("<input>", {
+          'id': 'time_slider'
+        }),
+        $("<div>", {
+          'class': 'dropdown-divider',
+        })
+      )
+    )
+  $('#filter-body').prepend(
+      $("<i>", {
+        'id':'time_slider_item-save',
+        'class': 'fas fa-calendar-check float-right',
+        'style': 'font-size: 1.5em ; margin-top: -16px; margin-right:4px; color: rgba(250,250,250,0.8); cursor:pointer',
+        'onclick': 'set_time_slider_filter()',
+      })
+    )
+  $('#filter-body').prepend(
+      $("<i>", {
+        'id':'time_slider_item-clear',
+        'class': 'fas fa-calendar-times float-right',
+        'style': 'font-size: 1.5em; margin-top: -16px; margin-right:-16px; color: rgba(250,250,250,0.8); cursor:pointer',
+        'onclick': 'clear_time_slider_filter()',
+      })
+    )
+  $("#time_slider").ionRangeSlider({
+      skin: "flat",
+      type: "double",
+      step: step_time_slider,
+      grid: true,
+      grid_snap: true,
+      min: min_date,
+      max: max_date,
+      from: from_date,
+      to: to_date,
+      prettify: tsToDate,
+      onChange: function (data) {
+          set_time_slider_color();
+        },
+      onFinish: function (data) {
+          set_time_slider_values(data);
+        },
+      onStart: function (data) {
+          set_time_slider_values(data);
+        },
+    });
+
+    $('.irs-min , .irs-max  ').css("cursor", "pointer");
+    $('.irs-min , .irs-max  ').attr("data-toggle","modal");
+    $('.irs-min , .irs-max  ').attr("data-target","#time-slider-modal");
+    set_time_slider_color();
+}
+
+//Función que cambia el estilo del datetimepicker según la selección por día,seman,mes o año
+function change_step_time_slider(){
+  if($('#time_slider_step').val()=='day'){
+    $("#time_slider_from , #time_slider_to").each(function(){
+      $(this).val('');
+      $(this).off('dp.change');
+      $(this).data('DateTimePicker').destroy();
+      $(this).datetimepicker({
+        format      :   "DD/MM/YYYY",
+        viewMode    :   "days",
+      });
+    })
+  }
+  if($('#time_slider_step').val()=='week'){
+    $("#time_slider_from , #time_slider_to").each(function(){
+      $(this).val('');
+      $(this).data('DateTimePicker').destroy();
+      $(this).datetimepicker({
+        format      :   "DD/MM/YYYY",
+        viewMode    :   "days",
+        calendarWeeks: true,
+      });
+      $(this).on('dp.change', function (e) {
+        value = $(this).val();
+        dateObject=changeformatDate(value, 'day');
+        number_of_week=getWeekNumber(dateObject)
+        $(this).val(number_of_week[0]+'-Sem '+number_of_week[1]);
+      });
+    })
+  }
+  if($('#time_slider_step').val()=='month'){
+    $("#time_slider_from , #time_slider_to").each(function(){
+      $(this).val('');
+      $(this).data('DateTimePicker').destroy();
+      $(this).datetimepicker({
+        format      :   "MM/YYYY",
+        viewMode    :   "months",
+      });
+      $(this).off('dp.change');
+    })
+  }
+  if($('#time_slider_step').val()=='year'){
+    $("#time_slider_from , #time_slider_to").each(function(){
+      $(this).val('');
+      $(this).off('dp.change');
+      $(this).data('DateTimePicker').destroy();
+      $(this).datetimepicker({
+        format      :   "YYYY",
+        viewMode    :   "years",
+      });
+    })
+  }
+}
+
+// Función que manda los valores del modal datetimepicker al timeslider
+function set_time_slider(){
+  if($("#time_slider_from").val()=='' || $("#time_slider_to").val()==''){return}
+  var step_date=$('#time_slider_step').val();
+  if(step_date=='day' || step_date=='month'){
+    var min_date=dateToTS(new Date(changeformatDate($('#time_slider_from').val(),step_date)));
+    var max_date=dateToTS(new Date(changeformatDate($('#time_slider_to').val(),step_date)));
+  }
+  if(step_date=='week'){
+    min_date=dateToTS(getDateOfISOWeek(($('#time_slider_from').val().split('-')[1]).substring(4),$('#time_slider_from').val().split('-')[0]));
+    max_date=dateToTS(getDateOfISOWeek(($('#time_slider_to').val().split('-')[1]).substring(4),$('#time_slider_to').val().split('-')[0]));
+  }
+
+  if(step_date=='day' || step_date=='month' || step_date=='week'){
+    var milisec_day=86400000;
+    if(step_date=='day'){
+      range=1;
+      var step_time_slider=milisec_day;
+    }
+    if(step_date=='week'){
+      range=7;
+      var step_time_slider=milisec_day*7;
+    }
+    if(step_date=='month'){
+      range=31;
+      var step_time_slider=milisec_day*31;
+    }
+    var total_range=(dateToTS(max_date)-dateToTS(min_date))/(milisec_day*range);
+    var from_date=dateToTS(min_date)+range*milisec_day;
+    var to_date=dateToTS(min_date)+Math.floor(total_range)*31*milisec_day;
+  }
+
+  if(step_date=='year'){
+    min_date=$('#time_slider_from').val();
+    max_date=$('#time_slider_to').val();
+    from_date=parseInt(min_date)+1;
+    to_date=parseInt(max_date)-1;
+    var step_time_slider=1;
+  }
+  if(max_date<=min_date){return}
+  $('#time_slider_item').remove();
+  $('#time_slider_item-save').remove();
+  $('#time_slider_item-clear').remove();
+  $('#time-slider-modal').modal('toggle');
+  clear_time_slider_filter();
+  create_time_slider(min_date,max_date,dateToTS(from_date),dateToTS(to_date), step_time_slider);
+}
+
+// función que toma el dato y lo convierte en formato "prety" para colocarlo en las etiquetas del timeslider
+function tsToDate(ts) {
+  var step_date=$('#time_slider_step').val();
+  if(step_date=='day' || step_date=='month' || step_date=='week'){
+    var lang = "es-AR";
+    var d = new Date(ts);
+    var d_year=d.getFullYear();
+    var d_month=d.getMonth()+1;
+    var d_day=d.getDate();
+    if(step_date=='day'){
+      var d_format = d_day+'/'+d_month+'/'+d_year;
+    }
+    if(step_date=='month'){
+      var month_names=['ene','feb','mar','abr','may','jun','jul','ago','set','oct','nov','dic'];
+      var d_format =month_names[d_month-1]+'/'+d_year;
+    }
+    if(step_date=='week'){
+      number_of_week=getWeekNumber(d);
+      var d_format =number_of_week[0]+'-Sem '+number_of_week[1];
+    }
+  } else{
+    d_format=ts
+  }
+    return d_format;
+}
+
+// Función para colocar el timeslider en gris (no aplicado)
+function set_time_slider_color(){
+  var colored_element=['.irs-bar','.irs-from', '.irs-to','.irs-single', '.irs-handle>i:first-child'];
+    colored_element.forEach(function(element){
+      $(element).addClass('time-slider-inactive');
+      $(element).removeClass('time-slider-active');
+    })
+}
+
+//Función para tomar los datos del from y del to y convertirlos en fechas
+function set_time_slider_values(data){
+  var from_pretty= data.from_pretty;
+  var to_pretty=data.to_pretty;
+  var step_date=$('#time_slider_step').val();
+  if(step_date=='day'){
+    from_pretty=from_pretty.split('/')[2]+'-'+from_pretty.split('/')[1]+'-'+from_pretty.split('/')[0];
+    to_pretty=to_pretty.split('/')[2]+'-'+to_pretty.split('/')[1]+'-'+to_pretty.split('/')[0];
+  }
+  if(step_date=='week'){
+    var dateofweek=getDateOfISOWeek((from_pretty.split('-')[1]).substring(4),from_pretty.split('-')[0])
+    from_pretty=dateofweek.getFullYear()+'-'+(dateofweek.getMonth()+1)+'-'+dateofweek.getDate();
+    var dateofweek=getDateOfISOWeek((to_pretty.split('-')[1]).substring(4),to_pretty.split('-')[0])
+    //+6días
+    var milisec_day=86400000;
+    var lastdayofweek= new Date(dateToTS(dateofweek)+6*milisec_day);
+    to_pretty=lastdayofweek.getFullYear()+'-'+(lastdayofweek.getMonth()+1)+'-'+lastdayofweek.getDate();
+  }
+  if(step_date=='month'){
+    var month_names=['ene','feb','mar','abr','may','jun','jul','ago','set','oct','nov','dic'];
+    from_pretty=from_pretty.split('/')[1]+'-'+(jQuery.inArray(from_pretty.split('/')[0], month_names)+1)+'-1';
+    last_day=new Date(to_pretty.split('/')[1], (jQuery.inArray(to_pretty.split('/')[0], month_names)+1), 0);
+    last_day=last_day.getDate();
+    to_pretty=to_pretty.split('/')[1]+'-'+(jQuery.inArray(to_pretty.split('/')[0], month_names)+1)+'-'+last_day;
+  }
+  if(step_date=='year'){
+    from_pretty=from_pretty+'-1-1';
+    to_pretty=to_pretty+'-12-31';
+  }
+  from_pretty+=' 00:00';
+  to_pretty+=' 23:59:59.99';
+  $('#time-slider-from-value').val(from_pretty);
+  $('#time-slider-to-value').val(to_pretty);
+}
+
+//Función para aplicar el timeslider como filtro
+function set_time_slider_filter(){
+  var colored_element=['.irs-bar','.irs-from', '.irs-to','.irs-single', '.irs-handle>i:first-child'];
+  colored_element.forEach(function(element){
+    $(element).addClass('time-slider-active');
+    $(element).removeClass('time-slider-inactive');
+  });
+  if($('#prev_bar')!=undefined)($('#prev_bar').remove());
+  var width_clone = ( 100 * parseFloat($('.irs-bar').css('width')) / parseFloat($('.irs-bar').parent().css('width')) ) + '%';
+  var left_clone = ( 100 * parseFloat($('.irs-bar').css('left')) / parseFloat($('.irs-bar').parent().css('width')) ) + '%';
+  var prev_bar=$('.irs-bar').clone();
+  prev_bar.attr('id','prev_bar');
+  prev_bar.appendTo('.irs--flat');
+  var styletext='background:#d3d800!important;left:'+left_clone+';width:'+width_clone;
+  $('#prev_bar').attr('style',styletext);
+
+  //toma los valores from y to y los asigna a las variables globales
+  Navarra.project_types.config.from_date = $('#time-slider-from-value').val();
+  Navarra.project_types.config.to_date = $('#time-slider-to-value').val();
+
+  // actualiza datos y mapa
+  init_data_dashboard(true);
+  Navarra.geomaps.current_layer();
+  Navarra.geomaps.show_kpis();
+  var heatmap_actived = Navarra.project_types.config.heatmap_field;
+  if (heatmap_actived != '') {
+    Navarra.geomaps.heatmap_data();
+  }
+   var wms_filter_options = Navarra.project_types.config.filter_option;
+  if(wms_filter_options!= ''){
+    Navarra.geomaps.wms_filter();
+  }
+}
+
+//Función para eliminar el timeslider como filtro
+function clear_time_slider_filter(){
+  Navarra.project_types.config.from_date = "";
+  Navarra.project_types.config.to_date = "";
+  if($('#prev_bar')!=undefined)($('#prev_bar').remove());
+  set_time_slider_color();
+  init_data_dashboard(true);
+  Navarra.geomaps.current_layer();
+  Navarra.geomaps.show_kpis();
+  var heatmap_actived = Navarra.project_types.config.heatmap_field;
+  if (heatmap_actived != '') {
+    Navarra.geomaps.heatmap_data();
+  }
+  var wms_filter_options = Navarra.project_types.config.filter_option;
+  if(wms_filter_options!= ''){
+    Navarra.geomaps.wms_filter();
+  }
+}
+
+
+// Funciones para manejo de fechas
+//Devuelve el valor timestamp tipo numerico desde una fecha dada
+function dateToTS(date) {
+  return date.valueOf();
+}
+//funcion para obtener el número de semana a partir de una fecha. Las semanas comienzan los lunes
+function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    // Set to nearest Thursday: current date + 4 - current day number
+    // Make Sunday's day number 7
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+    // Get first day of year
+    var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    // Calculate full weeks to nearest Thursday
+    var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+    // Return array of year and week number
+    return [d.getUTCFullYear(), weekNo];
+}
+
+//función para devolver una fecha dada un número de semana y un año
+function getDateOfISOWeek(w, y) {
+  var simple = new Date(y, 0, 1 + (w - 1) * 7);
+  var dow = simple.getDay();
+  var ISOweekStart = simple;
+  if (dow <= 4)
+    ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+  else
+    ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+  return ISOweekStart;
+}
+
+//función para obtener una objeto fecha cuando el dato está en el formato dd/mm/yyyy o mm/yyyy
+function changeformatDate(d,type){
+  var dateParts = d.split("/");
+  if(type=='day'){
+    var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+  }
+  if(type=='month'){
+    var dateObject = new Date(+dateParts[1], dateParts[0] - 1, +'1');
+  }
+  return dateObject;
+}
+
+//********TERMINAN FUNCIONES PARA TIMESLIDER*******

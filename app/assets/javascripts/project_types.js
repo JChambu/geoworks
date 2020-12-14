@@ -11,6 +11,9 @@ Navarra.project_types.config = {
   filter:'',
   input_value:'',
   filter_option: [],
+  cross_layer: '',
+  cross_layer_filter: [],
+  cross_layer_owner: false,
   size_box: [],
   filter_kpi:[],
   kpi_field:'',
@@ -20,7 +23,11 @@ Navarra.project_types.config = {
   data_point_colors:[],
   heatmap_field: '',
   heatmap_indicator: '',
-  owner: false
+  owner: false,
+  data_dashboard:'',
+  from_date: '',
+  to_date: '',
+  item_selected:""
 }
 
 // Select para roles

@@ -12,13 +12,77 @@ class ProjectTypesController < ApplicationController
   end
 
   def project_type_layers
+
+    # Busca todas las capas
     @projects = ProjectType
       .joins(:has_project_types)
-      .where.not(name_layer: params[:name_projects])
+      .where.not(name_layer: params[:current_layer])
       .where(enabled_as_layer: true)
       .where(has_project_types: {user_id: current_user.id})
       .ordered
-    render json: {"data": @projects}
+
+    layers = {}
+
+    # Cicla las capas y levanta los filtros
+    @projects.each do |project|
+
+      layer_filters = {}
+      project_filters = ProjectFilter
+        .where(project_type_id: project.id)
+        .where(user_id: current_user.id)
+        .first
+
+      if !project_filters.nil?
+
+        if !project_filters.properties.nil?
+          project_filters.properties.each do |f|
+            layer_filters[:attribute_filter] = "#{f[0]}|=|'#{f[1]}'"
+          end
+        end
+
+        if project_filters.owner == true
+          layer_filters[:owner_filter] = project_filters.owner
+        end
+
+        if !project_filters.cross_layer_filter_id.nil?
+
+          cl_filter = {}
+
+          cross_layer_filter = ProjectFilter
+            .where(id: project_filters.cross_layer_filter_id)
+            .where(user_id: current_user.id)
+            .first
+
+          cl_name = ProjectType.where(id: cross_layer_filter.project_type_id).pluck(:name_layer).first
+          cl_filter[:cl_name] = cl_name
+
+          if !cross_layer_filter.properties.nil?
+            cross_layer_filter.properties.each do |f|
+              cl_filter[:cl_attribute_filter] = "#{f[0]}|=|'#{f[1]}'"
+            end
+          end
+
+          if cross_layer_filter.owner == true
+            cl_filter[:cl_owner_filter] = cross_layer_filter.owner
+          end
+
+          layer_filters[:cl_filter] = cl_filter
+
+        end
+
+      end
+
+      layers["layer_#{project.name_layer}"] = {
+        "name": project.name,
+        "layer": project.name_layer,
+        "type_geometry": project.type_geometry,
+        "color": project.layer_color,
+        "layer_filters": layer_filters
+      }
+
+    end
+
+    render json: layers
   end
 
   def share
@@ -76,6 +140,14 @@ class ProjectTypesController < ApplicationController
 
   end
 
+  def create_quick_filters
+    @field = "field"
+    respond_to do |format|
+      format.js
+    end
+
+  end
+
   def dashboard
   end
 
@@ -84,12 +156,180 @@ class ProjectTypesController < ApplicationController
     @op_graph = params[:graph]
     @data_conditions = params[:data_conditions]
     filter_condition = []
+    from_date = params[:from_date]
+    to_date = params[:to_date]
     @querys = ''
     if @op_graph == 'true'
-      @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id], @data_conditions, current_user.id)
+      @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id], @data_conditions, current_user.id, from_date, to_date)
     else
-      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id],@data_conditions, current_user.id)
+      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id],@data_conditions, current_user.id, from_date, to_date)
     end
+  end
+
+  def search_data_dashboard
+
+    project_type_id = params[:project_type_id]
+    offset_rows = params[:offset_rows]
+    per_page_value = params[:per_page_value]
+    filter_value = params[:filter_value]
+    filter_by_column = params[:filter_by_column]
+    order_by_column = params[:order_by_column]
+    type_box = params[:type_box]
+    size_box = params[:size_box]
+    data_conditions = params[:data_conditions]
+    from_date = params[:from_date]
+    to_date = params[:to_date]
+
+    data = Project
+      .select('DISTINCT main.*')
+      .from('projects main')
+      .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
+      .joins('INNER JOIN public.users ON users.id = main.user_id')
+      .where('main.project_type_id = ?', project_type_id.to_i)
+      .where('main.row_active = ?', true)
+      .where('main.current_season = ?', true)
+    # Aplica filtro geográfico
+    if !type_box.blank? && !size_box.blank?
+
+      if type_box == 'extent'
+
+        minx = size_box[0].to_f if !size_box.nil?
+        miny = size_box[1].to_f if !size_box.nil?
+        maxx = size_box[2].to_f if !size_box.nil?
+        maxy = size_box[3].to_f if !size_box.nil?
+        data = data.where("shared_extensions.ST_Contains(shared_extensions.ST_MakeEnvelope(#{minx}, #{maxy}, #{maxx}, #{miny}, 4326), main.#{:the_geom})")
+
+      else
+
+        arr1 = []
+        size_box.each do |a,x|
+          z = []
+          @a = a
+          @x = x
+          x.each do |b,y|
+            @b = b
+            @y = y
+            z.push(y)
+          end
+          arr1.push([z])
+        end
+        data = data.where("shared_extensions.ST_Contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'), 4326), main.#{:the_geom})")
+      end
+    end
+
+    @project_filter = ProjectFilter.where(project_type_id: project_type_id.to_i).where(user_id: current_user.id).first
+
+    if !@project_filter.nil?
+
+      # Aplica filtro owner
+      if @project_filter.owner == true
+        data = data.where('main.user_id = ?', current_user.id)
+      end
+
+      # Aplica filtro por atributo a la capa principal
+      if !@project_filter.properties.nil?
+        @project_filter.properties.to_a.each do |prop|
+          data = data.where("main.properties ->> '#{prop[0]}' = '#{prop[1]}'")
+        end
+      end
+
+      # Aplica filtro intercapa
+      if !@project_filter.cross_layer_filter_id.nil?
+
+        @cross_layer_filter = ProjectFilter.where(id: @project_filter.cross_layer_filter_id).where(user_id: current_user.id).first
+
+        # Cruza la capa principal con la capa secunadaria
+        data = data
+          .except(:from).from('projects main CROSS JOIN projects sec')
+          .where('shared_extensions.ST_Intersects(main.the_geom, sec.the_geom)')
+          .where('sec.project_type_id = ?', @cross_layer_filter.project_type_id)
+          .where('sec.row_active = ?', true)
+          .where('sec.current_season = ?', true)
+
+        # Aplica filtro por owner a la capa secundaria
+        if @cross_layer_filter.owner == true
+          data = data.where('sec.user_id = ?', current_user.id)
+        end
+
+        # Aplica filtro por atributo a la capa secundaria
+        if !@cross_layer_filter.properties.nil?
+          @cross_layer_filter.properties.to_a.each do |prop|
+            data = data.where("sec.properties->>'#{prop[0]}' = '#{prop[1]}'")
+          end
+        end
+      end
+    end
+
+    # Aplica filtro de time_slider
+    if !from_date.blank? || !to_date.blank?
+      data = data.where("main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}'")
+    else
+      data = data.where('main.row_enabled = ?', true)
+    end
+
+    # Aplica filtros generados por el usuario
+    if !data_conditions.blank?
+
+      data_conditions.each do |key|
+
+        @s = key.split('|')
+        @field = @s[0]
+        @filter = @s[1]
+        @value = @s[2]
+
+        # Aplica filtro por campo usuario
+        if @field == 'app_usuario'
+          data =  data.where("users.name " + @filter + " #{@value}")
+        end
+
+        # Aplica filtro por campo estado
+        if @field == 'app_estado'
+          data =  data.where("project_statuses.name " + @filter + " #{@value} ")
+        end
+
+        # Aplica filtro por otro campo
+        if @field != 'app_usuario' && @field != 'app_estado'
+          data = data.where("properties->>'" + @field + "'" + @filter + "#{@value}")
+        end
+      end
+
+    end
+
+    # Aplica búsqueda del usuario
+    if !filter_by_column.blank? && !filter_value.blank?
+      data = data.where("TRANSLATE(main.properties ->> '#{filter_by_column}','ÁÉÍÓÚáéíóú','AEIOUaeiou') ilike translate('%#{filter_value}%','ÁÉÍÓÚáéíóú','AEIOUaeiou')")
+    end
+
+    # Aplica órden de los registros
+    if !order_by_column.blank?
+      field = ProjectField.where(key: order_by_column, project_type_id: project_type_id).first
+
+      # TODO: se deben corregir los errores ortográficos almacenados en la db
+      if field.field_type.name == 'Numérico' || field.field_type.name == 'Numerico'
+        data = data
+          .except(:select).select("DISTINCT main.*, (main.properties ->> '#{order_by_column}')::numeric AS order")
+          .order("(main.properties ->> '#{order_by_column}')::numeric")
+      elsif field.field_type.name == 'Fecha'
+        data = data
+          .except(:select).select("DISTINCT main.*, (main.properties ->> '#{order_by_column}')::date AS order")
+          .order("(main.properties ->> '#{order_by_column}')::date")
+      else
+        data = data
+          .except(:select).select("DISTINCT main.*, main.properties ->> '#{order_by_column}' AS order")
+          .order("main.properties ->> '#{order_by_column}'")
+      end
+    else
+      data = data.order("main.id")
+    end
+
+    # Aplica limit y offset para paginar
+    if !offset_rows.blank? && !per_page_value.blank?
+      data = data
+        .offset(offset_rows.to_i)
+        .limit(per_page_value.to_i)
+    end
+
+    render json: {"data": data}
   end
 
   def heatmap
@@ -258,17 +498,6 @@ class ProjectTypesController < ApplicationController
 
   end
 
-  # Actualiza el level del proyecto
-  def update_level
-
-    level = params[:level_data]
-    level.each do |p, l|
-      @project_type = ProjectType.find(p)
-      @project_type.update_level!(l)
-    end
-
-
-  end
 
   # PATCH/PUT /project_types/1
   # PATCH/PUT /project_types/1.json
@@ -313,7 +542,7 @@ class ProjectTypesController < ApplicationController
   def project_type_params
     params.require(:project_type).permit(
       :name, :type_file, :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color,
-      :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition,
+      :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition, :enable_period, :level,
       project_fields_attributes: [
         :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
         :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,

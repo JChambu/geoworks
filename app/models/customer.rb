@@ -59,7 +59,7 @@ class Customer < ApplicationRecord
 
   def add_url
 
-    self.url = "http://#{subdomain}.api.geoworks.com.ar/api/v1"
+    self.url = "https://#{subdomain}.api.geoworks.com.ar/api/v1"
     save!
 
   end
