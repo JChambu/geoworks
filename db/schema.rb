@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20201211140918) do
+ActiveRecord::Schema.define(version: 20201214204552) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -281,6 +281,7 @@ ActiveRecord::Schema.define(version: 20201211140918) do
     t.boolean "heatmap_field", default: false
     t.boolean "colored_points_field", default: false
     t.string "roles_edit"
+    t.boolean "data_table", default: false
     t.index ["project_type_id"], name: "index_project_fields_on_project_type_id"
   end
 
