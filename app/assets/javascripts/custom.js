@@ -97,52 +97,6 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
 
   if( typeof(Chart) === 'undefined'){ return; }
 
-  // Agrega el time_slider al card de filtros
-  if ($('#time_slider').length == 0) {
-
-    $('#filter-body').prepend(
-      $('<div>', {
-        'id': 'time_slider_item'
-      }).append(
-        $("<input>", {
-          'id': 'time_slider'
-        }),
-        $("<div>", {
-          'class': 'dropdown-divider',
-        })
-      )
-    )
-
-    var lang = "es-AR";
-    var year = 2019;
-
-    function dateToTS(date) {
-      return date.valueOf();
-    }
-
-    function tsToDate(ts) {
-      var d = new Date(ts);
-
-      return d.toLocaleDateString(lang, {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric'
-      });
-    }
-
-    $("#time_slider").ionRangeSlider({
-      skin: "flat",
-      type: "double",
-      grid: true,
-      min: dateToTS(new Date(year, 10, 1)),
-      max: dateToTS(new Date(year, 11, 1)),
-      from: dateToTS(new Date(year, 10, 8)),
-      to: dateToTS(new Date(year, 10, 23)),
-      prettify: tsToDate
-    });
-
-  }
-
   if ($('.graphics').length){
 
     $(".chart_container").remove();
@@ -177,11 +131,11 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
       url: '/project_types/kpi.json',
       datatype: 'json',
       data: {
-        data_id: data_id, 
-        size_box: size_box, 
-        graph: true, 
-        type_box: type_box, 
-        dashboard_id: dashboard_id, 
+        data_id: data_id,
+        size_box: size_box,
+        graph: true,
+        type_box: type_box,
+        dashboard_id: dashboard_id,
         data_conditions: conditions,
         from_date: from_date,
         to_date: to_date
@@ -229,7 +183,7 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
           var lab_all=[];//variable que agrupa los labels de cada serie
           var da_all=[];//Variable que agrupa los datos de cada serie
           var lab_acumulado=[];//variable que acumula todos los labels de todas las series
-          
+
           // Separamos las series
           $.each(reg, function(a, b){
 
@@ -370,7 +324,7 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
             lab_acumulado=lab_acumulado.sort(function (a, b) {
               if(a!=null){
                 return a.localeCompare(b);
-              }              
+              }
               });//lo ordena en español para colocar la ñ en su lugar. sort() la coloca al final
             var indexnull=lab_acumulado.indexOf(null);
             if(indexnull>=0){lab_acumulado[indexnull]='sin datos'}
@@ -378,7 +332,7 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
               //Ordenamos el array traído de la base de datos
               var lab_temporal_ordenado=lab_all[l].slice().sort();
               var lab_temporal_ordenado=lab_temporal_ordenado.sort(function (a, b) {
-                if(a!=null){return a.localeCompare(b);}     
+                if(a!=null){return a.localeCompare(b);}
               });//lo ordena en español
               var indexnull=lab_temporal_ordenado.indexOf(null);
               if(indexnull>=0){lab_temporal_ordenado[indexnull]='sin datos'}
@@ -459,12 +413,12 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
 
               if (index == 'data'){
                 data_general = value;
-                
+
 
                 // Extraemos los datos del array de la serie
                 $.each(data_general, function(idx, vax){
                   var idx_index=idx.substring(5)
-    
+
                   // BAR & LINE datasets
                   if (type_chart == 'bar' || type_chart == 'line') {
                     datasets.push({
@@ -663,7 +617,7 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
               //legend_display = false;
 
 
-            } 
+            }
             if(status_view_expanded) { // Expanded
 
               if (width == 3) {
@@ -1086,7 +1040,7 @@ function init_data_dashboard(haschange){
      var active_page=parseInt($(".active_page").html());
     }
     var offset_rows=per_page_value*(active_page-1);
-  } 
+  }
     var filter_value=$("#choose").val();
     var filter_by_column=$(".filter_by_column").val();
     var order_by_column=$(".order_by_column").val();
@@ -1110,12 +1064,12 @@ function init_data_dashboard(haschange){
         from_date: from_date,
         to_date: to_date
       },
-    
+
       success: function(data) {
 
         var fields = document.querySelectorAll(".field_key");
         var data_dashboard=data.data
-  
+
       // borramos los datos anteriores
         document.getElementById("tbody_visible").remove();
         var new_body=document.createElement("TBODY");
@@ -1155,8 +1109,8 @@ function init_data_dashboard(haschange){
                         Navarra.project_types.config.data_dashboard="app_id = '"+appid_selected+"'";
                       }
                     }
-                }              
-            } 
+                }
+            }
             new_row.setAttribute('onclick','show_item('+index+','+appid_selected+')');
             new_celd.className="custom_row";
             if($('#table_hidden th:nth-child('+(indexColumn+1)+')').is(':hidden')){
@@ -1176,7 +1130,7 @@ function init_data_dashboard(haschange){
 
     //Si hay cambios en los datos, recalcula el search
     if(haschange){
-      if(filter_value!=""){ // si hay una búsqueda en el search    
+      if(filter_value!=""){ // si hay una búsqueda en el search
             Navarra.project_types.config.data_dashboard="strToLowerCase("+filter_by_column+") like '%"+filter_value.toLowerCase()+"%'";
             Navarra.geomaps.current_layer();
 
@@ -1198,7 +1152,7 @@ function init_data_dashboard(haschange){
                 from_date: from_date,
                 to_date: to_date
               },
-            
+
               success: function(data) {
                 var totalfiles_selected=data.data.length;
                 // pagina teniendo en cuenta solo lo buscado en el search
@@ -1221,7 +1175,7 @@ function init_data_dashboard(haschange){
             data_pagination($('.total_files').val(),1);
             //elimina el indicador de total buscado
             $('.selected_files_from_total').html("");
-          }          
+          }
         }
     }
 }
@@ -1242,7 +1196,7 @@ function data_pagination(selected, active_page){
     var page_hide1=false;
     for(i=1;i<=total_page;i++){
       if(i<=3||i>total_page-1 || i==active_page-1 || i==active_page || i==active_page+1){
-        if(i==active_page){ 
+        if(i==active_page){
           numbers+='<li><a class="page_data active_page">'+i+'</a></li>'
         } else{
           numbers+='<li><a class="page_data">'+i+'</a></li>'
@@ -1266,28 +1220,28 @@ function data_pagination(selected, active_page){
     $('#page_numbers').replaceWith('<ul class="pagination pagination-sm m-0" id="page_numbers">'+numbers+'</ul>');
     } else{
     $('#page_numbers').replaceWith('<ul class="pagination pagination-sm m-0" id="page_numbers"></ul>');
-    } 
+    }
   //Pagina activa
   $(".page_data").click(function(){
     active_page=parseInt($(this).html());
     data_pagination(selected,active_page);
     init_data_dashboard(false);
-  });   
+  });
   $(".page_back").click(function(){
       active_page--;
       data_pagination(selected, active_page);
       init_data_dashboard(false);
-  });    
+  });
   $(".page_foward").click(function(){
       active_page++;
       data_pagination(selected, active_page);
       init_data_dashboard(false);
-  });        
+  });
 }
 //****** TERMINAN FUNCIONES PARA TABLA DE DATOS*****
 
 
-//****** FUNCIONES PARA TIMESLIDER***** 
+//****** FUNCIONES PARA TIMESLIDER*****
 
 // Función para iniciar por primera vez el timeslider
 function init_time_slider(){
@@ -1298,17 +1252,17 @@ function init_time_slider(){
   var min_date=dateToTS(today_format)-5*milisec_day;
   var max_date=dateToTS(today_format)+5*milisec_day;
   var from_date= dateToTS(today_format)-2*milisec_day;
-  var to_date= dateToTS(today_format)+2*milisec_day;  
+  var to_date= dateToTS(today_format)+2*milisec_day;
   var step_time_slider=milisec_day;
   create_time_slider(min_date,max_date,from_date,to_date, step_time_slider);
   // arma datetimepicker con formato incial por día y le manda los datos del timeslider
   $('#time_slider_from').datetimepicker({
     format      :   "DD/MM/YYYY",
-    viewMode    :   "days", 
+    viewMode    :   "days",
   });
   $('#time_slider_to').datetimepicker({
     format      :   "DD/MM/YYYY",
-    viewMode    :   "days", 
+    viewMode    :   "days",
   });
   $('#time_slider_from').val(tsToDate(min_date));
   $('#time_slider_to').val(tsToDate(max_date));
@@ -1363,7 +1317,7 @@ function create_time_slider(min_date,max_date,from_date,to_date, step_time_slide
         },
       onStart: function (data) {
           set_time_slider_values(data);
-        },  
+        },
     });
 
     $('.irs-min , .irs-max  ').css("cursor", "pointer");
@@ -1378,20 +1332,20 @@ function change_step_time_slider(){
     $("#time_slider_from , #time_slider_to").each(function(){
       $(this).val('');
       $(this).off('dp.change');
-      $(this).data('DateTimePicker').destroy(); 
+      $(this).data('DateTimePicker').destroy();
       $(this).datetimepicker({
         format      :   "DD/MM/YYYY",
-        viewMode    :   "days", 
+        viewMode    :   "days",
       });
     })
   }
   if($('#time_slider_step').val()=='week'){
     $("#time_slider_from , #time_slider_to").each(function(){
       $(this).val('');
-      $(this).data('DateTimePicker').destroy(); 
+      $(this).data('DateTimePicker').destroy();
       $(this).datetimepicker({
         format      :   "DD/MM/YYYY",
-        viewMode    :   "days", 
+        viewMode    :   "days",
         calendarWeeks: true,
       });
       $(this).on('dp.change', function (e) {
@@ -1405,13 +1359,13 @@ function change_step_time_slider(){
   if($('#time_slider_step').val()=='month'){
     $("#time_slider_from , #time_slider_to").each(function(){
       $(this).val('');
-      $(this).data('DateTimePicker').destroy(); 
+      $(this).data('DateTimePicker').destroy();
       $(this).datetimepicker({
         format      :   "MM/YYYY",
-        viewMode    :   "months", 
+        viewMode    :   "months",
       });
       $(this).off('dp.change');
-    }) 
+    })
   }
   if($('#time_slider_step').val()=='year'){
     $("#time_slider_from , #time_slider_to").each(function(){
@@ -1420,7 +1374,7 @@ function change_step_time_slider(){
       $(this).data('DateTimePicker').destroy();
       $(this).datetimepicker({
         format      :   "YYYY",
-        viewMode    :   "years", 
+        viewMode    :   "years",
       });
     })
   }
@@ -1452,12 +1406,12 @@ function set_time_slider(){
     if(step_date=='month'){
       range=31;
       var step_time_slider=milisec_day*31;
-    }    
+    }
     var total_range=(dateToTS(max_date)-dateToTS(min_date))/(milisec_day*range);
     var from_date=dateToTS(min_date)+range*milisec_day;
     var to_date=dateToTS(min_date)+Math.floor(total_range)*31*milisec_day;
   }
-  
+
   if(step_date=='year'){
     min_date=$('#time_slider_from').val();
     max_date=$('#time_slider_to').val();
@@ -1497,7 +1451,7 @@ function tsToDate(ts) {
   } else{
     d_format=ts
   }
-    return d_format;  
+    return d_format;
 }
 
 // Función para colocar el timeslider en gris (no aplicado)
@@ -1544,7 +1498,7 @@ function set_time_slider_values(data){
   $('#time-slider-to-value').val(to_pretty);
 }
 
-//Función para aplicar el timeslider como filtro 
+//Función para aplicar el timeslider como filtro
 function set_time_slider_filter(){
   var colored_element=['.irs-bar','.irs-from', '.irs-to','.irs-single', '.irs-handle>i:first-child'];
   colored_element.forEach(function(element){
@@ -1559,7 +1513,7 @@ function set_time_slider_filter(){
   prev_bar.appendTo('.irs--flat');
   var styletext='background:#d3d800!important;left:'+left_clone+';width:'+width_clone;
   $('#prev_bar').attr('style',styletext);
-  
+
   //toma los valores from y to y los asigna a las variables globales
   Navarra.project_types.config.from_date = $('#time-slider-from-value').val();
   Navarra.project_types.config.to_date = $('#time-slider-to-value').val();
@@ -1578,7 +1532,7 @@ function set_time_slider_filter(){
   }
 }
 
-//Función para eliminar el timeslider como filtro 
+//Función para eliminar el timeslider como filtro
 function clear_time_slider_filter(){
   Navarra.project_types.config.from_date = "";
   Navarra.project_types.config.to_date = "";
@@ -1633,10 +1587,10 @@ function getDateOfISOWeek(w, y) {
 function changeformatDate(d,type){
   var dateParts = d.split("/");
   if(type=='day'){
-    var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]); 
+    var dateObject = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
   }
   if(type=='month'){
-    var dateObject = new Date(+dateParts[1], dateParts[0] - 1, +'1'); 
+    var dateObject = new Date(+dateParts[1], dateParts[0] - 1, +'1');
   }
   return dateObject;
 }

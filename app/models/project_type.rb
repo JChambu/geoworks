@@ -6,9 +6,6 @@ class ProjectType < ApplicationRecord
   include ProjectTypes::Validations
   include ProjectTypes::GeoJson
 
-  include RailsSortable::Model
-  set_sortable :level
-
   has_paper_trail
 
   require 'rgeo/shapefile'
