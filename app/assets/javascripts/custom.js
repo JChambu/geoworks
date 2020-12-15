@@ -1594,5 +1594,114 @@ function changeformatDate(d,type){
   }
   return dateObject;
 }
-
 //********TERMINAN FUNCIONES PARA TIMESLIDER*******
+
+//****** FUNCIONES PARA ARMAR REPORTE*****
+// Función para traer todos los datos de los registros contenidos y filtrados
+function init_report(){
+  var type_box = 'polygon';
+  var size_box = Navarra.dashboards.config.size_polygon;
+  if (size_box.length==0) {
+    var size_box = [];
+    type_box = 'extent';
+    size_ext = Navarra.dashboards.config.size_box;
+    size_box[0] = size_ext['_southWest']['lng'];
+    size_box[1] = size_ext['_southWest']['lat'];
+    size_box[2] = size_ext['_northEast']['lng'];
+    size_box[3] = size_ext['_northEast']['lat'];
+  }
+
+  var conditions = Navarra.project_types.config.filter_kpi;
+
+  var project_type_id = Navarra.dashboards.config.project_type_id;
+  var per_page = $(".select_perpage").html();
+  var per_page_value = parseInt(per_page);
+  if(!isNaN(per_page_value)){
+    if($(".active_page").length==0){
+      var active_page=1
+    } else{
+     var active_page=parseInt($(".active_page").html());
+    }
+    var offset_rows=per_page_value*(active_page-1);
+  }
+    var filter_value=$("#choose").val();
+    var filter_by_column=$(".filter_by_column").val();
+    var order_by_column=$(".order_by_column").val();
+    var from_date = Navarra.project_types.config.from_date;
+    var to_date = Navarra.project_types.config.to_date;
+
+    //capas activas
+    active_layers=[];
+    check_layers = document.querySelectorAll('input:checked.leaflet-control-layers-selector');
+    for(l=0; l<check_layers.length; l++){
+      if(check_layers[l].type=='checkbox'){
+        active_layers.push($(check_layers[l]).next().html());
+      }
+    }
+    $.ajax({
+      type: 'GET',
+      //cambiar nombre de la url
+      url: '/project_types/search_data_dashboard',
+      datatype: 'json',
+      data: {
+        filter_value: filter_value,
+        filter_by_column: filter_by_column,
+        order_by_column: order_by_column,
+        project_type_id: project_type_id,
+        //eliminar estos parámetros
+          offset_rows: offset_rows,
+          per_page_value: per_page_value,
+        //
+        type_box: type_box,
+        size_box: size_box,
+        data_conditions: conditions,
+        from_date: from_date,
+        to_date: to_date,
+        active_layers: active_layers
+      },
+
+      success: function(data) {
+        var fields = document.querySelectorAll(".field_key_report");
+        var data_dashboard=data.data
+
+      // borramos los datos anteriores
+        document.getElementById("tbody_visible_report").remove();
+        document.getElementById("tbody_hidden_report").remove();
+        var new_body=document.createElement("TBODY");
+        new_body.style.visibility="hidden";
+        new_body.id="tbody_hidden_report";
+        document.getElementById("table_hidden_report").appendChild(new_body);
+        var new_body=document.createElement("TBODY");
+        new_body.style.className="project_data_div";
+        new_body.id="tbody_visible_report";
+        document.getElementById("table_visible_report").appendChild(new_body);
+
+        // llenado de la tabla de datos !!!!!!!!!!!!!! aqui falta código cuando regresen todos los datos
+        data_dashboard.forEach(function(element, index) {
+          var new_row = document.createElement("TR");
+          new_row.className="row_data_report text-secondary";
+          var data_properties = element.properties;
+          fields.forEach(function(column, indexColumn){
+            var column_name=column.value;
+            var new_celd = document.createElement("TD");
+            if(column.value=="#"){
+                new_celd.innerHTML=(index+1);
+            } else{
+                if(data_properties[column_name]!=undefined){
+                    new_celd.innerHTML=data_properties[column_name];
+                }
+            }
+            new_celd.className="custom_row";
+            if(column_name!="#"){
+              if(document.getElementById('columnfake_report_'+column_name).className=="d-none"){
+                new_celd.style.display="none";
+              };
+            }
+            new_row.appendChild(new_celd);
+          });
+           document.getElementById("tbody_visible_report").appendChild(new_row.cloneNode(true));
+           document.getElementById("tbody_hidden_report").appendChild(new_row);
+          });
+      }
+    })
+}

@@ -33,6 +33,12 @@ $(".th-hover").hover(function(){
         }
       }
   })
+
+// Arma reporte
+$("#show_report").click(function(){
+  init_report();
+});
+
 });
 
 //ordena descendente y ascendente
@@ -92,21 +98,6 @@ function show_item(index, appid_selected){
   Navarra.geomaps.current_layer();
 }
 
-function show_geometry(index, multi){
-  var geometry= $('.geometry').eq(index).html();
-   var cols = document.querySelectorAll( '.table_scroll table tbody tr:nth-child('+(index+1)+') td');
-   data_text="";
-   var i=0;
-   cols.forEach(function(col){
-    i++;
-     if(col.innerText!="" && i!=1 && i<cols.length){
-     var head = $('.table_scroll table thead tr th:nth-child('+(i)+'');
-     if(head.is(":visible")){
-       data_text+=head.text()+": "+col.textContent+'<br/>';
-     }
-    }
-   })
-}
 
 </script>
 <style type="text/css">
@@ -128,22 +119,13 @@ function show_geometry(index, multi){
   height: 10px;
 }
 
-.icons{
-  color: inherit!important;
-  display: inline-block;
-  width: auto;
-  padding: 0px 2px;
-}
-.icons:hover{
-  background: none;
-}
-
-
 </style>
 <div class="card-header chart-header-bg-transparent py-1 px-2 card_data">
   Datos
+  <a data-toggle="modal" data-target="#modal-report" id="show_report"><i class="fas fa-clipboard-list ml-3" title="Reporte" style="cursor: pointer;" ></i></a>
+
   <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown-columns">
-    <i class="fas fa-plus ml-3" style="font-size: 0.8em; cursor: pointer;"></i>
+    <i class="fas fa-plus ml-2" style="font-size: 0.8em; cursor: pointer;" title="Agregar Columna"></i>
   </a>
   <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; overflow-y: auto;">
     <% if !@fields.nil? %>
@@ -160,14 +142,14 @@ function show_geometry(index, multi){
       <% end %>
     <% end %>
   </div>
-  <input id="choose" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0" placeholder="Buscar" style="width: 0%; transition:1.5s;"  >
+  <input id="choose" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0 ml-2" placeholder="Buscar" style="width: 0%; transition:1.5s;"  >
   <input type="text" class="choose_column d-none">
   <input type="text" class="filter_by_column d-none">
   <input type="text" class="order_by_column d-none">
   <input type="text" class="total_files d-none">
   <h6 type="text" class="selected_files_from_total d-inline"></h6>
 
-  <div class="" style="float: right;">
+  <div class="mt-1" style="float: right;">
     <div class="dropdown" style="display: inline-block;">
       <h6 class="dropdown-toggle select_perpage m-0 mr-3"  id="dropdownMenuButton" data-toggle   ="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 0.8em; cursor: pointer;">
         20/pág

@@ -432,3 +432,28 @@ div.custom-menu.show {
 .project_data_div{
   border-top: solid 2px transparent;
 }
+
+/*estilo para tabla de datos */
+.icons{
+  color: inherit!important;
+  display: inline-block;
+  width: auto;
+  padding: 0px 2px;
+}
+.icons:hover{
+  background: none;
+}
+
+/* estilo para tabla reporte */
+.modal-report{
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+}
+.icons_report{
+  position:relative;
+  top:-5px;
+  left:5px;
+}
