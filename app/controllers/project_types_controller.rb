@@ -467,21 +467,23 @@ class ProjectTypesController < ApplicationController
     end
 
     # Cruza con las capas internas
-    active_layers.each do |layer|
+    if !active_layers.blank?
+      active_layers.each do |layer|
 
-      project_type = ProjectType.where(name: layer).first
-      fields = ProjectField
-        .where(project_type_id: project_type.id)
-        .order(:sort)
+        project_type = ProjectType.where(name: layer).first
+        fields = ProjectField
+          .where(project_type_id: project_type.id)
+          .order(:sort)
 
-      if project_type.id != project_type_id
-        data = data
-          .joins("INNER JOIN projects #{project_type.name_layer} ON (shared_extensions.ST_Intersects(main.the_geom, #{project_type.name_layer}.the_geom))")
-          .where("#{project_type.name_layer}.project_type_id = #{project_type.id}")
-      end
+        if project_type.id != project_type_id
+          data = data
+            .joins("INNER JOIN projects #{project_type.name_layer} ON (shared_extensions.ST_Intersects(main.the_geom, #{project_type.name_layer}.the_geom))")
+            .where("#{project_type.name_layer}.project_type_id = #{project_type.id}")
+        end
 
-      fields.each do |field|
-        data = data.select("#{project_type.name_layer}.properties ->> '#{field.key}' as #{project_type.name_layer}_#{field.key}")
+        fields.each do |field|
+          data = data.select("#{project_type.name_layer}.properties ->> '#{field.key}' as #{project_type.name_layer}_#{field.key}")
+        end
       end
     end
 
