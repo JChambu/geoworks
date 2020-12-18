@@ -472,7 +472,6 @@ class ProjectTypesController < ApplicationController
       project_type = ProjectType.where(name: layer).first
       fields = ProjectField
         .where(project_type_id: project_type.id)
-        .where(data_table: true)
         .order(:sort)
 
       if project_type.id != project_type_id
