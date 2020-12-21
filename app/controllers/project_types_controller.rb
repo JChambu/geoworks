@@ -472,6 +472,8 @@ class ProjectTypesController < ApplicationController
         .where(:name => active_layers)
         .order(level: :desc)
 
+      @cabecera = {}
+
       project_types.each do |p|
 
         fields = ProjectField
@@ -486,11 +488,12 @@ class ProjectTypesController < ApplicationController
             .where("#{p.name_layer}.project_type_id = #{p.id}")
         end
 
-        @cabecera = {}
         @campos_total = []
+
         fields.each do |field|
           @campos = {}
-          data = data.select("#{p.name_layer}.properties ->> '#{field.key}' as #{field.key}")
+          data = data.select("#{p.name_layer}.properties ->> '#{field.key}' as #{p.name_layer}_#{field.key}")
+
           @campos['key'] = field.key
           @campos['name'] = field.name
           @campos['data_table'] = field.data_table
@@ -499,11 +502,12 @@ class ProjectTypesController < ApplicationController
           @campos_total.push(@campos)
         end
 
-        @cabecera['fields'] = @campos_total
-        @cabecera['data'] = data
-        @report_data[p.name] = @cabecera
+        @cabecera[p.name] = @campos_total
 
       end
+      @report_data['thead'] = @cabecera
+      @report_data['tbody'] = data
+
     end
 
     render json: @report_data
