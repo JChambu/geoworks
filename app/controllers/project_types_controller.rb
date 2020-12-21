@@ -344,6 +344,7 @@ class ProjectTypesController < ApplicationController
     from_date = params[:from_date]
     to_date = params[:to_date]
     active_layers = params[:active_layers]
+    # active_layers = ["Inspección", "Cuadros / Recomendaciones", "Propiedades"]
 
     data = Project
       .select('DISTINCT main.id')
@@ -461,28 +462,51 @@ class ProjectTypesController < ApplicationController
       end
     end
 
+    @report_data = {}
+
     # Cruza con las capas internas
     if !active_layers.blank?
-      active_layers.each do |layer|
 
-        project_type = ProjectType.where(name: layer).first
+      project_types = ProjectType
+        .where(enabled_as_layer: true)
+        .where(:name => active_layers)
+        .order(level: :desc)
+
+      project_types.each do |p|
+
         fields = ProjectField
-          .where(project_type_id: project_type.id)
-          .order(:sort)
+          .joins(:project_type)
+          .where(project_types: {enabled_as_layer: true})
+          .where(project_type_id: p.id)
+          .order('project_types.level DESC', :sort)
 
-        if project_type.id != project_type_id
+        if p.id != project_type_id
           data = data
-            .joins("INNER JOIN projects #{project_type.name_layer} ON (shared_extensions.ST_Intersects(main.the_geom, #{project_type.name_layer}.the_geom))")
-            .where("#{project_type.name_layer}.project_type_id = #{project_type.id}")
+            .joins("INNER JOIN projects #{p.name_layer} ON (shared_extensions.ST_Intersects(main.the_geom, #{p.name_layer}.the_geom))")
+            .where("#{p.name_layer}.project_type_id = #{p.id}")
         end
 
+        @cabecera = {}
+        @campos_total = []
         fields.each do |field|
-          data = data.select("#{project_type.name_layer}.properties ->> '#{field.key}' as #{project_type.name_layer}_#{field.key}")
+          @campos = {}
+          data = data.select("#{p.name_layer}.properties ->> '#{field.key}' as #{field.key}")
+          @campos['key'] = field.key
+          @campos['name'] = field.name
+          @campos['data_table'] = field.data_table
+          @campos['field_type_id'] = field.field_type_id
+          @campos['calculated_field'] = field.calculated_field
+          @campos_total.push(@campos)
         end
+
+        @cabecera['fields'] = @campos_total
+        @cabecera['data'] = data
+        @report_data[p.name] = @cabecera
+
       end
     end
 
-    render json: data
+    render json: @report_data
 
   end
 
