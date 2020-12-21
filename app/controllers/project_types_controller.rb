@@ -461,11 +461,6 @@ class ProjectTypesController < ApplicationController
       end
     end
 
-    # Aplica búsqueda del usuario
-    if !filter_by_column.blank? && !filter_value.blank?
-      data = data.where("TRANSLATE(main.properties ->> '#{filter_by_column}','ÁÉÍÓÚáéíóú','AEIOUaeiou') ilike translate('%#{filter_value}%','ÁÉÍÓÚáéíóú','AEIOUaeiou')")
-    end
-
     # Cruza con las capas internas
     if !active_layers.blank?
       active_layers.each do |layer|
