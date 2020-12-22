@@ -1660,7 +1660,6 @@ function init_report(){
         console.log("Datos");
         console.log(data)
         var data_thead=data.thead;
-        var projects_report=Object.keys(data_thead);
 
       //  var data_header = data.header;
        // var data_header = JSON.parse('[{ "project_name":"ArriendoChile", "fields":[{"name":"Comuna","key":"comune"},{"name":"bathroom","key":"bathroom"},{"name":"bedroom","key":"bedroom"},{"name":"email","key":"email"}]},{"project_name":"Cuadros","fields":[{"name":"Campo 3","key":"campo3"},{"name":"Campo 4","key":"campo4"}]},{"project_name":"Inspecciones","fields":[{"name":"Campo 5","key":"campo5"},{"name":"Campo 6","key":"campo6"}]}]');
@@ -1720,12 +1719,12 @@ function init_report(){
         new_row_fields.appendChild(new_row);
 
         // llenamos fila de proyectos
-        projects_report.forEach(function(element) {
+        data_thead.forEach(function(element) {
           var new_row=document.createElement("TH");
-          new_row.className="report_row report_project_"+element.toLowerCase()
+          new_row.className="report_row report_project_"+element.name_layer;
           var new_element=document.createElement('P');
           new_element.className="text-secondary p-0 m-0 d-inline";
-          new_element.innerHTML=element;
+          new_element.innerHTML=element.name;
           new_element.style.lineHeight="3vh";
           new_row.appendChild(new_element);
           new_drop=document.createElement('DIV');
@@ -1734,7 +1733,7 @@ function init_report(){
           new_a.setAttribute("data-toggle","dropdown");
           new_a.setAttribute("aria-haspopup",true);
           new_a.setAttribute("onclick","open_drop_down_report(event)");
-          new_a.id="dropdown_project_"+element;
+          new_a.id="dropdown_project_"+element.name_layer;
           new_a.setAttribute("aria-expanded",false);
           var new_element=document.createElement('I');
           new_element.className="fas fa-plus icons_report d-none text-secondary";
@@ -1744,10 +1743,10 @@ function init_report(){
           new_drop.appendChild(new_a);
           var new_dropdown=document.createElement('DIV');
           new_dropdown.className="dropdown-menu custom_drop_down scroll";
-          new_dropdown.setAttribute("aria-labelledby","dropdown_project_"+element);
+          new_dropdown.setAttribute("aria-labelledby","dropdown_project_"+element.name_layer);
           new_dropdown.style.maxHeight="80vh"; 
           new_dropdown.style.overflowY="auto;"
-          var data_header_fields = data_thead[element];
+          var data_header_fields = element.fields;
           data_header_fields.forEach(function(field, index) {
               if(field.field_type_id!= 7 && field.field_type_id !=11){
                 fields_all_count_add++;
@@ -1762,6 +1761,7 @@ function init_report(){
               }
           });
           
+          
           new_drop.appendChild(new_dropdown);
           new_row.appendChild(new_drop);
           new_row_projects.appendChild(new_row);
@@ -1774,7 +1774,7 @@ function init_report(){
             }
           });
           //llenamos fila de subtítulos
-          var data_header_fields = data_thead[element];
+          var data_header_fields = element.fields;
           var fields_count=0;
           data_header_fields.forEach(function(field, index) {
             if(field.field_type_id!= 7 && field.field_type_id !=11){
@@ -1799,13 +1799,13 @@ function init_report(){
 
             //armamos fila de campos
               var new_row=document.createElement("TH");
-              new_row.className="report_row field_row columnfake_report_"+element.toLowerCase()+'_'+ field.key;
+              new_row.className="report_row field_row columnfake_report_"+element.name_layer+'_'+ field.key;
               new_row.style.minWidth="100px";
               new_row.style.borderTop="none";
               var new_element2=document.createElement('INPUT');
               new_element2.type="text";
               new_element2.className="d-none field_key_report";
-              new_element2.value=element.toLowerCase()+'_'+ field.key
+              new_element2.value=element.name_layer+'_'+ field.key
               new_row.appendChild(new_element2);
               var new_element=document.createElement('DIV');
               new_element.className="text-secondary";
@@ -1831,8 +1831,10 @@ function init_report(){
               new_row.appendChild(new_element);
               new_row_fields.appendChild(new_row);  
             }
-          }); 
+          });
+
           new_row.colSpan=fields_count;
+          
         });
         document.getElementById("thead_report_visible").appendChild(new_row_projects.cloneNode(true));  
         document.getElementById("thead_report_hidden").appendChild(new_row_projects); 
@@ -1955,7 +1957,7 @@ function unset_subtitles(){
       }
       else{
         text_subtitle=row.firstElementChild.innerHTML;
-        row.style.borderBottom="solid 1px rgba(0,0,0,0.6)";
+        row.style.borderBottom="solid 2px rgba(0,0,0,0.6)";
         colspan_array.push(colspan_number);
         colspan_number=1;
       }
@@ -1990,3 +1992,4 @@ function unset_subtitles(){
     }
   });
 }
+
