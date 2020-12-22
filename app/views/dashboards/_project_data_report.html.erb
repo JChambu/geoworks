@@ -1,64 +1,55 @@
+<script type="text/javascript">
+//scroll de ambas tablas simultáneamente
+$(document).ready(function () {
+  $('#modal-report').on('shown.bs.modal', function (e) {
+  //ancho del head de la tabla
+    if(document.getElementById('div_scroll_report').scrollHeight>document.getElementById('div_scroll_report').clientHeight){
+        var width_browser = window.innerWidth;
+        var width_report = (width_browser-11)+ 'px';
+        document.getElementById('div_noscroll_report').style.width=width_report;
+    } else {
+       document.getElementById('div_noscroll_report').style.width="auto";
+    }
+
+  //editar tabla
+  var edit = false;
+  $('.edit_report').click(function(){
+    if(!edit){
+      $('.icons_report').removeClass("d-none");
+      edit = true;
+    } else{
+      $('.icons_report').addClass("d-none");
+      edit = false;
+    }
+  });
+  
+});
+});
+</script>
+
 <div class="modal fade" tabindex="-1" role="dialog" id="modal-report" >
-  <div class="modal-dialog modal-report" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Reporte</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <div class="modal-dialog modal-report bg-light" role="document">
+    <div class="modal-content" style="border: none;">
+      <div class="modal-header p-2" style="height: 6vh">
+        <h6 class="modal-title mt-0">Reporte</h6>
+        <a>
+          <i class="fas fa-edit ml-2 edit_report" style="font-size: 0.8em; cursor: pointer;" title="Editar Reporte"></i>
+          <i class="fas fa-download ml-2" style="font-size: 0.8em; cursor: pointer;" title="Descargar Reporte"></i>
+        </a>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="text-secondary" aria-hidden="true">&times;</span></button>
       </div>
-      <div class="modal-body">
-        <div class="table-responsive div_table no_scroll bg-light" style="height: 35px; overflow-y: hidden; border-bottom: solid 2px rgba(0,0,0,0.6)">
-           <table class="table table-hover m-0 card-body" id="table_hidden_report" style="font-size: 0.8em; text-align:center; border:solid 2px transparent;">
-            <thead>
-              <tr>
-                <th style="height: 8vh; padding-top: 0px; vertical-align: middle; cursor: pointer;">
-                  <div class="text-secondary"  >
-                    <p class="text-secondary" style="display: inline-block;">#</p>
-                    <input type="text" class="d-none field_key_report" value="#">
-                  </div>
-                </th>
-                <% if !@fields.nil? %>
-                <% index = 0 %>
-                  <% @fields.each do |field|  %>
-                    <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-                    <% index=index+1 %>
-                    <% if !field.popup %>
-                    <th style="height: 8vh; padding-top: 0px; vertical-align: middle; min-width: 100px; cursor:pointer;" class="d-none" id=<%="columnfake_report_"+field.key %>>
-                    <% else %>
-                      <th style="height: 8vh; padding-top: 0px; vertical-align: middle; min-width: 100px; cursor:pointer;" id=<%="columnfake_report_"+field.key %>>
-                    <% end %>    
-                        <div class="text-secondary"  >
-                          <p style="white-space: nowrap; display: inline-block;"><%= field.name %></p>
-                          <i class="fas fa-times icons icons_report" onclick="hide_column(<%=index%>)" ></i>
-                          <input type="text" class="d-none field_key_report" id=<%= "field_key_report"+index.to_s %> value=<%=field.key %>>
-                        </div>
-                      </th>
-                      <% else %>
-                    <% end %>
-                  <% end %>
-                <% end %>
-              </tr>
+      <div class="modal-body p-0 bg-light">
+        <div class="table-responsive div_table no_scroll bg-light" style="height: 13vh; overflow-y: hidden;transition: 1s" id="div_noscroll_report">
+          <table class="table table-bordered m-0 card-body" id="table_hidden_report" style="font-size: 0.8em; text-align:center; border:solid 2px transparent;">
+            <thead id="thead_report_visible">
             </thead>
-            <tbody id="tbody_hidden_report" style="visibility: hidden;">
+            <tbody class="invisible" id="tbody_hidden_report">
             </tbody>
           </table>
         </div>
-        <div class="table-responsive div_table bg-light"  style="position: relative; z-index: 10;transition: 1s;">
-          <table class="table table-hover m-0 card-body" id="table_visible_report" style="font-size: 0.8em; position: relative;top: -45px; text-align: center;">
-            <thead style="visibility: hidden; border-bottom: solid transparent">
-              <tr class="data_fields">
-                <th>#</th>
-                <% if !@fields.nil? %>
-                <% @fields.each do |field|  %>
-                  <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-                  <% if !field.popup %>
-                <th style="min-width: 100px; white-space: nowrap;" class="d-none" id=<%="column_report_"+field.name%>><%= field.name %></th>
-                  <% else %>
-            <th style="min-width: 100px; white-space: nowrap;" id=<%="column_report"+field.name %>><%= field.       name %></th>
-                  <% end %> 
-                  <% end %>
-                <% end %>
-                <% end %>
-              </tr>
+        <div class="table-responsive scroll div_table bg-light"  style="position: relative; z-index: 10;transition: 1s; max-height: 80vh; overflow-y: auto;" id="div_scroll_report">
+          <table class="table table-bordered mt-0 ml-0 mr-0 card-body" id="table_visible_report" style="font-size: 0.8em; position: relative;top: -13vh; text-align: center;margin-bottom: -13vh">
+            <thead id="thead_report_hidden" style="visibility: hidden; border-bottom: solid transparent; height: 6vh">            
             </thead>
             <tbody id="tbody_visible_report" class="project_data_div">
             </tbody>
