@@ -456,7 +456,7 @@ class ProjectTypesController < ApplicationController
 
         # Aplica filtro por otro campo
         if @field != 'app_usuario' && @field != 'app_estado'
-          data = data.where("properties->>'" + @field + "'" + @filter + "#{@value}")
+          data = data.where("main.properties->>'" + @field + "'" + @filter + "#{@value}")
         end
       end
     end
