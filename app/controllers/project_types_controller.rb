@@ -346,7 +346,7 @@ class ProjectTypesController < ApplicationController
     active_layers = params[:active_layers]
 
     data = Project
-      .select('DISTINCT main.id')
+      .select('DISTINCT main.id, project_statuses.color as status_color')
       .from('projects main')
       .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
       .joins('INNER JOIN public.users ON users.id = main.user_id')
