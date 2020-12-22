@@ -344,7 +344,6 @@ class ProjectTypesController < ApplicationController
     from_date = params[:from_date]
     to_date = params[:to_date]
     active_layers = params[:active_layers]
-    # active_layers = ["Inspección", "Cuadros / Recomendaciones", "Propiedades"]
 
     data = Project
       .select('DISTINCT main.id')
@@ -472,9 +471,12 @@ class ProjectTypesController < ApplicationController
         .where(:name => active_layers)
         .order(level: :desc)
 
-      @cabecera = {}
+
+      @cabecera_array = []
 
       project_types.each do |p|
+
+        @cabecera = {}
 
         fields = ProjectField
           .joins(:project_type)
@@ -503,12 +505,15 @@ class ProjectTypesController < ApplicationController
           @campos_total.push(@campos)
         end
 
-        @cabecera[p.name] = @campos_total
+        @cabecera['fields'] = @campos_total
+        @cabecera['name'] = p.name
+        @cabecera['name_layer'] = p.name_layer
+
+        @cabecera_array.push(@cabecera)
 
       end
-      @report_data['thead'] = @cabecera
+      @report_data['thead'] = @cabecera_array
       @report_data['tbody'] = data
-
     end
 
     render json: @report_data
