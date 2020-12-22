@@ -494,6 +494,7 @@ class ProjectTypesController < ApplicationController
           @campos = {}
           data = data.select("#{p.name_layer}.properties ->> '#{field.key}' as #{p.name_layer}_#{field.key}")
 
+          @campos['id'] = field.id
           @campos['key'] = field.key
           @campos['name'] = field.name
           @campos['data_table'] = field.data_table
