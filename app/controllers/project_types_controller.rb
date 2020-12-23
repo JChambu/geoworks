@@ -334,7 +334,7 @@ class ProjectTypesController < ApplicationController
 
   def search_report_data
 
-    project_type_id = params[:project_type_id]
+    project_type_id = params[:project_type_id].to_i
     filter_value = params[:filter_value]
     filter_by_column = params[:filter_by_column]
     order_by_column = params[:order_by_column]
@@ -496,7 +496,12 @@ class ProjectTypesController < ApplicationController
 
         fields.each do |field|
           @campos = {}
-          data = data.select("#{p.name_layer}.properties ->> '#{field.key}' as #{p.name_layer}_#{field.key}")
+
+          if p.id != project_type_id
+            data = data.select("#{p.name_layer}.properties ->> '#{field.key}' as #{p.name_layer}_#{field.key}")
+          else
+            data = data.select("main.properties ->> '#{field.key}' as #{p.name_layer}_#{field.key}")
+          end
 
           @campos['id'] = field.id
           @campos['key'] = field.key
