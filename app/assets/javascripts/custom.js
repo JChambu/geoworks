@@ -2017,15 +2017,16 @@ function table_to_excel(){
       e.parentNode.removeChild(e);
     }
   });
-  export_to_excel('clone_table','geoworks', 'archivo.xls')
+  export_to_excel('clone_table','geoworks', 'reporte.xls')
 }
 
 function export_to_excel(table, name, filename) {
   let uri = 'data:application/vnd.ms-excel;base64,', 
   template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><title></title><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>', 
-  base64 = function(s) { return window.btoa(decodeURIComponent(encodeURIComponent(s))) },         
+  base64 = function(s) { return window.btoa(decodeURIComponent(encodeURIComponent(s.replace('–','-').replace(/[\u00A0-\u2666]/g, function(c) {
+    return '&#' + c.charCodeAt(0)})))) },
   format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; })}
-          
+        
   if (!table.nodeType) table = document.getElementById(table)
   var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
   var link = document.createElement('a');
