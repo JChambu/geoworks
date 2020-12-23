@@ -1870,7 +1870,7 @@ function init_report(){
                 new_celd.innerHTML=(index+1);
             } else{
                 if(element[column.value]!=undefined){
-                    new_celd.innerHTML=element[column.value];
+                    new_celd.innerHTML=element[column.value].replace(/[\[\]\"]/g, "");
                 }
             }
             new_celd.className="custom_row";
@@ -1879,24 +1879,6 @@ function init_report(){
             }
             new_row.appendChild(new_celd);
           });
-          /*
-          fields.forEach(function(column, indexColumn){
-            var column_name=column.value;
-            var new_celd = document.createElement("TD");
-            if(column.value=="#"){
-                new_celd.innerHTML=(index+1);
-            } else{
-                if(element[column_name]!=undefined){
-                    new_celd.innerHTML=element[column_name];
-                }
-            }
-            new_celd.className="custom_row";
-            if(document.getElementsByClassName('columnfake_report_'+column_name)[0].style.display=="none"){
-                   new_celd.style.display="none";
-                  }
-            new_row.appendChild(new_celd);
-          });
-          */
            document.getElementById("tbody_visible_report").appendChild(new_row.cloneNode(true));
            document.getElementById("tbody_hidden_report").appendChild(new_row);
         });
