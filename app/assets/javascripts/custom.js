@@ -1868,6 +1868,7 @@ function init_report(){
             var new_celd = document.createElement("TD");
             if(column.value=="#"){
                 new_celd.innerHTML=(index+1);
+                new_celd.style.background=element["status_color"];
             } else{
                 if(element[column.value]!=undefined){
                     new_celd.innerHTML=element[column.value].replace(/[\[\]\"]/g, "");
