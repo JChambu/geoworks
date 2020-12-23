@@ -1661,9 +1661,7 @@ function init_report(){
         console.log("Datos");
         console.log(data)
         var data_thead=data.thead;
-
-      //  var data_header = data.header;
-       // var data_header = JSON.parse('[{ "project_name":"ArriendoChile", "fields":[{"name":"Comuna","key":"comune"},{"name":"bathroom","key":"bathroom"},{"name":"bedroom","key":"bedroom"},{"name":"email","key":"email"}]},{"project_name":"Cuadros","fields":[{"name":"Campo 3","key":"campo3"},{"name":"Campo 4","key":"campo4"}]},{"project_name":"Inspecciones","fields":[{"name":"Campo 5","key":"campo5"},{"name":"Campo 6","key":"campo6"}]}]');
+        
         //ARMADO DE LA CABECERA DE LA TABLA
         // borramos los datos anteriores
         var fields_all_count=0;
@@ -1771,7 +1769,7 @@ function init_report(){
           data_header_fields.forEach(function(field, index) {
             if(field.field_type_id ==11 && field.calculated_field !=""){
               subtitles_names.push(field.name);
-              subtitles_ids.push(field.calculated_field)
+              subtitles_ids.push(JSON.parse(field.calculated_field));
             }
           });
           //llenamos fila de subtítulos
@@ -1788,7 +1786,7 @@ function init_report(){
               new_element.style.whiteSpace="nowrap";
               new_element.style.lineHeight="3vh";
               for(x=0;x<subtitles_ids.length;x++){
-                  if(subtitles_ids[x].includes(field.id)){
+                  if(subtitles_ids[x].indexOf(field.id)>=0){
                     new_element.innerHTML=subtitles_names[x];
                   }
               }
