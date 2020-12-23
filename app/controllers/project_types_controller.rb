@@ -488,6 +488,8 @@ class ProjectTypesController < ApplicationController
           data = data
             .joins("INNER JOIN projects #{p.name_layer} ON (shared_extensions.ST_Intersects(main.the_geom, #{p.name_layer}.the_geom))")
             .where("#{p.name_layer}.project_type_id = #{p.id}")
+            .where("#{p.name_layer}.row_active = ?", true)
+            .where("#{p.name_layer}.current_season = ?", true)
         end
 
         @campos_total = []
