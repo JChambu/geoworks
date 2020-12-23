@@ -471,52 +471,57 @@ class ProjectTypesController < ApplicationController
         .where(:name => active_layers).or(ProjectType.where(id: project_type_id))
         .order(level: :desc)
 
-
       @cabecera_array = []
+
+      main_level = ProjectType.where(id: project_type_id).pluck(:level).first
 
       project_types.each do |p|
 
-        @cabecera = {}
+        if p.level >= main_level
 
-        fields = ProjectField
-          .joins(:project_type)
-          .where(project_types: {enabled_as_layer: true})
-          .where(project_type_id: p.id)
-          .order('project_types.level DESC', :sort)
+          @cabecera = {}
 
-        if p.id != project_type_id
-          data = data
-            .joins("INNER JOIN projects #{p.name_layer} ON (shared_extensions.ST_Intersects(main.the_geom, #{p.name_layer}.the_geom))")
-            .where("#{p.name_layer}.project_type_id = #{p.id}")
-            .where("#{p.name_layer}.row_active = ?", true)
-            .where("#{p.name_layer}.current_season = ?", true)
-        end
-
-        @campos_total = []
-
-        fields.each do |field|
-          @campos = {}
+          fields = ProjectField
+            .joins(:project_type)
+            .where(project_types: {enabled_as_layer: true})
+            .where(project_type_id: p.id)
+            .order('project_types.level DESC', :sort)
 
           if p.id != project_type_id
-            data = data.select("#{p.name_layer}.properties ->> '#{field.key}' as #{p.name_layer}_#{field.key}")
-          else
-            data = data.select("main.properties ->> '#{field.key}' as #{p.name_layer}_#{field.key}")
+            data = data
+              .joins("INNER JOIN projects #{p.name_layer} ON (shared_extensions.ST_Intersects(main.the_geom, #{p.name_layer}.the_geom))")
+              .where("#{p.name_layer}.project_type_id = #{p.id}")
+              .where("#{p.name_layer}.row_active = ?", true)
+              .where("#{p.name_layer}.current_season = ?", true)
           end
 
-          @campos['id'] = field.id
-          @campos['key'] = field.key
-          @campos['name'] = field.name
-          @campos['data_table'] = field.data_table
-          @campos['field_type_id'] = field.field_type_id
-          @campos['calculated_field'] = field.calculated_field
-          @campos_total.push(@campos)
+          @campos_total = []
+
+          fields.each do |field|
+            @campos = {}
+
+            if p.id != project_type_id
+              data = data.select("#{p.name_layer}.properties ->> '#{field.key}' as #{p.name_layer}_#{field.key}")
+            else
+              data = data.select("main.properties ->> '#{field.key}' as #{p.name_layer}_#{field.key}")
+            end
+
+            @campos['id'] = field.id
+            @campos['key'] = field.key
+            @campos['name'] = field.name
+            @campos['data_table'] = field.data_table
+            @campos['field_type_id'] = field.field_type_id
+            @campos['calculated_field'] = field.calculated_field
+            @campos_total.push(@campos)
+          end
+
+          @cabecera['fields'] = @campos_total
+          @cabecera['name'] = p.name
+          @cabecera['name_layer'] = p.name_layer
+
+          @cabecera_array.push(@cabecera)
+
         end
-
-        @cabecera['fields'] = @campos_total
-        @cabecera['name'] = p.name
-        @cabecera['name_layer'] = p.name_layer
-
-        @cabecera_array.push(@cabecera)
 
       end
       @report_data['thead'] = @cabecera_array
