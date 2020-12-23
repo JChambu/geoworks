@@ -1598,10 +1598,13 @@ function changeformatDate(d,type){
 
 //****** FUNCIONES PARA ARMAR REPORTE*****
 // Función para traer todos los datos de los registros contenidos y filtrados
-var subtitles_names=[];
-var subtitles_ids=[];
-var array_d_none=[true];
+var subtitles_names;
+var subtitles_ids;
+var array_d_none;
 function init_report(){
+  subtitles_names=[];
+  subtitles_ids=[];
+  array_d_none=[true];
   var type_box = 'polygon';
   var size_box = Navarra.dashboards.config.size_polygon;
   if (size_box.length==0) {
