@@ -1600,6 +1600,7 @@ function changeformatDate(d,type){
 // Función para traer todos los datos de los registros contenidos y filtrados
 var subtitles_names=[];
 var subtitles_ids=[];
+var array_d_none=[true];
 function init_report(){
   var type_box = 'polygon';
   var size_box = Navarra.dashboards.config.size_polygon;
@@ -1796,7 +1797,7 @@ function init_report(){
               }
               new_row.appendChild(new_element);
               new_row_subtitles.appendChild(new_row);
-
+        
             //armamos fila de campos
               var new_row=document.createElement("TH");
               new_row.className="report_row field_row columnfake_report_"+element.name_layer+'_'+ field.key;
@@ -1825,8 +1826,10 @@ function init_report(){
               new_element.appendChild(new_element2);
               if(!field.data_table){
                 new_row.style.display="none";
+                array_d_none.push(false);
               } else{
                 fields_count++;
+                array_d_none.push(true);
               }
               new_row.appendChild(new_element);
               new_row_fields.appendChild(new_row);  
@@ -1834,7 +1837,6 @@ function init_report(){
           });
 
           new_row.colSpan=fields_count;
-          
         });
         document.getElementById("thead_report_visible").appendChild(new_row_projects.cloneNode(true));  
         document.getElementById("thead_report_hidden").appendChild(new_row_projects); 
@@ -1843,9 +1845,9 @@ function init_report(){
         document.getElementById("thead_report_visible").appendChild(new_row_fields.cloneNode(true));  
         document.getElementById("thead_report_hidden").appendChild(new_row_fields); 
 
+
         // ARMADO DEL CUERPO DE LA TABLA
         var fields = document.getElementById('thead_report_visible').querySelectorAll(".field_key_report");
-
       // borramos los datos anteriores
         document.getElementById("tbody_visible_report").remove();
         document.getElementById("tbody_hidden_report").remove();
@@ -1863,6 +1865,22 @@ function init_report(){
           var new_row = document.createElement("TR");
           new_row.className="row_data_report text-secondary";
           fields.forEach(function(column, indexColumn){
+            var new_celd = document.createElement("TD");
+            if(column.value=="#"){
+                new_celd.innerHTML=(index+1);
+            } else{
+                if(element[column.value]!=undefined){
+                    new_celd.innerHTML=element[column.value];
+                }
+            }
+            new_celd.className="custom_row";
+            if(!array_d_none[indexColumn]){
+                  new_celd.style.display="none";
+            }
+            new_row.appendChild(new_celd);
+          });
+          /*
+          fields.forEach(function(column, indexColumn){
             var column_name=column.value;
             var new_celd = document.createElement("TD");
             if(column.value=="#"){
@@ -1878,9 +1896,11 @@ function init_report(){
                   }
             new_row.appendChild(new_celd);
           });
+          */
            document.getElementById("tbody_visible_report").appendChild(new_row.cloneNode(true));
            document.getElementById("tbody_hidden_report").appendChild(new_row);
         });
+
       $('#modal-report').modal('show');
       set_subtitles();  
       }
@@ -1993,3 +2013,41 @@ function unset_subtitles(){
   });
 }
 
+// exportar tabla a excel
+function table_to_excel(){
+  var origin_table=document.getElementById('table_visible_report');
+  var clone_table=origin_table.cloneNode(true);
+  clone_table.id="clone_table";
+  clone_table.style.display="none";
+  document.getElementById('modal-report').appendChild(clone_table);
+  document.querySelectorAll('#clone_table .dropdown').forEach(e => e.parentNode.removeChild(e));
+  var th_clone = document.querySelectorAll('#clone_table th');
+  th_clone.forEach(function(e) {
+        e.style.display.border="solid 4px black"
+    if(e.style.display=='none'){
+      e.parentNode.removeChild(e);
+    }
+  });
+  var td_clone = document.querySelectorAll('#clone_table td');
+  td_clone.forEach(function(e) {
+    if(e.style.display=='none'){
+      e.parentNode.removeChild(e);
+    }
+  });
+  export_to_excel('clone_table','geoworks', 'archivo.xls')
+}
+
+function export_to_excel(table, name, filename) {
+  let uri = 'data:application/vnd.ms-excel;base64,', 
+  template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><title></title><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>', 
+  base64 = function(s) { return window.btoa(decodeURIComponent(encodeURIComponent(s))) },         
+  format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; })}
+          
+  if (!table.nodeType) table = document.getElementById(table)
+  var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+  var link = document.createElement('a');
+  link.download = filename;
+  link.href = uri + base64(format(template, ctx));
+  link.click();
+  document.getElementById('clone_table').remove();
+}
