@@ -485,5 +485,9 @@ div.custom-menu.show {
 .custom_drop_down{
   position:fixed !important;
   top: 10vh !important;
+  left: 80% !important;
+  width:20%;
   transform: none!important;
+  max-height: 80vh; 
+  overflow-y: auto !important;
 }

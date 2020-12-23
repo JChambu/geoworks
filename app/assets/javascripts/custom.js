@@ -1743,8 +1743,6 @@ function init_report(){
           var new_dropdown=document.createElement('DIV');
           new_dropdown.className="dropdown-menu custom_drop_down scroll";
           new_dropdown.setAttribute("aria-labelledby","dropdown_project_"+element.name_layer);
-          new_dropdown.style.maxHeight="80vh"; 
-          new_dropdown.style.overflowY="auto;"
           var data_header_fields = element.fields;
           data_header_fields.forEach(function(field, index) {
               if(field.field_type_id!= 7 && field.field_type_id !=11){
@@ -1921,15 +1919,6 @@ function show_column_report(index,){
  $('.report_project_'+project_span).attr('colspan',project_span_number+1);
  $('.custom_drop_down p:nth-child('+(index-1)+')').css("display","none"); 
  set_subtitles()
-}
-
-//posiciona correctamente el dropdown
-function open_drop_down_report(e){
-  var element=e.target;
- // var pos_left=element.parentNode.parentNode.offsetWidth;
-  //console.log(pos_left)
- // var pos_left_px=pos_left+"px";
-  document.getElementsByClassName('custom_drop_down')[0].style.setProperty('margin-left', '50%' , 'important');
 }
 
 //agrupamos subtítulos
