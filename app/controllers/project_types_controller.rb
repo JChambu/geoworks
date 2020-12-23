@@ -468,7 +468,7 @@ class ProjectTypesController < ApplicationController
 
       project_types = ProjectType
         .where(enabled_as_layer: true)
-        .where(:name => active_layers)
+        .where(:name => active_layers).or(ProjectType.where(id: project_type_id))
         .order(level: :desc)
 
 
