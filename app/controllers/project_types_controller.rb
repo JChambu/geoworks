@@ -350,7 +350,7 @@ class ProjectTypesController < ApplicationController
       .from('projects main')
       .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
       .joins('INNER JOIN public.users ON users.id = main.user_id')
-      .where('main.project_type_id = ?', project_type_id.to_i)
+      .where('main.project_type_id = ?', project_type_id)
       .where('main.row_active = ?', true)
       .where('main.current_season = ?', true)
       .order("main.id")
@@ -384,7 +384,7 @@ class ProjectTypesController < ApplicationController
       end
     end
 
-    @project_filter = ProjectFilter.where(project_type_id: project_type_id.to_i).where(user_id: current_user.id).first
+    @project_filter = ProjectFilter.where(project_type_id: project_type_id).where(user_id: current_user.id).first
 
     if !@project_filter.nil?
 
