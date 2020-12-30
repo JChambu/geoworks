@@ -1661,10 +1661,9 @@ function init_report(){
         active_layers: active_layers
       },
       success: function(data) {
-        console.log("Datos");
-        console.log(data)
+
         var data_thead=data.thead;
-        
+
         //ARMADO DE LA CABECERA DE LA TABLA
         // borramos los datos anteriores
         var fields_all_count=0;
@@ -1760,8 +1759,8 @@ function init_report(){
               new_dropdown.appendChild(new_element);
               }
           });
-          
-          
+
+
           new_drop.appendChild(new_dropdown);
           new_row.appendChild(new_drop);
           new_row_projects.appendChild(new_row);
@@ -1796,7 +1795,7 @@ function init_report(){
               }
               new_row.appendChild(new_element);
               new_row_subtitles.appendChild(new_row);
-        
+
             //armamos fila de campos
               var new_row=document.createElement("TH");
               new_row.className="report_row field_row columnfake_report_"+element.name_layer+'_'+ field.key;
@@ -1831,18 +1830,18 @@ function init_report(){
                 array_d_none.push(true);
               }
               new_row.appendChild(new_element);
-              new_row_fields.appendChild(new_row);  
+              new_row_fields.appendChild(new_row);
             }
           });
 
           new_row.colSpan=fields_count;
         });
-        document.getElementById("thead_report_visible").appendChild(new_row_projects.cloneNode(true));  
-        document.getElementById("thead_report_hidden").appendChild(new_row_projects); 
-        document.getElementById("thead_report_visible").appendChild(new_row_subtitles.cloneNode(true));  
-        document.getElementById("thead_report_hidden").appendChild(new_row_subtitles); 
-        document.getElementById("thead_report_visible").appendChild(new_row_fields.cloneNode(true));  
-        document.getElementById("thead_report_hidden").appendChild(new_row_fields); 
+        document.getElementById("thead_report_visible").appendChild(new_row_projects.cloneNode(true));
+        document.getElementById("thead_report_hidden").appendChild(new_row_projects);
+        document.getElementById("thead_report_visible").appendChild(new_row_subtitles.cloneNode(true));
+        document.getElementById("thead_report_hidden").appendChild(new_row_subtitles);
+        document.getElementById("thead_report_visible").appendChild(new_row_fields.cloneNode(true));
+        document.getElementById("thead_report_hidden").appendChild(new_row_fields);
 
 
         // ARMADO DEL CUERPO DE LA TABLA
@@ -1884,7 +1883,7 @@ function init_report(){
         });
 
       $('#modal-report').modal('show');
-      set_subtitles();  
+      set_subtitles();
       }
     });
 }
@@ -1920,7 +1919,7 @@ function show_column_report(index,){
  var project_span= $('.tr_hidden_report th:nth-child('+index+') input').val().split('_')[0];
  var project_span_number = parseInt($('.report_project_'+project_span).attr('colspan'));
  $('.report_project_'+project_span).attr('colspan',project_span_number+1);
- $('.custom_drop_down p:nth-child('+(index-1)+')').css("display","none"); 
+ $('.custom_drop_down p:nth-child('+(index-1)+')').css("display","none");
  set_subtitles()
 }
 
@@ -2011,12 +2010,12 @@ function table_to_excel(){
 }
 
 function export_to_excel(table, name, filename) {
-  let uri = 'data:application/vnd.ms-excel;base64,', 
-  template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><title></title><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>', 
+  let uri = 'data:application/vnd.ms-excel;base64,',
+  template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><title></title><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>',
   base64 = function(s) { return window.btoa(decodeURIComponent(encodeURIComponent(s.replace('–','-').replace(/[\u00A0-\u2666]/g, function(c) {
     return '&#' + c.charCodeAt(0)})))) },
   format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; })}
-        
+
   if (!table.nodeType) table = document.getElementById(table)
   var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
   var link = document.createElement('a');
