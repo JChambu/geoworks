@@ -166,6 +166,10 @@ class ProjectTypesController < ApplicationController
     end
   end
 
+  def search_photos_and_subforms
+    render json: {}
+  end
+
   def search_data_dashboard
 
     project_type_id = params[:project_type_id]
@@ -520,7 +524,7 @@ class ProjectTypesController < ApplicationController
     end
     report_data['thead'] = p_data_array
     report_data['tbody'] = data
-    
+
     render json: report_data
   end
 

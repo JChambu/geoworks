@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get 'projects/popup' => 'projects#popup'
   get 'project_types/kpi' => 'project_types#kpi'
   get 'project_types/search_data_dashboard' => 'project_types#search_data_dashboard'
+  get 'project_types/search_photos_and_subforms' => 'project_types#search_photos_and_subforms'
   get 'project_types/search_report_data' => 'project_types#search_report_data'
   get 'project_types/filter_heatmap' => 'project_types#filter_heatmap'
   get 'project_types/graph3' => 'project_types#graph2'
