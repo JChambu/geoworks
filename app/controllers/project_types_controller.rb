@@ -461,21 +461,21 @@ class ProjectTypesController < ApplicationController
       end
     end
 
-    @report_data = {}
+    report_data = {}
 
     project_types = ProjectType
       .where(enabled_as_layer: true)
       .where(:name => active_layers).or(ProjectType.where(id: project_type_id))
       .order(level: :desc)
 
-    @cabecera_array = []
+    p_data_array = []
     main_level = ProjectType.where(id: project_type_id).pluck(:level).first
 
     project_types.each do |p|
 
       if p.level >= main_level
 
-        @cabecera = {}
+        p_data = {}
 
         fields = ProjectField
           .joins(:project_type)
@@ -491,10 +491,10 @@ class ProjectTypesController < ApplicationController
             .where("#{p.name_layer}.current_season = ?", true)
         end
 
-        @campos_total = []
+        p_fields_array = []
 
         fields.each do |field|
-          @campos = {}
+          p_fields = {}
 
           if p.id != project_type_id
             data = data.select("#{p.name_layer}.properties ->> '#{field.key}' as #{p.name_layer}_#{field.key}")
@@ -502,29 +502,26 @@ class ProjectTypesController < ApplicationController
             data = data.select("main.properties ->> '#{field.key}' as #{p.name_layer}_#{field.key}")
           end
 
-          @campos['id'] = field.id
-          @campos['key'] = field.key
-          @campos['name'] = field.name
-          @campos['data_table'] = field.data_table
-          @campos['field_type_id'] = field.field_type_id
-          @campos['calculated_field'] = field.calculated_field
-          @campos_total.push(@campos)
+          p_fields['id'] = field.id
+          p_fields['key'] = field.key
+          p_fields['name'] = field.name
+          p_fields['data_table'] = field.data_table
+          p_fields['field_type_id'] = field.field_type_id
+          p_fields['calculated_field'] = field.calculated_field
+          p_fields_array.push(p_fields)
         end
 
-        @cabecera['fields'] = @campos_total
-        @cabecera['name'] = p.name
-        @cabecera['name_layer'] = p.name_layer
-
-        @cabecera_array.push(@cabecera)
-
+        p_data['fields'] = p_fields_array
+        p_data['name'] = p.name
+        p_data['name_layer'] = p.name_layer
+        p_data_array.push(p_data)
       end
 
     end
-    @report_data['thead'] = @cabecera_array
-    @report_data['tbody'] = data
-
-    render json: @report_data
-
+    report_data['thead'] = p_data_array
+    report_data['tbody'] = data
+    
+    render json: report_data
   end
 
   def heatmap
