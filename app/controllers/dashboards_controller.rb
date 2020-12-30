@@ -30,6 +30,8 @@ class DashboardsController < ApplicationController
     if !@project_type.nil?
 
       @fields = ProjectField.where(project_type_id: @project_type.id)
+      @fields_all = ProjectField.joins(:project_type).where(project_types: {enabled_as_layer: true}).order('project_types.level DESC', :sort)
+      @project_types_all = ProjectType.where(enabled_as_layer: true).order(level: :desc)
       @extent = Project.geometry_bounds(@project_type.id, current_user.id)
       @current_tenant = Apartment::Tenant.current
 

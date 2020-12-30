@@ -1594,5 +1594,433 @@ function changeformatDate(d,type){
   }
   return dateObject;
 }
-
 //********TERMINAN FUNCIONES PARA TIMESLIDER*******
+
+//****** FUNCIONES PARA ARMAR REPORTE*****
+// Función para traer todos los datos de los registros contenidos y filtrados
+var subtitles_names;
+var subtitles_ids;
+var array_d_none;
+function init_report(){
+  subtitles_names=[];
+  subtitles_ids=[];
+  array_d_none=[true];
+  var type_box = 'polygon';
+  var size_box = Navarra.dashboards.config.size_polygon;
+  if (size_box.length==0) {
+    var size_box = [];
+    type_box = 'extent';
+    size_ext = Navarra.dashboards.config.size_box;
+    size_box[0] = size_ext['_southWest']['lng'];
+    size_box[1] = size_ext['_southWest']['lat'];
+    size_box[2] = size_ext['_northEast']['lng'];
+    size_box[3] = size_ext['_northEast']['lat'];
+  }
+
+  var conditions = Navarra.project_types.config.filter_kpi;
+  var project_type_id = Navarra.dashboards.config.project_type_id;
+  var per_page = $(".select_perpage").html();
+  var per_page_value = parseInt(per_page);
+  if(!isNaN(per_page_value)){
+    if($(".active_page").length==0){
+      var active_page=1
+    } else{
+     var active_page=parseInt($(".active_page").html());
+    }
+    var offset_rows=per_page_value*(active_page-1);
+  }
+    var filter_value=$("#choose").val();
+    var filter_by_column=$(".filter_by_column").val();
+    var order_by_column=$(".order_by_column").val();
+    var from_date = Navarra.project_types.config.from_date;
+    var to_date = Navarra.project_types.config.to_date;
+
+    //capas activas
+    active_layers=[];
+    check_layers = document.querySelectorAll('input:checked.leaflet-control-layers-selector');
+    for(l=0; l<check_layers.length; l++){
+      if(check_layers[l].type=='checkbox'){
+        var name_layer_project = $(check_layers[l]).next().html().substring(1);
+        active_layers.push(name_layer_project);
+      }
+    }
+    $.ajax({
+      type: 'GET',
+      url: '/project_types/search_report_data',
+      datatype: 'json',
+      data: {
+        filter_value: filter_value,
+        filter_by_column: filter_by_column,
+        order_by_column: order_by_column,
+        project_type_id: project_type_id,
+        type_box: type_box,
+        size_box: size_box,
+        data_conditions: conditions,
+        from_date: from_date,
+        to_date: to_date,
+        active_layers: active_layers
+      },
+      success: function(data) {
+
+        var data_thead=data.thead;
+
+        //ARMADO DE LA CABECERA DE LA TABLA
+        // borramos los datos anteriores
+        var fields_all_count=0;
+        var fields_all_count_add=0;
+        document.getElementById("thead_report_visible").remove();
+        var new_div=document.createElement("THEAD");
+        new_div.id="thead_report_visible";
+        document.getElementById("table_hidden_report").appendChild(new_div);
+        document.getElementById("thead_report_hidden").remove();
+        var new_div=document.createElement("THEAD");
+        new_div.id="thead_report_hidden";
+        new_div.style.visibility="hidden";
+        new_div.style.borderBottom="solid transparent";
+        document.getElementById("table_visible_report").appendChild(new_div);
+
+        //armamos fila de proyectos
+        var new_row_projects=document.createElement("TR");
+        var new_row=document.createElement("TH");
+        new_row.className="report_row";
+        var new_element=document.createElement('P');
+        new_element.className="text-secondary p-0 m-0 d-inline";
+        new_element.innerHTML="PROYECTOS";
+        new_element.style.lineHeight="3vh";
+        new_row.appendChild(new_element);
+        new_row_projects.appendChild(new_row);
+
+        //armamos fila de subtítulos
+        var new_row_subtitles=document.createElement("TR");
+        new_row_subtitles.className='tr_hidden_report';
+        var new_row=document.createElement("TH");
+        new_row.className="report_row";
+        var new_element=document.createElement('P');
+        new_element.className="text-secondary p-0 m-0 d-inline";
+        new_element.innerHTML="DATOS";
+        new_element.style.lineHeight="3vh";
+        new_row.appendChild(new_element);
+        new_row_subtitles.appendChild(new_row);
+
+        //armamos fila de campos
+        var new_row_fields=document.createElement("TR");
+        new_row_fields.className='tr_hidden_report';
+        var new_row=document.createElement("TH");
+        new_row.className="report_row";
+        var new_element=document.createElement('P');
+        new_element.className="text-secondary p-0 m-0 d-inline columnfake_report_#";
+        new_element.innerHTML="#";
+        new_element.style.lineHeight="3vh";
+        new_row.appendChild(new_element);
+        var new_element=document.createElement('INPUT');
+        new_element.type="text";
+        new_element.className="d-none field_key_report";
+        new_element.value="#";
+        new_row.appendChild(new_element);
+        new_row_fields.appendChild(new_row);
+
+        // llenamos fila de proyectos
+        data_thead.forEach(function(element) {
+          var new_row=document.createElement("TH");
+          new_row.className="report_row report_project_"+element.name_layer;
+          var new_element=document.createElement('P');
+          new_element.className="text-secondary p-0 m-0 d-inline";
+          new_element.innerHTML=element.name;
+          new_element.style.lineHeight="3vh";
+          new_row.appendChild(new_element);
+          new_drop=document.createElement('DIV');
+          new_drop.className="dropdown d-inline";
+          new_a=document.createElement('A');
+          new_a.setAttribute("data-toggle","dropdown");
+          new_a.setAttribute("aria-haspopup",true);
+          new_a.setAttribute("onclick","open_drop_down_report(event)");
+          new_a.id="dropdown_project_"+element.name_layer;
+          new_a.setAttribute("aria-expanded",false);
+          var new_element=document.createElement('I');
+          new_element.className="fas fa-plus icons_report d-none text-secondary";
+          new_element.style.cursor="pointer";
+          new_element.title="Agregar Columna";
+          new_a.appendChild(new_element)
+          new_drop.appendChild(new_a);
+          var new_dropdown=document.createElement('DIV');
+          new_dropdown.className="dropdown-menu custom_drop_down scroll";
+          new_dropdown.setAttribute("aria-labelledby","dropdown_project_"+element.name_layer);
+          var data_header_fields = element.fields;
+          data_header_fields.forEach(function(field, index) {
+              if(field.field_type_id!= 7 && field.field_type_id !=11){
+                fields_all_count_add++;
+                var new_element=document.createElement('P');
+                new_element.className="dropdown-item text-secondary";
+                new_element.setAttribute("onclick","show_column_report("+fields_all_count_add+")");
+                new_element.innerHTML=field.name;
+                if(field.data_table){
+                  new_element.style.display="none";
+                }
+              new_dropdown.appendChild(new_element);
+              }
+          });
+
+
+          new_drop.appendChild(new_dropdown);
+          new_row.appendChild(new_drop);
+          new_row_projects.appendChild(new_row);
+
+          //arma variable con subtítulos
+          data_header_fields.forEach(function(field, index) {
+            if(field.field_type_id ==11 && field.calculated_field !=""){
+              subtitles_names.push(field.name);
+              subtitles_ids.push(JSON.parse(field.calculated_field));
+            }
+          });
+          //llenamos fila de subtítulos
+          var data_header_fields = element.fields;
+          var fields_count=0;
+          data_header_fields.forEach(function(field, index) {
+            if(field.field_type_id!= 7 && field.field_type_id !=11){
+              fields_all_count++;
+              var new_row=document.createElement("TH");
+              new_row.className="report_row subtitle_row" ;
+              new_row.style.borderBottom="none";
+              var new_element=document.createElement('P');
+              new_element.className="text-secondary p-0 m-0 d-inline";
+              new_element.style.whiteSpace="nowrap";
+              new_element.style.lineHeight="3vh";
+              for(x=0;x<subtitles_ids.length;x++){
+                  if(subtitles_ids[x].indexOf(field.id)>=0){
+                    new_element.innerHTML=subtitles_names[x];
+                  }
+              }
+              if(!field.data_table){
+                new_row.style.display="none";
+              }
+              new_row.appendChild(new_element);
+              new_row_subtitles.appendChild(new_row);
+
+            //armamos fila de campos
+              var new_row=document.createElement("TH");
+              new_row.className="report_row field_row columnfake_report_"+element.name_layer+'_'+ field.key;
+              new_row.style.minWidth="100px";
+              new_row.style.borderTop="none";
+              var new_element2=document.createElement('INPUT');
+              new_element2.type="text";
+              new_element2.className="d-none field_key_report";
+              new_element2.value=element.name_layer+'_'+ field.key
+              new_row.appendChild(new_element2);
+              var new_element=document.createElement('DIV');
+              new_element.className="text-secondary";
+              var new_element2=document.createElement('P');
+              new_element2.style.whiteSpace="nowrap";
+              new_element2.style.margin="0px";
+              new_element2.style.display="inline-block";
+              new_element2.style.lineHeight="3vh";
+              new_element2.innerHTML=field.name;
+              new_element.appendChild(new_element2);
+
+              var new_element2=document.createElement('I');
+              new_element2.className="fas fa-times icons_report d-none text-danger";
+              new_element2.style.cursor="pointer";
+              new_element2.title="Eliminar";
+              new_element2.setAttribute("onclick","hide_column_report("+fields_all_count+")")
+              new_element.appendChild(new_element2);
+              if(!field.data_table){
+                new_row.style.display="none";
+                array_d_none.push(false);
+              } else{
+                fields_count++;
+                array_d_none.push(true);
+              }
+              new_row.appendChild(new_element);
+              new_row_fields.appendChild(new_row);
+            }
+          });
+
+          new_row.colSpan=fields_count;
+        });
+        document.getElementById("thead_report_visible").appendChild(new_row_projects.cloneNode(true));
+        document.getElementById("thead_report_hidden").appendChild(new_row_projects);
+        document.getElementById("thead_report_visible").appendChild(new_row_subtitles.cloneNode(true));
+        document.getElementById("thead_report_hidden").appendChild(new_row_subtitles);
+        document.getElementById("thead_report_visible").appendChild(new_row_fields.cloneNode(true));
+        document.getElementById("thead_report_hidden").appendChild(new_row_fields);
+
+
+        // ARMADO DEL CUERPO DE LA TABLA
+        var fields = document.getElementById('thead_report_visible').querySelectorAll(".field_key_report");
+      // borramos los datos anteriores
+        document.getElementById("tbody_visible_report").remove();
+        document.getElementById("tbody_hidden_report").remove();
+        var new_body=document.createElement("TBODY");
+        new_body.style.visibility="hidden";
+        new_body.id="tbody_hidden_report";
+        document.getElementById("table_hidden_report").appendChild(new_body);
+        var new_body=document.createElement("TBODY");
+        new_body.style.className="project_data_div";
+        new_body.id="tbody_visible_report";
+        document.getElementById("table_visible_report").appendChild(new_body);
+
+        // llenado de la tabla de datos
+        data.tbody.forEach(function(element, index) {
+          var new_row = document.createElement("TR");
+          new_row.className="row_data_report text-secondary";
+          fields.forEach(function(column, indexColumn){
+            var new_celd = document.createElement("TD");
+            if(column.value=="#"){
+                new_celd.innerHTML=(index+1);
+                new_celd.style.background=element["status_color"];
+            } else{
+                if(element[column.value]!=undefined){
+                    new_celd.innerHTML=element[column.value].replace(/[\[\]\"]/g, "").replace('true','SI').replace('false','NO');
+                }
+            }
+            new_celd.className="custom_row";
+            if(!array_d_none[indexColumn]){
+                  new_celd.style.display="none";
+            }
+            new_row.appendChild(new_celd);
+          });
+           document.getElementById("tbody_visible_report").appendChild(new_row.cloneNode(true));
+           document.getElementById("tbody_hidden_report").appendChild(new_row);
+        });
+
+      $('#modal-report').modal('show');
+      set_subtitles();
+      }
+    });
+}
+//oculta columnas
+function hide_column_report(index){
+  unset_subtitles()
+  index+=1;
+ $('#table_hidden_report tr td:nth-child('+index+')').css('display','none');
+ $('.tr_hidden_report th:nth-child('+index+')').css('display','none');
+ $('#table_visible_report tr td:nth-child('+index+')').css('display','none');
+ $('.tr_hidden_report th:nth-child('+index+')').css('display','none');
+
+ var project_span= $('.tr_hidden_report th:nth-child('+index+') input').val().split('_')[0];
+ var project_span_number = parseInt($('.report_project_'+project_span).attr('colspan'));
+ if (project_span_number>1){
+  $('.report_project_'+project_span).attr('colspan',project_span_number-1);
+ } else{
+  $('.report_project_'+project_span).addClass("d-none");
+ }
+ $('.custom_drop_down p:nth-child('+(index-1)+')').css("display","block");
+ set_subtitles();
+}
+
+//muestra columnas
+function show_column_report(index,){
+  unset_subtitles()
+  index+=1;
+ $('#table_hidden_report tr td:nth-child('+index+')').css('display','table-cell');
+ $('.tr_hidden_report th:nth-child('+index+')').css('display','table-cell');
+ $('#table_visible_report tr td:nth-child('+index+')').css('display','table-cell');
+ $('.tr_hidden_report th:nth-child('+index+')').css('display','table-cell');
+
+ var project_span= $('.tr_hidden_report th:nth-child('+index+') input').val().split('_')[0];
+ var project_span_number = parseInt($('.report_project_'+project_span).attr('colspan'));
+ $('.report_project_'+project_span).attr('colspan',project_span_number+1);
+ $('.custom_drop_down p:nth-child('+(index-1)+')').css("display","none");
+ set_subtitles()
+}
+
+//agrupamos subtítulos
+function unset_subtitles(){
+  $('.subtitle_row').attr('colspan','1');
+  var field_rows = document.querySelectorAll('.field_row');
+  var subtitles_rows = document.querySelectorAll('.subtitle_row');
+  field_rows.forEach(function(row, index) {
+    if(row.style.display=='none'){}else{
+      subtitles_rows[index].style.display="table-cell";
+      subtitles_rows[index].style.borderBottom="none";
+    }
+  });
+}
+  function set_subtitles(){
+  var text_subtitle="";
+  var colspan_number=0;
+  var colspan_array=[];
+  var field_rows = document.querySelectorAll('.field_row');
+  var subtitles_rows = document.querySelectorAll('#table_hidden_report .subtitle_row');
+  subtitles_rows.forEach(function(row) {
+    if(row.firstElementChild.innerHTML!="" && row.style.display!="none"){
+      if(row.firstElementChild.innerHTML==text_subtitle){
+        row.style.display="none";
+        colspan_number++;
+      }
+      else{
+        text_subtitle=row.firstElementChild.innerHTML;
+        row.style.borderBottom="solid 2px rgba(0,0,0,0.6)";
+        colspan_array.push(colspan_number);
+        colspan_number=1;
+      }
+    }
+  });
+  colspan_array.push(colspan_number);
+  var colspan_index=1;
+  subtitles_rows.forEach(function(row) {
+    if(row.firstElementChild.innerHTML!="" && row.style.display!="none"){
+      row.setAttribute("colspan",colspan_array[colspan_index]);
+      colspan_index++;
+    }
+  });
+  var subtitles_rows_hidden = document.querySelectorAll('#table_visible_report .subtitle_row');
+  subtitles_rows_hidden.forEach(function(row) {
+    if(row.firstElementChild.innerHTML!="" && row.style.display!="none"){
+      if(row.firstElementChild.innerHTML==text_subtitle){
+        row.style.display="none";
+      }
+      else{
+        text_subtitle=row.firstElementChild.innerHTML;
+        row.style.borderBottom="solid 1px rgba(0,0,0,0.6)";
+      }
+    }
+  });
+
+  var colspan_index=1;
+  subtitles_rows_hidden.forEach(function(row) {
+    if(row.firstElementChild.innerHTML!="" && row.style.display!="none"){
+      row.setAttribute("colspan",colspan_array[colspan_index]);
+      colspan_index++;
+    }
+  });
+}
+
+// exportar tabla a excel
+function table_to_excel(){
+  var origin_table=document.getElementById('table_visible_report');
+  var clone_table=origin_table.cloneNode(true);
+  clone_table.id="clone_table";
+  clone_table.style.display="none";
+  document.getElementById('modal-report').appendChild(clone_table);
+  document.querySelectorAll('#clone_table .dropdown').forEach(e => e.parentNode.removeChild(e));
+  var th_clone = document.querySelectorAll('#clone_table th');
+  th_clone.forEach(function(e) {
+        e.style.display.border="solid 4px black"
+    if(e.style.display=='none'){
+      e.parentNode.removeChild(e);
+    }
+  });
+  var td_clone = document.querySelectorAll('#clone_table td');
+  td_clone.forEach(function(e) {
+    if(e.style.display=='none'){
+      e.parentNode.removeChild(e);
+    }
+  });
+  export_to_excel('clone_table','geoworks', 'reporte.xls')
+}
+
+function export_to_excel(table, name, filename) {
+  let uri = 'data:application/vnd.ms-excel;base64,',
+  template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><title></title><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>',
+  base64 = function(s) { return window.btoa(decodeURIComponent(encodeURIComponent(s.replace('–','-').replace(/[\u00A0-\u2666]/g, function(c) {
+    return '&#' + c.charCodeAt(0)})))) },
+  format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; })}
+
+  if (!table.nodeType) table = document.getElementById(table)
+  var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+  var link = document.createElement('a');
+  link.download = filename;
+  link.href = uri + base64(format(template, ctx));
+  link.click();
+  document.getElementById('clone_table').remove();
+}
