@@ -1093,13 +1093,23 @@ function init_data_dashboard(haschange){
           fields.forEach(function(column, indexColumn){
             var column_name=column.value;
             var new_celd = document.createElement("TD");
+            if(column.value=="#_action"){
+              var new_icon = document.createElement('I');
+              new_icon.className="fas fa-info-circle";
+              new_icon.style.marginRight='10px';
+              new_celd.appendChild(new_icon);
+              new_celd.title="Más Información";
+              appid_info=data_properties["app_id"];
+              new_celd.setAttribute('onclick','show_item_info('+appid_info+')');
+            } 
             if(column.value=="#"){
               if(isNaN(per_page_value)){
                 new_celd.innerHTML=(index+1);
               }else{
                 new_celd.innerHTML=(index+1)+(active_page-1)*per_page_value;
               }
-            } else{
+            } 
+            if(column.value!="#" && column.value!="#_action"){
                 if(data_properties[column_name]!=undefined){
                     new_celd.innerHTML=data_properties[column_name];
                     if(column.value=="app_id"){
@@ -1596,6 +1606,8 @@ function changeformatDate(d,type){
 }
 //********TERMINAN FUNCIONES PARA TIMESLIDER*******
 
+
+
 //****** FUNCIONES PARA ARMAR REPORTE*****
 // Función para traer todos los datos de los registros contenidos y filtrados
 var subtitles_names;
@@ -2024,3 +2036,48 @@ function export_to_excel(table, name, filename) {
   link.click();
   document.getElementById('clone_table').remove();
 }
+
+//********TERMINAN FUNCIONES PARA ARMAR REPORTE*******
+
+
+//****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
+
+function show_item_info(appid_info){
+  var project_type_id = Navarra.dashboards.config.project_type_id;
+  $.ajax({
+      type: 'GET',
+      url: '/project_types/search_photos_and_subforms',
+      datatype: 'json',
+      data: {
+        project_type_id: project_type_id,
+        app_id: appid_info
+      },
+      success: function(data) {
+        console.log("Datos "+data);
+        $("#info-modal").modal('show');
+        var dataString='{"Comuna":"LasCondes","Phone":"9239471839","Bathroom":"3","Bedroom":"4"}'
+        var data=JSON.parse(dataString);
+        var keys = Object.keys(data);
+        keys.forEach(function(element) {
+          var new_row=document.createElement('DIV');
+          new_row.className="form-row";
+          var new_celd=document.createElement('DIV');
+          new_celd.className="col-md-5";
+          var new_p=document.createElement('H6');
+          new_p.innerHTML=element+":";
+          new_celd.appendChild(new_p);
+          new_row.appendChild(new_celd);
+          var new_celd=document.createElement('DIV');
+          new_celd.className="col-md-7";
+          var new_p=document.createElement('H6');
+          new_p.innerHTML=data[element];
+          new_celd.appendChild(new_p);
+          new_row.appendChild(new_celd);
+          document.getElementById('info-body').appendChild(new_row);
+        });
+      }
+    });
+}
+
+
+//****** TERMINAN FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
