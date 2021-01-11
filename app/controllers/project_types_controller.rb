@@ -167,7 +167,116 @@ class ProjectTypesController < ApplicationController
   end
 
   def search_photos_and_subforms
-    render json: {}
+
+    project_type_id = params[:project_type_id]
+    project_id = params[:app_id]
+
+    campos_padre = ProjectField.where(project_type_id: project_type_id).order(:sort)
+
+    campos_array_padre = []
+
+    campos_padre.each do |cp|
+
+      if cp.field_type_id == 7
+
+        datos_hijos = ProjectDataChild.where(project_id: project_id)
+
+        data_todos_hijos = []
+
+        datos_hijos.each do |hijo|
+
+          hijo_hash = {}
+          c_photos = PhotoChild.where(project_data_child_id: hijo.id)
+
+          fotos_del_hijo = []
+
+          c_photos.each do |hpic|
+            fotohijo = {}
+            fotohijo['id'] = hpic.id
+            fotohijo['name'] = hpic.name
+            fotohijo['image'] = hpic.image
+            fotos_del_hijo.push(fotohijo)
+          end
+
+          campos_hijo = ProjectSubfield.where(project_field_id: cp.id).order(:sort)
+
+          campos_array_hijos = []
+
+          campos_hijo.each do |ch|
+
+            properties_hijo = datos_hijos.pluck(:properties).first.first
+
+            value_hijo = properties_hijo[ch.id.to_s]
+
+            camp_hijo = {}
+
+            if !value_hijo.nil?
+
+              camp_hijo['name'] = ch.name
+              camp_hijo['value'] = value_hijo
+              camp_hijo['field_type_id'] = ch.field_type_id
+              camp_hijo['calculated_field'] = ch.calculated_field
+              camp_hijo['hidden'] = ch.hidden
+
+              campos_array_hijos.push(camp_hijo)
+
+            end # cierra validacion hijo nulo
+
+          end # cierra iteracion campos hijos
+
+
+          data_de_hijo = {}
+          data_de_hijo['children_id'] = hijo.id
+          data_de_hijo['children_gwm_created_at'] = hijo.gwm_created_at
+          data_de_hijo['children_fields'] = campos_array_hijos
+          data_de_hijo['children_photos'] = fotos_del_hijo
+          data_de_hijo
+
+          data_todos_hijos.push(data_de_hijo)
+
+        end # cierra iteracion hijos
+
+        value_padre = data_todos_hijos
+
+      else
+
+        value_padre = Project.where(id: project_id).pluck("properties ->> '#{cp.key}'").first
+
+      end
+
+      camp_padre = {}
+
+      if !value_padre.nil?
+
+        camp_padre['name'] = cp.name
+        camp_padre['value'] = value_padre
+        camp_padre['field_type_id'] = cp.field_type_id
+        camp_padre['calculated_field'] = cp.calculated_field
+        camp_padre['hidden'] = cp.hidden
+
+        campos_array_padre.push(camp_padre)
+
+      end
+
+    end
+
+    fotos_padre = Photo.where(project_id: project_id)
+
+    f_photos_final = []
+
+    fotos_padre.each do |fpic|
+      fotopadre = {}
+      fotopadre['id'] = fpic.id
+      fotopadre['name'] = fpic.name
+      fotopadre['image'] = fpic.image
+      f_photos_final.push(fotopadre)
+    end
+    data = {}
+
+    data['father_fields'] = campos_array_padre
+    data['father_photos'] = f_photos_final
+
+    render json: data
   end
 
   def search_data_dashboard
