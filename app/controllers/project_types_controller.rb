@@ -273,6 +273,7 @@ class ProjectTypesController < ApplicationController
     end
     data = {}
 
+    data['father_id'] = project_id
     data['father_fields'] = campos_array_padre
     data['father_photos'] = f_photos_final
 
