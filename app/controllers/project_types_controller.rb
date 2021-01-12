@@ -212,6 +212,7 @@ class ProjectTypesController < ApplicationController
 
             if !value_hijo.nil?
 
+              camp_hijo['field_id'] = ch.id
               camp_hijo['name'] = ch.name
               camp_hijo['value'] = value_hijo
               camp_hijo['field_type_id'] = ch.field_type_id
@@ -248,6 +249,7 @@ class ProjectTypesController < ApplicationController
 
       if !value_padre.nil?
 
+        camp_padre['field_id'] = cp.id
         camp_padre['name'] = cp.name
         camp_padre['value'] = value_padre
         camp_padre['field_type_id'] = cp.field_type_id
@@ -273,7 +275,6 @@ class ProjectTypesController < ApplicationController
     end
     data = {}
 
-    data['father_id'] = project_id
     data['father_fields'] = campos_array_padre
     data['father_photos'] = f_photos_final
 
