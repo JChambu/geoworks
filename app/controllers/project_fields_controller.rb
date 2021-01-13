@@ -39,8 +39,12 @@ class ProjectFieldsController < ApplicationController
   end
 
   def field_popup
-    @fields = ProjectField.where(project_type_id: params[:project_type_id]).where(popup: true).pluck(:key) 
-    render json: @fields
+    @fields = ProjectField.where(project_type_id: params[:project_type_id]).where(popup: true)
+    fields_json = {}
+    @fields.each do |field|
+      fields_json[field.key] = field.name
+    end
+    render json: fields_json
   end
   
   def set_project_field
