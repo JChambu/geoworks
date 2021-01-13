@@ -204,6 +204,26 @@ class ProjectTypesController < ApplicationController
 
           campos_hijo.each do |ch|
 
+            roles_edit = (JSON.parse(ch.roles_edit)).reject(&:blank?)
+            roles_read = (JSON.parse(ch.roles_read)).reject(&:blank?)
+            customer_name = Apartment::Tenant.current
+            Apartment::Tenant.switch 'public' do
+
+              customer_id = Customer.where(name: customer_name).pluck(:id)
+
+              @rol_del_usuario = UserCustomer
+                .where(user_id: current_user.id)
+                .where(customer_id: customer_id)
+                .pluck(:role_id)
+                .first
+
+            end
+
+            if roles_edit.include?(@rol_del_usuario.to_s)
+              can_edit = true
+            else
+              can_edit = false
+            end
             properties_hijo = datos_hijos.pluck(:properties).first.first
 
             value_hijo = properties_hijo[ch.id.to_s]
@@ -217,6 +237,7 @@ class ProjectTypesController < ApplicationController
             camp_hijo['field_type_id'] = ch.field_type_id
             camp_hijo['calculated_field'] = ch.calculated_field
             camp_hijo['hidden'] = ch.hidden
+            camp_hijo['can_edit'] = can_edit
 
             campos_array_hijos.push(camp_hijo)
 
