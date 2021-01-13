@@ -210,18 +210,16 @@ class ProjectTypesController < ApplicationController
 
             camp_hijo = {}
 
-            if !value_hijo.nil?
 
-              camp_hijo['field_id'] = ch.id
-              camp_hijo['name'] = ch.name
-              camp_hijo['value'] = value_hijo
-              camp_hijo['field_type_id'] = ch.field_type_id
-              camp_hijo['calculated_field'] = ch.calculated_field
-              camp_hijo['hidden'] = ch.hidden
+            camp_hijo['field_id'] = ch.id
+            camp_hijo['name'] = ch.name
+            camp_hijo['value'] = value_hijo
+            camp_hijo['field_type_id'] = ch.field_type_id
+            camp_hijo['calculated_field'] = ch.calculated_field
+            camp_hijo['hidden'] = ch.hidden
 
-              campos_array_hijos.push(camp_hijo)
+            campos_array_hijos.push(camp_hijo)
 
-            end # cierra validacion hijo nulo
 
           end # cierra iteracion campos hijos
 
@@ -246,19 +244,13 @@ class ProjectTypesController < ApplicationController
       end
 
       camp_padre = {}
-
-      if !value_padre.nil?
-
-        camp_padre['field_id'] = cp.id
-        camp_padre['name'] = cp.name
-        camp_padre['value'] = value_padre
-        camp_padre['field_type_id'] = cp.field_type_id
-        camp_padre['calculated_field'] = cp.calculated_field
-        camp_padre['hidden'] = cp.hidden
-
-        campos_array_padre.push(camp_padre)
-
-      end
+      camp_padre['field_id'] = cp.id
+      camp_padre['name'] = cp.name
+      camp_padre['value'] = value_padre
+      camp_padre['field_type_id'] = cp.field_type_id
+      camp_padre['calculated_field'] = cp.calculated_field
+      camp_padre['hidden'] = cp.hidden
+      campos_array_padre.push(camp_padre)
 
     end
 
