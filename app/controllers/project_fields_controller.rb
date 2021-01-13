@@ -39,7 +39,7 @@ class ProjectFieldsController < ApplicationController
   end
 
   def field_popup
-    @fields = ProjectField.where(project_type_id: params[:project_type_id]).where(popup: true)
+    @fields = ProjectField.where(project_type_id: params[:project_type_id]).where(popup: true).order(:sort)
     fields_json = {}
     @fields.each do |field|
       fields_json[field.key] = field.name
