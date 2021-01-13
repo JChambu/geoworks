@@ -46,12 +46,12 @@ class ProjectFieldsController < ApplicationController
     end
     render json: fields_json
   end
-  
+
   def set_project_field
     @project_field = ProjectField.find(params[:id])
     @project_subfields = @project_field.project_subfields.order(:sort)
   end
-  
+
   def project_field_params
     params.require(:project_field).permit(:id,  project_subfields_attributes: [:id, :field_type_id, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id, :sort])
   end
