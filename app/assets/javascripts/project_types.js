@@ -27,7 +27,8 @@ Navarra.project_types.config = {
   data_dashboard:'',
   from_date: '',
   to_date: '',
-  item_selected:""
+  item_selected:"",
+  current_layer_filters: ""
 }
 
 // Select para roles

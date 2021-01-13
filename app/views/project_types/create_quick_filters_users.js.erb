@@ -1,0 +1,67 @@
+$('#quick_filter_modal').modal('hide');
+remove_user_filters();
+field_key = '<%= params[:q][:user_filter]%>'
+values = document.querySelectorAll(".check_input_users");
+var value = " ";
+values.forEach(function(element, index){
+  if(element.checked){
+    status_value = $('.value_input_users').eq(index).html();
+    value = status_value;
+  }
+});
+
+if(value!="Todos"){
+  field_name =  '<%= get_name_from_key(params[:q][:user_filter]).name %>';
+  var operator = " = "
+  var filter = field_key + '|' + operator + '|\'' + value + '\'';
+  var filter_view = field_name  + " " + operator + " " + value;
+
+  Navarra.project_types.config.filter_option.push(filter);
+  Navarra.project_types.config.filter_kpi.push(filter);
+
+  // Elimina y vuelve a agregar el item al card Filtros Activos
+  $('#filter-body').append(
+    $('<div>', { // item
+      'class': 'message text-light bg-secondary px-2 mb-1 py-1 rounded border border-dark shadow',
+      'id': filter,
+      'value': filter
+    }).append(
+      $('<b>', {
+        'text': 'Filtrado por: '+filter_view
+      }),
+      $('<button>', {
+        'type': 'button',
+        'class': 'close',
+        'id': 'close_point_color',
+        'text': '×'
+      })
+    )
+  )
+  $(".fa-user-alt").css("color", "#d3d800");
+} else{
+  $(".fa-user-alt").css("color", "#9b9b9b");
+}
+
+resize_graphics();
+
+var point_color = Navarra.project_types.config.field_point_colors;
+if(point_color == ''){
+    Navarra.geomaps.wms_filter();
+}else{
+    Navarra.geomaps.point_colors_data();
+}
+
+function remove_user_filters(){
+  var ar= Navarra.project_types.config.filter_option
+  b = jQuery.grep(ar, function(value){
+    if(value.split('|')[0] == 'app_usuario'){
+      return null;
+    }else{
+      return value;
+    }
+    
+  })
+  Navarra.project_types.config.filter_option = b;
+  Navarra.project_types.config.filter_kpi = b;
+   $(".message[id*="+'app_usuario '+"]").remove();  
+}

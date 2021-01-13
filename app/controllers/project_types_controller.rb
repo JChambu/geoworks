@@ -141,11 +141,17 @@ class ProjectTypesController < ApplicationController
   end
 
   def create_quick_filters
-    @field = "field"
+    @field_status = "field"
     respond_to do |format|
       format.js
     end
+  end
 
+  def create_quick_filters_users
+    @field_users = "field"
+    respond_to do |format|
+      format.js
+    end
   end
 
   def dashboard
