@@ -265,8 +265,20 @@ class ProjectTypesController < ApplicationController
       fotopadre['image'] = fpic.image
       f_photos_final.push(fotopadre)
     end
+    estados = Project
+      .joins(:project_status)
+      .where(id: project_id)
+      .pluck(:project_status_id, :name, :color)
+      .first
+
+    estados_final = {}
+
+    estados_final['status_id'] = estados[0]
+    estados_final['status_name'] = estados[1]
+    estados_final['status_color'] = estados[2]
     data = {}
 
+    data['father_status'] = estados_final
     data['father_fields'] = campos_array_padre
     data['father_photos'] = f_photos_final
 
