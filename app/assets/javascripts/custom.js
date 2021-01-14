@@ -2117,53 +2117,70 @@ function show_item_info(appid_info, from_map){
         //campos del registro
         var father_fields = data.father_fields;
         var subtitles_all=[];
+        var subtitles_all_child =[];
         father_fields.forEach(function(element) {
           if(element.field_type_id==7 && element.value.length==0){
           } 
-          else{  
-            if(element.field_type_id!=7){
-              var new_row=document.createElement('DIV');
-                if(element.hidden){
-                  new_row.className="form-row d-none hidden_field";
-                } else{
-                  new_row.className="form-row";
-                }
-              if(element.value==null && element.field_type_id!=11){
-                new_row.classList.add("d-none");
-                new_row.classList.add("empty_field");
-              }  
-              if(subtitles_all.indexOf(element.field_id)>=0){
-                new_row.classList.add("d-none");
-                new_row.classList.add("subtile_hidden"+element.field_id);
+          else{ 
+          if(element.field_type_id!=7){  
+            var new_row=document.createElement('DIV');
+              if(element.hidden){
+                new_row.className="form-row d-none hidden_field";
+              } else{
+                new_row.className="form-row";
               }
+            if(element.value==null && element.field_type_id!=11){
+              new_row.classList.add("d-none");
+              new_row.classList.add("empty_field");
+            }  
+            if(subtitles_all.indexOf(element.field_id)>=0){
+              new_row.classList.add("d-none");
+              new_row.classList.add("subtile_hidden"+element.field_id);
+            }  
               var new_celd=document.createElement('DIV');
-              new_celd.className="col-md-5";
+              if(element.field_type_id==11){
+                new_celd.className="col-md-12";
+              } else {
+                new_celd.className="col-md-5";
+              }
               var new_p=document.createElement('H6');
               new_p.innerHTML=element.name+":";
               if(element.field_type_id==11){
                 new_p.className="info_subtitle";
-                new_p.setAttribute("onClick","open_subtitle("+element.calculated_field+")");
+                new_p.setAttribute("onClick","open_subtitle("+element.calculated_field+",'')");
                 if(element.calculated_field!=""){
                   subtitles_all=subtitles_all.concat(JSON.parse(element.calculated_field));
                 }
               }
               new_celd.appendChild(new_p);
               new_row.appendChild(new_celd);
-              var new_celd=document.createElement('DIV');
-              new_celd.className="col-md-7";    
-              var new_p=document.createElement('INPUT');
-              new_p.className="form-control form-control-sm info_input_disabled";
-              new_p.disabled=true;
-              if(element.value!=null){
-                new_p.value=element.value.replace(/[\[\]\"]/g, "").replace('true','SI').replace('false','NO');;
+              if(element.field_type_id!=11){
+                var new_celd=document.createElement('DIV');
+                new_celd.className="col-md-7";    
+                var new_p=document.createElement('INPUT');
+                new_p.className="form-control form-control-sm info_input_disabled";
+                new_p.disabled=true;
+                if(element.value!=null){
+                  new_p.value=element.value.replace(/[\[\]\"]/g, "").replace('true','SI').replace('false','NO');;
+                }
+                new_celd.appendChild(new_p);
+                new_row.appendChild(new_celd);
               }
-              new_celd.appendChild(new_p);
-              new_row.appendChild(new_celd);
               document.getElementById('info_body').appendChild(new_row);
-            } else{
-              //hijos
-              var new_row=document.createElement('DIV');
-              new_row.className="form-row";
+          } else{
+            //hijos
+            var new_row=document.createElement('DIV');
+            if(element.hidden){
+              new_row.className="d-none hidden_field";
+             } 
+           // if(element.value==null && element.field_type_id!=11){
+             // new_row.classList.add("d-none");
+             // new_row.classList.add("empty_field");
+            //}  
+            if(subtitles_all.indexOf(element.field_id)>=0){
+              new_row.classList.add("d-none");
+              new_row.classList.add("subtile_hidden"+element.field_id);
+            }
               var new_celd=document.createElement('DIV');
               var new_p=document.createElement('H6');
               new_p.innerHTML=element.name+":";
@@ -2171,18 +2188,17 @@ function show_item_info(appid_info, from_map){
               new_p.style.display="inline-block";
               new_celd.appendChild(new_p);
               new_row.appendChild(new_celd);
-              document.getElementById('info_body').appendChild(new_row);
               child_elements = element.value;
               child_elements.forEach(function(element_child) {
-                var new_row=document.createElement('DIV');
-                new_row.className="form-row";
+                var new_row1=document.createElement('DIV');
+                new_row1.className="form-row";
                 var new_celd=document.createElement('DIV');
                 new_celd.className="col-md-5 ml-3";
                 var new_p=document.createElement('H6');
                 new_p.innerHTML="<span style='font-size:2em;position:absolute;margin-top:-5px;margin-left:-30px'>&#8594</span> Fecha:";
                 new_p.style.margin="0px";
                 new_celd.appendChild(new_p);
-                new_row.appendChild(new_celd);
+                new_row1.appendChild(new_celd);
                 var new_celd=document.createElement('DIV');
                 new_celd.className="col-md-6";    
                 var new_p=document.createElement('INPUT');
@@ -2192,43 +2208,61 @@ function show_item_info(appid_info, from_map){
                 new_p.style.padding="0px 0.5rem";
                 new_p.style.height="auto";
                 new_celd.appendChild(new_p);
-                new_row.appendChild(new_celd);
-                document.getElementById('info_body').appendChild(new_row);
+                new_row1.appendChild(new_celd);
+                new_row.appendChild(new_row1);
+                //campos de los hijos
                 children_fields=element_child.children_fields;
                 children_fields.forEach(function(element_child_field) {
-                  var new_row=document.createElement('DIV');
+                  var new_row1=document.createElement('DIV');
                   if(element_child_field.hidden){
-                    new_row.className="form-row d-none hidden_field";
+                    new_row1.className="form-row d-none hidden_field";
                   } else{
-                    new_row.className="form-row";
+                    new_row1.className="form-row";
                   }
-                  if(element_child_field.value==null && element.field_type_id!=11){
-                    new_row.classList.add("d-none");
-                    new_row.classList.add("empty_field");
+                  if(element_child_field.value==null && element_child_field.field_type_id!=11){
+                    new_row1.classList.add("d-none");
+                    new_row1.classList.add("empty_field");
                   } 
+                  if(subtitles_all_child.indexOf(element_child_field.field_id)>=0){
+                   new_row1.classList.add("d-none");
+                    new_row1.classList.add("subtile_hidden_child"+element_child_field.field_id);
+                  }  
                   var new_celd=document.createElement('DIV');
-                  new_celd.className="col-md-5 ml-3";
+                  if(element_child_field.field_type_id==11){
+                    new_celd.className="col-md-12";
+                  } else {
+                    new_celd.className="col-md-5 ml-3";
+                  }
                   var new_p=document.createElement('H6');
                   new_p.innerHTML=element_child_field.name;
+                  if(element_child_field.field_type_id==11){
+                    new_p.className="info_subtitle";
+                    new_p.setAttribute("onClick","open_subtitle("+element_child_field.calculated_field+",'_child')");
+                    if(element_child_field.calculated_field!=""){
+                      subtitles_all_child=subtitles_all_child.concat(JSON.parse(element_child_field.calculated_field));
+                    }
+                  }
                   new_p.style.margin="0px";
                   new_celd.appendChild(new_p);
-                  new_row.appendChild(new_celd);
-                  var new_celd=document.createElement('DIV');
-                  new_celd.className="col-md-6";    
-                  var new_p=document.createElement('INPUT');
-                  new_p.className="form-control form-control-sm info_input_disabled";
-                  new_p.style.padding="0px 0.5rem";
-                  new_p.style.height="auto";
-                  new_p.disabled=true;
-                  if(element_child_field.value!=null){
-                    new_p.value=element_child_field.value.replace(/[\[\]\"]/g, "").replace('true','SI').replace('false','NO');
+                  new_row1.appendChild(new_celd);
+                  if(element_child_field.field_type_id!=11){
+                    var new_celd=document.createElement('DIV');
+                    new_celd.className="col-md-6";    
+                    var new_p=document.createElement('INPUT');
+                    new_p.className="form-control form-control-sm info_input_disabled";
+                    new_p.style.padding="0px 0.5rem";
+                    new_p.style.height="auto";
+                    new_p.disabled=true;
+                    if(element_child_field.value!=null){
+                      new_p.value=element_child_field.value.replace(/[\[\]\"]/g, "").replace('true','SI').replace('false','NO');
+                    }
+                    new_celd.appendChild(new_p);
+                    new_row1.appendChild(new_celd);
                   }
-                  new_celd.appendChild(new_p);
-                  new_row.appendChild(new_celd);
-                  document.getElementById('info_body').appendChild(new_row);
+                  new_row.appendChild(new_row1)
                 });
 
-                //fotos del registro
+                //fotos del hijo
                 var children_photos = element_child.children_photos;
                 children_photos.forEach(function(photo){
                   var new_div = document.createElement('DIV');
@@ -2243,11 +2277,11 @@ function show_item_info(appid_info, from_map){
                   new_photo.innerHTML=photo.name;
                   new_photo.className="photo_description";
                   new_div.appendChild(new_photo);
-                  document.getElementById('info_body').appendChild(new_div);
+                  new_row.appendChild(new_div);
                 });
               });
-            }
-            
+              document.getElementById('info_body').appendChild(new_row);
+            }            
           }
         });
         //Muestra el punto en el mapa y elimina el seleccionado en la tabla
@@ -2288,17 +2322,17 @@ function show_hidden_fields(){
   }
 }
 
-function open_subtitle(fields){
+function open_subtitle(fields,ischild){
   if(fields!=""){
     fields.forEach(function(field_id){
-      if($(".subtile_hidden"+field_id).length>0){
-        $(".subtile_hidden"+field_id).removeClass("d-none");
-        $(".subtile_hidden"+field_id).addClass("subtile_visible"+field_id);
-        $(".subtile_hidden"+field_id).removeClass("subtile_hidden"+field_id);
+      if($(".subtile_hidden"+ischild+field_id).length>0){
+        $(".subtile_hidden"+ischild+field_id).removeClass("d-none");
+        $(".subtile_hidden"+ischild+field_id).addClass("subtile_visible"+ischild+field_id);
+        $(".subtile_hidden"+ischild+field_id).removeClass("subtile_hidden"+ischild+field_id);
       }else{
-        $(".subtile_visible"+field_id).addClass("d-none");
-        $(".subtile_visible"+field_id).addClass("subtile_hidden"+field_id);
-        $(".subtile_visible"+field_id).removeClass("subtile_visible"+field_id);
+        $(".subtile_visible"+ischild+field_id).addClass("d-none");
+        $(".subtile_visible"+ischild+field_id).addClass("subtile_hidden"+ischild+field_id);
+        $(".subtile_visible"+ischild+field_id).removeClass("subtile_visible"+ischild+field_id);
       }
 
     })
