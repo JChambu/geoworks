@@ -2144,13 +2144,17 @@ function show_item_info(appid_info, from_map){
                 new_celd.className="col-md-5";
               }
               var new_p=document.createElement('H6');
-              new_p.innerHTML=element.name+":";
+             
               if(element.field_type_id==11){
-                new_p.className="info_subtitle";
+                new_p.className="bg-primary pl-1";
+                new_p.style.cursor="pointer";
                 new_p.setAttribute("onClick","open_subtitle("+element.calculated_field+",'')");
                 if(element.calculated_field!=""){
                   subtitles_all=subtitles_all.concat(JSON.parse(element.calculated_field));
                 }
+                new_p.innerHTML=element.name;
+              } else{
+                new_p.innerHTML=element.name+":";
               }
               new_celd.appendChild(new_p);
               new_row.appendChild(new_celd);
@@ -2234,13 +2238,16 @@ function show_item_info(appid_info, from_map){
                     new_celd.className="col-md-5 ml-3";
                   }
                   var new_p=document.createElement('H6');
-                  new_p.innerHTML=element_child_field.name;
                   if(element_child_field.field_type_id==11){
-                    new_p.className="info_subtitle";
+                    new_p.className="bg-primary pl-1";
+                    new_p.style.cursor="pointer";
                     new_p.setAttribute("onClick","open_subtitle("+element_child_field.calculated_field+",'_child')");
                     if(element_child_field.calculated_field!=""){
                       subtitles_all_child=subtitles_all_child.concat(JSON.parse(element_child_field.calculated_field));
                     }
+                    new_p.innerHTML=element_child_field.name;
+                  } else{
+                    new_p.innerHTML=element_child_field.name+":";
                   }
                   new_p.style.margin="0px";
                   new_celd.appendChild(new_p);
