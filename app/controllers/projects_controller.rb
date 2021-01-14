@@ -12,6 +12,11 @@ class ProjectsController < ApplicationController
     render json: {data: @project_statuses_data}
   end
 
+  def search_users
+    @project_users_data = User.all
+    render json: {data: @project_users_data}
+  end
+
   def popup
     project_data = Project.find(params['project_id'].to_i)
      render json: {data: project_data }
