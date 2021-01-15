@@ -2177,10 +2177,7 @@ function show_item_info(appid_info, from_map){
             if(element.hidden){
               new_row.className="d-none hidden_field";
              } 
-           // if(element.value==null && element.field_type_id!=11){
-             // new_row.classList.add("d-none");
-             // new_row.classList.add("empty_field");
-            //}  
+           
             if(subtitles_all.indexOf(element.field_id)>=0){
               new_row.classList.add("d-none");
               new_row.classList.add("subtile_hidden"+element.field_id);
@@ -2333,7 +2330,7 @@ function open_subtitle(fields,ischild){
   if(fields!=""){
     fields.forEach(function(field_id){
       if($(".subtile_hidden"+ischild+field_id).length>0){
-        $(".subtile_hidden"+ischild+field_id).removeClass("d-none");
+        $(".subtile_hidden"+ischild+field_id).not('.empty_field').not('.hidden_field').removeClass("d-none");
         $(".subtile_hidden"+ischild+field_id).addClass("subtile_visible"+ischild+field_id);
         $(".subtile_hidden"+ischild+field_id).removeClass("subtile_hidden"+ischild+field_id);
       }else{
