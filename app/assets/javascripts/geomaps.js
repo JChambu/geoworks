@@ -880,10 +880,14 @@ Navarra.geomaps = function() {
     for(l=0; l<check_layers.length; l++){
       if(check_layers[l].type=='checkbox'){
         var name_layer_project = $(check_layers[l]).next().html().substring(1);
+        console.log("capa: "+name_layer_project.toLowerCase());
+        console.log("current"+current_layer_name.toLowerCase)
         if(name_layer_project.toLowerCase()!=current_layer_name.toLowerCase() && name_layer_project.toLowerCase()!=" seleccionados" )
         active_internal_layers.push(name_layer_project);
       }
     }
+    console.log("capas Activas")
+    console.log(active_internal_layers);
 
     // elimina las capas creadas anteriormente
     for(x=0;x<layer_array.length;x++){
@@ -1028,6 +1032,7 @@ Navarra.geomaps = function() {
           var name_layer_project = $(check_layers[l]).next().html().substring(1);
           if(active_internal_layers.indexOf(name_layer_project)>=0){
             check_layers[l].click();
+            console.log("click "+name_layer_project)
           }
         }
       }
