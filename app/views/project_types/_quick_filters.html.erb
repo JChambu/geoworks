@@ -48,7 +48,7 @@
         $.each(data['data'], function(value, a){
           let container = document.createElement("DIV");
             let opt_check= document.createElement("DIV");
-            opt_check.className="custom-control custom-radio d-inline";
+            opt_check.className="custom-control custom-radio d-inline align-middle";
             let opt_check_input1= document.createElement("INPUT");
               opt_check_input1.type="hidden";
               opt_check.append(opt_check_input1)
@@ -72,7 +72,7 @@
                 opt_circle.style.background=`${a.color}`
             container.append(opt_circle);
             let opt = document.createElement("h6");
-            opt.className='d-inline value_input_status';
+            opt.className='d-inline value_input_status align-middle';
             opt.innerHTML = `${a.name}`;  
             container.append(opt);
           $quick_filters_div.append(container);
