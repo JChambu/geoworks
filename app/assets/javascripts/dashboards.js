@@ -180,7 +180,7 @@ Navarra.dashboards.action_show = function(){
         $(".leaflet-right").css("margin-right", "1%");
         $(".table_data_container").css("transition-delay", "0.2s");
         $(".table_data_container").css("width", "99%");
-        init_chart_doughnut();
+      //  init_chart_doughnut();
       }
       if (status_view_condensed) { // Condensed
         $('#view').removeClass('view-condensed');

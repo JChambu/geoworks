@@ -91,6 +91,10 @@ function capitalize(s){
 };
 
 function init_chart_doughnut(size_box = null, create_time_s=true){
+  // no calcula la función si los gráficos están escondidos
+  if($('#view').hasClass('view-condensed')){
+    return;
+  }
 
   // Guardamos la posición del scroll
   var scroll = $('.graphics').scrollTop();
