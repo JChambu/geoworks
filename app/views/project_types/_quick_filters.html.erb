@@ -39,7 +39,7 @@
         var ar= Navarra.project_types.config.filter_option
         var status_filters_active = $(".message[id*="+'app_estado '+"]");
         if(status_filters_active.length==0){
-          status_filters_active_text = "Todos";
+          status_filters_active_text = "Sin Filtro";
           document.getElementById('radio_all').checked=true;
         } else {
           status_filters_active_text = status_filters_active.first().attr('id')

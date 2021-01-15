@@ -39,7 +39,7 @@
         var ar= Navarra.project_types.config.filter_option
         var status_filters_active = $(".message[id*="+'app_usuario '+"]");
         if(status_filters_active.length==0){
-          status_filters_active_text = "Todos";
+          status_filters_active_text = "Sin Filtro";
           document.getElementById('radio_all').checked=true;
         } else {
           status_filters_active_text = status_filters_active.first().attr('id')
@@ -48,7 +48,7 @@
         $.each(data['data'], function(value, a){
           let container = document.createElement("DIV");
             let opt_check= document.createElement("DIV");
-            opt_check.className="custom-control custom-radio d-inline";
+            opt_check.className="custom-control custom-radio d-inline mr-1";
             let opt_check_input1= document.createElement("INPUT");
               opt_check_input1.type="hidden";
               opt_check.append(opt_check_input1)
@@ -69,7 +69,7 @@
 
             let opt = document.createElement("h6");
             opt.className='d-inline value_input_users';
-            opt.innerHTML = " "+`${a.name}`;  
+            opt.innerHTML = `${a.name}`;  
             container.append(opt);
           $quick_filters_div.append(container);
         })

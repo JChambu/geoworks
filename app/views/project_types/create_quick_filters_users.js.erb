@@ -10,7 +10,7 @@ values.forEach(function(element, index){
   }
 });
 
-if(value!="Todos"){
+if(value!="Sin Filtro"){
   field_name =  '<%= get_name_from_key(params[:q][:user_filter]).name %>';
   var operator = " = "
   var filter = field_key + '|' + operator + '|\'' + value + '\'';
