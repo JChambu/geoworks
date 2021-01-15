@@ -6,12 +6,12 @@
   <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
     <%=select_tag 'q[status_filter]', raw("<option>app_estado</option>") , class: "d-none" %>
     <div>
-      <div class="custom-control custom-checkbox d-inline">
+      <div class="custom-control custom-radio d-inline">
         <input type="hidden">
         <input type="radio" id="radio_all" name="radio_status_filter" class="custom-control-input check_input_status" checked="false">
         <label class="string optional control-label custom-control-label" for="radio_all"></label>
-        <h6 class="d-inline value_input_status">Todos</h6>
       </div>
+        <h6 class="d-inline value_input_status" style="margin-left: 10px">Sin Filtro</h6>
     </div>
     <div class="quick_filters_div">
     </div>
@@ -48,7 +48,7 @@
         $.each(data['data'], function(value, a){
           let container = document.createElement("DIV");
             let opt_check= document.createElement("DIV");
-            opt_check.className="custom-control custom-checkbox d-inline";
+            opt_check.className="custom-control custom-radio d-inline";
             let opt_check_input1= document.createElement("INPUT");
               opt_check_input1.type="hidden";
               opt_check.append(opt_check_input1)
@@ -68,7 +68,7 @@
             container.append(opt_check);
 
             let opt_circle = document.createElement("DIV");
-                opt_circle.className='circle_status' ;
+                opt_circle.className='square_status' ;
                 opt_circle.style.background=`${a.color}`
             container.append(opt_circle);
             let opt = document.createElement("h6");

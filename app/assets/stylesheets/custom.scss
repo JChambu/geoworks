@@ -412,8 +412,11 @@ div.custom-menu.show {
   border-top-color: #d3d800 !important;
 }
 
-/*custom checkbox*/
+/*custom checkbox and radio*/
 .custom-checkbox .custom-control-input:checked~.custom-control-label::before{
+  background-color:#d3d800;
+}
+.custom-radio .custom-control-input:checked~.custom-control-label::before{
   background-color:#d3d800;
 }
 .img-project{
@@ -433,14 +436,13 @@ div.custom-menu.show {
 .page_data{
   cursor:pointer;
 }
-.circle_status{
+.square_status{
   width:15px;
   height:15px;
-  background: red;
   display:inline-block;
   vertical-align:middle;
-  border-radius: 50%;
   margin: 0px 10px;
+  border: solid 1px;
 }
 .custom_row{
   line-height: normal;

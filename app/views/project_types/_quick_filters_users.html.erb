@@ -6,11 +6,11 @@
   <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
     <%=select_tag 'q[user_filter]', raw("<option>app_usuario</option>") , class: "d-none" %>
     <div>
-      <div class="custom-control custom-checkbox d-inline">
+      <div class="custom-control custom-radio d-inline">
         <input type="hidden">
         <input type="radio" id="radio_all" name="radio_user_filter" class="custom-control-input check_input_users" checked="false">
         <label class="string optional control-label custom-control-label" for="radio_all"></label>
-        <h6 class="d-inline value_input_users">Todos</h6>
+        <h6 class="d-inline value_input_users">Sin Filtro</h6>
       </div>
     </div>
     <div class="quick_filters_div">
@@ -48,7 +48,7 @@
         $.each(data['data'], function(value, a){
           let container = document.createElement("DIV");
             let opt_check= document.createElement("DIV");
-            opt_check.className="custom-control custom-checkbox d-inline";
+            opt_check.className="custom-control custom-radio d-inline";
             let opt_check_input1= document.createElement("INPUT");
               opt_check_input1.type="hidden";
               opt_check.append(opt_check_input1)
@@ -69,7 +69,7 @@
 
             let opt = document.createElement("h6");
             opt.className='d-inline value_input_users';
-            opt.innerHTML = `${a.name}`;  
+            opt.innerHTML = " "+`${a.name}`;  
             container.append(opt);
           $quick_filters_div.append(container);
         })
