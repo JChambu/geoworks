@@ -7,6 +7,7 @@
       Navarra.dashboards.config.project_type_id = <%= @project_type.id %>
       Navarra.dashboards.config.current_tenant = '<%= @current_tenant %>';
       Navarra.dashboards.config.name_layer = '<%= @project_type.name_layer %>';
+      Navarra.dashboards.config.name_project = '<%= @project_type.name %>';
       Navarra.dashboards.config.type_geometry = '<%= @project_type.type_geometry %>';
     <% end %>
     <% if !@dashboard.nil? %>

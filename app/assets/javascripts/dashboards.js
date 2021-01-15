@@ -45,6 +45,7 @@ Navarra.dashboards.config = {
   size_box: [],
   size_polygon: [],
   name_layer: '',
+  name_project: '',
   type_geometry: '',
   current_tenement: '',
   user_name: ''

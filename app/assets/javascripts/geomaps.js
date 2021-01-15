@@ -872,6 +872,7 @@ Navarra.geomaps = function() {
 
   function layers_internal() {
     current_layer = Navarra.dashboards.config.name_layer;
+    current_layer_name = Navarra.dashboards.config.name_project;
 
     // verifica que capas estás chequeadas
     var active_internal_layers=[];
@@ -879,16 +880,10 @@ Navarra.geomaps = function() {
     for(l=0; l<check_layers.length; l++){
       if(check_layers[l].type=='checkbox'){
         var name_layer_project = $(check_layers[l]).next().html().substring(1);
-        console.log("capa: "+name_layer_project.toLowerCase());
-        console.log("current layer"+current_layer);
-        console.log("son diferentes? ");
-        console.log(name_layer_project.toLowerCase()!=current_layer);
-        if(name_layer_project.toLowerCase()!=current_layer && name_layer_project.toLowerCase()!=" seleccionados" )
+        if(name_layer_project.toLowerCase()!=current_layer_name.toLowerCase() && name_layer_project.toLowerCase()!=" seleccionados" )
         active_internal_layers.push(name_layer_project);
       }
     }
-    console.log("Capas Activas");
-    console.log(active_internal_layers);
 
     // elimina las capas creadas anteriormente
     for(x=0;x<layer_array.length;x++){
