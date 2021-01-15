@@ -169,8 +169,8 @@ Navarra.dashboards.action_show = function(){
         $('#view').removeClass('fa-arrow-alt-circle-right');
         $('#view').addClass('fa-arrow-alt-circle-left');
         $("#view").css("left", "-1%");
-        $(".sidebar").css("transition-delay", "0s");
-        $(".sidebar").css("width", "1%");
+        $(".sidebar").css("transition-delay", "0.2s");
+        $(".sidebar").css("width", "1.2%");
         $("#filter-container").css("transition", "0s");
         $(".graphics").css("transition", "0s");
         $("#filter-container").css("transition-delay", "0s");

@@ -2129,7 +2129,7 @@ function show_item_info(appid_info, from_map){
               } else{
                 new_row.className="form-row";
               }
-            if(element.value==null && element.field_type_id!=11){
+            if((element.value==null && element.field_type_id!=11) || element.value=="" || element.value==" "){
               new_row.classList.add("d-none");
               new_row.classList.add("empty_field");
             }  
@@ -2220,7 +2220,7 @@ function show_item_info(appid_info, from_map){
                   } else{
                     new_row1.className="form-row";
                   }
-                  if(element_child_field.value==null && element_child_field.field_type_id!=11){
+                  if((element_child_field.value==null && element_child_field.field_type_id!=11) || element_child_field.value=="" || element_child_field.value==" "){
                     new_row1.classList.add("d-none");
                     new_row1.classList.add("empty_field");
                   } 
