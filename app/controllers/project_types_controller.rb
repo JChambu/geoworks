@@ -234,6 +234,11 @@ class ProjectTypesController < ApplicationController
 
             value_hijo = properties_hijo[ch.id.to_s]
 
+
+            if cp.field_type_id == 7 || cp.field_type_id == 2
+              value_hijo = value_hijo.to_s
+            end
+
             camp_hijo = {}
 
 
