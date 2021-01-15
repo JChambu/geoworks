@@ -1022,7 +1022,7 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
 function init_data_dashboard(haschange){
   //cierra modal de información del registro
   $("#info-modal").modal("hide");
-  $(".fakeLoader").css("display","block");
+ // $(".fakeLoader").css("display","block");
   var type_box = 'polygon';
   var size_box = Navarra.dashboards.config.size_polygon;
   if (size_box.length==0) {
@@ -1139,7 +1139,7 @@ function init_data_dashboard(haschange){
            document.getElementById("tbody_hidden").appendChild(new_row);
            $('table tbody tr:nth-child('+(found_id)+')').addClass('found');
           });
-        $(".fakeLoader").css("display","none");
+       // $(".fakeLoader").css("display","none");
       }
     })
 
@@ -1633,7 +1633,7 @@ var array_d_none;
 function init_report(){
   //cierra modal de información del registro
   $("#info-modal").modal("hide");
-  $(".fakeLoader").css("display","block");
+//  $(".fakeLoader").css("display","block");
 
   subtitles_names=[];
   subtitles_ids=[];
@@ -1916,7 +1916,7 @@ function init_report(){
         });
 
       $('#modal-report').modal('show');
-      $(".fakeLoader").css("display","none");
+     // $(".fakeLoader").css("display","none");
       set_subtitles();
       }
     });
