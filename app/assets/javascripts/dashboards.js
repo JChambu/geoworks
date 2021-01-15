@@ -277,6 +277,7 @@ Navarra.dashboards.action_show = function(){
         $("#collapse_data").css("border", "1px solid rgba(0,0,0,0.6)");
         $(".leaflet-control-scale-line").css("display", "none");
         $(".leaflet-control-attribution").css("display", "none");
+        init_data_dashboard(false);
       }
     });
 
