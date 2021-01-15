@@ -13,8 +13,11 @@ class ProjectsController < ApplicationController
   end
 
   def search_users
-    @project_users_data = User.all
-    render json: {data: @project_users_data}
+    customer_subdomain = Apartment::Tenant.current
+    Apartment::Tenant.switch 'public' do
+      @usuarios_corpo = User.joins(:customers).where(customers: {subdomain: customer_subdomain})
+    end
+    render json: {data: @usuarios_corpo}
   end
 
   def popup
