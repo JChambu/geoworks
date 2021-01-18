@@ -1,5 +1,8 @@
 //peticiones Ajax
 var xhr_kpi = null;
+var xhr_chart = null;
+var xhr_table = null;
+var xhr_info = null;
 
 Number.prototype.format = function(n, x, s, c) {
   var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
@@ -134,7 +137,10 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
     var from_date = Navarra.project_types.config.from_date;
     var to_date = Navarra.project_types.config.to_date;
 
-    $.ajax({
+    if(xhr_chart && xhr_chart.readyState != 4) { 
+      xhr_chart.abort();
+    }
+    xhr_chart = $.ajax({
       type: 'GET',
       url: '/project_types/kpi.json',
       datatype: 'json',
@@ -1062,7 +1068,10 @@ function init_data_dashboard(haschange){
     var from_date = Navarra.project_types.config.from_date;
     var to_date = Navarra.project_types.config.to_date;
 
-    $.ajax({
+    if(xhr_table && xhr_table.readyState != 4) { 
+      xhr_table.abort();
+    }
+    xhr_table = $.ajax({
       type: 'GET',
       url: '/project_types/search_data_dashboard',
       datatype: 'json',
@@ -1161,8 +1170,11 @@ function init_data_dashboard(haschange){
             Navarra.project_types.config.data_dashboard="strToLowerCase("+filter_by_column+") like '%"+filter_value.toLowerCase()+"%'";
             Navarra.geomaps.current_layer();
 
-            //clacula paginación de la busqueda e indicador de cantidad sobre el total
-            $.ajax({
+            //calcula paginación de la busqueda e indicador de cantidad sobre el total
+            if(xhr_table && xhr_table.readyState != 4) { 
+              xhr_table.abort();
+            }
+            xhr_table = $.ajax({
               type: 'GET',
               url: '/project_types/search_data_dashboard',
               datatype: 'json',
@@ -2074,7 +2086,10 @@ function export_to_excel(table, name, filename) {
 
 function show_item_info(appid_info, from_map){
   var project_type_id = Navarra.dashboards.config.project_type_id;
-  $.ajax({
+  if(xhr_info && xhr_info.readyState != 4) { 
+      xhr_info.abort();
+    }
+    xhr_info = $.ajax({
       type: 'GET',
       url: '/project_types/search_photos_and_subforms',
       datatype: 'json',
@@ -2083,8 +2098,6 @@ function show_item_info(appid_info, from_map){
         app_id: appid_info
       },
       success: function(data) {
-        console.log("Datos ");
-        console.log(data)
         $('.div_confirmation').addClass("d-none");
         $('.div_confirmation').removeClass("d-inline");
         $("#info-modal").modal('show');
