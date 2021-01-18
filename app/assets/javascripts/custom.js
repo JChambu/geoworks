@@ -155,7 +155,8 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
         to_date: to_date
       },
       success: function(data){
-        console.log("Succes Chart")
+        console.log("Success Chart");
+        console.log(data)
         // Aplicamos drag and drop
         dragula({
           containers: Array.prototype.slice.call($('.graphics')),
