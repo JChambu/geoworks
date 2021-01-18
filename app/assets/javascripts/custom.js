@@ -138,7 +138,7 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
     var to_date = Navarra.project_types.config.to_date;
 
     if(xhr_chart && xhr_chart.readyState != 4) { 
-      xhr_chart.abort();
+    //  xhr_chart.abort();
     }
     xhr_chart = $.ajax({
       type: 'GET',
@@ -155,7 +155,7 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
         to_date: to_date
       },
       success: function(data){
-
+        console.log("Succes Chart")
         // Aplicamos drag and drop
         dragula({
           containers: Array.prototype.slice.call($('.graphics')),
