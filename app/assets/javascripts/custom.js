@@ -1,3 +1,5 @@
+//peticiones Ajax
+var xhr_kpi = null;
 
 Number.prototype.format = function(n, x, s, c) {
   var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
@@ -35,7 +37,10 @@ function init_kpi(size_box = null) {
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
 
-  $.ajax({
+  if(xhr_kpi && xhr_kpi.readyState != 4) { 
+    xhr_kpi.abort();
+  }
+  xhr_kpi = $.ajax({
     type: 'GET',
     url: '/project_types/kpi.json',
     datatype: 'json',
@@ -52,7 +57,6 @@ function init_kpi(size_box = null) {
     success: function(data) {
 
       data.forEach(function(element) {
-
         var count_element = element['data'][0]['count'];
 
         if(element['title'] == 'Seleccionado'){
