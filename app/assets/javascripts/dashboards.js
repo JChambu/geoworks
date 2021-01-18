@@ -151,7 +151,7 @@ Navarra.dashboards.action_show = function(){
         $(".table_data_container").css("transition-delay", "0s");
         $(".table_data_container").css("width", "40%");
         $(".leaflet-right").css("margin-right", "60%");
-        init_chart_doughnut();
+        draw_charts();
       } 
       if (status_view_expanded) { // Expanded
         $('#view').removeClass('view-expanded');
@@ -161,7 +161,7 @@ Navarra.dashboards.action_show = function(){
         $(".leaflet-right").css("margin-right", "30%");
         $(".table_data_container").css("transition-delay", "0.2s");
         $(".table_data_container").css("width", "70%");
-        init_chart_doughnut();
+        draw_charts();
       }
       if (status_view_right) { // Normal Right
         $('#view').removeClass('view-normal-right');
@@ -180,7 +180,6 @@ Navarra.dashboards.action_show = function(){
         $(".leaflet-right").css("margin-right", "1%");
         $(".table_data_container").css("transition-delay", "0.2s");
         $(".table_data_container").css("width", "99%");
-      //  init_chart_doughnut();
       }
       if (status_view_condensed) { // Condensed
         $('#view').removeClass('view-condensed');

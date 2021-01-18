@@ -703,7 +703,8 @@ Navarra.geomaps = function() {
 
   function current_layer() {
     name_layer = Navarra.dashboards.config.name_layer;
-    var labelLayer;
+    var labelLayer = Navarra.dashboards.config.name_project;
+    /*
     if(xhr_namelayer && xhr_namelayer.readyState != 4) { 
       xhr_namelayer.abort();
     }
@@ -720,9 +721,13 @@ Navarra.geomaps = function() {
         if (labelLayer == undefined) {
           labelLayer = 'Predeterminada'
         }
+        console.log("NameLayer");
+        console.log(labelLayer);
+        console.log("projectName");
+        console.log(Navarra.dashboards.config.name_project);
       }
     })
-
+    */
     workspace = Navarra.dashboards.config.current_tenement;
 
     cql_filter = "1 = 1";
