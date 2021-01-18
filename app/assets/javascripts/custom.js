@@ -3,6 +3,7 @@ var xhr_kpi = null;
 var xhr_chart = null;
 var xhr_table = null;
 var xhr_info = null;
+var xhr_report = null;
 
 Number.prototype.format = function(n, x, s, c) {
   var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
@@ -138,7 +139,7 @@ function init_chart_doughnut(size_box = null, create_time_s=true){
     var to_date = Navarra.project_types.config.to_date;
 
     if(xhr_chart && xhr_chart.readyState != 4) { 
-    //  xhr_chart.abort();
+      xhr_chart.abort();
     }
     xhr_chart = $.ajax({
       type: 'GET',
@@ -1698,7 +1699,10 @@ function init_report(){
         active_layers.push(name_layer_project);
       }
     }
-    $.ajax({
+    if(xhr_report && xhr_report.readyState != 4) { 
+      xhr_report.abort();
+    }
+    xhr_report = $.ajax({
       type: 'GET',
       url: '/project_types/search_report_data',
       datatype: 'json',
