@@ -1685,9 +1685,13 @@ function init_report(){
     check_layers = document.querySelectorAll('input:checked.leaflet-control-layers-selector');
     for(l=0; l<check_layers.length; l++){
       if(check_layers[l].type=='checkbox'){
-        var name_layer_project = $(check_layers[l]).next().html().substring(1);
+        var name_layer_project = $(check_layers[l]).next().html().substring(1).split(" (Datos Filtrados)")[0];
         active_layers.push(name_layer_project);
       }
+    }
+    // quita elementos repetidos de las capas
+    for(var i = active_layers.length -1; i >=0; i--){
+       if(active_layers.indexOf(active_layers[i]) !== i){active_layers.splice(i,1)}
     }
     if(xhr_report && xhr_report.readyState != 4) { 
       xhr_report.abort();
@@ -2093,6 +2097,7 @@ function show_item_info(appid_info, from_map){
         app_id: appid_info
       },
       success: function(data) {
+        console.log(data)
         $('.div_confirmation').addClass("d-none");
         $('.div_confirmation').removeClass("d-inline");
         $("#info-modal").modal('show');
@@ -2149,7 +2154,7 @@ function show_item_info(appid_info, from_map){
               } else{
                 new_row.className="form-row";
               }
-            if((element.value==null && element.field_type_id!=11) || element.value=="" || element.value==" "){
+            if((element.value==null && element.field_type_id!=11) || (element.value=="" && element.field_type_id!=11) || (element.value==" " && element.field_type_id!=11)){
               new_row.classList.add("d-none");
               new_row.classList.add("empty_field");
             }  
@@ -2181,7 +2186,7 @@ function show_item_info(appid_info, from_map){
               if(element.field_type_id!=11){
                 var new_celd=document.createElement('DIV');
                 new_celd.className="col-md-7";    
-                var new_p=document.createElement('INPUT');
+                var new_p=document.createElement('TEXTAREA');
                 new_p.className="form-control form-control-sm info_input_disabled";
                 new_p.disabled=true;
                 if(element.value!=null){
@@ -2222,7 +2227,7 @@ function show_item_info(appid_info, from_map){
                 new_row1.appendChild(new_celd);
                 var new_celd=document.createElement('DIV');
                 new_celd.className="col-md-6";    
-                var new_p=document.createElement('INPUT');
+                var new_p=document.createElement('TEXTAREA');
                 new_p.className="form-control form-control-sm info_input_disabled";
                 new_p.disabled=true;
                 new_p.value=element_child.children_gwm_created_at.split("T")[0]+" "+element_child.children_gwm_created_at.split("T")[1].substring(0,8);
@@ -2240,7 +2245,7 @@ function show_item_info(appid_info, from_map){
                   } else{
                     new_row1.className="form-row";
                   }
-                  if((element_child_field.value==null && element_child_field.field_type_id!=11) || element_child_field.value=="" || element_child_field.value==" "){
+                  if((element_child_field.value==null && element_child_field.field_type_id!=11) || (element_child_field.value=="" && element_child_field.field_type_id!=11) || (element_child_field.value==" " && element_child_field.field_type_id!=11)){
                     new_row1.classList.add("d-none");
                     new_row1.classList.add("empty_field");
                   } 
@@ -2272,7 +2277,7 @@ function show_item_info(appid_info, from_map){
                   if(element_child_field.field_type_id!=11){
                     var new_celd=document.createElement('DIV');
                     new_celd.className="col-md-6";    
-                    var new_p=document.createElement('INPUT');
+                    var new_p=document.createElement('TEXTAREA');
                     new_p.className="form-control form-control-sm info_input_disabled";
                     new_p.style.padding="0px 0.5rem";
                     new_p.style.height="auto";
@@ -2307,7 +2312,8 @@ function show_item_info(appid_info, from_map){
               document.getElementById('info_body').appendChild(new_row);
             }            
           }
-        });
+        }); 
+        textarea_adjust_height();
         //Muestra el punto en el mapa y elimina el seleccionado en la tabla
         if(from_map){
           $('table tbody tr').removeClass('found');
@@ -2338,6 +2344,7 @@ function show_hidden_fields(){
     $(".hidden_field").addClass("hidden_field_show");
     $(".hidden_field").removeClass("hidden_field");
     $(".fa-eye-slash").css("color","#d3d800");
+    textarea_adjust_height();
   }else{
     $(".hidden_field_show").addClass("d-none");
     $(".hidden_field_show").addClass("hidden_field");
@@ -2360,7 +2367,14 @@ function open_subtitle(fields,ischild){
       }
 
     })
+    textarea_adjust_height();
   }
 }
-
+function textarea_adjust_height() {
+  //ajustamos el alto
+  document.querySelectorAll(".info_input_disabled").forEach(function(element_tag, index) {
+    var height_text = "height:"+element_tag.scrollHeight+"px!important";
+      element_tag.setAttribute('style', height_text);
+  });
+}
 //****** TERMINAN FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
