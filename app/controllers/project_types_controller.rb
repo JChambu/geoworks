@@ -199,7 +199,9 @@ class ProjectTypesController < ApplicationController
         children_data.each do |c_data|
 
           # Busca las fotos del hijo
-          child_photos = PhotoChild.where(project_data_child_id: c_data.id)
+          child_photos = PhotoChild
+            .where(project_data_child_id: c_data.id)
+            .where(row_active: true)
           child_photos_array = []
           child_photos.each do |c_photo|
             c_photo_hash = {}
