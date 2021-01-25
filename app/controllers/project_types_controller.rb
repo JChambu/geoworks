@@ -188,7 +188,11 @@ class ProjectTypesController < ApplicationController
       if f_field.field_type_id == 7
 
         # Busca los datos del los hijos
-        children_data = ProjectDataChild.where(project_id: project_id)
+        children_data = ProjectDataChild
+          .where(project_id: project_id)
+          .where(row_active: true)
+          .where(current_season: true)
+          .where(row_enabled: true)
 
         children_data_array = []
 
