@@ -516,11 +516,16 @@ div.custom-menu.show {
 .info_input{
   height:auto !important;
   line-height:1 !important;
+  resize: none;
+  overflow: hidden;
 }
 .info_input_disabled{
   background: none!important;
   border: none!important;
   color: #aaa!important;
+  resize: none;
+  overflow: hidden;
+  height: 25px!important;
 }
 .photo_div_info{
   width:23%;
