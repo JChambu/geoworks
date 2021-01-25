@@ -190,6 +190,7 @@ class ProjectTypesController < ApplicationController
         # Busca los datos del los hijos
         children_data = ProjectDataChild
           .where(project_id: project_id)
+          .where(project_field_id: f_field.id)
           .where(row_active: true)
           .where(current_season: true)
           .where(row_enabled: true)
