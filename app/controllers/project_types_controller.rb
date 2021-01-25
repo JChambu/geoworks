@@ -177,142 +177,143 @@ class ProjectTypesController < ApplicationController
     project_type_id = params[:project_type_id]
     project_id = params[:app_id]
 
-    campos_padre = ProjectField.where(project_type_id: project_type_id).order(:sort)
+    # Busca los campos del padre
+    father_fields = ProjectField.where(project_type_id: project_type_id).order(:sort)
 
-    campos_array_padre = []
+    father_fields_array = []
 
-    campos_padre.each do |cp|
+    father_fields.each do |f_field|
 
-      if cp.field_type_id == 7
+      # Si el tipo de campo es subformulario, busca todos los hijos con sus fotos
+      if f_field.field_type_id == 7
 
-        datos_hijos = ProjectDataChild.where(project_id: project_id)
+        # Busca los datos del los hijos
+        children_data = ProjectDataChild.where(project_id: project_id)
 
-        data_todos_hijos = []
+        children_data_array = []
 
-        datos_hijos.each do |hijo|
+        children_data.each do |c_data|
 
-          hijo_hash = {}
-          c_photos = PhotoChild.where(project_data_child_id: hijo.id)
-
-          fotos_del_hijo = []
-
-          c_photos.each do |hpic|
-            fotohijo = {}
-            fotohijo['id'] = hpic.id
-            fotohijo['name'] = hpic.name
-            fotohijo['image'] = hpic.image
-            fotos_del_hijo.push(fotohijo)
+          # Busca las fotos del hijo
+          child_photos = PhotoChild.where(project_data_child_id: c_data.id)
+          child_photos_array = []
+          child_photos.each do |c_photo|
+            c_photo_hash = {}
+            c_photo_hash['id'] = c_photo.id
+            c_photo_hash['name'] = c_photo.name
+            c_photo_hash['image'] = c_photo.image
+            child_photos_array.push(c_photo_hash)
           end
 
-          campos_hijo = ProjectSubfield.where(project_field_id: cp.id).order(:sort)
+          # Busca los campos del hijo
+          child_fields = ProjectSubfield.where(project_field_id: f_field.id).order(:sort)
 
-          campos_array_hijos = []
+          child_fields_array = []
 
-          campos_hijo.each do |ch|
+          child_fields.each do |c_field|
 
-            roles_edit = (JSON.parse(ch.roles_edit)).reject(&:blank?)
-            roles_read = (JSON.parse(ch.roles_read)).reject(&:blank?)
+            roles_edit = (JSON.parse(c_field.roles_edit)).reject(&:blank?)
+            roles_read = (JSON.parse(c_field.roles_read)).reject(&:blank?)
             customer_name = Apartment::Tenant.current
+
             Apartment::Tenant.switch 'public' do
-
-              customer_id = Customer.where(name: customer_name).pluck(:id)
-
-              @rol_del_usuario = UserCustomer
+              customer_id = Customer.where(subdomain: customer_name).pluck(:id)
+              @user_rol = UserCustomer
                 .where(user_id: current_user.id)
                 .where(customer_id: customer_id)
                 .pluck(:role_id)
                 .first
-
             end
 
-            if roles_edit.include?(@rol_del_usuario.to_s)
+            if roles_edit.include?(@user_rol.to_s)
               can_edit = true
             else
               can_edit = false
             end
-            properties_hijo = datos_hijos.pluck(:properties).first.first
 
-            value_hijo = properties_hijo[ch.id.to_s]
+            # Busca los datos del hijo
+            child_properties = children_data.pluck(:properties).first.first # FIXME: los datos de los hijos no se deberían almacenar en un array
+            child_value = child_properties[c_field.id.to_s]
 
-
-            if cp.field_type_id == 7 || cp.field_type_id == 2
-              value_hijo = value_hijo.to_s
+            # Si es un listado (simple o múltiple) convierte el valor de array a string
+            if f_field.field_type_id == 7 || f_field.field_type_id == 2
+              child_value = child_value.to_s
             end
 
-            camp_hijo = {}
+            c_data_hash = {}
+            c_data_hash['field_id'] = c_field.id
+            c_data_hash['name'] = c_field.name
+            c_data_hash['value'] = child_value
+            c_data_hash['field_type_id'] = c_field.field_type_id
+            c_data_hash['calculated_field'] = c_field.calculated_field
+            c_data_hash['hidden'] = c_field.hidden
+            c_data_hash['can_edit'] = can_edit
+
+            child_fields_array.push(c_data_hash)
+
+          end # Cierra child_fields.each
 
 
-            camp_hijo['field_id'] = ch.id
-            camp_hijo['name'] = ch.name
-            camp_hijo['value'] = value_hijo
-            camp_hijo['field_type_id'] = ch.field_type_id
-            camp_hijo['calculated_field'] = ch.calculated_field
-            camp_hijo['hidden'] = ch.hidden
-            camp_hijo['can_edit'] = can_edit
+          children_data_hash = {}
+          children_data_hash['children_id'] = c_data.id
+          children_data_hash['children_gwm_created_at'] = c_data.gwm_created_at
+          children_data_hash['children_fields'] = child_fields_array
+          children_data_hash['children_photos'] = child_photos_array
+          children_data_hash
 
-            campos_array_hijos.push(camp_hijo)
+          children_data_array.push(children_data_hash)
 
+        end # Cierra children_data.each
 
-          end # cierra iteracion campos hijos
-
-
-          data_de_hijo = {}
-          data_de_hijo['children_id'] = hijo.id
-          data_de_hijo['children_gwm_created_at'] = hijo.gwm_created_at
-          data_de_hijo['children_fields'] = campos_array_hijos
-          data_de_hijo['children_photos'] = fotos_del_hijo
-          data_de_hijo
-
-          data_todos_hijos.push(data_de_hijo)
-
-        end # cierra iteracion hijos
-
-        value_padre = data_todos_hijos
+        father_data = children_data_array
 
       else
 
-        value_padre = Project.where(id: project_id).pluck("properties ->> '#{cp.key}'").first
+        father_data = Project.where(id: project_id).pluck("properties ->> '#{f_field.key}'").first
 
       end
 
-      camp_padre = {}
-      camp_padre['field_id'] = cp.id
-      camp_padre['name'] = cp.name
-      camp_padre['value'] = value_padre
-      camp_padre['field_type_id'] = cp.field_type_id
-      camp_padre['calculated_field'] = cp.calculated_field
-      camp_padre['hidden'] = cp.hidden
-      campos_array_padre.push(camp_padre)
+      father_field_hash = {}
+      father_field_hash['field_id'] = f_field.id
+      father_field_hash['name'] = f_field.name
+      father_field_hash['value'] = father_data
+      father_field_hash['field_type_id'] = f_field.field_type_id
+      father_field_hash['calculated_field'] = f_field.calculated_field
+      father_field_hash['hidden'] = f_field.hidden
+      father_fields_array.push(father_field_hash)
 
     end
 
-    fotos_padre = Photo.where(project_id: project_id)
+    # Busca las gotos del padre
+    father_photos = Photo.where(project_id: project_id)
 
-    f_photos_final = []
+    father_photos_array = []
 
-    fotos_padre.each do |fpic|
-      fotopadre = {}
-      fotopadre['id'] = fpic.id
-      fotopadre['name'] = fpic.name
-      fotopadre['image'] = fpic.image
-      f_photos_final.push(fotopadre)
+    father_photos.each do |f_photo|
+      f_photo_hash = {}
+      f_photo_hash['id'] = f_photo.id
+      f_photo_hash['name'] = f_photo.name
+      f_photo_hash['image'] = f_photo.image
+      father_photos_array.push(f_photo_hash)
     end
-    estados = Project
+
+    father_status = Project
       .joins(:project_status)
       .where(id: project_id)
       .pluck(:project_status_id, :name, :color)
       .first
 
-    estados_final = {}
+    father_status_hash = {}
 
-    estados_final['status_id'] = estados[0]
-    estados_final['status_name'] = estados[1]
-    estados_final['status_color'] = estados[2]
+    father_status_hash['status_id'] = father_status[0]
+    father_status_hash['status_name'] = father_status[1]
+    father_status_hash['status_color'] = father_status[2]
+
     data = {}
 
-    data['father_status'] = estados_final
-    data['father_fields'] = campos_array_padre
-    data['father_photos'] = f_photos_final
+    data['father_status'] = father_status_hash
+    data['father_fields'] = father_fields_array
+    data['father_photos'] = father_photos_array
 
     render json: data
   end
