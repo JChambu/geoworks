@@ -291,7 +291,9 @@ class ProjectTypesController < ApplicationController
     end
 
     # Busca las gotos del padre
-    father_photos = Photo.where(project_id: project_id)
+    father_photos = Photo
+      .where(project_id: project_id)
+      .where(row_active: true)
 
     father_photos_array = []
 
