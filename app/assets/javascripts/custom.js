@@ -2090,7 +2090,7 @@ function show_item_info(appid_info, from_map){
     }
     xhr_info = $.ajax({
       type: 'GET',
-      url: '/project_types/search_photos_and_subforms',
+      url: '/project_types/search_father_children_and_photos_data',
       datatype: 'json',
       data: {
         project_type_id: project_type_id,

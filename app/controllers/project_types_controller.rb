@@ -172,7 +172,7 @@ class ProjectTypesController < ApplicationController
     end
   end
 
-  def search_photos_and_subforms
+  def search_father_children_and_photos_data
 
     project_type_id = params[:project_type_id]
     project_id = params[:app_id]
