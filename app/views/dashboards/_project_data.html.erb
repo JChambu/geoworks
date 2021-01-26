@@ -45,7 +45,6 @@ $("#show_report").click(function(){
 //ordena descendente y ascendente
 function order_column(index){
   var column_order=$('#field_key'+index).val();
-  console.log("Texto ordenar "+column_order)
   $('.order_by_column').val(column_order);
   init_data_dashboard(false);
 }
