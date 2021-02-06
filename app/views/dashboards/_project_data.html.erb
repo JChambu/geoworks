@@ -31,6 +31,7 @@ $(".th-hover").hover(function(){
           $('#choose').addClass("p-0");
           $('#choose').blur();
         }
+        $("#info-modal").modal('hide');
       }
   })
 
@@ -92,6 +93,7 @@ function show_item(index, appid_selected){
   $('table tbody tr:nth-child('+(index+1)+')').removeClass('found');
   Navarra.project_types.config.data_dashboard="";
   Navarra.project_types.config.item_selected="";
+  $("#info-modal").modal('hide');
  }else{
    $('table tbody tr').removeClass('found');
    $('table tbody tr:nth-child('+(index+1)+')').addClass('found');
@@ -155,6 +157,10 @@ function show_item(index, appid_selected){
     <thead>
       <tr>
         <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
+          <p style="color:white; margin-bottom: 0px"></p>
+          <input type="text" class="d-none field_key" value="#_action">
+        </th>
+        <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
           <p style="color:white; margin-bottom: 0px">#</p>
           <input type="text" class="d-none field_key" value="#">
         </th>
@@ -192,6 +198,7 @@ function show_item(index, appid_selected){
   <table class="table table-hover m-0 card-body" id="table_visible" style="font-size: 0.8em; position: relative;top: -45px; text-align: center;">
     <thead style="visibility: hidden; border-bottom: solid transparent">
       <tr class="data_fields">
+        <th></th>
         <th>#</th>
         <% if !@fields.nil? %>
         <% @fields.each do |field|  %>

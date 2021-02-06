@@ -45,6 +45,7 @@ Navarra.dashboards.config = {
   size_box: [],
   size_polygon: [],
   name_layer: '',
+  name_project: '',
   type_geometry: '',
   current_tenement: '',
   user_name: ''
@@ -124,7 +125,6 @@ Navarra.dashboards.action_show = function(){
       if (heatmap_actived != ''){
         Navarra.geomaps.heatmap_data();
       }
-
       resize_graphics();
     });
 
@@ -151,7 +151,7 @@ Navarra.dashboards.action_show = function(){
         $(".table_data_container").css("transition-delay", "0s");
         $(".table_data_container").css("width", "40%");
         $(".leaflet-right").css("margin-right", "60%");
-        init_chart_doughnut();
+        draw_charts();
       } 
       if (status_view_expanded) { // Expanded
         $('#view').removeClass('view-expanded');
@@ -161,7 +161,7 @@ Navarra.dashboards.action_show = function(){
         $(".leaflet-right").css("margin-right", "30%");
         $(".table_data_container").css("transition-delay", "0.2s");
         $(".table_data_container").css("width", "70%");
-        init_chart_doughnut();
+        draw_charts();
       }
       if (status_view_right) { // Normal Right
         $('#view').removeClass('view-normal-right');
@@ -169,8 +169,8 @@ Navarra.dashboards.action_show = function(){
         $('#view').removeClass('fa-arrow-alt-circle-right');
         $('#view').addClass('fa-arrow-alt-circle-left');
         $("#view").css("left", "-1%");
-        $(".sidebar").css("transition-delay", "0s");
-        $(".sidebar").css("width", "1%");
+        $(".sidebar").css("transition-delay", "0.2s");
+        $(".sidebar").css("width", "1.2%");
         $("#filter-container").css("transition", "0s");
         $(".graphics").css("transition", "0s");
         $("#filter-container").css("transition-delay", "0s");
@@ -180,7 +180,6 @@ Navarra.dashboards.action_show = function(){
         $(".leaflet-right").css("margin-right", "1%");
         $(".table_data_container").css("transition-delay", "0.2s");
         $(".table_data_container").css("width", "99%");
-        init_chart_doughnut();
       }
       if (status_view_condensed) { // Condensed
         $('#view').removeClass('view-condensed');
@@ -222,12 +221,12 @@ Navarra.dashboards.action_show = function(){
         $('#view-data').removeClass('fa-arrow-alt-circle-up');
         $('#view-data').addClass('fa-arrow-alt-circle-down');
         $(".table_data_container").css("transition-delay", "0s");
-        $(".table_data_container").css("top", "8vh");
+        $(".table_data_container").css("top", "8.5vh");
         $(".leaflet-right").css("display", "none");
         $(".leaflet-left").css("display", "none");
         var height_browser = window.innerHeight
         var height_card=$(".card_data").innerHeight()
-        var height_table = height_browser*.92 - height_card -50
+        var height_table = height_browser*.923 - height_card -50
         $(".table_scroll").css("height", height_table);
         $(".leaflet-control-scale-line").css("display", "none");
         $(".leaflet-control-attribution").css("display", "none");
@@ -238,7 +237,7 @@ Navarra.dashboards.action_show = function(){
         $(".leaflet-right").css("display", "block");
         $(".leaflet-left").css("display", "block");
         $(".table_data_container").css("transition-delay", "0s");
-        $(".table_data_container").css("top", "50vh");
+        $(".table_data_container").css("top", "50.8vh");
         var height_browser = window.innerHeight;
         var height_card=$(".card_data").innerHeight()
         var height_table = height_browser*.5 - height_card -50
@@ -254,7 +253,7 @@ Navarra.dashboards.action_show = function(){
         $('#view-data').addClass('fa-arrow-alt-circle-up');
         $('#view-data').css("top","-3vh");
         $(".table_data_container").css("transition-delay", "0.3s");
-        $(".table_data_container").css("top", "97.5vh");  
+        $(".table_data_container").css("top", "98vh");  
         $("#collapse_data").css("max-height", "0vh");
         $("#collapse_data").css("transition", "0.8s");
         $("#collapse_data").css("border", "none");
@@ -266,7 +265,7 @@ Navarra.dashboards.action_show = function(){
         $('#view-data').addClass('view-normal');
         $('#view-data').css("top","-10px");
         $(".table_data_container").css("transition-delay", "0s");
-        $(".table_data_container").css("top", "50%");
+        $(".table_data_container").css("top", "50.8vh");
         var height_browser = window.innerHeight
         var height_card=$(".card_data").innerHeight()
         var height_table = height_browser*.5 - height_card -50
@@ -277,6 +276,7 @@ Navarra.dashboards.action_show = function(){
         $("#collapse_data").css("border", "1px solid rgba(0,0,0,0.6)");
         $(".leaflet-control-scale-line").css("display", "none");
         $(".leaflet-control-attribution").css("display", "none");
+        init_data_dashboard(false);
       }
     });
 

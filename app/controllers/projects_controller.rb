@@ -12,6 +12,14 @@ class ProjectsController < ApplicationController
     render json: {data: @project_statuses_data}
   end
 
+  def search_users
+    customer_subdomain = Apartment::Tenant.current
+    Apartment::Tenant.switch 'public' do
+      @usuarios_corpo = User.joins(:customers).where(customers: {subdomain: customer_subdomain})
+    end
+    render json: {data: @usuarios_corpo}
+  end
+
   def popup
     project_data = Project.find(params['project_id'].to_i)
      render json: {data: project_data }
