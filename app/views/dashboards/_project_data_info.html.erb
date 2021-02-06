@@ -1,0 +1,86 @@
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('#close_info').click(function(){
+      $('table tbody tr').removeClass('found');
+      Navarra.project_types.config.data_dashboard="";
+      Navarra.project_types.config.item_selected="";
+      Navarra.geomaps.current_layer();
+    });
+  });
+
+  function show_confirmation(div_confirmation){
+    return;
+    disabled_fields();
+    $('.div_confirmation').addClass("d-none");
+    $('.div_confirmation').removeClass("d-inline");
+    $('#'+div_confirmation).addClass("d-inline");
+    $('#'+div_confirmation).removeClass("d-none");
+    if(div_confirmation=='edit_confirmation'){
+      $('.info_input_disabled').addClass('info_input');
+      $('.info_input_disabled').prop('disabled', false);
+      $('.info_input_disabled').removeClass('info_input_disabled');
+    }
+  }
+  function save_info(){
+    disabled_fields();
+    $('.div_confirmation').addClass("d-none");
+    $('.div_confirmation').removeClass("d-inline");
+    $('#info_messages').addClass("d-inline");
+    $('#info_messages').removeClass("d-none");
+  }
+  function disabled_fields(){
+    $('.info_input').addClass('info_input_disabled');
+    $('.info_input').prop('disabled', true);
+    $('.info_input').removeClass('info_input');
+  }
+</script>
+
+<div id="info-modal" class="modal fade show" aria-modal="true" data-backdrop=false style="width: 30%; margin-left: 70.2% !important;top: 4.2vh">
+  <div class="modal-dialog" style="max-width: none;">
+    <div class="modal-content">
+      <div class="modal-header pt-2 pb-2">
+        <h4 class="modal-title"> Datos del registro </h4>
+          <i class="fas fa-eye-slash" style="margin-top: 0.25rem; position: absolute;right: 2.8rem;cursor:pointer" title="Mostrar/Esconder Campos Ocultos" onclick="show_hidden_fields()"></i>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close_info"><span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal_info" style="height: 74vh; overflow-y: auto;">
+        <div id="info_body"></div>
+      </div>
+      <div class="modal-footer" style="height: 8vh;flex-wrap: nowrap;">
+        <div class="d-none text-left div_confirmation" id="info_messages" style="width: 70%;">
+          Registro guardado correctamente
+        </div>
+        <div class="d-none text-left div_confirmation" id="edit_confirmation" style="width: 70%;">
+          <p class="m-0 d-inline">Guardar Cambios?</p>
+          <button type="button" class="btn btn-secondary p-0" onclick="save_info()" style="width: 35px">SI</button>
+          <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
+        </div>
+        <div class="d-none text-left div_confirmation" id="lat_long_edit" style="width: 70%;">
+          <p class="m-0" style="font-size: 0.8em">Lat: -34.5656 Lon: -71.4783</p>
+          <button type="button" class="btn btn-secondary pt-0 pb-0 pl-1 pr-1" onclick="save_info()" >Guardar</button>
+          <button type="button" class="btn btn-secondary pt-0 pb-0 pl-1 pr-1" data-dismiss="modal">Cancelar</button>
+        </div>
+        <div class="d-none text-left div_confirmation" id="owner_confirmation" style="width: 70%;">
+          <select class="form-control form-control-sm d-inline p-0" style="width: 68%">
+            <option></option>
+          </select>
+          <button type="button" class="btn btn-secondary p-0" onclick="save_info()" style="width: 35px">SI</button>
+          <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
+        </div>
+        <div class="d-none text-left div_confirmation" id="disable_confirmation" style="width: 70%;">
+          <p class="m-0 d-inline">Desactivar Registro?</p>
+          <button type="button" class="btn btn-secondary p-0" onclick="save_info()" style="width: 35px">SI</button>
+          <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
+        </div>
+        <div class="d-inline text-right" style="width: 30%;">
+          <i class="fas fa-edit" style="cursor: pointer;" title="Proximamente" onclick="show_confirmation('edit_confirmation')"></i>   
+          <i class="fas fa-map-marker-alt" style="cursor: pointer;" title="Proximamente" onclick="show_confirmation('lat_long_edit')"></i>
+          <i class="fas fa-user-edit" style="cursor: pointer;" title="Proximamente" onclick="show_confirmation('owner_confirmation')"></i>
+          <i class="fas fa-archive" style="cursor: pointer;" title="Proximamente" onclick="show_confirmation('disable_confirmation')"></i>
+          <i class="fas fa-history" style="cursor: pointer;" title="Proximamente" onclick="show_confirmation('disable_confirmation')"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

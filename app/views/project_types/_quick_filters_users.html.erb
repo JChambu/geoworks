@@ -1,17 +1,17 @@
-<%= form_tag project_type_create_quick_filters_path, :remote => true, :method => :get do |f| %>
+<%= form_tag project_type_create_quick_filters_users_path, :remote => true, :method => :get do |f| %>
 <div class="modal-header">
-  <h4 class="modal-title"> Filtro por Estado </h4>
+  <h4 class="modal-title"> Filtro por Usuario </h4>
   <button type="button" class="close close_quick_filters" ><span>&times;</span></button>
 </div>
   <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
-    <%=select_tag 'q[status_filter]', raw("<option>app_estado</option>") , class: "d-none" %>
+    <%=select_tag 'q[user_filter]', raw("<option>app_usuario</option>") , class: "d-none" %>
     <div>
       <div class="custom-control custom-radio d-inline">
         <input type="hidden">
-        <input type="radio" id="radio_all" name="radio_status_filter" class="custom-control-input check_input_status" checked="false">
+        <input type="radio" id="radio_all" name="radio_user_filter" class="custom-control-input check_input_users" checked="false">
         <label class="string optional control-label custom-control-label" for="radio_all"></label>
+        <h6 class="d-inline value_input_users">Sin Filtro</h6>
       </div>
-        <h6 class="d-inline value_input_status" style="margin-left: 10px">Sin Filtro</h6>
     </div>
     <div class="quick_filters_div">
     </div>
@@ -19,14 +19,14 @@
 
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary close_quick_filters" >Cancelar</button>
-    <%= submit_tag :enviar, id: "quick_filter_status", class: "envf btn btn-primary close_quick_filters close_all_filters", value: 'Aplicar' %>
+    <%= submit_tag :enviar, id: "quick_filter_users", class: "envf btn btn-primary close_quick_filters close_all_filters", value: 'Aplicar' %>
   </div>
 <% end %>
 
 <script>
   $(document).ready(function(){
   $.ajax({
-    url:  "/projects/search_statuses.json",
+    url:  "/projects/search_users.json",
     type: "GET",
     data: { project_type_id: <%= params[:project_type_id] %> },
     success: function(data){
@@ -37,7 +37,7 @@
         $quick_filters_div.className = 'quick_filters_div';
         // revisa qué opción esté filtrada
         var ar= Navarra.project_types.config.filter_option
-        var status_filters_active = $(".message[id*="+'app_estado '+"]");
+        var status_filters_active = $(".message[id*="+'app_usuario '+"]");
         if(status_filters_active.length==0){
           status_filters_active_text = "Sin Filtro";
           document.getElementById('radio_all').checked=true;
@@ -48,15 +48,15 @@
         $.each(data['data'], function(value, a){
           let container = document.createElement("DIV");
             let opt_check= document.createElement("DIV");
-            opt_check.className="custom-control custom-radio d-inline align-middle";
+            opt_check.className="custom-control custom-radio d-inline mr-1";
             let opt_check_input1= document.createElement("INPUT");
               opt_check_input1.type="hidden";
               opt_check.append(opt_check_input1)
               let opt_check_input= document.createElement("INPUT");
-              opt_check_input.className="custom-control-input check_input_status";
-              opt_check_input.id='checkbox'+`${a.name}`;
+              opt_check_input.className="custom-control-input check_input_users";
               opt_check_input.type="radio";
-              opt_check_input.name="radio_status_filter";
+              opt_check_input.id='checkbox'+`${a.name}`;
+              opt_check_input.name="radio_user_filter";
               if(status_filters_active_text==a.name){
                 opt_check_input.checked=true;             
               }
@@ -67,12 +67,8 @@
               opt_check.append(opt_check_label)
             container.append(opt_check);
 
-            let opt_circle = document.createElement("DIV");
-                opt_circle.className='square_status' ;
-                opt_circle.style.background=`${a.color}`
-            container.append(opt_circle);
             let opt = document.createElement("h6");
-            opt.className='d-inline value_input_status align-middle';
+            opt.className='d-inline value_input_users';
             opt.innerHTML = `${a.name}`;  
             container.append(opt);
           $quick_filters_div.append(container);
