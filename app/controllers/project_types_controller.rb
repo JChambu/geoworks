@@ -141,11 +141,17 @@ class ProjectTypesController < ApplicationController
   end
 
   def create_quick_filters
-    @field = "field"
+    @field_status = "field"
     respond_to do |format|
       format.js
     end
+  end
 
+  def create_quick_filters_users
+    @field_users = "field"
+    respond_to do |format|
+      format.js
+    end
   end
 
   def dashboard
@@ -164,6 +170,161 @@ class ProjectTypesController < ApplicationController
     else
       @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id],@data_conditions, current_user.id, from_date, to_date)
     end
+  end
+
+  def search_father_children_and_photos_data
+
+    project_type_id = params[:project_type_id]
+    project_id = params[:app_id]
+
+    # Busca los campos del padre
+    father_fields = ProjectField.where(project_type_id: project_type_id).order(:sort)
+
+    father_fields_array = []
+
+    father_fields.each do |f_field|
+
+      # Si el tipo de campo es subformulario, busca todos los hijos con sus fotos
+      if f_field.field_type_id == 7
+
+        # Busca los datos del los hijos
+        children_data = ProjectDataChild
+          .where(project_id: project_id)
+          .where(project_field_id: f_field.id)
+          .where(row_active: true)
+          .where(current_season: true)
+          .where(row_enabled: true)
+
+        children_data_array = []
+
+        children_data.each do |c_data|
+
+          # Busca las fotos del hijo
+          child_photos = PhotoChild
+            .where(project_data_child_id: c_data.id)
+            .where(row_active: true)
+          child_photos_array = []
+          child_photos.each do |c_photo|
+            c_photo_hash = {}
+            c_photo_hash['id'] = c_photo.id
+            c_photo_hash['name'] = c_photo.name
+            c_photo_hash['image'] = c_photo.image
+            child_photos_array.push(c_photo_hash)
+          end
+
+          # Busca los campos del hijo
+          child_fields = ProjectSubfield.where(project_field_id: f_field.id).order(:sort)
+
+          child_fields_array = []
+
+          child_fields.each do |c_field|
+
+            roles_edit = (JSON.parse(c_field.roles_edit)).reject(&:blank?)
+            roles_read = (JSON.parse(c_field.roles_read)).reject(&:blank?)
+            customer_name = Apartment::Tenant.current
+
+            Apartment::Tenant.switch 'public' do
+              customer_id = Customer.where(subdomain: customer_name).pluck(:id)
+              @user_rol = UserCustomer
+                .where(user_id: current_user.id)
+                .where(customer_id: customer_id)
+                .pluck(:role_id)
+                .first
+            end
+
+            if roles_edit.include?(@user_rol.to_s)
+              can_edit = true
+            else
+              can_edit = false
+            end
+
+            # Busca los datos del hijo
+            child_properties = c_data[:properties].first # FIXME: los datos de los hijos no se deberían almacenar en un array
+            child_value = child_properties[c_field.id.to_s]
+
+            # Si es un listado (simple o múltiple) convierte el valor de array a string
+            if f_field.field_type_id == 7 || f_field.field_type_id == 2
+              child_value = child_value.to_s
+            end
+
+            c_data_hash = {}
+            c_data_hash['field_id'] = c_field.id
+            c_data_hash['name'] = c_field.name
+            c_data_hash['value'] = child_value
+            c_data_hash['field_type_id'] = c_field.field_type_id
+            c_data_hash['calculated_field'] = c_field.calculated_field
+            c_data_hash['hidden'] = c_field.hidden
+            c_data_hash['can_edit'] = can_edit
+
+            child_fields_array.push(c_data_hash)
+
+          end # Cierra child_fields.each
+
+
+          children_data_hash = {}
+          children_data_hash['children_id'] = c_data.id
+          children_data_hash['children_gwm_created_at'] = c_data.gwm_created_at
+          children_data_hash['children_fields'] = child_fields_array
+          children_data_hash['children_photos'] = child_photos_array
+          children_data_hash
+
+          children_data_array.push(children_data_hash)
+
+        end # Cierra children_data.each
+
+        father_data = children_data_array
+
+      else
+
+        father_data = Project.where(id: project_id).pluck("properties ->> '#{f_field.key}'").first
+
+      end
+
+      father_field_hash = {}
+      father_field_hash['field_id'] = f_field.id
+      father_field_hash['name'] = f_field.name
+      father_field_hash['value'] = father_data
+      father_field_hash['field_type_id'] = f_field.field_type_id
+      father_field_hash['calculated_field'] = f_field.calculated_field
+      father_field_hash['hidden'] = f_field.hidden
+      father_fields_array.push(father_field_hash)
+
+    end
+
+    # Busca las gotos del padre
+    father_photos = Photo
+      .where(project_id: project_id)
+      .where(row_active: true)
+
+    father_photos_array = []
+
+    father_photos.each do |f_photo|
+      f_photo_hash = {}
+      f_photo_hash['id'] = f_photo.id
+      f_photo_hash['name'] = f_photo.name
+      f_photo_hash['image'] = f_photo.image
+      father_photos_array.push(f_photo_hash)
+    end
+
+    father_status = Project
+      .joins(:project_status)
+      .where(id: project_id)
+      .pluck(:project_status_id, :name, :color)
+      .first
+
+    father_status_hash = {}
+
+    father_status_hash['status_id'] = father_status[0]
+    father_status_hash['status_name'] = father_status[1]
+    father_status_hash['status_color'] = father_status[2]
+
+    data = {}
+
+    data['father_status'] = father_status_hash
+    data['father_fields'] = father_fields_array
+    data['father_photos'] = father_photos_array
+
+    render json: data
   end
 
   def search_data_dashboard
@@ -330,6 +491,198 @@ class ProjectTypesController < ApplicationController
     end
 
     render json: {"data": data}
+  end
+
+  def search_report_data
+
+    project_type_id = params[:project_type_id].to_i
+    filter_value = params[:filter_value]
+    filter_by_column = params[:filter_by_column]
+    order_by_column = params[:order_by_column]
+    type_box = params[:type_box]
+    size_box = params[:size_box]
+    data_conditions = params[:data_conditions]
+    from_date = params[:from_date]
+    to_date = params[:to_date]
+    active_layers = params[:active_layers]
+
+    data = Project
+      .select('DISTINCT main.id, project_statuses.color as status_color')
+      .from('projects main')
+      .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
+      .joins('INNER JOIN public.users ON users.id = main.user_id')
+      .where('main.project_type_id = ?', project_type_id)
+      .where('main.row_active = ?', true)
+      .where('main.current_season = ?', true)
+      .order("main.id")
+
+    # Aplica filtro geográfico
+    if !type_box.blank? && !size_box.blank?
+
+      if type_box == 'extent'
+
+        minx = size_box[0].to_f if !size_box.nil?
+        miny = size_box[1].to_f if !size_box.nil?
+        maxx = size_box[2].to_f if !size_box.nil?
+        maxy = size_box[3].to_f if !size_box.nil?
+        data = data.where("shared_extensions.ST_Contains(shared_extensions.ST_MakeEnvelope(#{minx}, #{maxy}, #{maxx}, #{miny}, 4326), main.#{:the_geom})")
+
+      else
+
+        arr1 = []
+        size_box.each do |a,x|
+          z = []
+          @a = a
+          @x = x
+          x.each do |b,y|
+            @b = b
+            @y = y
+            z.push(y)
+          end
+          arr1.push([z])
+        end
+        data = data.where("shared_extensions.ST_Contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'), 4326), main.#{:the_geom})")
+      end
+    end
+
+    @project_filter = ProjectFilter.where(project_type_id: project_type_id).where(user_id: current_user.id).first
+
+    if !@project_filter.nil?
+
+      # Aplica filtro owner
+      if @project_filter.owner == true
+        data = data.where('main.user_id = ?', current_user.id)
+      end
+
+      # Aplica filtro por atributo a la capa principal
+      if !@project_filter.properties.nil?
+        @project_filter.properties.to_a.each do |prop|
+          data = data.where("main.properties ->> '#{prop[0]}' = '#{prop[1]}'")
+        end
+      end
+
+      # Aplica filtro intercapa
+      if !@project_filter.cross_layer_filter_id.nil?
+
+        @cross_layer_filter = ProjectFilter.where(id: @project_filter.cross_layer_filter_id).where(user_id: current_user.id).first
+
+        # Cruza la capa principal con la capa secunadaria
+        data = data
+          .except(:from).from('projects main CROSS JOIN projects sec')
+          .where('shared_extensions.ST_Intersects(main.the_geom, sec.the_geom)')
+          .where('sec.project_type_id = ?', @cross_layer_filter.project_type_id)
+          .where('sec.row_active = ?', true)
+          .where('sec.current_season = ?', true)
+
+        # Aplica filtro por owner a la capa secundaria
+        if @cross_layer_filter.owner == true
+          data = data.where('sec.user_id = ?', current_user.id)
+        end
+
+        # Aplica filtro por atributo a la capa secundaria
+        if !@cross_layer_filter.properties.nil?
+          @cross_layer_filter.properties.to_a.each do |prop|
+            data = data.where("sec.properties->>'#{prop[0]}' = '#{prop[1]}'")
+          end
+        end
+      end
+    end
+
+    # Aplica filtro de time_slider
+    if !from_date.blank? || !to_date.blank?
+      data = data.where("main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}'")
+    else
+      data = data.where('main.row_enabled = ?', true)
+    end
+
+    # Aplica filtros generados por el usuario
+    if !data_conditions.blank?
+
+      data_conditions.each do |key|
+
+        @s = key.split('|')
+        @field = @s[0]
+        @filter = @s[1]
+        @value = @s[2]
+
+        # Aplica filtro por campo usuario
+        if @field == 'app_usuario'
+          data =  data.where("users.name " + @filter + " #{@value}")
+        end
+
+        # Aplica filtro por campo estado
+        if @field == 'app_estado'
+          data =  data.where("project_statuses.name " + @filter + " #{@value} ")
+        end
+
+        # Aplica filtro por otro campo
+        if @field != 'app_usuario' && @field != 'app_estado'
+          data = data.where("main.properties->>'" + @field + "'" + @filter + "#{@value}")
+        end
+      end
+    end
+
+    report_data = {}
+
+    project_types = ProjectType
+      .where(enabled_as_layer: true)
+      .where(:name => active_layers).or(ProjectType.where(id: project_type_id))
+      .order(level: :desc)
+
+    p_data_array = []
+    main_level = ProjectType.where(id: project_type_id).pluck(:level).first
+
+    project_types.each do |p|
+
+      if p.level >= main_level
+
+        p_data = {}
+
+        fields = ProjectField
+          .joins(:project_type)
+          .where(project_types: {enabled_as_layer: true})
+          .where(project_type_id: p.id)
+          .order('project_types.level DESC', :sort)
+
+        if p.id != project_type_id
+          data = data
+            .joins("INNER JOIN projects #{p.name_layer} ON (shared_extensions.ST_Intersects(main.the_geom, #{p.name_layer}.the_geom))")
+            .where("#{p.name_layer}.project_type_id = #{p.id}")
+            .where("#{p.name_layer}.row_active = ?", true)
+            .where("#{p.name_layer}.current_season = ?", true)
+        end
+
+        p_fields_array = []
+
+        fields.each do |field|
+          p_fields = {}
+
+          if p.id != project_type_id
+            data = data.select("#{p.name_layer}.properties ->> '#{field.key}' as #{p.name_layer}_#{field.key}")
+          else
+            data = data.select("main.properties ->> '#{field.key}' as #{p.name_layer}_#{field.key}")
+          end
+
+          p_fields['id'] = field.id
+          p_fields['key'] = field.key
+          p_fields['name'] = field.name
+          p_fields['data_table'] = field.data_table
+          p_fields['field_type_id'] = field.field_type_id
+          p_fields['calculated_field'] = field.calculated_field
+          p_fields_array.push(p_fields)
+        end
+
+        p_data['fields'] = p_fields_array
+        p_data['name'] = p.name
+        p_data['name_layer'] = p.name_layer
+        p_data_array.push(p_data)
+      end
+
+    end
+    report_data['thead'] = p_data_array
+    report_data['tbody'] = data
+
+    render json: report_data
   end
 
   def heatmap
@@ -545,7 +898,7 @@ class ProjectTypesController < ApplicationController
       :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition, :enable_period, :level,
       project_fields_attributes: [
         :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
-        :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,
+        :choice_list_id, :hidden, :read_only, :popup, :data_table, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,
         project_subfields_attributes: [
           :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
           :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script
