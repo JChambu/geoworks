@@ -309,18 +309,36 @@ div.custom-menu.show {
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
   border: 2px solid rgba(0, 0, 0, 0.2);
-  background: rgba(58, 63, 68, 0.5) !important;
+  background: rgba(58, 63, 68, 0.7) !important;
   color: #FFFFFF !important;
   text-shadow: 1px 1px 1px #2c2e34;
   box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4) !important;
+  border-radius: 4px !important;
+  padding:8px 8px 0px 8px!important;
 }
 .leaflet-container a.leaflet-popup-close-button {
   color: #FFFFFF !important;
   text-shadow: 1px 1px 1px #2c2e34;
+  top: 6px !important;
+  right: 6px !important;
+  font-size:2em !important;
 }
 .leaflet-popup-content {
-  margin:8px!important;
-  width:fit-content!important;
+  max-width:300px;
+  margin:0px!important;
+}
+
+.leaflet-popup-content p{
+  margin: 20px 0px 10px 0px!important;
+  font-size:1.1em;
+}
+
+.info_icon{
+  font-size: 1.5em;
+  color: white;
+  margin-left: 90%;
+  margin-top: 5px;
+  cursor:pointer;
 }
 
 /* Evita los elementos de leaflet de la derecha se superpongan con el sidebar */
@@ -394,8 +412,11 @@ div.custom-menu.show {
   border-top-color: #d3d800 !important;
 }
 
-/*custom checkbox*/
+/*custom checkbox and radio*/
 .custom-checkbox .custom-control-input:checked~.custom-control-label::before{
+  background-color:#d3d800;
+}
+.custom-radio .custom-control-input:checked~.custom-control-label::before{
   background-color:#d3d800;
 }
 .img-project{
@@ -415,14 +436,13 @@ div.custom-menu.show {
 .page_data{
   cursor:pointer;
 }
-.circle_status{
+.square_status{
   width:15px;
   height:15px;
-  background: red;
   display:inline-block;
   vertical-align:middle;
-  border-radius: 50%;
   margin: 0px 10px;
+  border: solid 1px;
 }
 .custom_row{
   line-height: normal;
@@ -491,3 +511,57 @@ div.custom-menu.show {
   max-height: 80vh; 
   overflow-y: auto !important;
 }
+
+/* estilo para popup info registro */
+.info_input{
+  height:auto !important;
+  line-height:1 !important;
+  resize: none;
+  overflow: hidden;
+}
+.info_input_disabled{
+  background: none!important;
+  border: none!important;
+  color: #aaa!important;
+  resize: none;
+  overflow: hidden;
+  height: 25px!important;
+}
+.photo_div_info{
+  width:23%;
+  margin: 0px 1% 5px 1%;
+  display:inline-block;
+  vertical-align:top;
+}
+.photo_div_info_extended{
+  width:100%;
+  background:rgba(0,0,0,0.8);
+  margin: 0px;
+  padding: 10px 30%;
+  top: 8vh;
+  left: 0%;
+  z-index:3000;
+  height:92vh;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  font-size: 2em;
+}
+.photo_info{
+  width:100%;
+  cursor:pointer;
+}
+.photo_description{
+  margin: 0px;
+  text-align: center;
+  font-size: 0.8em;
+  line-height:1em;
+  margin: 5px;
+}
+.status_info_icon{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  margin-right:10px;
+}
+
