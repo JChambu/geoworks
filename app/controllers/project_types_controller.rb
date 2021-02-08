@@ -239,7 +239,7 @@ class ProjectTypesController < ApplicationController
             end
 
             # Busca los datos del hijo
-            child_properties = c_data[:properties].first # FIXME: los datos de los hijos no se deberían almacenar en un array
+            child_properties = c_data[:properties]
             child_value = child_properties[c_field.id.to_s]
 
             # Si es un listado (simple o múltiple) convierte el valor de array a string
