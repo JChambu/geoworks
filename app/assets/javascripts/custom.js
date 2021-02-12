@@ -160,10 +160,11 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         to_date: to_date
       },
       success: function(data) {
-        console.log("Success Chart");
-        console.log(data);
+        // console.log("Success Chart");
         data_charts = data;
         draw_charts();
+
+        //dragAndDrop.init();
 
       } //cierra function data
     }) //cierra ajax
@@ -176,13 +177,82 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
 function draw_charts() {
   $(".chart_container").remove();
   var data = data_charts;
-  // Aplicamos drag and drop
-  dragula({
-    containers: Array.prototype.slice.call($('.graphics')),
-    moves: function(el, container, handle) {
-      return handle.classList.contains('handle') || handle.parentNode.classList.contains('handle');
-    }
-  });
+
+  var dragAndDrop = {
+            store: [],
+            init: function() {
+
+              self = this;
+              this.dragula();
+              this.eventListeners();
+
+              // if (localStorage.getItem('store'))
+              //   this.store = JSON.parse(localStorage.getItem('store'));
+
+              // querySelectorAll returns a nodelist and should be converted to array to use filter, map and foreach
+              var nodesArray = Array.prototype.slice.call(document.querySelectorAll("#graph .chart_container"));
+
+              var nodesArray = nodesArray.filter(function(e) {
+                return self.store.map(function(d) {
+                return d['element'];
+                }).indexOf(e.id) === -1;
+              }).forEach(function(e) {
+                self.store.push({'element': e.id,'container': 'graph'});
+              });
+
+              this.store.forEach(function(obj) {
+              document.getElementById(obj.container).appendChild(document.getElementById(obj.element));              });
+            },
+            eventListeners: function() {
+              this.dragula.on('drop', this.dropped.bind(this));
+            },
+
+            dragula: function() {
+              this.dragula = dragula([document.getElementById('graph')],
+              {
+                copy: false,
+              });
+            },
+
+            dropped: function(el, target, source, sibling) {
+              // Remove element from store if it exists
+              var indexEl = this.store.map(function(d) {
+                return d['element'];
+              }).indexOf(el.id);
+              if (indexEl > -1)
+                this.store.splice(indexEl, 1);
+
+              var indexDrop = this.store.length;
+              if (sibling) { // If sibling store before sibling
+                indexDrop = this.store.map(function(d) {
+                  return d['element'];
+                }).indexOf(sibling.id);
+              }
+
+              this.store.splice(indexDrop, 0, {
+                'element': el.id,
+                'container': target.id
+              });
+
+              var asd = this.store
+              var resultado = {}
+              $.each(asd, function(index) {
+                sort = index
+                graph_id = $(this)[0]['element'].replace(/chart_container/g, '')
+                resultado[graph_id] = sort
+              })
+              $.ajax({
+                        url:  '/graphics/update_sort',
+                        type: 'POST',
+                        dataType: 'script',
+                        data: { sort_data: resultado }
+              });
+              localStorage.removeItem("store");
+              console.log(resultado);
+              // console.log(this.store);
+              // localStorage.setItem('store', JSON.stringify(this.store));
+            }
+          }
 
   // Ordenamos las series por chart
   for (var i = 0; i < data.length; i++) {
@@ -591,9 +661,9 @@ function draw_charts() {
           'class': 'card-header chart-header-bg-transparent py-1 px-2',
           'id': 'header' + graphic_id
         }).append(
-          $('<span>', { // handle
-            'class': 'fas fa-arrows-alt handle border border-dark'
-          }),
+          // $('<span>', { // handle
+          //   'class': 'fas fa-arrows-alt handle border border-dark'
+          // }),
           $('<text>', {
             'text': title
           }),
@@ -1031,6 +1101,8 @@ function draw_charts() {
   if (scroll > 0) {
     $('.graphics').scrollTop(scroll);
   }
+  dragAndDrop.init();
+
 }
 
 //****** FUNCIONES PARA TABLA DE DATOS*****

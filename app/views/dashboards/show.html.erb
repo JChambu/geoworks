@@ -150,7 +150,7 @@
     </div>
 
     <% if can? :graphics, :visualizer %>
-      <div class="graphics d-flex align-content-start flex-wrap"></div>
+      <div class="graphics d-flex align-content-start flex-wrap" id="graph"></div>
     <% end %>
 
     <i class="fas fa-arrow-alt-circle-left view-normal" id="view"></i>
@@ -168,5 +168,3 @@
 <%= render :partial =>'project_data_report' %>
 
 <%= render :partial =>'project_data_info' %>
-
-

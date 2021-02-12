@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210121212156) do
+ActiveRecord::Schema.define(version: 20210211001400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,6 +83,7 @@ ActiveRecord::Schema.define(version: 20210121212156) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "color"
+    t.string "description"
   end
 
   create_table "crono_jobs", force: :cascade do |t|
@@ -163,6 +164,7 @@ ActiveRecord::Schema.define(version: 20210121212156) do
     t.integer "chart_id"
     t.decimal "scale", default: "1.0"
     t.boolean "legend_display", default: false
+    t.integer "sort"
     t.index ["dashboard_id"], name: "index_graphics_on_dashboard_id"
   end
 
