@@ -55,6 +55,7 @@ class GraphicsController < ApplicationController
     @graphic = @dashboard.graphics.find(params[:id])
     respond_to do |format|
       if @graphic.update(graphic_params)
+        format.js
         format.html { redirect_to @graphic, notice: 'Graphic was successfully updated.' }
         format.json { render :show, status: :ok, location: @graphic }
       else

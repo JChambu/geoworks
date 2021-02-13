@@ -244,7 +244,6 @@ function draw_charts() {
               $.ajax({
                         url:  '/graphics/update_sort',
                         type: 'POST',
-                        dataType: 'script',
                         data: { sort_data: resultado }
               });
               localStorage.removeItem("store");
