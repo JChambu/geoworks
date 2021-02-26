@@ -133,7 +133,22 @@ class ProjectTypesController < ApplicationController
   end
 
   def create_filters
+
+    # TODO: Acá debe llegar el grupo que contiene al campo, por ahora se está
+    # diferenciando según si el project_field que llega tiene números o letras
+    # ya que en hijos se usa key numérico y en padres key con letras
+
     @field = "field"
+    @field_name = ''
+    @table = ''
+    if /^[0-9]+$/.match(params[:q][:project_field])
+      @field_name = helpers.get_name_from_id(params[:q][:project_field]).name
+      @table = 'Subformularios'
+    else
+      @field_name = helpers.get_name_from_key(params[:q][:project_field]).name
+      @table = 'Formularios'
+    end
+
     respond_to do |format|
       format.js
     end
