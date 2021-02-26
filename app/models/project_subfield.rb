@@ -2,6 +2,7 @@ class ProjectSubfield < ApplicationRecord
  include RailsSortable::Model
    set_sortable :sort
    belongs_to :project_field
+   belongs_to :field_type
    before_create :key_name
 
   def key_name
