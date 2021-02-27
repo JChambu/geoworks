@@ -98,6 +98,7 @@ Navarra.dashboards.action_show = function(){
       resize_graphics();
     });
 
+    // Desactiva filtro creado por el usuario
     $("#filter-body").on("click", ".message",  function(){
       $(".fa-filter").css("color", "#9b9b9b");
       var da =  $(this).attr('id');
