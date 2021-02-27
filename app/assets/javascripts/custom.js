@@ -160,8 +160,7 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         to_date: to_date
       },
       success: function(data) {
-        console.log("Success Chart");
-        console.log(data);
+
         data_charts = data;
         draw_charts();
 
@@ -2136,7 +2135,7 @@ function show_item_info(appid_info, from_map) {
       app_id: appid_info
     },
     success: function(data) {
-      console.log(data)
+      
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
       $("#info-modal").modal('show');
