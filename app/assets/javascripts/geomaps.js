@@ -704,32 +704,7 @@ Navarra.geomaps = function() {
   function current_layer() {
     name_layer = Navarra.dashboards.config.name_layer;
     var labelLayer = Navarra.dashboards.config.name_project;
-    /*
-    if(xhr_namelayer && xhr_namelayer.readyState != 4) {
-      xhr_namelayer.abort();
-    }
-    xhr_namelayer = $.ajax({
-      async: false,
-      type: 'GET',
-      url: '/project_types/search_name_layer.json',
-      data: {
-        name_projects: name_layer
-      },
-      datatype: 'json',
-      success: function(data) {
-        labelLayer = data['data'][0];
-        if (labelLayer == undefined) {
-          labelLayer = 'Predeterminada'
-        }
-        console.log("NameLayer");
-        console.log(labelLayer);
-        console.log("projectName");
-        console.log(Navarra.dashboards.config.name_project);
-      }
-    })
-    */
     workspace = Navarra.dashboards.config.current_tenement;
-
     cql_filter = "1 = 1";
 
     // Aplica filtro por atributo y filros generados por el usuario
