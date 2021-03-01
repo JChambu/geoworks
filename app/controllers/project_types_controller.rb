@@ -141,12 +141,27 @@ class ProjectTypesController < ApplicationController
     @field = "field"
     @field_name = ''
     @table = ''
+
     if /^[0-9]+$/.match(params[:q][:project_field])
+
       @field_name = helpers.get_name_from_id(params[:q][:project_field]).name
-      @table = 'Subformularios'
+      subform_key = params[:q][:project_field]
+      subform_operator = params[:q][:filters]
+      subform_value = params[:q][:input_value]
+      project_type_id = params[:project_type_id]
+
+      # TODO: Esta consulta quizás la podría hacer solamente a ProjectDataChild, revisar si hace falta la clause del project_type_id
+      @filtered_form_ids = Project
+        .joins(:project_data_child)
+        .where("project_data_children.properties ->> '#{subform_key}' #{subform_operator} '#{subform_value}'")
+        .where(projects: {project_type_id: project_type_id})
+        .pluck(:id)
+        .uniq
+
+      @table = 'subform_filter'
     else
       @field_name = helpers.get_name_from_key(params[:q][:project_field]).name
-      @table = 'Formularios'
+      @table = 'form_filter'
     end
 
     respond_to do |format|

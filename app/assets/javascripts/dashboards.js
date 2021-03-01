@@ -101,18 +101,30 @@ Navarra.dashboards.action_show = function(){
     // Desactiva filtro creado por el usuario
     $("#filter-body").on("click", ".message", function() {
 
-      var current_filters = Navarra.project_types.config.filter_option;
-      var filter_to_remove = $(this).attr('id');
-      updated_filters = $.grep(current_filters, function(value) {
-        return value != filter_to_remove;
-      })
-      Navarra.project_types.config.filter_option = updated_filters;
+      var current_filters;
+      var filter_to_remove;
+
+      if ($(this).hasClass("form_filter")) {
+        current_filters = Navarra.project_types.config.filter_option;
+        filter_to_remove = $(this).attr('id');
+        updated_filters = $.grep(current_filters, function(value) {
+          return value != filter_to_remove;
+        })
+        Navarra.project_types.config.filter_option = updated_filters;
+      } else {
+        current_filters = Navarra.project_types.config.filtered_form_ids;
+        filter_to_remove = $(this).attr('value');
+        updated_filters = $.grep(current_filters, function(value) {
+          return value != filter_to_remove;
+        })
+        Navarra.project_types.config.filtered_form_ids = updated_filters;
+      }
 
       $(".fa-filter").css("color", "#9b9b9b");
       $(this).remove();
       Navarra.geomaps.wms_filter();
 
-      // TODO: Esto se debería revir cuando se actualice la herramienta de colorear puntos
+      // TODO: Esto se debería revisar cuando se actualice la herramienta de colorear puntos
       // Navarra.project_types.config.field_point_colors = '';
       // Navarra.geomaps.point_colors_data();
 
