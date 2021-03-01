@@ -38,7 +38,7 @@
           }
 
           var filter = field_key + '|' + operator + '|\'' + value + '\'';
-          Navarra.project_types.config.filter_option.push(filter);
+          Navarra.project_types.config.attribute_filters.push(filter);
 
         <% end %>
         Navarra.project_types.config.owner = <%= @project_filter.owner %>;

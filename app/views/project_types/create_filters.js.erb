@@ -17,7 +17,7 @@ var filter = field_key + '|' + operator + '|\'' + value + '\'';
 
 // Guarda el filtro dependiendo si es para la tabla padres o hijos
 if (table == 'form_filter') {
-  Navarra.project_types.config.filter_option.push(filter);
+  Navarra.project_types.config.attribute_filters.push(filter);
 } else {
   Navarra.project_types.config.filtered_form_ids.push(filtered_form_ids);
 }

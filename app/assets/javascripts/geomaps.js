@@ -379,12 +379,12 @@ Navarra.geomaps = function() {
   function wms_filter() {
 
     var cql_filter = 'project_type_id=' + Navarra.dashboards.config.project_type_id;
-    var filter_option = Navarra.project_types.config.filter_option;
+    var attribute_filters = Navarra.project_types.config.attribute_filters;
 
-    if (filter_option.length > 0) {
+    if (attribute_filters.length > 0) {
 
       // Aplica filtro por atributo y filros generados por el usuario
-      $.each(filter_option, function(a, b) {
+      $.each(attribute_filters, function(a, b) {
         data_filter = b.split('|');
         cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
       });
@@ -468,7 +468,7 @@ Navarra.geomaps = function() {
 
     field_point = Navarra.project_types.config.field_point_colors;
     data_point = Navarra.project_types.config.data_point_colors;
-    var filter_option = Navarra.project_types.config.filter_option;
+    var attribute_filters = Navarra.project_types.config.attribute_filters;
 
     if (field_point != '') {
       mymap.removeLayer(project_current);
@@ -503,8 +503,8 @@ Navarra.geomaps = function() {
         });
 
         // Aplica filtro por atributo y filros generados por el usuario
-        if (filter_option != '') {
-          $.each(filter_option, function(a, b) {
+        if (attribute_filters != '') {
+          $.each(attribute_filters, function(a, b) {
             data_filter = b.split('|');
             value_filter += " and " + data_filter[0] + data_filter[1] + data_filter[2];
           });
@@ -584,7 +584,7 @@ Navarra.geomaps = function() {
           collapsed: true
         }).addTo(mymap);
 
-        if (filter_option.length == 0) {
+        if (attribute_filters.length == 0) {
           current_layer();
         }
         ss = [];
@@ -610,7 +610,7 @@ Navarra.geomaps = function() {
       size_box[2] = size_ext['_northEast']['lng'];
       size_box[3] = size_ext['_northEast']['lat'];
     }
-    var conditions = Navarra.project_types.config.filter_option
+    var attribute_filters = Navarra.project_types.config.attribute_filters
     var data_id = Navarra.dashboards.config.project_type_id;
     var heatmap_field = Navarra.project_types.config.heatmap_field;
     var heatmap_indicator = Navarra.project_types.config.heatmap_indicator;
@@ -626,7 +626,7 @@ Navarra.geomaps = function() {
       datatype: 'json',
       data: {
         project_type_id: data_id,
-        conditions: conditions,
+        conditions: attribute_filters,
         heatmap_field: heatmap_field,
         size_box: size_box,
         type_box: type_box,
@@ -708,9 +708,9 @@ Navarra.geomaps = function() {
     cql_filter = "1 = 1";
 
     // Aplica filtro por atributo y filros generados por el usuario
-    var filter_option = Navarra.project_types.config.filter_option;
-    if (filter_option.length > 0) {
-      $.each(filter_option, function(a, b) {
+    var attribute_filters = Navarra.project_types.config.attribute_filters;
+    if (attribute_filters.length > 0) {
+      $.each(attribute_filters, function(a, b) {
         data_filter = b.split('|');
         cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
       });

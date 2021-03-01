@@ -105,12 +105,12 @@ Navarra.dashboards.action_show = function(){
       var filter_to_remove;
 
       if ($(this).hasClass("form_filter")) {
-        current_filters = Navarra.project_types.config.filter_option;
+        current_filters = Navarra.project_types.config.attribute_filters;
         filter_to_remove = $(this).attr('id');
         updated_filters = $.grep(current_filters, function(value) {
           return value != filter_to_remove;
         })
-        Navarra.project_types.config.filter_option = updated_filters;
+        Navarra.project_types.config.attribute_filters = updated_filters;
       } else {
         current_filters = Navarra.project_types.config.filtered_form_ids;
         filter_to_remove = $(this).attr('value');
