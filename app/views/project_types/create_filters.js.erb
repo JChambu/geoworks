@@ -17,11 +17,11 @@ var filter_view = field_name  + " " + operator + " " + value_view;
 
 // Guarda el filtro dependiendo si es para la tabla padres o hijos
 if (table == 'Formularios') {
-  Navarra.project_types.config.filter_option.father.push(filter);
-  Navarra.project_types.config.filter_kpi.father.push(filter);
+  Navarra.project_types.config.filter_option.push(filter);
+  Navarra.project_types.config.filter_kpi.push(filter);
 } else {
-  Navarra.project_types.config.filter_option.children.push(filter);
-  Navarra.project_types.config.filter_kpi.children.push(filter);
+  // Navarra.project_types.config.filter_option.push(padres_filtrados);
+  // Navarra.project_types.config.filter_kpi.push(padres_filtrados);
 }
 
 // Elimina y vuelve a agregar el item al card Filtros Activos
