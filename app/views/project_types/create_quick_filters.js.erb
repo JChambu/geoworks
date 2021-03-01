@@ -16,7 +16,6 @@ if(value!="Sin Filtro"){
   var filter_view = field_name  + " " + operator + " " + value;
 
   Navarra.project_types.config.filter_option.push(filter);
-  Navarra.project_types.config.filter_kpi.push(filter);
 
   // Elimina y vuelve a agregar el item al card Filtros Activos
   $('#filter-body').append(
@@ -58,9 +57,8 @@ function remove_status_filters(){
     }else{
       return value;
     }
-    
+
   })
   Navarra.project_types.config.filter_option = b;
-  Navarra.project_types.config.filter_kpi = b;
-   $(".message[id*="+'app_estado '+"]").remove();  
+   $(".message[id*="+'app_estado '+"]").remove();
  }

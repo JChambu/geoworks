@@ -18,7 +18,6 @@ Navarra.project_types.config = {
   kpi_filter: '',
   kpi_value: '',
   filter_option: [], // esta es la que debería almacenar todos los filtros
-  filter_kpi: [], // esta se tiene que unificar con filter_option
   owner: false,
   field_point_colors:'',
   data_point_colors:[],

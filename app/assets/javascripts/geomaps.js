@@ -610,7 +610,7 @@ Navarra.geomaps = function() {
       size_box[2] = size_ext['_northEast']['lng'];
       size_box[3] = size_ext['_northEast']['lat'];
     }
-    var conditions = Navarra.project_types.config.filter_kpi
+    var conditions = Navarra.project_types.config.filter_option
     var data_id = Navarra.dashboards.config.project_type_id;
     var heatmap_field = Navarra.project_types.config.heatmap_field;
     var heatmap_indicator = Navarra.project_types.config.heatmap_indicator;

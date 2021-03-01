@@ -39,7 +39,7 @@ function init_kpi(size_box = null) {
   // }
   var data_id = Navarra.dashboards.config.project_type_id;
   var dashboard_id = Navarra.dashboards.config.dashboard_id;
-  var conditions = Navarra.project_types.config.filter_kpi;
+  var conditions = Navarra.project_types.config.filter_option;
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
 
@@ -138,7 +138,7 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
 
     var data_id = Navarra.dashboards.config.project_type_id;
     var dashboard_id = Navarra.dashboards.config.dashboard_id;
-    var conditions = Navarra.project_types.config.filter_kpi;
+    var conditions = Navarra.project_types.config.filter_option;
     var from_date = Navarra.project_types.config.from_date;
     var to_date = Navarra.project_types.config.to_date;
 
@@ -1054,7 +1054,7 @@ function init_data_dashboard(haschange) {
     size_box[3] = size_ext['_northEast']['lat'];
   }
 
-  var conditions = Navarra.project_types.config.filter_kpi;
+  var conditions = Navarra.project_types.config.filter_option;
 
   var project_type_id = Navarra.dashboards.config.project_type_id;
   var per_page = $(".select_perpage").html();
@@ -1688,7 +1688,7 @@ function init_report() {
     size_box[3] = size_ext['_northEast']['lat'];
   }
 
-  var conditions = Navarra.project_types.config.filter_kpi;
+  var conditions = Navarra.project_types.config.filter_option;
   var project_type_id = Navarra.dashboards.config.project_type_id;
   var per_page = $(".select_perpage").html();
   var per_page_value = parseInt(per_page);
@@ -2135,7 +2135,7 @@ function show_item_info(appid_info, from_map) {
       app_id: appid_info
     },
     success: function(data) {
-      
+
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
       $("#info-modal").modal('show');
