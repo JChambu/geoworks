@@ -292,19 +292,24 @@ module ProjectTypes::Indicators
 
       # Aplica filtros de hijos
       if !filtered_form_ids.blank?
-
-        if sql_full.blank?
-          final_array = []
-          filtered_form_ids.each do |ids_array|
-            ids_array = JSON.parse(ids_array)
-            final_array = final_array | ids_array
+        final_array = []
+        filtered_form_ids.each do |ids_array|
+          ids_array = JSON.parse(ids_array)
+          if !final_array.blank?
+            final_array = final_array & ids_array
+          else
+            final_array = ids_array
           end
-          final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
-          data = data.where("main.id IN #{final_array}")
         end
-
+        final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
+        if sql_full.blank?
+          data = data.where("main.id IN #{final_array}")
+        else
+          data = data.sub('where_clause', "where_clause (main.id IN #{final_array}) AND ")
+        end
       end
       @data = data
+      
     end
 
     def kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, user_id, from_date, to_date)
