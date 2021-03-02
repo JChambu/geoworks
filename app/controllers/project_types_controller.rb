@@ -190,14 +190,37 @@ class ProjectTypesController < ApplicationController
 
     @op_graph = params[:graph]
     @data_conditions = params[:data_conditions]
+    @filtered_form_ids = params[:filtered_form_ids]
     filter_condition = []
     from_date = params[:from_date]
     to_date = params[:to_date]
     @querys = ''
+
     if @op_graph == 'true'
-      @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id], @data_conditions, current_user.id, from_date, to_date)
+      @querys = ProjectType.kpi_new(
+        params[:data_id],
+        @op_graph,
+        params[:size_box],
+        params[:type_box],
+        params[:dashboard_id],
+        @data_conditions,
+        @filtered_form_ids,
+        current_user.id,
+        from_date,
+        to_date
+      )
     else
-      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id],@data_conditions, current_user.id, from_date, to_date)
+      @querys = ProjectType.kpi_without_graph(
+        params[:data_id],
+        @op_graph,
+        params[:size_box],
+        params[:type_box],
+        params[:dashboard_id],
+        @data_conditions,
+        @filtered_form_ids,
+        current_user.id,
+        from_date, to_date
+      )
     end
   end
 

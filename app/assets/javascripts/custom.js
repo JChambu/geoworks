@@ -40,6 +40,7 @@ function init_kpi(size_box = null) {
   var data_id = Navarra.dashboards.config.project_type_id;
   var dashboard_id = Navarra.dashboards.config.dashboard_id;
   var attribute_filters = Navarra.project_types.config.attribute_filters;
+  var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
 
@@ -56,6 +57,7 @@ function init_kpi(size_box = null) {
       graph: false,
       type_box: type_box,
       data_conditions: attribute_filters,
+      filtered_form_ids: filtered_form_ids,
       from_date: from_date,
       to_date: to_date,
     },
@@ -139,6 +141,7 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
     var data_id = Navarra.dashboards.config.project_type_id;
     var dashboard_id = Navarra.dashboards.config.dashboard_id;
     var attribute_filters = Navarra.project_types.config.attribute_filters;
+    var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
     var from_date = Navarra.project_types.config.from_date;
     var to_date = Navarra.project_types.config.to_date;
 
@@ -156,6 +159,7 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         type_box: type_box,
         dashboard_id: dashboard_id,
         data_conditions: attribute_filters,
+        filtered_form_ids: filtered_form_ids,
         from_date: from_date,
         to_date: to_date
       },
