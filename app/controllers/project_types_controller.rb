@@ -390,6 +390,7 @@ class ProjectTypesController < ApplicationController
     type_box = params[:type_box]
     size_box = params[:size_box]
     data_conditions = params[:data_conditions]
+    filtered_form_ids = params[:filtered_form_ids]
     from_date = params[:from_date]
     to_date = params[:to_date]
 
@@ -401,6 +402,7 @@ class ProjectTypesController < ApplicationController
       .where('main.project_type_id = ?', project_type_id.to_i)
       .where('main.row_active = ?', true)
       .where('main.current_season = ?', true)
+
     # Aplica filtro geográfico
     if !type_box.blank? && !size_box.blank?
 
@@ -506,6 +508,21 @@ class ProjectTypesController < ApplicationController
         end
       end
 
+    end
+
+    # Aplica filtros de hijos
+    if !filtered_form_ids.blank?
+      final_array = []
+      filtered_form_ids.each do |ids_array|
+        ids_array = JSON.parse(ids_array)
+        if !final_array.blank?
+          final_array = final_array & ids_array
+        else
+          final_array = ids_array
+        end
+      end
+      final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
+      data = data.where("main.id IN #{final_array}")
     end
 
     # Aplica búsqueda del usuario

@@ -1059,6 +1059,7 @@ function init_data_dashboard(haschange) {
   }
 
   var attribute_filters = Navarra.project_types.config.attribute_filters;
+  var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
 
   var project_type_id = Navarra.dashboards.config.project_type_id;
   var per_page = $(".select_perpage").html();
@@ -1094,6 +1095,7 @@ function init_data_dashboard(haschange) {
       type_box: type_box,
       size_box: size_box,
       data_conditions: attribute_filters,
+      filtered_form_ids: filtered_form_ids,
       from_date: from_date,
       to_date: to_date
     },
@@ -1197,6 +1199,7 @@ function init_data_dashboard(haschange) {
           type_box: type_box,
           size_box: size_box,
           data_conditions: attribute_filters,
+          filtered_form_ids: filtered_form_ids,
           from_date: from_date,
           to_date: to_date
         },
