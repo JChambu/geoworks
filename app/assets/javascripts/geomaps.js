@@ -378,84 +378,112 @@ Navarra.geomaps = function() {
 
   function wms_filter() {
 
-    var cql_filter = 'project_type_id=' + Navarra.dashboards.config.project_type_id;
+    var cql_filter = 'project_type_id = ' + Navarra.dashboards.config.project_type_id;
+
+    // Aplica filtros por hijos generados por el usuario
+    var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+    if (filtered_form_ids.length) {
+      let final_array = [];
+      for (var i = 0; i < filtered_form_ids.length; i++) {
+        let ids_array = JSON.parse(filtered_form_ids[i])
+        if (final_array.length) {
+          final_array = final_array.filter(value => ids_array.includes(value));
+        } else {
+          final_array = ids_array
+        }
+      }
+      final_array = final_array.toString()
+      cql_filter += ' and app_id IN (' + final_array + ')';
+    }
+
+    // Aplica filtro por atributo y filros padres generados por el usuario
     var attribute_filters = Navarra.project_types.config.attribute_filters;
-
-    if (attribute_filters.length > 0) {
-
-      // Aplica filtro por atributo y filros generados por el usuario
+    if (attribute_filters.length) {
       $.each(attribute_filters, function(a, b) {
         data_filter = b.split('|');
         cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
       });
-
-      mymap.removeLayer(project_current);
-      mymap.removeLayer(project_current_selected);
-      if (typeof(projectss) !== 'undefined') {
-        mymap.removeLayer(projectss);
-      }
-
-      var heatmap_actived = Navarra.project_types.config.heatmap_field;
-      if (heatmap_actived != '') {
-        Navarra.geomaps.heatmap_data();
-      }
-
-      // Aplica filtro owner
-      var owner = Navarra.project_types.config.owner;
-      var user_name = Navarra.dashboards.config.user_name;
-      if (owner == true) {
-        cql_filter += " and app_usuario='" + user_name + "'";
-      }
-
-      // Aplica filtro de time_slider
-      var from_date = Navarra.project_types.config.from_date;
-      var to_date = Navarra.project_types.config.to_date;
-      if (from_date != '' || to_date != '') {
-        cql_filter += " AND (gwm_created_at BETWEEN '" + from_date + "' AND '" + to_date + "')"
-      } else {
-        cql_filter += ' AND row_enabled = true'
-      }
-
-      var point_color = Navarra.project_types.config.field_point_colors;
-      switch (type_geometry) {
-        case 'Point':
-          style = 'poi_new';
-          break;
-        case 'Polygon':
-          style = 'polygon_new';
-          break;
-        default:
-          style = 'poi_new';
-      }
-
-      if (point_color != '') {
-        if (typeof(projectss) !== 'undefined') {
-          mymap.removeLayer(projectss);
-        }
-        Navarra.geomaps.point_colors_data();
-      } else {
-        current_tenement = Navarra.dashboards.config.current_tenement;
-        layer_current = current_tenement + ":" + name_layer;
-        projectFilterLayer = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
-          layers: layer_current, //nombre de la capa (ver get capabilities)
-          format: 'image/png',
-          transparent: 'true',
-          opacity: 1,
-          version: '1.0.0', //wms version (ver get capabilities)
-          tiled: true,
-          styles: style,
-          INFO_FORMAT: 'application/json',
-          format_options: 'callback:getJson',
-          CQL_FILTER: cql_filter
-        })
-        projectss = projectFilterLayer.getLayer(layer_current).addTo(mymap);
-      }
-    } else {
-      if (typeof(projectss) !== 'undefined') {
-        mymap.removeLayer(projectss);
-      }
-      project_current.addTo(mymap);
     }
+
+    // Aplica filtro owner
+    var owner = Navarra.project_types.config.owner;
+    if (owner == true) {
+      var user_name = Navarra.dashboards.config.user_name;
+      cql_filter += " and app_usuario='" + user_name + "'";
+    }
+
+    // Aplica filtro intercapa
+    var cross_layer_filter = Navarra.project_types.config.cross_layer_filter;
+    var cross_layer_owner = Navarra.project_types.config.cross_layer_owner;
+    if (cross_layer_filter.length || cross_layer_owner == true) {
+      let cl_name = Navarra.project_types.config.cross_layer
+      let cl_clasue = '1 = 1'
+
+      // Aplica filtro intercapa por atributo
+      if (cross_layer_filter.length > 0) {
+        c_filter = cross_layer_filter[0].split('|');
+        cl_clasue += " and " + c_filter[0] +" = '" + c_filter[2] + "'"
+      }
+
+      // Aplica filtro intercapa por owner
+      if (cross_layer_owner == true) {
+        var user_name = Navarra.dashboards.config.user_name;
+        cl_clasue += " and app_usuario = ''" + user_name + "''"
+      }
+
+      cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + cl_name + "', 'the_geom', '" + cl_clasue + "')))"
+
+    }
+
+    // Aplica filtro de time_slider
+    var from_date = Navarra.project_types.config.from_date;
+    var to_date = Navarra.project_types.config.to_date;
+
+    if (from_date != '' || to_date != '') {
+      console.log('Aplica time_slider!');
+      cql_filter += " AND (gwm_created_at BETWEEN '" + from_date + "' AND '" + to_date + "')"
+    } else {
+      cql_filter += ' AND row_enabled = true'
+    }
+
+    var heatmap_actived = Navarra.project_types.config.heatmap_field;
+    if (heatmap_actived != '') {
+      Navarra.geomaps.heatmap_data();
+    }
+
+    switch (type_geometry) {
+      case 'Point':
+        style = 'poi_new';
+        break;
+      case 'Polygon':
+        style = 'polygon_new';
+        break;
+      default:
+        style = 'poi_new';
+    }
+
+    mymap.removeLayer(project_current);
+    mymap.removeLayer(project_current_selected);
+    if (typeof(projectss) !== 'undefined') {
+      mymap.removeLayer(projectss);
+    }
+
+    current_tenement = Navarra.dashboards.config.current_tenement;
+    layer_current = current_tenement + ":" + name_layer;
+    projectFilterLayer = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
+      layers: layer_current, //nombre de la capa (ver get capabilities)
+      format: 'image/png',
+      transparent: 'true',
+      opacity: 1,
+      version: '1.0.0', //wms version (ver get capabilities)
+      tiled: true,
+      styles: style,
+      INFO_FORMAT: 'application/json',
+      format_options: 'callback:getJson',
+      CQL_FILTER: cql_filter
+    })
+    projectss = projectFilterLayer.getLayer(layer_current).addTo(mymap);
+
     show_kpis();
     show_data_dashboard();
     //recalcula las capas internas
