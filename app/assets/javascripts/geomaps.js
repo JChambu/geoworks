@@ -792,40 +792,44 @@ Navarra.geomaps = function() {
     var cql_filter_data_not_selected = "";
     var cql_filter_data_selected = " and 1 = 2";
     var data_from_navarra = Navarra.project_types.config.data_dashboard;
-    if(data_from_navarra!=""){
-        cql_filter_data_not_selected=" and NOT ("+data_from_navarra+" )";
-        cql_filter_data_selected=" and "+data_from_navarra;
-        var geometry_draw_array = Navarra.dashboards.config.size_polygon;
-        if(geometry_draw_array.length>0){
-           geometry_draw = "MULTIPOLYGON(";
-           for (xx = 0; xx < geometry_draw_array.length; xx++) {
-             if(xx>0){geometry_draw += ",((";}else{geometry_draw += "((";}
-            for (x = 0; x < geometry_draw_array[xx].length; x++) {
-              if (x > 0) {
-                geometry_draw += " , ";
-              }
-              geometry_draw += geometry_draw_array[xx][x][0] + " " + geometry_draw_array[xx][x][1];
-              }
-              geometry_draw += "))";
+    if (data_from_navarra != "") {
+      cql_filter_data_not_selected = " and NOT (" + data_from_navarra + " )";
+      cql_filter_data_selected = " and " + data_from_navarra;
+      var geometry_draw_array = Navarra.dashboards.config.size_polygon;
+      if (geometry_draw_array.length > 0) {
+        geometry_draw = "MULTIPOLYGON(";
+        for (xx = 0; xx < geometry_draw_array.length; xx++) {
+          if (xx > 0) {
+            geometry_draw += ",((";
+          } else {
+            geometry_draw += "((";
+          }
+          for (x = 0; x < geometry_draw_array[xx].length; x++) {
+            if (x > 0) {
+              geometry_draw += " , ";
             }
-            geometry_draw += ")";
-            cql_filter_data_selected+= " and WITHIN(the_geom, "+geometry_draw+")";
-            cql_filter_data_not_selected=" and (NOT ("+data_from_navarra+" ) or NOT( WITHIN(the_geom, "+geometry_draw+")))";
+            geometry_draw += geometry_draw_array[xx][x][0] + " " + geometry_draw_array[xx][x][1];
+          }
+          geometry_draw += "))";
         }
-   }
+        geometry_draw += ")";
+        cql_filter_data_selected += " and WITHIN(the_geom, " + geometry_draw + ")";
+        cql_filter_data_not_selected = " and (NOT (" + data_from_navarra + " ) or NOT( WITHIN(the_geom, " + geometry_draw + ")))";
+      }
+    }
 
 
-   cql_filter_not_selected = cql_filter + cql_filter_data_not_selected;
-   cql_filter_selected = cql_filter + cql_filter_data_selected;
+    cql_filter_not_selected = cql_filter + cql_filter_data_not_selected;
+    cql_filter_selected = cql_filter + cql_filter_data_selected;
 
-   //elimina los puntos dibujados de la capa
-    if(first_layer){
+    //elimina los puntos dibujados de la capa
+    if (first_layer) {
       mymap.removeLayer(project_current);
       layerControl.removeLayer(project_current);
       mymap.removeLayer(project_current_selected);
       layerControl.removeLayer(project_current_selected);
     }
-     first_layer=true;
+    first_layer = true;
 
     current_layer = workspace + ":" + name_layer;
 
