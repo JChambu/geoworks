@@ -440,7 +440,6 @@ Navarra.geomaps = function() {
     var to_date = Navarra.project_types.config.to_date;
 
     if (from_date != '' || to_date != '') {
-      console.log('Aplica time_slider!');
       cql_filter += " AND (gwm_created_at BETWEEN '" + from_date + "' AND '" + to_date + "')"
     } else {
       cql_filter += ' AND row_enabled = true'
@@ -735,6 +734,22 @@ Navarra.geomaps = function() {
     workspace = Navarra.dashboards.config.current_tenement;
     cql_filter = "1 = 1";
 
+    // Aplica filtros por hijos generados por el usuario
+    var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+    if (filtered_form_ids.length) {
+      let final_array = [];
+      for (var i = 0; i < filtered_form_ids.length; i++) {
+        let ids_array = JSON.parse(filtered_form_ids[i])
+        if (final_array.length) {
+          final_array = final_array.filter(value => ids_array.includes(value));
+        } else {
+          final_array = ids_array
+        }
+      }
+      final_array = final_array.toString()
+      cql_filter += ' and app_id IN (' + final_array + ')';
+    }
+
     // Aplica filtro por atributo y filros generados por el usuario
     var attribute_filters = Navarra.project_types.config.attribute_filters;
     if (attribute_filters.length > 0) {
@@ -754,7 +769,6 @@ Navarra.geomaps = function() {
     // Aplica filtro intercapa
     var cross_layer_filter = Navarra.project_types.config.cross_layer_filter;
     var cross_layer_owner = Navarra.project_types.config.cross_layer_owner;
-
     if (cross_layer_filter.length > 0 || cross_layer_owner == true) {
 
       let cl_name = Navarra.project_types.config.cross_layer
@@ -796,6 +810,7 @@ Navarra.geomaps = function() {
       cql_filter_data_not_selected = " and NOT (" + data_from_navarra + " )";
       cql_filter_data_selected = " and " + data_from_navarra;
       var geometry_draw_array = Navarra.dashboards.config.size_polygon;
+
       if (geometry_draw_array.length > 0) {
         geometry_draw = "MULTIPOLYGON(";
         for (xx = 0; xx < geometry_draw_array.length; xx++) {
@@ -816,6 +831,7 @@ Navarra.geomaps = function() {
         cql_filter_data_selected += " and WITHIN(the_geom, " + geometry_draw + ")";
         cql_filter_data_not_selected = " and (NOT (" + data_from_navarra + " ) or NOT( WITHIN(the_geom, " + geometry_draw + ")))";
       }
+
     }
 
 
