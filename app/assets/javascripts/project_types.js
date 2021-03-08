@@ -10,20 +10,20 @@ Navarra.project_types.config = {
   project_field:'',
   filter:'',
   input_value:'',
-  filter_option: [],
   cross_layer: '',
   cross_layer_filter: [],
   cross_layer_owner: false,
   size_box: [],
-  filter_kpi:[],
   kpi_field:'',
   kpi_filter: '',
   kpi_value: '',
+  attribute_filters: [],
+  filtered_form_ids: [],
+  owner: false,
   field_point_colors:'',
   data_point_colors:[],
   heatmap_field: '',
   heatmap_indicator: '',
-  owner: false,
   data_dashboard:'',
   from_date: '',
   to_date: '',
@@ -78,33 +78,6 @@ $(document).on('click', 'form .add_fields', function(event){
 
   event.preventDefault();
 });
-
-//$(document).on('click', '.envf', function(event){
- // console.log($('.proj_field').val());
-  //console.log($('.proj_value').val());
-
-   //var project_field = $('.proj_field').val();
-//   var filter =$('#q_filters').val();
- //  var input_value =$('.proj_value').val();
-
-
-//   console.log(input_value);
-   //Navarra.project_types.config.project_field = project_field;
-//   Navarra.project_types.config.filter = filter;
-  // Navarra.project_types.config.input_value = input_value;
-//   Navarra.geomaps.wms_filter();
-//   // Navarra.geo_openlayers.addMarker_op();
-// //  init_kpi();
-//   //  init_chart_doughnut();
-  // $("#filters-modal").modal('hide');
-//});
-
-/*if (window.File && window.FileReader && window.FileList && window.Blob) {
-  console.log('Great success! All the File APIs are supported.');
-} else {
-  alert('The File APIs are not fully supported in this browser.');
-}*/
-
 
 Navarra.project_types.action_create = function(){
   init = function(){

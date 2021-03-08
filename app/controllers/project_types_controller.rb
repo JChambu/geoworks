@@ -133,11 +133,40 @@ class ProjectTypesController < ApplicationController
   end
 
   def create_filters
+
+    # TODO: Acá debe llegar el grupo que contiene al campo, por ahora se está
+    # diferenciando según si el project_field que llega tiene números o letras
+    # ya que en hijos se usa key numérico y en padres key con letras
+
     @field = "field"
+    @field_name = ''
+    @table = ''
+
+    if /^[0-9]+$/.match(params[:q][:project_field])
+
+      @field_name = helpers.get_name_from_id(params[:q][:project_field]).name
+      subform_key = params[:q][:project_field]
+      subform_operator = params[:q][:filters]
+      subform_value = params[:q][:input_value]
+      project_type_id = params[:project_type_id]
+
+      # TODO: Esta consulta quizás la podría hacer solamente a ProjectDataChild, revisar si hace falta la clause del project_type_id
+      @filtered_form_ids = Project
+        .joins(:project_data_child)
+        .where("project_data_children.properties ->> '#{subform_key}' #{subform_operator} '#{subform_value}'")
+        .where(projects: {project_type_id: project_type_id})
+        .pluck(:id)
+        .uniq
+
+      @table = 'subform_filter'
+    else
+      @field_name = helpers.get_name_from_key(params[:q][:project_field]).name
+      @table = 'form_filter'
+    end
+
     respond_to do |format|
       format.js
     end
-
   end
 
   def create_quick_filters
@@ -161,14 +190,37 @@ class ProjectTypesController < ApplicationController
 
     @op_graph = params[:graph]
     @data_conditions = params[:data_conditions]
+    @filtered_form_ids = params[:filtered_form_ids]
     filter_condition = []
     from_date = params[:from_date]
     to_date = params[:to_date]
     @querys = ''
+
     if @op_graph == 'true'
-      @querys = ProjectType.kpi_new(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id], @data_conditions, current_user.id, from_date, to_date)
+      @querys = ProjectType.kpi_new(
+        params[:data_id],
+        @op_graph,
+        params[:size_box],
+        params[:type_box],
+        params[:dashboard_id],
+        @data_conditions,
+        @filtered_form_ids,
+        current_user.id,
+        from_date,
+        to_date
+      )
     else
-      @querys = ProjectType.kpi_without_graph(params[:data_id], @op_graph, params[:size_box], params[:type_box], params[:dashboard_id],@data_conditions, current_user.id, from_date, to_date)
+      @querys = ProjectType.kpi_without_graph(
+        params[:data_id],
+        @op_graph,
+        params[:size_box],
+        params[:type_box],
+        params[:dashboard_id],
+        @data_conditions,
+        @filtered_form_ids,
+        current_user.id,
+        from_date, to_date
+      )
     end
   end
 
@@ -338,6 +390,7 @@ class ProjectTypesController < ApplicationController
     type_box = params[:type_box]
     size_box = params[:size_box]
     data_conditions = params[:data_conditions]
+    filtered_form_ids = params[:filtered_form_ids]
     from_date = params[:from_date]
     to_date = params[:to_date]
 
@@ -349,6 +402,7 @@ class ProjectTypesController < ApplicationController
       .where('main.project_type_id = ?', project_type_id.to_i)
       .where('main.row_active = ?', true)
       .where('main.current_season = ?', true)
+
     # Aplica filtro geográfico
     if !type_box.blank? && !size_box.blank?
 
@@ -454,6 +508,21 @@ class ProjectTypesController < ApplicationController
         end
       end
 
+    end
+
+    # Aplica filtros de hijos
+    if !filtered_form_ids.blank?
+      final_array = []
+      filtered_form_ids.each do |ids_array|
+        ids_array = JSON.parse(ids_array)
+        if !final_array.blank?
+          final_array = final_array & ids_array
+        else
+          final_array = ids_array
+        end
+      end
+      final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
+      data = data.where("main.id IN #{final_array}")
     end
 
     # Aplica búsqueda del usuario
@@ -901,7 +970,7 @@ class ProjectTypesController < ApplicationController
         :choice_list_id, :hidden, :read_only, :popup, :data_table, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,
         project_subfields_attributes: [
           :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
-          :choice_list_id, :hidden, :read_only, :popup, :calculated_field, :data_script
+          :choice_list_id, :hidden, :read_only, :popup, :filter_field, :calculated_field, :data_script
         ]
       ]
     ).merge(user_id: current_user.id)

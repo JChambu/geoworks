@@ -45,7 +45,6 @@ $("#show_report").click(function(){
 //ordena descendente y ascendente
 function order_column(index){
   var column_order=$('#field_key'+index).val();
-  console.log("Texto ordenar "+column_order)
   $('.order_by_column').val(column_order);
   init_data_dashboard(false);
 }
@@ -123,8 +122,8 @@ function show_item(index, appid_selected){
             <a class="dropdown-item column_data" onclick="show_column(<%=index%>)"><%= field.name %></a>
           <% else %>
             <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>
-          <% end %>  
-        <% end %>  
+          <% end %>
+        <% end %>
       <% end %>
     <% end %>
   </div>
@@ -173,7 +172,7 @@ function show_item(index, appid_selected){
               <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" class="d-none" id=<%="columnfake_"+field.name %>>
             <% else %>
               <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" id=<%="columnfake_"+field.name %>>
-            <% end %>    
+            <% end %>
                 <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
                   <p style="color:white; margin-bottom: 0px; white-space: nowrap;"><%= field.name %></p>
                   <div style="padding-top: 10px; padding-bottom:20px">
@@ -207,7 +206,7 @@ function show_item(index, appid_selected){
             <th style="min-width: 100px; white-space: nowrap;" class="d-none" id=<%="column_"+field.name %>><%= field.name %></th>
            <% else %>
             <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.name %>><%= field.name %></th>
-           <% end %> 
+           <% end %>
           <% end %>
         <% end %>
         <% end %>

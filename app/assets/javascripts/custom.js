@@ -39,7 +39,8 @@ function init_kpi(size_box = null) {
   // }
   var data_id = Navarra.dashboards.config.project_type_id;
   var dashboard_id = Navarra.dashboards.config.dashboard_id;
-  var conditions = Navarra.project_types.config.filter_kpi;
+  var attribute_filters = Navarra.project_types.config.attribute_filters;
+  var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
 
@@ -55,7 +56,8 @@ function init_kpi(size_box = null) {
       size_box: size_box,
       graph: false,
       type_box: type_box,
-      data_conditions: conditions,
+      data_conditions: attribute_filters,
+      filtered_form_ids: filtered_form_ids,
       from_date: from_date,
       to_date: to_date,
     },
@@ -138,7 +140,8 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
 
     var data_id = Navarra.dashboards.config.project_type_id;
     var dashboard_id = Navarra.dashboards.config.dashboard_id;
-    var conditions = Navarra.project_types.config.filter_kpi;
+    var attribute_filters = Navarra.project_types.config.attribute_filters;
+    var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
     var from_date = Navarra.project_types.config.from_date;
     var to_date = Navarra.project_types.config.to_date;
 
@@ -155,13 +158,13 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         graph: true,
         type_box: type_box,
         dashboard_id: dashboard_id,
-        data_conditions: conditions,
+        data_conditions: attribute_filters,
+        filtered_form_ids: filtered_form_ids,
         from_date: from_date,
         to_date: to_date
       },
       success: function(data) {
-        console.log("Success Chart");
-        console.log(data);
+
         data_charts = data;
         draw_charts();
 
@@ -1055,7 +1058,8 @@ function init_data_dashboard(haschange) {
     size_box[3] = size_ext['_northEast']['lat'];
   }
 
-  var conditions = Navarra.project_types.config.filter_kpi;
+  var attribute_filters = Navarra.project_types.config.attribute_filters;
+  var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
 
   var project_type_id = Navarra.dashboards.config.project_type_id;
   var per_page = $(".select_perpage").html();
@@ -1090,7 +1094,8 @@ function init_data_dashboard(haschange) {
       per_page_value: per_page_value,
       type_box: type_box,
       size_box: size_box,
-      data_conditions: conditions,
+      data_conditions: attribute_filters,
+      filtered_form_ids: filtered_form_ids,
       from_date: from_date,
       to_date: to_date
     },
@@ -1193,7 +1198,8 @@ function init_data_dashboard(haschange) {
           per_page_value: '',
           type_box: type_box,
           size_box: size_box,
-          data_conditions: conditions,
+          data_conditions: attribute_filters,
+          filtered_form_ids: filtered_form_ids,
           from_date: from_date,
           to_date: to_date
         },
@@ -1588,8 +1594,8 @@ function set_time_slider_filter() {
   if (heatmap_actived != '') {
     Navarra.geomaps.heatmap_data();
   }
-  var wms_filter_options = Navarra.project_types.config.filter_option;
-  if (wms_filter_options != '') {
+  var attribute_filters = Navarra.project_types.config.attribute_filters;
+  if (attribute_filters != '') {
     Navarra.geomaps.wms_filter();
   }
 }
@@ -1608,8 +1614,8 @@ function clear_time_slider_filter(refresh_data) {
     if (heatmap_actived != '') {
       Navarra.geomaps.heatmap_data();
     }
-    var wms_filter_options = Navarra.project_types.config.filter_option;
-    if (wms_filter_options != '') {
+    var attribute_filters = Navarra.project_types.config.attribute_filters;
+    if (attribute_filters != '') {
       Navarra.geomaps.wms_filter();
     }
   }
@@ -1689,7 +1695,7 @@ function init_report() {
     size_box[3] = size_ext['_northEast']['lat'];
   }
 
-  var conditions = Navarra.project_types.config.filter_kpi;
+  var attribute_filters = Navarra.project_types.config.attribute_filters;
   var project_type_id = Navarra.dashboards.config.project_type_id;
   var per_page = $(".select_perpage").html();
   var per_page_value = parseInt(per_page);
@@ -1736,7 +1742,7 @@ function init_report() {
       project_type_id: project_type_id,
       type_box: type_box,
       size_box: size_box,
-      data_conditions: conditions,
+      data_conditions: attribute_filters,
       from_date: from_date,
       to_date: to_date,
       active_layers: active_layers
@@ -2136,7 +2142,7 @@ function show_item_info(appid_info, from_map) {
       app_id: appid_info
     },
     success: function(data) {
-      console.log(data)
+
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
       $("#info-modal").modal('show');

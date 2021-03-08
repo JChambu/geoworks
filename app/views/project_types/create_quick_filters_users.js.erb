@@ -16,8 +16,7 @@ if(value!="Sin Filtro"){
   var filter = field_key + '|' + operator + '|\'' + value + '\'';
   var filter_view = field_name  + " " + operator + " " + value;
 
-  Navarra.project_types.config.filter_option.push(filter);
-  Navarra.project_types.config.filter_kpi.push(filter);
+  Navarra.project_types.config.attribute_filters.push(filter);
 
   // Elimina y vuelve a agregar el item al card Filtros Activos
   $('#filter-body').append(
@@ -52,16 +51,15 @@ if(point_color == ''){
 }
 
 function remove_user_filters(){
-  var ar= Navarra.project_types.config.filter_option
+  var ar= Navarra.project_types.config.attribute_filters
   b = jQuery.grep(ar, function(value){
     if(value.split('|')[0] == 'app_usuario'){
       return null;
     }else{
       return value;
     }
-    
+
   })
-  Navarra.project_types.config.filter_option = b;
-  Navarra.project_types.config.filter_kpi = b;
-   $(".message[id*="+'app_usuario '+"]").remove();  
+  Navarra.project_types.config.attribute_filters = b;
+   $(".message[id*="+'app_usuario '+"]").remove();
 }

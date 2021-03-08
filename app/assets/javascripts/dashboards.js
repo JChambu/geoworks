@@ -98,31 +98,38 @@ Navarra.dashboards.action_show = function(){
       resize_graphics();
     });
 
-    $("#filter-body").on("click", ".message",  function(){
+    // Desactiva filtro creado por el usuario
+    $("#filter-body").on("click", ".message", function() {
+
+      var current_filters;
+      var filter_to_remove;
+
+      if ($(this).hasClass("form_filter")) {
+        current_filters = Navarra.project_types.config.attribute_filters;
+        filter_to_remove = $(this).attr('id');
+        updated_filters = $.grep(current_filters, function(value) {
+          return value != filter_to_remove;
+        })
+        Navarra.project_types.config.attribute_filters = updated_filters;
+      } else {
+        current_filters = Navarra.project_types.config.filtered_form_ids;
+        filter_to_remove = $(this).attr('value');
+        updated_filters = $.grep(current_filters, function(value) {
+          return value != filter_to_remove;
+        })
+        Navarra.project_types.config.filtered_form_ids = updated_filters;
+      }
+
       $(".fa-filter").css("color", "#9b9b9b");
-      var da =  $(this).attr('id');
-        Navarra.project_types.config.field_point_colors = '';
-        $(this).remove();
-
-      var kpi_value =  $(this).attr('value');
-      ar = Navarra.project_types.config.filter_option;
-      option_kpi = Navarra.project_types.config.filter_kpi;
-      field_point = Navarra.project_types.config.field_point_colors;
-
-      b = $.grep(ar, function(value){
-          return value != da;
-      })
-      kpi = $.grep(option_kpi, function(value){
-          return value != kpi_value;
-      })
-
-      Navarra.project_types.config.filter_option = b;
-      Navarra.project_types.config.filter_kpi = kpi;
       $(this).remove();
       Navarra.geomaps.wms_filter();
-      Navarra.geomaps.point_colors_data();
+
+      // TODO: Esto se debería revisar cuando se actualice la herramienta de colorear puntos
+      // Navarra.project_types.config.field_point_colors = '';
+      // Navarra.geomaps.point_colors_data();
+
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
-      if (heatmap_actived != ''){
+      if (heatmap_actived != '') {
         Navarra.geomaps.heatmap_data();
       }
       resize_graphics();
@@ -152,7 +159,7 @@ Navarra.dashboards.action_show = function(){
         $(".table_data_container").css("width", "40%");
         $(".leaflet-right").css("margin-right", "60%");
         draw_charts();
-      } 
+      }
       if (status_view_expanded) { // Expanded
         $('#view').removeClass('view-expanded');
         $('#view').addClass('view-normal-right');
@@ -208,7 +215,7 @@ Navarra.dashboards.action_show = function(){
         init_data_dashboard(false);
         first_open=false;
       }
-      
+
 
       // Chequeamos el estado de view
       status_view = $('#view-data').hasClass('view-normal');
@@ -230,7 +237,7 @@ Navarra.dashboards.action_show = function(){
         $(".table_scroll").css("height", height_table);
         $(".leaflet-control-scale-line").css("display", "none");
         $(".leaflet-control-attribution").css("display", "none");
-      } 
+      }
       if (status_view_expanded) { // Expanded
         $('#view-data').removeClass('view-expanded');
         $('#view-data').addClass('view-normal-right');
@@ -253,7 +260,7 @@ Navarra.dashboards.action_show = function(){
         $('#view-data').addClass('fa-arrow-alt-circle-up');
         $('#view-data').css("top","-3vh");
         $(".table_data_container").css("transition-delay", "0.3s");
-        $(".table_data_container").css("top", "98vh");  
+        $(".table_data_container").css("top", "98vh");
         $("#collapse_data").css("max-height", "0vh");
         $("#collapse_data").css("transition", "0.8s");
         $("#collapse_data").css("border", "none");
