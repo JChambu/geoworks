@@ -64,7 +64,7 @@ function search_column(index){
 
 //oculta columnas
 function hide_column(index){
-  index+=1;
+  index+=2;
  $('#table_hidden tr td:nth-child('+index+')').hide();
  $('#table_hidden tr th:nth-child('+index+')').addClass("d-none");
  $('#table_visible tr td:nth-child('+index+')').hide();
@@ -75,7 +75,7 @@ function hide_column(index){
 
 //muestra columnas
 function show_column(index,){
-  index+=1;
+  index+=2;
  $('#table_hidden tr td:nth-child('+index+')').show()
  $('#table_hidden tr th:nth-child('+index+')').removeClass("d-none")
  $('#table_visible tr td:nth-child('+index+')').show()
