@@ -714,9 +714,18 @@ class ProjectTypesController < ApplicationController
   # DELETE /project_types/1
   # DELETE /project_types/1.json
   def destroy
-    authorize! :project_types, :destroy
-    @project_type.destroy
-    redirect_to root_path()
+
+    respond_to do |format|
+      if @project_type.destroy
+        ProjectType.destroy_layer_geoserver @project_type.name_layer
+        format.html { redirect_to root_path(), notice: 'El proyecto se eliminó correctamente.' }
+        format.json { render :show, status: :created, location: @project_type }
+      else
+        format.html { render :edit }
+        format.json { render json: @project_type.errors, status: :unprocessable_entity }
+      end
+    end
+
   end
 
   private
