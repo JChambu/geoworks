@@ -337,8 +337,11 @@ class ProjectTypesController < ApplicationController
       father_field_hash['name'] = f_field.name
       father_field_hash['value'] = father_data
       father_field_hash['field_type_id'] = f_field.field_type_id
-      father_field_hash['calculated_field'] = f_field.calculated_field
+      father_field_hash['required'] = f_field.required
+      father_field_hash['read_only'] = f_field.read_only
       father_field_hash['hidden'] = f_field.hidden
+      father_field_hash['data_script'] = f_field.data_script
+      father_field_hash['calculated_field'] = f_field.calculated_field
       father_fields_array.push(father_field_hash)
 
     end
