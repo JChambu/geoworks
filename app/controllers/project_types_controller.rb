@@ -236,6 +236,25 @@ class ProjectTypesController < ApplicationController
 
     father_fields.each do |f_field|
 
+      roles_edit = (JSON.parse(f_field.roles_edit)).reject(&:blank?)
+      roles_read = (JSON.parse(f_field.roles_read)).reject(&:blank?)
+      customer_name = Apartment::Tenant.current
+
+      Apartment::Tenant.switch 'public' do
+        customer_id = Customer.where(subdomain: customer_name).pluck(:id)
+        @user_rol = UserCustomer
+          .where(user_id: current_user.id)
+          .where(customer_id: customer_id)
+          .pluck(:role_id)
+          .first
+      end
+
+      if roles_edit.include?(@user_rol.to_s)
+        can_edit = true
+      else
+        can_edit = false
+      end
+
       # Si el tipo de campo es subformulario, busca todos los hijos con sus fotos
       if f_field.field_type_id == 7
 
@@ -339,6 +358,7 @@ class ProjectTypesController < ApplicationController
       father_field_hash['field_type_id'] = f_field.field_type_id
       father_field_hash['required'] = f_field.required
       father_field_hash['read_only'] = f_field.read_only
+      father_field_hash['can_edit'] = can_edit
       father_field_hash['hidden'] = f_field.hidden
       father_field_hash['data_script'] = f_field.data_script
       father_field_hash['calculated_field'] = f_field.calculated_field
