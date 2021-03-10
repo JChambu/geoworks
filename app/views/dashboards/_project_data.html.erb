@@ -64,23 +64,23 @@ function search_column(index){
 
 //oculta columnas
 function hide_column(index){
-  index+=1;
+  index+=2;
  $('#table_hidden tr td:nth-child('+index+')').hide();
  $('#table_hidden tr th:nth-child('+index+')').addClass("d-none");
  $('#table_visible tr td:nth-child('+index+')').hide();
  $('#table_visible tr th:nth-child('+index+')').addClass("d-none");
- $('.addcolumns a:nth-child('+(index-1)+')').removeClass("d-none");
+ $('.addcolumns a:nth-child('+(index-2)+')').removeClass("d-none");
  $('.fa-plus').removeClass("d-none");
 }
 
 //muestra columnas
 function show_column(index,){
-  index+=1;
+  index+=2;
  $('#table_hidden tr td:nth-child('+index+')').show()
  $('#table_hidden tr th:nth-child('+index+')').removeClass("d-none")
  $('#table_visible tr td:nth-child('+index+')').show()
  $('#table_visible tr th:nth-child('+index+')').removeClass("d-none")
- $('.addcolumns a:nth-child('+(index-1)+')').addClass("d-none");
+ $('.addcolumns a:nth-child('+(index-2)+')').addClass("d-none");
  if($(".addcolumns").children().length == $(".column_data.d-none").length){
    $('.fa-plus').addClass("d-none");
  }

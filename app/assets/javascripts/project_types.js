@@ -28,6 +28,7 @@ Navarra.project_types.config = {
   from_date: '',
   to_date: '',
   item_selected:"",
+  id_item_displayed:'',
   current_layer_filters: ""
 }
 

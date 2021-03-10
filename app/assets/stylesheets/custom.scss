@@ -518,6 +518,7 @@ div.custom-menu.show {
   line-height:1 !important;
   resize: none;
   overflow: hidden;
+  appearance: menulist;
 }
 .info_input_disabled{
   background: none!important;
@@ -526,6 +527,7 @@ div.custom-menu.show {
   resize: none;
   overflow: hidden;
   height: 25px!important;
+  appearance: none;
 }
 .photo_div_info{
   width:23%;
