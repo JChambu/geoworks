@@ -255,6 +255,38 @@ class ProjectTypesController < ApplicationController
         can_edit = false
       end
 
+      if f_field.field_type_id == 10 || f_field.field_type_id == 2
+
+        id = f_field.choice_list_id
+
+        items = []
+        choice_list = ChoiceList.find(id)
+        choice_list_item  = ChoiceListItem.where(choice_list_id: choice_list.id)
+        sorted_choice_list_items = choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items
+
+        # Arma el objeto
+        sorted_choice_list_items.each do |row|
+
+          # Si tiene listados anidados, los agrega
+          if !row.nested_list_id.nil?
+
+            @nested_items = []
+            nested_choice_list = ChoiceList.find(row.nested_list_id)
+            nested_choice_list_item  = ChoiceListItem.where(choice_list_id: nested_choice_list.id)
+            nested_sorted_choice_list_items = nested_choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items anidados
+            nested_sorted_choice_list_items.each do |f|
+              @nested_items << { "id": f.id, "name": f.name }
+            end
+            items << { "id": row.id, "name": row.name, "nested_items": @nested_items }
+          else
+            items << { "id": row.id, "name": row.name }
+          end
+
+        end
+
+        other_possible_values = items
+      end
+
       # Si el tipo de campo es subformulario, busca todos los hijos con sus fotos
       if f_field.field_type_id == 7
 
@@ -358,6 +390,7 @@ class ProjectTypesController < ApplicationController
       father_field_hash['field_id'] = f_field.id
       father_field_hash['name'] = f_field.name
       father_field_hash['value'] = father_data
+      father_field_hash['other_possible_values'] = other_possible_values
       father_field_hash['field_type_id'] = f_field.field_type_id
       father_field_hash['required'] = f_field.required
       father_field_hash['read_only'] = f_field.read_only
