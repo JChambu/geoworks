@@ -260,7 +260,7 @@ class ProjectTypesController < ApplicationController
 
         id = f_field.choice_list_id
 
-        items = []
+        other_possible_values = []
         choice_list = ChoiceList.find(id)
         choice_list_item  = ChoiceListItem.where(choice_list_id: choice_list.id)
         sorted_choice_list_items = choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items
@@ -278,14 +278,13 @@ class ProjectTypesController < ApplicationController
             nested_sorted_choice_list_items.each do |f|
               @nested_items << { "id": f.id, "name": f.name }
             end
-            items << { "id": row.id, "name": row.name, "nested_items": @nested_items }
+            other_possible_values << { "id": row.id, "name": row.name, "nested_items": @nested_items }
           else
-            items << { "id": row.id, "name": row.name }
+            other_possible_values << { "id": row.id, "name": row.name }
           end
 
         end
 
-        other_possible_values = items
       end
 
       # Si el tipo de campo es subformulario, busca todos los hijos con sus fotos
@@ -422,17 +421,17 @@ class ProjectTypesController < ApplicationController
 
       father_field_hash = {}
       father_field_hash['field_id'] = f_field.id
-      father_field_hash['key'] = f_field.key
       father_field_hash['name'] = f_field.name
-      father_field_hash['value'] = father_data
-      father_field_hash['other_possible_values'] = other_possible_values
       father_field_hash['field_type_id'] = f_field.field_type_id
+      father_field_hash['value'] = father_data
+      father_field_hash['other_possible_values'] = other_possible_values if f_field.field_type_id == 10 || f_field.field_type_id == 2
       father_field_hash['required'] = f_field.required
       father_field_hash['read_only'] = f_field.read_only
       father_field_hash['can_edit'] = can_edit
       father_field_hash['hidden'] = f_field.hidden
       father_field_hash['data_script'] = f_field.data_script
       father_field_hash['calculated_field'] = f_field.calculated_field
+      father_field_hash['key'] = f_field.key
       father_fields_array.push(father_field_hash)
 
     end
