@@ -2148,6 +2148,7 @@ function show_item_info(appid_info, from_map) {
       $("#info-modal").modal('show');
 
       //borra datos anteriores
+      var arraymultiselect=[];
       document.getElementById('info_body').remove();
       var new_body = document.createElement('DIV');
       new_body.id = 'info_body';
@@ -2227,12 +2228,38 @@ function show_item_info(appid_info, from_map) {
             }
             new_celd.appendChild(new_p);
             new_row.appendChild(new_celd);
+
+
             if (element.field_type_id != 11) {
               var new_celd = document.createElement('DIV');
-              new_celd.className = "col-md-7";
+              new_celd.className = "col-md-7 field_div";
+              // Adapta el código a los diferentes tipos de campos
               if (element.field_type_id == 1) {
                 var new_p = document.createElement('TEXTAREA');
-                new_p.className = "form-control form-control-sm info_input_disabled";
+                new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
+              }
+              if (element.field_type_id == 2 || element.field_type_id == 10) {
+                var new_p = document.createElement('SELECT');
+                if(element.field_type_id == 10){
+                  new_p.multiple = true;
+                }
+                new_p.className = "multiselect_field form-control form-control-sm info_input_disabled";
+                var items_field = element.other_possible_values;
+                values = element.value;
+                var found_option = false;
+                items_field.forEach(function(item) {
+                  var new_option = document.createElement('OPTION');
+                  new_option.text=item.name;
+                  new_option.value=item.name;
+                  if(values!=null){
+                      new_option.selected = values.indexOf(item.name) >= 0;
+                      if(values.indexOf(item.name)>=0){found_option=true}
+                  }
+                  new_p.appendChild(new_option);
+                  if(!found_option){new_p.selectedIndex = -1;}
+                });
+                var id_field = element.field_id;
+                new_p.id = "multiselect_field_"+id_field;
               }
               if (element.field_type_id == 3) {
                 var new_p = document.createElement('INPUT');
@@ -2253,17 +2280,46 @@ function show_item_info(appid_info, from_map) {
               if (element.field_type_id == 5) {
                 var new_p = document.createElement('INPUT');
                 new_p.type = "number";
-               // new_p.setAttribute('onkeypress','number_keyboard()');
                 new_p.className = "form-control form-control-sm info_input_disabled";
               }
               new_p.disabled = true;
-              if (element.value != null) {
+              if (element.value != null && element.field_type_id != 10 && element.field_type_id != 2) {
                 new_p.value = element.value.replace(/[\[\]\"]/g, "").replace('true', 'SI').replace('false', 'NO');
+              }
+              if(element.required==true){
+                new_p.classList.add('required_field');
+              }
+              if(element.read_only==true || element.can_edit==false){
+                new_p.classList.add('readonly_field');
               }
               new_celd.appendChild(new_p);
               new_row.appendChild(new_celd);
             }
             document.getElementById('info_body').appendChild(new_row);
+            if(document.getElementById('multiselect_field_'+id_field)!=null){
+              if(document.getElementById('multiselect_field_'+id_field).classList.contains("readonly_field")){
+                var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field';
+              } else{
+                var buttonClass = 'text-left form-control form-control-sm info_input_disabled';
+              }
+              $('#multiselect_field_'+id_field).multiselect({
+                maxHeight: 800,
+                buttonClass: buttonClass,
+                buttonWidth: '100%',
+                nonSelectedText: 'Seleccionar',
+                selectedClass: 'selected_multiple_item',
+                delimiterText: '\n',
+                numberDisplayed: 0,
+                allSelectedText: false,
+                enableFiltering: true,
+                enableCaseInsensitiveFiltering: true,
+                filterPlaceholder: 'Buscar',
+                includeFilterClearBtn: false,
+                includeSelectAllOption: false,
+                dropRight: true,
+              });
+          }
+
           } else {
             //hijos
             var new_row = document.createElement('DIV');
@@ -2295,8 +2351,8 @@ function show_item_info(appid_info, from_map) {
               new_row1.appendChild(new_celd);
               var new_celd = document.createElement('DIV');
               new_celd.className = "col-md-6";
-              var new_p = document.createElement('TEXTAREA');
-              new_p.className = "form-control form-control-sm info_input_disabled";
+              var new_p = document.createElement('INPUT');
+              new_p.className = "form-control form-control-sm info_input_disabled readonly_field";
               new_p.disabled = true;
               new_p.value = element_child.children_gwm_created_at.split("T")[0] + " " + element_child.children_gwm_created_at.split("T")[1].substring(0, 8);
               new_p.style.padding = "0px 0.5rem";
@@ -2304,6 +2360,7 @@ function show_item_info(appid_info, from_map) {
               new_celd.appendChild(new_p);
               new_row1.appendChild(new_celd);
               new_row.appendChild(new_row1);
+
               //campos de los hijos
               children_fields = element_child.children_fields;
               children_fields.forEach(function(element_child_field) {
@@ -2342,17 +2399,73 @@ function show_item_info(appid_info, from_map) {
                 new_p.style.margin = "0px";
                 new_celd.appendChild(new_p);
                 new_row1.appendChild(new_celd);
+
+
                 if (element_child_field.field_type_id != 11) {
                   var new_celd = document.createElement('DIV');
-                  new_celd.className = "col-md-6";
-                  var new_p = document.createElement('TEXTAREA');
-                  new_p.className = "form-control form-control-sm info_input_disabled";
-                  new_p.style.padding = "0px 0.5rem";
-                  new_p.style.height = "auto";
+                  new_celd.className = "col-md-6 field_div";
+                  // Adapta el código a los diferentes tipos de campos
+                  if (element_child_field.field_type_id == 1) {
+                    var new_p = document.createElement('TEXTAREA');
+                    new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
+                  }
+                  if (element_child_field.field_type_id == 2 || element_child_field.field_type_id == 10) {
+                    var new_p = document.createElement('SELECT');
+                    if(element_child_field.field_type_id == 10){
+                      new_p.multiple = true;
+                    }
+                    new_p.className = "multiselect_field form-control form-control-sm info_input_disabled";
+                    var items_field = element_child_field.other_possible_values;
+                    values = element.value;
+                    var found_option = false;
+                    items_field.forEach(function(item) {
+                      var new_option = document.createElement('OPTION');
+                      new_option.text=item.name;
+                      new_option.value=item.name;
+                      if(values!=null){
+                        new_option.selected = values.indexOf(item.name) >= 0;
+                        if(values.indexOf(item.name)>=0){found_option=true}
+                      }
+                      new_p.appendChild(new_option);
+                      if(!found_option){new_p.selectedIndex = -1;}
+                    });
+                    var id_field = element.field_id;
+                    new_p.id = "multiselect_child_field_"+id_field;
+                    arraymultiselect.add(id_field);
+                  }
+                  if (element_child_field.field_type_id == 3) {
+                    var new_p = document.createElement('INPUT');
+                    new_p.className = "form-control form-control-sm info_input_disabled date_field";
+                  }
+                  if (element_child_field.field_type_id == 4) {
+                    var new_p = document.createElement('SELECT');
+                    new_p.className = "form-control form-control-sm info_input_disabled";
+                    var new_option = document.createElement('OPTION');
+                    new_option.text="SI";
+                    new_option.value="SI";
+                    new_p.appendChild(new_option);
+                    var new_option = document.createElement('OPTION');
+                    new_option.text="NO";
+                    new_option.value="NO";
+                    new_p.appendChild(new_option);
+                  }
+                  if (element_child_field.field_type_id == 5) {
+                    var new_p = document.createElement('INPUT');
+                    new_p.type = "number";
+                    new_p.className = "form-control form-control-sm info_input_disabled";
+                  }
                   new_p.disabled = true;
-                  if (element_child_field.value != null) {
+                  if (element_child_field.value != null && element_child_field.field_type_id != 10 && element_child_field.field_type_id != 2) {
                     new_p.value = element_child_field.value.replace(/[\[\]\"]/g, "").replace('true', 'SI').replace('false', 'NO');
                   }
+                  if(element_child_field.required==true){
+                    new_p.classList.add('required_field');
+                  }
+                  if(element_child_field.read_only==true || element_child_field.can_edit==false){
+                    new_p.classList.add('readonly_field');
+                  }
+                  new_p.style.padding = "0px 0.5rem";
+                  new_p.style.height = "auto";
                   new_celd.appendChild(new_p);
                   new_row1.appendChild(new_celd);
                 }
@@ -2380,18 +2493,45 @@ function show_item_info(appid_info, from_map) {
             document.getElementById('info_body').appendChild(new_row);
           }
         }
+        
       });
       textarea_adjust_height();
       $('.date_field').datetimepicker({
-                  format: "YYYY-MM-DD",
-                  viewMode: "days",
-                  locale: moment.locale('en', {
-                    week: {
-                      dow: 1,
-                      doy: 4
-                    }
-                  }),
-                });
+        format: "YYYY-MM-DD",
+        viewMode: "days",
+        locale: moment.locale('en', {
+          week: {
+            dow: 1,
+            doy: 4
+          }
+        }),
+      });
+
+      // selectores y multiselectores en hijos
+       for(x=0;x<arraymultiselect.length;x++){
+              if(document.getElementById('multiselect_child_field_'+arraymultiselect[x]).classList.contains("readonly_field")){
+                var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field';
+              } else{
+                var buttonClass = 'text-left form-control form-control-sm info_input_disabled';
+              }
+              $('#multiselect_child_field_'+arraymultiselect[x]).multiselect({
+                maxHeight: 800,
+                buttonClass: buttonClass,
+                buttonWidth: '100%',
+                nonSelectedText: 'Seleccionar',
+                selectedClass: 'selected_multiple_item',
+                delimiterText: '\n',
+                numberDisplayed: 0,
+                allSelectedText: false,
+                enableFiltering: true,
+                enableCaseInsensitiveFiltering: true,
+                filterPlaceholder: 'Buscar',
+                includeFilterClearBtn: false,
+                includeSelectAllOption: false,
+                dropRight: true,
+              });
+          }
+      
       //Muestra el punto en el mapa y elimina el seleccionado en la tabla
       if (from_map) {
         $('table tbody tr').removeClass('found');
@@ -2451,7 +2591,7 @@ function open_subtitle(fields, ischild) {
 
 function textarea_adjust_height() {
   //ajustamos el alto
-  document.querySelectorAll(".info_input_disabled").forEach(function(element_tag, index) {
+  document.querySelectorAll(".textarea_input").forEach(function(element_tag, index) {
     var height_text = "height:" + element_tag.scrollHeight + "px!important";
     element_tag.setAttribute('style', height_text);
   });
@@ -2461,13 +2601,54 @@ function textarea_adjust_height() {
 
 //****** FUNCIONES PARA EDICION DE REGISTROS *****
 
+function edit_file(){
+  //verifica requeridos
+  var required_field_number = 0;
+  $('#info_messages').html("");
+  $('#info_messages').addClass("d-none");
+  $('#info_messages').removeClass("text-danger");
+  $(".required_field").each(function() {
+    $(this).parent().closest('div').css("border-bottom","none");
+    if(this.value == null || this.value == ""){
+      $(this).parent().closest('div').css("border-bottom","solid 2px #dc3545");
+      required_field_number++;
+    }
+  });
+  if(required_field_number>0){
+    $('#info_messages').html("Complete los campos requeridos");
+    $('#info_messages').addClass("text-danger");
+    $('#info_messages').removeClass("d-none");
+    return;
+  }
+  var project_type_id = Navarra.dashboards.config.project_type_id;
+  var appid = Navarra.project_types.config.id_item_displayed;
+  var properties_to_save = "";
+  /*
+  $.ajax({
+    type: 'GET',
+    url: '/project_types/edit_file',
+    datatype: 'json',
+    data: {
+      project_type_id: project_type_id,
+      app_id: appid,
+      properties: properties_to_save
+    },
+    success: function(data) {
+      $('#info_messages').addClass("d-inline");
+      $('#info_messages').removeClass("d-none");
+      $('#info_messages').html(data);
+    }
+  });
+  */
+}
+
 function change_owner(){
   var project_type_id = Navarra.dashboards.config.project_type_id;
   var appid = Navarra.project_types.config.id_item_displayed;
   var id_owner = $("#owner_change_select").val();
   $.ajax({
     type: 'GET',
-    url: '/project_types/disable_file',
+    url: '/project_types/change_owner',
     datatype: 'json',
     data: {
       project_type_id: project_type_id,
@@ -2499,10 +2680,6 @@ function disable_file(){
       $('#info_messages').html(data);
     }
   });
-}
-
-function number_keyboard(){
-  if (event.keyCode ==48 || event.keyCode ==49 || event.keyCode ==50 || event.keyCode ==51 || event.keyCode ==52 || event.keyCode ==53 || event.keyCode ==54 || event.keyCode ==55 || event.keyCode ==56 || event.keyCode ==57 || event.keyCode ==13 || event.keyCode ==46 ){}else{ event.returnValue = false;}
 }
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****

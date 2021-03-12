@@ -567,3 +567,29 @@ div.custom-menu.show {
   margin-right:10px;
 }
 
+/* estilo multiselector de campos listados multiples */
+.field_div .multiselect{
+  overflow:visible!important;
+  height: fit-content!important;
+}
+.field_div .multiselect-selected-text{
+  white-space: pre-wrap!important;
+}
+.field_div .selected_multiple_item{
+  background:#d3d80080 !important;
+  color:white!important;
+  width: 100%;
+}
+.field_div .multiselect-container label input {
+  display:none!important;
+}
+.field_div .multiselect-container label {
+  width: 100%!important;
+}
+.field_div ul{
+  padding: 5px 10px !important;
+}
+.field_div .dropdown-toggle::after {
+  display:none !important;
+}
+

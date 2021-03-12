@@ -18,13 +18,12 @@
     $('#'+div_confirmation).addClass("d-inline");
     $('#'+div_confirmation).removeClass("d-none");
     if(div_confirmation=='edit_confirmation'){
-      $('.info_input_disabled').addClass('info_input');
-      $('.info_input_disabled').prop('disabled', false);
-      $('.info_input_disabled').removeClass('info_input_disabled');
+      $('.info_input_disabled').not('.readonly_field').removeClass('disabled');
+      $('.info_input_disabled').not('.readonly_field').addClass('info_input');
+      $('.info_input_disabled').not('.readonly_field').prop('disabled', false);
+      $('.info_input_disabled').not('.readonly_field').removeClass('info_input_disabled');
       // muestra campos vacíos
       $('.empty_field').removeClass('d-none');
-      textarea_adjust_height();
-
     }
     if(div_confirmation=='owner_confirmation'){
       // trae opciones de usuarios
@@ -52,6 +51,9 @@
     disabled_fields();
     $('.div_confirmation').addClass("d-none");
     $('.div_confirmation').removeClass("d-inline");
+    if(option_save=="edit_confirmation"){
+      edit_file();
+    }
     if(option_save=="owner_confirmation"){
       change_owner();
     }
@@ -83,7 +85,7 @@
         </div>
         <div class="d-none text-left div_confirmation" id="edit_confirmation" style="width: 70%;">
           <p class="m-0 d-inline">Guardar Cambios?</p>
-          <button type="button" class="btn btn-secondary p-0" onclick="save_info()" style="width: 35px">SI</button>
+          <button type="button" class="btn btn-secondary p-0" onclick="save_info('edit_confirmation')" style="width: 35px">SI</button>
           <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
         </div>
         <div class="d-none text-left div_confirmation" id="lat_long_edit" style="width: 70%;">
