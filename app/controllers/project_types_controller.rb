@@ -249,7 +249,8 @@ class ProjectTypesController < ApplicationController
           .first
       end
 
-      if roles_edit.include?(@user_rol.to_s)
+      # Si el rol del usuario está seleccionado o sino hay ningún rol seteado, se puede editar
+      if roles_edit.include?(@user_rol.to_s) || roles_edit.blank?
         can_edit = true
       else
         can_edit = false
@@ -335,7 +336,8 @@ class ProjectTypesController < ApplicationController
                 .first
             end
 
-            if roles_edit.include?(@user_rol.to_s)
+            # Si el rol del usuario está seleccionado o sino hay ningún rol seteado, se puede editar
+            if roles_edit.include?(@user_rol.to_s) || roles_edit.blank?
               can_edit = true
             else
               can_edit = false
