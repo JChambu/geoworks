@@ -355,11 +355,11 @@ class ProjectTypesController < ApplicationController
             c_data_hash['name'] = c_field.name
             c_data_hash['value'] = child_value
             c_data_hash['field_type_id'] = c_field.field_type_id
-            c_data_hash['required'] = f_field.required
-            c_data_hash['read_only'] = f_field.read_only
+            c_data_hash['required'] = c_field.required
+            c_data_hash['read_only'] = c_field.read_only
             c_data_hash['can_edit'] = can_edit
             c_data_hash['hidden'] = c_field.hidden
-            c_data_hash['data_script'] = f_field.data_script
+            c_data_hash['data_script'] = c_field.data_script
             c_data_hash['calculated_field'] = c_field.calculated_field
 
             child_fields_array.push(c_data_hash)
