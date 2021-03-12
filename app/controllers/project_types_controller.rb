@@ -388,6 +388,7 @@ class ProjectTypesController < ApplicationController
 
       father_field_hash = {}
       father_field_hash['field_id'] = f_field.id
+      father_field_hash['key'] = f_field.key
       father_field_hash['name'] = f_field.name
       father_field_hash['value'] = father_data
       father_field_hash['other_possible_values'] = other_possible_values
