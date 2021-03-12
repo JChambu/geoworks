@@ -343,6 +343,37 @@ class ProjectTypesController < ApplicationController
               can_edit = false
             end
 
+            if c_field.field_type_id == 10 || c_field.field_type_id == 2
+
+              id = c_field.choice_list_id
+
+              other_possible_values = []
+              choice_list = ChoiceList.find(id)
+              choice_list_item  = ChoiceListItem.where(choice_list_id: choice_list.id)
+              sorted_choice_list_items = choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items
+
+              # Arma el objeto
+              sorted_choice_list_items.each do |row|
+
+                # Si tiene listados anidados, los agrega
+                if !row.nested_list_id.nil?
+
+                  @nested_items = []
+                  nested_choice_list = ChoiceList.find(row.nested_list_id)
+                  nested_choice_list_item  = ChoiceListItem.where(choice_list_id: nested_choice_list.id)
+                  nested_sorted_choice_list_items = nested_choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items anidados
+                  nested_sorted_choice_list_items.each do |f|
+                    @nested_items << { "id": f.id, "name": f.name }
+                  end
+                  other_possible_values << { "id": row.id, "name": row.name, "nested_items": @nested_items }
+                else
+                  other_possible_values << { "id": row.id, "name": row.name }
+                end
+
+              end
+
+            end
+
             # Busca los datos del hijo
             child_properties = c_data[:properties]
             child_value = child_properties[c_field.id.to_s]
@@ -356,6 +387,7 @@ class ProjectTypesController < ApplicationController
             c_data_hash['field_id'] = c_field.id
             c_data_hash['name'] = c_field.name
             c_data_hash['value'] = child_value
+            c_data_hash['other_possible_values'] = other_possible_values if c_field.field_type_id == 10 || c_field.field_type_id == 2
             c_data_hash['field_type_id'] = c_field.field_type_id
             c_data_hash['required'] = c_field.required
             c_data_hash['read_only'] = c_field.read_only
