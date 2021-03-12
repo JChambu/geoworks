@@ -60,7 +60,7 @@
                     </div>
                   <% end %>
                 <% end %>
-                <% if (mt.name == 'data' && (e.name == 'new' || e.name == 'visualizer')) %>
+                <% if (mt.name == 'data' && (e.name == 'edit' || e.name == 'visualizer')) %>
                   <div class="form-group">
                     <div class="custom-control custom-switch">
                       <%= check_box_tag "permissions[#{mt.id}][#{e.id}]",e.id , @permissions.any? {|c| c.event_id == e.id && c.model_type_id == mt.id}, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>

@@ -33,13 +33,13 @@
         type: "GET",
         data: { project_type_id: project_type_id},
         success: function(data){
-          $('#owner_change_select').empty(); 
+          $('#owner_change_select').empty();
           $.each(data['data'], function(value, a){
             if(`${a.active}`=='true'){
               let opt_check= document.createElement("OPTION");
-              opt_check.text = `${a.name}`; 
+              opt_check.text = `${a.name}`;
               opt_check.value = `${a.id}`;
-              $('#owner_change_select').append(opt_check); 
+              $('#owner_change_select').append(opt_check);
             }
           });
         }
@@ -107,9 +107,11 @@
         <div class="d-none text-left div_confirmation" id="history" style="width: 70%;">
         </div>
         <div class="d-inline text-right" style="width: 30%;">
-          <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation')"></i>   
-          <i class="fas fa-map-marker-alt" style="cursor: pointer;" title="Próximamente" onclick="show_confirmation('lat_long_edit')"></i>
-          <i class="fas fa-user-edit" style="cursor: pointer;" title="Cambiar Propietario" onclick="show_confirmation('owner_confirmation')"></i>
+          <% if can? :data, :edit %>
+            <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation')"></i>
+            <i class="fas fa-map-marker-alt" style="cursor: pointer;" title="Próximamente" onclick="show_confirmation('lat_long_edit')"></i>
+            <i class="fas fa-user-edit" style="cursor: pointer;" title="Cambiar Propietario" onclick="show_confirmation('owner_confirmation')"></i>
+          <% end %>
           <i class="fas fa-archive" style="cursor: pointer;" title="Desactivar" onclick="show_confirmation('disable_confirmation')"></i>
           <i class="fas fa-history" style="cursor: pointer;" title="Próximamente" onclick="show_confirmation('history')"></i>
         </div>
