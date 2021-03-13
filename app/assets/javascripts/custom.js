@@ -2195,9 +2195,9 @@ function show_item_info(appid_info, from_map) {
           if (element.field_type_id != 7) {
             var new_row = document.createElement('DIV');
             if (element.hidden) {
-              new_row.className = "form-row d-none hidden_field";
+              new_row.className = "form-row d-none hidden_field row_field";
             } else {
-              new_row.className = "form-row";
+              new_row.className = "form-row row_field";
             }
             if ((element.value == null && element.field_type_id != 11) || (element.value == "" && element.field_type_id != 11) || (element.value == " " && element.field_type_id != 11)) {
               new_row.classList.add("d-none");
@@ -2258,8 +2258,9 @@ function show_item_info(appid_info, from_map) {
                   new_p.appendChild(new_option);
                   if(!found_option){new_p.selectedIndex = -1;}
                 });
-                var id_field = element.field_id;
-                new_p.id = "multiselect_field_"+id_field;
+                if(element.data_script!=""){
+                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +element.value +' )');
+                }
               }
               if (element.field_type_id == 3) {
                 var new_p = document.createElement('INPUT');
@@ -2276,6 +2277,10 @@ function show_item_info(appid_info, from_map) {
                 new_option.text="NO";
                 new_option.value="NO";
                 new_p.appendChild(new_option);
+                new_p.value="";
+                if(element.data_script!=""){
+                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +element.value +' )');
+                }
               }
               if (element.field_type_id == 5) {
                 var new_p = document.createElement('INPUT');
@@ -2292,17 +2297,20 @@ function show_item_info(appid_info, from_map) {
               if(element.read_only==true || element.can_edit==false){
                 new_p.classList.add('readonly_field');
               }
+              var id_field = element.field_id;
+              new_p.id = "field_id_"+id_field;
               new_celd.appendChild(new_p);
               new_row.appendChild(new_celd);
             }
             document.getElementById('info_body').appendChild(new_row);
-            if(document.getElementById('multiselect_field_'+id_field)!=null){
-              if(document.getElementById('multiselect_field_'+id_field).classList.contains("readonly_field")){
+            if(document.getElementById('field_id_'+id_field)!=null){
+            if(document.getElementById('field_id_'+id_field).classList.contains("multiselect_field")){
+              if(document.getElementById('field_id_'+id_field).classList.contains("readonly_field")){
                 var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field';
               } else{
                 var buttonClass = 'text-left form-control form-control-sm info_input_disabled';
               }
-              $('#multiselect_field_'+id_field).multiselect({
+              $('#field_id_'+id_field).multiselect({
                 maxHeight: 800,
                 buttonClass: buttonClass,
                 buttonWidth: '100%',
@@ -2318,6 +2326,7 @@ function show_item_info(appid_info, from_map) {
                 includeSelectAllOption: false,
                 dropRight: true,
               });
+            }
           }
 
           } else {
@@ -2408,6 +2417,7 @@ function show_item_info(appid_info, from_map) {
                   if (element_child_field.field_type_id == 1) {
                     var new_p = document.createElement('TEXTAREA');
                     new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
+                    new_p.style.minHeight = '22px';
                   }
                   if (element_child_field.field_type_id == 2 || element_child_field.field_type_id == 10) {
                     var new_p = document.createElement('SELECT');
@@ -2430,8 +2440,8 @@ function show_item_info(appid_info, from_map) {
                       if(!found_option){new_p.selectedIndex = -1;}
                     });
                     var id_field = element.field_id;
-                    new_p.id = "multiselect_child_field_"+id_field;
-                    arraymultiselect.add(id_field);
+                    new_p.id = "field_child_id_"+id_field;
+                    arraymultiselect.push(id_field);
                   }
                   if (element_child_field.field_type_id == 3) {
                     var new_p = document.createElement('INPUT');
@@ -2509,12 +2519,12 @@ function show_item_info(appid_info, from_map) {
 
       // selectores y multiselectores en hijos
        for(x=0;x<arraymultiselect.length;x++){
-              if(document.getElementById('multiselect_child_field_'+arraymultiselect[x]).classList.contains("readonly_field")){
+              if(document.getElementById('field_child_id_'+arraymultiselect[x]).classList.contains("readonly_field")){
                 var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field';
               } else{
                 var buttonClass = 'text-left form-control form-control-sm info_input_disabled';
               }
-              $('#multiselect_child_field_'+arraymultiselect[x]).multiselect({
+              $('#field_child_id_'+arraymultiselect[x]).multiselect({
                 maxHeight: 800,
                 buttonClass: buttonClass,
                 buttonWidth: '100%',
@@ -2539,8 +2549,15 @@ function show_item_info(appid_info, from_map) {
         Navarra.project_types.config.item_selected = appid_info;
         Navarra.geomaps.current_layer();
       }
-    }
-  });
+      //Ejecuta Script de campos padres
+        father_fields.forEach(function(element) {
+          if(element.data_script!=""){
+            Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,true);
+          }
+        });
+
+    }//end Success
+  }); //end ajax
 }
 
 function open_photo(e) {
@@ -2592,7 +2609,7 @@ function open_subtitle(fields, ischild) {
 function textarea_adjust_height() {
   //ajustamos el alto
   document.querySelectorAll(".textarea_input").forEach(function(element_tag, index) {
-    var height_text = "height:" + element_tag.scrollHeight + "px!important";
+    var height_text = "height:" + element_tag.scrollHeight + "px!important ; min-height: 24px";
     element_tag.setAttribute('style', height_text);
   });
 }
@@ -2603,6 +2620,7 @@ function textarea_adjust_height() {
 
 function edit_file(){
   //verifica requeridos
+  textarea_adjust_height()
   var required_field_number = 0;
   $('#info_messages').html("");
   $('#info_messages').addClass("d-none");
@@ -2680,6 +2698,12 @@ function disable_file(){
       $('#info_messages').html(data);
     }
   });
+}
+
+function set_script(data_script,field_type_id,field_id,value){
+  if(data_script!=""){
+    Navarra.calculated_and_script_fields.Script(JSON.stringify(data_script),field_type_id, field_id,value, false);
+  }
 }
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
