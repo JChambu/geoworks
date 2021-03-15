@@ -22,13 +22,13 @@ class ProjectsController < ApplicationController
 
   def popup
     project_data = Project.find(params['project_id'].to_i)
-     render json: {data: project_data }
+    render json: {data: project_data }
   end
 
   # GET /projects
   # GET /projects.json
   def index
-    
+
     authorize! :data, :visualizer
     @search = @project_type.projects.all
     @search = @search.search(params[:q])
@@ -38,8 +38,8 @@ class ProjectsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv { send_data @projects.to_csv, filename: "users-#{Date.today}.csv" }
-          end
     end
+  end
 
   # GET /projects/1
   # GET /projects/1.json
@@ -106,12 +106,12 @@ class ProjectsController < ApplicationController
   end
 
   def set_project
-      @project = Project.find(params[:id])
-    end
+    @project = Project.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def project_params
-      @properties_keys = params[:project][:properties].keys
-      params.require(:project).permit( :project_type_id, :properties => [@properties_keys]).merge(user_id: current_user.id)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def project_params
+    @properties_keys = params[:project][:properties].keys
+    params.require(:project).permit( :project_type_id, :properties => [@properties_keys]).merge(user_id: current_user.id)
+  end
 end
