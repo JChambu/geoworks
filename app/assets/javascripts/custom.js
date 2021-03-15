@@ -2655,7 +2655,7 @@ function edit_file(){
   });
     console.log("Properties")
     console.log(properties_to_save)
-  /*
+
   $.ajax({
     type: 'GET',
     url: '/project_types/edit_file',
@@ -2671,7 +2671,6 @@ function edit_file(){
       $('#info_messages').html(data);
     }
   });
-  */
 }
 
 function change_owner(){
