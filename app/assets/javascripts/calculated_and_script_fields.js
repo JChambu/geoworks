@@ -7,16 +7,16 @@ function Script(data_script, field_type_id , field_id , value, initial) {
     var id_field = field_id;
     if(field_type==4){
         // si el campo tipo booleano tiene un Script y viene con valor nulo, se asigna valor = false por primera vez
-       if(value==null && initial){$('#field_id_'+id_field).val("NO")}
+       if(value==null && initial){$('#field_id_'+id_field).val("false")}
         var scriptObj = JSON.parse(scriptString);
-        if($('#field_id_'+id_field).val()=="SI"){
+        if($('#field_id_'+id_field).val()=="true"){
             var scriptTrue = scriptObj.true;
         } else{
             var scriptTrue = scriptObj.false;
         }
         script_ejecute(scriptTrue, initial);
 }
- if((field_type==10 || field_type==2) && value!="" && value!=null){
+ if((field_type==10 || field_type==2)){
     var scriptObjMulti = JSON.parse(scriptString);
     var arrayMultiOption_keys = Object.keys(scriptObjMulti);
     var valueObj = $('#field_id_'+id_field).val();
@@ -33,6 +33,8 @@ function Script(data_script, field_type_id , field_id , value, initial) {
             if(encontro==false){
                 scriptTrue = scriptObj.false;
             }
+            console.log("Script a ejecutar")
+            console.log(scriptTrue)
             script_ejecute(scriptTrue, initial);
         }
  }
@@ -48,6 +50,8 @@ function script_ejecute(scriptTrue, initial){
 
     for(x=0;x<hiddenTrue.length;x++){
         if($('#field_id_'+hiddenTrue[x]).length>0){
+            console.log("Oculta "+hiddenTrue[x])
+            console.log($('#field_id_'+hiddenTrue[x]).parent().closest('.row_field'))
             $('#field_id_'+hiddenTrue[x]).parent().closest('.row_field').addClass("d-none");
             $('#field_id_'+hiddenTrue[x]).parent().closest('.row_field').addClass("hidden_field");
         }
@@ -56,9 +60,11 @@ function script_ejecute(scriptTrue, initial){
     for(x=0;x<hiddenFalse.length;x++){
         if($('#field_id_'+hiddenFalse[x]).length>0){
             if(initial){
+                console.log("Muestra "+hiddenFalse[x])
                 $('#field_id_'+hiddenFalse[x]).parent().closest('.row_field').not('.empty_field').removeClass("d-none");
                 $('#field_id_'+hiddenFalse[x]).parent().closest('.row_field').removeClass("hidden_field");
             } else{
+                console.log("Muestra "+hiddenFalse[x])
                 $('#field_id_'+hiddenFalse[x]).parent().closest('.row_field').removeClass("d-none");
                 $('#field_id_'+hiddenFalse[x]).parent().closest('.row_field').removeClass("hidden_field");
             }

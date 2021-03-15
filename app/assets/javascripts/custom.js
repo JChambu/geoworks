@@ -7,6 +7,8 @@ var xhr_info = null;
 var xhr_report = null;
 var data_charts;
 
+var father_fields;
+
 Number.prototype.format = function(n, x, s, c) {
   var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
     num = this.toFixed(Math.max(0, ~~n));
@@ -2186,7 +2188,7 @@ function show_item_info(appid_info, from_map) {
       });
 
       //campos del registro
-      var father_fields = data.father_fields;
+      father_fields = data.father_fields;
       var subtitles_all = [];
       var subtitles_all_child = [];
       father_fields.forEach(function(element) {
@@ -2214,7 +2216,6 @@ function show_item_info(appid_info, from_map) {
               new_celd.className = "col-md-5";
             }
             var new_p = document.createElement('H6');
-
             if (element.field_type_id == 11) {
               new_p.className = "bg-primary pl-1";
               new_p.style.cursor = "pointer";
@@ -2225,6 +2226,8 @@ function show_item_info(appid_info, from_map) {
               new_p.innerHTML = element.name;
             } else {
               new_p.innerHTML = element.name + ":";
+              new_p.classList.add("field_key_json");
+              new_p.id=element.field_id+"__key__"+element.key;
             }
             new_celd.appendChild(new_p);
             new_row.appendChild(new_celd);
@@ -2233,6 +2236,7 @@ function show_item_info(appid_info, from_map) {
             if (element.field_type_id != 11) {
               var new_celd = document.createElement('DIV');
               new_celd.className = "col-md-7 field_div";
+
               // Adapta el código a los diferentes tipos de campos
               if (element.field_type_id == 1) {
                 var new_p = document.createElement('TEXTAREA');
@@ -2271,11 +2275,11 @@ function show_item_info(appid_info, from_map) {
                 new_p.className = "form-control form-control-sm info_input_disabled";
                 var new_option = document.createElement('OPTION');
                 new_option.text="SI";
-                new_option.value="SI";
+                new_option.value="true";
                 new_p.appendChild(new_option);
                 var new_option = document.createElement('OPTION');
                 new_option.text="NO";
-                new_option.value="NO";
+                new_option.value="false";
                 new_p.appendChild(new_option);
                 new_p.value="";
                 if(element.data_script!=""){
@@ -2289,7 +2293,8 @@ function show_item_info(appid_info, from_map) {
               }
               new_p.disabled = true;
               if (element.value != null && element.field_type_id != 10 && element.field_type_id != 2) {
-                new_p.value = element.value.replace(/[\[\]\"]/g, "").replace('true', 'SI').replace('false', 'NO');
+               // new_p.value = element.value.replace(/[\[\]\"]/g, "").replace('true', 'SI').replace('false', 'NO');
+                new_p.value = element.value;
               }
               if(element.required==true){
                 new_p.classList.add('required_field');
@@ -2640,7 +2645,16 @@ function edit_file(){
   }
   var project_type_id = Navarra.dashboards.config.project_type_id;
   var appid = Navarra.project_types.config.id_item_displayed;
-  var properties_to_save = "";
+  // Arma Json properties padres
+  var properties_to_save = new Object();
+  $('.field_key_json').each(function() {
+    var key_field_properties = this.id.split('__')[2];
+    var id_field_properties = this.id.split('__')[0];
+    var value_field_properties = $('#field_id_'+id_field_properties).val()
+    properties_to_save[key_field_properties] = value_field_properties;
+  });
+    console.log("Properties")
+    console.log(properties_to_save)
   /*
   $.ajax({
     type: 'GET',
@@ -2704,6 +2718,15 @@ function set_script(data_script,field_type_id,field_id,value){
   if(data_script!=""){
     Navarra.calculated_and_script_fields.Script(JSON.stringify(data_script),field_type_id, field_id,value, false);
   }
+}
+
+function set_script_all(){
+  //Ejecuta Script de campos padres
+        father_fields.forEach(function(element) {
+          if(element.data_script!=""){
+            Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,true);
+          }
+        });
 }
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
