@@ -94,7 +94,165 @@ function script_ejecute(scriptTrue, initial){
         }
     }
 }
+
+function Calculate(calculated_field, field_type_id , field_id , value, edition_type){
+    var CalculateObj = JSON.parse(calculated_field);
+    var field_type = field_type_id
+    var id_field = field_id;
+    var valueObj = $('#field_id_'+id_field).val();
+    var CalculateObj_keys = Object.keys(CalculateObj);
+    //Cálculos permitidos al crear y editar datos
+    if(edition_type=="data_edition" || edition_type== "new_file"){
+        for(k=0;k<CalculateObj_keys.length;k++){
+            if(CalculateObj_keys[k]=="calculation"){
+                var calculoStringArray = CalculateObj.calculation.split("#");
+                var calculoStringReplace="";
+                for(ll=0;ll<calculoStringArray.length;ll++){
+                    if(ll % 2 == 0){
+                        calculoStringReplace+=calculoStringArray[ll];
+                    } else{
+                        var val = $('#field_id_'+calculoStringArray[ll]).val();
+                        if(val==""){val=0}
+                        calculoStringReplace+=val;
+                    }
+                } 
+                console.log("String a calcular "+calculoStringReplace)
+                var resultado = eval(calculoStringReplace);
+                console.log("Resultado")
+                console.log(resultado)
+                $('#field_id_'+field_id).val(resultado);
+            }
+            if(CalculateObj_keys[k]=="semanaDesde"){
+                var val_from = $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).val();
+                if(val_from!=""){
+                    var dateParts = val_from.split("-");
+                    var val_from_format =dateParts[2]+"/"+dateParts[1]+"/" +dateParts[0];
+                    var dateObject = changeformatDate(val_from_format, 'day');
+                    number_of_week = getWeekNumber(dateObject)[1]
+                    $('#field_id_'+field_id).val(number_of_week);
+                }
+            }
+        }
+    }
+    //Cálculos permitidos al crear y editar geometrias
+    if(edition_type=="geometry_edition " || edition_type== "new_file"){
+        for(k=0;k<CalculateObj_keys.length;k++){
+            if(CalculateObj_keys[k]=="superficie"){
+
+            }
+            if(CalculateObj_keys[k]=="provincia"){
+
+            }
+            if(CalculateObj_keys[k]=="municipio"){
+
+            }
+            if(CalculateObj_keys[k]=="localidad"){
+
+            }
+        }    
+    }
+    // Cálculos permitidos al crear registro
+    if(edition_type== "new_file"){
+        for(k=0;k<CalculateObj_keys.length;k++){
+            if(CalculateObj_keys[k]=="sessionVariable"){
+
+            }
+            if(CalculateObj_keys[k]=="time"){
+
+            }
+            if(CalculateObj_keys[k]=="ID"){
+
+            }
+            if(CalculateObj_keys[k]=="semanaTomate"){
+
+            }
+            //Iscamen
+            if(CalculateObj_keys[k]=="codigo_fenologia"){
+
+            }
+            if(CalculateObj_keys[k]=="temporada"){
+
+            }
+            if(CalculateObj_keys[k]=="semana"){
+
+            }
+        }    
+    }
+}
+
+function evaluar(str) {
+    var pos = -1;
+    var ch;
+
+    function nextChar() {
+        ch = (++pos < str.length()) ? str.charAt(pos) : -1;
+    }
+    function eat(charToEat) {
+        while (ch == ' ') nextChar();
+            if (ch == charToEat) {
+                nextChar();
+                return true;
+        }
+        return false;
+    }
+    function parse() {
+        nextChar();
+        var x = parseExpression();
+            //if (pos < str.length()) throw new RuntimeException("Unexpected: " + (char)ch);
+            return x;
+        }
+
+        function parseExpression() {
+            var x = parseTerm();
+            for (;;) {
+                if  (eat('+')) {x += parseTerm();} // addition
+                else if (eat('-')) { x -= parseTerm();} // subtraction
+                    else {return x;}
+                }
+            }
+
+        function parseTerm() {
+            var x = parseFactor();
+                for (;;) {
+                    if      (eat('*')) {x *= parseFactor();} // multiplication
+                    else if (eat('/')) {x /= parseFactor();} // division
+                    else {return x;}
+                }
+            }
+
+        function parseFactor() {
+                if (eat('+')) {return parseFactor();} // unary plus
+                if (eat('-')) {return -parseFactor();} // unary minus
+
+                var x;
+                var startPos = this.pos;
+                if (eat('(')) { // parentheses
+                    x = parseExpression();
+                    eat(')');
+                } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
+                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
+                    x = Double.parseDouble(str.substring(startPos, this.pos));
+                } else if (ch >= 'a' && ch <= 'z') { // functions
+                    while (ch >= 'a' && ch <= 'z') nextChar();
+                    var func = str.substring(startPos, this.pos);
+                    x = parseFactor();
+                    if (func.equals("sqrt")) {x = Math.sqrt(x)}
+                    else if (func.equals("sin")) {x = Math.sin(Math.toRadians(x))}
+                    else if (func.equals("cos")) {x = Math.cos(Math.toRadians(x))}
+                    else if (func.equals("tan")) {x = Math.tan(Math.toRadians(x))}
+                   // else throw new RuntimeException("Unknown function: " + func);
+                } else {
+                   // throw new RuntimeException("Unexpected: " + (char)ch);
+                }
+
+                if (eat('^')) {x = Math.pow(x, parseFactor());} // exponentiation
+
+                return x;
+            }
+}                            
+
 return {
-    Script: Script
+    Script: Script,
+    Calculate: Calculate
 }
 }();

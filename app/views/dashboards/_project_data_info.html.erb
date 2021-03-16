@@ -23,8 +23,9 @@
       $('.info_input_disabled').not('.readonly_field').prop('disabled', false);
       $('.info_input_disabled').not('.readonly_field').removeClass('info_input_disabled');
       // muestra campos vacíos
-       $('.empty_fi.eld').not('.hidden_field').removeClass('d-none');
+       $('.empty_field').not('.hidden_field').removeClass('d-none');
       set_script_all();
+      calculate_all();
     }
     if(div_confirmation=='owner_confirmation'){
       // trae opciones de usuarios

@@ -2241,6 +2241,7 @@ function show_item_info(appid_info, from_map) {
               if (element.field_type_id == 1) {
                 var new_p = document.createElement('TEXTAREA');
                 new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
+                new_p.setAttribute("onChange","calculate_all()");
               }
               if (element.field_type_id == 2 || element.field_type_id == 10) {
                 var new_p = document.createElement('SELECT');
@@ -2290,6 +2291,7 @@ function show_item_info(appid_info, from_map) {
                 var new_p = document.createElement('INPUT');
                 new_p.type = "number";
                 new_p.className = "form-control form-control-sm info_input_disabled";
+                new_p.setAttribute("onChange","calculate_all()");
               }
               new_p.disabled = true;
               if (element.value != null && element.field_type_id != 10 && element.field_type_id != 2) {
@@ -2521,6 +2523,9 @@ function show_item_info(appid_info, from_map) {
           }
         }),
       });
+      $('.date_field').on('dp.change', function(e){ 
+        calculate_all();
+    });          
 
       // selectores y multiselectores en hijos
        for(x=0;x<arraymultiselect.length;x++){
@@ -2733,6 +2738,22 @@ function set_script_all(){
             Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,false);
           }
         });
+}
+
+function calculate_change(calculated_field,field_type_id,field_id,value){
+  console.log("entra funcion calcular")
+  if(calculated_field!=""){
+    Navarra.calculated_and_script_fields.Calculate(JSON.stringify(calculated_field),field_type_id, field_id,value, "data_edition");
+  }
+}
+function calculate_all(){
+  //Ejecuta Calculate de campos padres
+        father_fields.forEach(function(element) {
+          if(element.calculated_field!="" && element.field_type_id!=11){
+            console.log("Va a calcular "+element.name)
+            Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,element.field_id,element.value,"data_edition");
+          }
+        });  
 }
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
