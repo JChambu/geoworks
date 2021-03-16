@@ -2656,14 +2656,16 @@ function edit_file(){
     var key_field_properties = this.id.split('__')[2];
     var id_field_properties = this.id.split('__')[0];
     var fiel_type_properties = this.id.split('__')[3];
-    if(fiel_type_properties==2){
-      var array_val = [];
-      array_val.push($('#field_id_'+id_field_properties).val());
-      var value_field_properties = array_val;
-    }else{
-      var value_field_properties = $('#field_id_'+id_field_properties).val();
+    if($('#field_id_'+id_field_properties).val()!="" && $('#field_id_'+id_field_properties).val()!=null ){
+      if(fiel_type_properties==2){
+        var array_val = [];
+        array_val.push($('#field_id_'+id_field_properties).val());
+        var value_field_properties = array_val;
+      }else{
+        var value_field_properties = $('#field_id_'+id_field_properties).val();
+      }
+      properties_to_save[key_field_properties] = value_field_properties;
     }
-    properties_to_save[key_field_properties] = value_field_properties;
   });
     console.log("Properties")
     console.log(properties_to_save)
