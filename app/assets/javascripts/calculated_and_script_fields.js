@@ -33,8 +33,6 @@ function Script(data_script, field_type_id , field_id , value, initial) {
             if(encontro==false){
                 scriptTrue = scriptObj.false;
             }
-            console.log("Script a ejecutar")
-            console.log(scriptTrue)
             script_ejecute(scriptTrue, initial);
         }
  }
@@ -50,8 +48,6 @@ function script_ejecute(scriptTrue, initial){
 
     for(x=0;x<hiddenTrue.length;x++){
         if($('#field_id_'+hiddenTrue[x]).length>0){
-            console.log("Oculta "+hiddenTrue[x])
-            console.log($('#field_id_'+hiddenTrue[x]).parent().closest('.row_field'))
             $('#field_id_'+hiddenTrue[x]).parent().closest('.row_field').addClass("d-none");
             $('#field_id_'+hiddenTrue[x]).parent().closest('.row_field').addClass("hidden_field");
         }
@@ -60,11 +56,9 @@ function script_ejecute(scriptTrue, initial){
     for(x=0;x<hiddenFalse.length;x++){
         if($('#field_id_'+hiddenFalse[x]).length>0){
             if(initial){
-                console.log("Muestra "+hiddenFalse[x])
                 $('#field_id_'+hiddenFalse[x]).parent().closest('.row_field').not('.empty_field').removeClass("d-none");
                 $('#field_id_'+hiddenFalse[x]).parent().closest('.row_field').removeClass("hidden_field");
             } else{
-                console.log("Muestra "+hiddenFalse[x])
                 $('#field_id_'+hiddenFalse[x]).parent().closest('.row_field').removeClass("d-none");
                 $('#field_id_'+hiddenFalse[x]).parent().closest('.row_field').removeClass("hidden_field");
             }

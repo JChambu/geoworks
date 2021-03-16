@@ -2227,7 +2227,7 @@ function show_item_info(appid_info, from_map) {
             } else {
               new_p.innerHTML = element.name + ":";
               new_p.classList.add("field_key_json");
-              new_p.id=element.field_id+"__key__"+element.key;
+              new_p.id=element.field_id+"__key__"+element.key+"__"+element.field_type_id;
             }
             new_celd.appendChild(new_p);
             new_row.appendChild(new_celd);
@@ -2293,7 +2293,6 @@ function show_item_info(appid_info, from_map) {
               }
               new_p.disabled = true;
               if (element.value != null && element.field_type_id != 10 && element.field_type_id != 2) {
-               // new_p.value = element.value.replace(/[\[\]\"]/g, "").replace('true', 'SI').replace('false', 'NO');
                 new_p.value = element.value;
               }
               if(element.required==true){
@@ -2445,7 +2444,6 @@ function show_item_info(appid_info, from_map) {
                       if(!found_option){new_p.selectedIndex = -1;}
                     });
                     var id_field = element.field_id;
-                    new_p.id = "field_child_id_"+id_field;
                     arraymultiselect.push(id_field);
                   }
                   if (element_child_field.field_type_id == 3) {
@@ -2457,11 +2455,11 @@ function show_item_info(appid_info, from_map) {
                     new_p.className = "form-control form-control-sm info_input_disabled";
                     var new_option = document.createElement('OPTION');
                     new_option.text="SI";
-                    new_option.value="SI";
+                    new_option.value="true";
                     new_p.appendChild(new_option);
                     var new_option = document.createElement('OPTION');
                     new_option.text="NO";
-                    new_option.value="NO";
+                    new_option.value="false";
                     new_p.appendChild(new_option);
                   }
                   if (element_child_field.field_type_id == 5) {
@@ -2471,7 +2469,7 @@ function show_item_info(appid_info, from_map) {
                   }
                   new_p.disabled = true;
                   if (element_child_field.value != null && element_child_field.field_type_id != 10 && element_child_field.field_type_id != 2) {
-                    new_p.value = element_child_field.value.replace(/[\[\]\"]/g, "").replace('true', 'SI').replace('false', 'NO');
+                    new_p.value = element_child_field.value
                   }
                   if(element_child_field.required==true){
                     new_p.classList.add('required_field');
@@ -2481,6 +2479,8 @@ function show_item_info(appid_info, from_map) {
                   }
                   new_p.style.padding = "0px 0.5rem";
                   new_p.style.height = "auto";
+                  var id_field = element.field_id;
+                  new_p.id = "field_child_id_"+id_field;
                   new_celd.appendChild(new_p);
                   new_row1.appendChild(new_celd);
                 }
@@ -2650,7 +2650,14 @@ function edit_file(){
   $('.field_key_json').each(function() {
     var key_field_properties = this.id.split('__')[2];
     var id_field_properties = this.id.split('__')[0];
-    var value_field_properties = $('#field_id_'+id_field_properties).val()
+    var fiel_type_properties = this.id.split('__')[3];
+    if(fiel_type_properties==2){
+      var array_val = [];
+      array_val.push($('#field_id_'+id_field_properties).val());
+      var value_field_properties = array_val;
+    }else{
+      var value_field_properties = $('#field_id_'+id_field_properties).val();
+    }
     properties_to_save[key_field_properties] = value_field_properties;
   });
     console.log("Properties")
@@ -2723,7 +2730,7 @@ function set_script_all(){
   //Ejecuta Script de campos padres
         father_fields.forEach(function(element) {
           if(element.data_script!=""){
-            Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,true);
+            Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,false);
           }
         });
 }
