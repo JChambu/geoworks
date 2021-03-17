@@ -88,6 +88,12 @@ has_paper_trail
     save!
   end
 
+  def disable_form
+    self.row_enabled = false
+    self.disabled_at = Time.now
+    save!
+  end
+
   def update_form properties, user_id
 
 

@@ -2901,20 +2901,18 @@ function change_owner(){
 }
 
 function disable_file(){
-  var project_type_id = Navarra.dashboards.config.project_type_id;
-  var appid = Navarra.project_types.config.id_item_displayed;
+  var app_id = Navarra.project_types.config.id_item_displayed;
   $.ajax({
-    type: 'GET',
-    url: '/project_types/disable_file',
-    datatype: 'json',
+    type: 'PATCH',
+    url: '/projects/disable_form',
+    datatype: 'JSON',
     data: {
-      project_type_id: project_type_id,
-      app_id: appid
+      app_id: app_id
     },
     success: function(data) {
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
-      $('#info_messages').html(data);
+      $('#info_messages').html(data['status']);
       //cambiar app_usuario
     }
   });

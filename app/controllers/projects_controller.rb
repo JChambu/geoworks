@@ -7,6 +7,25 @@ class ProjectsController < ApplicationController
     render json: {data: @user}
   end
 
+  # Deshabilita un registro (row_enabled = false)
+  def disable_form
+    app_id = params[:app_id]
+    if app_id.present?
+      @project = Project.find(app_id)
+      if @project.present?
+        if @project.disable_form
+          render json: {status: 'El registro fue deshabilitado correctamente.'}
+        else
+          render json: {status: 'Error. No se pudo deshabilitar el registro.'}
+        end
+      else
+        render json: {status: 'Error. No se encontró el registro.'}
+      end
+    else
+      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
+    end
+  end
+
   # Actualiza la columna properties
   def update_form
     app_id = params[:app_id]
