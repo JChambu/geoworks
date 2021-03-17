@@ -2246,6 +2246,7 @@ function show_item_info(appid_info, from_map) {
                 new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
                 new_p.setAttribute("onChange","calculate_all()");
               }
+              var found_nested = false;
               if (element.field_type_id == 2 || element.field_type_id == 10) {
                 var new_p = document.createElement('SELECT');
                 if(element.field_type_id == 10){
@@ -2253,27 +2254,83 @@ function show_item_info(appid_info, from_map) {
                 }
                 new_p.className = "multiselect_field form-control form-control-sm info_input_disabled";
                 var items_field = element.other_possible_values;
+                //verifica si tiene anidados
+                items_field.forEach(function(item) {
+                  if(item.nested_items!=null){
+                    found_nested = true;
+                  }
+                });
+                if(found_nested){ new_p.classList.add('nested')}
                 values = element.value;
-                var found_option = false;
+                values_nested = element.value;
+                //comienza anidados
+                if(found_nested){
+                  if(element.value!=null){
+                    values = JSON.parse(element.value)[0];
+                    values_nested = JSON.parse(element.value)[1];
+                    console.log(values_nested)
+                  }
+                  var new_p_nested = document.createElement('SELECT');
+                  new_p_nested.className = "mb-1 multiselect_field form-control form-control-sm info_input_disabled";
+                  new_p_nested.disabled = true;
+                  if(element.required==true){
+                    new_p_nested.classList.add('required_field');
+                  }
+                  if(element.read_only==true || element.can_edit==false){
+                    new_p_nested.classList.add('readonly_field');
+                  }
+                  var id_field_nested = element.field_id+"_nested";
+                  new_p_nested.id = "field_id_"+id_field_nested;
+                  //termina anidados
+                }
+
+                var found_option = false;   
+                var selected_option;          
                 items_field.forEach(function(item) {
                   var new_option = document.createElement('OPTION');
                   new_option.text=item.name;
                   new_option.value=item.name;
                   if(values!=null){
                       new_option.selected = values.indexOf(item.name) >= 0;
-                      if(values.indexOf(item.name)>=0){found_option=true}
+                      if(values.indexOf(item.name)>=0){
+                        found_option=true;
+                        selected_option = item.name;
+                      }
                   }
                   new_p.appendChild(new_option);
                   if(!found_option){new_p.selectedIndex = -1;}
+                  //Comienza Anidados opciones
+                  if(item.nested_items!=null){
+                    new_option.setAttribute('data-type',item.name);
+                    var items_field_nested = item.nested_items;
+                    var found_option_nested = false;             
+                    items_field_nested.forEach(function(item_nested) {
+                    var new_option_nested = document.createElement('OPTION');
+                    new_option_nested.text=item_nested.name;
+                    new_option_nested.value=item_nested.name;
+                    if(item.name != selected_option){
+                      new_option_nested.className = "d-none";
+                    }
+                    new_option_nested.setAttribute('data-type',item.name);
+                    new_p_nested.appendChild(new_option_nested);
+                    });
+                    new_p_nested.value=values_nested;
+                  }
+                  //termina anidados opciones
                 });
+                if(found_nested){
+                  new_p.setAttribute('onChange', 'set_nested(event)');
+                }
                 if(element.data_script!=""){
-                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +element.value +' )');
+                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +element.value+',' +found_nested +',event )');
                 }
               }
+
               if (element.field_type_id == 3) {
                 var new_p = document.createElement('INPUT');
                 new_p.className = "form-control form-control-sm info_input_disabled date_field";
               }
+
               if (element.field_type_id == 4) {
                 var new_p = document.createElement('SELECT');
                 new_p.className = "form-control form-control-sm info_input_disabled";
@@ -2309,15 +2366,17 @@ function show_item_info(appid_info, from_map) {
               var id_field = element.field_id;
               new_p.id = "field_id_"+id_field;
               new_celd.appendChild(new_p);
+              //agrega selector anidado si existe
+              if(found_nested){new_celd.appendChild(new_p_nested)}
               new_row.appendChild(new_celd);
             }
             document.getElementById('info_body').appendChild(new_row);
             if(document.getElementById('field_id_'+id_field)!=null){
             if(document.getElementById('field_id_'+id_field).classList.contains("multiselect_field")){
               if(document.getElementById('field_id_'+id_field).classList.contains("readonly_field")){
-                var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field';
+                var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled readonly_field';
               } else{
-                var buttonClass = 'text-left form-control form-control-sm info_input_disabled';
+                var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled';
               }
               $('#field_id_'+id_field).multiselect({
                 maxHeight: 800,
@@ -2424,6 +2483,7 @@ function show_item_info(appid_info, from_map) {
                 if (element_child_field.field_type_id != 11) {
                   var new_celd = document.createElement('DIV');
                   new_celd.className = "col-md-6 field_div";
+
                   // Adapta el código a los diferentes tipos de campos
                   if (element_child_field.field_type_id == 1) {
                     var new_p = document.createElement('TEXTAREA');
@@ -2431,6 +2491,7 @@ function show_item_info(appid_info, from_map) {
                     new_p.style.minHeight = '22px';
                     new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
                   }
+                  var found_nested = false;
                   if (element_child_field.field_type_id == 2 || element_child_field.field_type_id == 10) {
                     var new_p = document.createElement('SELECT');
                     if(element_child_field.field_type_id == 10){
@@ -2438,24 +2499,76 @@ function show_item_info(appid_info, from_map) {
                     }
                     new_p.className = "multiselect_field form-control form-control-sm info_input_disabled";
                     var items_field = element_child_field.other_possible_values;
-                    values = element.value;
+                    //verifica si tiene anidados
+                    items_field.forEach(function(item) {
+                      if(item.nested_items!=null){
+                        found_nested = true;
+                      }
+                    });
+                    if(found_nested){ new_p.classList.add('nested')}
+                    values = element_child_field.value;
+                    values_nested = element_child_field.value;
+                    //comienza anidados
+                    if(found_nested){
+                      if(element_child_field.value!=null){
+                      values = JSON.parse(element_child_field.value)[0];
+                      values_nested = JSON.parse(element_child_field.value)[1];
+                      }
+                      var new_p_nested = document.createElement('SELECT');
+                      new_p_nested.className = "mb-1 multiselect_field form-control form-control-sm info_input_disabled";
+                      new_p_nested.disabled = true;
+                      if(element_child_field.required==true){
+                        new_p_nested.classList.add('required_field');
+                      }
+                      if(element_child_field.read_only==true || element_child_field.can_edit==false){
+                        new_p_nested.classList.add('readonly_field');
+                      }
+                      var id_field = element_child_field.field_id;
+                      var id_child = element_child.children_id;
+                      var id_field_nested = element.field_id+"_nested";
+                      new_p_nested.id = "fieldchildid__"+id_field+"__"+id_child+"_nested";
+                    //termina anidados
+                    }
+
                     var found_option = false;
+                    var selected_option;
                     items_field.forEach(function(item) {
                       var new_option = document.createElement('OPTION');
                       new_option.text=item.name;
                       new_option.value=item.name;
                       if(values!=null){
                         new_option.selected = values.indexOf(item.name) >= 0;
-                        if(values.indexOf(item.name)>=0){found_option=true}
+                        if(values.indexOf(item.name)>=0){
+                          found_option=true;
+                          selected_option = item.name;
+                        }
                       }
                       new_p.appendChild(new_option);
                       if(!found_option){new_p.selectedIndex = -1;}
+                      //Comienza Anidados opciones
+                      if(item.nested_items!=null){
+                        new_option.setAttribute('data-type',item.name);
+                        var items_field_nested = item.nested_items;
+                        var found_option_nested = false;             
+                        items_field_nested.forEach(function(item_nested) {
+                        var new_option_nested = document.createElement('OPTION');
+                        new_option_nested.text=item_nested.name;
+                        new_option_nested.value=item_nested.name;
+                        if(item.name != selected_option){
+                          new_option_nested.className = "d-none";
+                        }
+                        new_option_nested.setAttribute('data-type',item.name);
+                        new_p_nested.appendChild(new_option_nested);
+                        });
+                        new_p_nested.value=values_nested;
+                      }
+                      //termina anidados opciones
                     });
                     var id_field = element_child_field.field_id;
                     var id_child = element_child.children_id;
                     arraymultiselect.push(id_field);
                     arraymultiselectChild.push(id_child);
-                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
+                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+',' +found_nested +',event)');
                   }
                   if (element_child_field.field_type_id == 3) {
                     var new_p = document.createElement('INPUT');
@@ -2678,6 +2791,9 @@ function edit_file(){
       if(fiel_type_properties==2){
         var array_val = [];
         array_val.push($('#field_id_'+id_field_properties).val());
+        if(document.getElementById('field_id_'+id_field_properties).classList.contains('nested')){
+            array_val.push($('#field_id_'+id_field_properties+'_nested').val());
+          }
         var value_field_properties = array_val;
       }else{
         var value_field_properties = $('#field_id_'+id_field_properties).val();
@@ -2721,6 +2837,9 @@ function edit_file(){
         if(fiel_type_properties==2){
           var array_val = [];
           array_val.push($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val());
+          if(document.getElementById('fieldchildid__'+id_field_child_properties+'__'+id_child_properties).classList.contains('nested')){
+            array_val.push($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties+'_nested').val());
+          }
           var value_field_properties = array_val;
         }else{
           var value_field_properties = $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val();
@@ -2805,9 +2924,12 @@ function disable_file(){
   });
 }
 
-function set_script(data_script,field_type_id,field_id,value){
+function set_script(data_script,field_type_id,field_id,value,isnested,event){
   if(data_script!=""){
     Navarra.calculated_and_script_fields.Script(JSON.stringify(data_script),field_type_id, field_id,value, false);
+  }
+  if(isnested){
+    set_nested(event)
   }
 }
 
@@ -2836,8 +2958,25 @@ function calculate_all(){
         });  
 }
 
-function changeChild(id_child_edited){
+function set_nested(event){
+  var id_event = event.target.id;
+  var id_event_nested = id_event+"_nested";
+  var attribute_nested = document.getElementById(id_event).options[document.getElementById(id_event).selectedIndex].getAttribute('data-type');
+  $("#"+id_event_nested).val("");
+  $("#"+id_event_nested+" option").each(function() {
+    if(this.getAttribute('data-type')==attribute_nested){
+       $(this).removeClass('d-none')
+    } else{
+      $(this).addClass('d-none');
+    }
+  });
+}
+
+function changeChild(id_child_edited,isnested,event){
   array_child_edited.push(id_child_edited);
+  if(isnested){
+    set_nested(event)
+  }
 }
 
 Array.prototype.unique=function(a){

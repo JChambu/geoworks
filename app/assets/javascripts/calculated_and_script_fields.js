@@ -19,7 +19,14 @@ function Script(data_script, field_type_id , field_id , value, initial) {
  if((field_type==10 || field_type==2)){
     var scriptObjMulti = JSON.parse(scriptString);
     var arrayMultiOption_keys = Object.keys(scriptObjMulti);
-    var valueObj = $('#field_id_'+id_field).val();
+    if($('#field_id_'+id_field).val()!=null){
+    if(field_type == 2){
+        var valueObj = [];
+        valueObj.push($('#field_id_'+id_field).val());
+    } else {
+        var valueObj = $('#field_id_'+id_field).val();
+    }
+    console.log(valueObj)
         for(xx=0;xx<arrayMultiOption_keys.length;xx++){
             var encontro = false;
             var scriptObj = scriptObjMulti[arrayMultiOption_keys[xx]];
@@ -35,6 +42,7 @@ function Script(data_script, field_type_id , field_id , value, initial) {
             }
             script_ejecute(scriptTrue, initial);
         }
+    }
  }
 
 }
