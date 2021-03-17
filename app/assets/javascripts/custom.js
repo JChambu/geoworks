@@ -2268,7 +2268,6 @@ function show_item_info(appid_info, from_map) {
                   if(element.value!=null){
                     values = JSON.parse(element.value)[0];
                     values_nested = JSON.parse(element.value)[1];
-                    console.log(values_nested)
                   }
                   var new_p_nested = document.createElement('SELECT');
                   new_p_nested.className = "mb-1 multiselect_field form-control form-control-sm info_input_disabled";
@@ -2285,18 +2284,21 @@ function show_item_info(appid_info, from_map) {
                 }
 
                 var found_option = false;
-                var selected_option;
                 items_field.forEach(function(item) {
                   var new_option = document.createElement('OPTION');
                   new_option.text=item.name;
                   new_option.value=item.name;
-                  if(values!=null){
-                      new_option.selected = values.indexOf(item.name) >= 0;
-                      if(values.indexOf(item.name)>=0){
-                        found_option=true;
-                        selected_option = item.name;
+                  if(!found_nested){
+                    if(values!=null){
+                      values_array = JSON.parse(values)
+                        for (v=0;v<values_array.length;v++){
+                          if(values_array[v]==item.name){
+                            found_option=true;
+                            new_option.selected = true;
+                          }
+                        }
                       }
-                  }
+                    }
                   new_p.appendChild(new_option);
                   if(!found_option){new_p.selectedIndex = -1;}
                   //Comienza Anidados opciones
@@ -2308,7 +2310,7 @@ function show_item_info(appid_info, from_map) {
                     var new_option_nested = document.createElement('OPTION');
                     new_option_nested.text=item_nested.name;
                     new_option_nested.value=item_nested.name;
-                    if(item.name != selected_option){
+                    if(item.name != values){
                       new_option_nested.className = "d-none";
                     }
                     new_option_nested.setAttribute('data-type',item.name);
@@ -2318,6 +2320,8 @@ function show_item_info(appid_info, from_map) {
                   }
                   //termina anidados opciones
                 });
+                if(found_nested){new_p.value=values;}
+
                 if(found_nested){
                   new_p.setAttribute('onChange', 'set_nested(event)');
                 }
@@ -2531,18 +2535,21 @@ function show_item_info(appid_info, from_map) {
                     }
 
                     var found_option = false;
-                    var selected_option;
                     items_field.forEach(function(item) {
                       var new_option = document.createElement('OPTION');
                       new_option.text=item.name;
                       new_option.value=item.name;
-                      if(values!=null){
-                        new_option.selected = values.indexOf(item.name) >= 0;
-                        if(values.indexOf(item.name)>=0){
-                          found_option=true;
-                          selected_option = item.name;
-                        }
-                      }
+                      if(!found_nested){
+                        if(values!=null){
+                          values_array = JSON.parse(values)
+                          for (v=0;v<values_array.length;v++){
+                            if(values_array[v]==item.name){
+                              found_option=true;
+                              new_option.selected = true;
+                            }
+                          }
+                       }
+                     }
                       new_p.appendChild(new_option);
                       if(!found_option){new_p.selectedIndex = -1;}
                       //Comienza Anidados opciones
@@ -2554,7 +2561,7 @@ function show_item_info(appid_info, from_map) {
                         var new_option_nested = document.createElement('OPTION');
                         new_option_nested.text=item_nested.name;
                         new_option_nested.value=item_nested.name;
-                        if(item.name != selected_option){
+                        if(item.name != values){
                           new_option_nested.className = "d-none";
                         }
                         new_option_nested.setAttribute('data-type',item.name);
@@ -2564,6 +2571,7 @@ function show_item_info(appid_info, from_map) {
                       }
                       //termina anidados opciones
                     });
+                    if(found_nested){new_p.value=values;}
                     var id_field = element_child_field.field_id;
                     var id_child = element_child.children_id;
                     arraymultiselect.push(id_field);
