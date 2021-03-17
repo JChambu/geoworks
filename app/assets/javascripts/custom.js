@@ -2284,8 +2284,8 @@ function show_item_info(appid_info, from_map) {
                   //termina anidados
                 }
 
-                var found_option = false;   
-                var selected_option;          
+                var found_option = false;
+                var selected_option;
                 items_field.forEach(function(item) {
                   var new_option = document.createElement('OPTION');
                   new_option.text=item.name;
@@ -2303,7 +2303,7 @@ function show_item_info(appid_info, from_map) {
                   if(item.nested_items!=null){
                     new_option.setAttribute('data-type',item.name);
                     var items_field_nested = item.nested_items;
-                    var found_option_nested = false;             
+                    var found_option_nested = false;
                     items_field_nested.forEach(function(item_nested) {
                     var new_option_nested = document.createElement('OPTION');
                     new_option_nested.text=item_nested.name;
@@ -2549,7 +2549,7 @@ function show_item_info(appid_info, from_map) {
                       if(item.nested_items!=null){
                         new_option.setAttribute('data-type',item.name);
                         var items_field_nested = item.nested_items;
-                        var found_option_nested = false;             
+                        var found_option_nested = false;
                         items_field_nested.forEach(function(item_nested) {
                         var new_option_nested = document.createElement('OPTION');
                         new_option_nested.text=item_nested.name;
@@ -2635,7 +2635,7 @@ function show_item_info(appid_info, from_map) {
             document.getElementById('info_body').appendChild(new_row);
           }
         }
-        
+
       });
       textarea_adjust_height();
       $('.date_field').datetimepicker({
@@ -2648,7 +2648,7 @@ function show_item_info(appid_info, from_map) {
           }
         }),
       });
-      $('.date_field').on('dp.change', function(e){ 
+      $('.date_field').on('dp.change', function(e){
         console.log(this)
         console.log(this.id)
         if(this.id.substring(0,12)=="fieldchildid"){
@@ -2656,7 +2656,7 @@ function show_item_info(appid_info, from_map) {
         } else{
           calculate_all();
         }
-    });          
+    });
 
       // selectores y multiselectores en hijos
        for(x=0;x<arraymultiselect.length;x++){
@@ -2682,7 +2682,7 @@ function show_item_info(appid_info, from_map) {
                 dropRight: true,
               });
           }
-      
+
       //Muestra el punto en el mapa y elimina el seleccionado en la tabla
       if (from_map) {
         $('table tbody tr').removeClass('found');
@@ -2855,12 +2855,9 @@ function edit_file(){
     child_data.values = properties_child_to_save;
     child_edited_all.push(child_data);
 }
-  
-    
 
     console.log("Objeto a enviar")
     console.log(child_data)
-
     console.log(child_edited_all);
 
   // $.ajax({
@@ -2949,7 +2946,7 @@ function calculate_all(){
             console.log("Va a calcular "+element.name)
             Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,element.field_id,element.value,"data_edition");
           }
-        });  
+        });
 }
 
 function set_nested(event){

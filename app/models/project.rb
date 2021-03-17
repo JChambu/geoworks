@@ -1,5 +1,5 @@
 class Project < ApplicationRecord
-has_paper_trail
+  has_paper_trail
   include Projects::Scopes
 
   require "json"
