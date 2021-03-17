@@ -2779,8 +2779,7 @@ function edit_file(){
     $('#info_messages').removeClass("d-none");
     return;
   }
-  var project_type_id = Navarra.dashboards.config.project_type_id;
-  var appid = Navarra.project_types.config.id_item_displayed;
+  var app_id = Navarra.project_types.config.id_item_displayed;
   // Arma Json properties padres
   var properties_to_save = new Object();
   $('.field_key_json').each(function() {
@@ -2805,18 +2804,17 @@ function edit_file(){
     console.log(properties_to_save)
 
   $.ajax({
-    type: 'GET',
-    url: '/project_types/edit_file',
-    datatype: 'json',
+    type: 'PATCH',
+    url: '/projects/update_form',
+    datatype: 'JSON',
     data: {
-      project_type_id: project_type_id,
-      app_id: appid,
+      app_id: app_id,
       properties: properties_to_save
     },
     success: function(data) {
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
-      $('#info_messages').html(data);
+      $('#info_messages').html(data['status']);
     }
   });
 

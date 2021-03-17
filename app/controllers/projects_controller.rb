@@ -7,6 +7,26 @@ class ProjectsController < ApplicationController
     render json: {data: @user}
   end
 
+  # Actualiza la columna properties
+  def update_form
+    app_id = params[:app_id]
+    properties = params[:properties]
+    if app_id.present? && properties.present?
+      @project = Project.find(app_id)
+      if @project.present?
+        if @project.update_form(properties, current_user.id)
+          render json: {status: 'El registro fue modificado correctamente.', user_id: current_user.id}
+        else
+          render json: {status: 'Error. No se pudo actualizar el registro.'}
+        end
+      else
+        render json: {status: 'Error. No se encontró el registro.'}
+      end
+    else
+      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
+    end
+  end
+
   def search_statuses
     @project_statuses_data = ProjectStatus.where(project_type_id: params[:project_type_id])
     render json: {data: @project_statuses_data}
