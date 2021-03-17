@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get 'projects/search_statuses' => 'projects#search_statuses'
   get 'projects/search_users' => 'projects#search_users'
   patch 'projects/update_form' => 'projects#update_form'
+  patch 'projects/change_owner' => 'projects#change_owner'
   post 'project_statuses/options', as: 'project_statuses_options'
   post 'project_statuses/update_priority', as: 'project_statuses_update_priority'
 

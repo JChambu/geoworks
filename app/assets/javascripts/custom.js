@@ -2881,22 +2881,20 @@ function edit_file(){
 }
 
 function change_owner(){
-  var project_type_id = Navarra.dashboards.config.project_type_id;
-  var appid = Navarra.project_types.config.id_item_displayed;
-  var id_owner = $("#owner_change_select").val();
+  var app_id = Navarra.project_types.config.id_item_displayed;
+  var user_id = $("#owner_change_select").val();
   $.ajax({
-    type: 'GET',
-    url: '/project_types/change_owner',
-    datatype: 'json',
+    type: 'PATCH',
+    url: '/projects/change_owner',
+    datatype: 'JSON',
     data: {
-      project_type_id: project_type_id,
-      app_id: appid,
-      owner_id: id_owner
+      app_id: app_id,
+      user_id: user_id
     },
     success: function(data) {
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
-      $('#info_messages').html(data);
+      $('#info_messages').html(data['status']);
       //cambiar app_usuario
     }
   });

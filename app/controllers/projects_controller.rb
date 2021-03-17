@@ -27,6 +27,26 @@ class ProjectsController < ApplicationController
     end
   end
 
+  # Cambia el propietario del registro
+  def change_owner
+    app_id = params[:app_id]
+    user_id = params[:user_id]
+    if app_id.present? && user_id.present?
+      @project = Project.find(app_id)
+      if @project.present?
+        if @project.change_owner(user_id)
+          render json: {status: 'El registro fue reasignado correctamente.'}
+        else
+          render json: {status: 'Error. No se pudo reasignado el registro.'}
+        end
+      else
+        render json: {status: 'Error. No se encontró el registro.'}
+      end
+    else
+      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
+    end
+  end
+
   def search_statuses
     @project_statuses_data = ProjectStatus.where(project_type_id: params[:project_type_id])
     render json: {data: @project_statuses_data}

@@ -82,6 +82,12 @@ has_paper_trail
 
   end
 
+  def change_owner user_id
+    self.properties['app_usuario'] = user_id
+    self.user_id = user_id
+    save!
+  end
+
   def update_form properties, user_id
 
 
