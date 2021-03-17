@@ -8,6 +8,7 @@ var xhr_report = null;
 var data_charts;
 
 var father_fields;
+var array_child_edited;
 
 Number.prototype.format = function(n, x, s, c) {
   var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
@@ -2151,6 +2152,8 @@ function show_item_info(appid_info, from_map) {
 
       //borra datos anteriores
       var arraymultiselect=[];
+      var arraymultiselectChild=[];
+      array_child_edited = [];
       document.getElementById('info_body').remove();
       var new_body = document.createElement('DIV');
       new_body.id = 'info_body';
@@ -2410,6 +2413,8 @@ function show_item_info(appid_info, from_map) {
                   new_p.innerHTML = element_child_field.name;
                 } else {
                   new_p.innerHTML = element_child_field.name + ":";
+                  new_p.classList.add("field_key_child_json");
+                  new_p.id=element.field_id+"__child__"+element_child.children_id+"__"+element_child_field.field_type_id+"__"+element_child_field.field_id;
                 }
                 new_p.style.margin = "0px";
                 new_celd.appendChild(new_p);
@@ -2424,6 +2429,7 @@ function show_item_info(appid_info, from_map) {
                     var new_p = document.createElement('TEXTAREA');
                     new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
                     new_p.style.minHeight = '22px';
+                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
                   }
                   if (element_child_field.field_type_id == 2 || element_child_field.field_type_id == 10) {
                     var new_p = document.createElement('SELECT');
@@ -2445,8 +2451,11 @@ function show_item_info(appid_info, from_map) {
                       new_p.appendChild(new_option);
                       if(!found_option){new_p.selectedIndex = -1;}
                     });
-                    var id_field = element.field_id;
+                    var id_field = element_child_field.field_id;
+                    var id_child = element_child.children_id;
                     arraymultiselect.push(id_field);
+                    arraymultiselectChild.push(id_child);
+                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
                   }
                   if (element_child_field.field_type_id == 3) {
                     var new_p = document.createElement('INPUT');
@@ -2463,11 +2472,13 @@ function show_item_info(appid_info, from_map) {
                     new_option.text="NO";
                     new_option.value="false";
                     new_p.appendChild(new_option);
+                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
                   }
                   if (element_child_field.field_type_id == 5) {
                     var new_p = document.createElement('INPUT');
                     new_p.type = "number";
                     new_p.className = "form-control form-control-sm info_input_disabled";
+                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
                   }
                   new_p.disabled = true;
                   if (element_child_field.value != null && element_child_field.field_type_id != 10 && element_child_field.field_type_id != 2) {
@@ -2481,8 +2492,9 @@ function show_item_info(appid_info, from_map) {
                   }
                   new_p.style.padding = "0px 0.5rem";
                   new_p.style.height = "auto";
-                  var id_field = element.field_id;
-                  new_p.id = "field_child_id_"+id_field;
+                  var id_field = element_child_field.field_id;
+                  var id_child = element_child.children_id;
+                  new_p.id = "fieldchildid__"+id_field+"__"+id_child;
                   new_celd.appendChild(new_p);
                   new_row1.appendChild(new_celd);
                 }
@@ -2524,17 +2536,23 @@ function show_item_info(appid_info, from_map) {
         }),
       });
       $('.date_field').on('dp.change', function(e){ 
-        calculate_all();
+        console.log(this)
+        console.log(this.id)
+        if(this.id.substring(0,12)=="fieldchildid"){
+          changeChild(this.id.split('__')[2]);
+        } else{
+          calculate_all();
+        }
     });          
 
       // selectores y multiselectores en hijos
        for(x=0;x<arraymultiselect.length;x++){
-              if(document.getElementById('field_child_id_'+arraymultiselect[x]).classList.contains("readonly_field")){
+              if(document.getElementById('fieldchildid__'+arraymultiselect[x]+'__'+arraymultiselectChild[x]).classList.contains("readonly_field")){
                 var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field';
               } else{
                 var buttonClass = 'text-left form-control form-control-sm info_input_disabled';
               }
-              $('#field_child_id_'+arraymultiselect[x]).multiselect({
+              $('#fieldchildid__'+arraymultiselect[x]+'__'+arraymultiselectChild[x]).multiselect({
                 maxHeight: 800,
                 buttonClass: buttonClass,
                 buttonWidth: '100%',
@@ -2685,6 +2703,64 @@ function edit_file(){
       $('#info_messages').html(data);
     }
   });
+
+  //envio de Json hijos
+  var child_edited_all = [];
+  array_child_edited = array_child_edited.unique();
+  for(z=0;z<array_child_edited.length;z++){
+    var properties_child_to_save = new Object();
+    var id_field_father_properties;
+    $('.field_key_child_json').each(function() {
+      id_field_father_properties = this.id.split('__')[0];
+      var id_child_properties = this.id.split('__')[2];
+      var fiel_type_properties = this.id.split('__')[3];
+      var id_field_child_properties = this.id.split('__')[4];
+
+      if(id_child_properties==array_child_edited[z]){
+      if($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val()!="" && $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val()!=null ){
+        if(fiel_type_properties==2){
+          var array_val = [];
+          array_val.push($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val());
+          var value_field_properties = array_val;
+        }else{
+          var value_field_properties = $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val();
+        }
+        properties_child_to_save[id_field_child_properties] = value_field_properties;
+        console.log("Properties Child")
+        console.log(properties_child_to_save)
+        }
+      }
+    });
+    var child_data = new Object();
+    child_data.IdFather = Navarra.project_types.config.id_item_displayed;
+    child_data.field_id = id_field_father_properties;
+    child_data.child_id = array_child_edited[z];
+    child_data.values = properties_child_to_save;
+    child_edited_all.push(child_data);
+}
+  
+    
+
+    console.log("Objeto a enviar")
+    console.log(child_data)
+
+    console.log(child_edited_all);
+
+  $.ajax({
+    type: 'GET',
+    url: '/project_types/edit_file_child',
+    datatype: 'json',
+    data: {
+      project_type_id: project_type_id,
+      values: child_edited_all
+    },
+    success: function(data) {
+      $('#info_messages').addClass("d-inline");
+      $('#info_messages').removeClass("d-none");
+      $('#info_messages').html(data);
+      //cambiar app_usuario
+    }
+  });
 }
 
 function change_owner(){
@@ -2704,6 +2780,7 @@ function change_owner(){
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
       $('#info_messages').html(data);
+      //cambiar app_usuario
     }
   });
 }
@@ -2723,6 +2800,7 @@ function disable_file(){
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
       $('#info_messages').html(data);
+      //cambiar app_usuario
     }
   });
 }
@@ -2757,5 +2835,13 @@ function calculate_all(){
           }
         });  
 }
+
+function changeChild(id_child_edited){
+  array_child_edited.push(id_child_edited);
+}
+
+Array.prototype.unique=function(a){
+  return function(){return this.filter(a)}}(function(a,b,c){return c.indexOf(a,b+1)<0
+});
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
