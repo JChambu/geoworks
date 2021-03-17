@@ -2863,21 +2863,21 @@ function edit_file(){
 
     console.log(child_edited_all);
 
-  $.ajax({
-    type: 'GET',
-    url: '/project_types/edit_file_child',
-    datatype: 'json',
-    data: {
-      project_type_id: project_type_id,
-      values: child_edited_all
-    },
-    success: function(data) {
-      $('#info_messages').addClass("d-inline");
-      $('#info_messages').removeClass("d-none");
-      $('#info_messages').html(data);
-      //cambiar app_usuario
-    }
-  });
+  // $.ajax({
+  //   type: 'GET',
+  //   url: '/project_types/edit_file_child',
+  //   datatype: 'json',
+  //   data: {
+  //     project_type_id: project_type_id,
+  //     values: child_edited_all
+  //   },
+  //   success: function(data) {
+  //     $('#info_messages').addClass("d-inline");
+  //     $('#info_messages').removeClass("d-none");
+  //     $('#info_messages').html(data);
+  //     //cambiar app_usuario
+  //   }
+  // });
 }
 
 function change_owner(){
