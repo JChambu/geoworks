@@ -2639,7 +2639,7 @@ function show_item_info(appid_info, from_map) {
       });
       textarea_adjust_height();
       $('.date_field').datetimepicker({
-        format: "YYYY-MM-DD",
+        format: "DD/MM/YYYY",
         viewMode: "days",
         locale: moment.locale('en', {
           week: {
@@ -2795,7 +2795,7 @@ function edit_file(){
           }
         var value_field_properties = array_val;
       }else{
-        var value_field_properties = $('#field_id_'+id_field_properties).val();
+          var value_field_properties = $('#field_id_'+id_field_properties).val();
       }
       properties_to_save[key_field_properties] = value_field_properties;
     }

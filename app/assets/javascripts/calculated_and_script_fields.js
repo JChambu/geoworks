@@ -133,9 +133,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
             if(CalculateObj_keys[k]=="semanaDesde"){
                 var val_from = $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).val();
                 if(val_from!=""){
-                    var dateParts = val_from.split("-");
-                    var val_from_format =dateParts[2]+"/"+dateParts[1]+"/" +dateParts[0];
-                    var dateObject = changeformatDate(val_from_format, 'day');
+                    var dateObject = changeformatDate(val_from, 'day');
                     number_of_week = getWeekNumber(dateObject)[1]
                     $('#field_id_'+field_id).val(number_of_week);
                 }
