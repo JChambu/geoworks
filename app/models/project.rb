@@ -7,6 +7,7 @@ class Project < ApplicationRecord
   belongs_to :project_type
   belongs_to :user
   has_many :project_data_child
+  before_update :update_sequence_projects
 
   #validate :validate_properties
 
@@ -80,6 +81,12 @@ class Project < ApplicationRecord
     #
 
 
+  end
+
+  def update_sequence_projects
+    sequence_name = 'projects_update_sequence_seq'
+    @a = ActiveRecord::Base.connection.execute("SELECT nextval('#{sequence_name}')")
+    self.update_sequence = @a[0]['nextval']
   end
 
   def change_owner user_id
