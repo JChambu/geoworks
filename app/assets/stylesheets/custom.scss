@@ -139,35 +139,22 @@ div.custom-menu.show {
 }
 
 /* Botón para extender el sidebar */
-#view {
-  cursor: pointer;
-  position: absolute;
-  top: 40vh;
-  z-index: 402 !important;
-  font-size: 20px;
-  color: #e8ebef;
-  background: rgba(58, 63, 68, 0.5);
-  transform: translate(-50%);
-  border-width: 5px;
-  border-color: transparent;
-  border-radius: 50%;
-  border-style: solid;
-}
-#view-data {
-  cursor: pointer;
+.view-data-container {
   position:absolute;
-  top:-3vh;
-  left: 50%;
-  z-index: 402 !important;
-  font-size: 20px;
-  color: #e8ebef;
-  background: rgba(58, 63, 68, 0.5);
-  transform: translate(-50%);
-  border-width: 5px;
-  border-color: transparent;
-  border-radius: 50%;
-  border-style: solid;
+  top:-8px;
+  right: 0px;
+  width:72px;
+  z-index: 405;
+  background: #272B30;
+  padding: 1px 10px;
+  border-radius: 2px;
   transition:1s;
+}
+.view-data {
+  cursor: pointer;
+  font-size: 12px;
+  color: #e9ecef;
+  margin: 0px 2px;
 }
 
 /* Gráficos */
@@ -274,6 +261,9 @@ div.custom-menu.show {
 .leaflet-control-zoom-in:hover,
 .leaflet-control-zoom-out:hover {
   color: #d3d800 !important;
+}
+.leaflet-top .leaflet-control {
+  margin-top:15px!important;
 }
 
 /*Elimina la marca*/

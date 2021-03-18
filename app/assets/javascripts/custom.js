@@ -113,7 +113,7 @@ function capitalize(s) {
 
 function init_chart_doughnut(size_box = null, create_time_s = true) {
   // no calcula la función si los gráficos están escondidos
-  if ($('#view').hasClass('view-condensed')) {
+  if ($('#status-view-sidebar').hasClass('status-view-condensed')) {
     return;
   }
   $(".chart_body_custom").css("visibility","hidden");
@@ -646,10 +646,9 @@ function draw_charts() {
     )
 
     //Chequeamos el estado de view
-    var status_view_chart = $('#view').hasClass('view-normal');
-    var status_view_expanded_chart = $('#view').hasClass('view-expanded');
-    var status_view_right_chart = $('#view').hasClass('view-normal-right');
-    if (status_view_chart || status_view_right_chart) { // Default
+    var status_view_chart = $('#status-view-sidebar').hasClass('status-view-middle');
+    var status_view_expanded_chart = $('#status-view-sidebar').hasClass('status-view-expanded');
+    if (status_view_chart) { // Default
       if (width == 3) {
         width = 6;
         aspectR = "1";
@@ -1053,7 +1052,7 @@ function draw_charts() {
 // Función para traer todos los datos de los registros contenidos y filtrados
 function init_data_dashboard(haschange) {
   //Evita calcular la tabla si está oculta
-  if ($('#view-data').hasClass('view-condensed')) {
+  if ($('#status-view').hasClass('status-view-condensed')) {
     return;
   }
   //cierra modal de información del registro
@@ -2667,8 +2666,6 @@ function show_item_info(appid_info, from_map) {
         }),
       });
       $('.date_field').on('dp.change', function(e){
-        console.log(this)
-        console.log(this.id)
         if(this.id.substring(0,12)=="fieldchildid"){
           changeChild(this.id.split('__')[2]);
         } else{
@@ -2952,7 +2949,6 @@ function set_script_all(){
 }
 
 function calculate_change(calculated_field,field_type_id,field_id,value){
-  console.log("entra funcion calcular")
   if(calculated_field!=""){
     Navarra.calculated_and_script_fields.Calculate(JSON.stringify(calculated_field),field_type_id, field_id,value, "data_edition");
   }
@@ -2961,7 +2957,6 @@ function calculate_all(){
   //Ejecuta Calculate de campos padres
         father_fields.forEach(function(element) {
           if(element.calculated_field!="" && element.field_type_id!=11){
-            console.log("Va a calcular "+element.name)
             Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,element.field_id,element.value,"data_edition");
           }
         });
