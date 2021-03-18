@@ -18,6 +18,11 @@ Number.prototype.format = function(n, x, s, c) {
 };
 
 function init_kpi(size_box = null) {
+  $('.tile_count').empty();
+  html = ' <div class="spinner-border" style="margin:10px" role="status">'+
+        '<span class="sr-only">Loading...</span>'+
+        '</div>';
+  $('.tile_count').append(html);
   var type_box = 'polygon';
   var data_conditions = {}
 
@@ -66,7 +71,7 @@ function init_kpi(size_box = null) {
     },
     dashboard_id: dashboard_id,
     success: function(data) {
-
+      $('.tile_count').empty();
       data.forEach(function(element) {
         var count_element = element['data'][0]['count'];
 
@@ -83,10 +88,9 @@ function init_kpi(size_box = null) {
           data_cont = (Number(count_element)).format(0, 3, '.', ',');
         }
 
-        if ($('.kpi_' + element['id']).length) {
-          $('.kpi_' + element['id']).replaceWith('<div class="count kpi_' + element['id'] + '">' + data_cont + '</div>');
-        } else {
-
+      // if ($('.kpi_' + element['id']).length) {
+        // $('.kpi_' + element['id']).replaceWith('<div class="count kpi_' + element['id'] + '">' + data_cont + '</div>');
+        //} else {
           html = ' <div class="tile_stats_count">' +
             '<span class="count_top align-top">' + element['title'] + '</span>' +
             '<div class="count align-middle kpi_' + element['id'] + '"> ' + data_cont + '</div>' +
@@ -94,7 +98,7 @@ function init_kpi(size_box = null) {
             '</div>'
           $('.tile_count').append(html);
 
-        }
+       // }
 
       }); // Cierra forEach
     } // Cierra success
@@ -112,7 +116,12 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
   if ($('#view').hasClass('view-condensed')) {
     return;
   }
-
+  $(".chart_body_custom").css("visibility","hidden");
+   html = ' <div class="d-flex justify-content-center" style= "position: absolute;width:100%; height:190px; align-items:center">'+
+          '<div class="spinner-border" role="status">'+
+          '<span class="sr-only">Loading...</span>'+
+          '</div></div>';
+  $('.chart_container').append(html);
   // Guardamos la posición del scroll
   var scroll = $('.graphics').scrollTop();
 
@@ -170,6 +179,7 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
 
         data_charts = data;
         draw_charts();
+        
 
       } //cierra function data
     }) //cierra ajax
@@ -623,7 +633,7 @@ function draw_charts() {
           'id': 'collapse_' + graphic_id
         }).append(
           $('<div>', {
-            'class': 'card-body px-1 pb-0',
+            'class': 'card-body px-1 pb-0 chart_body_custom',
             'id': 'body' + graphic_id
           }).append(
             $('<canvas>', {
