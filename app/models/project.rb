@@ -97,7 +97,7 @@ class Project < ApplicationRecord
 
   def disable_form
     self.row_enabled = false
-    self.disabled_at = Time.now
+    self.disabled_at = Time.now - 3.hours # TODO: Corregir zona horaria
     save!
   end
 
