@@ -103,14 +103,13 @@ class Project < ApplicationRecord
 
   def update_form properties, user_id
 
-
     properties['app_usuario'] = user_id
     attributes = {
       properties: properties,
-      user_id: user_id
+      user_id: user_id,
+      gwm_updated_at: Time.now - 3.hours # TODO: Corregir zona horaria
     }
     self.update_attributes(attributes)
-    save!
 
   end
 
