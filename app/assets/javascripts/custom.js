@@ -2255,7 +2255,7 @@ function show_item_info(appid_info, from_map) {
               if (element.field_type_id == 1) {
                 var new_p = document.createElement('TEXTAREA');
                 new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
-                new_p.setAttribute("onChange","calculate_all()");
+                new_p.setAttribute("onChange","calculate_all(false)");
               }
               var found_nested = false;
               if (element.field_type_id == 2 || element.field_type_id == 10) {
@@ -2291,6 +2291,7 @@ function show_item_info(appid_info, from_map) {
                   }
                   var id_field_nested = element.field_id+"_nested";
                   new_p_nested.id = "field_id_"+id_field_nested;
+                  new_p_nested.setAttribute("onChange","changeFile()")
                   //termina anidados
                 }
 
@@ -2367,7 +2368,7 @@ function show_item_info(appid_info, from_map) {
                 var new_p = document.createElement('INPUT');
                 new_p.type = "number";
                 new_p.className = "form-control form-control-sm info_input_disabled";
-                new_p.setAttribute("onChange","calculate_all()");
+                new_p.setAttribute("onChange","calculate_all(false)");
               }
               new_p.disabled = true;
               if (element.value != null && element.field_type_id != 10 && element.field_type_id != 2) {
@@ -2543,6 +2544,7 @@ function show_item_info(appid_info, from_map) {
                       var id_child = element_child.children_id;
                       var id_field_nested = element.field_id+"_nested";
                       new_p_nested.id = "fieldchildid__"+id_field+"__"+id_child+"_nested";
+                      new_p_nested.setAttribute('onChange','changeChild('+element_child.children_id+')')
                     //termina anidados
                     }
 
@@ -2629,6 +2631,7 @@ function show_item_info(appid_info, from_map) {
                   var id_child = element_child.children_id;
                   new_p.id = "fieldchildid__"+id_field+"__"+id_child;
                   new_celd.appendChild(new_p);
+                  if(found_nested){new_celd.appendChild(new_p_nested)}
                   new_row1.appendChild(new_celd);
                 }
                 new_row.appendChild(new_row1)
@@ -2672,7 +2675,7 @@ function show_item_info(appid_info, from_map) {
         if(this.id.substring(0,12)=="fieldchildid"){
           changeChild(this.id.split('__')[2]);
         } else{
-          calculate_all();
+          calculate_all(false);
         }
     });
 
@@ -2884,6 +2887,8 @@ function edit_file(){
       subforms: child_edited_all
     },
     success: function(data) {
+      filechange = false;
+      array_child_edited = [];
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
       $('#info_messages').html(data['status']);
@@ -2954,9 +2959,9 @@ function calculate_change(calculated_field,field_type_id,field_id,value){
     Navarra.calculated_and_script_fields.Calculate(JSON.stringify(calculated_field),field_type_id, field_id,value, "data_edition");
   }
 }
-function calculate_all(){
+function calculate_all(first_time){
   //Ejecuta Calculate de campos padres
-  filechange = true;
+  if(!first_time){filechange = true;}
         father_fields.forEach(function(element) {
           if(element.calculated_field!="" && element.field_type_id!=11){
             Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,element.field_id,element.value,"data_edition");
