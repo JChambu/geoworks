@@ -2867,29 +2867,29 @@ function edit_file(){
     child_data.IdFather = Navarra.project_types.config.id_item_displayed;
     child_data.field_id = id_field_father_properties;
     child_data.child_id = array_child_edited[z];
-    child_data.values = properties_child_to_save;
+    child_data.properties = properties_child_to_save;
     child_edited_all.push(child_data);
-}
+  }
 
-    console.log("Objeto a enviar")
-    console.log(child_data)
-    console.log(child_edited_all);
+  console.log("Hijos para actualizar")
+  console.log(child_edited_all);
 
-  // $.ajax({
-  //   type: 'GET',
-  //   url: '/project_types/edit_file_child',
-  //   datatype: 'json',
-  //   data: {
-  //     project_type_id: project_type_id,
-  //     values: child_edited_all
-  //   },
-  //   success: function(data) {
-  //     $('#info_messages').addClass("d-inline");
-  //     $('#info_messages').removeClass("d-none");
-  //     $('#info_messages').html(data);
-  //     //cambiar app_usuario
-  //   }
-  // });
+  $.ajax({
+    type: 'PATCH',
+    url: '/project_data_children/update_subform',
+    datatype: 'json',
+    data: {
+      subforms: child_edited_all
+    },
+    success: function(data) {
+      $('#info_messages').addClass("d-inline");
+      $('#info_messages').removeClass("d-none");
+      $('#info_messages').html(data);
+      //cambiar app_usuario
+    }
+
+  });
+
 }
 
 function change_owner(){
