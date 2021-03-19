@@ -270,6 +270,9 @@ div.custom-menu.show {
 .leaflet-control-attribution a{
   display:none!important;
 }
+.leaflet-container .leaflet-control-attribution{
+  display:none !important;
+}
 /* Modifica el estilo de la escala de Leaflet*/
 .leaflet-control-scale-line {
   background-color: transparent !important;

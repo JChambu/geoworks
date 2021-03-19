@@ -212,72 +212,6 @@ Navarra.dashboards.action_show = function(){
         }
     });
 
-
-    $("#view").on("click", function() {
-      // Chequeamos el estado de view
-      status_view = $('#view').hasClass('view-normal');
-      status_view_expanded = $('#view').hasClass('view-expanded');
-      status_view_right = $('#view').hasClass('view-normal-right');
-      status_view_condensed = $('#view').hasClass('view-condensed');
-      if (status_view) { // Default
-        $('#view').addClass('view-expanded');
-        $('#view').removeClass('view-normal');
-        $('#view').removeClass('fa-arrow-alt-circle-left');
-        $('#view').addClass('fa-arrow-alt-circle-right');
-        $(".sidebar").css("transition-delay", "0.2s");
-        $(".sidebar").css("width", "60%");
-        $(".table_data_container").css("transition-delay", "0s");
-        $(".table_data_container").css("width", "40%");
-        $(".leaflet-right").css("margin-right", "60%");
-        draw_charts();
-      }
-      if (status_view_expanded) { // Expanded
-        $('#view').removeClass('view-expanded');
-        $('#view').addClass('view-normal-right');
-        $(".sidebar").css("transition-delay", "0s");
-        $(".sidebar").css("width", "30%");
-        $(".leaflet-right").css("margin-right", "30%");
-        $(".table_data_container").css("transition-delay", "0.2s");
-        $(".table_data_container").css("width", "70%");
-        draw_charts();
-      }
-      if (status_view_right) { // Normal Right
-        $('#view').removeClass('view-normal-right');
-        $('#view').addClass('view-condensed');
-        $('#view').removeClass('fa-arrow-alt-circle-right');
-        $('#view').addClass('fa-arrow-alt-circle-left');
-        $("#view").css("left", "-1%");
-        $(".sidebar").css("transition-delay", "0.2s");
-        $(".sidebar").css("width", "1.2%");
-        $("#filter-container").css("transition", "0s");
-        $(".graphics").css("transition", "0s");
-        $("#filter-container").css("transition-delay", "0s");
-        $(".graphics").css("transition-delay", "0s");
-        $("#filter-container").css("transform", "scale(0)");
-        $(".graphics").css("transform", "scale(0)");
-        $(".leaflet-right").css("margin-right", "1%");
-        $(".table_data_container").css("transition-delay", "0.2s");
-        $(".table_data_container").css("width", "99%");
-      }
-      if (status_view_condensed) { // Condensed
-        $('#view').removeClass('view-condensed');
-        $('#view').addClass('view-normal');
-        $("#view").css("left", "0%");
-        $(".sidebar").css("transition-delay", "0.2s");
-        $(".sidebar").css("width", "30%");
-        $(".leaflet-right").css("margin-right", "30%");
-        $(".table_data_container").css("transition-delay", "0s");
-        $(".table_data_container").css("width", "70%");
-        $("#filter-container").css("transition", "2s");
-        $(".graphics").css("transition", "1s");
-        $("#filter-container").css("transition-delay", "0.3s");
-        $(".graphics").css("transition-delay", "0.3s");
-        $("#filter-container").css("transform", "scale(1)");
-        $(".graphics").css("transform", "scale(1)");
-        init_chart_doughnut();
-      }
-    });
-
     //Ventana inferior datos
 
     //Expandir toda la pantalla
@@ -298,7 +232,6 @@ Navarra.dashboards.action_show = function(){
           $("#collapse_data").css("transition-delay", "0.6s");
           $("#collapse_data").css("border", "1px solid rgba(0,0,0,0.6)");
           $(".leaflet-control-scale-line").css("display", "none");
-          $(".leaflet-control-attribution").css("display", "none");
           init_data_dashboard(false);
         }
     });
@@ -313,7 +246,6 @@ Navarra.dashboards.action_show = function(){
       $(".leaflet-right").css("display", "block");
       $(".leaflet-left").css("display", "block");
       $(".leaflet-control-scale-line").css("display", "block");
-      $(".leaflet-control-attribution").css("display", "block");
     });
 
     //Abrir a mitad de pantalla
@@ -334,7 +266,6 @@ Navarra.dashboards.action_show = function(){
           $("#collapse_data").css("transition-delay", "0.6s");
           $("#collapse_data").css("border", "1px solid rgba(0,0,0,0.6)");
           $(".leaflet-control-scale-line").css("display", "none");
-          $(".leaflet-control-attribution").css("display", "none");
           init_data_dashboard(false);
         }
     });
