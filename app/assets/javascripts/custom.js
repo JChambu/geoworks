@@ -6,6 +6,7 @@ var xhr_table_search = null;
 var xhr_info = null;
 var xhr_report = null;
 var data_charts;
+var filechange;
 
 var father_fields;
 var array_child_edited;
@@ -2159,6 +2160,7 @@ function show_item_info(appid_info, from_map) {
       $('.div_confirmation').removeClass("d-inline");
       $("#info-modal").modal('show');
 
+      filechange = false;
       //borra datos anteriores
       var arraymultiselect=[];
       var arraymultiselectChild=[];
@@ -2330,7 +2332,7 @@ function show_item_info(appid_info, from_map) {
                   //termina anidados opciones
                 });
                 if(found_nested){new_p.value=values;}
-
+                new_p.setAttribute('onChange', 'changeFile()');
                 if(found_nested){
                   new_p.setAttribute('onChange', 'set_nested(event)');
                 }
@@ -2356,6 +2358,7 @@ function show_item_info(appid_info, from_map) {
                 new_option.value="false";
                 new_p.appendChild(new_option);
                 new_p.value="";
+                new_p.setAttribute('onChange', 'changeFile()');
                 if(element.data_script!=""){
                   new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +element.value +' )');
                 }
@@ -2794,44 +2797,40 @@ function edit_file(){
     $('#info_messages').removeClass("d-none");
     return;
   }
+  if(!filechange && array_child_edited.length==0){
+    $('#info_messages').html("No hay cambios a guardar");
+    $('#info_messages').addClass("text-danger");
+    $('#info_messages').removeClass("d-none");
+    return;
+  }
+
   var app_id = Navarra.project_types.config.id_item_displayed;
   // Arma Json properties padres
-  var properties_to_save = new Object();
-  $('.field_key_json').each(function() {
-    var key_field_properties = this.id.split('__')[2];
-    var id_field_properties = this.id.split('__')[0];
-    var fiel_type_properties = this.id.split('__')[3];
-    if($('#field_id_'+id_field_properties).val()!="" && $('#field_id_'+id_field_properties).val()!=null ){
-      if(fiel_type_properties==2){
-        var array_val = [];
-        array_val.push($('#field_id_'+id_field_properties).val());
-        if(document.getElementById('field_id_'+id_field_properties).classList.contains('nested')){
-            array_val.push($('#field_id_'+id_field_properties+'_nested').val());
-          }
-        var value_field_properties = array_val;
-      }else{
-          var value_field_properties = $('#field_id_'+id_field_properties).val();
+  if(filechange){
+    var properties_to_save = new Object();
+    $('.field_key_json').each(function() {
+      var key_field_properties = this.id.split('__')[2];
+      var id_field_properties = this.id.split('__')[0];
+      var fiel_type_properties = this.id.split('__')[3];
+      if($('#field_id_'+id_field_properties).val()!="" && $('#field_id_'+id_field_properties).val()!=null ){
+        if(fiel_type_properties==2){
+          var array_val = [];
+          array_val.push($('#field_id_'+id_field_properties).val());
+          if(document.getElementById('field_id_'+id_field_properties).classList.contains('nested')){
+              array_val.push($('#field_id_'+id_field_properties+'_nested').val());
+            }
+          var value_field_properties = array_val;
+        }else{
+            var value_field_properties = $('#field_id_'+id_field_properties).val();
+        }
+        properties_to_save[key_field_properties] = value_field_properties;
       }
-      properties_to_save[key_field_properties] = value_field_properties;
-    }
-  });
+    });
+  } else {
+    var properties_to_save = null;
+  }
     console.log("Properties")
     console.log(properties_to_save)
-
-  $.ajax({
-    type: 'PATCH',
-    url: '/projects/update_form',
-    datatype: 'JSON',
-    data: {
-      app_id: app_id,
-      properties: properties_to_save
-    },
-    success: function(data) {
-      $('#info_messages').addClass("d-inline");
-      $('#info_messages').removeClass("d-none");
-      $('#info_messages').html(data['status']);
-    }
-  });
 
   //envio de Json hijos
   var child_edited_all = [];
@@ -2874,22 +2873,22 @@ function edit_file(){
   console.log("Hijos para actualizar")
   console.log(child_edited_all);
 
+
   $.ajax({
     type: 'PATCH',
-    url: '/project_data_children/update_subform',
-    datatype: 'json',
+    url: '/projects/update_form',
+    datatype: 'JSON',
     data: {
+      app_id: app_id,
+      properties: properties_to_save,
       subforms: child_edited_all
     },
     success: function(data) {
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
-      $('#info_messages').html(data);
-      //cambiar app_usuario
+      $('#info_messages').html(data['status']);
     }
-
   });
-
 }
 
 function change_owner(){
@@ -2931,6 +2930,8 @@ function disable_file(){
 }
 
 function set_script(data_script,field_type_id,field_id,value,isnested,event){
+  // Script de campos padres
+  filechange = true;
   if(data_script!=""){
     Navarra.calculated_and_script_fields.Script(JSON.stringify(data_script),field_type_id, field_id,value, false);
   }
@@ -2955,6 +2956,7 @@ function calculate_change(calculated_field,field_type_id,field_id,value){
 }
 function calculate_all(){
   //Ejecuta Calculate de campos padres
+  filechange = true;
         father_fields.forEach(function(element) {
           if(element.calculated_field!="" && element.field_type_id!=11){
             Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,element.field_id,element.value,"data_edition");
@@ -2963,6 +2965,7 @@ function calculate_all(){
 }
 
 function set_nested(event){
+  filechange = true;
   var id_event = event.target.id;
   var id_event_nested = id_event+"_nested";
   var attribute_nested = document.getElementById(id_event).options[document.getElementById(id_event).selectedIndex].getAttribute('data-type');
@@ -2981,6 +2984,10 @@ function changeChild(id_child_edited,isnested,event){
   if(isnested){
     set_nested(event)
   }
+}
+
+function changeFile(){
+  filechange = true;
 }
 
 Array.prototype.unique=function(a){
