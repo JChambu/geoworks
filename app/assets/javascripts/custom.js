@@ -2504,7 +2504,7 @@ function show_item_info(appid_info, from_map) {
                   // Adapta el código a los diferentes tipos de campos
                   if (element_child_field.field_type_id == 1) {
                     var new_p = document.createElement('TEXTAREA');
-                    new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
+                    new_p.className = "form-control form-control-sm info_input_disabled textarea_input is_child_field";
                     new_p.style.minHeight = '22px';
                     new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
                   }
@@ -2514,7 +2514,7 @@ function show_item_info(appid_info, from_map) {
                     if(element_child_field.field_type_id == 10){
                       new_p.multiple = true;
                     }
-                    new_p.className = "multiselect_field form-control form-control-sm info_input_disabled";
+                    new_p.className = "multiselect_field form-control form-control-sm info_input_disabled is_child_field";
                     var items_field = element_child_field.other_possible_values;
                     //verifica si tiene anidados
                     items_field.forEach(function(item) {
@@ -2532,7 +2532,7 @@ function show_item_info(appid_info, from_map) {
                       values_nested = JSON.parse(element_child_field.value)[1];
                       }
                       var new_p_nested = document.createElement('SELECT');
-                      new_p_nested.className = "mb-1 multiselect_field form-control form-control-sm info_input_disabled";
+                      new_p_nested.className = "mb-1 multiselect_field form-control form-control-sm info_input_disabled is_child_field";
                       new_p_nested.disabled = true;
                       if(element_child_field.required==true){
                         new_p_nested.classList.add('required_field');
@@ -2594,11 +2594,11 @@ function show_item_info(appid_info, from_map) {
                   }
                   if (element_child_field.field_type_id == 3) {
                     var new_p = document.createElement('INPUT');
-                    new_p.className = "form-control form-control-sm info_input_disabled date_field";
+                    new_p.className = "form-control form-control-sm info_input_disabled date_field is_child_field";
                   }
                   if (element_child_field.field_type_id == 4) {
                     var new_p = document.createElement('SELECT');
-                    new_p.className = "form-control form-control-sm info_input_disabled";
+                    new_p.className = "form-control form-control-sm info_input_disabled is_child_field";
                     var new_option = document.createElement('OPTION');
                     new_option.text="SI";
                     new_option.value="true";
@@ -2612,7 +2612,7 @@ function show_item_info(appid_info, from_map) {
                   if (element_child_field.field_type_id == 5) {
                     var new_p = document.createElement('INPUT');
                     new_p.type = "number";
-                    new_p.className = "form-control form-control-sm info_input_disabled";
+                    new_p.className = "form-control form-control-sm info_input_disabled is_child_field";
                     new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
                   }
                   new_p.disabled = true;
@@ -2682,9 +2682,9 @@ function show_item_info(appid_info, from_map) {
       // selectores y multiselectores en hijos
        for(x=0;x<arraymultiselect.length;x++){
               if(document.getElementById('fieldchildid__'+arraymultiselect[x]+'__'+arraymultiselectChild[x]).classList.contains("readonly_field")){
-                var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field';
+                var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field is_child_field';
               } else{
-                var buttonClass = 'text-left form-control form-control-sm info_input_disabled';
+                var buttonClass = 'text-left form-control form-control-sm info_input_disabled is_child_field';
               }
               $('#fieldchildid__'+arraymultiselect[x]+'__'+arraymultiselectChild[x]).multiselect({
                 maxHeight: 800,
@@ -2780,18 +2780,26 @@ function textarea_adjust_height() {
 
 //****** FUNCIONES PARA EDICION DE REGISTROS *****
 
-function edit_file(){
+function edit_file(width_childs){
   //verifica requeridos
   textarea_adjust_height()
   var required_field_number = 0;
   $('#info_messages').html("");
   $('#info_messages').addClass("d-none");
   $('#info_messages').removeClass("text-danger");
+  if(width_childs){array_child_edited=[]}
   $(".required_field").each(function() {
     $(this).parent().closest('div').css("border-bottom","none");
-    if(this.value == null || this.value == ""){
-      $(this).parent().closest('div').css("border-bottom","solid 2px #dc3545");
-      required_field_number++;
+    console.log("Está editando hijos???" + width_childs)
+    if(!width_childs && this.classList.contains('is_child_field')){
+      console.log("Es requerido en hijos")
+    }else{
+      console.log("Campo Requerido ");
+      console.log(this.value)
+      if(this.value == null || this.value == ""){
+        $(this).parent().closest('div').css("border-bottom","solid 2px #dc3545");
+        required_field_number++;
+      }
     }
   });
   if(required_field_number>0){
@@ -2837,45 +2845,46 @@ function edit_file(){
 
   //envio de Json hijos
   var child_edited_all = [];
-  array_child_edited = array_child_edited.unique();
-  for(z=0;z<array_child_edited.length;z++){
-    var properties_child_to_save = new Object();
-    var id_field_father_properties;
-    $('.field_key_child_json').each(function() {
-      id_field_father_properties = this.id.split('__')[0];
-      var id_child_properties = this.id.split('__')[2];
-      var fiel_type_properties = this.id.split('__')[3];
-      var id_field_child_properties = this.id.split('__')[4];
+  if(array_child_edited.length>0){
+    array_child_edited = array_child_edited.unique();
+    for(z=0;z<array_child_edited.length;z++){
+      var properties_child_to_save = new Object();
+      var id_field_father_properties;
+      $('.field_key_child_json').each(function() {
+        id_field_father_properties = this.id.split('__')[0];
+        var id_child_properties = this.id.split('__')[2]; 
+        var fiel_type_properties = this.id.split('__')[3];
+        var id_field_child_properties = this.id.split('__')[4];
 
-      if(id_child_properties==array_child_edited[z]){
-      if($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val()!="" && $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val()!=null ){
-        if(fiel_type_properties==2){
-          var array_val = [];
-          array_val.push($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val());
-          if(document.getElementById('fieldchildid__'+id_field_child_properties+'__'+id_child_properties).classList.contains('nested')){
-            array_val.push($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties+'_nested').val());
+        if(id_child_properties==array_child_edited[z]){
+        if($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val()!="" && $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val()!=null ){
+          if(fiel_type_properties==2){
+            var array_val = [];
+            array_val.push($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val());
+            if(document.getElementById('fieldchildid__'+id_field_child_properties+'__'+id_child_properties).classList.contains('nested')){
+              array_val.push($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties+'_nested').val());
+            }
+            var value_field_properties = array_val;
+          }else{
+            var value_field_properties = $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val();
           }
-          var value_field_properties = array_val;
-        }else{
-          var value_field_properties = $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val();
+          properties_child_to_save[id_field_child_properties] = value_field_properties;
+          console.log("Properties Child")
+          console.log(properties_child_to_save)
+          }
         }
-        properties_child_to_save[id_field_child_properties] = value_field_properties;
-        console.log("Properties Child")
-        console.log(properties_child_to_save)
-        }
-      }
-    });
-    var child_data = new Object();
-    child_data.IdFather = Navarra.project_types.config.id_item_displayed;
-    child_data.field_id = id_field_father_properties;
-    child_data.child_id = array_child_edited[z];
-    child_data.properties = properties_child_to_save;
-    child_edited_all.push(child_data);
+      });
+      var child_data = new Object();
+      child_data.IdFather = Navarra.project_types.config.id_item_displayed;
+      child_data.field_id = id_field_father_properties;
+      child_data.child_id = array_child_edited[z];
+      child_data.properties = properties_child_to_save;
+      child_edited_all.push(child_data);
+    }
   }
 
   console.log("Hijos para actualizar")
   console.log(child_edited_all);
-
 
   $.ajax({
     type: 'PATCH',

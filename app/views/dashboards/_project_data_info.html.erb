@@ -18,6 +18,17 @@
     $('#'+div_confirmation).addClass("d-inline");
     $('#'+div_confirmation).removeClass("d-none");
     if(div_confirmation=='edit_confirmation'){
+      $('.info_input_disabled').not('.readonly_field').not('.is_child_field').removeClass('disabled');
+      $('.info_input_disabled').not('.readonly_field').not('.is_child_field').addClass('info_input');
+      $('.info_input_disabled').not('.readonly_field').not('.is_child_field').prop('disabled', false);
+      $('.info_input_disabled').not('.readonly_field').not('.is_child_field').removeClass('info_input_disabled');
+      // muestra campos vacíos
+       $('.empty_field').not('.hidden_field').not('.is_child_field').removeClass('d-none');
+      set_script_all();
+      calculate_all(true);
+    }
+
+    if(div_confirmation=='edit_confirmation_child'){
       $('.info_input_disabled').not('.readonly_field').removeClass('disabled');
       $('.info_input_disabled').not('.readonly_field').addClass('info_input');
       $('.info_input_disabled').not('.readonly_field').prop('disabled', false);
@@ -54,7 +65,10 @@
     $('.div_confirmation').addClass("d-none");
     $('.div_confirmation').removeClass("d-inline");
     if(option_save=="edit_confirmation"){
-      edit_file();
+      edit_file(false);
+    }
+    if(option_save=="edit_confirmation_child"){
+      edit_file(true);
     }
     if(option_save=="owner_confirmation"){
       change_owner();
@@ -91,6 +105,11 @@
             <button type="button" class="btn btn-secondary p-0" onclick="save_info('edit_confirmation')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
+           <div class="d-none text-left div_confirmation" id="edit_confirmation_child" style="width: 70%;">
+            <p class="m-0 d-inline">Guardar Cambios?</p>
+            <button type="button" class="btn btn-secondary p-0" onclick="save_info('edit_confirmation_child')" style="width: 35px">SI</button>
+            <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
+          </div>
           <div class="d-none text-left div_confirmation" id="lat_long_edit" style="width: 70%;">
             <p class="m-0" style="font-size: 0.8em">Lat: -34.5656 Lon: -71.4783</p>
             <button type="button" class="btn btn-secondary pt-0 pb-0 pl-1 pr-1" onclick="save_info()" >Guardar</button>
@@ -112,9 +131,14 @@
           <div class="d-inline text-right" style="width: 30%;">
             <% if can? :data, :edit %>
               <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation')"></i>
+             <!--Aquí autorización para editar padres e hijos -->
+               <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation_child')"></i>
+               <!--Aquí autorización para edición geométrica -->
               <i class="fas fa-map-marker-alt" style="cursor: pointer;" title="Próximamente" onclick="show_confirmation('lat_long_edit')"></i>
+              <!--Aquí autorización para cambiar owner -->
               <i class="fas fa-user-edit" style="cursor: pointer;" title="Cambiar Propietario" onclick="show_confirmation('owner_confirmation')"></i>
             <% end %>
+            <!--Aquí autorización para cambiar desactivar -->
             <i class="fas fa-archive" style="cursor: pointer;" title="Desactivar" onclick="show_confirmation('disable_confirmation')"></i>
             <i class="fas fa-history" style="cursor: pointer;" title="Próximamente" onclick="show_confirmation('history')"></i>
           </div>
