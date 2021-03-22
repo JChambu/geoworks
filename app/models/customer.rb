@@ -25,7 +25,7 @@ class Customer < ApplicationRecord
     require 'uri'
     uri = URI.parse("http://#{ENV['GEOSERVER_HOST']}:8080/geoserver/rest/workspaces")
     request = Net::HTTP::Post.new(uri)
-    request.basic_auth('admin', ENV['GEOSERVER_ADMIN_PASSWORD'])
+    request.basic_auth(ENV['GEOSERVER_USER'], ENV['GEOSERVER_PASSWORD'])
     request.content_type = "text/xml"
     request.body = "<workspace><name>#{subdomain}</name></workspace>"
     req_options = {
@@ -44,7 +44,7 @@ class Customer < ApplicationRecord
     require 'uri'
     uri = URI.parse("http://#{ENV['GEOSERVER_HOST']}:8080/geoserver/rest/workspaces/#{subdomain}/datastores")
     request = Net::HTTP::Post.new(uri)
-    request.basic_auth('admin', ENV['GEOSERVER_ADMIN_PASSWORD'])
+    request.basic_auth(ENV['GEOSERVER_USER'], ENV['GEOSERVER_PASSWORD'])
     request.content_type = "text/xml"
     request.body = "<dataStore><name>#{subdomain}</name><connectionParameters><host>#{ENV['POSTGRES_HOST']}</host><port>5432</port><database>#{ENV['POSTGRES_DATABASE']}</database><schema>#{subdomain}</schema><user>#{ENV['POSTGRES_USER']}</user><passwd>#{ENV['POSTGRES_PASSWORD']}</passwd><dbtype>postgis</dbtype></connectionParameters></dataStore>"
     req_options = {
@@ -91,7 +91,7 @@ class Customer < ApplicationRecord
     require 'uri'
     uri = URI.parse("http://#{ENV['GEOSERVER_HOST']}:8080/geoserver/rest/workspaces/#{subdomain}?recurse=true")
     request = Net::HTTP::Delete.new(uri)
-    request.basic_auth('admin', ENV['GEOSERVER_ADMIN_PASSWORD'])
+    request.basic_auth(ENV['GEOSERVER_USER'], ENV['GEOSERVER_PASSWORD'])
     req_options = {
       use_ssl: uri.scheme == "https",
     }
