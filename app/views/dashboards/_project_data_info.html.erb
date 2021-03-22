@@ -55,6 +55,22 @@
               $('#owner_change_select').append(opt_check);
             }
           });
+          $('#owner_change_select').multiselect({
+                maxHeight: 800,
+                buttonClass: 'text-left mb-1 form-control form-control-sm',
+                buttonWidth: '50%',
+                nonSelectedText: 'Seleccionar',
+                selectedClass: 'selected_multiple_item',
+                delimiterText: '\n',
+                numberDisplayed: 0,
+                allSelectedText: false,
+                enableFiltering: true,
+                enableCaseInsensitiveFiltering: true,
+                filterPlaceholder: 'Buscar',
+                includeFilterClearBtn: false,
+                includeSelectAllOption: false,
+                dropRight: true,
+              });
         }
       });
     }

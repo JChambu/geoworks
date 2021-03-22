@@ -568,21 +568,37 @@ div.custom-menu.show {
 .field_div .multiselect-selected-text{
   white-space: pre-wrap!important;
 }
-.field_div .selected_multiple_item{
+.field_div .selected_multiple_item , .div_confirmation .selected_multiple_item{
   background:#d3d80080 !important;
   color:white!important;
   width: 100%;
 }
-.field_div .multiselect-container label input {
+.field_div .multiselect-container label input, .div_confirmation .multiselect-container label input  {
   display:none!important;
 }
-.field_div .multiselect-container label {
+.field_div .multiselect-container label , .div_confirmation .multiselect-container label{
   width: 100%!important;
 }
-.field_div ul{
+.field_div ul , .div_confirmation ul{
   padding: 5px 10px !important;
 }
-.field_div .dropdown-toggle::after {
+.field_div .dropdown-toggle::after , div_confirmation .dropdown-toggle::after {
   display:none !important;
+}
+.ok_button ul:after{
+  content:"OK";
+  cursor: pointer;
+  float: right;
+  border: solid 1px;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#8a9196), color-stop(60%, #7A8288), to(#70787d));
+  background-image: linear-gradient(#8a9196, #7A8288 60%, #70787d);
+  background-repeat: no-repeat;
+  -webkit-filter: none;
+  filter: none;
+  border-color: rgba(0,0,0,0.6);
+  color:white;
+  margint-top:20px;
 }
 

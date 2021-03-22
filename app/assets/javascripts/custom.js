@@ -2250,6 +2250,7 @@ function show_item_info(appid_info, from_map) {
             if (element.field_type_id != 11) {
               var new_celd = document.createElement('DIV');
               new_celd.className = "col-md-7 field_div";
+              if(element.field_type_id == 10){new_celd.classList.add("ok_button")}
 
               // Adapta el código a los diferentes tipos de campos
               if (element.field_type_id == 1) {
