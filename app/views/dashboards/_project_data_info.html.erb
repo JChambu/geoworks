@@ -146,16 +146,21 @@
           </div>
           <div class="d-inline text-right" style="width: 30%;">
             <% if can? :data, :edit %>
-              <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation')"></i>
-             <!--Aquí autorización para editar padres e hijos -->
-               <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation_child')"></i>
-               <!--Aquí autorización para edición geométrica -->
+              <% if can? :data, :edit_subforms %>
+                <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation_child')"></i>
+              <% else %>
+                <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation')"></i>
+              <% end %>
+            <% end %>
+            <% if can? :data, :edit_geom %>
               <i class="fas fa-map-marker-alt" style="cursor: pointer;" title="Próximamente" onclick="show_confirmation('lat_long_edit')"></i>
-              <!--Aquí autorización para cambiar owner -->
+            <% end %>
+            <% if can? :data, :edit_owner %>
               <i class="fas fa-user-edit" style="cursor: pointer;" title="Cambiar Propietario" onclick="show_confirmation('owner_confirmation')"></i>
             <% end %>
-            <!--Aquí autorización para cambiar desactivar -->
+            <% if can? :data, :disable %>
             <i class="fas fa-archive" style="cursor: pointer;" title="Desactivar" onclick="show_confirmation('disable_confirmation')"></i>
+            <% end %>
             <i class="fas fa-history" style="cursor: pointer;" title="Próximamente" onclick="show_confirmation('history')"></i>
           </div>
         </div>
