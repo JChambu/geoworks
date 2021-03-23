@@ -1,6 +1,7 @@
 html,
 body {
   height: 100%;
+  overflow-y:hidden;
 }
 
 #map {
@@ -8,14 +9,18 @@ body {
   height: 91vh;
 }
 .sidebar {
-  width: 30%;
-  position: absolute;
+  width: 100%;
+  left:0%;
+  position: relative;
   z-index: 401;
   background-color: rgba(0, 0, 0, 0.2);
-  transition:1s;
+  transition:0.7s;
+  overflow-y:hidden;
+  padding-top:0px!important;
 }
 .graphics {
-  overflow-y: scroll;
+  overflow-y: auto;
+  transition: 1s;
 }
 
 .fas:hover {
@@ -140,21 +145,16 @@ div.custom-menu.show {
 
 /* Botón para extender el sidebar */
 .view-data-container {
-  position:absolute;
-  top:-8px;
-  right: 0px;
-  width:72px;
-  z-index: 405;
-  background: #272B30;
+  float: right;
   padding: 1px 10px;
-  border-radius: 2px;
-  transition:1s;
+
 }
 .view-data {
   cursor: pointer;
   font-size: 12px;
   color: #e9ecef;
   margin: 0px 2px;
+  color: #9b9b9b;
 }
 
 /* Gráficos */
@@ -170,6 +170,9 @@ div.custom-menu.show {
 }
 .chart-bg-transparent {
   background-color: rgba(58, 63, 68, 0.4);
+}
+.chart-bg-none {
+  background: none;
 }
 
 
@@ -262,9 +265,20 @@ div.custom-menu.show {
 .leaflet-control-zoom-out:hover {
   color: #d3d800 !important;
 }
-.leaflet-top .leaflet-control {
-  margin-top:15px!important;
+.leaflet-top .leaflet-control , .leaflet-draw-section , .leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar , .leaflet-top  {
+  display:inline-flex;
+  flex-direction: row;
+  border: none !important;
 }
+
+.leaflet-bar a:first-child , .leaflet-bar a:last-child , .leaflet-bar a,  {
+  border-radius:5px!important;
+    margin: 1px!important;
+}
+.leaflet-draw-toolbar{
+  margin: 0px!important;
+}
+
 
 /*Elimina la marca*/
 .leaflet-control-attribution a{
@@ -602,3 +616,8 @@ div.custom-menu.show {
   margint-top:20px;
 }
 
+/* estilo multiselector de campos listados multiples */
+.custom_dropdown_panels{
+  top: 0vh;
+  right: 100.5%;
+}

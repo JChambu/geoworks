@@ -114,7 +114,7 @@ function capitalize(s) {
 
 function init_chart_doughnut(size_box = null, create_time_s = true) {
   // no calcula la función si los gráficos están escondidos
-  if ($('#status-view-sidebar').hasClass('status-view-condensed')) {
+  if (!$('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded')) {
     return;
   }
   $(".chart_body_custom").css("visibility","hidden");
@@ -601,11 +601,11 @@ function draw_charts() {
 
     $('.graphics').append(
       $('<div>', {
-        'class': 'card text-light p-0 mb-2 chart-bg-transparent chart_container',
+        'class': 'card text-light p-0 mt-1 chart-bg-none chart_container',
         'id': 'chart_container' + graphic_id
       }).append(
         $('<div>', {
-          'class': 'card-header chart-header-bg-transparent py-1 px-2',
+          'class': 'py-1 px-2',
           'id': 'header' + graphic_id
         }).append(
           $('<span>', { // handle
@@ -647,8 +647,8 @@ function draw_charts() {
     )
 
     //Chequeamos el estado de view
-    var status_view_chart = $('#status-view-sidebar').hasClass('status-view-middle');
-    var status_view_expanded_chart = $('#status-view-sidebar').hasClass('status-view-expanded');
+    var status_view_chart = $('#sidebar_all').hasClass('charts-container');
+    var status_view_expanded_chart = $('#sidebar_all').hasClass('charts-container_expanded');
     if (status_view_chart) { // Default
       if (width == 3) {
         width = 6;
@@ -1346,7 +1346,7 @@ function init_time_slider() {
 
 //Función para crear el time-slider al inciar y al cambiar la configuración
 function create_time_slider(min_date, max_date, from_date, to_date, step_time_slider) {
-  $('#filter-body').prepend(
+  $('#filter-time-body').prepend(
     $('<div>', {
       'id': 'time_slider_item',
       'style': 'margin-top:10px',
@@ -1359,7 +1359,7 @@ function create_time_slider(min_date, max_date, from_date, to_date, step_time_sl
       })
     )
   )
-  $('#filter-body').prepend(
+  $('#filter-time-body').prepend(
     $("<i>", {
       'id': 'time_slider_item-save',
       'class': 'fas fa-calendar-check float-right',
@@ -1367,7 +1367,7 @@ function create_time_slider(min_date, max_date, from_date, to_date, step_time_sl
       'onclick': 'set_time_slider_filter()',
     })
   )
-  $('#filter-body').prepend(
+  $('#filter-time-body').prepend(
     $("<i>", {
       'id': 'time_slider_item-clear',
       'class': 'fas fa-calendar-times float-right',

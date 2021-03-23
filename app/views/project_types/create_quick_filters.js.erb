@@ -20,12 +20,12 @@ if(value!="Sin Filtro"){
   // Elimina y vuelve a agregar el item al card Filtros Activos
   $('#filter-body').append(
     $('<div>', { // item
-      'class': 'message text-light bg-secondary px-2 mb-1 py-1 rounded border border-dark shadow',
+      'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow',
       'id': filter,
       'value': filter
     }).append(
       $('<b>', {
-        'text': 'Filtrado por: '+filter_view
+        'text':+filter_view
      }),
       $('<button>', {
         'type': 'button',
@@ -40,6 +40,7 @@ if(value!="Sin Filtro"){
   $(".fa-bell").css("color", "#9b9b9b");
 }
 
+resize_filters();
 resize_graphics();
 
 var point_color = Navarra.project_types.config.field_point_colors;
