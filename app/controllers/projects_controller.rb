@@ -43,19 +43,21 @@ class ProjectsController < ApplicationController
       else
         render json: {status: 'Error. No se encontró el registro.'}
       end
-    else
-      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
 
     # Hijos
     subforms = params[:subforms]
-    
+
     if subforms.present?
       subforms.each do |i, sf|
         child_id = sf['child_id']
         properties = sf['properties']
         @project_data_children = ProjectDataChild.find(child_id)
-        @project_data_children.update_subform(properties, current_user.id)
+        if @project_data_children.update_subform(properties, current_user.id)
+          render json: {status: 'El registro fue modificado correctamente.'}
+        else
+          render json: {status: 'Error. No se pudo actualizar el registro.'}
+        end
       end
     end
 
