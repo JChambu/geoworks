@@ -25,6 +25,7 @@ $(".th-hover").hover(function(){
   //busqueda por columna al hacer click
   $('#choose').keydown(function(e){
     if(e.keyCode == 13){
+      $(".active_page").html("1");
         init_data_dashboard(true);
         if($('#choose').val()==""){
           $('#choose').css("width","0%");
