@@ -28,8 +28,10 @@ class ProjectsController < ApplicationController
 
   # Actualiza la columna properties
   def update_form
+    # Padres
     app_id = params[:app_id]
     properties = params[:properties]
+
     if app_id.present? && properties.present?
       @project = Project.find(app_id)
       if @project.present?
@@ -44,6 +46,19 @@ class ProjectsController < ApplicationController
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
+
+    # Hijos
+    subforms = params[:subforms]
+    
+    if subforms.present?
+      subforms.each do |i, sf|
+        child_id = sf['child_id']
+        properties = sf['properties']
+        @project_data_children = ProjectDataChild.find(child_id)
+        @project_data_children.update_subform(properties, current_user.id)
+      end
+    end
+
   end
 
   # Cambia el propietario del registro
