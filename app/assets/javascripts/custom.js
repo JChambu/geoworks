@@ -2788,7 +2788,7 @@ function edit_file(width_childs){
   $('#info_messages').html("");
   $('#info_messages').addClass("d-none");
   $('#info_messages').removeClass("text-danger");
-  if(width_childs){array_child_edited=[]}
+  if(!width_childs){array_child_edited=[]}
   $(".required_field").each(function() {
     $(this).parent().closest('div').css("border-bottom","none");
     console.log("Está editando hijos???" + width_childs)
