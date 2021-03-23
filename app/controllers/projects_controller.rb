@@ -91,7 +91,7 @@ class ProjectsController < ApplicationController
   def search_users
     customer_subdomain = Apartment::Tenant.current
     Apartment::Tenant.switch 'public' do
-      @usuarios_corpo = User.joins(:customers).where(customers: {subdomain: customer_subdomain})
+      @usuarios_corpo = User.joins(:customers).where(customers: {subdomain: customer_subdomain}).order(:name)
     end
     render json: {data: @usuarios_corpo}
   end
