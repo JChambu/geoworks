@@ -24,6 +24,9 @@
       $('.info_input_disabled').not('.readonly_field').not('.is_child_field').removeClass('info_input_disabled');
       // muestra campos vacíos
        $('.empty_field').not('.hidden_field').not('.is_child_field').removeClass('d-none');
+       //muestra campos ocultos en subtítulos
+        $("div[class*='subtile_hidden']").not('.hidden_field').removeClass('d-none');
+        textarea_adjust_height();
       set_script_all();
       calculate_all(true);
     }
@@ -35,6 +38,9 @@
       $('.info_input_disabled').not('.readonly_field').removeClass('info_input_disabled');
       // muestra campos vacíos
        $('.empty_field').not('.hidden_field').removeClass('d-none');
+       //muestra campos ocultos en subtítulos
+        $("div[class*='subtile_hidden']").not('.hidden_field').removeClass('d-none');
+        textarea_adjust_height();
       set_script_all();
       calculate_all(true);
     }
