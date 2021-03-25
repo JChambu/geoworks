@@ -2142,6 +2142,7 @@ function export_to_excel(table, name, filename) {
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
 function show_item_info(appid_info, from_map) {
+  Navarra.dashboards.config.has_field_errors = false;
   var project_type_id = Navarra.dashboards.config.project_type_id;
   Navarra.project_types.config.id_item_displayed = appid_info;
   if (xhr_info && xhr_info.readyState != 4) {
@@ -2235,7 +2236,12 @@ function show_item_info(appid_info, from_map) {
               new_p.style.cursor = "pointer";
               new_p.setAttribute("onClick", "open_subtitle(" + element.calculated_field + ",'')");
               if (element.calculated_field != "") {
-                subtitles_all = subtitles_all.concat(JSON.parse(element.calculated_field));
+                try{
+                  subtitles_all = subtitles_all.concat(JSON.parse(element.calculated_field));
+                } catch(e){
+                  set_error_message("Error de configuración: subtítulo del campo:"+element.name);
+                }
+                
               }
               new_p.innerHTML = element.name;
             } else {
@@ -2278,8 +2284,13 @@ function show_item_info(appid_info, from_map) {
                 //comienza anidados
                 if(found_nested){
                   if(element.value!=null){
-                    values = JSON.parse(element.value)[0];
-                    values_nested = JSON.parse(element.value)[1];
+                    try{
+                      values = JSON.parse(element.value)[0];
+                      values_nested = JSON.parse(element.value)[1];
+                    } catch (e){
+                      set_error_message("Error en listados anidados: "+element.name);
+                    }
+                    
                   }
                   var new_p_nested = document.createElement('SELECT');
                   new_p_nested.className = "mb-1 multiselect_field form-control form-control-sm info_input_disabled";
@@ -2303,7 +2314,11 @@ function show_item_info(appid_info, from_map) {
                   new_option.value=item.name;
                   if(!found_nested){
                     if(values!=null){
-                      values_array = JSON.parse(values)
+                      try{
+                        values_array = JSON.parse(values)  
+                      } catch(e){
+                        set_error_message("Error en listados: "+element.name);
+                      }
                         for (v=0;v<values_array.length;v++){
                           if(values_array[v]==item.name){
                             found_option=true;
@@ -2485,7 +2500,11 @@ function show_item_info(appid_info, from_map) {
                   new_p.style.cursor = "pointer";
                   new_p.setAttribute("onClick", "open_subtitle(" + element_child_field.calculated_field + ",'_child')");
                   if (element_child_field.calculated_field != "") {
-                    subtitles_all_child = subtitles_all_child.concat(JSON.parse(element_child_field.calculated_field));
+                    try{
+                      subtitles_all_child = subtitles_all_child.concat(JSON.parse(element_child_field.calculated_field));
+                    }catch(e){
+                      set_error_message("Error de configuración: subtítulo del campo subformulario:"+element_child_field.name);
+                    }
                   }
                   new_p.innerHTML = element_child_field.name;
                 } else {
@@ -2529,8 +2548,12 @@ function show_item_info(appid_info, from_map) {
                     //comienza anidados
                     if(found_nested){
                       if(element_child_field.value!=null){
-                      values = JSON.parse(element_child_field.value)[0];
-                      values_nested = JSON.parse(element_child_field.value)[1];
+                        try{
+                          values = JSON.parse(element_child_field.value)[0];
+                          values_nested = JSON.parse(element_child_field.value)[1];
+                        } catch(e){
+                          set_error_message("Error en subformulario, listados anidados : "+element_child_field.name);
+                        }
                       }
                       var new_p_nested = document.createElement('SELECT');
                       new_p_nested.className = "mb-1 multiselect_field form-control form-control-sm info_input_disabled is_child_field";
@@ -2556,7 +2579,12 @@ function show_item_info(appid_info, from_map) {
                       new_option.value=item.name;
                       if(!found_nested){
                         if(values!=null){
-                          values_array = JSON.parse(values)
+                          try{
+                            values_array = JSON.parse(values)
+                          } catch(e){
+                            set_error_message("Error en subformulario, listados: "+element_child_field.name);
+                          }
+                          
                           for (v=0;v<values_array.length;v++){
                             if(values_array[v]==item.name){
                               found_option=true;
@@ -3008,5 +3036,16 @@ function changeFile(){
 Array.prototype.unique=function(a){
   return function(){return this.filter(a)}}(function(a,b,c){return c.indexOf(a,b+1)<0
 });
+
+function set_error_message(message){
+  Navarra.dashboards.config.has_field_errors = true;
+    $('#info_messages').html(message);
+    $('#info_messages').addClass("text-danger");
+    $('#info_messages').removeClass("d-none");
+    $('#edit_confirmation').addClass("d-none");
+    $('#edit_confirmation_child').addClass("d-none");
+    $('#edit_confirmation').removeClass("d-inline");
+    $('#edit_confirmation_child').removeClass("d-inline");
+}  
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****

@@ -56,7 +56,8 @@ Navarra.dashboards.config = {
   name_project: '',
   type_geometry: '',
   current_tenement: '',
-  user_name: ''
+  user_name: '',
+  has_field_errors: ''
 };
 
 resize_graphics = function(){

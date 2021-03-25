@@ -9,76 +9,78 @@
   });
 
   function show_confirmation(div_confirmation){
-    if(div_confirmation=="lat_long_edit" || div_confirmation=="history"){
-      return;
-    }
-    disabled_fields();
-    $('.div_confirmation').addClass("d-none");
-    $('.div_confirmation').removeClass("d-inline");
-    $('#'+div_confirmation).addClass("d-inline");
-    $('#'+div_confirmation).removeClass("d-none");
-    if(div_confirmation=='edit_confirmation'){
-      $('.info_input_disabled').not('.readonly_field').not('.is_child_field').removeClass('disabled');
-      $('.info_input_disabled').not('.readonly_field').not('.is_child_field').addClass('info_input');
-      $('.info_input_disabled').not('.readonly_field').not('.is_child_field').prop('disabled', false);
-      $('.info_input_disabled').not('.readonly_field').not('.is_child_field').removeClass('info_input_disabled');
-      // muestra campos vacíos
-       $('.empty_field').not('.hidden_field').not('.is_child_field').removeClass('d-none');
-       //muestra campos ocultos en subtítulos
-        $("div[class*='subtile_hidden']").not('.hidden_field').removeClass('d-none');
-        textarea_adjust_height();
-      set_script_all();
-      calculate_all(true);
-    }
+    if(!Navarra.dashboards.config.has_field_errors){
+      if(div_confirmation=="lat_long_edit" || div_confirmation=="history"){
+        return;
+      }
+      disabled_fields();
+      $('.div_confirmation').addClass("d-none");
+      $('.div_confirmation').removeClass("d-inline");
+      $('#'+div_confirmation).addClass("d-inline");
+      $('#'+div_confirmation).removeClass("d-none");
+      if(div_confirmation=='edit_confirmation'){
+        $('.info_input_disabled').not('.readonly_field').not('.is_child_field').removeClass('disabled');
+        $('.info_input_disabled').not('.readonly_field').not('.is_child_field').addClass('info_input');
+        $('.info_input_disabled').not('.readonly_field').not('.is_child_field').prop('disabled', false);
+        $('.info_input_disabled').not('.readonly_field').not('.is_child_field').removeClass('info_input_disabled');
+        // muestra campos vacíos
+        $('.empty_field').not('.hidden_field').not('.is_child_field').removeClass('d-none');
+        //muestra campos ocultos en subtítulos
+          $("div[class*='subtile_hidden']").not('.hidden_field').removeClass('d-none');
+          textarea_adjust_height();
+        set_script_all();
+        calculate_all(true);
+      }
 
-    if(div_confirmation=='edit_confirmation_child'){
-      $('.info_input_disabled').not('.readonly_field').removeClass('disabled');
-      $('.info_input_disabled').not('.readonly_field').addClass('info_input');
-      $('.info_input_disabled').not('.readonly_field').prop('disabled', false);
-      $('.info_input_disabled').not('.readonly_field').removeClass('info_input_disabled');
-      // muestra campos vacíos
-       $('.empty_field').not('.hidden_field').removeClass('d-none');
-       //muestra campos ocultos en subtítulos
-        $("div[class*='subtile_hidden']").not('.hidden_field').removeClass('d-none');
-        textarea_adjust_height();
-      set_script_all();
-      calculate_all(true);
-    }
-    if(div_confirmation=='owner_confirmation'){
-      // trae opciones de usuarios
-      var project_type_id = Navarra.dashboards.config.project_type_id;
-      $.ajax({
-        url:  "/projects/search_users.json",
-        type: "GET",
-        data: { project_type_id: project_type_id},
-        success: function(data){
-          $('#owner_change_select').empty();
-          $.each(data['data'], function(value, a){
-            if(`${a.active}`=='true'){
-              let opt_check= document.createElement("OPTION");
-              opt_check.text = `${a.name}`;
-              opt_check.value = `${a.id}`;
-              $('#owner_change_select').append(opt_check);
-            }
-          });
-          $('#owner_change_select').multiselect({
-                maxHeight: 800,
-                buttonClass: 'text-left mb-1 form-control form-control-sm',
-                buttonWidth: '50%',
-                nonSelectedText: 'Seleccionar',
-                selectedClass: 'selected_multiple_item',
-                delimiterText: '\n',
-                numberDisplayed: 0,
-                allSelectedText: false,
-                enableFiltering: true,
-                enableCaseInsensitiveFiltering: true,
-                filterPlaceholder: 'Buscar',
-                includeFilterClearBtn: false,
-                includeSelectAllOption: false,
-                dropRight: true,
-              });
-        }
-      });
+      if(div_confirmation=='edit_confirmation_child'){
+        $('.info_input_disabled').not('.readonly_field').removeClass('disabled');
+        $('.info_input_disabled').not('.readonly_field').addClass('info_input');
+        $('.info_input_disabled').not('.readonly_field').prop('disabled', false);
+        $('.info_input_disabled').not('.readonly_field').removeClass('info_input_disabled');
+        // muestra campos vacíos
+        $('.empty_field').not('.hidden_field').removeClass('d-none');
+        //muestra campos ocultos en subtítulos
+          $("div[class*='subtile_hidden']").not('.hidden_field').removeClass('d-none');
+          textarea_adjust_height();
+        set_script_all();
+        calculate_all(true);
+      }
+      if(div_confirmation=='owner_confirmation'){
+        // trae opciones de usuarios
+        var project_type_id = Navarra.dashboards.config.project_type_id;
+        $.ajax({
+          url:  "/projects/search_users.json",
+          type: "GET",
+          data: { project_type_id: project_type_id},
+          success: function(data){
+            $('#owner_change_select').empty();
+            $.each(data['data'], function(value, a){
+              if(`${a.active}`=='true'){
+                let opt_check= document.createElement("OPTION");
+                opt_check.text = `${a.name}`;
+                opt_check.value = `${a.id}`;
+                $('#owner_change_select').append(opt_check);
+              }
+            });
+            $('#owner_change_select').multiselect({
+                  maxHeight: 800,
+                  buttonClass: 'text-left mb-1 form-control form-control-sm',
+                  buttonWidth: '50%',
+                  nonSelectedText: 'Seleccionar',
+                  selectedClass: 'selected_multiple_item',
+                  delimiterText: '\n',
+                  numberDisplayed: 0,
+                  allSelectedText: false,
+                  enableFiltering: true,
+                  enableCaseInsensitiveFiltering: true,
+                  filterPlaceholder: 'Buscar',
+                  includeFilterClearBtn: false,
+                  includeSelectAllOption: false,
+                  dropRight: true,
+                });
+          }
+        });
+      }
     }
   }
 
