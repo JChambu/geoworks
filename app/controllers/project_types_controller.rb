@@ -262,6 +262,7 @@ class ProjectTypesController < ApplicationController
           can_edit = false
         end
 
+        # Si el tipo de campo es listado (simple, múltiple o anidado) arma un array con los otros valores posibles
         if f_field.field_type_id == 10 || f_field.field_type_id == 2
 
           id = f_field.choice_list_id
