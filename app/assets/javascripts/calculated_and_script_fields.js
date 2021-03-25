@@ -117,7 +117,6 @@ function script_ejecute(scriptTrue, initial, field_id){
 
 function Calculate(calculated_field, field_type_id , field_id , value, edition_type){
   try{ 
-  calculated_field="ualquier dato" 
     var CalculateObj = JSON.parse(calculated_field);
     var field_type = field_type_id
     var id_field = field_id;
