@@ -375,11 +375,6 @@ class ProjectTypesController < ApplicationController
                 child_properties = c_data[:properties]
                 child_value = child_properties[c_field.id.to_s]
 
-                # Si es un listado (simple o múltiple) convierte el valor de array a string
-                if f_field.field_type_id == 7 || f_field.field_type_id == 2
-                  child_value = child_value.to_s
-                end
-
                 c_data_hash = {}
                 c_data_hash['field_id'] = c_field.id
                 c_data_hash['name'] = c_field.name
