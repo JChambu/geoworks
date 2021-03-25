@@ -243,6 +243,9 @@ class ProjectTypesController < ApplicationController
     # Busca los campos del padre
     father_fields = ProjectField.where(project_type_id: project_type_id).order(:sort)
 
+    # Busca los datos almacenados en el properties de los padres
+    father_properties = Project.where(id: project_id).pluck(:properties).first
+
     father_fields_array = []
 
     father_fields.each do |f_field|
@@ -412,7 +415,7 @@ class ProjectTypesController < ApplicationController
 
         else
 
-          father_data = Project.where(id: project_id).pluck("properties ->> '#{f_field.key}'").first
+          father_data = father_properties[f_field.key]
 
         end
 
