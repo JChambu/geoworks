@@ -2185,6 +2185,7 @@ function show_item_info(appid_info, from_map) {
       document.getElementById('info_body').appendChild(new_div);
 
       //fotos del registro
+      var verify_count_elements_photos = 0
       var father_photos = data.father_photos;
       father_photos.forEach(function(photo) {
         var new_div = document.createElement('DIV');
@@ -2200,16 +2201,21 @@ function show_item_info(appid_info, from_map) {
         new_photo.className = "photo_description";
         new_div.appendChild(new_photo);
         document.getElementById('info_body').appendChild(new_div);
+        verify_count_elements_photos++;
       });
+      if(verify_count_elements_photos!= father_photos.length){
+        set_error_message("Error: no se pudieron traer todas las fotos del registro");
+      }
 
       //campos del registro
       father_fields = data.father_fields;
       var subtitles_all = [];
       var subtitles_all_child = [];
+      var verify_count_elements = 0; // variable para chequear que se dibujan todos los campos sin error
       father_fields.forEach(function(element) {
         console.log(element);
         if (element.field_type_id == 7 && element.value.length == 0) {} else {
-          if (element.field_type_id != 7) {
+          if (element.field_type_id != 7) { //dibuja campo padre
             var new_row = document.createElement('DIV');
             if (element.hidden) {
               new_row.className = "form-row d-none hidden_field row_field";
@@ -2284,10 +2290,10 @@ function show_item_info(appid_info, from_map) {
                 //comienza anidados
                 if(found_nested){
                   if(element.value!=null){
-                    try{
-                      values = JSON.parse(element.value)[0];
-                      values_nested = JSON.parse(element.value)[1];
-                    } catch (e){
+                    if(Array.isArray(element.value)){
+                      values = element.value[0];
+                      values_nested = element.value[1];
+                    } else{
                       set_error_message("Error en listados anidados: "+element.name);
                     }
                     
@@ -2314,9 +2320,9 @@ function show_item_info(appid_info, from_map) {
                   new_option.value=item.name;
                   if(!found_nested){
                     if(values!=null){
-                      try{
-                        values_array = JSON.parse(values)  
-                      } catch(e){
+                      if(Array.isArray(values)){
+                        values_array = values;
+                      } else{
                         set_error_message("Error en listados: "+element.name);
                       }
                         for (v=0;v<values_array.length;v++){
@@ -2430,8 +2436,8 @@ function show_item_info(appid_info, from_map) {
             }
           }
 
-          } else {
-            //hijos
+          } //termina campo padre
+          else {// Dibuja campos hijos
             var new_row = document.createElement('DIV');
             if (element.hidden) {
               new_row.className = "d-none hidden_field";
@@ -2449,6 +2455,7 @@ function show_item_info(appid_info, from_map) {
             new_celd.appendChild(new_p);
             new_row.appendChild(new_celd);
             child_elements = element.value;
+            var verify_count_elements_childs = 0;
             child_elements.forEach(function(element_child) {
               var new_row1 = document.createElement('DIV');
               new_row1.className = "form-row";
@@ -2473,6 +2480,7 @@ function show_item_info(appid_info, from_map) {
 
               //campos de los hijos
               children_fields = element_child.children_fields;
+              var verify_count_elements_childs_fields = 0;
               children_fields.forEach(function(element_child_field) {
                 var new_row1 = document.createElement('DIV');
                 if (element_child_field.hidden) {
@@ -2548,10 +2556,10 @@ function show_item_info(appid_info, from_map) {
                     //comienza anidados
                     if(found_nested){
                       if(element_child_field.value!=null){
-                        try{
-                          values = JSON.parse(element_child_field.value)[0];
-                          values_nested = JSON.parse(element_child_field.value)[1];
-                        } catch(e){
+                        if(Array.isArray(element_child_field.value)){
+                          values = element_child_field.value[0];
+                          values_nested = element_child_field.value[1];
+                        } else{
                           set_error_message("Error en subformulario, listados anidados : "+element_child_field.name);
                         }
                       }
@@ -2579,9 +2587,9 @@ function show_item_info(appid_info, from_map) {
                       new_option.value=item.name;
                       if(!found_nested){
                         if(values!=null){
-                          try{
-                            values_array = JSON.parse(values)
-                          } catch(e){
+                          if(Array.isArray(values)){
+                            values_array = values;
+                          } else{
                             set_error_message("Error en subformulario, listados: "+element_child_field.name);
                           }
                           
@@ -2663,11 +2671,16 @@ function show_item_info(appid_info, from_map) {
                   if(found_nested){new_celd.appendChild(new_p_nested)}
                   new_row1.appendChild(new_celd);
                 }
-                new_row.appendChild(new_row1)
+                new_row.appendChild(new_row1);
+                verify_count_elements_childs_fields++;
               });
+              if(verify_count_elements_childs_fields!= children_fields.length){
+                set_error_message("Error: no se pudieron traer todos los campos del subformulario "+element.name);
+              }
 
               //fotos del hijo
               var children_photos = element_child.children_photos;
+              var verify_count_elements_childs_photos = 0;
               children_photos.forEach(function(photo) {
                 var new_div = document.createElement('DIV');
                 new_div.className = "photo_div_info";
@@ -2682,13 +2695,25 @@ function show_item_info(appid_info, from_map) {
                 new_photo.className = "photo_description";
                 new_div.appendChild(new_photo);
                 new_row.appendChild(new_div);
+                verify_count_elements_childs_photos++;
               });
-            });
+              if(verify_count_elements_childs_photos!= children_photos.length){
+                set_error_message("Error: no se pudieron traer todas las fotos del campo "+element.name);
+              }
+              verify_count_elements_childs++;
+            }); //termina for Each childs
+            if(verify_count_elements_childs!= child_elements.length){
+              set_error_message("Error: no se pudieron traer todos los subformularios del campo "+element.name);
+            }
             document.getElementById('info_body').appendChild(new_row);
           }
         }
+        verify_count_elements ++;
+      }); // termina for Each de padres
+      if(verify_count_elements!= father_fields.length){
+        set_error_message("Error: no se pudieron traer todos los campos");
+      }
 
-      });
       textarea_adjust_height();
       $('.date_field').datetimepicker({
         format: "DD/MM/YYYY",
