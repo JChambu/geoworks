@@ -250,187 +250,189 @@ class ProjectTypesController < ApplicationController
 
     father_fields.each do |f_field|
 
-      # Si el rol del usuario está dentro de los roles que pueden ver el campo (o no hay ningún rol configurado), el campo se agrega al json
+      # Si el rol del usuario está seleccionado o sino hay ningún rol seteado, se puede ver
       roles_read = (JSON.parse(f_field.roles_read)).reject(&:blank?)
       if roles_read.include?(@user_rol.to_s) || roles_read.blank?
+        can_view = true
+      else
+        can_view = false
+      end
 
-        # Si el rol del usuario está seleccionado o sino hay ningún rol seteado, se puede editar
-        roles_edit = (JSON.parse(f_field.roles_edit)).reject(&:blank?)
-        if roles_edit.include?(@user_rol.to_s) || roles_edit.blank?
-          can_edit = true
-        else
-          can_edit = false
-        end
+      # Si el rol del usuario está seleccionado o sino hay ningún rol seteado, se puede editar
+      roles_edit = (JSON.parse(f_field.roles_edit)).reject(&:blank?)
+      if roles_edit.include?(@user_rol.to_s) || roles_edit.blank?
+        can_edit = true
+      else
+        can_edit = false
+      end
 
-        # Si el tipo de campo es listado (simple, múltiple o anidado) arma un array con los otros valores posibles
-        if f_field.field_type_id == 10 || f_field.field_type_id == 2
+      # Si el tipo de campo es listado (simple, múltiple o anidado) arma un array con los otros valores posibles
+      if f_field.field_type_id == 10 || f_field.field_type_id == 2
 
-          id = f_field.choice_list_id
+        id = f_field.choice_list_id
 
-          other_possible_values = []
-          choice_list = ChoiceList.find(id)
-          choice_list_item  = ChoiceListItem.where(choice_list_id: choice_list.id)
-          sorted_choice_list_items = choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items
+        other_possible_values = []
+        choice_list = ChoiceList.find(id)
+        choice_list_item  = ChoiceListItem.where(choice_list_id: choice_list.id)
+        sorted_choice_list_items = choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items
 
-          # Arma el objeto
-          sorted_choice_list_items.each do |row|
+        # Arma el objeto
+        sorted_choice_list_items.each do |row|
 
-            # Si tiene listados anidados, los agrega
-            if !row.nested_list_id.nil?
+          # Si tiene listados anidados, los agrega
+          if !row.nested_list_id.nil?
 
-              @nested_items = []
-              nested_choice_list = ChoiceList.find(row.nested_list_id)
-              nested_choice_list_item  = ChoiceListItem.where(choice_list_id: nested_choice_list.id)
-              nested_sorted_choice_list_items = nested_choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items anidados
-              nested_sorted_choice_list_items.each do |f|
-                @nested_items << { "id": f.id, "name": f.name }
-              end
-              other_possible_values << { "id": row.id, "name": row.name, "nested_items": @nested_items }
-            else
-              other_possible_values << { "id": row.id, "name": row.name }
+            @nested_items = []
+            nested_choice_list = ChoiceList.find(row.nested_list_id)
+            nested_choice_list_item  = ChoiceListItem.where(choice_list_id: nested_choice_list.id)
+            nested_sorted_choice_list_items = nested_choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items anidados
+            nested_sorted_choice_list_items.each do |f|
+              @nested_items << { "id": f.id, "name": f.name }
             end
-
+            other_possible_values << { "id": row.id, "name": row.name, "nested_items": @nested_items }
+          else
+            other_possible_values << { "id": row.id, "name": row.name }
           end
 
         end
 
-        # Si el tipo de campo es subformulario, busca todos los hijos con sus fotos
-        if f_field.field_type_id == 7
+      end
 
-          # Busca los datos del los hijos
-          children_data = ProjectDataChild
-            .where(project_id: project_id)
-            .where(project_field_id: f_field.id)
+      # Si el tipo de campo es subformulario, busca todos los hijos con sus fotos
+      if f_field.field_type_id == 7
+
+        # Busca los datos del los hijos
+        children_data = ProjectDataChild
+          .where(project_id: project_id)
+          .where(project_field_id: f_field.id)
+          .where(row_active: true)
+          .where(current_season: true)
+          .where(row_enabled: true)
+
+        children_data_array = []
+
+        children_data.each do |c_data|
+
+          # Busca las fotos del hijo
+          child_photos = PhotoChild
+            .where(project_data_child_id: c_data.id)
             .where(row_active: true)
-            .where(current_season: true)
-            .where(row_enabled: true)
+          child_photos_array = []
+          child_photos.each do |c_photo|
+            c_photo_hash = {}
+            c_photo_hash['id'] = c_photo.id
+            c_photo_hash['name'] = c_photo.name
+            c_photo_hash['image'] = c_photo.image
+            child_photos_array.push(c_photo_hash)
+          end
 
-          children_data_array = []
+          # Busca los campos del hijo
+          child_fields = ProjectSubfield.where(project_field_id: f_field.id).order(:sort)
 
-          children_data.each do |c_data|
+          child_fields_array = []
 
-            # Busca las fotos del hijo
-            child_photos = PhotoChild
-              .where(project_data_child_id: c_data.id)
-              .where(row_active: true)
-            child_photos_array = []
-            child_photos.each do |c_photo|
-              c_photo_hash = {}
-              c_photo_hash['id'] = c_photo.id
-              c_photo_hash['name'] = c_photo.name
-              c_photo_hash['image'] = c_photo.image
-              child_photos_array.push(c_photo_hash)
-            end
+          child_fields.each do |c_field|
 
-            # Busca los campos del hijo
-            child_fields = ProjectSubfield.where(project_field_id: f_field.id).order(:sort)
+            # Si el rol del usuario está dentro de los roles que pueden ver el campo (o no hay ningún rol configurado), el campo se agrega al json
+            roles_read = (JSON.parse(c_field.roles_read)).reject(&:blank?)
+            if roles_read.include?(@user_rol.to_s) || roles_read.blank?
 
-            child_fields_array = []
+              # Si el rol del usuario está seleccionado o sino hay ningún rol seteado, se puede editar
+              roles_edit = (JSON.parse(c_field.roles_edit)).reject(&:blank?)
+              if roles_edit.include?(@user_rol.to_s) || roles_edit.blank?
+                can_edit = true
+              else
+                can_edit = false
+              end
 
-            child_fields.each do |c_field|
+              if c_field.field_type_id == 10 || c_field.field_type_id == 2
 
-              # Si el rol del usuario está dentro de los roles que pueden ver el campo (o no hay ningún rol configurado), el campo se agrega al json
-              roles_read = (JSON.parse(c_field.roles_read)).reject(&:blank?)
-              if roles_read.include?(@user_rol.to_s) || roles_read.blank?
+                id = c_field.choice_list_id
 
-                # Si el rol del usuario está seleccionado o sino hay ningún rol seteado, se puede editar
-                roles_edit = (JSON.parse(c_field.roles_edit)).reject(&:blank?)
-                if roles_edit.include?(@user_rol.to_s) || roles_edit.blank?
-                  can_edit = true
-                else
-                  can_edit = false
-                end
+                other_possible_values = []
+                choice_list = ChoiceList.find(id)
+                choice_list_item  = ChoiceListItem.where(choice_list_id: choice_list.id)
+                sorted_choice_list_items = choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items
 
-                if c_field.field_type_id == 10 || c_field.field_type_id == 2
+                # Arma el objeto
+                sorted_choice_list_items.each do |row|
 
-                  id = c_field.choice_list_id
+                  # Si tiene listados anidados, los agrega
+                  if !row.nested_list_id.nil?
 
-                  other_possible_values = []
-                  choice_list = ChoiceList.find(id)
-                  choice_list_item  = ChoiceListItem.where(choice_list_id: choice_list.id)
-                  sorted_choice_list_items = choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items
-
-                  # Arma el objeto
-                  sorted_choice_list_items.each do |row|
-
-                    # Si tiene listados anidados, los agrega
-                    if !row.nested_list_id.nil?
-
-                      @nested_items = []
-                      nested_choice_list = ChoiceList.find(row.nested_list_id)
-                      nested_choice_list_item  = ChoiceListItem.where(choice_list_id: nested_choice_list.id)
-                      nested_sorted_choice_list_items = nested_choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items anidados
-                      nested_sorted_choice_list_items.each do |f|
-                        @nested_items << { "id": f.id, "name": f.name }
-                      end
-                      other_possible_values << { "id": row.id, "name": row.name, "nested_items": @nested_items }
-                    else
-                      other_possible_values << { "id": row.id, "name": row.name }
+                    @nested_items = []
+                    nested_choice_list = ChoiceList.find(row.nested_list_id)
+                    nested_choice_list_item  = ChoiceListItem.where(choice_list_id: nested_choice_list.id)
+                    nested_sorted_choice_list_items = nested_choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items anidados
+                    nested_sorted_choice_list_items.each do |f|
+                      @nested_items << { "id": f.id, "name": f.name }
                     end
-
+                    other_possible_values << { "id": row.id, "name": row.name, "nested_items": @nested_items }
+                  else
+                    other_possible_values << { "id": row.id, "name": row.name }
                   end
 
                 end
 
-                # Busca los datos del hijo
-                child_properties = c_data[:properties]
-                child_value = child_properties[c_field.id.to_s]
-
-                c_data_hash = {}
-                c_data_hash['field_id'] = c_field.id
-                c_data_hash['name'] = c_field.name
-                c_data_hash['value'] = child_value
-                c_data_hash['other_possible_values'] = other_possible_values if c_field.field_type_id == 10 || c_field.field_type_id == 2
-                c_data_hash['field_type_id'] = c_field.field_type_id
-                c_data_hash['required'] = c_field.required
-                c_data_hash['read_only'] = c_field.read_only
-                c_data_hash['can_edit'] = can_edit
-                c_data_hash['hidden'] = c_field.hidden
-                c_data_hash['data_script'] = c_field.data_script
-                c_data_hash['calculated_field'] = c_field.calculated_field
-
-                child_fields_array.push(c_data_hash)
-
               end
 
-            end # Cierra child_fields.each
+              # Busca los datos del hijo
+              child_properties = c_data[:properties]
+              child_value = child_properties[c_field.id.to_s]
 
+              c_data_hash = {}
+              c_data_hash['field_id'] = c_field.id
+              c_data_hash['name'] = c_field.name
+              c_data_hash['value'] = child_value
+              c_data_hash['other_possible_values'] = other_possible_values if c_field.field_type_id == 10 || c_field.field_type_id == 2
+              c_data_hash['field_type_id'] = c_field.field_type_id
+              c_data_hash['required'] = c_field.required
+              c_data_hash['read_only'] = c_field.read_only
+              c_data_hash['can_edit'] = can_edit
+              c_data_hash['hidden'] = c_field.hidden
+              c_data_hash['data_script'] = c_field.data_script
+              c_data_hash['calculated_field'] = c_field.calculated_field
 
-            children_data_hash = {}
-            children_data_hash['children_id'] = c_data.id
-            children_data_hash['children_gwm_created_at'] = c_data.gwm_created_at
-            children_data_hash['children_fields'] = child_fields_array
-            children_data_hash['children_photos'] = child_photos_array
-            children_data_hash
+              child_fields_array.push(c_data_hash)
 
-            children_data_array.push(children_data_hash)
+            end
 
-          end # Cierra children_data.each
+          end # Cierra child_fields.each
 
-          father_data = children_data_array
+          children_data_hash = {}
+          children_data_hash['children_id'] = c_data.id
+          children_data_hash['children_gwm_created_at'] = c_data.gwm_created_at
+          children_data_hash['children_fields'] = child_fields_array
+          children_data_hash['children_photos'] = child_photos_array
+          children_data_hash
 
-        else
+          children_data_array.push(children_data_hash)
 
-          father_data = father_properties[f_field.key]
+        end # Cierra children_data.each
 
-        end
+        father_data = children_data_array
 
-        father_field_hash = {}
-        father_field_hash['field_id'] = f_field.id
-        father_field_hash['name'] = f_field.name
-        father_field_hash['field_type_id'] = f_field.field_type_id
-        father_field_hash['value'] = father_data
-        father_field_hash['other_possible_values'] = other_possible_values if f_field.field_type_id == 10 || f_field.field_type_id == 2
-        father_field_hash['required'] = f_field.required
-        father_field_hash['read_only'] = f_field.read_only
-        father_field_hash['can_edit'] = can_edit
-        father_field_hash['hidden'] = f_field.hidden
-        father_field_hash['data_script'] = f_field.data_script
-        father_field_hash['calculated_field'] = f_field.calculated_field
-        father_field_hash['key'] = f_field.key
-        father_fields_array.push(father_field_hash)
+      else
+
+        father_data = father_properties[f_field.key]
 
       end
+
+      father_field_hash = {}
+      father_field_hash['field_id'] = f_field.id
+      father_field_hash['name'] = f_field.name
+      father_field_hash['field_type_id'] = f_field.field_type_id
+      father_field_hash['value'] = father_data
+      father_field_hash['other_possible_values'] = other_possible_values if f_field.field_type_id == 10 || f_field.field_type_id == 2
+      father_field_hash['required'] = f_field.required
+      father_field_hash['read_only'] = f_field.read_only
+      father_field_hash['can_view'] = can_view
+      father_field_hash['can_edit'] = can_edit
+      father_field_hash['hidden'] = f_field.hidden
+      father_field_hash['data_script'] = f_field.data_script
+      father_field_hash['calculated_field'] = f_field.calculated_field
+      father_field_hash['key'] = f_field.key
+      father_fields_array.push(father_field_hash)
 
     end
 
