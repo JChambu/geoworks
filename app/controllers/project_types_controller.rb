@@ -253,17 +253,17 @@ class ProjectTypesController < ApplicationController
       # Si el rol del usuario está seleccionado o sino hay ningún rol seteado, se puede ver
       roles_read = (JSON.parse(f_field.roles_read)).reject(&:blank?)
       if roles_read.include?(@user_rol.to_s) || roles_read.blank?
-        can_view = true
+        f_can_read = true
       else
-        can_view = false
+        f_can_read = false
       end
 
       # Si el rol del usuario está seleccionado o sino hay ningún rol seteado, se puede editar
       roles_edit = (JSON.parse(f_field.roles_edit)).reject(&:blank?)
       if roles_edit.include?(@user_rol.to_s) || roles_edit.blank?
-        can_edit = true
+        f_can_edit = true
       else
-        can_edit = false
+        f_can_edit = false
       end
 
       # Si el tipo de campo es listado (simple, múltiple o anidado) arma un array con los otros valores posibles
@@ -336,17 +336,17 @@ class ProjectTypesController < ApplicationController
             # Si el rol del usuario está dentro de los roles que pueden ver el campo (o no hay ningún rol configurado), el campo se agrega al json
             roles_read = (JSON.parse(c_field.roles_read)).reject(&:blank?)
             if roles_read.include?(@user_rol.to_s) || roles_read.blank?
-              can_view = true
+              c_can_read = true
             else
-              can_view = false
+              c_can_read = false
             end
 
             # Si el rol del usuario está seleccionado o sino hay ningún rol seteado, se puede editar
             roles_edit = (JSON.parse(c_field.roles_edit)).reject(&:blank?)
             if roles_edit.include?(@user_rol.to_s) || roles_edit.blank?
-              can_edit = true
+              c_can_edit = true
             else
-              can_edit = false
+              c_can_edit = false
             end
 
             if c_field.field_type_id == 10 || c_field.field_type_id == 2
@@ -392,8 +392,8 @@ class ProjectTypesController < ApplicationController
             c_data_hash['field_type_id'] = c_field.field_type_id
             c_data_hash['required'] = c_field.required
             c_data_hash['read_only'] = c_field.read_only
-            c_data_hash['can_view'] = can_view
-            c_data_hash['can_edit'] = can_edit
+            c_data_hash['can_read'] = c_can_read
+            c_data_hash['can_edit'] = c_can_edit
             c_data_hash['hidden'] = c_field.hidden
             c_data_hash['data_script'] = c_field.data_script
             c_data_hash['calculated_field'] = c_field.calculated_field
@@ -429,8 +429,8 @@ class ProjectTypesController < ApplicationController
       father_field_hash['other_possible_values'] = other_possible_values if f_field.field_type_id == 10 || f_field.field_type_id == 2
       father_field_hash['required'] = f_field.required
       father_field_hash['read_only'] = f_field.read_only
-      father_field_hash['can_view'] = can_view
-      father_field_hash['can_edit'] = can_edit
+      father_field_hash['can_read'] = f_can_read
+      father_field_hash['can_edit'] = f_can_edit
       father_field_hash['hidden'] = f_field.hidden
       father_field_hash['data_script'] = f_field.data_script
       father_field_hash['calculated_field'] = f_field.calculated_field
