@@ -2222,6 +2222,9 @@ function show_item_info(appid_info, from_map) {
             } else {
               new_row.className = "form-row row_field";
             }
+            if(element.can_read==false){
+                new_row.classList.add('canot_read');
+              }
             if ((element.value == null && element.field_type_id != 11) || (element.value == "" && element.field_type_id != 11) || (element.value == " " && element.field_type_id != 11)) {
               new_row.classList.add("d-none");
               new_row.classList.add("empty_field");
@@ -2402,6 +2405,7 @@ function show_item_info(appid_info, from_map) {
               if(element.read_only==true || element.can_edit==false){
                 new_p.classList.add('readonly_field');
               }
+              
               var id_field = element.field_id;
               new_p.id = "field_id_"+id_field;
               new_celd.appendChild(new_p);
@@ -2501,6 +2505,9 @@ function show_item_info(appid_info, from_map) {
                   new_celd.className = "col-md-12";
                 } else {
                   new_celd.className = "col-md-5 ml-3";
+                }
+                if(element_child_field.can_read==false){
+                    new_celd.classList.add('canot_read');
                 }
                 var new_p = document.createElement('H6');
                 if (element_child_field.field_type_id == 11) {
@@ -2662,6 +2669,7 @@ function show_item_info(appid_info, from_map) {
                   if(element_child_field.read_only==true || element_child_field.can_edit==false){
                     new_p.classList.add('readonly_field');
                   }
+                  
                   new_p.style.padding = "0px 0.5rem";
                   new_p.style.height = "auto";
                   var id_field = element_child_field.field_id;
