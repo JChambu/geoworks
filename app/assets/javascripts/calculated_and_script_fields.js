@@ -137,10 +137,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                         calculoStringReplace+=val;
                     }
                 } 
-                console.log("String a calcular "+calculoStringReplace)
                 var resultado = eval(calculoStringReplace);
-                console.log("Resultado")
-                console.log(resultado)
                 $('#field_id_'+field_id).val(resultado);
             }
             if(CalculateObj_keys[k]=="semanaDesde"){
@@ -150,6 +147,39 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                     number_of_week = getWeekNumber(dateObject)[1]
                     $('#field_id_'+field_id).val(number_of_week);
                 }
+            }
+            if(CalculateObj_keys[k]=="localidad"){
+                var id_Provincia = CalculateObj.localidad.split(',')[0];
+                var id_Departamento = CalculateObj.localidad.split(',')[1];
+                var provincia = $("#field_id_"+id_Provincia).val();
+                var departamento = $("#field_id_"+id_Departamento).val();
+                $.getJSON('https://apis.datos.gob.ar/georef/api/localidades?provincia=%22'+provincia+'%22&departamento=%22'+departamento+'%22&orden=nombre&aplanar=true&campos=estandar&max=5000', function(data,err) {
+                    // JSON result in `data` variable
+                    if(err=='success'){
+                        $("#field_id_"+field_id).empty();
+                        var found_option=false;
+                        data.localidades.forEach(function(element) {
+                            var new_option = document.createElement('OPTION');
+                              new_option.text=element.nombre;
+                              new_option.value=element.nombre;
+                              if(valueObj==null && value!=null){
+                                value_selected=value[0];
+                            }else{
+                                value_selected=valueObj;
+                            }
+                                if(value_selected==element.nombre){
+                                  found_option=true;
+                                  new_option.selected = true;
+                                }
+                              document.getElementById("field_id_"+field_id).appendChild(new_option);
+                        });
+                        if(!found_option){document.getElementById("field_id_"+field_id).selectedIndex = -1;}
+                        $("#field_id_"+field_id).multiselect('rebuild');
+                        
+                    } else{
+                        set_error_message("Error en la Api de Localizaciones");
+                    }
+                });
             }
         }
     }
@@ -165,9 +195,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
             if(CalculateObj_keys[k]=="municipio"){
 
             }
-            if(CalculateObj_keys[k]=="localidad"){
-
-            }
+            
         }    
     }
     // Cálculos permitidos al crear registro

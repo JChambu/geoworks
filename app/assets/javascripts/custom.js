@@ -2418,7 +2418,7 @@ function show_item_info(appid_info, from_map) {
                 var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled';
               }
               $('#field_id_'+id_field).multiselect({
-                maxHeight: 800,
+                maxHeight: 450,
                 buttonClass: buttonClass,
                 buttonWidth: '100%',
                 nonSelectedText: 'Seleccionar',
@@ -2741,7 +2741,7 @@ function show_item_info(appid_info, from_map) {
                 var buttonClass = 'text-left form-control form-control-sm info_input_disabled is_child_field';
               }
               $('#fieldchildid__'+arraymultiselect[x]+'__'+arraymultiselectChild[x]).multiselect({
-                maxHeight: 800,
+                maxHeight: 450,
                 buttonClass: buttonClass,
                 buttonWidth: '100%',
                 nonSelectedText: 'Seleccionar',
@@ -2769,8 +2769,9 @@ function show_item_info(appid_info, from_map) {
         father_fields.forEach(function(element) {
           if(element.data_script!=""){
             Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,true);
-          }
+          }          
         });
+        calculate_all();
 
     }//end Success
   }); //end ajax
