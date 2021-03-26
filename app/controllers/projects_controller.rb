@@ -35,8 +35,8 @@ class ProjectsController < ApplicationController
     if app_id.present? && properties.present?
       @project = Project.find(app_id)
       if @project.present?
-        if @project.update_form(properties, current_user.id)
-          render json: {status: 'El registro fue modificado correctamente.', user_id: current_user.id}
+        if @project.update_form(properties)
+          render json: {status: 'El registro fue modificado correctamente.'}
         else
           render json: {status: 'Error. No se pudo actualizar el registro.'}
         end
