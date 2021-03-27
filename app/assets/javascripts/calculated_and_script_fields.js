@@ -160,14 +160,14 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                         var found_option=false;
                         data.localidades.forEach(function(element) {
                             var new_option = document.createElement('OPTION');
-                              new_option.text=element.nombre;
-                              new_option.value=element.nombre;
+                              new_option.text=camelCase(element.nombre);
+                              new_option.value=camelCase(element.nombre);
                               if(valueObj==null && value!=null){
                                 value_selected=value[0];
                             }else{
                                 value_selected=valueObj;
                             }
-                                if(value_selected==element.nombre){
+                                if(value_selected.toUpperCase()==element.nombre.toUpperCase()){
                                   found_option=true;
                                   new_option.selected = true;
                                 }
@@ -175,6 +175,9 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                         });
                         if(!found_option){document.getElementById("field_id_"+field_id).selectedIndex = -1;}
                         $("#field_id_"+field_id).multiselect('rebuild');
+                        if(document.getElementById('field_id_'+field_id).classList.contains('info_input_disabled')){
+                            $("#field_id_"+field_id).multiselect('disable');
+                        }
                         
                     } else{
                         set_error_message("Error en la Api de Localizaciones");
@@ -228,7 +231,15 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
   } catch(e){
     set_error_message("Error en el atributo calculado del campo ID:"+field_id);
   }  
-}                         
+}   
+
+function camelCase(str) {
+        var lcStr = str.toLowerCase();
+        return lcStr.replace(/(?:^|\s)\w/g, function(match) {
+            return match.toUpperCase();
+        });
+    }
+            
 
 return {
     Script: Script,

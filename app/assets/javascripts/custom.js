@@ -2779,7 +2779,7 @@ function show_item_info(appid_info, from_map) {
             Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,true);
           }          
         });
-        calculate_all();
+        calculate_all(true);
 
     }//end Success
   }); //end ajax
@@ -2853,12 +2853,8 @@ function edit_file(width_childs){
   if(!width_childs){array_child_edited=[]}
   $(".required_field").each(function() {
     $(this).parent().closest('div').css("border-bottom","none");
-    console.log("Está editando hijos???" + width_childs)
     if(!width_childs && this.classList.contains('is_child_field')){
-      console.log("Es requerido en hijos")
     }else{
-      console.log("Campo Requerido ");
-      console.log(this.value)
       if(this.value == null || this.value == ""){
         $(this).parent().closest('div').css("border-bottom","solid 2px #dc3545");
         required_field_number++;
