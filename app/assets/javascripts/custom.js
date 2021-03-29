@@ -2363,7 +2363,8 @@ function show_item_info(appid_info, from_map) {
                   new_p.setAttribute('onChange', 'set_nested(event)');
                 }
                 if(element.data_script!=""){
-                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +element.value+',' +found_nested +',event )');
+                  if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
+                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event  )');
                 }
               }
 
@@ -2386,8 +2387,9 @@ function show_item_info(appid_info, from_map) {
                 new_p.value="";
                 new_p.setAttribute('onChange', 'changeFile()');
                 if(element.data_script!=""){
-                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +element.value +' )');
-                }
+                  if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
+                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event )');
+                 }
               }
               if (element.field_type_id == 5) {
                 var new_p = document.createElement('INPUT');
@@ -2891,7 +2893,15 @@ function edit_file(width_childs){
             }
           var value_field_properties = array_val;
         }else{
-            var value_field_properties = $('#field_id_'+id_field_properties).val();
+          if( fiel_type_properties == 4){
+            var value_field_properties = $('#field_id_'+id_field_properties).val().toLowerCase() == 'true' ? true : false;;
+          } else{
+            if( fiel_type_properties == 5){
+              var value_field_properties = parseFloat($('#field_id_'+id_field_properties).val());
+              } else{
+              var value_field_properties = $('#field_id_'+id_field_properties).val();
+            }
+          }
         }
         properties_to_save[key_field_properties] = value_field_properties;
       }
@@ -2925,7 +2935,15 @@ function edit_file(width_childs){
             }
             var value_field_properties = array_val;
           }else{
-            var value_field_properties = $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val();
+            if( fiel_type_properties == 4){
+             var value_field_properties = $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val().toLowerCase() == 'true' ? true : false;;
+            } else{
+              if( fiel_type_properties == 5){
+              var value_field_properties = parseFloat($('#field_id_'+id_field_properties).val());
+              } else{ 
+                var value_field_properties = $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val();
+              }
+            }
           }
           properties_child_to_save[id_field_child_properties] = value_field_properties;
           console.log("Properties Child")
