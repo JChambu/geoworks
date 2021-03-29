@@ -180,7 +180,7 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
 
         data_charts = data;
         draw_charts();
-        
+
 
       } //cierra function data
     }) //cierra ajax
@@ -2157,6 +2157,10 @@ function show_item_info(appid_info, from_map) {
       app_id: appid_info
     },
     success: function(data) {
+
+      console.log('Padres e hijos sin actualizar');
+      console.log(data);
+
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
       $("#info-modal").modal('show');
@@ -2213,7 +2217,6 @@ function show_item_info(appid_info, from_map) {
       var subtitles_all_child = [];
       var verify_count_elements = 0; // variable para chequear que se dibujan todos los campos sin error
       father_fields.forEach(function(element) {
-        console.log(element);
         if (element.field_type_id == 7 && element.value.length == 0) {} else {
           if (element.field_type_id != 7) { //dibuja campo padre
             var new_row = document.createElement('DIV');
@@ -2250,7 +2253,7 @@ function show_item_info(appid_info, from_map) {
                 } catch(e){
                   set_error_message("Error de configuración: subtítulo del campo:"+element.name);
                 }
-                
+
               }
               new_p.innerHTML = element.name;
             } else {
@@ -2299,7 +2302,7 @@ function show_item_info(appid_info, from_map) {
                     } else{
                       set_error_message("Error en listados anidados: "+element.name);
                     }
-                    
+
                   }
                   var new_p_nested = document.createElement('SELECT');
                   new_p_nested.className = "mb-1 multiselect_field form-control form-control-sm info_input_disabled";
@@ -2407,7 +2410,7 @@ function show_item_info(appid_info, from_map) {
               if(element.read_only==true || element.can_edit==false){
                 new_p.classList.add('readonly_field');
               }
-              
+
               var id_field = element.field_id;
               new_p.id = "field_id_"+id_field;
               new_celd.appendChild(new_p);
@@ -2601,7 +2604,7 @@ function show_item_info(appid_info, from_map) {
                           } else{
                             set_error_message("Error en subformulario, listados: "+element_child_field.name);
                           }
-                          
+
                           for (v=0;v<values_array.length;v++){
                             if(values_array[v]==item.name){
                               found_option=true;
@@ -2671,7 +2674,7 @@ function show_item_info(appid_info, from_map) {
                   if(element_child_field.read_only==true || element_child_field.can_edit==false){
                     new_p.classList.add('readonly_field');
                   }
-                  
+
                   new_p.style.padding = "0px 0.5rem";
                   new_p.style.height = "auto";
                   var id_field = element_child_field.field_id;
@@ -2779,7 +2782,7 @@ function show_item_info(appid_info, from_map) {
         father_fields.forEach(function(element) {
           if(element.data_script!=""){
             Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,true);
-          }          
+          }
         });
         calculate_all(true);
 
@@ -2909,7 +2912,7 @@ function edit_file(width_childs){
   } else {
     var properties_to_save = null;
   }
-    console.log("Properties")
+    console.log("Padre a actualizar")
     console.log(properties_to_save)
 
   //envio de Json hijos
@@ -2921,7 +2924,7 @@ function edit_file(width_childs){
       var id_field_father_properties;
       $('.field_key_child_json').each(function() {
         id_field_father_properties = this.id.split('__')[0];
-        var id_child_properties = this.id.split('__')[2]; 
+        var id_child_properties = this.id.split('__')[2];
         var fiel_type_properties = this.id.split('__')[3];
         var id_field_child_properties = this.id.split('__')[4];
 
@@ -2940,14 +2943,12 @@ function edit_file(width_childs){
             } else{
               if( fiel_type_properties == 5){
               var value_field_properties = parseFloat($('#field_id_'+id_field_properties).val());
-              } else{ 
+              } else{
                 var value_field_properties = $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val();
               }
             }
           }
           properties_child_to_save[id_field_child_properties] = value_field_properties;
-          console.log("Properties Child")
-          console.log(properties_child_to_save)
           }
         }
       });
@@ -2960,7 +2961,7 @@ function edit_file(width_childs){
     }
   }
 
-  console.log("Hijos para actualizar")
+  console.log("Hijos a actualizar")
   console.log(child_edited_all);
 
   $.ajax({
@@ -3094,6 +3095,6 @@ function set_error_message(message){
     $('#edit_confirmation_child').addClass("d-none");
     $('#edit_confirmation').removeClass("d-inline");
     $('#edit_confirmation_child').removeClass("d-inline");
-}  
+}
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
