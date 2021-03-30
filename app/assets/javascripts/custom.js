@@ -1052,8 +1052,8 @@ function draw_charts() {
 //****** FUNCIONES PARA TABLA DE DATOS*****
 // Función para traer todos los datos de los registros contenidos y filtrados
 function init_data_dashboard(haschange) {
-  //Evita calcular la tabla si está oculta
-  if ($('#status-view').hasClass('status-view-condensed')) {
+  //Evita calcular la tabla si está oculta o si no existe por autorización de roles
+  if ($('#status-view').hasClass('status-view-condensed') || $('.table_data_container').length==0) {
     return;
   }
   //cierra modal de información del registro
