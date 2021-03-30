@@ -76,11 +76,6 @@ class Project < ApplicationRecord
     @fields = ProjectField.where(project_type_id: 31)
     @properties = Project.where(project_type_id: 32).select("properties->>'form_values'")
 
-    #   @data = JSON.parse(@properties.to_h)
-    #@properties.each do |row|
-    #
-
-
   end
 
   def update_sequence_projects

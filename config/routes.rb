@@ -20,7 +20,6 @@ Rails.application.routes.draw do
   patch 'projects/update_form' => 'projects#update_form'
   patch 'projects/change_owner' => 'projects#change_owner'
   patch 'projects/disable_form' => 'projects#disable_form'
-  patch 'project_data_children/update_subform' => 'project_data_children#update_subform'
   post 'project_statuses/options', as: 'project_statuses_options'
   post 'project_statuses/update_priority', as: 'project_statuses_update_priority'
 

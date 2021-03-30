@@ -3,16 +3,6 @@ class ProjectDataChildrenController < ApplicationController
   before_action :set_project_data_child, only: [:show, :edit, :update, :destroy]
 
 
-  def update_subform
-    subforms = params[:subforms]
-    subforms.each do |i, sf|
-      child_id = sf['child_id']
-      properties = sf['properties']
-      @project_data_children = ProjectDataChild.find(child_id)
-      @project_data_children.update_subform(properties, current_user.id)
-    end
-  end
-
   # GET /project_data_children
   # GET /project_data_children.json
   def index
