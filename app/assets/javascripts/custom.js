@@ -2328,17 +2328,17 @@ function show_item_info(appid_info, from_map) {
                     if(values!=null){
                       if(Array.isArray(values)){
                         values_array = values;
-                      } else{
-                        set_error_message("Error en listados: "+element.name);
-                      }
                         for (v=0;v<values_array.length;v++){
                           if(values_array[v]==item.name){
                             found_option=true;
                             new_option.selected = true;
                           }
                         }
-                      }
+                      } else{
+                        set_error_message("Error en listados: "+element.name);
+                      }    
                     }
+                  }
                   new_p.appendChild(new_option);
                   if(!found_option){new_p.selectedIndex = -1;}
                   //Comienza Anidados opciones
@@ -2572,7 +2572,8 @@ function show_item_info(appid_info, from_map) {
                           values = element_child_field.value[0];
                           values_nested = element_child_field.value[1];
                         } else{
-                          set_error_message("Error en subformulario, listados anidados : "+element_child_field.name);
+                          //comentado hasta edición de hijos
+                         // set_error_message("Error en subformulario, listados anidados : "+element_child_field.name);
                         }
                       }
                       var new_p_nested = document.createElement('SELECT');
@@ -2601,15 +2602,15 @@ function show_item_info(appid_info, from_map) {
                         if(values!=null){
                           if(Array.isArray(values)){
                             values_array = values;
-                          } else{
-                            set_error_message("Error en subformulario, listados: "+element_child_field.name);
-                          }
-
-                          for (v=0;v<values_array.length;v++){
+                            for (v=0;v<values_array.length;v++){
                             if(values_array[v]==item.name){
                               found_option=true;
                               new_option.selected = true;
                             }
+                          }
+                          } else{
+                            //Comentado hasta la edición de hijos
+                            //set_error_message("Error en subformulario, listados: "+element_child_field.name);
                           }
                        }
                      }
