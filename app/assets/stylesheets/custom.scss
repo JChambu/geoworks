@@ -625,3 +625,8 @@ div.custom-menu.show {
 .canot_read{
   display: none!important;
 }
+
+.custom-card-body{
+  max-height:68vh;
+  overflow-y:auto;
+}
