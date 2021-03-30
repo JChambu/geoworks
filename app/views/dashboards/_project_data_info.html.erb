@@ -86,6 +86,7 @@
 
   function save_info(option_save){
     disabled_fields();
+    Navarra.geomaps.close_all_popups();
     $('.div_confirmation').addClass("d-none");
     $('.div_confirmation').removeClass("d-inline");
     if(option_save=="edit_confirmation"){

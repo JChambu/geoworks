@@ -1174,6 +1174,10 @@ Navarra.geomaps = function() {
     }); // Cierra L.WMS.Source.extend
   }
 
+  function close_all_popups(){
+    mymap.closePopup();
+  }
+
   return {
     init: init,
     wms_filter: wms_filter,
@@ -1184,6 +1188,7 @@ Navarra.geomaps = function() {
     show_kpis: show_kpis,
     layers_internal: layers_internal,
     layers_external: layers_external,
-    popup: popup
+    popup: popup,
+    close_all_popups: close_all_popups
   }
 }();
