@@ -30,9 +30,9 @@ $(document).ready(function() {
   var height_dashboard = height_browser - 60
   $("#map").css("height", height_dashboard);
     height_time_slider = $('#timeslider-container').height()+4;
-    $('#timeslider-container').css('height',height_time_slider);
+    $('#timeslider-container').css('height','0px');
     height_filters = $('#filter-container').height()+4;
-    $('#filter-container').css('height',height_filters);
+    $('#filter-container').css('height','0px');
   resize_graphics()
 });
 
