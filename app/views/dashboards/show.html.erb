@@ -25,6 +25,7 @@
 
     // Carga filtro por atributos y owner
     <% if @project_filter %>
+
       <% if !@project_filter.properties.nil? %>
         <% @project_filter.properties.each do |p| %>
 
@@ -41,8 +42,8 @@
           Navarra.project_types.config.attribute_filters.push(filter);
 
         <% end %>
-        Navarra.project_types.config.owner = <%= @project_filter.owner %>;
       <% end %>
+      Navarra.project_types.config.owner = <%= @project_filter.owner %>;
     <% end %>
 
     <% if @cross_layer_filter %>
@@ -81,7 +82,7 @@
       $('#'+container).css('left',"0%");
       $('#sidebar_all').removeClass(container);
       if(container!='charts-container' && ($('#sidebar_all').hasClass('charts-container') || $('#sidebar_all').hasClass('charts-container_expanded'))){
-        setTimeout(function(){ 
+        setTimeout(function(){
           resize_graphics();
         }, 700);
       }
@@ -96,7 +97,7 @@
           $(".leaflet-right").css("margin-right", "30%");
           $(".table_data_container").css("width", "70%");
         }
-      }   
+      }
     }
 
     //abrir paneles laterales
@@ -135,7 +136,7 @@
       if(need_recalculate){init_chart_doughnut();}
       if(need_draw_charts){draw_charts();}
       if($('#sidebar_all').hasClass('charts-container')){
-        setTimeout(function(){ 
+        setTimeout(function(){
           resize_graphics();
         }, 700);
       }
@@ -159,7 +160,7 @@
       $('#sidebar_all').removeClass(container);
       if(need_draw_charts){draw_charts();}
       if($('#sidebar_all').hasClass('charts-container_expanded')){
-        setTimeout(function(){ 
+        setTimeout(function(){
           resize_graphics();
         }, 700);
       }
@@ -282,7 +283,7 @@
     <% end %>
   </div>
   </div>
- 
+
 
    <% if can? :data, :visualizer %>
     <div class="pt-1 px-1 table_data_container position-absolute" style="top: 97vh; left: 0%; width: 70%; z-index: 401; transition: 1s; transition-delay: 0.3s">
