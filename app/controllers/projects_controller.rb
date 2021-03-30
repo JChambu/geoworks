@@ -54,7 +54,7 @@ class ProjectsController < ApplicationController
         child_id = sf['child_id']
         properties = sf['properties']
         @project_data_children = ProjectDataChild.find(child_id)
-        if @project_data_children.update_subform(properties, current_user.id)
+        if @project_data_children.update_subform(properties)
           render json: {status: 'El registro fue modificado correctamente.'}
         else
           render json: {status: 'Error. No se pudo actualizar el registro.'}
