@@ -2942,7 +2942,7 @@ function edit_file(width_childs){
              var value_field_properties = $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val().toLowerCase() == 'true' ? true : false;;
             } else{
               if( fiel_type_properties == 5){
-              var value_field_properties = parseFloat($('#field_id_'+id_field_properties).val());
+              var value_field_properties = parseFloat($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val());
               } else{
                 var value_field_properties = $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val();
               }
