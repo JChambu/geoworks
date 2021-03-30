@@ -28,9 +28,10 @@ class ProjectsController < ApplicationController
 
   # Actualiza la columna properties
   def update_form
+
     # Padres
     app_id = params[:app_id]
-    properties = params[:properties]
+    properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
 
     if app_id.present? && properties.present?
       @project = Project.find(app_id)
@@ -46,7 +47,7 @@ class ProjectsController < ApplicationController
     end
 
     # Hijos
-    subforms = params[:subforms]
+    subforms = params[:subforms] # FIXME: los paremetros llegan como string
 
     if subforms.present?
       subforms.each do |i, sf|

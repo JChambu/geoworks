@@ -2970,7 +2970,7 @@ function edit_file(width_childs){
     datatype: 'JSON',
     data: {
       app_id: app_id,
-      properties: properties_to_save,
+      properties: JSON.stringify(properties_to_save),
       subforms: child_edited_all
     },
     success: function(data) {
