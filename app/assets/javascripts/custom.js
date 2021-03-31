@@ -1051,13 +1051,13 @@ function draw_charts() {
 
 //****** FUNCIONES PARA TABLA DE DATOS*****
 // Función para traer todos los datos de los registros contenidos y filtrados
-function init_data_dashboard(haschange) {
+function init_data_dashboard(haschange,close_info) {
   //Evita calcular la tabla si está oculta o si no existe por autorización de roles
   if ($('#status-view').hasClass('status-view-condensed') || $('.table_data_container').length==0) {
     return;
   }
   //cierra modal de información del registro
-  $("#info-modal").modal("hide");
+  if(!close_info){}else{$("#info-modal").modal("hide");}
   $(".fakeLoader").css("display", "block");
   var type_box = 'polygon';
   var size_box = Navarra.dashboards.config.size_polygon;
@@ -2164,6 +2164,7 @@ function show_item_info(appid_info, from_map) {
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
       $("#info-modal").modal('show');
+      $(".fa-eye-slash").css("color", "#9b9b9b");
 
       filechange = false;
       //borra datos anteriores
@@ -2274,6 +2275,7 @@ function show_item_info(appid_info, from_map) {
               if (element.field_type_id == 1) {
                 var new_p = document.createElement('TEXTAREA');
                 new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
+                if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
                 new_p.setAttribute("onChange","calculate_all(false)");
               }
               var found_nested = false;
@@ -2398,6 +2400,7 @@ function show_item_info(appid_info, from_map) {
                 var new_p = document.createElement('INPUT');
                 new_p.type = "number";
                 new_p.className = "form-control form-control-sm info_input_disabled";
+                if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
                 new_p.setAttribute("onChange","calculate_all(false)");
               }
               new_p.disabled = true;
@@ -2980,6 +2983,7 @@ function edit_file(width_childs){
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
       $('#info_messages').html(data['status']);
+      update_all();
     }
   });
 }
@@ -2999,7 +3003,8 @@ function change_owner(){
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
       $('#info_messages').html(data['status']);
-      //cambiar app_usuario
+      $('.app_usuario_value').val(user_id);
+      update_all();
     }
   });
 }
@@ -3017,9 +3022,23 @@ function disable_file(){
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
       $('#info_messages').html(data['status']);
-      //cambiar app_usuario
+      update_all();
     }
   });
+}
+
+function update_all(){
+  init_data_dashboard(true,false);
+  Navarra.geomaps.current_layer();
+  Navarra.geomaps.show_kpis();
+  var heatmap_actived = Navarra.project_types.config.heatmap_field;
+  if (heatmap_actived != '') {
+    Navarra.geomaps.heatmap_data();
+  }
+  var attribute_filters = Navarra.project_types.config.attribute_filters;
+  if (attribute_filters != '') {
+    Navarra.geomaps.wms_filter();
+  }
 }
 
 function set_script(data_script,field_type_id,field_id,value,isnested,event){
