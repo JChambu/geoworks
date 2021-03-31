@@ -520,7 +520,6 @@ class ProjectTypesController < ApplicationController
     end
     report_data['thead'] = p_data_array
     report_data['tbody'] = data
-    
     render json: report_data
   end
 
@@ -714,7 +713,7 @@ class ProjectTypesController < ApplicationController
   # DELETE /project_types/1
   # DELETE /project_types/1.json
   def destroy
-
+    authorize! :project_types, :destroy
     respond_to do |format|
       if @project_type.destroy
         ProjectType.destroy_layer_geoserver @project_type.name_layer
