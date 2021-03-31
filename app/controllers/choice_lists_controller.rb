@@ -4,8 +4,14 @@ class ChoiceListsController < ApplicationController
   # GET /choice_lists
   # GET /choice_lists.json
   def index
-    @choice_lists = ChoiceList.order(:name)
     authorize! :choice_lists, :visualizer
+    @choice_lists = ChoiceList.order(:name)
+    respond_to do |format|
+      format.html
+      format.csv { send_data @choice_lists.to_csv,
+                   filename: "Listados-#{Date.today}",
+                   type: 'text/csv; charset=utf-8' }
+    end
   end
 
   # GET /choice_lists/1
