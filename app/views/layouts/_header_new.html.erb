@@ -155,8 +155,12 @@ function open_panel(id_panel){
         <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
           <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelAdmin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Paneles</a>
             <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels" aria-labelledby="panelAdmin">
-              <a class="dropdown-item" href="#" onclick="open_panel('view-data-middle')">Tabla de datos</a>
-              <a class="dropdown-item" href="#" onclick="open_panel('view-charts')">Indicadores Gráficos</a>
+              <% if can? :data, :visualizer %>
+                <a class="dropdown-item" href="#" onclick="open_panel('view-data-middle')">Tabla de datos</a>
+              <% end %>
+              <% if can? :graphics, :visualizer %>
+                <a class="dropdown-item" href="#" onclick="open_panel('view-charts')">Indicadores Gráficos</a>
+              <% end %>
               <a class="dropdown-item" href="#" onclick="open_panel('view-filters')">Filtros Activos</a>
               <a class="dropdown-item" href="#" onclick="open_panel('view-timeslider')">Rango Temporal</a>
             </div>
