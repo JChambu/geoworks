@@ -1,3 +1,3 @@
 class PhotoChild < ApplicationRecord
-  belongs_to :project_data_child_id
+  belongs_to :project_data_child
 end

@@ -164,6 +164,7 @@ ActiveRecord::Schema.define(version: 20210128024355) do
     t.integer "chart_id"
     t.decimal "scale", default: "1.0"
     t.boolean "legend_display", default: false
+    t.integer "sort"
     t.index ["dashboard_id"], name: "index_graphics_on_dashboard_id"
   end
 
@@ -331,6 +332,7 @@ ActiveRecord::Schema.define(version: 20210128024355) do
     t.integer "sort"
     t.text "data_script"
     t.string "roles_edit"
+    t.boolean "filter_field", default: false
     t.index ["choice_list_id"], name: "index_project_subfields_on_choice_list_id"
     t.index ["field_type_id"], name: "index_project_subfields_on_field_type_id"
     t.index ["project_field_id"], name: "index_project_subfields_on_project_field_id"
@@ -445,7 +447,6 @@ ActiveRecord::Schema.define(version: 20210128024355) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
-  add_foreign_key "analytics_dashboards", "analysis_types"
   add_foreign_key "analytics_dashboards", "charts"
   add_foreign_key "analytics_dashboards", "project_types"
   add_foreign_key "has_project_types", "project_types"

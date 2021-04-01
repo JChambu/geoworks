@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 services:
   db:
     build: ./postgres
@@ -36,3 +36,6 @@ services:
       - db
 volumes:
   dbdata:
+networks:
+  default:
+    name: geoworks_network
