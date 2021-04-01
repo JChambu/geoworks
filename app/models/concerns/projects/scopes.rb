@@ -4,24 +4,60 @@ module Projects::Scopes
   module ClassMethods
 
     def search_value_for_fields params
-      @d = []
-      field = ProjectField.where(key: params['project_field_id']).where( project_type_id: params[:project_type_id]).first
-      if field.field_type.name == 'Listado (opción multiple)'
-        @d.push({field_type_name: field.field_type.name, values: ChoiceListItem.where(choice_list_id: field.choice_list_id).select('name as p_name')})
+
+      table = params['table']
+      field_key = params['project_field_key']
+      project_type_id = params[:project_type_id]
+      data = []
+
+      if table == 'Formularios'
+
+        field = ProjectField
+          .where(key: field_key)
+          .where(project_type_id: project_type_id)
+          .first
+
+        if field.field_type.name == 'Listado (opción multiple)'
+          data.push({field_type_name: field.field_type.name, values: ChoiceListItem.where(choice_list_id: field.choice_list_id).select('name as p_name')})
+        else
+
+          select = "projects.properties->>'#{field.key}' as p_name" if field_key != 'app_usuario' && field_key !='app_estado'
+          select = "users.name as p_name"  if field_key == 'app_usuario'
+          select = "project_statuses.name as p_name" if field_key == 'app_estado'
+
+          # TODO: Acá debería buscar sólo los no eliminados
+          query = Project
+            .joins(:user, :project_status)
+            .where(project_type_id: project_type_id)
+            .select(select)
+            .group('p_name')
+            .order('p_name')
+
+          data.push({field_type_name: field.field_type.name, values: query})
+        end
+
       else
 
-        select = "projects.properties->>'#{field.key}' as p_name" if params['project_field_id'] != 'app_usuario' && params['project_field_id'] !='app_estado'
-        select = "users.name as p_name"  if params['project_field_id'] == 'app_usuario'
-        select = "project_statuses.name as p_name" if params['project_field_id'] == 'app_estado'
+        subfield = ProjectSubfield
+          .joins(:project_field)
+          .where(project_fields: {project_type_id: project_type_id})
+          .where(id: field_key)
+          .first
 
-        query = Project.joins(:user, :project_status).
-          where(project_type_id: params[:project_type_id]).
-          select(select).
-          group('p_name').
-          order('p_name')
-        @d.push({field_type_name: field.field_type.name, values: query})
+        if subfield.field_type.name == 'Listado (opción multiple)'
+          data.push({field_type_name: subfield.field_type.name, values: ChoiceListItem.where(choice_list_id: subfield.choice_list_id).select('name as p_name')})
+        else
+          query = ProjectDataChild
+            .select("project_data_children.properties->>'#{subfield.id}' as p_name")
+            .joins(:project)
+            .where(projects: {project_type_id: project_type_id})
+            .group('p_name')
+            .order('p_name')
+          data.push({field_type_name: subfield.field_type.name, values: query})
+        end
+
       end
-      @d
+      data
     end
 
     def search_properties_data_for_tenant params

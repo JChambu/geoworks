@@ -8,7 +8,8 @@
 # Geoserver
 GEOSERVER_HOST=gw-geoserver
 GEOSERVER_PORT=<8600/443>
-GEOSERVER_ADMIN_PASSWORD=<geoserver-admin-password>
+GEOSERVER_USER=<geoserver-user>
+GEOSERVER_PASSWORD=<geoserver-password>
 GEOSERVER_DATA_DIR=/opt/geoserver/data_dir
 ENABLE_JSONP=true
 MAX_FILTER_RULES=20

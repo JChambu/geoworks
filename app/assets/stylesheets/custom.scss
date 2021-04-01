@@ -1,6 +1,7 @@
 html,
 body {
   height: 100%;
+  overflow-y:hidden;
 }
 
 #map {
@@ -8,14 +9,18 @@ body {
   height: 91vh;
 }
 .sidebar {
-  width: 30%;
-  position: absolute;
+  width: 100%;
+  left:0%;
+  position: relative;
   z-index: 401;
   background-color: rgba(0, 0, 0, 0.2);
-  transition:1s;
+  transition:0.7s;
+  overflow-y:hidden;
+  padding-top:0px!important;
 }
 .graphics {
-  overflow-y: scroll;
+  overflow-y: auto;
+  transition: 1s;
 }
 
 .fas:hover {
@@ -139,35 +144,17 @@ div.custom-menu.show {
 }
 
 /* Botón para extender el sidebar */
-#view {
-  cursor: pointer;
-  position: absolute;
-  top: 40vh;
-  z-index: 402 !important;
-  font-size: 20px;
-  color: #e8ebef;
-  background: rgba(58, 63, 68, 0.5);
-  transform: translate(-50%);
-  border-width: 5px;
-  border-color: transparent;
-  border-radius: 50%;
-  border-style: solid;
+.view-data-container {
+  float: right;
+  padding: 1px 10px;
+
 }
-#view-data {
+.view-data {
   cursor: pointer;
-  position:absolute;
-  top:-3vh;
-  left: 50%;
-  z-index: 402 !important;
-  font-size: 20px;
-  color: #e8ebef;
-  background: rgba(58, 63, 68, 0.5);
-  transform: translate(-50%);
-  border-width: 5px;
-  border-color: transparent;
-  border-radius: 50%;
-  border-style: solid;
-  transition:1s;
+  font-size: 12px;
+  color: #e9ecef;
+  margin: 0px 2px;
+  color: #9b9b9b;
 }
 
 /* Gráficos */
@@ -183,6 +170,9 @@ div.custom-menu.show {
 }
 .chart-bg-transparent {
   background-color: rgba(58, 63, 68, 0.4);
+}
+.chart-bg-none {
+  background: none;
 }
 
 
@@ -275,10 +265,27 @@ div.custom-menu.show {
 .leaflet-control-zoom-out:hover {
   color: #d3d800 !important;
 }
+.leaflet-top .leaflet-control , .leaflet-draw-section , .leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar , .leaflet-top  {
+  display:inline-flex;
+  flex-direction: row;
+  border: none !important;
+}
+
+.leaflet-bar a:first-child , .leaflet-bar a:last-child , .leaflet-bar a,  {
+  border-radius:5px!important;
+    margin: 1px!important;
+}
+.leaflet-draw-toolbar{
+  margin: 0px!important;
+}
+
 
 /*Elimina la marca*/
 .leaflet-control-attribution a{
   display:none!important;
+}
+.leaflet-container .leaflet-control-attribution{
+  display:none !important;
 }
 /* Modifica el estilo de la escala de Leaflet*/
 .leaflet-control-scale-line {
@@ -430,7 +437,7 @@ div.custom-menu.show {
     color: red;
     white-space: nowrap;
 }
-.page_active {
+.active_page {
   border-bottom:solid 1px white;
 }
 .page_data{
@@ -518,6 +525,7 @@ div.custom-menu.show {
   line-height:1 !important;
   resize: none;
   overflow: hidden;
+  appearance: menulist;
 }
 .info_input_disabled{
   background: none!important;
@@ -526,6 +534,7 @@ div.custom-menu.show {
   resize: none;
   overflow: hidden;
   height: 25px!important;
+  appearance: none;
 }
 .photo_div_info{
   width:23%;
@@ -565,3 +574,63 @@ div.custom-menu.show {
   margin-right:10px;
 }
 
+/* estilo multiselector de campos listados multiples */
+.field_div .multiselect{
+  overflow:visible!important;
+  height: fit-content!important;
+}
+.field_div .multiselect-selected-text{
+  white-space: pre-wrap!important;
+}
+.field_div .selected_multiple_item , .div_confirmation .selected_multiple_item{
+  background:#d3d80080 !important;
+  color:white!important;
+  width: 100%;
+}
+.field_div .multiselect-container label input, .div_confirmation .multiselect-container label input  {
+  display:none!important;
+}
+.field_div .multiselect-container label , .div_confirmation .multiselect-container label{
+  width: 100%!important;
+}
+.field_div ul , .div_confirmation ul{
+  padding: 5px 10px !important;
+}
+.field_div .dropdown-toggle::after , div_confirmation .dropdown-toggle::after {
+  display:none !important;
+}
+.ok_button ul:after{
+  content:"OK";
+  cursor: pointer;
+  float: right;
+  border: solid 1px;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#8a9196), color-stop(60%, #7A8288), to(#70787d));
+  background-image: linear-gradient(#8a9196, #7A8288 60%, #70787d);
+  background-repeat: no-repeat;
+  -webkit-filter: none;
+  filter: none;
+  border-color: rgba(0,0,0,0.6);
+  color:white;
+  margint-top:20px;
+}
+
+/* estilo multiselector de campos listados multiples */
+.custom_dropdown_panels{
+  top: 0vh;
+  right: 100.5%;
+}
+/* registros ocultos por autorización */
+.canot_read{
+  display: none!important;
+}
+
+.custom-card-body{
+  max-height:68vh;
+  overflow-y:auto;
+}
+.custom-card-body-np{
+  max-height:74vh;
+  overflow-y:auto;
+}
