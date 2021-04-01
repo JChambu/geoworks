@@ -16,6 +16,13 @@
           </div>
         </div>
 
+        <div class="row justify-content-center">
+          <%= f.label :description, 'Descripción', class: 'col-md-2 text-right col-form-label' %>
+          <div class="col-md-6">
+            <%= f.text_area :description, class: "form-control form-control-sm" %>
+          </div>
+        </div>
+        <br>
         <div id="field_items" class="field_items text-center">
           <%= f.fields_for :choice_list_items do |i| %>
             <%= render "choice_list_item_fields", f: i %>
