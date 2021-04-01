@@ -1,5 +1,5 @@
 class GraphicsController < ApplicationController
-  before_action :set_dashboard
+  before_action :set_dashboard, except: :update_sort
   before_action :set_graphic, only: [:show, :edit, :update, :destroy]
 
   # GET /graphics
@@ -73,6 +73,17 @@ class GraphicsController < ApplicationController
       format.js
       format.html { redirect_to graphics_url, notice: 'Graphic was successfully destroyed.' }
       format.json { head :no_content }
+    end
+  end
+
+  def update_sort
+
+    sort = params[:sort_data]
+    sort.each do |s, p|
+      p s
+      p p
+      @graphic = Graphic.find(s)
+      @graphic.update_sort!(p)
     end
   end
 

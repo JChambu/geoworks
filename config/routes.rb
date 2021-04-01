@@ -22,6 +22,8 @@ Rails.application.routes.draw do
   patch 'projects/disable_form' => 'projects#disable_form'
   post 'project_statuses/options', as: 'project_statuses_options'
   post 'project_statuses/update_priority', as: 'project_statuses_update_priority'
+  post 'graphics/update_sort' => 'graphics#update_sort', as: :update_sort
+
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
