@@ -332,6 +332,7 @@ ActiveRecord::Schema.define(version: 20210211001400) do
     t.integer "sort"
     t.text "data_script"
     t.string "roles_edit"
+    t.boolean "filter_field", default: false
     t.index ["choice_list_id"], name: "index_project_subfields_on_choice_list_id"
     t.index ["field_type_id"], name: "index_project_subfields_on_field_type_id"
     t.index ["project_field_id"], name: "index_project_subfields_on_project_field_id"

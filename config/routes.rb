@@ -3,7 +3,6 @@ Rails.application.routes.draw do
 
   get 'project_types/maps' => 'project_types#maps'
   get 'project_types/search_name_layer' => 'project_types#search_name_layer'
-  get 'projects/popup' => 'projects#popup'
   get 'project_types/kpi' => 'project_types#kpi'
   get 'project_types/search_data_dashboard' => 'project_types#search_data_dashboard'
   get 'project_types/search_father_children_and_photos_data' => 'project_types#search_father_children_and_photos_data'
@@ -17,6 +16,10 @@ Rails.application.routes.draw do
   get 'projects/search_data' => 'projects#search_data'
   get 'projects/search_statuses' => 'projects#search_statuses'
   get 'projects/search_users' => 'projects#search_users'
+  get 'projects/popup' => 'projects#popup'
+  patch 'projects/update_form' => 'projects#update_form'
+  patch 'projects/change_owner' => 'projects#change_owner'
+  patch 'projects/disable_form' => 'projects#disable_form'
   post 'project_statuses/options', as: 'project_statuses_options'
   post 'project_statuses/update_priority', as: 'project_statuses_update_priority'
   post 'graphics/update_sort' => 'graphics#update_sort', as: :update_sort

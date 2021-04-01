@@ -15,18 +15,17 @@ if(value!="Sin Filtro"){
   var filter = field_key + '|' + operator + '|\'' + value + '\'';
   var filter_view = field_name  + " " + operator + " " + value;
 
-  Navarra.project_types.config.filter_option.push(filter);
-  Navarra.project_types.config.filter_kpi.push(filter);
+  Navarra.project_types.config.attribute_filters.push(filter);
 
   // Elimina y vuelve a agregar el item al card Filtros Activos
   $('#filter-body').append(
     $('<div>', { // item
-      'class': 'message text-light bg-secondary px-2 mb-1 py-1 rounded border border-dark shadow',
+      'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow form_filter',
       'id': filter,
       'value': filter
     }).append(
       $('<b>', {
-        'text': 'Filtrado por: '+filter_view
+        'text':+filter_view
      }),
       $('<button>', {
         'type': 'button',
@@ -41,6 +40,7 @@ if(value!="Sin Filtro"){
   $(".fa-bell").css("color", "#9b9b9b");
 }
 
+resize_filters();
 resize_graphics();
 
 var point_color = Navarra.project_types.config.field_point_colors;
@@ -51,16 +51,15 @@ if(point_color == ''){
 }
 
 function remove_status_filters(){
-  var ar= Navarra.project_types.config.filter_option
+  var ar= Navarra.project_types.config.attribute_filters
   b = jQuery.grep(ar, function(value){
     if(value.split('|')[0] == 'app_estado'){
       return null;
     }else{
       return value;
     }
-    
+
   })
-  Navarra.project_types.config.filter_option = b;
-  Navarra.project_types.config.filter_kpi = b;
-   $(".message[id*="+'app_estado '+"]").remove();  
+  Navarra.project_types.config.attribute_filters = b;
+   $(".message[id*="+'app_estado '+"]").remove();
  }

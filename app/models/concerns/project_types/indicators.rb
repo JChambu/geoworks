@@ -249,48 +249,70 @@ module ProjectTypes::Indicators
       end
     end
 
-    def filters_on_the_fly data, data_conditions, sql_full
+    def filters_on_the_fly data, data_conditions, filtered_form_ids, sql_full
 
+      # Aplica filtros de padres
+      if !data_conditions.blank?
+        data_conditions.each do |key|
 
-      data_conditions.each do |key|
+          @s = key.split('|')
+          @field = @s[0]
+          @filter = @s[1]
+          @value = @s[2]
 
-        @s = key.split('|')
-        @field = @s[0]
-        @filter = @s[1]
-        @value = @s[2]
+          # Aplica filtro por campo usuario
+          if @field == 'app_usuario'
+            if sql_full.blank?
+              data =  data.where("users.name " + @filter + " #{@value}")
+            else
+              data = data.sub('where_clause', "where_clause users.name #{@filter} #{@value} AND ")
+            end
+          end
 
-        # Aplica filtro por campo usuario
-        if @field == 'app_usuario'
-          if sql_full.blank?
-            data =  data.where("users.name " + @filter + " #{@value}")
+          # Aplica filtro por campo estado
+          if @field == 'app_estado'
+            if sql_full.blank?
+              data =  data.where("project_statuses.name " + @filter + " #{@value} ")
+            else
+              data = data.sub('where_clause', "where_clause project_statuses.name #{@filter} #{@value} AND ")
+            end
+          end
+
+          # Aplica filtro por otro campo
+          if @field != 'app_usuario' && @field != 'app_estado'
+            if sql_full.blank?
+              data =  data.where("main.properties->>'" + @field +"'" +  @filter +" #{@value} ")
+            else
+              data = data.sub('where_clause', "where_clause (main.properties->>'#{@field}' #{@filter} #{@value}) AND ")
+            end
+          end
+
+        end
+      end
+
+      # Aplica filtros de hijos
+      if !filtered_form_ids.blank?
+        final_array = []
+        filtered_form_ids.each do |ids_array|
+          ids_array = JSON.parse(ids_array)
+          if !final_array.blank?
+            final_array = final_array & ids_array
           else
-            data = data.sub('where_clause', "where_clause users.name #{@filter} #{@value} AND ")
+            final_array = ids_array
           end
         end
-
-        # Aplica filtro por campo estado
-        if @field == 'app_estado'
-          if sql_full.blank?
-            data =  data.where("project_statuses.name " + @filter + " #{@value} ")
-          else
-            data = data.sub('where_clause', "where_clause project_statuses.name #{@filter} #{@value} AND ")
-          end
+        final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
+        if sql_full.blank?
+          data = data.where("main.id IN #{final_array}")
+        else
+          data = data.sub('where_clause', "where_clause (main.id IN #{final_array}) AND ")
         end
-
-        # Aplica filtro por otro campo
-        if @field != 'app_usuario' && @field != 'app_estado'
-          if sql_full.blank?
-            data =  data.where("main.properties->>'" + @field +"'" +  @filter +" #{@value} ")
-          else
-            data = data.sub('where_clause', "where_clause (main.properties->>'#{@field}' #{@filter} #{@value}) AND ")
-          end
-        end
-
       end
       @data = data
+      
     end
 
-    def kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id, from_date, to_date)
+    def kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, user_id, from_date, to_date)
 
       querys=[]
       @op = option_graph
@@ -320,9 +342,7 @@ module ProjectTypes::Indicators
             @data = apply_time_slider_filter @data, from_date, to_date, chart.sql_full
 
             # Aplica filtros generados por el usuario
-            if !data_conditions.blank?
-              conditions_on_the_fly =  filters_on_the_fly @data, data_conditions, chart.sql_full
-            end
+            conditions_on_the_fly =  filters_on_the_fly @data, data_conditions, filtered_form_ids, chart.sql_full
 
             if chart.kpi_type == 'basic'
               filters_simple = filters_simple @data, chart, project_type_id
@@ -347,7 +367,7 @@ module ProjectTypes::Indicators
       querys
     end
 
-    def kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, user_id, from_date, to_date)
+    def kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, user_id, from_date, to_date)
 
       querys = []
       @data_fixed = ''
@@ -372,9 +392,7 @@ module ProjectTypes::Indicators
       @data_fixed = apply_time_slider_filter @data_fixed, from_date, to_date, sql_full
 
       # Aplica filtros generados por el usuario
-      if !data_conditions.blank?
-        @data_fixed = filters_on_the_fly @data_fixed, data_conditions, sql_full
-      end
+      @data_fixed = filters_on_the_fly @data_fixed, data_conditions, filtered_form_ids, sql_full
 
       @total_row = Project
         .select('DISTINCT main.*')
@@ -417,9 +435,7 @@ module ProjectTypes::Indicators
         data = apply_time_slider_filter data, from_date, to_date, chart.sql_full
 
         # Aplica filtros generados por el usuario
-        if !data_conditions.blank?
-          data = filters_on_the_fly data, data_conditions, chart.sql_full
-        end
+        data = filters_on_the_fly data, data_conditions, filtered_form_ids, chart.sql_full
 
 
         if chart.kpi_type == 'basic'
