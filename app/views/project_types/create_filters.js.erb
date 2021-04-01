@@ -1,7 +1,9 @@
-field_name =  '<%= get_name_from_key(params[:q][:project_field]).name %>';
-field_key = '<%= params[:q][:project_field]%>'
+table = '<%= @table %>';
+field_name = '<%= @field_name %>';
+field_key = '<%= params[:q][:project_field]%>';
 operator = '<%= raw params[:q][:filters] %>';
 value = '<%= params[:q][:input_value] %>';
+filtered_form_ids = '<%= @filtered_form_ids %>';
 
 // Aplica modificaciones si el value es array
 if (value.match(/&quot;/g) != null) {
@@ -12,20 +14,25 @@ if (value.match(/&quot;/g) != null) {
 }
 
 var filter = field_key + '|' + operator + '|\'' + value + '\'';
-var filter_view = field_name  + " " + operator + " " + value_view;
 
-Navarra.project_types.config.filter_option.push(filter);
-Navarra.project_types.config.filter_kpi.push(filter);
+// Guarda el filtro dependiendo si es para la tabla padres o hijos
+if (table == 'form_filter') {
+  Navarra.project_types.config.attribute_filters.push(filter);
+} else {
+  Navarra.project_types.config.filtered_form_ids.push(filtered_form_ids);
+}
+
+var filter_view = field_name + " " + operator + " " + value_view;
 
 // Elimina y vuelve a agregar el item al card Filtros Activos
 $('#filter-body').append(
   $('<div>', { // item
-    'class': 'message text-light bg-secondary px-2 mb-1 py-1 rounded border border-dark shadow',
+    'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow ' + table,
     'id': filter,
-    'value': filter
+    'value': filtered_form_ids
   }).append(
     $('<b>', {
-      'text': 'Filtrado por: '+filter_view
+      'text':filter_view
     }),
     $('<button>', {
       'type': 'button',
@@ -36,14 +43,15 @@ $('#filter-body').append(
   )
 )
 
+resize_filters();
 resize_graphics();
 
 $("#filters-modal").modal('hide');
 //$("#filters-modal").remove();
 $(".fa-filter").css("color", "#d3d800");
 var point_color = Navarra.project_types.config.field_point_colors;
-if(point_color == ''){
-    Navarra.geomaps.wms_filter();
-}else{
-    Navarra.geomaps.point_colors_data();
+if (point_color == '') {
+  Navarra.geomaps.wms_filter();
+} else {
+  Navarra.geomaps.point_colors_data();
 }

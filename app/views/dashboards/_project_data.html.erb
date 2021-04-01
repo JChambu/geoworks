@@ -25,12 +25,14 @@ $(".th-hover").hover(function(){
   //busqueda por columna al hacer click
   $('#choose').keydown(function(e){
     if(e.keyCode == 13){
+      $(".active_page").html("1");
         init_data_dashboard(true);
         if($('#choose').val()==""){
           $('#choose').css("width","0%");
           $('#choose').addClass("p-0");
           $('#choose').blur();
         }
+        $("#info-modal").modal('hide');
       }
   })
 
@@ -44,7 +46,6 @@ $("#show_report").click(function(){
 //ordena descendente y ascendente
 function order_column(index){
   var column_order=$('#field_key'+index).val();
-  console.log("Texto ordenar "+column_order)
   $('.order_by_column').val(column_order);
   init_data_dashboard(false);
 }
@@ -64,23 +65,23 @@ function search_column(index){
 
 //oculta columnas
 function hide_column(index){
-  index+=1;
+  index+=2;
  $('#table_hidden tr td:nth-child('+index+')').hide();
  $('#table_hidden tr th:nth-child('+index+')').addClass("d-none");
  $('#table_visible tr td:nth-child('+index+')').hide();
  $('#table_visible tr th:nth-child('+index+')').addClass("d-none");
- $('.addcolumns a:nth-child('+(index-1)+')').removeClass("d-none");
+ $('.addcolumns a:nth-child('+(index-2)+')').removeClass("d-none");
  $('.fa-plus').removeClass("d-none");
 }
 
 //muestra columnas
 function show_column(index,){
-  index+=1;
+  index+=2;
  $('#table_hidden tr td:nth-child('+index+')').show()
  $('#table_hidden tr th:nth-child('+index+')').removeClass("d-none")
  $('#table_visible tr td:nth-child('+index+')').show()
  $('#table_visible tr th:nth-child('+index+')').removeClass("d-none")
- $('.addcolumns a:nth-child('+(index-1)+')').addClass("d-none");
+ $('.addcolumns a:nth-child('+(index-2)+')').addClass("d-none");
  if($(".addcolumns").children().length == $(".column_data.d-none").length){
    $('.fa-plus').addClass("d-none");
  }
@@ -92,6 +93,7 @@ function show_item(index, appid_selected){
   $('table tbody tr:nth-child('+(index+1)+')').removeClass('found');
   Navarra.project_types.config.data_dashboard="";
   Navarra.project_types.config.item_selected="";
+  $("#info-modal").modal('hide');
  }else{
    $('table tbody tr').removeClass('found');
    $('table tbody tr:nth-child('+(index+1)+')').addClass('found');
@@ -121,8 +123,8 @@ function show_item(index, appid_selected){
             <a class="dropdown-item column_data" onclick="show_column(<%=index%>)"><%= field.name %></a>
           <% else %>
             <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>
-          <% end %>  
-        <% end %>  
+          <% end %>
+        <% end %>
       <% end %>
     <% end %>
   </div>
@@ -132,6 +134,12 @@ function show_item(index, appid_selected){
   <input type="text" class="order_by_column d-none">
   <input type="text" class="total_files d-none">
   <h6 type="text" class="selected_files_from_total d-inline"></h6>
+  
+  <div class="view-data-container status-view-condensed" id="status-view">
+    <i class="fas fa-window-maximize view-data" id="view-data-middle"></i>
+    <i class="fas fa-square view-data" id="view-data-expanded"></i>
+    <i class="fas fa-times view-data" id="view-data-hidden"></i>
+  </div>
 
   <div class="mt-1" style="float: right;">
     <div class="dropdown" style="display: inline-block;">
@@ -155,6 +163,10 @@ function show_item(index, appid_selected){
     <thead>
       <tr>
         <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
+          <p style="color:white; margin-bottom: 0px"></p>
+          <input type="text" class="d-none field_key" value="#_action">
+        </th>
+        <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
           <p style="color:white; margin-bottom: 0px">#</p>
           <input type="text" class="d-none field_key" value="#">
         </th>
@@ -167,7 +179,7 @@ function show_item(index, appid_selected){
               <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" class="d-none" id=<%="columnfake_"+field.name %>>
             <% else %>
               <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" id=<%="columnfake_"+field.name %>>
-            <% end %>    
+            <% end %>
                 <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
                   <p style="color:white; margin-bottom: 0px; white-space: nowrap;"><%= field.name %></p>
                   <div style="padding-top: 10px; padding-bottom:20px">
@@ -192,6 +204,7 @@ function show_item(index, appid_selected){
   <table class="table table-hover m-0 card-body" id="table_visible" style="font-size: 0.8em; position: relative;top: -45px; text-align: center;">
     <thead style="visibility: hidden; border-bottom: solid transparent">
       <tr class="data_fields">
+        <th></th>
         <th>#</th>
         <% if !@fields.nil? %>
         <% @fields.each do |field|  %>
@@ -200,7 +213,7 @@ function show_item(index, appid_selected){
             <th style="min-width: 100px; white-space: nowrap;" class="d-none" id=<%="column_"+field.name %>><%= field.name %></th>
            <% else %>
             <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.name %>><%= field.name %></th>
-           <% end %> 
+           <% end %>
           <% end %>
         <% end %>
         <% end %>

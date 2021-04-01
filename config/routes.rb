@@ -3,9 +3,9 @@ Rails.application.routes.draw do
 
   get 'project_types/maps' => 'project_types#maps'
   get 'project_types/search_name_layer' => 'project_types#search_name_layer'
-  get 'projects/popup' => 'projects#popup'
   get 'project_types/kpi' => 'project_types#kpi'
   get 'project_types/search_data_dashboard' => 'project_types#search_data_dashboard'
+  get 'project_types/search_father_children_and_photos_data' => 'project_types#search_father_children_and_photos_data'
   get 'project_types/search_report_data' => 'project_types#search_report_data'
   get 'project_types/filter_heatmap' => 'project_types#filter_heatmap'
   get 'project_types/graph3' => 'project_types#graph2'
@@ -15,6 +15,11 @@ Rails.application.routes.draw do
   get 'project_types/create_share' => 'project_types#create_share', as: :create_share
   get 'projects/search_data' => 'projects#search_data'
   get 'projects/search_statuses' => 'projects#search_statuses'
+  get 'projects/search_users' => 'projects#search_users'
+  get 'projects/popup' => 'projects#popup'
+  patch 'projects/update_form' => 'projects#update_form'
+  patch 'projects/change_owner' => 'projects#change_owner'
+  patch 'projects/disable_form' => 'projects#disable_form'
   post 'project_statuses/options', as: 'project_statuses_options'
   post 'project_statuses/update_priority', as: 'project_statuses_update_priority'
 
@@ -81,8 +86,10 @@ Rails.application.routes.draw do
     get 'project_types/share' => 'project_types#share', as: :share
     get 'project_types/filters' => 'project_types#filters', as: :filters
     get 'project_types/quick_filters' => 'project_types#quick_filters', as: :quick_filters
+    get 'project_types/quick_filters_users' => 'project_types#quick_filters_users', as: :quick_filters_users
     get 'project_types/create_filters' => 'project_types#create_filters', as: :create_filters
     get 'project_types/create_quick_filters' => 'project_types#create_quick_filters', as: :create_quick_filters
+    get 'project_types/create_quick_filters_users' => 'project_types#create_quick_filters_users', as: :create_quick_filters_users
     get 'project_types/heatmap' => 'project_types#heatmap', as: :heatmap
     get 'project_types/create_heatmap' => 'project_types#create_heatmap', as: :create_heatmap
     get 'project_types/point_colors' => 'project_types#point_colors', as: :point_colors
