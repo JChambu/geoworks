@@ -33,7 +33,7 @@ Navarra.geomaps = function() {
     var grayscale = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
       attribution: '',
       id: 'mapbox/light-v10',
-      accessToken: 'pk.eyJ1IjoiZmxhdmlhYXJpYXMiLCJhIjoiY2ppY2NzMm55MTN6OTNsczZrcGFkNHpoOSJ9.cL-mifEoJa6szBQUGnLmrA',
+      accessToken: 'pk.eyJ1IjoiZ2lzd29ya2luZ21hcCIsImEiOiJja21lenQ3bG0zMGg4MndvamtrNjdhbzl4In0.sxBssnfTVHWdklOJDZsIjA',
       updateWhenIdle: true,
       reuseTiles: true
     });
@@ -66,7 +66,7 @@ Navarra.geomaps = function() {
       center: [-33.113399134183744, -69.69339599609376],
       zoomControl: false,
       zoomAnimation: false,
-      layers: [grayscale]
+      layers: [streets]
     });
 
 
@@ -1174,6 +1174,10 @@ Navarra.geomaps = function() {
     }); // Cierra L.WMS.Source.extend
   }
 
+  function close_all_popups(){
+    mymap.closePopup();
+  }
+
   return {
     init: init,
     wms_filter: wms_filter,
@@ -1184,6 +1188,7 @@ Navarra.geomaps = function() {
     show_kpis: show_kpis,
     layers_internal: layers_internal,
     layers_external: layers_external,
-    popup: popup
+    popup: popup,
+    close_all_popups: close_all_popups
   }
 }();

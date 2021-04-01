@@ -34,10 +34,14 @@ ActiveRecord::Base.transaction do
 
   Event.where(name: 'new' ).first_or_create!
   Event.where(name: 'edit').first_or_create!
+  Event.where(name: 'edit_subforms').first_or_create!
+  Event.where(name: 'edit_geom').first_or_create!
+  Event.where(name: 'edit_owner').first_or_create!
   Event.where(name: 'destroy').first_or_create!
   Event.where(name: 'visualizer').first_or_create!
   Event.where(name: 'share').first_or_create!
   Event.where(name: 'export').first_or_create!
+  Event.where(name: 'disable').first_or_create!
 
   FieldType.where(name: 'Texto' ).first_or_create!
   FieldType.where(name: 'Listado (opción única)' ).first_or_create!

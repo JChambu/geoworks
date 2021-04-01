@@ -27,12 +27,12 @@ var filter_view = field_name + " " + operator + " " + value_view;
 // Elimina y vuelve a agregar el item al card Filtros Activos
 $('#filter-body').append(
   $('<div>', { // item
-    'class': 'message text-light bg-secondary px-2 mb-1 py-1 rounded border border-dark shadow ' + table,
+    'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow ' + table,
     'id': filter,
     'value': filtered_form_ids
   }).append(
     $('<b>', {
-      'text': 'Filtrado por: ' + filter_view
+      'text':filter_view
     }),
     $('<button>', {
       'type': 'button',
@@ -43,6 +43,7 @@ $('#filter-body').append(
   )
 )
 
+resize_filters();
 resize_graphics();
 
 $("#filters-modal").modal('hide');

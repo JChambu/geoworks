@@ -46,6 +46,7 @@
           .split('|')[2].replace(/[\']/g,"");
         }
         $.each(data['data'], function(value, a){
+          if(`${a.active}`=='true'){
           let container = document.createElement("DIV");
             let opt_check= document.createElement("DIV");
             opt_check.className="custom-control custom-radio d-inline mr-1";
@@ -72,6 +73,7 @@
             opt.innerHTML = `${a.name}`;  
             container.append(opt);
           $quick_filters_div.append(container);
+        }
         })
         parent_div.append($quick_filters_div);        
     }

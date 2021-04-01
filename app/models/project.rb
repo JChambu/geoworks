@@ -1,5 +1,5 @@
 class Project < ApplicationRecord
-has_paper_trail
+  has_paper_trail
   include Projects::Scopes
 
   require "json"
@@ -7,6 +7,7 @@ has_paper_trail
   belongs_to :project_type
   belongs_to :user
   has_many :project_data_child
+  before_update :update_sequence_projects
 
   #validate :validate_properties
 
@@ -75,14 +76,34 @@ has_paper_trail
     @fields = ProjectField.where(project_type_id: 31)
     @properties = Project.where(project_type_id: 32).select("properties->>'form_values'")
 
-    #   @data = JSON.parse(@properties.to_h)
-    #@properties.each do |row|
-    #
-
-
   end
 
+  def update_sequence_projects
+    sequence_name = 'projects_update_sequence_seq'
+    @a = ActiveRecord::Base.connection.execute("SELECT nextval('#{sequence_name}')")
+    self.update_sequence = @a[0]['nextval']
+  end
 
+  def change_owner user_id
+    self.properties['app_usuario'] = user_id
+    self.user_id = user_id
+    save!
+  end
 
+  def disable_form
+    self.row_enabled = false
+    self.disabled_at = Time.now - 3.hours # TODO: Corregir zona horaria
+    save!
+  end
+
+  def update_form properties
+
+    attributes = {
+      properties: properties,
+      gwm_updated_at: Time.now - 3.hours # TODO: Corregir zona horaria
+    }
+    self.update_attributes(attributes)
+
+  end
 
 end
