@@ -13,6 +13,7 @@ Navarra.geomaps = function() {
   var ss = [];
   var size_box = [];
 
+  var myLocalStorage = window.localStorage;
 
   var init = function() {
 
@@ -58,17 +59,21 @@ Navarra.geomaps = function() {
       valueField: 'count'
     };
 
-
+    var last_zoom= myLocalStorage.getItem('zoom'); 
+    var last_latitude= myLocalStorage.getItem('latitude'); 
+    var last_longitude= myLocalStorage.getItem('longitude'); 
+    if(last_zoom==null){last_zoom=12}
+    if(last_latitude==null){last_latitude=-33.113399134183744}
+    if(last_longitude==null){last_longitude=-69.69339599609376}
     mymap = L.map('map', {
       fadeAnimation: false,
       markerZoomAnimation: false,
-      zoom: 12,
-      center: [-33.113399134183744, -69.69339599609376],
+      zoom: last_zoom,
+      center: [last_latitude, last_longitude],
       zoomControl: false,
       zoomAnimation: false,
       layers: [streets]
     });
-
 
     type_geometry = Navarra.dashboards.config.type_geometry;
     minx = Navarra.dashboards.config.minx;
@@ -84,10 +89,12 @@ Navarra.geomaps = function() {
       });
     }
 
-    mymap.fitBounds([
-      [miny, minx],
-      [maxy, maxx]
-    ]);
+    if(myLocalStorage.getItem('zoom')==null){
+      mymap.fitBounds([
+        [miny, minx],
+        [maxy, maxx]
+      ]);
+    }
 
     baseMaps = {
       "Calles": streets,
@@ -368,6 +375,9 @@ Navarra.geomaps = function() {
 
 
   function onMapZoomedMoved(e) {
+    myLocalStorage.setItem('zoom', mymap.getZoom());
+    myLocalStorage.setItem('latitude', mymap.getCenter().lat);
+    myLocalStorage.setItem('longitude', mymap.getCenter().lng);
     checked = Navarra.dashboards.config.draw_disabled;
     if (checked) {
       show_kpis();
@@ -1178,6 +1188,7 @@ Navarra.geomaps = function() {
     mymap.closePopup();
   }
 
+
   return {
     init: init,
     wms_filter: wms_filter,
@@ -1189,6 +1200,6 @@ Navarra.geomaps = function() {
     layers_internal: layers_internal,
     layers_external: layers_external,
     popup: popup,
-    close_all_popups: close_all_popups
+    close_all_popups: close_all_popups,
   }
 }();
