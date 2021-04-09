@@ -6,12 +6,6 @@ class ChoiceListsController < ApplicationController
   def index
     authorize! :choice_lists, :visualizer
     @choice_lists = ChoiceList.order(:name)
-    respond_to do |format|
-      format.html
-      format.csv { send_data @choice_lists.to_csv,
-                   filename: "Listados-#{Date.today}",
-                   type: 'text/csv; charset=utf-8' }
-    end
   end
 
   # GET /choice_lists/1
@@ -69,6 +63,16 @@ class ChoiceListsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to choice_lists_url, notice: 'Listado eliminado correctamente.' }
       format.json { head :no_content }
+    end
+  end
+
+  def export_csv
+    @choice_lists = ChoiceList.all
+    respond_to do |format|
+      format.html
+      format.csv { send_data @choice_lists.to_csv,
+                   filename: "#{ChoiceList.name}-#{Date.today}"
+                 }
     end
   end
 

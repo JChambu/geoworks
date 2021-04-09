@@ -37,7 +37,9 @@
               <% if can? :choice_lists, :destroy %>
                 <td class="text-center"><%= link_to choice_list, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
               <% end %>
-              <td class="text-center"><%= link_to 'Exportar a CSV', choice_lists_path(format: "csv"), class: "btn btn-primary btn-sm"%></td>
+
+              <td class="text-center"><%= link_to 'Exportar a CSV', export_csv_path(format: "csv"), class: "btn btn-primary btn-sm" %></td>
+
             </tr>
           <% end %>
         </tbody>
