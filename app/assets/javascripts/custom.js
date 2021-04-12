@@ -113,6 +113,7 @@ function capitalize(s) {
 };
 
 function init_chart_doughnut(size_box = null, create_time_s = true) {
+  console.log("grafica")
   // no calcula la función si los gráficos están escondidos
   if (!$('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded')) {
     return;
@@ -1185,7 +1186,6 @@ function init_data_dashboard(haschange,close_info) {
     },
 
     success: function(data) {
-
       var fields = document.querySelectorAll(".field_key");
       var data_dashboard = data.data
 
@@ -1670,18 +1670,12 @@ function set_time_slider_filter() {
   Navarra.project_types.config.from_date = $('#time-slider-from-value').val();
   Navarra.project_types.config.to_date = $('#time-slider-to-value').val();
 
-  // actualiza datos y mapa
-  init_data_dashboard(true);
-  Navarra.geomaps.current_layer();
-  Navarra.geomaps.show_kpis();
-  var heatmap_actived = Navarra.project_types.config.heatmap_field;
-  if (heatmap_actived != '') {
-    Navarra.geomaps.heatmap_data();
-  }
-  var attribute_filters = Navarra.project_types.config.attribute_filters;
-  if (attribute_filters != '') {
-    Navarra.geomaps.wms_filter();
-  }
+  //zoom_extent a datos filtrados
+  Navarra.geomaps.get_zoomextent(true);
+  // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
+ // init_data_dashboard(true);
+  Navarra.geomaps.current_layer(true);
+ // Navarra.geomaps.show_kpis();
 }
 
 //Función para eliminar el timeslider como filtro
@@ -1691,17 +1685,12 @@ function clear_time_slider_filter(refresh_data) {
   if ($('#prev_bar') != undefined)($('#prev_bar').remove());
   set_time_slider_color();
   if (refresh_data) {
-    init_data_dashboard(true);
+      //zoom_extent a datos filtrados
+    Navarra.geomaps.get_zoomextent(true);
+    // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
+  //  init_data_dashboard(true);
     Navarra.geomaps.current_layer();
-    Navarra.geomaps.show_kpis();
-    var heatmap_actived = Navarra.project_types.config.heatmap_field;
-    if (heatmap_actived != '') {
-      Navarra.geomaps.heatmap_data();
-    }
-    var attribute_filters = Navarra.project_types.config.attribute_filters;
-    if (attribute_filters != '') {
-      Navarra.geomaps.wms_filter();
-    }
+    //Navarra.geomaps.show_kpis();
   }
 }
 
@@ -3107,9 +3096,6 @@ function update_all(){
     Navarra.geomaps.heatmap_data();
   }
   var attribute_filters = Navarra.project_types.config.attribute_filters;
-  if (attribute_filters != '') {
-    Navarra.geomaps.wms_filter();
-  }
 }
 
 function set_script(data_script,field_type_id,field_id,value,isnested,event){

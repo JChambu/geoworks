@@ -45,9 +45,11 @@ resize_graphics();
 
 var point_color = Navarra.project_types.config.field_point_colors;
 if(point_color == ''){
-    Navarra.geomaps.wms_filter();
+  Navarra.geomaps.get_zoomextent(true);
+  Navarra.geomaps.wms_filter();
 }else{
-    Navarra.geomaps.point_colors_data();
+  Navarra.geomaps.get_zoomextent(true);
+  Navarra.geomaps.point_colors_data();
 }
 
 function remove_status_filters(){

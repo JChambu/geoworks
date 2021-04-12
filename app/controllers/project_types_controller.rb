@@ -183,6 +183,12 @@ class ProjectTypesController < ApplicationController
     end
   end
 
+  def get_extent 
+    project_type_id =  params[:project_type_id]
+    data =  Project.geometry_bounds(project_type_id, current_user.id)
+    render json: {"data": data}
+  end
+
   def dashboard
   end
 
