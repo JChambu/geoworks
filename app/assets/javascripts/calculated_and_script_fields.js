@@ -138,6 +138,8 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                     }
                 } 
                 var resultado = eval(calculoStringReplace);
+                //redondea a dos decimales
+                resultado = Math.round(resultado * 100) / 100
                 $('#field_id_'+field_id).val(resultado);
             }
             if(CalculateObj_keys[k]=="semanaDesde"){
@@ -164,13 +166,15 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                               new_option.value=camelCase(element.nombre);
                               if(valueObj==null && value!=null){
                                 value_selected=value[0];
-                            }else{
-                                value_selected=valueObj;
-                            }
-                                if(value_selected.toUpperCase()==element.nombre.toUpperCase()){
-                                  found_option=true;
-                                  new_option.selected = true;
+                                }else{
+                                    value_selected=valueObj;
                                 }
+                                if(value_selected!=null){
+                                    if(value_selected.toUpperCase()==element.nombre.toUpperCase()){
+                                    found_option=true;
+                                    new_option.selected = true;
+                                    }
+                                }    
                               document.getElementById("field_id_"+field_id).appendChild(new_option);
                         });
                         if(!found_option){document.getElementById("field_id_"+field_id).selectedIndex = -1;}
