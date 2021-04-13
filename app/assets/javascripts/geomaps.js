@@ -16,6 +16,12 @@ Navarra.geomaps = function() {
 
   var init = function() {
 
+    //crea nodo para popup
+    var z = document.createElement('DIV'); // is a node
+    z.id = "popup_created";
+    document.body.appendChild(z);
+    //fin nodo
+
     url = window.location.hostname;
     protocol = window.location.protocol;
     if (protocol == 'https:') {
@@ -1110,9 +1116,8 @@ Navarra.geomaps = function() {
     })
   }
 
-
+var project_names=["ArriendosChile","PoligonosChile"];
   function popup() {
-
     MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
         if (!this._map) {
@@ -1126,54 +1131,64 @@ Navarra.geomaps = function() {
             var prop = cc['features'][0]['properties'];
             project_name_feature = cc['features'][0]['id'];
             project_name = project_name_feature.split('.fid')[0];
-            var z = document.createElement('p'); // is a node
-            var x = []
             var count = 1;
-            var project_id = cc['features'][0]['properties']['id'];
-            var data_id = Navarra.dashboards.config.project_type_id;
-            if (name_layer == project_name) {
-              if(xhr_popup && xhr_popup.readyState != 4) {
-                xhr_popup.abort();
-              }
+
             xhr_popup = $.ajax({
                 type: 'GET',
                 url: '/project_fields/field_popup.json',
                 datatype: 'json',
                 data: {
-                  project_type_id: data_id
+                  project_name: project_name
                 },
                 success: function(data) {
-                  Object.keys(data).forEach(function(value) {
-                    label = data[value];
+                  var fields_popup=data["fields_popup"];
+                  
+                  var new_p = document.createElement('P');
+                  new_p.className="tittle_popup";
+                  new_p.innerHTML=data["project_name"];
+                  document.getElementById("popup_created").appendChild(new_p);
+
+                  Object.keys(fields_popup).forEach(function(value) {
+                    label = data["fields_popup"][value];
                     var val = prop[value]
                     // Valida si el valor no es nulo
                     if (val != null && val != 'null') {
                       // Elimina los corchetes y comillas del valor (en caso que contenga)
                       val = val.toString().replace(/\[|\]|\"/g, '');
-                      x.push(label + ': ' + val);
+                      var new_p = document.createElement('P');
+                      new_p.className="p_popup"
+                      new_p.innerHTML=label + ': ' + val;
+                      document.getElementById("popup_created").appendChild(new_p);
                     }
                   });
                   var app_id_popup=prop["app_id"];
-                  x.push('<b><i class="fas fa-info-circle info_icon" onclick="show_item_info('+app_id_popup+',true)"></i>');
-                  z.innerHTML = x.join(" <br>");
-                  inn = document.body.appendChild(z);
+                  if(Navarra.dashboards.config.name_project==data["project_name"]){
+                    var new_p = document.createElement('I');
+                    new_p.setAttribute("onclick",'show_item_info('+app_id_popup+',true)');
+                    new_p.className="fas fa-info-circle info_icon";
+                    document.getElementById("popup_created").appendChild(new_p);
+                  }
+                
+                  inn = document.getElementById("popup_created").innerHTML;
                   checked = $('#select').hasClass('active');
 
                   if (draw_disabled) {
                     L.popup()
                       .setLatLng(latlng)
                       .setContent(inn)
+                      .on('remove', function(e) {
+                          $('#popup_created').empty();
+                        })
                       .openOn(mymap);
                   }
                 } // Cierra success
               }); // Cierra ajax
             } // Cierra if
-          } // Cierra if
+        //  } // Cierra if
         } // Cierra if
       } // Cierra showFeatureInfo
     }); // Cierra L.WMS.Source.extend
   }
-
   function close_all_popups(){
     mymap.closePopup();
   }

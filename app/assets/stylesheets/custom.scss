@@ -335,16 +335,12 @@ div.custom-menu.show {
   margin:0px!important;
 }
 
-.leaflet-popup-content p{
-  margin: 20px 0px 10px 0px!important;
-  font-size:1.1em;
-}
-
 .info_icon{
   font-size: 1.5em;
   color: white;
   margin-left: 90%;
   margin-top: 5px;
+  margin-bottom:5px;
   cursor:pointer;
 }
 
@@ -633,4 +629,16 @@ div.custom-menu.show {
 .custom-card-body-np{
   max-height:74vh;
   overflow-y:auto;
+}
+
+/* texto dentro del popup */
+.tittle_popup{
+ font-weight:bold;
+ font-size:1.3em;
+ margin: 10px 0px 5px 0px!important; 
+ border-bottom: solid 1px;
+}
+.p_popup{
+  margin:0px!important;
+  font-size:1.1em;
 }
