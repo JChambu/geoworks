@@ -10,6 +10,7 @@
         <% if can? :choice_lists, :new %>
           <%= link_to 'Nuevo', new_choice_list_path, class: "btn btn-primary" %>
         <% end %>
+        <td class="text-center"><%= link_to 'Exportar todo a CSV', export_all_csv_path(format: "csv"), class: "btn btn-primary" %></td>
       </div>
     </div>
   </div>
@@ -37,9 +38,7 @@
               <% if can? :choice_lists, :destroy %>
                 <td class="text-center"><%= link_to choice_list, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt"></i> <%end%></td>
               <% end %>
-
-              <td class="text-center"><%= link_to 'Exportar a CSV', export_csv_path(format: "csv"), class: "btn btn-primary btn-sm" %></td>
-
+              <td class="text-center"><%= link_to 'Exportar a CSV', export_csv_path(:format => :csv, :id => choice_list.id), class: "btn btn-primary btn-sm" %></td>
             </tr>
           <% end %>
         </tbody>

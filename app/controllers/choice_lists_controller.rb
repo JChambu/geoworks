@@ -1,5 +1,5 @@
 class ChoiceListsController < ApplicationController
-  before_action :set_choice_list, only: [:show, :edit, :update, :destroy]
+  before_action :set_choice_list, only: [:show, :edit, :update, :destroy, :export_csv]
 
   # GET /choice_lists
   # GET /choice_lists.json
@@ -67,11 +67,19 @@ class ChoiceListsController < ApplicationController
   end
 
   def export_csv
+    @choice_list = ChoiceList.find(params[:id])
+    respond_to do |format|
+      format.html
+      format.csv { send_data @choice_list.to_csv, filename: "#{@choice_list.name}-#{Date.today}.csv" }
+    end
+  end
+
+  def export_all_csv
     @choice_lists = ChoiceList.all
     respond_to do |format|
       format.html
       format.csv { send_data @choice_lists.to_csv,
-                   filename: "#{ChoiceList.name}-#{Date.today}"
+                   filename: "Listados-#{Date.today}"
                  }
     end
   end
