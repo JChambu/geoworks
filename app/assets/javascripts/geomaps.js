@@ -1177,6 +1177,7 @@ var project_names=["ArriendosChile","PoligonosChile"];
                       .setLatLng(latlng)
                       .setContent(inn)
                       .on('remove', function(e) {
+                        console.log("Borrar popup")
                           $('#popup_created').empty();
                         })
                       .openOn(mymap);
