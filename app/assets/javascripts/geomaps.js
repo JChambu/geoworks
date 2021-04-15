@@ -138,11 +138,7 @@ Navarra.geomaps = function() {
         container.appendChild(new_a);
 
         onClick = function(event) {
-          if(editableLayers.getLayers().length!=0){
-            mymap.fitBounds(editableLayers.getBounds());
-          } else{
-            get_zoomextent(false);
-          }
+          get_zoomextent();
         };
         L.DomEvent.addListener(container, 'click', onClick, this);
 
@@ -1231,39 +1227,31 @@ function close_all_popups(){
   mymap.closePopup();
 }
 
-function get_zoomextent(from_filters){
-  var project_type_id = Navarra.dashboards.config.project_type_id;
-  var attribute_filters = Navarra.project_types.config.attribute_filters;
-  var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
-  var from_date = Navarra.project_types.config.from_date;
-  var to_date = Navarra.project_types.config.to_date;
-  $.ajax({
-    type: 'GET',
-    url: '/project_types/get_extent',
-    datatype: 'json',
-    data: {
-      project_type_id: project_type_id,
-      attribute_filters: attribute_filters,
-      filtered_form_ids: filtered_form_ids,
-      from_date: from_date,
-      to_date: to_date
-    },
+function get_zoomextent(){
+  if(editableLayers.getLayers().length!=0){
+    mymap.fitBounds(editableLayers.getBounds());
+  } else{
+    var project_type_id = Navarra.dashboards.config.project_type_id;
+    var attribute_filters = Navarra.project_types.config.attribute_filters;
+    var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+    var from_date = Navarra.project_types.config.from_date;
+    var to_date = Navarra.project_types.config.to_date;
+    $.ajax({
+      type: 'GET',
+      url: '/project_types/get_extent',
+      datatype: 'json',
+      data: {
+        project_type_id: project_type_id,
+        attribute_filters: attribute_filters,
+        filtered_form_ids: filtered_form_ids,
+        from_date: from_date,
+        to_date: to_date
+      },
       success: function(data) {
-        var bounds_initial =mymap.getBounds();
         mymap.fitBounds([[data.data[0].miny, data.data[0].minx],[data.data[0].maxy, data.data[0].maxx]]);
-        setTimeout(function(){  
-          var bounds_final =mymap.getBounds();
-          if(bounds_initial["_northEast"]["lat"]==bounds_final["_northEast"]["lat"] && bounds_initial["_northEast"]["lng"]==bounds_final["_northEast"]["lng"] && bounds_initial["_southWest"]["lat"]==bounds_final["_southWest"]["lat"] && bounds_initial["_southWest"]["lng"]==bounds_final["_southWest"]["lng"]  ){
-          //el mapa no se mueve
-            if(from_filters){//si la petición viene de un cambio en los filtros o timeslider
-              show_kpis();
-              show_data_dashboard();
-            }
-          } 
-        }, 500);
-       
       }
-  });
+    });
+  }
 }
 
   return {

@@ -9,6 +9,7 @@ values.forEach(function(element, index){
   }
 });
 
+console.log(value)
 if(value!="Sin Filtro"){
   field_name =  '<%= get_name_from_key(params[:q][:status_filter]).name %>';
   var operator = " = "
@@ -45,10 +46,10 @@ resize_graphics();
 
 var point_color = Navarra.project_types.config.field_point_colors;
 if(point_color == ''){
-  Navarra.geomaps.get_zoomextent(true);
+  Navarra.geomaps.get_zoomextent();
   Navarra.geomaps.wms_filter();
 }else{
-  Navarra.geomaps.get_zoomextent(true);
+  Navarra.geomaps.get_zoomextent();
   Navarra.geomaps.point_colors_data();
 }
 

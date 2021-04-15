@@ -113,7 +113,6 @@ function capitalize(s) {
 };
 
 function init_chart_doughnut(size_box = null, create_time_s = true) {
-  console.log("grafica")
   // no calcula la función si los gráficos están escondidos
   if (!$('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded')) {
     return;
@@ -1671,10 +1670,10 @@ function set_time_slider_filter() {
   Navarra.project_types.config.to_date = $('#time-slider-to-value').val();
 
   //zoom_extent a datos filtrados
-  Navarra.geomaps.get_zoomextent(true);
+  Navarra.geomaps.get_zoomextent();
   // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
  // init_data_dashboard(true);
-  Navarra.geomaps.current_layer(true);
+  Navarra.geomaps.current_layer();
  // Navarra.geomaps.show_kpis();
 }
 
