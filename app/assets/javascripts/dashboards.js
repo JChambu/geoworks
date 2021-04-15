@@ -147,9 +147,14 @@ Navarra.dashboards.action_show = function(){
         })
         Navarra.project_types.config.filtered_form_ids = updated_filters;
       }
-
-      $(".fa-filter").css("color", "#9b9b9b");
       $(this).remove();
+      console.log($(".filter_container"));
+      console.log($(".filter_container").length);
+      if($(".filter_container").length==0){
+        $(".fa-search-location").css("color", "#9b9b9b");
+      } else{
+        $(".fa-search-location").css("color", "#d3d800");
+      }
       Navarra.geomaps.get_zoomextent();
       Navarra.geomaps.wms_filter();
 

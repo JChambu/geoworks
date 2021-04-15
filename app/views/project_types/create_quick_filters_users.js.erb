@@ -21,7 +21,7 @@ if(value!="Sin Filtro"){
   // Elimina y vuelve a agregar el item al card Filtros Activos
   $('#filter-body').append(
     $('<div>', { // item
-      'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow form_filter',
+      'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow form_filter filter_container',
       'id': filter,
       'value': filter
     }).append(
@@ -36,9 +36,11 @@ if(value!="Sin Filtro"){
       })
     )
   )
-  $(".fa-user-alt").css("color", "#d3d800");
+  $(".fa-search-location").css("color", "#d3d800");
 } else{
-  $(".fa-user-alt").css("color", "#9b9b9b");
+  if($(".filter_container").length==0){
+    $(".fa-search-location").css("color", "#9b9b9b");
+  }
 }
 
 resize_filters();
