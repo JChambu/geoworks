@@ -32,7 +32,6 @@ class DashboardsController < ApplicationController
       @fields = ProjectField.where(project_type_id: @project_type.id)
       @fields_all = ProjectField.joins(:project_type).where(project_types: {enabled_as_layer: true}).order('project_types.level DESC', :sort)
       @project_types_all = ProjectType.where(enabled_as_layer: true).order(level: :desc)
-      @extent = Project.geometry_bounds(@project_type.id, current_user.id)
       @current_tenant = Apartment::Tenant.current
 
       @projects = Project
@@ -86,6 +85,7 @@ class DashboardsController < ApplicationController
           @cross_layer = ProjectType.where(id: @cross_layer_filter.project_type_id).pluck(:name_layer).first
         end
       end
+      @extent = Project.geometry_bounds(@project_type.id, current_user.id, attribute_filters = '', filtered_form_ids = '', from_date = '', to_date = '')
     end
   end
 
