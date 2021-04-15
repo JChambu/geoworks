@@ -33,7 +33,9 @@ Rails.application.routes.draw do
 
     resources :field_types
     resources :layers
-    resources :choice_lists
+    resources :choice_lists do
+      collection { post :import } 
+    end
     resources :charts
     resources :analysis_types
     resources :regexp_types
