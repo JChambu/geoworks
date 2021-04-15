@@ -1248,8 +1248,14 @@ function get_zoomextent(){
         to_date: to_date
       },
       success: function(data) {
-        mymap.fitBounds([[data.data[0].miny, data.data[0].minx],[data.data[0].maxy, data.data[0].maxx]]);
-      }
+        if(data.data[0].miny==null || data.data[0].minx==null || data.data[0].maxy==null || data.data[0].maxx==null){
+          //no hay datos que mostrar
+          show_kpis();
+          show_data_dashboard();
+        } else{
+          mymap.fitBounds([[data.data[0].miny, data.data[0].minx],[data.data[0].maxy, data.data[0].maxx]]);
+        }
+       }
     });
   }
 }
