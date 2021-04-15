@@ -77,10 +77,8 @@ class ChoiceListsController < ApplicationController
   def export_all_csv
     @choice_lists = ChoiceList.all
     respond_to do |format|
-      format.html
-      format.csv { send_data @choice_lists.to_csv,
-                   filename: "Listados-#{Date.today}"
-                 }
+     format.html
+     format.csv { send_data @choice_lists.to_csv_all, filename: "Listados-#{Date.today}.csv" }
     end
   end
 
