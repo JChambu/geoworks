@@ -12,7 +12,9 @@ Navarra.geomaps = function() {
   var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current,project_current_selected,current_tenement;
   var ss = [];
   var size_box = [];
-
+  var last_lat = 0;
+  var last_long = 0;
+  var inn = ""
 
   var init = function() {
 
@@ -1120,6 +1122,12 @@ var project_names=["ArriendosChile","PoligonosChile"];
   function popup() {
     MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
+        if(latlng["lat"]!=last_lat || latlng["lng"]!=last_long){
+          //si hace click en otro punto borra contenedor de popup
+          $('#popup_created').empty();
+        }
+        last_lat=latlng["lat"];
+        last_long=latlng["lng"];
         if (!this._map) {
           return;
         }
@@ -1142,11 +1150,12 @@ var project_names=["ArriendosChile","PoligonosChile"];
                 },
                 success: function(data) {
                   var fields_popup=data["fields_popup"];
-                  
+                  var div_popup = document.createElement('DIV');
+                  div_popup.className="div_popup";
                   var new_p = document.createElement('P');
                   new_p.className="tittle_popup";
                   new_p.innerHTML=data["project_name"];
-                  document.getElementById("popup_created").appendChild(new_p);
+                  div_popup.appendChild(new_p);
 
                   Object.keys(fields_popup).forEach(function(value) {
                     label = data["fields_popup"][value];
@@ -1158,7 +1167,7 @@ var project_names=["ArriendosChile","PoligonosChile"];
                       var new_p = document.createElement('P');
                       new_p.className="p_popup"
                       new_p.innerHTML=label + ': ' + val;
-                      document.getElementById("popup_created").appendChild(new_p);
+                      div_popup.appendChild(new_p);
                     }
                   });
                   var app_id_popup=prop["app_id"];
@@ -1166,9 +1175,20 @@ var project_names=["ArriendosChile","PoligonosChile"];
                     var new_p = document.createElement('I');
                     new_p.setAttribute("onclick",'show_item_info('+app_id_popup+',true)');
                     new_p.className="fas fa-info-circle info_icon";
-                    document.getElementById("popup_created").appendChild(new_p);
+                    div_popup.appendChild(new_p);
                   }
-                
+
+                  var isdifferent=true;
+                  //verifica que si se está haciendo click en el mismo punto
+                  $(".div_popup").each(function(){
+                    if(div_popup.innerHTML==$(this).html()){
+                      isdifferent=false;
+                    }
+                  });
+                  if(isdifferent){
+                    document.getElementById("popup_created").appendChild(div_popup);
+                  }
+                  
                   inn = document.getElementById("popup_created").innerHTML;
                   checked = $('#select').hasClass('active');
 
@@ -1176,10 +1196,6 @@ var project_names=["ArriendosChile","PoligonosChile"];
                     L.popup()
                       .setLatLng(latlng)
                       .setContent(inn)
-                      .on('remove', function(e) {
-                        console.log("Borrar popup")
-                          $('#popup_created').empty();
-                        })
                       .openOn(mymap);
                   }
                 } // Cierra success
