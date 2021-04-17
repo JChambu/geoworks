@@ -66,9 +66,9 @@ Navarra.geomaps = function() {
       valueField: 'count'
     };
 
-    var last_zoom= myLocalStorage.getItem('zoom'); 
-    var last_latitude= myLocalStorage.getItem('latitude'); 
-    var last_longitude= myLocalStorage.getItem('longitude'); 
+    var last_zoom= myLocalStorage.getItem('zoom');
+    var last_latitude= myLocalStorage.getItem('latitude');
+    var last_longitude= myLocalStorage.getItem('longitude');
     if(last_zoom==null){last_zoom=12}
     if(last_latitude==null){last_latitude=-33.113399134183744}
     if(last_longitude==null){last_longitude=-69.69339599609376}
@@ -536,7 +536,7 @@ Navarra.geomaps = function() {
     layers_internal();
   }
 
-
+  // NOTE: La herramienta Colorear Puntos está descontinuada
   function point_colors_data() {
 
     field_point = Navarra.project_types.config.field_point_colors;
