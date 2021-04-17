@@ -105,17 +105,17 @@ class Project < ApplicationRecord
 
         # Aplica filtro por campo usuario
         if @field == 'app_usuario'
-          @bounds =  @bounds.where("users.name " + @filter + " #{@value}")
+          @bounds =  @bounds.where("users.name " + @filter + " '#{@value}'")
         end
 
         # Aplica filtro por campo estado
         if @field == 'app_estado'
-          @bounds =  @bounds.where("project_statuses.name " + @filter + " #{@value} ")
+          @bounds =  @bounds.where("project_statuses.name " + @filter + " '#{@value}' ")
         end
 
         # Aplica filtro por otro campo
         if @field != 'app_usuario' && @field != 'app_estado'
-          @bounds = @bounds.where("main.properties->>'" + @field + "'" + @filter + "#{@value}")
+          @bounds = @bounds.where("main.properties->>'" + @field + "'" + @filter + "'#{@value}'")
         end
       end
     end

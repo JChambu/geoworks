@@ -446,7 +446,7 @@ Navarra.geomaps = function() {
     if (attribute_filters.length) {
       $.each(attribute_filters, function(a, b) {
         data_filter = b.split('|');
-        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
+        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " '" + data_filter[2] + "'";
       });
     }
 
@@ -467,7 +467,7 @@ Navarra.geomaps = function() {
       // Aplica filtro intercapa por atributo
       if (cross_layer_filter.length > 0) {
         c_filter = cross_layer_filter[0].split('|');
-        cl_clasue += " and " + c_filter[0] +" = '" + c_filter[2] + "'"
+        cl_clasue += " and " + c_filter[0] +" = ''" + c_filter[2] + "''"
       }
 
       // Aplica filtro intercapa por owner
@@ -802,7 +802,7 @@ Navarra.geomaps = function() {
     if (attribute_filters.length > 0) {
       $.each(attribute_filters, function(a, b) {
         data_filter = b.split('|');
-        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
+        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " '" + data_filter[2] + "'";
       });
     }
 
@@ -824,7 +824,7 @@ Navarra.geomaps = function() {
       // Aplica filtro intercapa por atributo
       if (cross_layer_filter.length > 0) {
         c_filter = cross_layer_filter[0].split('|');
-        cl_clasue += " and " + c_filter[0] +" = '" + c_filter[2] + "'"
+        cl_clasue += " and " + c_filter[0] +" = ''" + c_filter[2] + "''"
       }
 
       // Aplica filtro intercapa por owner
