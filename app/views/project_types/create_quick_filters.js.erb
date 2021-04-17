@@ -10,22 +10,21 @@ values.forEach(function(element, index){
 });
 
 if(value!="Sin Filtro"){
-  field_name =  '<%= get_name_from_key(params[:q][:status_filter]).name %>';
   var operator = " = "
   var filter = field_key + '|' + operator + '|\'' + value + '\'';
-  var filter_view = field_name  + " " + operator + " " + value;
+  var filter_view = "Estado " + operator + " " + value;
 
   Navarra.project_types.config.attribute_filters.push(filter);
 
   // Elimina y vuelve a agregar el item al card Filtros Activos
   $('#filter-body').append(
     $('<div>', { // item
-      'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow form_filter',
+      'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow form_filter filter_container',
       'id': filter,
       'value': filter
     }).append(
       $('<b>', {
-        'text':+filter_view
+        'text': filter_view
      }),
       $('<button>', {
         'type': 'button',
@@ -35,9 +34,11 @@ if(value!="Sin Filtro"){
       })
     )
   )
-  $(".fa-bell").css("color", "#d3d800");
+  $(".fa-search-location").css("color", "#d3d800");
 } else{
-  $(".fa-bell").css("color", "#9b9b9b");
+  if($(".filter_container").length==0){
+    $(".fa-search-location").css("color", "#9b9b9b");
+  }
 }
 
 resize_filters();
@@ -45,9 +46,11 @@ resize_graphics();
 
 var point_color = Navarra.project_types.config.field_point_colors;
 if(point_color == ''){
-    Navarra.geomaps.wms_filter();
+  Navarra.geomaps.get_zoomextent();
+  Navarra.geomaps.wms_filter();
 }else{
-    Navarra.geomaps.point_colors_data();
+  Navarra.geomaps.get_zoomextent();
+  Navarra.geomaps.point_colors_data();
 }
 
 function remove_status_filters(){

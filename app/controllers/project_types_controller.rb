@@ -183,6 +183,16 @@ class ProjectTypesController < ApplicationController
     end
   end
 
+  def get_extent
+    project_type_id = params[:project_type_id]
+    attribute_filters = params[:attribute_filters]
+    filtered_form_ids = params[:filtered_form_ids]
+    from_date = params[:from_date]
+    to_date = params[:to_date]
+    data = Project.geometry_bounds(project_type_id, current_user.id, attribute_filters, filtered_form_ids, from_date, to_date)
+    render json: {"data": data}
+  end
+
   def dashboard
   end
 

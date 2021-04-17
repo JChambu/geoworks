@@ -98,6 +98,7 @@ Navarra.dashboards.action_show = function(){
       $(".fa-spinner").css("color", "#9b9b9b");
       Navarra.project_types.config.field_point_colors = '';
       $('#colored_points').remove();
+      Navarra.geomaps.get_zoomextent();
       Navarra.geomaps.wms_filter();
       Navarra.geomaps.point_colors_data();
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
@@ -146,9 +147,15 @@ Navarra.dashboards.action_show = function(){
         })
         Navarra.project_types.config.filtered_form_ids = updated_filters;
       }
-
-      $(".fa-filter").css("color", "#9b9b9b");
       $(this).remove();
+      console.log($(".filter_container"));
+      console.log($(".filter_container").length);
+      if($(".filter_container").length==0){
+        $(".fa-search-location").css("color", "#9b9b9b");
+      } else{
+        $(".fa-search-location").css("color", "#d3d800");
+      }
+      Navarra.geomaps.get_zoomextent();
       Navarra.geomaps.wms_filter();
 
       // TODO: Esto se debería revisar cuando se actualice la herramienta de colorear puntos
