@@ -13,62 +13,27 @@
     <% if !@dashboard.nil? %>
       Navarra.dashboards.config.dashboard_id = <%= @dashboard.id %>
     <% end %>
-    <% if @extent.length > 0  %>
+    <% if @extent.length > 0 %>
       Navarra.dashboards.config.minx = <%= @extent[0].minx %>
-      Navarra.dashboards.config.miny = <%= @extent[0].miny  %>
-      Navarra.dashboards.config.maxx = <%= @extent[0].maxx  %>
+      Navarra.dashboards.config.miny = <%= @extent[0].miny %>
+      Navarra.dashboards.config.maxx = <%= @extent[0].maxx %>
       Navarra.dashboards.config.maxy = <%= @extent[0].maxy %>
     <% end %>
 
-    // TODO: Ahora que se aplican los filtros en los datos esta lógica
-    // se está duplicando hay que unficarla con el controlador
-
-    // Carga filtro por atributos y owner
-    <% if @project_filter %>
-
-      <% if !@project_filter.properties.nil? %>
-        <% @project_filter.properties.each do |p| %>
-
-          var field_key = '<%= p[0] %>';
-          var operator = '=';
-          var value = '<%= p[1] %>';
-
-          // Aplica modificaciones si el value es array
-          if (value.match(/&quot;/g) != null) {
-            value = value.replace(/&quot;/g, '\"')
-          }
-
-          var filter = field_key + '|' + operator + '|\'' + value + '\'';
-          Navarra.project_types.config.attribute_filters.push(filter);
-
-        <% end %>
+    <% if !@project_filters.nil? %>
+      // Carga filtros por atributos y owner
+      <% if !@user_attribute_filter.nil? %>
+        Navarra.project_types.config.attribute_filters.push('<%= raw @user_attribute_filter %>');
       <% end %>
-      Navarra.project_types.config.owner = <%= @project_filter.owner %>;
-    <% end %>
-
-    <% if @cross_layer_filter %>
-      <% if !@cross_layer_filter.properties.nil? %>
-        <% @cross_layer_filter.properties.each do |f| %>
-
-        var field_key = '<%= f[0] %>';
-        var operator = '=';
-        var value = '<%= f[1] %>';
-
-        // Aplica modificaciones si el value es array
-        if (value.match(/&quot;/g) != null) {
-          value = value.replace(/&quot;/g, '\"')
-        }
-
-        var contained_filter = field_key + '|' + operator + '|\'' + value + '\'';
-        Navarra.project_types.config.cross_layer_filter.push(contained_filter);
-
+      Navarra.project_types.config.owner = <%= @project_filters.owner %>;
+      // Carga filtros intercapa
+      <% if !@project_filters.cross_layer_filter_id.nil? %>
+        <% if !@user_cross_layer_filter.nil? %>
+          Navarra.project_types.config.cross_layer_filter.push('<%= raw @user_cross_layer_filter %>');
         <% end %>
+        Navarra.project_types.config.cross_layer_owner = <%= @cross_layer_filter.owner %>;
+        Navarra.project_types.config.cross_layer = '<%= @cross_layer %>';
       <% end %>
-      Navarra.project_types.config.cross_layer_owner = <%= @cross_layer_filter.owner %>;
-    <% end %>
-
-    <% if @cross_layer %>
-      Navarra.project_types.config.cross_layer = '<%= @cross_layer %>';
     <% end %>
 
     //cerrar paneles laterales

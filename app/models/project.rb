@@ -14,18 +14,18 @@ class Project < ApplicationRecord
   def self.geometry_bounds project_type_id, user_id, attribute_filters, filtered_form_ids, from_date, to_date
 
     @bounds = Project
-    .select("
-      shared_extensions.st_Xmin(shared_extensions.st_collect(main.the_geom)) as minx,
-      shared_extensions.st_Ymin(shared_extensions.st_collect(main.the_geom)) as miny,
-      shared_extensions.st_Xmax(shared_extensions.st_collect(main.the_geom)) as maxx,
-      shared_extensions.st_Ymax(shared_extensions.st_collect(main.the_geom)) as maxy
-    ")
-    .from('projects main')
-    .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
-    .joins('INNER JOIN public.users ON users.id = main.user_id')
-    .where('main.project_type_id = ?', project_type_id)
-    .where('main.row_active = ?', true)
-    .where('main.current_season = ?', true)
+      .select("
+        shared_extensions.st_Xmin(shared_extensions.st_collect(main.the_geom)) as minx,
+        shared_extensions.st_Ymin(shared_extensions.st_collect(main.the_geom)) as miny,
+        shared_extensions.st_Xmax(shared_extensions.st_collect(main.the_geom)) as maxx,
+        shared_extensions.st_Ymax(shared_extensions.st_collect(main.the_geom)) as maxy
+      ")
+      .from('projects main')
+      .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
+      .joins('INNER JOIN public.users ON users.id = main.user_id')
+      .where('main.project_type_id = ?', project_type_id)
+      .where('main.row_active = ?', true)
+      .where('main.current_season = ?', true)
 
     @project_filter = ProjectFilter.where(project_type_id: project_type_id.to_i).where(user_id: user_id).first
 
@@ -105,17 +105,17 @@ class Project < ApplicationRecord
 
         # Aplica filtro por campo usuario
         if @field == 'app_usuario'
-          @bounds =  @bounds.where("users.name " + @filter + " #{@value}")
+          @bounds = @bounds.where("users.name " + @filter + " '#{@value}'")
         end
 
         # Aplica filtro por campo estado
         if @field == 'app_estado'
-          @bounds =  @bounds.where("project_statuses.name " + @filter + " #{@value} ")
+          @bounds = @bounds.where("project_statuses.name " + @filter + " '#{@value}' ")
         end
 
         # Aplica filtro por otro campo
         if @field != 'app_usuario' && @field != 'app_estado'
-          @bounds = @bounds.where("main.properties->>'" + @field + "'" + @filter + "#{@value}")
+          @bounds = @bounds.where("main.properties->>'" + @field + "'" + @filter + "'#{@value}'")
         end
       end
     end

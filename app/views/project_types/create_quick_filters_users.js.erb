@@ -12,7 +12,7 @@ values.forEach(function(element, index){
 
 if(value!="Sin Filtro"){
   var operator = " = "
-  var filter = field_key + '|' + operator + '|\'' + value + '\'';
+  var filter = field_key + '|' + operator + '|' + value;
   var filter_view = "Usuario " + operator + " " + value;
 
   Navarra.project_types.config.attribute_filters.push(filter);

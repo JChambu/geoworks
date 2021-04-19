@@ -263,27 +263,27 @@ module ProjectTypes::Indicators
           # Aplica filtro por campo usuario
           if @field == 'app_usuario'
             if sql_full.blank?
-              data =  data.where("users.name " + @filter + " #{@value}")
+              data = data.where("users.name " + @filter + " '#{@value}'")
             else
-              data = data.sub('where_clause', "where_clause users.name #{@filter} #{@value} AND ")
+              data = data.sub('where_clause', "where_clause users.name #{@filter} '#{@value}' AND ")
             end
           end
 
           # Aplica filtro por campo estado
           if @field == 'app_estado'
             if sql_full.blank?
-              data =  data.where("project_statuses.name " + @filter + " #{@value} ")
+              data =  data.where("project_statuses.name " + @filter + " '#{@value}' ")
             else
-              data = data.sub('where_clause', "where_clause project_statuses.name #{@filter} #{@value} AND ")
+              data = data.sub('where_clause', "where_clause project_statuses.name #{@filter} '#{@value}' AND ")
             end
           end
 
           # Aplica filtro por otro campo
           if @field != 'app_usuario' && @field != 'app_estado'
             if sql_full.blank?
-              data =  data.where("main.properties->>'" + @field +"'" +  @filter +" #{@value} ")
+              data =  data.where("main.properties->>'" + @field +"'" +  @filter +" '#{@value}' ")
             else
-              data = data.sub('where_clause', "where_clause (main.properties->>'#{@field}' #{@filter} #{@value}) AND ")
+              data = data.sub('where_clause', "where_clause (main.properties->>'#{@field}' #{@filter} '#{@value}') AND ")
             end
           end
 
@@ -309,7 +309,7 @@ module ProjectTypes::Indicators
         end
       end
       @data = data
-      
+
     end
 
     def kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, user_id, from_date, to_date)

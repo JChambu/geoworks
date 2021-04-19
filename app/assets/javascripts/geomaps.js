@@ -74,9 +74,9 @@ Navarra.geomaps = function() {
       valueField: 'count'
     };
 
-    var last_zoom= myLocalStorage.getItem('zoom'); 
-    var last_latitude= myLocalStorage.getItem('latitude'); 
-    var last_longitude= myLocalStorage.getItem('longitude'); 
+    var last_zoom= myLocalStorage.getItem('zoom');
+    var last_latitude= myLocalStorage.getItem('latitude');
+    var last_longitude= myLocalStorage.getItem('longitude');
     if(last_zoom==null){last_zoom=12}
     if(last_latitude==null){last_latitude=-33.113399134183744}
     if(last_longitude==null){last_longitude=-69.69339599609376}
@@ -454,7 +454,7 @@ Navarra.geomaps = function() {
     if (attribute_filters.length) {
       $.each(attribute_filters, function(a, b) {
         data_filter = b.split('|');
-        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
+        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " '" + data_filter[2] + "'";
       });
     }
 
@@ -475,7 +475,7 @@ Navarra.geomaps = function() {
       // Aplica filtro intercapa por atributo
       if (cross_layer_filter.length > 0) {
         c_filter = cross_layer_filter[0].split('|');
-        cl_clasue += " and " + c_filter[0] +" = '" + c_filter[2] + "'"
+        cl_clasue += " and " + c_filter[0] +" = ''" + c_filter[2] + "''"
       }
 
       // Aplica filtro intercapa por owner
@@ -544,7 +544,7 @@ Navarra.geomaps = function() {
     layers_internal();
   }
 
-
+  // NOTE: La herramienta Colorear Puntos está descontinuada
   function point_colors_data() {
 
     field_point = Navarra.project_types.config.field_point_colors;
@@ -810,7 +810,7 @@ Navarra.geomaps = function() {
     if (attribute_filters.length > 0) {
       $.each(attribute_filters, function(a, b) {
         data_filter = b.split('|');
-        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
+        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " '" + data_filter[2] + "'";
       });
     }
 
@@ -832,7 +832,7 @@ Navarra.geomaps = function() {
       // Aplica filtro intercapa por atributo
       if (cross_layer_filter.length > 0) {
         c_filter = cross_layer_filter[0].split('|');
-        cl_clasue += " and " + c_filter[0] +" = '" + c_filter[2] + "'"
+        cl_clasue += " and " + c_filter[0] +" = ''" + c_filter[2] + "''"
       }
 
       // Aplica filtro intercapa por owner

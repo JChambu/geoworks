@@ -2,18 +2,13 @@ table = '<%= @table %>';
 field_name = '<%= @field_name %>';
 field_key = '<%= params[:q][:project_field]%>';
 operator = '<%= raw params[:q][:filters] %>';
-value = '<%= params[:q][:input_value] %>';
+value = '<%= raw params[:q][:input_value] %>';
 filtered_form_ids = '<%= @filtered_form_ids %>';
 
-// Aplica modificaciones si el value es array
-if (value.match(/&quot;/g) != null) {
-  value = value.replace(/&quot;/g, '\"')
-  value_view = value.replace(/[\[\]\"]/g, "")
-} else {
-  value_view = value
-}
+// Quita los corchetes de los listados
+value_view = value.replace(/[\[\]\"]/g, "")
 
-var filter = field_key + '|' + operator + '|\'' + value + '\'';
+var filter = field_key + '|' + operator + '|' + value;
 
 // Guarda el filtro dependiendo si es para la tabla padres o hijos
 if (table == 'form_filter') {

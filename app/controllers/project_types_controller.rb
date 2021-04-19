@@ -600,17 +600,17 @@ class ProjectTypesController < ApplicationController
 
         # Aplica filtro por campo usuario
         if @field == 'app_usuario'
-          data =  data.where("users.name " + @filter + " #{@value}")
+          data =  data.where("users.name " + @filter + " '#{@value}'")
         end
 
         # Aplica filtro por campo estado
         if @field == 'app_estado'
-          data =  data.where("project_statuses.name " + @filter + " #{@value} ")
+          data =  data.where("project_statuses.name " + @filter + " '#{@value}' ")
         end
 
         # Aplica filtro por otro campo
         if @field != 'app_usuario' && @field != 'app_estado'
-          data = data.where("properties->>'" + @field + "'" + @filter + "#{@value}")
+          data = data.where("main.properties->>'" + @field + "'" + @filter + "'#{@value}'")
         end
       end
 
@@ -782,17 +782,17 @@ class ProjectTypesController < ApplicationController
 
         # Aplica filtro por campo usuario
         if @field == 'app_usuario'
-          data =  data.where("users.name " + @filter + " #{@value}")
+          data =  data.where("users.name " + @filter + " '#{@value}'")
         end
 
         # Aplica filtro por campo estado
         if @field == 'app_estado'
-          data =  data.where("project_statuses.name " + @filter + " #{@value} ")
+          data =  data.where("project_statuses.name " + @filter + " '#{@value}' ")
         end
 
         # Aplica filtro por otro campo
         if @field != 'app_usuario' && @field != 'app_estado'
-          data = data.where("main.properties->>'" + @field + "'" + @filter + "#{@value}")
+          data = data.where("main.properties->>'" + @field + "'" + @filter + "'#{@value}'")
         end
       end
     end
@@ -927,9 +927,9 @@ class ProjectTypesController < ApplicationController
           @filter = @s[1]
           @value = @s[2]
           if (@filter == '<' || @filter == '>' || @filter == '>=' || @filter == '<=' )
-            data =  data.where(" (properties->>'" + @field +"')::numeric" +  @filter +"#{@value}")
+            data =  data.where(" (properties->>'" + @field +"')::numeric" +  @filter +"'#{@value}'")
           else
-            data =  data.where(" properties->>'" + @field +"'" +  @filter +"#{@value}")
+            data =  data.where(" properties->>'" + @field +"'" +  @filter +"'#{@value}'")
           end
         end
       end
