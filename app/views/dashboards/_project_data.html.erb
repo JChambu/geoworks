@@ -166,6 +166,13 @@ function show_item(index, appid_selected){
           <p style="color:white; margin-bottom: 0px"></p>
           <input type="text" class="d-none field_key" value="#_action">
         </th>
+        <th style="padding-top: 0px; vertical-align: top;">
+          <div class="custom-control custom-checkbox" title="Seleccionar Todo">
+            <input class="custom-control-input field_key" id="table_select_all" type="checkbox" value="#_select">
+            <label class="string optional control-label custom-control-label" for="table_select_all"> </label>
+          </div>
+
+        </th>
         <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
           <p style="color:white; margin-bottom: 0px">#</p>
           <input type="text" class="d-none field_key" value="#">
@@ -205,6 +212,9 @@ function show_item(index, appid_selected){
     <thead style="visibility: hidden; border-bottom: solid transparent">
       <tr class="data_fields">
         <th></th>
+        <th>
+          <input type="checkbox" class="field_key">
+        </th>
         <th>#</th>
         <% if !@fields.nil? %>
         <% @fields.each do |field|  %>
