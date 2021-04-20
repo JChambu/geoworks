@@ -2319,7 +2319,7 @@ function show_item_info(appid_info, from_map) {
             } else {
               new_p.innerHTML = element.name + ":";
               new_p.classList.add("field_key_json");
-              new_p.id=element.field_id+"__key__"+element.key+"__"+element.field_type_id;
+              new_p.id=element.field_id+"|key|"+element.key+"|"+element.field_type_id;
             }
             new_celd.appendChild(new_p);
             new_row.appendChild(new_celd);
@@ -2592,7 +2592,7 @@ function show_item_info(appid_info, from_map) {
                 } else {
                   new_p.innerHTML = element_child_field.name + ":";
                   new_p.classList.add("field_key_child_json");
-                  new_p.id=element.field_id+"__child__"+element_child.children_id+"__"+element_child_field.field_type_id+"__"+element_child_field.field_id;
+                  new_p.id=element.field_id+"|child|"+element_child.children_id+"|"+element_child_field.field_type_id+"|"+element_child_field.field_id;
                 }
                 new_p.style.margin = "0px";
                 new_celd.appendChild(new_p);
@@ -2650,7 +2650,7 @@ function show_item_info(appid_info, from_map) {
                       var id_field = element_child_field.field_id;
                       var id_child = element_child.children_id;
                       var id_field_nested = element.field_id+"_nested";
-                      new_p_nested.id = "fieldchildid__"+id_field+"__"+id_child+"_nested";
+                      new_p_nested.id = "fieldchildid|"+id_field+"|"+id_child+"_nested";
                       new_p_nested.setAttribute('onChange','changeChild('+element_child.children_id+')')
                     //termina anidados
                     }
@@ -2742,7 +2742,7 @@ function show_item_info(appid_info, from_map) {
                   new_p.style.height = "auto";
                   var id_field = element_child_field.field_id;
                   var id_child = element_child.children_id;
-                  new_p.id = "fieldchildid__"+id_field+"__"+id_child;
+                  new_p.id = "fieldchildid|"+id_field+"|"+id_child;
                   new_celd.appendChild(new_p);
                   if(found_nested){new_celd.appendChild(new_p_nested)}
                   new_row1.appendChild(new_celd);
@@ -2803,7 +2803,7 @@ function show_item_info(appid_info, from_map) {
       });
       $('.date_field').on('dp.change', function(e){
         if(this.id.substring(0,12)=="fieldchildid"){
-          changeChild(this.id.split('__')[2]);
+          changeChild(this.id.split('|')[2]);
         } else{
           calculate_all(false);
         }
@@ -2811,12 +2811,12 @@ function show_item_info(appid_info, from_map) {
 
       // selectores y multiselectores en hijos
        for(x=0;x<arraymultiselect.length;x++){
-              if(document.getElementById('fieldchildid__'+arraymultiselect[x]+'__'+arraymultiselectChild[x]).classList.contains("readonly_field")){
+              if(document.getElementById('fieldchildid|'+arraymultiselect[x]+'|'+arraymultiselectChild[x]).classList.contains("readonly_field")){
                 var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field is_child_field';
               } else{
                 var buttonClass = 'text-left form-control form-control-sm info_input_disabled is_child_field';
               }
-              $('#fieldchildid__'+arraymultiselect[x]+'__'+arraymultiselectChild[x]).multiselect({
+              $('#fieldchildid|'+arraymultiselect[x]+'|'+arraymultiselectChild[x]).multiselect({
                 maxHeight: 450,
                 buttonClass: buttonClass,
                 buttonWidth: '100%',
@@ -2947,9 +2947,9 @@ function edit_file(width_childs){
   if(filechange){
     var properties_to_save = new Object();
     $('.field_key_json').each(function() {
-      var key_field_properties = this.id.split('__')[2];
-      var id_field_properties = this.id.split('__')[0];
-      var fiel_type_properties = this.id.split('__')[3];
+      var key_field_properties = this.id.split('|')[2];
+      var id_field_properties = this.id.split('|')[0];
+      var fiel_type_properties = this.id.split('|')[3];
       if($('#field_id_'+id_field_properties).val()!="" && $('#field_id_'+id_field_properties).val()!=null ){
         if(fiel_type_properties==2){
           var array_val = [];
@@ -2986,28 +2986,28 @@ function edit_file(width_childs){
       var properties_child_to_save = new Object();
       var id_field_father_properties;
       $('.field_key_child_json').each(function() {
-        id_field_father_properties = this.id.split('__')[0];
-        var id_child_properties = this.id.split('__')[2];
-        var fiel_type_properties = this.id.split('__')[3];
-        var id_field_child_properties = this.id.split('__')[4];
+        id_field_father_properties = this.id.split('|')[0];
+        var id_child_properties = this.id.split('|')[2];
+        var fiel_type_properties = this.id.split('|')[3];
+        var id_field_child_properties = this.id.split('|')[4];
 
         if(id_child_properties==array_child_edited[z]){
-        if($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val()!="" && $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val()!=null ){
+        if($('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val()!="" && $('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val()!=null ){
           if(fiel_type_properties==2){
             var array_val = [];
-            array_val.push($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val());
-            if(document.getElementById('fieldchildid__'+id_field_child_properties+'__'+id_child_properties).classList.contains('nested')){
-              array_val.push($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties+'_nested').val());
+            array_val.push($('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val());
+            if(document.getElementById('fieldchildid|'+id_field_child_properties+'|'+id_child_properties).classList.contains('nested')){
+              array_val.push($('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties+'_nested').val());
             }
             var value_field_properties = array_val;
           }else{
             if( fiel_type_properties == 4){
-             var value_field_properties = $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val().toLowerCase() == 'true' ? true : false;;
+             var value_field_properties = $('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val().toLowerCase() == 'true' ? true : false;;
             } else{
               if( fiel_type_properties == 5){
-              var value_field_properties = parseFloat($('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val());
+              var value_field_properties = parseFloat($('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val());
               } else{
-                var value_field_properties = $('#fieldchildid__'+id_field_child_properties+'__'+id_child_properties).val();
+                var value_field_properties = $('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val();
               }
             }
           }
