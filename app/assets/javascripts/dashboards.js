@@ -7,7 +7,6 @@ $(document).ready(function () {
         bgColor: 'rgba(0, 0, 0, 0.5)',
         spinner:"spinner2",
     });
-    $(document.body).css("overflow-y","hidden");
 });
 
 // Establece alto de mapa y sidebar al redimensionar
