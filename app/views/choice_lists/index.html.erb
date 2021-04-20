@@ -6,10 +6,10 @@
       <div class="col-md-6">
         <h1 class="m-0">Listados</h1>
         <br>
-        <%= form_tag import_choice_lists_path, multipart: true do %>
-          <%= file_field_tag :file %>
-          <%= submit_tag "Importar Listado" %>
-        <% end %>
+          <%= form_tag import_choice_lists_path, multipart: true  do %>
+            <%= file_field_tag :file %>
+            <%= submit_tag "Importar Listado" %>
+          <% end %>
       </div>
       <div class="col-md-6 text-right">
         <% if can? :choice_lists, :new %>

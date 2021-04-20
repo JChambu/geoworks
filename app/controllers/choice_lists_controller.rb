@@ -67,9 +67,9 @@ class ChoiceListsController < ApplicationController
   end
 
   def import
-    @choice_list = ChoiceList.find(params[:id])
+    @choice_lists = ChoiceList.all
     ChoiceList.import(params[:file])
-    redirect_to root_url, notice: "Listados importados"
+    redirect_to choice_lists_url, notice: "Listados importados"
   end
 
   private
