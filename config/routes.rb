@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   patch 'projects/update_form' => 'projects#update_form'
   patch 'projects/change_owner' => 'projects#change_owner'
   patch 'projects/disable_form' => 'projects#disable_form'
+  patch 'projects/destroy_form' => 'projects#destroy_form'
   post 'project_statuses/options', as: 'project_statuses_options'
   post 'project_statuses/update_priority', as: 'project_statuses_update_priority'
   post 'graphics/update_sort' => 'graphics#update_sort', as: :update_sort

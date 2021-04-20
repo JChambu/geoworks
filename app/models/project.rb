@@ -180,6 +180,11 @@ class Project < ApplicationRecord
     save!
   end
 
+  def destroy_form
+    self.row_active = false
+    save!
+  end
+
   def disable_form
     self.row_enabled = false
     self.disabled_at = Time.now - 3.hours # TODO: Corregir zona horaria
@@ -187,13 +192,11 @@ class Project < ApplicationRecord
   end
 
   def update_form properties
-
     attributes = {
       properties: properties,
       gwm_updated_at: Time.now - 3.hours # TODO: Corregir zona horaria
     }
     self.update_attributes(attributes)
-
   end
 
 end

@@ -7,6 +7,25 @@ class ProjectsController < ApplicationController
     render json: {data: @user}
   end
 
+  # Elimina un registro (row_active = false)
+  def destroy_form
+    app_id = params[:app_id]
+    if app_id.present?
+      @project = Project.find(app_id)
+      if @project.present?
+        if @project.destroy_form
+          render json: {status: 'El registro fue eliminado correctamente.'}
+        else
+          render json: {status: 'Error. No se pudo eliminar el registro.'}
+        end
+      else
+        render json: {status: 'Error. No se encontró el registro.'}
+      end
+    else
+      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
+    end
+  end
+
   # Deshabilita un registro (row_enabled = false)
   def disable_form
     app_id = params[:app_id]
