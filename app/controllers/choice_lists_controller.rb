@@ -67,7 +67,6 @@ class ChoiceListsController < ApplicationController
   end
 
   def import
-    @choice_lists = ChoiceList.all
     ChoiceList.import(params[:file])
     redirect_to choice_lists_url, notice: "Listados importados"
   end
