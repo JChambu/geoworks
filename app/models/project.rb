@@ -180,6 +180,12 @@ class Project < ApplicationRecord
     save!
   end
 
+  def change_status status_id
+    self.properties['app_estado'] = status_id
+    self.project_status_id = status_id
+    save!
+  end
+
   def disable_form
     self.row_enabled = false
     self.disabled_at = Time.now - 3.hours # TODO: Corregir zona horaria
