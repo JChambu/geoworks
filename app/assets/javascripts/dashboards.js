@@ -7,6 +7,7 @@ $(document).ready(function () {
         bgColor: 'rgba(0, 0, 0, 0.5)',
         spinner:"spinner2",
     });
+    $(document.body).css("overflow-y","hidden");
 });
 
 // Establece alto de mapa y sidebar al redimensionar
@@ -148,8 +149,6 @@ Navarra.dashboards.action_show = function(){
         Navarra.project_types.config.filtered_form_ids = updated_filters;
       }
       $(this).remove();
-      console.log($(".filter_container"));
-      console.log($(".filter_container").length);
       if($(".filter_container").length==0){
         $(".fa-search-location").css("color", "#9b9b9b");
       } else{
