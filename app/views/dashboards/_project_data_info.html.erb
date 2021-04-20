@@ -101,6 +101,9 @@
     if(option_save=="disable_confirmation"){
       disable_file();
     }
+    if(option_save=="delete_confirmation"){
+      delete_file();
+    }
   }
   function disabled_fields(){
     $('.info_input').addClass('info_input_disabled');
@@ -123,35 +126,40 @@
           <div id="info_body"></div>
         </div>
         <div class="modal-footer" style="height: 8vh;flex-wrap: nowrap;">
-          <div class="d-none text-left div_confirmation" id="info_messages" style="width: 70%;">
+          <div class="d-none text-left div_confirmation" id="info_messages" style="width: 65%;">
           </div>
-          <div class="d-none text-left div_confirmation" id="edit_confirmation" style="width: 70%;">
+          <div class="d-none text-left div_confirmation" id="edit_confirmation" style="width: 65%;">
             <p class="m-0 d-inline">Guardar Cambios?</p>
             <button type="button" class="btn btn-secondary p-0" onclick="save_info('edit_confirmation')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
-           <div class="d-none text-left div_confirmation" id="edit_confirmation_child" style="width: 70%;">
+           <div class="d-none text-left div_confirmation" id="edit_confirmation_child" style="width: 65%;">
             <p class="m-0 d-inline">Guardar Cambios?</p>
             <button type="button" class="btn btn-secondary p-0" onclick="save_info('edit_confirmation_child')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
-          <div class="d-none text-left div_confirmation" id="lat_long_edit" style="width: 70%;">
+          <div class="d-none text-left div_confirmation" id="lat_long_edit" style="width: 65%;">
             <p class="m-0" style="font-size: 0.8em">Lat: -34.5656 Lon: -71.4783</p>
             <button type="button" class="btn btn-secondary pt-0 pb-0 pl-1 pr-1" onclick="save_info()" >Guardar</button>
             <button type="button" class="btn btn-secondary pt-0 pb-0 pl-1 pr-1" data-dismiss="modal">Cancelar</button>
           </div>
-          <div class="d-none text-left div_confirmation" id="owner_confirmation" style="width: 70%;">
+          <div class="d-none text-left div_confirmation" id="owner_confirmation" style="width: 65%;">
             <select class="form-control form-control-sm d-inline p-0" id="owner_change_select" style="width: 68%">
             </select>
             <button type="button" class="btn btn-secondary p-0" onclick="save_info('owner_confirmation')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
-          <div class="d-none text-left div_confirmation" id="disable_confirmation" style="width: 70%;">
+          <div class="d-none text-left div_confirmation" id="disable_confirmation" style="width: 65%;">
             <p class="m-0 d-inline">Desactivar Registro?</p>
             <button type="button" class="btn btn-secondary p-0" onclick="save_info('disable_confirmation')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
-          <div class="d-none text-left div_confirmation" id="history" style="width: 70%;">
+          <div class="d-none text-left div_confirmation" id="delete_confirmation" style="width: 65%;">
+            <p class="m-0 d-inline">Eliminar Registro?</p>
+            <button type="button" class="btn btn-secondary p-0" onclick="save_info('delete_confirmation')" style="width: 35px">SI</button>
+            <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
+          </div>
+          <div class="d-none text-left div_confirmation" id="history" style="width: 65%;">
           </div>
           <div class="d-inline text-right" style="width: 30%;">
             <% if can? :data, :edit %>
@@ -169,6 +177,9 @@
             <% end %>
             <% if can? :data, :disable %>
             <i class="fas fa-archive" style="cursor: pointer;" title="Desactivar" onclick="show_confirmation('disable_confirmation')"></i>
+            <% end %>
+             <% if can? :data, :disable %>
+            <i class="fas fa-trash" style="cursor: pointer;" title="Eliminar" onclick="show_confirmation('delete_confirmation')"></i>
             <% end %>
             <i class="fas fa-history" style="cursor: pointer;" title="Próximamente" onclick="show_confirmation('history')"></i>
           </div>

@@ -2216,7 +2216,6 @@ function show_item_info(appid_info, from_map) {
       app_id: appid_info
     },
     success: function(data) {
-
       console.log('Padres e hijos sin actualizar');
       console.log(data);
 
@@ -3081,6 +3080,26 @@ function disable_file(){
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
       $('#info_messages').html(data['status']);
+      update_all();
+    }
+  });
+}
+
+function delete_file(){
+  var app_id = Navarra.project_types.config.id_item_displayed;
+  $.ajax({
+    type: 'PATCH',
+    url: '/projects/destroy_form',
+    datatype: 'JSON',
+    data: {
+      app_id: app_id
+    },
+    success: function(data) {
+      $('#info_messages').addClass("d-inline");
+      $('#info_messages').removeClass("d-none");
+      $('#info_messages').html(data['status']);
+      Navarra.project_types.config.item_selected="";
+      Navarra.project_types.config.data_dashboard = "";
       update_all();
     }
   });
