@@ -176,10 +176,10 @@
               <i class="fas fa-user-edit" style="cursor: pointer;" title="Cambiar Propietario" onclick="show_confirmation('owner_confirmation')"></i>
             <% end %>
             <% if can? :data, :disable %>
-            <i class="fas fa-archive" style="cursor: pointer;" title="Desactivar" onclick="show_confirmation('disable_confirmation')"></i>
+              <i class="fas fa-archive" style="cursor: pointer;" title="Desactivar" onclick="show_confirmation('disable_confirmation')"></i>
             <% end %>
-             <% if can? :data, :disable %>
-            <i class="fas fa-trash" style="cursor: pointer;" title="Eliminar" onclick="show_confirmation('delete_confirmation')"></i>
+            <% if can? :data, :destroy %>
+              <i class="fas fa-trash" style="cursor: pointer;" title="Eliminar" onclick="show_confirmation('delete_confirmation')"></i>
             <% end %>
             <i class="fas fa-history" style="cursor: pointer;" title="Próximamente" onclick="show_confirmation('history')"></i>
           </div>
