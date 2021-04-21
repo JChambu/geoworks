@@ -2396,7 +2396,7 @@ function show_item_info(appid_info, from_map) {
                         }
                       } else{
                         set_error_message("Error en listados: "+element.name);
-                      }    
+                      }
                     }
                   }
                   new_p.appendChild(new_option);
@@ -3086,13 +3086,15 @@ function disable_file(){
 }
 
 function delete_file(){
+  var project_type_id = Navarra.dashboards.config.project_type_id;
   var app_id = Navarra.project_types.config.id_item_displayed;
   $.ajax({
     type: 'PATCH',
     url: '/projects/destroy_form',
     datatype: 'JSON',
     data: {
-      app_id: app_id
+      app_id: app_id,
+      project_type_id: project_type_id
     },
     success: function(data) {
       $('#info_messages').addClass("d-inline");
