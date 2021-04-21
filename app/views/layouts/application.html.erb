@@ -3,7 +3,7 @@
   <head>
     <%= render :partial => 'common/head' %>
   </head>
-  <body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action] %>" class="nav-sm  dashboard">
+  <body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action] %>" class="nav-sm  dashboard" style="overflow-y: hidden;">
        <%= render partial: 'layouts/header_new' %>
   </body>
 </html>
