@@ -48,7 +48,7 @@ var can_edit_status_yes;
         if(can_edit_yes == 0 && can_edit_subforms_yes == 0 && can_edit_status_yes == 1){
           var field_to_edit = $('.input_status').not('.readonly_field');
         }
-        
+
         field_to_edit.removeClass('disabled');
         field_to_edit.addClass('info_input');
         field_to_edit.prop('disabled', false);
@@ -115,23 +115,23 @@ var can_edit_status_yes;
       var edit_childs = false;
       if(can_edit_yes==1 || can_edit_subforms_yes==1){
         edit_data = true;
-      } 
+      }
       if(can_edit_yes==1){
         edit_parents = true;
-      } 
+      }
       if(can_edit_subforms_yes==1){
         edit_childs = true;
-      } 
+      }
       if(can_edit_status_yes==1){
         edit_status = true;
-      } 
+      }
        if(can_edit_yes==1 || can_edit_subforms_yes==1){
         edit_file(edit_parents, edit_childs, edit_status);
-      }   
+      }
       if(can_edit_status_yes==1 && !edit_data){
         edit_file_status(false);
       }
-      
+
     }
     if(option_save=="owner_confirmation"){
       change_owner();
@@ -187,7 +187,7 @@ var can_edit_status_yes;
           <div class="d-none text-left div_confirmation" id="history" style="width: 70%;">
           </div>
           <div class="d-inline text-right" style="width: 30%;">
-            <% if (can? :data, :edit) || (can? :data, :edit_subforms) || (can? :data, :edit)  %> <!-- Cambiar por :edit_status -->
+            <% if (can? :data, :edit) || (can? :data, :edit_subforms) || (can? :data, :edit_status) %>
               <% if can? :data, :edit %>
                 <input class="d-none" id="can_edit_yes" value="1" >
               <% else %>
@@ -198,12 +198,11 @@ var can_edit_status_yes;
               <% else %>
                 <input class="d-none" id="can_edit_subforms_yes" value="=0">
               <% end %>
-              <% if can? :data, :edit %> <!-- Cambiar por :edit_status -->
+              <% if can? :data, :edit_status %>
                 <input class="d-none" id="can_edit_status_yes" value="1" >
               <% else %>
                 <input class="d-none" id="can_edit_status_yes" value="=0">
               <% end %>
-
               <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation')"></i>
             <% end %>
             <% if can? :data, :edit_geom %>
