@@ -3,15 +3,24 @@
 <div class="card m-2 shadow">
   <div class="card-body">
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-3">
         <h1 class="m-0">Listados</h1>
-        <br>
-          <%= form_tag import_choice_lists_path, multipart: true  do %>
-            <%= file_field_tag :file %>
-            <%= submit_tag "Importar Listado" %>
-          <% end %>
       </div>
-      <div class="col-md-6 text-right">
+
+      <div class="col-md-3">
+        <%= form_tag import_choice_lists_path, multipart: true do %>
+        <div class="input-group">
+          <%= file_field_tag :file, accept: '.csv', class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '', required: true %>
+          <p><i class="fas fa-exclamation-circle"></i> Sólo acepta archivos de tipo <b>CSV</b></p>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+          <%= submit_tag "Importar", class: "btn btn-primary"%>
+      </div>
+      <% end %>
+
+      <div class="col-md-3 text-right">
         <% if can? :choice_lists, :new %>
           <%= link_to 'Nuevo', new_choice_list_path, class: "btn btn-primary" %>
         <% end %>
