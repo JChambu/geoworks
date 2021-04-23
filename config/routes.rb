@@ -23,6 +23,8 @@ Rails.application.routes.draw do
   patch 'projects/disable_form' => 'projects#disable_form'
   post 'project_statuses/options', as: 'project_statuses_options'
   post 'project_statuses/update_priority', as: 'project_statuses_update_priority'
+  get 'choice_lists/export_csv'=> 'choice_lists#export_csv', as: 'export_csv'
+  get 'choice_lists/export_all_csv'=> 'choice_lists#export_all_csv', as: 'export_all_csv'
   post 'graphics/update_sort' => 'graphics#update_sort', as: :update_sort
 
 

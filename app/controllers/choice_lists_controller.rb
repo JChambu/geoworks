@@ -1,11 +1,11 @@
 class ChoiceListsController < ApplicationController
-  before_action :set_choice_list, only: [:show, :edit, :update, :destroy]
+  before_action :set_choice_list, only: [:show, :edit, :update, :destroy, :export_csv]
 
   # GET /choice_lists
   # GET /choice_lists.json
   def index
-    @choice_lists = ChoiceList.order(:name)
     authorize! :choice_lists, :visualizer
+    @choice_lists = ChoiceList.order(:name)
   end
 
   # GET /choice_lists/1
@@ -63,6 +63,22 @@ class ChoiceListsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to choice_lists_url, notice: 'Listado eliminado correctamente.' }
       format.json { head :no_content }
+    end
+  end
+
+  def export_csv
+    @choice_list = ChoiceList.find(params[:id])
+    respond_to do |format|
+      format.html
+      format.csv { send_data @choice_list.to_csv, filename: "#{@choice_list.name}-#{Date.today}.csv" }
+    end
+  end
+
+  def export_all_csv
+    @choice_lists = ChoiceList.all
+    respond_to do |format|
+     format.html
+     format.csv { send_data @choice_lists.to_csv_all, filename: "Listados-#{Date.today}.csv" }
     end
   end
 
