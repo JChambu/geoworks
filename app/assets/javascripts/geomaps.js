@@ -8,13 +8,22 @@ Navarra.namespace("geomaps");
 var first_layer=false;
 var layer_array=[];
 Navarra.geomaps = function() {
-  var mymap, markers, editableLayers, projects, layerProjects, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
+  var mymap, markers, editableLayers, projects, layerProjects, layerProjectsSelected, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
   var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current,project_current_selected,current_tenement;
   var ss = [];
   var size_box = [];
-
+  var myLocalStorage = window.localStorage;
+  var last_lat = 0;
+  var last_long = 0;
+  var inn = ""
 
   var init = function() {
+
+    //crea nodo para popup
+    var z = document.createElement('DIV'); // is a node
+    z.id = "popup_created";
+    document.body.appendChild(z);
+    //fin nodo
 
     url = window.location.hostname;
     protocol = window.location.protocol;
@@ -27,25 +36,32 @@ Navarra.geomaps = function() {
     var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       updateWhenIdle: true,
-      reuseTiles: true
+      reuseTiles: true,
+      maxZoom: 20,
+      maxNativeZoom: 18
     });
 
     var grayscale = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
       attribution: '',
       id: 'mapbox/light-v10',
-      accessToken: 'pk.eyJ1IjoiZmxhdmlhYXJpYXMiLCJhIjoiY2ppY2NzMm55MTN6OTNsczZrcGFkNHpoOSJ9.cL-mifEoJa6szBQUGnLmrA',
+      accessToken: 'pk.eyJ1IjoiZ2lzd29ya2luZ21hcCIsImEiOiJja21lenQ3bG0zMGg4MndvamtrNjdhbzl4In0.sxBssnfTVHWdklOJDZsIjA',
       updateWhenIdle: true,
-      reuseTiles: true
+      reuseTiles: true,
+      maxZoom: 20,
+      maxNativeZoom: 18
     });
 
     var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+      maxZoom: 20,
+      maxNativeZoom: 18
     });
 
     var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
-      maxZoom: 19
+      maxZoom: 20,
+      maxNativeZoom: 19
     });
 
     cfg = {
@@ -58,17 +74,21 @@ Navarra.geomaps = function() {
       valueField: 'count'
     };
 
-
+    var last_zoom= myLocalStorage.getItem('zoom');
+    var last_latitude= myLocalStorage.getItem('latitude');
+    var last_longitude= myLocalStorage.getItem('longitude');
+    if(last_zoom==null){last_zoom=12}
+    if(last_latitude==null){last_latitude=-33.113399134183744}
+    if(last_longitude==null){last_longitude=-69.69339599609376}
     mymap = L.map('map', {
       fadeAnimation: false,
       markerZoomAnimation: false,
-      zoom: 12,
-      center: [-33.113399134183744, -69.69339599609376],
+      zoom: last_zoom,
+      center: [last_latitude, last_longitude],
       zoomControl: false,
       zoomAnimation: false,
-      layers: [grayscale]
+      layers: [streets]
     });
-
 
     type_geometry = Navarra.dashboards.config.type_geometry;
     minx = Navarra.dashboards.config.minx;
@@ -84,10 +104,12 @@ Navarra.geomaps = function() {
       });
     }
 
-    mymap.fitBounds([
-      [miny, minx],
-      [maxy, maxx]
-    ]);
+    if(myLocalStorage.getItem('zoom')==null){
+      mymap.fitBounds([
+        [miny, minx],
+        [maxy, maxx]
+      ]);
+    }
 
     baseMaps = {
       "Calles": streets,
@@ -107,6 +129,35 @@ Navarra.geomaps = function() {
     L.control.zoom({
       position: 'topright'
     }).addTo(mymap);
+
+    //agrega boton zoomextend
+    L.Control.ZoomExtend = L.Control.extend({
+      onAdd: function(map) {
+        var container = L.DomUtil.create('DIV');
+        container.className = "leaflet-control-zoom leaflet-bar leaflet-control";
+        var new_a = L.DomUtil.create('A');
+        new_a.className = "leaflet-draw-draw-polygon";
+        new_a.title = "Mostrar Todo"
+        var img = L.DomUtil.create('I');
+        img.className = 'fas fa-expand-arrows-alt';
+        img.style.color = "white";
+        img.style.cursor = "pointer"
+        new_a.appendChild(img)
+        container.appendChild(new_a);
+
+        onClick = function(event) {
+          get_zoomextent();
+        };
+        L.DomEvent.addListener(container, 'click', onClick, this);
+
+        return container;
+      },
+    });
+
+    L.control.ZoomExtend = function(opts) {
+      return new L.Control.ZoomExtend(opts);
+    }
+    L.control.ZoomExtend({ position: 'topright' }).addTo(mymap);
 
     editableLayers = new L.FeatureGroup();
     mymap.addLayer(editableLayers);
@@ -246,7 +297,6 @@ Navarra.geomaps = function() {
       position: 'bottomleft',
     }).addTo(mymap);
 
-
     popup();
     current_tenant = Navarra.dashboards.config.current_tenant;
     current_layer();
@@ -368,6 +418,9 @@ Navarra.geomaps = function() {
 
 
   function onMapZoomedMoved(e) {
+    myLocalStorage.setItem('zoom', mymap.getZoom());
+    myLocalStorage.setItem('latitude', mymap.getCenter().lat);
+    myLocalStorage.setItem('longitude', mymap.getCenter().lng);
     checked = Navarra.dashboards.config.draw_disabled;
     if (checked) {
       show_kpis();
@@ -378,97 +431,125 @@ Navarra.geomaps = function() {
 
   function wms_filter() {
 
-    var cql_filter = 'project_type_id=' + Navarra.dashboards.config.project_type_id;
-    var filter_option = Navarra.project_types.config.filter_option;
+    var cql_filter = 'project_type_id = ' + Navarra.dashboards.config.project_type_id;
 
-    if (filter_option.length > 0) {
-
-      // Aplica filtro por atributo y filros generados por el usuario
-      $.each(filter_option, function(a, b) {
-        data_filter = b.split('|');
-        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
-      });
-
-      mymap.removeLayer(project_current);
-      mymap.removeLayer(project_current_selected);
-      if (typeof(projectss) !== 'undefined') {
-        mymap.removeLayer(projectss);
-      }
-
-      var heatmap_actived = Navarra.project_types.config.heatmap_field;
-      if (heatmap_actived != '') {
-        Navarra.geomaps.heatmap_data();
-      }
-
-      // Aplica filtro owner
-      var owner = Navarra.project_types.config.owner;
-      var user_name = Navarra.dashboards.config.user_name;
-      if (owner == true) {
-        cql_filter += " and app_usuario='" + user_name + "'";
-      }
-
-      // Aplica filtro de time_slider
-      var from_date = Navarra.project_types.config.from_date;
-      var to_date = Navarra.project_types.config.to_date;
-      if (from_date != '' || to_date != '') {
-        cql_filter += " AND (gwm_created_at BETWEEN '" + from_date + "' AND '" + to_date + "')"
-      } else {
-        cql_filter += ' AND row_enabled = true'
-      }
-
-      var point_color = Navarra.project_types.config.field_point_colors;
-      switch (type_geometry) {
-        case 'Point':
-          style = 'poi_new';
-          break;
-        case 'Polygon':
-          style = 'polygon_new';
-          break;
-        default:
-          style = 'poi_new';
-      }
-
-      if (point_color != '') {
-        if (typeof(projectss) !== 'undefined') {
-          mymap.removeLayer(projectss);
+    // Aplica filtros por hijos generados por el usuario
+    var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+    if (filtered_form_ids.length) {
+      let final_array = [];
+      for (var i = 0; i < filtered_form_ids.length; i++) {
+        let ids_array = JSON.parse(filtered_form_ids[i])
+        if (final_array.length) {
+          final_array = final_array.filter(value => ids_array.includes(value));
+        } else {
+          final_array = ids_array
         }
-        Navarra.geomaps.point_colors_data();
-      } else {
-        current_tenement = Navarra.dashboards.config.current_tenement;
-        layer_current = current_tenement + ":" + name_layer;
-        projectFilterLayer = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
-          layers: layer_current, //nombre de la capa (ver get capabilities)
-          format: 'image/png',
-          transparent: 'true',
-          opacity: 1,
-          version: '1.0.0', //wms version (ver get capabilities)
-          tiled: true,
-          styles: style,
-          INFO_FORMAT: 'application/json',
-          format_options: 'callback:getJson',
-          CQL_FILTER: cql_filter
-        })
-        projectss = projectFilterLayer.getLayer(layer_current).addTo(mymap);
       }
-    } else {
-      if (typeof(projectss) !== 'undefined') {
-        mymap.removeLayer(projectss);
-      }
-      project_current.addTo(mymap);
+      final_array = final_array.toString()
+      cql_filter += ' and app_id IN (' + final_array + ')';
     }
-    show_kpis();
-    show_data_dashboard();
+
+    // Aplica filtro por atributo y filros padres generados por el usuario
+    var attribute_filters = Navarra.project_types.config.attribute_filters;
+    if (attribute_filters.length) {
+      $.each(attribute_filters, function(a, b) {
+        data_filter = b.split('|');
+        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " '" + data_filter[2] + "'";
+      });
+    }
+
+    // Aplica filtro owner
+    var owner = Navarra.project_types.config.owner;
+    if (owner == true) {
+      var user_name = Navarra.dashboards.config.user_name;
+      cql_filter += " and app_usuario='" + user_name + "'";
+    }
+
+    // Aplica filtro intercapa
+    var cross_layer_filter = Navarra.project_types.config.cross_layer_filter;
+    var cross_layer_owner = Navarra.project_types.config.cross_layer_owner;
+    if (cross_layer_filter.length || cross_layer_owner == true) {
+      let cl_name = Navarra.project_types.config.cross_layer
+      let cl_clasue = '1 = 1'
+
+      // Aplica filtro intercapa por atributo
+      if (cross_layer_filter.length > 0) {
+        c_filter = cross_layer_filter[0].split('|');
+        cl_clasue += " and " + c_filter[0] +" = ''" + c_filter[2] + "''"
+      }
+
+      // Aplica filtro intercapa por owner
+      if (cross_layer_owner == true) {
+        var user_name = Navarra.dashboards.config.user_name;
+        cl_clasue += " and app_usuario = ''" + user_name + "''"
+      }
+
+      cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + cl_name + "', 'the_geom', '" + cl_clasue + "')))"
+
+    }
+
+    // Aplica filtro de time_slider
+    var from_date = Navarra.project_types.config.from_date;
+    var to_date = Navarra.project_types.config.to_date;
+
+    if (from_date != '' || to_date != '') {
+      cql_filter += " AND (gwm_created_at BETWEEN '" + from_date + "' AND '" + to_date + "')"
+    } else {
+      cql_filter += ' AND row_enabled = true'
+    }
+
+    var heatmap_actived = Navarra.project_types.config.heatmap_field;
+    if (heatmap_actived != '') {
+      Navarra.geomaps.heatmap_data();
+    }
+
+    switch (type_geometry) {
+      case 'Point':
+        style = 'poi_new';
+        break;
+      case 'Polygon':
+        style = 'polygon_new';
+        break;
+      default:
+        style = 'poi_new';
+    }
+
+    mymap.removeLayer(project_current);
+    mymap.removeLayer(project_current_selected);
+    if (typeof(projectss) !== 'undefined') {
+      mymap.removeLayer(projectss);
+    }
+
+    current_tenement = Navarra.dashboards.config.current_tenement;
+    layer_current = current_tenement + ":" + name_layer;
+    projectFilterLayer = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
+      layers: layer_current, //nombre de la capa (ver get capabilities)
+      format: 'image/png',
+      transparent: 'true',
+      opacity: 1,
+      version: '1.0.0', //wms version (ver get capabilities)
+      tiled: true,
+      maxZoom: 20,
+      styles: style,
+      INFO_FORMAT: 'application/json',
+      format_options: 'callback:getJson',
+      CQL_FILTER: cql_filter
+    })
+    projectss = projectFilterLayer.getLayer(layer_current).addTo(mymap);
+    // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
+    //show_kpis();
+    //show_data_dashboard();
     //recalcula las capas internas
-    Navarra.project_types.config.current_layer_filters = cql_filter;   
+    Navarra.project_types.config.current_layer_filters = cql_filter;
     layers_internal();
   }
 
-
+  // NOTE: La herramienta Colorear Puntos está descontinuada
   function point_colors_data() {
 
     field_point = Navarra.project_types.config.field_point_colors;
     data_point = Navarra.project_types.config.data_point_colors;
-    var filter_option = Navarra.project_types.config.filter_option;
+    var attribute_filters = Navarra.project_types.config.attribute_filters;
 
     if (field_point != '') {
       mymap.removeLayer(project_current);
@@ -503,8 +584,8 @@ Navarra.geomaps = function() {
         });
 
         // Aplica filtro por atributo y filros generados por el usuario
-        if (filter_option != '') {
-          $.each(filter_option, function(a, b) {
+        if (attribute_filters != '') {
+          $.each(attribute_filters, function(a, b) {
             data_filter = b.split('|');
             value_filter += " and " + data_filter[0] + data_filter[1] + data_filter[2];
           });
@@ -528,6 +609,7 @@ Navarra.geomaps = function() {
           format: 'image/png',
           transparent: 'true',
           opacity: 1,
+          maxZoom: 20,
           version: '1.0.0', //wms version (ver get capabilities)
           tiled: true,
           styles: 'scale2',
@@ -584,7 +666,7 @@ Navarra.geomaps = function() {
           collapsed: true
         }).addTo(mymap);
 
-        if (filter_option.length == 0) {
+        if (attribute_filters.length == 0) {
           current_layer();
         }
         ss = [];
@@ -610,14 +692,14 @@ Navarra.geomaps = function() {
       size_box[2] = size_ext['_northEast']['lng'];
       size_box[3] = size_ext['_northEast']['lat'];
     }
-    var conditions = Navarra.project_types.config.filter_kpi
+    var attribute_filters = Navarra.project_types.config.attribute_filters
     var data_id = Navarra.dashboards.config.project_type_id;
     var heatmap_field = Navarra.project_types.config.heatmap_field;
     var heatmap_indicator = Navarra.project_types.config.heatmap_indicator;
     var from_date = Navarra.project_types.config.from_date;
     var to_date = Navarra.project_types.config.to_date;
 
-    if(xhr_heatmap && xhr_heatmap.readyState != 4) { 
+    if(xhr_heatmap && xhr_heatmap.readyState != 4) {
       xhr_heatmap.abort();
     }
     xhr_heatmap = $.ajax({
@@ -626,7 +708,7 @@ Navarra.geomaps = function() {
       datatype: 'json',
       data: {
         project_type_id: data_id,
-        conditions: conditions,
+        conditions: attribute_filters,
         heatmap_field: heatmap_field,
         size_box: size_box,
         type_box: type_box,
@@ -704,40 +786,31 @@ Navarra.geomaps = function() {
   function current_layer() {
     name_layer = Navarra.dashboards.config.name_layer;
     var labelLayer = Navarra.dashboards.config.name_project;
-    /*
-    if(xhr_namelayer && xhr_namelayer.readyState != 4) { 
-      xhr_namelayer.abort();
-    }
-    xhr_namelayer = $.ajax({
-      async: false,
-      type: 'GET',
-      url: '/project_types/search_name_layer.json',
-      data: {
-        name_projects: name_layer
-      },
-      datatype: 'json',
-      success: function(data) {
-        labelLayer = data['data'][0];
-        if (labelLayer == undefined) {
-          labelLayer = 'Predeterminada'
-        }
-        console.log("NameLayer");
-        console.log(labelLayer);
-        console.log("projectName");
-        console.log(Navarra.dashboards.config.name_project);
-      }
-    })
-    */
     workspace = Navarra.dashboards.config.current_tenement;
-
     cql_filter = "1 = 1";
 
+    // Aplica filtros por hijos generados por el usuario
+    var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+    if (filtered_form_ids.length) {
+      let final_array = [];
+      for (var i = 0; i < filtered_form_ids.length; i++) {
+        let ids_array = JSON.parse(filtered_form_ids[i])
+        if (final_array.length) {
+          final_array = final_array.filter(value => ids_array.includes(value));
+        } else {
+          final_array = ids_array
+        }
+      }
+      final_array = final_array.toString()
+      cql_filter += ' and app_id IN (' + final_array + ')';
+    }
+
     // Aplica filtro por atributo y filros generados por el usuario
-    var filter_option = Navarra.project_types.config.filter_option;
-    if (filter_option.length > 0) {
-      $.each(filter_option, function(a, b) {
+    var attribute_filters = Navarra.project_types.config.attribute_filters;
+    if (attribute_filters.length > 0) {
+      $.each(attribute_filters, function(a, b) {
         data_filter = b.split('|');
-        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
+        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " '" + data_filter[2] + "'";
       });
     }
 
@@ -751,7 +824,6 @@ Navarra.geomaps = function() {
     // Aplica filtro intercapa
     var cross_layer_filter = Navarra.project_types.config.cross_layer_filter;
     var cross_layer_owner = Navarra.project_types.config.cross_layer_owner;
-
     if (cross_layer_filter.length > 0 || cross_layer_owner == true) {
 
       let cl_name = Navarra.project_types.config.cross_layer
@@ -760,7 +832,7 @@ Navarra.geomaps = function() {
       // Aplica filtro intercapa por atributo
       if (cross_layer_filter.length > 0) {
         c_filter = cross_layer_filter[0].split('|');
-        cl_clasue += " and " + c_filter[0] +" = '" + c_filter[2] + "'"
+        cl_clasue += " and " + c_filter[0] +" = ''" + c_filter[2] + "''"
       }
 
       // Aplica filtro intercapa por owner
@@ -783,46 +855,52 @@ Navarra.geomaps = function() {
     }
 
     // Asigna todos los filtros a una variable global
-    Navarra.project_types.config.current_layer_filters = cql_filter;    
+    Navarra.project_types.config.current_layer_filters = cql_filter;
 
     // Aplica filtro de elementos seleccionados en la tabla
     var cql_filter_data_not_selected = "";
     var cql_filter_data_selected = " and 1 = 2";
     var data_from_navarra = Navarra.project_types.config.data_dashboard;
-    if(data_from_navarra!=""){
-        cql_filter_data_not_selected=" and NOT ("+data_from_navarra+" )";
-        cql_filter_data_selected=" and "+data_from_navarra;
-        var geometry_draw_array = Navarra.dashboards.config.size_polygon;
-        if(geometry_draw_array.length>0){
-           geometry_draw = "MULTIPOLYGON(";
-           for (xx = 0; xx < geometry_draw_array.length; xx++) {
-             if(xx>0){geometry_draw += ",((";}else{geometry_draw += "((";}
-            for (x = 0; x < geometry_draw_array[xx].length; x++) {
-              if (x > 0) {
-                geometry_draw += " , ";
-              }
-              geometry_draw += geometry_draw_array[xx][x][0] + " " + geometry_draw_array[xx][x][1];
-              }
-              geometry_draw += "))";
+    if (data_from_navarra != "") {
+      cql_filter_data_not_selected = " and NOT (" + data_from_navarra + " )";
+      cql_filter_data_selected = " and " + data_from_navarra;
+      var geometry_draw_array = Navarra.dashboards.config.size_polygon;
+
+      if (geometry_draw_array.length > 0) {
+        geometry_draw = "MULTIPOLYGON(";
+        for (xx = 0; xx < geometry_draw_array.length; xx++) {
+          if (xx > 0) {
+            geometry_draw += ",((";
+          } else {
+            geometry_draw += "((";
+          }
+          for (x = 0; x < geometry_draw_array[xx].length; x++) {
+            if (x > 0) {
+              geometry_draw += " , ";
             }
-            geometry_draw += ")";
-            cql_filter_data_selected+= " and WITHIN(the_geom, "+geometry_draw+")";
-            cql_filter_data_not_selected=" and (NOT ("+data_from_navarra+" ) or NOT( WITHIN(the_geom, "+geometry_draw+")))";
+            geometry_draw += geometry_draw_array[xx][x][0] + " " + geometry_draw_array[xx][x][1];
+          }
+          geometry_draw += "))";
         }
-   }
+        geometry_draw += ")";
+        cql_filter_data_selected += " and WITHIN(the_geom, " + geometry_draw + ")";
+        cql_filter_data_not_selected = " and (NOT (" + data_from_navarra + " ) or NOT( WITHIN(the_geom, " + geometry_draw + ")))";
+      }
+
+    }
 
 
-   cql_filter_not_selected = cql_filter + cql_filter_data_not_selected;
-   cql_filter_selected = cql_filter + cql_filter_data_selected;
+    cql_filter_not_selected = cql_filter + cql_filter_data_not_selected;
+    cql_filter_selected = cql_filter + cql_filter_data_selected;
 
-   //elimina los puntos dibujados de la capa
-    if(first_layer){
+    //elimina los puntos dibujados de la capa
+    if (first_layer) {
       mymap.removeLayer(project_current);
       layerControl.removeLayer(project_current);
       mymap.removeLayer(project_current_selected);
       layerControl.removeLayer(project_current_selected);
     }
-     first_layer=true;
+    first_layer = true;
 
     current_layer = workspace + ":" + name_layer;
 
@@ -842,6 +920,7 @@ Navarra.geomaps = function() {
       opacity: 1,
       version: '1.0.0', //wms version (ver get capabilities)
       tiled: true,
+      maxZoom: 20,
       styles: style,
       INFO_FORMAT: 'application/json',
       format_options: 'callback:getJson',
@@ -863,27 +942,26 @@ Navarra.geomaps = function() {
       style = 'polygon_new_selected';
     }
 
-    layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
+    layerProjectsSelected = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
       layers: current_layer, //nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
       opacity: 1,
       version: '1.0.0', //wms version (ver get capabilities)
       tiled: true,
+      maxZoom: 20,
       styles: style,
       INFO_FORMAT: 'application/json',
       format_options: 'callback:getJson',
       CQL_FILTER: cql_filter_selected
     })
 
-    project_current_selected = layerProjects.getLayer(current_layer).addTo(mymap);
+    project_current_selected = layerProjectsSelected.getLayer(current_layer).addTo(mymap);
     if(data_from_navarra!=""){
       layerControl.addOverlay(project_current_selected, " Seleccionados", null, {
         sortLayers: false
       });
     }
-
-
   }
 
 
@@ -911,7 +989,7 @@ Navarra.geomaps = function() {
     }
     layer_array=[];
 
-    if(xhr_current_layer && xhr_current_layer.readyState != 4) { 
+    if(xhr_current_layer && xhr_current_layer.readyState != 4) {
       xhr_current_layer.abort();
     }
     xhr_current_layer = $.ajax({
@@ -996,6 +1074,7 @@ Navarra.geomaps = function() {
             opacity: 1,
             version: '1.0.0', //wms version (ver get capabilities)
             tiled: true,
+            maxZoom: 20,
             styles: style,
             env: 'color:' + color_layer,
             INFO_FORMAT: 'application/json',
@@ -1026,6 +1105,7 @@ Navarra.geomaps = function() {
             opacity: 1,
             version: '1.0.0', //wms version (ver get capabilities)
             tiled: true,
+            maxZoom: 20,
             styles: style,
             env: 'color:' + color_layer,
             INFO_FORMAT: 'application/json',
@@ -1047,7 +1127,6 @@ Navarra.geomaps = function() {
           var name_layer_project = $(check_layers[l]).next().html().substring(1);
           if(active_internal_layers.indexOf(name_layer_project)>=0){
             check_layers[l].click();
-            console.log("click "+name_layer_project)
           }
         }
       }
@@ -1058,7 +1137,7 @@ Navarra.geomaps = function() {
 
   function layers_external() {
     //Layer outer
-    if(xhr_layer_external && xhr_layer_external.readyState != 4) { 
+    if(xhr_layer_external && xhr_layer_external.readyState != 4) {
       xhr_layer_external.abort();
     }
     xhr_layer_external = $.ajax({
@@ -1072,6 +1151,7 @@ Navarra.geomaps = function() {
             layers: v.layer, //nombre de la capa (ver get capabilities)
             format: 'image/png',
             transparent: 'true',
+            maxZoom: 20,
             opacity: 1,
             version: '1.1.1', //wms version (ver get capabilities)
             tiled: true,
@@ -1088,11 +1168,16 @@ Navarra.geomaps = function() {
     })
   }
 
-
+var project_names=["ArriendosChile","PoligonosChile"];
   function popup() {
-
     MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
+        if(latlng["lat"]!=last_lat || latlng["lng"]!=last_long){
+          //si hace click en otro punto borra contenedor de popup
+          $('#popup_created').empty();
+        }
+        last_lat=latlng["lat"];
+        last_long=latlng["lng"];
         if (!this._map) {
           return;
         }
@@ -1104,37 +1189,57 @@ Navarra.geomaps = function() {
             var prop = cc['features'][0]['properties'];
             project_name_feature = cc['features'][0]['id'];
             project_name = project_name_feature.split('.fid')[0];
-            var z = document.createElement('p'); // is a node
-            var x = []
             var count = 1;
-            var project_id = cc['features'][0]['properties']['id'];
-            var data_id = Navarra.dashboards.config.project_type_id;
-            if (name_layer == project_name) {
-              if(xhr_popup && xhr_popup.readyState != 4) { 
-                xhr_popup.abort();
-              }
+
             xhr_popup = $.ajax({
                 type: 'GET',
                 url: '/project_fields/field_popup.json',
                 datatype: 'json',
                 data: {
-                  project_type_id: data_id
+                  project_name: project_name
                 },
                 success: function(data) {
-                  Object.keys(data).forEach(function(value) {
-                    label = data[value];
+                  var fields_popup=data["fields_popup"];
+                  var div_popup = document.createElement('DIV');
+                  div_popup.className="div_popup";
+                  var new_p = document.createElement('P');
+                  new_p.className="tittle_popup";
+                  new_p.innerHTML=data["project_name"];
+                  div_popup.appendChild(new_p);
+
+                  Object.keys(fields_popup).forEach(function(value) {
+                    label = data["fields_popup"][value];
                     var val = prop[value]
                     // Valida si el valor no es nulo
                     if (val != null && val != 'null') {
                       // Elimina los corchetes y comillas del valor (en caso que contenga)
                       val = val.toString().replace(/\[|\]|\"/g, '');
-                      x.push(label + ': ' + val);
+                      var new_p = document.createElement('P');
+                      new_p.className="p_popup"
+                      new_p.innerHTML=label + ': ' + val;
+                      div_popup.appendChild(new_p);
                     }
                   });
                   var app_id_popup=prop["app_id"];
-                  x.push('<b><i class="fas fa-info-circle info_icon" onclick="show_item_info('+app_id_popup+',true)"></i>');
-                  z.innerHTML = x.join(" <br>");
-                  inn = document.body.appendChild(z);
+                  if(Navarra.dashboards.config.name_project==data["project_name"]){
+                    var new_p = document.createElement('I');
+                    new_p.setAttribute("onclick",'show_item_info('+app_id_popup+',true)');
+                    new_p.className="fas fa-info-circle info_icon";
+                    div_popup.appendChild(new_p);
+                  }
+
+                  var isdifferent=true;
+                  //verifica que si se está haciendo click en el mismo punto
+                  $(".div_popup").each(function(){
+                    if(div_popup.innerHTML==$(this).html()){
+                      isdifferent=false;
+                    }
+                  });
+                  if(isdifferent){
+                    document.getElementById("popup_created").appendChild(div_popup);
+                  }
+                  
+                  inn = document.getElementById("popup_created").innerHTML;
                   checked = $('#select').hasClass('active');
 
                   if (draw_disabled) {
@@ -1146,11 +1251,48 @@ Navarra.geomaps = function() {
                 } // Cierra success
               }); // Cierra ajax
             } // Cierra if
-          } // Cierra if
+        //  } // Cierra if
         } // Cierra if
       } // Cierra showFeatureInfo
     }); // Cierra L.WMS.Source.extend
   }
+
+function close_all_popups(){
+  mymap.closePopup();
+}
+
+function get_zoomextent(){
+  if(editableLayers.getLayers().length!=0){
+    mymap.fitBounds(editableLayers.getBounds());
+  } else{
+    var project_type_id = Navarra.dashboards.config.project_type_id;
+    var attribute_filters = Navarra.project_types.config.attribute_filters;
+    var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+    var from_date = Navarra.project_types.config.from_date;
+    var to_date = Navarra.project_types.config.to_date;
+    $.ajax({
+      type: 'GET',
+      url: '/project_types/get_extent',
+      datatype: 'json',
+      data: {
+        project_type_id: project_type_id,
+        attribute_filters: attribute_filters,
+        filtered_form_ids: filtered_form_ids,
+        from_date: from_date,
+        to_date: to_date
+      },
+      success: function(data) {
+        if(data.data[0].miny==null || data.data[0].minx==null || data.data[0].maxy==null || data.data[0].maxx==null){
+          //no hay datos que mostrar
+          show_kpis();
+          show_data_dashboard();
+        } else{
+          mymap.fitBounds([[data.data[0].miny, data.data[0].minx],[data.data[0].maxy, data.data[0].maxx]]);
+        }
+       }
+    });
+  }
+}
 
   return {
     init: init,
@@ -1162,6 +1304,8 @@ Navarra.geomaps = function() {
     show_kpis: show_kpis,
     layers_internal: layers_internal,
     layers_external: layers_external,
-    popup: popup
+    popup: popup,
+    close_all_popups: close_all_popups,
+    get_zoomextent: get_zoomextent
   }
 }();

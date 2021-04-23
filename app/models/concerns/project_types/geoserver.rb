@@ -8,7 +8,7 @@ module ProjectTypes::Geoserver
 
       uri = URI.parse("http://#{ENV['GEOSERVER_HOST']}:8080/geoserver/rest/reload")
       request = Net::HTTP::Post.new(uri)
-      request.basic_auth('admin', ENV['GEOSERVER_ADMIN_PASSWORD'])
+      request.basic_auth(ENV['GEOSERVER_USER'], ENV['GEOSERVER_PASSWORD'])
       request.content_type = "text/xml"
       req_options = {
         use_ssl: uri.scheme == "https",
@@ -44,7 +44,7 @@ module ProjectTypes::Geoserver
       current_tenant = 'geoworks' if current_tenant.empty? || current_tenant == 'public'
       uri = URI.parse("http://#{ENV['GEOSERVER_HOST']}:8080/geoserver/rest/workspaces/#{current_tenant}/datastores/#{current_tenant}/featuretypes.json")
       request = Net::HTTP::Get.new(uri)
-      request.basic_auth('admin', ENV['GEOSERVER_ADMIN_PASSWORD'])
+      request.basic_auth(ENV['GEOSERVER_USER'], ENV['GEOSERVER_PASSWORD'])
       req_options = {
         use_ssl: uri.scheme == "https",
       }
@@ -66,7 +66,7 @@ module ProjectTypes::Geoserver
       current_tenant = 'geoworks' if current_tenant.empty? || current_tenant == 'public'
       uri = URI.parse("http://#{ENV['GEOSERVER_HOST']}:8080/geoserver/rest/workspaces/#{current_tenant}/datastores/#{current_tenant}/featuretypes")
       request = Net::HTTP::Post.new(uri)
-      request.basic_auth('admin', ENV['GEOSERVER_ADMIN_PASSWORD'])
+      request.basic_auth(ENV['GEOSERVER_USER'], ENV['GEOSERVER_PASSWORD'])
       request.content_type = "text/xml"
       request.body = "<featureType><name>#{name_layer}</name><latLonBoundingBox><minx>-180</minx><maxx>180</maxx><miny>-90</miny><maxy>90</maxy><crs>EPSG:4326</crs></latLonBoundingBox></featureType>"
       req_options = {
@@ -77,5 +77,21 @@ module ProjectTypes::Geoserver
       end
       return [response.body, response.code]
     end
+
+    def destroy_layer_geoserver ( name_layer, current_tenant = Apartment::Tenant.current )
+      require 'net/http'
+      require 'uri'
+      #http://localhost:8080/geoserver/rest/workspaces/incorp/layers/plantacion
+      uri = URI.parse("http://#{ENV['GEOSERVER_HOST']}:8080/geoserver/rest/workspaces/#{current_tenant}/layers/#{name_layer}?recurse=true")
+      request = Net::HTTP::Delete.new(uri)
+      request.basic_auth('admin', ENV['GEOSERVER_ADMIN_PASSWORD'])
+      req_options = {
+          use_ssl: uri.scheme == 'https',
+      }
+      response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+         http.request(request)
+      end
+    end
+
   end
 end

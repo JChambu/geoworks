@@ -8,7 +8,7 @@
   <div class="modal-body">
     <div class="form-row">
       <div class="col-md-5">
-      <%=select_tag 'q[project_field]', options_for_select(filter_field_for_select), include_blank: true, class:'proj_field form-control' %>
+      <%=select_tag 'q[project_field]', grouped_options_for_select(filter_field_for_select), include_blank: true, class:'proj_field form-control' %>
       </div>
       <div class="col-md-2">
         <%=select_tag 'q[filters]', options_for_select(ProjectType::FILTERS), class: 'form-control' %>
@@ -33,7 +33,8 @@
       url: "/projects/search_data.json",
       type: "GET",
       data: {
-        project_field_id: $(this).val(),
+        table: $(this.options[this.selectedIndex]).closest('optgroup').prop('label'),
+        project_field_key: $(this).val(),
         project_type_id: <%= params[:project_type_id] %>
       },
       success: function(data) {

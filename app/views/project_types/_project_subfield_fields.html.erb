@@ -23,7 +23,12 @@
     </div>
   </td>
   <td style="width: 3%; padding-right: 0px"><div class="custom-control custom-checkbox"></div></td>
-  <td style="width: 3%; padding-right: 0px"><div class="custom-control custom-checkbox"></div></td>
+  <td style="width: 3%; padding-right: 0px">
+    <div class="custom-control custom-checkbox">
+      <%= f.check_box :filter_field, class:'custom-control-input', id: 'customCheckSubField4'.concat(f.object.id.to_s) %>
+      <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField4'.concat(f.object.id.to_s)%>
+    </div>
+  </td>
   <td style="width: 3%; padding-right: 0px"><div class="custom-control custom-checkbox"></div></td>
   <td style="width: 3%; padding-right: 0px"><div class="custom-control custom-checkbox"></div></td>
   <td style="width: 12%"><%= f.text_field :calculated_field, class: "form-control form-control-sm" %></td>

@@ -7,6 +7,83 @@ class ProjectsController < ApplicationController
     render json: {data: @user}
   end
 
+  # Deshabilita un registro (row_enabled = false)
+  def disable_form
+    app_id = params[:app_id]
+    if app_id.present?
+      @project = Project.find(app_id)
+      if @project.present?
+        if @project.disable_form
+          render json: {status: 'El registro fue deshabilitado correctamente.'}
+        else
+          render json: {status: 'Error. No se pudo deshabilitar el registro.'}
+        end
+      else
+        render json: {status: 'Error. No se encontró el registro.'}
+      end
+    else
+      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
+    end
+  end
+
+  # Actualiza la columna properties
+  def update_form
+
+    # Padres
+    app_id = params[:app_id]
+    properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
+
+    if app_id.present? && properties.present?
+      @project = Project.find(app_id)
+      if @project.present?
+        if @project.update_form(properties)
+          render json: {status: 'El registro fue modificado correctamente.'}
+        else
+          render json: {status: 'Error. No se pudo actualizar el registro.'}
+        end
+      else
+        render json: {status: 'Error. No se encontró el registro.'}
+      end
+    end
+
+    # Hijos
+    subforms = params[:subforms] # FIXME: los paremetros llegan como string
+
+    if subforms.present?
+      subforms.each do |i, sf|
+        child_id = sf['child_id']
+        properties = sf['properties']
+        @project_data_children = ProjectDataChild.find(child_id)
+        if @project_data_children.update_subform(properties)
+          render json: {status: 'El registro fue modificado correctamente.'}
+        else
+          render json: {status: 'Error. No se pudo actualizar el registro.'}
+        end
+      end
+    end
+
+  end
+
+  # Cambia el propietario del registro
+  def change_owner
+    app_id = params[:app_id]
+    user_id = params[:user_id]
+    if app_id.present? && user_id.present?
+      @project = Project.find(app_id)
+      if @project.present?
+        if @project.change_owner(user_id)
+          render json: {status: 'El registro fue reasignado correctamente.'}
+        else
+          render json: {status: 'Error. No se pudo reasignado el registro.'}
+        end
+      else
+        render json: {status: 'Error. No se encontró el registro.'}
+      end
+    else
+      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
+    end
+  end
+
   def search_statuses
     @project_statuses_data = ProjectStatus.where(project_type_id: params[:project_type_id])
     render json: {data: @project_statuses_data}
@@ -15,20 +92,20 @@ class ProjectsController < ApplicationController
   def search_users
     customer_subdomain = Apartment::Tenant.current
     Apartment::Tenant.switch 'public' do
-      @usuarios_corpo = User.joins(:customers).where(customers: {subdomain: customer_subdomain})
+      @usuarios_corpo = User.joins(:customers).where(customers: {subdomain: customer_subdomain}).order(:name)
     end
     render json: {data: @usuarios_corpo}
   end
 
   def popup
     project_data = Project.find(params['project_id'].to_i)
-     render json: {data: project_data }
+    render json: {data: project_data }
   end
 
   # GET /projects
   # GET /projects.json
   def index
-    
+
     authorize! :data, :visualizer
     @search = @project_type.projects.all
     @search = @search.search(params[:q])
@@ -38,8 +115,8 @@ class ProjectsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv { send_data @projects.to_csv, filename: "users-#{Date.today}.csv" }
-          end
     end
+  end
 
   # GET /projects/1
   # GET /projects/1.json
@@ -106,12 +183,12 @@ class ProjectsController < ApplicationController
   end
 
   def set_project
-      @project = Project.find(params[:id])
-    end
+    @project = Project.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def project_params
-      @properties_keys = params[:project][:properties].keys
-      params.require(:project).permit( :project_type_id, :properties => [@properties_keys]).merge(user_id: current_user.id)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def project_params
+    @properties_keys = params[:project][:properties].keys
+    params.require(:project).permit( :project_type_id, :properties => [@properties_keys]).merge(user_id: current_user.id)
+  end
 end
