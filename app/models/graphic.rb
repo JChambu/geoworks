@@ -5,5 +5,9 @@ class Graphic < ApplicationRecord
 
   accepts_nested_attributes_for :graphics_properties, allow_destroy: true
 
+  def update_sort! sort
+    self.sort = sort
+    save
+  end
 
 end

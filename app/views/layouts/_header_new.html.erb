@@ -1,7 +1,11 @@
 <script type="text/javascript">
 $(document).ready(function(){
- 
+
 });
+function open_panel(id_panel){
+  $('#'+id_panel).click();
+}
+
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -17,11 +21,6 @@ $(document).ready(function(){
 
       <!-- Proyectos -->
       <% if params[:controller] == 'project_types' && params[:action] == 'index' %>
-        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
-      <% end %>
-
-      <!-- Datos del Proyecto -->
-      <% if params[:controller] == 'projects' && params[:action] == 'index' %>
         <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
       <% end %>
 
@@ -129,7 +128,7 @@ $(document).ready(function(){
 
               <% if can? :graphics, :new %>
                 <%= link_to new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item custom-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' do %> <i class="fas fa-chart-pie chart-modal align-middle" style="font-size: 20px" title="Crear Gráfico"></i> <% end %>
-                <% end %>    
+                <% end %>
               </div>
             </li>
           <% end %>
@@ -153,9 +152,20 @@ $(document).ready(function(){
 
       <!-- Proyecto Actual -->
       <% if !@project_type.nil? && !@project_type.new_record?%>
-         <% if can? :data, :visualizer%>
-            <%= link_to 'Datos', project_type_projects_path(@project_type.id), class: "dropdown-item" %>
+        <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
+          <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelAdmin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Paneles</a>
+            <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels" aria-labelledby="panelAdmin">
+              <% if can? :data, :visualizer %>
+                <a class="dropdown-item" href="#" onclick="open_panel('view-data-middle')">Tabla de datos</a>
+              <% end %>
+              <% if can? :graphics, :visualizer %>
+                <a class="dropdown-item" href="#" onclick="open_panel('view-charts')">Indicadores Gráficos</a>
+              <% end %>
+              <a class="dropdown-item" href="#" onclick="open_panel('view-filters')">Filtros Activos</a>
+              <a class="dropdown-item" href="#" onclick="open_panel('view-timeslider')">Rango Temporal</a>
+            </div>
           <% end %>
+
           <% if can? :statuses, :visualizer %>
             <%= link_to 'Estados', project_type_project_statuses_path(@project_type.id), class: "dropdown-item" %>
            <% end %>
@@ -168,7 +178,7 @@ $(document).ready(function(){
           <% if can? :project_types, :destroy%>
             <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, id: 'project_del_button', class: "dropdown-item" %>
           <% end %>
-        <% end %>  
+        <% end %>
 
         <% if can? :choice_lists, :visualizer %>
           <%= link_to 'Listados', choice_lists_path, class: "dropdown-item" %>
