@@ -8,17 +8,19 @@
         <h1 class="m-0">Listados</h1>
       </div>
       <div class="col-md-6 text-center">
-        <%= form_tag import_choice_lists_path, multipart: true do %>
-        <div class="input-group">
-          <div class="custom-file mt-2 ml-5">
-            <%= file_field_tag :file, accept: '.csv', class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '', required: true %>
-          </div>
-          <div class="input-group-append py-1 mr-1">
-            <%= submit_tag "Importar", class: "btn btn-primary" %>
-          </div>
-        </div>
+        <% if can? :choice_lists, :new %>
+          <%= form_tag import_choice_lists_path, multipart: true do %>
+            <div class="input-group">
+              <div class="custom-file mt-2 ml-5">
+                <%= file_field_tag :file, accept: '.csv', class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '', required: true %>
+              </div>
+              <div class="input-group-append py-1 mr-1">
+                <%= submit_tag "Importar", class: "btn btn-primary" %>
+              </div>
+            </div>
+          <% end %>
+          <p class="mb-0"><i class="fas fa-exclamation-circle"></i> Sólo acepta archivos <b>CSV</b></p>
         <% end %>
-        <p class="mb-0"><i class="fas fa-exclamation-circle"></i> Sólo acepta archivos <b>CSV</b></p>
       </div>
       <div class="col-md-3 text-right py-1">
         <% if can? :choice_lists, :export %>
