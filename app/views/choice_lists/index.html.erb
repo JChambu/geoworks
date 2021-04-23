@@ -44,9 +44,11 @@
                   <%= link_to edit_choice_list_path(choice_list) do %> <i class="fas fa-edit" title="Editar"></i><% end %>
                 <% end %>
               </td>
-              <% if can? :choice_lists, :destroy %>
-                <td class="text-center"><%= link_to choice_list, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt" title="Eliminar"></i> <%end%></td>
-              <% end %>
+              <td class="text-center">
+                <% if can? :choice_lists, :destroy %>
+                  <%= link_to choice_list, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt" title="Eliminar"></i> <%end%>
+                <% end %>
+              </td>
             </tr>
           <% end %>
         </tbody>
