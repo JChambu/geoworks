@@ -7,7 +7,9 @@
         <h1 class="m-0">Listados</h1>
       </div>
       <div class="col-md-6 text-right">
-        <td class="text-center"><%= link_to 'Exportar', export_all_csv_path(format: "csv"), class: "btn btn-primary" %></td>
+        <% if can? :choice_lists, :export %>
+          <td class="text-center"><%= link_to 'Exportar', export_all_csv_path(format: "csv"), class: "btn btn-primary" %></td>
+        <% end %>
         <% if can? :choice_lists, :new %>
           <%= link_to 'Nuevo', new_choice_list_path, class: "btn btn-primary" %>
         <% end %>
@@ -32,7 +34,11 @@
             <tr>
               <td><%= choice_list.name %></td>
               <td><%= choice_list.description %></td>
-              <td class="text-center"><%= link_to export_csv_path(:format => :csv, :id => choice_list.id) do %> <i class="fas fa-download" title="Descargar CSV"></i><% end %></td>
+              <td class="text-center">
+                <% if can? :choice_lists, :export %>
+                  <%= link_to export_csv_path(:format => :csv, :id => choice_list.id) do %> <i class="fas fa-download" title="Descargar CSV"></i> <% end %>
+                <% end %>
+              </td>
               <td class="text-center">
                 <% if can? :choice_lists, :edit %>
                   <%= link_to edit_choice_list_path(choice_list) do %> <i class="fas fa-edit" title="Editar"></i><% end %>
