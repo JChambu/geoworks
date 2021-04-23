@@ -2266,7 +2266,6 @@ function show_item_info(appid_info, from_map) {
           new_option.text=status.name;
           if(status.status_type=="Heredable"){
             new_option.disabled = true;
-            new_option.text=status.name+"(Heredable)";
           }
           new_option.value=status.id+"|"+status.color;
           if(father_status.status_id==status.id){
@@ -3107,6 +3106,14 @@ function edit_file(edit_parent, edit_child, edit_status){
 }
 
 function edit_file_status(edit_data){
+  if(!statuschange){
+    $('#info_messages').html("No hay cambios a guardar");
+    $('#info_messages').addClass("text-danger");
+    $('#info_messages').removeClass("d-none");
+    return;
+  } else {
+    $('#info_messages').removeClass("text-danger");
+  }
   var app_id = Navarra.project_types.config.id_item_displayed;
   var status_id = $(".input_status").val().split('|')[0];
   $.ajax({
@@ -3244,7 +3251,6 @@ function changeFile(){
 function changeStatus(event){
   statuschange = true;
   var color_status = event.target.value.split("|")[1];
-  console.log(color_status);
   $(".status_info_icon").css("background",color_status);
 
 }
