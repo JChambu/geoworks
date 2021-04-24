@@ -7,6 +7,9 @@
       Navarra.geomaps.current_layer();
     });
   });
+  function close_alert(){
+      $('#alert_message').removeClass('show');
+  };
 
   function show_confirmation(div_confirmation){
     if(!Navarra.dashboards.config.has_field_errors){
@@ -187,4 +190,12 @@
       </div>
     </div>
   </div>
+  <div class="alert alert-dismissible fade position-absolute w-100 p-2" id="alert_message" role="alert" style="top: 90vh; z-index: 1000;">
+    <div class="modal-content w-auto float-right">
+      <div class="modal-body mr-5" id="alert_text_message" style="color: #aaa"></div>
+      <button type="button" class="close" style="color: #aaa" onclick="close_alert()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+</div>
 <% end %>

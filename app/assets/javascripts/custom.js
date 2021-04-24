@@ -3097,9 +3097,9 @@ function delete_file(){
       project_type_id: project_type_id
     },
     success: function(data) {
-      $('#info_messages').addClass("d-inline");
-      $('#info_messages').removeClass("d-none");
-      $('#info_messages').html(data['status']);
+      $('#alert_message').addClass('show');
+      $("#info-modal").modal("hide");
+      $('#alert_text_message').html(data['status']);
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       update_all();
