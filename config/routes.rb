@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get 'project_types/get_extent' => 'project_types#get_extent'
   patch 'projects/update_form' => 'projects#update_form'
   patch 'projects/change_owner' => 'projects#change_owner'
+  patch 'projects/change_status' => 'projects#change_status'
   patch 'projects/disable_form' => 'projects#disable_form'
   post 'project_statuses/options', as: 'project_statuses_options'
   post 'project_statuses/update_priority', as: 'project_statuses_update_priority'

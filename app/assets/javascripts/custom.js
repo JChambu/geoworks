@@ -7,6 +7,7 @@ var xhr_info = null;
 var xhr_report = null;
 var data_charts;
 var filechange;
+var statuschange;
 
 var father_fields;
 var array_child_edited;
@@ -2226,6 +2227,7 @@ function show_item_info(appid_info, from_map) {
       $(".fa-eye-slash").css("color", "#9b9b9b");
 
       filechange = false;
+      statuschange = false;
       //borra datos anteriores
       var arraymultiselect=[];
       var arraymultiselectChild=[];
@@ -2236,17 +2238,64 @@ function show_item_info(appid_info, from_map) {
       document.getElementById('modal_info').appendChild(new_body);
 
       // estado del registro
+      // trae datos de los estados
       var father_status = data.father_status;
       var new_div = document.createElement('DIV');
-      new_div.className = "d-flex align-items-center mb-3";
-      var new_icon = document.createElement('DIV');
-      new_icon.className = "status_info_icon";
-      new_icon.style.background = father_status.status_color;
-      new_div.appendChild(new_icon);
-      var new_p = document.createElement('H5');
-      new_p.innerHTML = father_status.status_name;
-      new_div.appendChild(new_p);
+      new_div.className = "d-flex align-items-center mb-3 field_div";
+      new_div.id="status_container_info";
       document.getElementById('info_body').appendChild(new_div);
+      $.ajax({
+      url:  "/projects/search_statuses.json",
+      type: "GET",
+      data: { project_type_id: project_type_id },
+      success: function(data_status) {  
+      console.log(data_status)      
+        var new_icon = document.createElement('DIV');
+        new_icon.className = "status_info_icon";
+        new_icon.style.background = father_status.status_color;
+        document.getElementById("status_container_info").appendChild(new_icon);
+        var new_p = document.createElement('SELECT');
+        new_p.className = "multiselect_field form-control form-control-sm multiselect_status input_status info_input_disabled";
+        new_p.style.width="90%";
+        new_p.setAttribute("onChange","changeStatus(event)");
+        new_p.disabled = true;
+        var status_options = data_status.data;
+        var found_status = false;
+        status_options.forEach(function(status) {
+          var new_option = document.createElement('OPTION');
+          new_option.text=status.name;
+          if(status.status_type=="Heredable"){
+            new_option.disabled = true;
+            new_option.text=status.name+"(Heredable)";
+          }
+          new_option.value=status.id+"|"+status.color;
+          if(father_status.status_id==status.id){
+            found_status=true;
+            new_option.selected = true;
+          }    
+          new_p.appendChild(new_option);
+          if(!found_status){new_p.selectedIndex = -1;}
+        });
+        document.getElementById("status_container_info").appendChild(new_p);  
+          $('.multiselect_status').multiselect({
+                maxHeight: 450,
+                buttonClass: 'text-left mb-1 form-control form-control-sm input_status info_input_disabled',
+                buttonWidth: '100%',
+                nonSelectedText: 'Seleccionar',
+                selectedClass: 'selected_multiple_item',
+                delimiterText: '\n',
+                numberDisplayed: 0,
+                allSelectedText: false,
+                enableFiltering: true,
+                enableCaseInsensitiveFiltering: true,
+                filterPlaceholder: 'Buscar',
+                includeFilterClearBtn: false,
+                includeSelectAllOption: false,
+                dropRight: true,
+              });
+      }
+      });
+
 
       //fotos del registro
       var verify_count_elements_photos = 0
@@ -2428,7 +2477,7 @@ function show_item_info(appid_info, from_map) {
                 }
                 if(element.data_script!=""){
                   if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
-                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event  )');
+                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +found_nested+',event  )');
                 }
               }
 
@@ -2816,7 +2865,7 @@ function show_item_info(appid_info, from_map) {
               } else{
                 var buttonClass = 'text-left form-control form-control-sm info_input_disabled is_child_field';
               }
-              $('#fieldchildid|'+arraymultiselect[x]+'|'+arraymultiselectChild[x]).multiselect({
+              $('#fieldchildid\\|'+arraymultiselect[x]+'\\|'+arraymultiselectChild[x]).multiselect({
                 maxHeight: 450,
                 buttonClass: buttonClass,
                 buttonWidth: '100%',
@@ -2911,18 +2960,20 @@ function textarea_adjust_height() {
 
 //****** FUNCIONES PARA EDICION DE REGISTROS *****
 
-function edit_file(width_childs){
+function edit_file(edit_parent, edit_child, edit_status){
   //verifica requeridos
   textarea_adjust_height()
   var required_field_number = 0;
   $('#info_messages').html("");
   $('#info_messages').addClass("d-none");
   $('#info_messages').removeClass("text-danger");
-  if(!width_childs){array_child_edited=[]}
+  if(!edit_child){array_child_edited=[]}
+
+    
   $(".required_field").each(function() {
     $(this).parent().closest('div').css("border-bottom","none");
-    if(!width_childs && this.classList.contains('is_child_field')){
-    }else{
+    if( (edit_parent && !edit_child && this.classList.contains('is_child_field')) ||
+      (!edit_parent && edit_child && !this.classList.contains('is_child_field'))){}else{
       if(this.value == null || this.value == ""){
         $(this).parent().closest('div').css("border-bottom","solid 2px #dc3545");
         required_field_number++;
@@ -2936,9 +2987,13 @@ function edit_file(width_childs){
     return;
   }
   if(!filechange && array_child_edited.length==0){
-    $('#info_messages').html("No hay cambios a guardar");
-    $('#info_messages').addClass("text-danger");
-    $('#info_messages').removeClass("d-none");
+    if(!statuschange){
+      $('#info_messages').html("No hay cambios a guardar");
+      $('#info_messages').addClass("text-danger");
+      $('#info_messages').removeClass("d-none");
+    } else {
+      edit_file_status(false);
+    }
     return;
   }
 
@@ -2992,22 +3047,22 @@ function edit_file(width_childs){
         var id_field_child_properties = this.id.split('|')[4];
 
         if(id_child_properties==array_child_edited[z]){
-        if($('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val()!="" && $('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val()!=null ){
+        if($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!="" && $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!=null ){
           if(fiel_type_properties==2){
             var array_val = [];
-            array_val.push($('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val());
+            array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
             if(document.getElementById('fieldchildid|'+id_field_child_properties+'|'+id_child_properties).classList.contains('nested')){
-              array_val.push($('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties+'_nested').val());
+              array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties+'_nested').val());
             }
             var value_field_properties = array_val;
           }else{
             if( fiel_type_properties == 4){
-             var value_field_properties = $('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val().toLowerCase() == 'true' ? true : false;;
+             var value_field_properties = $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val().toLowerCase() == 'true' ? true : false;;
             } else{
               if( fiel_type_properties == 5){
-              var value_field_properties = parseFloat($('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val());
+              var value_field_properties = parseFloat($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
               } else{
-                var value_field_properties = $('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val();
+                var value_field_properties = $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val();
               }
             }
           }
@@ -3042,7 +3097,35 @@ function edit_file(width_childs){
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
       $('#info_messages').html(data['status']);
-      update_all();
+      if(edit_status){
+        edit_file_status(true);
+      } else{
+        update_all();
+      }
+    }
+  });
+}
+
+function edit_file_status(edit_data){
+  var app_id = Navarra.project_types.config.id_item_displayed;
+  var status_id = $(".input_status").val().split('|')[0];
+  $.ajax({
+    type: 'PATCH',
+    url: '/projects/change_status',
+    datatype: 'JSON',
+    data: {
+      app_id: app_id,
+      status_id: status_id
+    },
+    success: function(data) {
+      $('#info_messages').addClass("d-inline");
+      $('#info_messages').removeClass("d-none");
+      if(edit_data){
+        $('#info_messages').html($('#info_messages').html()+"<br>" +data['status']);
+      } else{
+        $('#info_messages').html(data['status']);
+      }
+        update_all();
     }
   });
 }
@@ -3156,6 +3239,14 @@ function changeChild(id_child_edited,isnested,event){
 
 function changeFile(){
   filechange = true;
+}
+
+function changeStatus(event){
+  statuschange = true;
+  var color_status = event.target.value.split("|")[1];
+  console.log(color_status);
+  $(".status_info_icon").css("background",color_status);
+
 }
 
 Array.prototype.unique=function(a){
