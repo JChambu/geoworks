@@ -1191,14 +1191,10 @@ function init_data_dashboard(haschange,close_info) {
       // borramos los datos anteriores
       document.getElementById("tbody_visible").remove();
       var new_body = document.createElement("TBODY");
-      new_body.style.visibility = "hidden";
-      new_body.id = "tbody_hidden";
-      document.getElementById("table_hidden").appendChild(new_body);
-      document.getElementById("tbody_hidden").remove();
-      var new_body = document.createElement("TBODY");
       new_body.style.className = "project_data_div";
       new_body.id = "tbody_visible";
       document.getElementById("table_visible").appendChild(new_body);
+      $(".width_only").html("");
 
       // llenado de la tabla de datos
       var found_id = -1;
@@ -1240,13 +1236,21 @@ function init_data_dashboard(haschange,close_info) {
           if (column.value == "#") {
             if (isNaN(per_page_value)) {
               new_celd.innerHTML = (index + 1);
+              document.getElementById('columnfake_datacount').innerHTML=(index + 1);
             } else {
               new_celd.innerHTML = (index + 1) + (active_page - 1) * per_page_value;
+              document.getElementById('columnfake_datacount').innerHTML=(index + 1) + (active_page - 1) * per_page_value;
             }
           }
           if (column.value != "#" && column.value != "#_action") {
             if (data_properties[column_name] != undefined) {
               new_celd.innerHTML = data_properties[column_name];
+              //agraga el máximo valor a la tabla cabecera para tener 2 tablas con el mismo ancho de columnas
+              var celd_width = document.getElementById('columnfake_data_'+column_name);
+              if(celd_width.innerHTML=="" || celd_width.innerHTML.length< data_properties[column_name].length){
+                celd_width.innerHTML = data_properties[column_name];
+              }
+              // termina ajuste de ancho
               if (column.value == "app_id") {
                 appid_selected = data_properties[column_name];
                 if (Navarra.project_types.config.item_selected == data_properties[column_name]) {
@@ -1263,8 +1267,7 @@ function init_data_dashboard(haschange,close_info) {
           };
           new_row.appendChild(new_celd);
         });
-        document.getElementById("tbody_visible").appendChild(new_row.cloneNode(true));
-        document.getElementById("tbody_hidden").appendChild(new_row);
+        document.getElementById("tbody_visible").appendChild(new_row);
         $('table tbody tr:nth-child(' + (found_id) + ')').addClass('found');
       });
       $(".fakeLoader").css("display", "none");
@@ -1909,7 +1912,7 @@ function init_report() {
         new_a = document.createElement('A');
         new_a.setAttribute("data-toggle", "dropdown");
         new_a.setAttribute("aria-haspopup", true);
-        new_a.setAttribute("onclick", "open_drop_down_report(event)");
+     //   new_a.setAttribute("onclick", "open_drop_down_report(event)");
         new_a.id = "dropdown_project_" + element.name_layer;
         new_a.setAttribute("aria-expanded", false);
         var new_element = document.createElement('I');
@@ -2217,7 +2220,7 @@ function export_to_excel(table, name, filename) {
 
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
-function show_item_info(appid_info, from_map) {
+function show_item_info(appid_info, from_map, is_multiple) {
   Navarra.dashboards.config.has_field_errors = false;
   var project_type_id = Navarra.dashboards.config.project_type_id;
   Navarra.project_types.config.id_item_displayed = appid_info;
