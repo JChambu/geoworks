@@ -194,7 +194,11 @@ var dragAndDrop = {
   init: function() {
 
     self = this;
-    this.dragula();
+
+    if (typeof this.dragula === 'function'){
+      this.dragula();
+    }
+
     this.eventListeners();
 
     // querySelectorAll returns a nodelist and should be converted to array to use filter, map and foreach
@@ -245,23 +249,21 @@ var dragAndDrop = {
       'container': target.id
     });
 
-    var asd = this.store
-    var resultado = {}
-    $.each(asd, function(index) {
+    var tstore = this.store
+    var result = {}
+    $.each(tstore, function(index) {
       sort = index
       graph_id = $(this)[0]['element'].replace(/chart_container/g, '')
-      resultado[graph_id] = sort
+      result[graph_id] = sort
     })
     $.ajax({
       url: '/graphics/update_sort',
       type: 'POST',
       data: {
-        sort_data: resultado
+        sort_data: result
       }
     });
     localStorage.removeItem("store");
-    console.log(resultado);
-    // console.log(this.store);
   }
 }
 
@@ -2446,7 +2448,7 @@ function show_item_info(appid_info, from_map) {
                         }
                       } else{
                         set_error_message("Error en listados: "+element.name);
-                      }    
+                      }
                     }
                   }
                   new_p.appendChild(new_option);
