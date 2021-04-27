@@ -1,7 +1,6 @@
 html,
 body {
   height: 100%;
-  overflow-y:hidden;
 }
 
 #map {
@@ -595,6 +594,13 @@ div.custom-menu.show {
 .field_div .dropdown-toggle::after , div_confirmation .dropdown-toggle::after {
   display:none !important;
 }
+.field_div .multiselect-container .disabled{
+  opacity:0.2;
+}
+.input_status{
+  font-size: 1.4em;
+  vertical-align: text-top;
+}
 .ok_button ul:after{
   content:"OK";
   cursor: pointer;
@@ -620,15 +626,6 @@ div.custom-menu.show {
 /* registros ocultos por autorización */
 .canot_read{
   display: none!important;
-}
-
-.custom-card-body{
-  max-height:68vh;
-  overflow-y:auto;
-}
-.custom-card-body-np{
-  max-height:74vh;
-  overflow-y:auto;
 }
 
 /* texto dentro del popup */

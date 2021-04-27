@@ -38,7 +38,7 @@ class ProjectsController < ApplicationController
       @project = Project.find(app_id)
       if @project.present?
         if @project.disable_form
-          render json: {status: 'El registro fue deshabilitado correctamente.'}
+          render json: {status: 'Registro deshabilitado.'}
         else
           render json: {status: 'Error. No se pudo deshabilitar el registro.'}
         end
@@ -61,7 +61,7 @@ class ProjectsController < ApplicationController
       @project = Project.find(app_id)
       if @project.present?
         if @project.update_form(properties)
-          render json: {status: 'El registro fue modificado correctamente.'}
+          render json: {status: 'Registro actualizado.'}
         else
           render json: {status: 'Error. No se pudo actualizar el registro.'}
         end
@@ -79,7 +79,7 @@ class ProjectsController < ApplicationController
         properties = sf['properties']
         @project_data_children = ProjectDataChild.find(child_id)
         if @project_data_children.update_subform(properties)
-          render json: {status: 'El registro fue modificado correctamente.'}
+          render json: {status: 'Registro actualizado.'}
         else
           render json: {status: 'Error. No se pudo actualizar el registro.'}
         end
@@ -96,7 +96,7 @@ class ProjectsController < ApplicationController
       @project = Project.find(app_id)
       if @project.present?
         if @project.change_owner(user_id)
-          render json: {status: 'El registro fue reasignado correctamente.'}
+          render json: {status: 'Registro reasignado.'}
         else
           render json: {status: 'Error. No se pudo reasignado el registro.'}
         end
@@ -107,6 +107,27 @@ class ProjectsController < ApplicationController
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
   end
+
+  # Cambia el estado del registro
+  def change_status
+    app_id = params[:app_id]
+    status_id = params[:status_id]
+    if app_id.present? && status_id.present?
+      @project = Project.find(app_id)
+      if @project.present?
+        if @project.change_status(status_id)
+          render json: {status: 'Estado actualizado.'}
+        else
+          render json: {status: 'Error. No se pudo actualizar el estado.'}
+        end
+      else
+        render json: {status: 'Error. No se encontró el registro.'}
+      end
+    else
+      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
+    end
+  end
+
 
   def search_statuses
     @project_statuses_data = ProjectStatus.where(project_type_id: params[:project_type_id])

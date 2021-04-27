@@ -31,8 +31,8 @@
                 <% checked = @permissions.any? {|c| c.event_id == e.id && c.model_type_id == mt.id} %>
               <% end %>
 
-              <!-- Todos los módulos exepto Datos y Reportes -->
-              <% if mt.name != 'data' && mt.name != 'reports' %>
+              <!-- Todos los módulos exepto Datos, Reportes y Listados -->
+              <% if mt.name != 'data' && mt.name != 'reports' && mt.name != 'choice_lists' %>
 
                 <!-- Eventos ABMC -->
                 <% if e.name == 'new' || e.name == 'destroy' || e.name == 'edit' || e.name == 'visualizer' %>
@@ -57,7 +57,7 @@
               <% end %>
 
               <!-- Módulo Datos -->
-              <% if (mt.name == 'data' && (e.name == 'edit' || e.name == 'visualizer' || e.name == 'edit_subforms' || e.name == 'edit_geom' || e.name == 'edit_owner' || e.name == 'disable' || e.name == 'destroy')) %>
+              <% if (mt.name == 'data' && (e.name == 'visualizer' || e.name == 'edit' || e.name == 'edit_subforms' || e.name == 'edit_geom' || e.name == 'edit_owner' || e.name == 'disable' || e.name == 'destroy')) %>
                 <div class="form-group">
                   <div class="custom-control custom-switch">
                     <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
@@ -68,6 +68,16 @@
 
               <!-- Módulo Reportes -->
               <% if (mt.name == 'reports' && (e.name == 'export')) %>
+                <div class="form-group">
+                  <div class="custom-control custom-switch">
+                    <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
+                    <label class="custom-control-label custom-role-colour" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
+                  </div>
+                </div>
+              <% end %>
+
+              <!-- Módulo Listados -->
+              <% if (mt.name == 'choice_lists' && (e.name == 'new' || e.name == 'destroy' || e.name == 'edit' || e.name == 'visualizer' || e.name == 'export')) %>
                 <div class="form-group">
                   <div class="custom-control custom-switch">
                     <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>

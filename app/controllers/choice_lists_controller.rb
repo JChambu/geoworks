@@ -1,11 +1,11 @@
 class ChoiceListsController < ApplicationController
-  before_action :set_choice_list, only: [:show, :edit, :update, :destroy]
+  before_action :set_choice_list, only: [:show, :edit, :update, :destroy, :export_csv]
 
   # GET /choice_lists
   # GET /choice_lists.json
   def index
-    @choice_lists = ChoiceList.order(:name)
     authorize! :choice_lists, :visualizer
+    @choice_lists = ChoiceList.order(:name)
   end
 
   # GET /choice_lists/1
@@ -29,7 +29,6 @@ class ChoiceListsController < ApplicationController
   # POST /choice_lists.json
   def create
     @choice_list = ChoiceList.new(choice_list_params)
-
     respond_to do |format|
       if @choice_list.save
         format.html { redirect_to choice_lists_path, notice: 'Listado creado correctamente' }
@@ -66,18 +65,43 @@ class ChoiceListsController < ApplicationController
     end
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_choice_list
-      @choice_list = ChoiceList.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def choice_list_params
-      params.require(:choice_list).permit(:name, :description, :key, :value, :label, :_destroy,
-        choice_list_items_attributes: [
-          :id, :name, :nested_list_id, :_destroy
-        ]
-      )
+  def import
+    ChoiceList.import(params[:file])
+    redirect_to choice_lists_url, notice: "Listados importados"
+  end
+
+
+  def export_csv
+    @choice_list = ChoiceList.find(params[:id])
+    respond_to do |format|
+      format.html
+      format.csv { send_data @choice_list.to_csv, filename: "#{@choice_list.name}-#{Date.today}.csv" }
     end
+  end
+
+  
+  def export_all_csv
+    @choice_lists = ChoiceList.all
+    respond_to do |format|
+     format.html
+     format.csv { send_data @choice_lists.to_csv_all, filename: "Listados-#{Date.today}.csv" }
+    end
+  end
+
+  private
+  
+  # Use callbacks to share common setup or constraints between actions.
+  def set_choice_list
+    @choice_list = ChoiceList.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def choice_list_params
+    params.require(:choice_list).permit(:name, :description, :key, :value, :label, :_destroy,
+      choice_list_items_attributes: [
+        :id, :name, :nested_list_id, :_destroy
+      ]
+    )
+  end
 end
