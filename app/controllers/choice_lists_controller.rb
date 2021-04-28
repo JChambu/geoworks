@@ -58,10 +58,17 @@ class ChoiceListsController < ApplicationController
   # DELETE /choice_lists/1.json
   def destroy
     authorize! :choice_lists, :destroy
-    @choice_list.destroy
+    @project_field = ProjectField.where(choice_list_id: @choice_list.id)
+    @project_subfield = ProjectSubfield.where(choice_list_id: @choice_list.id)
     respond_to do |format|
-      format.html { redirect_to choice_lists_url, notice: 'Listado eliminado correctamente.' }
-      format.json { head :no_content }
+      if @project_field.any? || @project_subfield.any?
+        format.html { redirect_to choice_lists_url, notice: "No se puede eliminar el listado, está siendo usado por un campo" }
+        format.json { head :no_content }
+      else
+        @choice_list.destroy
+        format.html { redirect_to choice_lists_url, notice: 'El listado se eliminó correctamente' }
+        format.json { head :no_content }
+      end
     end
   end
 
@@ -80,7 +87,7 @@ class ChoiceListsController < ApplicationController
     end
   end
 
-  
+
   def export_all_csv
     @choice_lists = ChoiceList.all
     respond_to do |format|
@@ -90,7 +97,7 @@ class ChoiceListsController < ApplicationController
   end
 
   private
-  
+
   # Use callbacks to share common setup or constraints between actions.
   def set_choice_list
     @choice_list = ChoiceList.find(params[:id])
