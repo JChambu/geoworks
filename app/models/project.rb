@@ -180,6 +180,11 @@ class Project < ApplicationRecord
     save!
   end
 
+  def destroy_form
+    self.row_active = false
+    save!
+  end
+
   def change_status status_id
     self.properties['app_estado'] = status_id
     self.project_status_id = status_id
@@ -193,13 +198,11 @@ class Project < ApplicationRecord
   end
 
   def update_form properties
-
     attributes = {
       properties: properties,
       gwm_updated_at: Time.now - 3.hours # TODO: Corregir zona horaria
     }
     self.update_attributes(attributes)
-
   end
 
 end

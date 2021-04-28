@@ -194,7 +194,11 @@ var dragAndDrop = {
   init: function() {
 
     self = this;
-    this.dragula();
+
+    if (typeof this.dragula === 'function'){
+      this.dragula();
+    }
+
     this.eventListeners();
 
     // querySelectorAll returns a nodelist and should be converted to array to use filter, map and foreach
@@ -245,23 +249,21 @@ var dragAndDrop = {
       'container': target.id
     });
 
-    var asd = this.store
-    var resultado = {}
-    $.each(asd, function(index) {
+    var tstore = this.store
+    var result = {}
+    $.each(tstore, function(index) {
       sort = index
       graph_id = $(this)[0]['element'].replace(/chart_container/g, '')
-      resultado[graph_id] = sort
+      result[graph_id] = sort
     })
     $.ajax({
       url: '/graphics/update_sort',
       type: 'POST',
       data: {
-        sort_data: resultado
+        sort_data: result
       }
     });
     localStorage.removeItem("store");
-    console.log(resultado);
-    // console.log(this.store);
   }
 }
 
@@ -2237,7 +2239,6 @@ function show_item_info(appid_info, from_map, is_multiple) {
       app_id: appid_info
     },
     success: function(data) {
-
       console.log('Padres e hijos sin actualizar');
       console.log(data);
 
@@ -2286,6 +2287,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
           new_option.text=status.name;
           if(status.status_type=="Heredable"){
             new_option.disabled = true;
+            new_option.text=status.name+"(Heredable)";
           }
           new_option.value=status.id+"|"+status.color;
           if(father_status.status_id==status.id){
@@ -2465,7 +2467,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
                         }
                       } else{
                         set_error_message("Error en listados: "+element.name);
-                      }    
+                      }
                     }
                   }
                   new_p.appendChild(new_option);
@@ -3191,6 +3193,28 @@ function disable_file(){
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
       $('#info_messages').html(data['status']);
+      update_all();
+    }
+  });
+}
+
+function delete_file(){
+  var project_type_id = Navarra.dashboards.config.project_type_id;
+  var app_id = Navarra.project_types.config.id_item_displayed;
+  $.ajax({
+    type: 'PATCH',
+    url: '/projects/destroy_form',
+    datatype: 'JSON',
+    data: {
+      app_id: app_id,
+      project_type_id: project_type_id
+    },
+    success: function(data) {
+      $('#alert_message').addClass('show');
+      $("#info-modal").modal("hide");
+      $('#alert_text_message').html(data['status']);
+      Navarra.project_types.config.item_selected="";
+      Navarra.project_types.config.data_dashboard = "";
       update_all();
     }
   });
