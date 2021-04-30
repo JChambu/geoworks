@@ -2953,9 +2953,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
             Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,true);
           }
         });
-        if(!is_multiple){
-          calculate_all(true);
-        }
+        calculate_all(true);
+        
     }//end Success
   }); //end ajax
 }
@@ -3269,7 +3268,7 @@ function getapp_ids(){
     });
     console.log(app_ids)
   } else{
-    var app_ids = Navarra.project_types.config.id_item_displayed;
+    app_ids.push(Navarra.project_types.config.id_item_displayed);
   }
   return app_ids
 }
