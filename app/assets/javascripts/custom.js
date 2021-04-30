@@ -3251,6 +3251,7 @@ function delete_file(){
     },
     success: function(data) {
       $('#alert_message').addClass('show');
+      $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
       $('#alert_text_message').html(data['status']);
       Navarra.project_types.config.item_selected="";

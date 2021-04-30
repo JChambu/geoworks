@@ -13,6 +13,7 @@ var can_edit_status_yes;
 
   function close_alert(){
       $('#alert_message').removeClass('show');
+      $('#alert_message').addClass('d-none');
   };
 
   var can_edit_yes;
@@ -56,7 +57,7 @@ var can_edit_status_yes;
         if(can_edit_yes == 0 && can_edit_subforms_yes == 0 && can_edit_status_yes == 1){
           var field_to_edit = $('.input_status').not('.readonly_field');
         }
-        
+
         field_to_edit.removeClass('disabled');
         field_to_edit.addClass('info_input');
         field_to_edit.prop('disabled', false);
@@ -244,7 +245,7 @@ var can_edit_status_yes;
       </div>
     </div>
   </div>
-  <div class="alert alert-dismissible fade position-absolute w-100 p-2" id="alert_message" role="alert" style="top: 90vh; z-index: 1000;">
+  <div class="alert alert-dismissible fade position-absolute w-100 p-2 d-none" id="alert_message" role="alert" style="top: 90vh; z-index: 1000;">
     <div class="modal-content w-auto float-right">
       <div class="modal-body mr-5" id="alert_text_message" style="color: #aaa"></div>
       <button type="button" class="close" style="color: #aaa" onclick="close_alert()" aria-label="Close">
