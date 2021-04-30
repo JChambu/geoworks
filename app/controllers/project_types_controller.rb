@@ -237,7 +237,7 @@ class ProjectTypesController < ApplicationController
   def search_father_children_and_photos_data
 
     project_type_id = params[:project_type_id]
-    project_id = params[:app_id]
+    project_id = params[:app_id].to_i
 
     # Busca el rol del usuario
     customer_name = Apartment::Tenant.current
@@ -254,7 +254,9 @@ class ProjectTypesController < ApplicationController
     father_fields = ProjectField.where(project_type_id: project_type_id).order(:sort)
 
     # Busca los datos almacenados en el properties de los padres
-    father_properties = Project.where(id: project_id).pluck(:properties).first
+    unless project_id == 0
+      father_properties = Project.where(id: project_id).pluck(:properties).first
+    end
 
     father_fields_array = []
 
@@ -427,7 +429,16 @@ class ProjectTypesController < ApplicationController
 
       else
 
-        father_data = father_properties[f_field.key]
+        # Si el project_id es 0, se están editando múltiples registros por lo que se devuelven los values vacíos
+        unless project_id == 0
+          father_data = father_properties[f_field.key]
+        else
+          if f_field.field_type_id == 2 || f_field.field_type_id == 10
+            father_data = []
+          else
+            father_data = ''
+          end
+        end
 
       end
 
@@ -464,17 +475,25 @@ class ProjectTypesController < ApplicationController
       father_photos_array.push(f_photo_hash)
     end
 
-    father_status = Project
-      .joins(:project_status)
-      .where(id: project_id)
-      .pluck(:project_status_id, :name, :color)
-      .first
+    unless project_id == 0
+      father_status = Project
+        .joins(:project_status)
+        .where(id: project_id)
+        .pluck(:project_status_id, :name, :color)
+        .first
+    end
 
     father_status_hash = {}
 
-    father_status_hash['status_id'] = father_status[0]
-    father_status_hash['status_name'] = father_status[1]
-    father_status_hash['status_color'] = father_status[2]
+    unless project_id == 0
+      father_status_hash['status_id'] = father_status[0]
+      father_status_hash['status_name'] = father_status[1]
+      father_status_hash['status_color'] = father_status[2]
+    else
+      father_status_hash['status_id'] = ''
+      father_status_hash['status_name'] = ''
+      father_status_hash['status_color'] = ''
+    end
 
     data = {}
 
