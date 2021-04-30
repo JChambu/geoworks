@@ -60,9 +60,16 @@ class ChoiceListsController < ApplicationController
     authorize! :choice_lists, :destroy
     @project_field = ProjectField.where(choice_list_id: @choice_list.id)
     @project_subfield = ProjectSubfield.where(choice_list_id: @choice_list.id)
+    @choice_list_item = ChoiceListItem.where(nested_list_id: @choice_list.id)
+
     respond_to do |format|
-      if @project_field.any? || @project_subfield.any?
-        format.html { redirect_to choice_lists_url, notice: "No se puede eliminar el listado, está siendo usado por un campo" }
+      if @project_field.any? || @project_subfield.any? || @choice_list_item.any?
+        if @project_field.any? || @project_subfield.any?
+          type = 'campo'
+        else
+          type = 'listado'
+        end
+        format.html { redirect_to choice_lists_url, notice: "No se puede eliminar el listado, está siendo usado por un #{type}" }
         format.json { head :no_content }
       else
         @choice_list.destroy
