@@ -131,6 +131,35 @@
       }
     }
 
+//Funciones para modal de capas
+$(document).ready(function () {
+    $(".custom_dropdown_container").click(function (e) {
+      e.stopPropagation();
+    });
+  });
+
+function select_layer(){
+  layer_selected = event.target.id.split('_')[1];
+  check_layers = document.querySelectorAll('input.leaflet-control-layers-selector');
+  for (l = 0; l < check_layers.length; l++) {
+      var name_layer_project = $(check_layers[l]).next().html().substring(1);
+      if(layer_selected == name_layer_project){
+        $(check_layers[l]).click();
+        $("#layersDropdown").click();
+      }
+  }
+}
+
+function open_layer_container(){
+  var id_title = event.target.id.split('-')[0];
+  if($('#'+id_title).hasClass('d-none')){
+    $('#'+id_title).removeClass('d-none');
+  } else{
+    $('#'+id_title).addClass('d-none');
+  } 
+}
+
+
   </script>
 
 <% end %>
@@ -262,3 +291,28 @@
 <%= render :partial =>'project_data_report' %>
 
 <%= render :partial =>'project_data_info' %>
+
+
+
+<div class="nav-item dropdown" style="position: absolute;top: 9vh; left: 0%;z-index: 3000">
+      <a class="nav-link dropdown-toggle nocaret" href="#" id="layersDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 30px; height: 30px; margin: 10px">
+      </a>
+      <div class="dropdown-menu custom_dropdown_container" aria-labelledby="layersDropdown" style="z-index: 2000">
+         
+          <a class="dropdown-item" href="#" id="basemaps_container-title" onclick="open_layer_container()">Mapas Base</a>
+          <div class="modal-content custom_dropdown d-none" id="basemaps_container">
+          </div>
+
+          <a class="dropdown-item" href="#" id="activeproject_container-title" onclick="open_layer_container()">Proyecto Activo</a>
+          <div class="modal-content custom_dropdown d-none" id="activeproject_container">
+          </div>
+
+           <a class="dropdown-item" href="#" id="projects_container-title" onclick="open_layer_container()">Otros Proyectos</a>
+          <div class="modal-content custom_dropdown d-none" id="projects_container">
+          </div>
+
+           <a class="dropdown-item" href="#" id="externallayers_container-title" onclick="open_layer_container()">Capas Externas</a>
+          <div class="modal-content custom_dropdown d-none" id="externallayers_container">
+          </div>          
+      </div>
+    </div>
