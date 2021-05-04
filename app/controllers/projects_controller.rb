@@ -107,19 +107,14 @@ class ProjectsController < ApplicationController
 
   # Cambia el estado del registro
   def change_status
-    app_id = params[:app_id]
+    app_ids = params[:app_ids]
     status_id = params[:status_id]
-    if app_id.present? && status_id.present?
-      @project = Project.find(app_id)
-      if @project.present?
-        if @project.change_status(status_id)
-          render json: {status: 'Estado actualizado.'}
-        else
-          render json: {status: 'Error. No se pudo actualizar el estado.'}
-        end
-      else
-        render json: {status: 'Error. No se encontró el registro.'}
+    if app_ids.present? && status_id.present?
+      app_ids.each do |app_id|
+        @project = Project.find(app_id)
+        @project.change_status(status_id)
       end
+      render json: {status: 'Estados actualizados.'}
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
