@@ -85,19 +85,21 @@ class ProjectsController < ApplicationController
 
   # Cambia el propietario del registro
   def change_owner
-    app_id = params[:app_id]
+
+    puts ''
+    puts ' ***************** change_owner params ***************** '
+    p params
+    puts ' ******************************************************* '
+    puts ''
+
+    app_ids = params[:app_ids]
     user_id = params[:user_id]
-    if app_id.present? && user_id.present?
-      @project = Project.find(app_id)
-      if @project.present?
-        if @project.change_owner(user_id)
-          render json: {status: 'Registro reasignado.'}
-        else
-          render json: {status: 'Error. No se pudo reasignado el registro.'}
-        end
-      else
-        render json: {status: 'Error. No se encontró el registro.'}
+    if app_ids.present? && user_id.present?
+      app_ids.each do |app_id|
+        @project = Project.find(app_id)
+        @project.change_owner(user_id)
       end
+      render json: {status: 'Registros reasignados.'}
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
