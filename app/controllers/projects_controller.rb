@@ -85,13 +85,6 @@ class ProjectsController < ApplicationController
 
   # Cambia el propietario del registro
   def change_owner
-
-    puts ''
-    puts ' ***************** change_owner params ***************** '
-    p params
-    puts ' ******************************************************* '
-    puts ''
-
     app_ids = params[:app_ids]
     user_id = params[:user_id]
     if app_ids.present? && user_id.present?
