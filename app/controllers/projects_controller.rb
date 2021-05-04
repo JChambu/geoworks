@@ -33,18 +33,13 @@ class ProjectsController < ApplicationController
 
   # Deshabilita un registro (row_enabled = false)
   def disable_form
-    app_id = params[:app_id]
-    if app_id.present?
-      @project = Project.find(app_id)
-      if @project.present?
-        if @project.disable_form
-          render json: {status: 'Registro deshabilitado.'}
-        else
-          render json: {status: 'Error. No se pudo deshabilitar el registro.'}
-        end
-      else
-        render json: {status: 'Error. No se encontró el registro.'}
+    app_ids = params[:app_ids]
+    if app_ids.present?
+      app_ids.each do |app_id|
+        @project = Project.find(app_id)
+        @project.disable_form
       end
+      render json: {status: 'Registros deshabilitados.'}
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
