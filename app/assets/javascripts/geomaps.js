@@ -863,7 +863,7 @@ Navarra.geomaps = function() {
     var data_from_navarra = Navarra.project_types.config.data_dashboard;
     if (data_from_navarra != "") {
       cql_filter_data_not_selected = " and NOT (" + data_from_navarra + " )";
-      cql_filter_data_selected = " and " + data_from_navarra;
+      cql_filter_data_selected = " and (" + data_from_navarra + " )";
       var geometry_draw_array = Navarra.dashboards.config.size_polygon;
 
       if (geometry_draw_array.length > 0) {
@@ -956,8 +956,11 @@ Navarra.geomaps = function() {
       CQL_FILTER: cql_filter_selected
     })
 
+    console.log(cql_filter_selected)
+    console.log(cql_filter_not_selected)
     project_current_selected = layerProjectsSelected.getLayer(current_layer).addTo(mymap);
     if(data_from_navarra!=""){
+      console.log("Agrega seleccionados")
       layerControl.addOverlay(project_current_selected, " Seleccionados", null, {
         sortLayers: false
       });

@@ -45,6 +45,7 @@ $("#show_report").click(function(){
 $('#table_select_all').click(function(){
   if($(this).prop('checked')){
     show_item_all();
+    $('#multiple_edit').removeClass('d-none');
   } else {
     unselect_item_all();
   }

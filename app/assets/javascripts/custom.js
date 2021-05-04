@@ -2428,6 +2428,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
                 if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
                 if(!is_multiple){
                   new_p.setAttribute("onChange","calculate_all(false)");
+                } else{
+                  new_p.setAttribute('onChange', 'changeFile()');
                 }
               }
               var found_nested = false;
@@ -2526,6 +2528,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
                   if(!is_multiple){
                     if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
                     new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +found_nested+',event  )');
+                  } else{
+                    new_p.setAttribute('onChange', 'changeFile()');
                   }
                 }
               }
@@ -2552,6 +2556,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
                   if(!is_multiple){
                     if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
                     new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event )');
+                  } else{
+                    new_p.setAttribute('onChange', 'changeFile()');
                   }
                  }
               }
@@ -2562,6 +2568,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
                 if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
                 if(!is_multiple){
                   new_p.setAttribute("onChange","calculate_all(false)");
+                } else{
+                  new_p.setAttribute('onChange', 'changeFile()');
                 }
               }
               new_p.disabled = true;
@@ -2911,6 +2919,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
         } else{
           if(!is_multiple){
             calculate_all(false);
+          } else{
+            changeFile();
           }
         }
     });
@@ -3233,7 +3243,9 @@ function disable_file(){
       $('#info_messages').addClass("d-inline");
       $('#info_messages').removeClass("d-none");
       $('#info_messages').html(data['status']);
-      update_all();
+      Navarra.project_types.config.item_selected="";
+      Navarra.project_types.config.data_dashboard = "";
+      setTimeout(function(){update_all(); }, 3000);
     }
   });
 }
@@ -3282,7 +3294,6 @@ function update_all(){
   if (heatmap_actived != '') {
     Navarra.geomaps.heatmap_data();
   }
-  var attribute_filters = Navarra.project_types.config.attribute_filters;
 }
 
 function set_script(data_script,field_type_id,field_id,value,isnested,event){
