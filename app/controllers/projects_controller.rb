@@ -49,20 +49,17 @@ class ProjectsController < ApplicationController
   def update_form
 
     # Padres
-    app_id = params[:app_id]
+    app_ids = params[:app_ids]
     properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
 
-    if app_id.present? && properties.present?
-      @project = Project.find(app_id)
-      if @project.present?
-        if @project.update_form(properties)
-          render json: {status: 'Registro actualizado.'}
-        else
-          render json: {status: 'Error. No se pudo actualizar el registro.'}
-        end
-      else
-        render json: {status: 'Error. No se encontró el registro.'}
+    if app_ids.present? && properties.present?
+      app_ids.each do |app_id|
+        @project = Project.find(app_id)
+        @project.update_form(properties)
       end
+      render json: {status: 'Registros actualizados.'}
+    else
+      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
 
     # Hijos
