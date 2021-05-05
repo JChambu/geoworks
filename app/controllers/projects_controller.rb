@@ -33,7 +33,7 @@ class ProjectsController < ApplicationController
         @project = Project.find(app_id)
         @project.disable_form
       end
-      render json: {status: 'Registros deshabilitados.'}
+      render json: {status: 'Deshabilitación completada.'}
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
@@ -51,7 +51,7 @@ class ProjectsController < ApplicationController
         @project = Project.find(app_id)
         @project.update_form(properties)
       end
-      render json: {status: 'Registros actualizados.'}
+      render json: {status: 'Actualización completada.'}
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
@@ -83,7 +83,7 @@ class ProjectsController < ApplicationController
         @project = Project.find(app_id)
         @project.change_owner(user_id)
       end
-      render json: {status: 'Registros reasignados.'}
+      render json: {status: 'Reasignación completada.'}
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
@@ -98,7 +98,7 @@ class ProjectsController < ApplicationController
         @project = Project.find(app_id)
         @project.change_status(status_id)
       end
-      render json: {status: 'Estados actualizados.'}
+      render json: {status: 'Actualización completada.'}
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
