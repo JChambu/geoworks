@@ -138,12 +138,21 @@ $(document).ready(function () {
     });
   });
 
-function select_layer(){
-  layer_selected = event.target.id.split('_')[1];
+function select_layer(layer){
+  console.log("Layer "+layer)
+  if(layer!=undefined){
+    layer_selected = layer;
+  } else{
+    layer_selected = event.target.id.split('_')[1];
+  }
+  
   check_layers = document.querySelectorAll('input.leaflet-control-layers-selector');
   for (l = 0; l < check_layers.length; l++) {
+    console.log("Capa buscada" + layer_selected);
       var name_layer_project = $(check_layers[l]).next().html().substring(1);
       if(layer_selected == name_layer_project){
+        console.log(name_layer_project);
+        console.log("Encontro")
         $(check_layers[l]).click();
         $("#layersDropdown").click();
       }
@@ -159,8 +168,31 @@ function open_layer_container(){
   } 
 }
 
+function switch_filtered_layer(){
+  var id_switch = event.target.id.split('_')[1];
+  var texto = $('#checkbox_'+id_switch).attr('id');
+  if(texto.indexOf("-filtrados") > -1){
+    texto = texto.replace("-filtrados","");
+  } else{
+    texto+= "-filtrados";
+  }
+  $('#checkbox_'+id_switch).prop("id",texto);
+  $('#switch_'+id_switch).prop("id",texto.replace("checkbox_","switch_"));
+  $('#checkboxlabel_'+id_switch).prop("for",texto);
+  $('#switchlabel_'+id_switch).prop("for",texto.replace("checkbox_","switch_"));
+  $('#checkboxlabel_'+id_switch).prop("id",texto.replace("checkbox_","checkboxlabel_"));
+  $('#switchlabel_'+id_switch).prop("id",texto.replace("checkbox_","switchlabel_"));
+  if($('#'+texto).prop("checked")){
+    console.log("Cambia")
+    select_layer(id_switch);
+    select_layer(texto.split('_')[1]);
+  } else{
+    console.log("No cambia")
+  }
+}
+// terminan funciones para modal de capas
 
-  </script>
+</script>
 
 <% end %>
 
@@ -294,10 +326,10 @@ function open_layer_container(){
 
 
 
-<div class="nav-item dropdown" style="position: absolute;top: 9vh; left: 0%;z-index: 3000">
+<div class="nav-item dropdown" style="position: absolute;top: 9vh; left: 0%;z-index: 3000;">
       <a class="nav-link dropdown-toggle nocaret" href="#" id="layersDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 30px; height: 30px; margin: 10px">
       </a>
-      <div class="dropdown-menu custom_dropdown_container" aria-labelledby="layersDropdown" style="z-index: 2000">
+      <div class="dropdown-menu custom_dropdown_container" aria-labelledby="layersDropdown" style="z-index: 2000; width: max-content">
          
           <a class="dropdown-item" href="#" id="basemaps_container-title" onclick="open_layer_container()">Mapas Base</a>
           <div class="modal-content custom_dropdown d-none" id="basemaps_container">

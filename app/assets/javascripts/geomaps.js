@@ -1016,7 +1016,7 @@ Navarra.geomaps = function() {
       mymap.removeLayer(layer_array[x]);
       layerControl.removeLayer(layer_array[x]);
     }
-    layer_array=[];
+    layer_array=[];layers_internal
 
     if(xhr_current_layer && xhr_current_layer.readyState != 4) {
       xhr_current_layer.abort();
@@ -1115,6 +1115,26 @@ Navarra.geomaps = function() {
           layerControl.addOverlay(projectsa, label_layer, null, {
             sortLayers: true
           });
+          //genera Modal de capas internas
+          if($('#projects_container').children().length==0){
+            var new_item = 
+                    '<div>'+
+                    '<a class="dropdown-item d-flex" href="#" style="justify-content:space-between">'+
+                    '<div class="d-inline mr-3">'+
+                    '<div class="custom-control custom-checkbox" style="display: inline-block;">'+
+                    '<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+label_layer+'" type="checkbox" name="radio_mapabase">'+
+                    '<label id="checkboxlabel_'+label_layer+'" class="string optional control-label custom-control-label" for="checkbox_'+label_layer+'"> </label>'+
+                    '</div>'+
+                    '<label for=mapa_base1>'+label_layer+'</label>'+
+                    '</div>'+
+                    '<div class="custom-control custom-switch d-inline">'+
+                    '<input type="checkbox" id="switch_'+label_layer+'" class="custom-control-input" onchange="switch_filtered_layer()">'+
+                    '<label id="switchlabel_'+label_layer+'" class="custom-control-label custom-role-colour" for="switch_'+label_layer+'">Filtrados</label>'+
+                    '</div></a>'+
+                    '</div>'
+
+            $('#projects_container').append(new_item);
+          }
           layer_array.push(projectsa);
 
           // genera capa con los datos que se intersectan con la capa activa
@@ -1143,7 +1163,7 @@ Navarra.geomaps = function() {
           })
 
           projectsa = layerSubProjects.getLayer(layer_current_intersect);
-          layerControl.addOverlay(projectsa, label_layer+ " (Datos Filtrados)", null, {
+          layerControl.addOverlay(projectsa, label_layer+ "-filtrados", null, {
             sortLayers: true
           });
           layer_array.push(projectsa);
@@ -1192,6 +1212,13 @@ Navarra.geomaps = function() {
           layerControl.addOverlay(layer_outer, v.name, null, {
             sortLayers: true
           });
+          //genera Modal de capas externas
+          var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+                    '<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+v.name+'" type="checkbox" name="radio_mapabase">'+
+                    '<label class="string optional control-label custom-control-label" for="checkbox_'+v.name+'"> </label>'+
+                    '</div>'+
+                    '<label for=mapa_base1>'+v.name+'</label></a>';
+          $('#externallayers_container').append(new_item);
         })
       }
     })

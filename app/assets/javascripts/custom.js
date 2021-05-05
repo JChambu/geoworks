@@ -1825,7 +1825,7 @@ function init_report() {
   check_layers = document.querySelectorAll('input:checked.leaflet-control-layers-selector');
   for (l = 0; l < check_layers.length; l++) {
     if (check_layers[l].type == 'checkbox') {
-      var name_layer_project = $(check_layers[l]).next().html().substring(1).split(" (Datos Filtrados)")[0];
+      var name_layer_project = $(check_layers[l]).next().html().substring(1).split("-filtrados")[0];
       active_layers.push(name_layer_project);
     }
   }
