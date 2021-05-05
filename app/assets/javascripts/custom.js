@@ -2243,6 +2243,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
   } else{
       $('#multiple_edit').removeClass("multiple_on");
       if( $('#table_visible .custom-control-input:checked').length>0){
+        // si se llamó a edición simple pero hay multiple registros seleccionados, se limpia la selección
+        $('#table_select_all').prop('checked',false);
         $('#multiple_edit').addClass("d-none");
         unselect_item_all();
       }
@@ -3029,7 +3031,7 @@ function textarea_adjust_height() {
 
 function edit_file(edit_parent, edit_child, edit_status){
   textarea_adjust_height()
-  
+  $(".fakeLoader").css("display", "block");
   //verifica requeridos si no es edición múltiple
 
   var required_field_number = 0;
@@ -3164,8 +3166,10 @@ function edit_file(edit_parent, edit_child, edit_status){
       subforms: child_edited_all
     },
     success: function(data) {
+      $(".fakeLoader").css("display", "none");
       filechange = false;
       array_child_edited = [];
+      $('#table_select_all').prop('checked',false);
       if(!$('#multiple_edit').hasClass('multiple_on')){ 
         $('#info_messages').addClass("d-inline");
         $('#info_messages').removeClass("d-none");
@@ -3188,6 +3192,7 @@ function edit_file(edit_parent, edit_child, edit_status){
 }
 
 function edit_file_status(edit_data){
+  $(".fakeLoader").css("display", "block");
   if(!statuschange){
     $('#info_messages').html("No hay cambios a guardar");
     $('#info_messages').addClass("text-danger");
@@ -3207,6 +3212,8 @@ function edit_file_status(edit_data){
       status_id: status_id
     },
     success: function(data) {
+      $(".fakeLoader").css("display", "none");
+      $('#table_select_all').prop('checked',false);
       if(!$('#multiple_edit').hasClass('multiple_on')){ 
         $('#info_messages').addClass("d-inline");
         $('#info_messages').removeClass("d-none");
@@ -3233,6 +3240,7 @@ function edit_file_status(edit_data){
 }
 
 function change_owner(){
+  $(".fakeLoader").css("display", "block");
   var app_ids = getapp_ids();
   var user_id = $("#owner_change_select").val();
   $.ajax({
@@ -3244,6 +3252,8 @@ function change_owner(){
       user_id: user_id
     },
     success: function(data) {
+      $(".fakeLoader").css("display", "none");
+      $('#table_select_all').prop('checked',false);
       if(!$('#multiple_edit').hasClass('multiple_on')){ 
         $('#info_messages').addClass("d-inline");
         $('#info_messages').removeClass("d-none");
@@ -3264,6 +3274,7 @@ function change_owner(){
 }
 
 function disable_file(){
+  $(".fakeLoader").css("display", "block");
   var app_ids = getapp_ids();
   $.ajax({
     type: 'PATCH',
@@ -3273,6 +3284,8 @@ function disable_file(){
       app_ids: app_ids
     },
     success: function(data) {
+      $(".fakeLoader").css("display", "none");
+      $('#table_select_all').prop('checked',false);
       if(!$('#multiple_edit').hasClass('multiple_on')){ 
         $('#info_messages').addClass("d-inline");
         $('#info_messages').removeClass("d-none");
@@ -3291,6 +3304,7 @@ function disable_file(){
 }
 
 function delete_file(){
+  $(".fakeLoader").css("display", "block");
   var project_type_id = Navarra.dashboards.config.project_type_id;
   var app_ids = getapp_ids();
   $.ajax({
@@ -3302,6 +3316,8 @@ function delete_file(){
       project_type_id: project_type_id
     },
     success: function(data) {
+      $(".fakeLoader").css("display", "none");
+      $('#table_select_all').prop('checked',false);
       $('#alert_message').addClass('show');
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
@@ -3425,10 +3441,13 @@ function changeSelected(index){
   } else{
     $('#table_visible tr:nth-child('+(index+1)+')').removeClass('tr_checked');
   }
-  if($('#table_visible .custom-control-input:checked').length>=2){
+  if($('#table_visible .custom-control-input:checked').not('.just_header').length>=2){
     $('#multiple_edit').removeClass('d-none');
   } else{
     $('#multiple_edit').addClass('d-none');
+  }
+  if($('#table_visible .custom-control-input:checked').not('.just_header').length==0){
+    $('#table_select_all').prop('checked',false);
   }
 }
 
