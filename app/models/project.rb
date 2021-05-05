@@ -198,11 +198,11 @@ class Project < ApplicationRecord
   end
 
   def update_form properties
-    attributes = {
-      properties: properties,
-      gwm_updated_at: Time.now - 3.hours # TODO: Corregir zona horaria
-    }
-    self.update_attributes(attributes)
+    properties.each do |key, value|
+      self.properties[key] = value
+    end
+    self.gwm_updated_at = Time.now - 3.hours # TODO: Corregir zona horaria
+    save!
   end
 
 end
