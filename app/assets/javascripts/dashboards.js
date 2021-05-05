@@ -84,6 +84,11 @@ resize_filters = function(){
   }
 }
 
+set_layer_filter = function(){
+  // coloca las capas comofiltradas
+ // $('.layer_filter_switch')
+}
+
 Navarra.dashboards.action_show = function(){
 
   var init = function(){

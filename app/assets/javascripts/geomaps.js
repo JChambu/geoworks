@@ -1128,7 +1128,7 @@ Navarra.geomaps = function() {
                     '<label for=mapa_base1>'+label_layer+'</label>'+
                     '</div>'+
                     '<div class="custom-control custom-switch d-inline">'+
-                    '<input type="checkbox" id="switch_'+label_layer+'" class="custom-control-input" onchange="switch_filtered_layer()">'+
+                    '<input type="checkbox" id="switch_'+label_layer+'" class="custom-control-input layer_filter_switch" onchange="switch_filtered_layer()">'+
                     '<label id="switchlabel_'+label_layer+'" class="custom-control-label custom-role-colour" for="switch_'+label_layer+'">Filtrados</label>'+
                     '</div></a>'+
                     '</div>'
@@ -1161,6 +1161,8 @@ Navarra.geomaps = function() {
             format_options: 'callback:getJson',
             CQL_FILTER: cql_filter
           })
+          console.log(cql_filter)
+//          cql_filter = "1 = 1 AND row_enabled = true and INTERSECTS(the_geom, collectGeometries(queryCollection('geoworks:arriendochile', 'the_geom', '1 = 1 ')))"
 
           projectsa = layerSubProjects.getLayer(layer_current_intersect);
           layerControl.addOverlay(projectsa, label_layer+ "-filtrados", null, {
