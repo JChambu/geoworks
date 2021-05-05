@@ -2238,7 +2238,7 @@ function export_to_excel(table, name, filename) {
 function show_item_info(appid_info, from_map, is_multiple) {
   if(is_multiple){
     $('#multiple_edit').addClass("multiple_on");
-    var total_files_to_edit = $('#table_visible .custom-control-input:checked').length;
+    var total_files_to_edit = $('#table_visible .custom-control-input:checked').not('.just_header').length;
     $('#info_title').html(total_files_to_edit + " registros seleccionados ");
   } else{
       $('#multiple_edit').removeClass("multiple_on");
@@ -3316,7 +3316,7 @@ function delete_file(){
 function getapp_ids(){
   var app_ids = [];
   if($('#multiple_edit').hasClass("multiple_on")){
-    $('#table_visible .custom-control-input:checked').each(function(){
+    $('#table_visible .custom-control-input:checked').not('.just_header').each(function(){
       app_ids.push($(this).attr('id').split('_')[2]);
     });
     console.log(app_ids)
