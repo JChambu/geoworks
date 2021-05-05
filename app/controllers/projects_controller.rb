@@ -81,7 +81,7 @@ class ProjectsController < ApplicationController
     if app_ids.present? && user_id.present?
       app_ids.each do |app_id|
         @project = Project.find(app_id)
-        @project.change_owner(user_id)
+        @project.change_owner(user_id.to_i)
       end
       render json: {status: 'Reasignación completada.'}
     else
@@ -96,7 +96,7 @@ class ProjectsController < ApplicationController
     if app_ids.present? && status_id.present?
       app_ids.each do |app_id|
         @project = Project.find(app_id)
-        @project.change_status(status_id)
+        @project.change_status(status_id.to_i)
       end
       render json: {status: 'Actualización completada.'}
     else
