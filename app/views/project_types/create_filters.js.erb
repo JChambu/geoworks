@@ -40,6 +40,7 @@ $('#filter-body').append(
 
 resize_filters();
 resize_graphics();
+set_layer_filter();
 
 $("#filters-modal").modal('hide');
 //$("#filters-modal").remove();
@@ -52,3 +53,5 @@ if (point_color == '') {
   Navarra.geomaps.get_zoomextent();
   Navarra.geomaps.point_colors_data();
 }
+
+//coloca las capas de proyectos como filtradas

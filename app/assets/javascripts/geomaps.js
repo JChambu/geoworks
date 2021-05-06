@@ -16,6 +16,7 @@ Navarra.geomaps = function() {
   var last_lat = 0;
   var last_long = 0;
   var inn = ""
+  var first_time_internal_layers = true;
 
   var init = function() {
 
@@ -1116,7 +1117,7 @@ Navarra.geomaps = function() {
             sortLayers: true
           });
           //genera Modal de capas internas
-          if($('#projects_container').children().length==0){
+          if(first_time_internal_layers){
             var new_item = 
                     '<div>'+
                     '<a class="dropdown-item d-flex" href="#" style="justify-content:space-between">'+
@@ -1143,8 +1144,7 @@ Navarra.geomaps = function() {
           var current_layer_filters = Navarra.project_types.config.current_layer_filters.replace(/'/g,"''");
           cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + name_layer + "', 'the_geom', '" + current_layer_filters + "')))";
 
-       //   cql_filter = "1 = 1 and INTERSECTS(the_geom, collectGeometries(queryCollection('geoworks:arriendochile', 'the_geom', '1 = 1 and comune = ''Independencia'' AND row_enabled = true'))) AND row_enabled = true";
-          // genera capa con todos los datos, sin tener en cuenta la intersección con la capa activa
+       // genera capa con todos los datos, sin tener en cuenta la intersección con la capa activa
           layer_current_intersect = workspace + ":" + layer;
 
           layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
@@ -1161,8 +1161,6 @@ Navarra.geomaps = function() {
             format_options: 'callback:getJson',
             CQL_FILTER: cql_filter
           })
-          console.log(cql_filter)
-//          cql_filter = "1 = 1 AND row_enabled = true and INTERSECTS(the_geom, collectGeometries(queryCollection('geoworks:arriendochile', 'the_geom', '1 = 1 ')))"
 
           projectsa = layerSubProjects.getLayer(layer_current_intersect);
           layerControl.addOverlay(projectsa, label_layer+ "-filtrados", null, {
@@ -1170,17 +1168,19 @@ Navarra.geomaps = function() {
           });
           layer_array.push(projectsa);
         }) // Cierra each data
+        
+        first_time_internal_layers = false;
 
         //vuelve a checkear las capas anteriormente checkeadas
         var check_layers = document.querySelectorAll('.leaflet-control-layers-selector');
         for(l=0; l<check_layers.length; l++){
           if(check_layers[l].type=='checkbox'){
-          var name_layer_project = $(check_layers[l]).next().html().substring(1);
-          if(active_internal_layers.indexOf(name_layer_project)>=0){
-            check_layers[l].click();
+            var name_layer_project = $(check_layers[l]).next().html().substring(1);
+            if(active_internal_layers.indexOf(name_layer_project)>=0){
+              check_layers[l].click();
+            }
           }
         }
-      }
     } // Cierra success
   }) // Cierra ajax
 } // Cierra layers_internal
