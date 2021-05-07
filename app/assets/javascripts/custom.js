@@ -2238,11 +2238,13 @@ function export_to_excel(table, name, filename) {
 function show_item_info(appid_info, from_map, is_multiple) {
   if(is_multiple){
     $('#multiple_edit').addClass("multiple_on");
-    var total_files_to_edit = $('#table_visible .custom-control-input:checked').length;
+    var total_files_to_edit = $('#table_visible .custom-control-input:checked').not('.just_header').length;
     $('#info_title').html(total_files_to_edit + " registros seleccionados ");
   } else{
       $('#multiple_edit').removeClass("multiple_on");
       if( $('#table_visible .custom-control-input:checked').length>0){
+        // si se llamó a edición simple pero hay multiple registros seleccionados, se limpia la selección
+        $('#table_select_all').prop('checked',false);
         $('#multiple_edit').addClass("d-none");
         unselect_item_all();
       }
@@ -2428,6 +2430,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
                 if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
                 if(!is_multiple){
                   new_p.setAttribute("onChange","calculate_all(false)");
+                } else{
+                  new_p.setAttribute('onChange', 'changeFile()');
                 }
               }
               var found_nested = false;
@@ -2526,6 +2530,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
                   if(!is_multiple){
                     if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
                     new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +found_nested+',event  )');
+                  } else{
+                    new_p.setAttribute('onChange', 'changeFile()');
                   }
                 }
               }
@@ -2552,6 +2558,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
                   if(!is_multiple){
                     if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
                     new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event )');
+                  } else{
+                    new_p.setAttribute('onChange', 'changeFile()');
                   }
                  }
               }
@@ -2562,6 +2570,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
                 if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
                 if(!is_multiple){
                   new_p.setAttribute("onChange","calculate_all(false)");
+                } else{
+                  new_p.setAttribute('onChange', 'changeFile()');
                 }
               }
               new_p.disabled = true;
@@ -2911,6 +2921,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
         } else{
           if(!is_multiple){
             calculate_all(false);
+          } else{
+            changeFile();
           }
         }
     });
@@ -3019,11 +3031,12 @@ function textarea_adjust_height() {
 
 function edit_file(edit_parent, edit_child, edit_status){
   textarea_adjust_height()
-  
+  $(".fakeLoader").css("display", "block");
   //verifica requeridos si no es edición múltiple
 
   var required_field_number = 0;
   $('#info_messages').html("");
+  $('#alert_text_message').html("");
   $('#info_messages').addClass("d-none");
   $('#info_messages').removeClass("text-danger");
   if(!edit_child){array_child_edited=[]}
@@ -3153,11 +3166,22 @@ function edit_file(edit_parent, edit_child, edit_status){
       subforms: child_edited_all
     },
     success: function(data) {
+      $(".fakeLoader").css("display", "none");
       filechange = false;
       array_child_edited = [];
-      $('#info_messages').addClass("d-inline");
-      $('#info_messages').removeClass("d-none");
-      $('#info_messages').html(data['status']);
+      $('#table_select_all').prop('checked',false);
+      if(!$('#multiple_edit').hasClass('multiple_on')){ 
+        $('#info_messages').addClass("d-inline");
+        $('#info_messages').removeClass("d-none");
+        $('#info_messages').html(data['status']);
+      } else{
+        $('#alert_message').addClass('show');
+        $('#alert_message').removeClass('d-none');
+        $("#info-modal").modal("hide");
+        $('#alert_text_message').html(data['status']);
+        Navarra.project_types.config.item_selected="";
+        Navarra.project_types.config.data_dashboard = "";
+      }
       if(edit_status && statuschange){
         edit_file_status(true);
       } else{
@@ -3168,6 +3192,7 @@ function edit_file(edit_parent, edit_child, edit_status){
 }
 
 function edit_file_status(edit_data){
+  $(".fakeLoader").css("display", "block");
   if(!statuschange){
     $('#info_messages').html("No hay cambios a guardar");
     $('#info_messages').addClass("text-danger");
@@ -3187,12 +3212,27 @@ function edit_file_status(edit_data){
       status_id: status_id
     },
     success: function(data) {
-      $('#info_messages').addClass("d-inline");
-      $('#info_messages').removeClass("d-none");
-      if(edit_data){
-        $('#info_messages').html($('#info_messages').html()+"<br>" +data['status']);
+      $(".fakeLoader").css("display", "none");
+      $('#table_select_all').prop('checked',false);
+      if(!$('#multiple_edit').hasClass('multiple_on')){ 
+        $('#info_messages').addClass("d-inline");
+        $('#info_messages').removeClass("d-none");
+        if(edit_data){
+          $('#info_messages').html($('#info_messages').html()+"<br>" +data['status']);
+        } else{
+          $('#info_messages').html(data['status']);
+        }
       } else{
-        $('#info_messages').html(data['status']);
+        $('#alert_message').addClass('show');
+        $('#alert_message').removeClass('d-none');
+        $("#info-modal").modal("hide");
+         if(edit_data){
+          $('#alert_text_message').html($('#alert_text_message').html()+"<br>" +data['status']);
+        } else{
+          $('#alert_text_message').html(data['status']);
+        }
+        Navarra.project_types.config.item_selected="";
+        Navarra.project_types.config.data_dashboard = "";
       }
       update_all();
     }
@@ -3200,6 +3240,7 @@ function edit_file_status(edit_data){
 }
 
 function change_owner(){
+  $(".fakeLoader").css("display", "block");
   var app_ids = getapp_ids();
   var user_id = $("#owner_change_select").val();
   $.ajax({
@@ -3211,16 +3252,29 @@ function change_owner(){
       user_id: user_id
     },
     success: function(data) {
-      $('#info_messages').addClass("d-inline");
-      $('#info_messages').removeClass("d-none");
-      $('#info_messages').html(data['status']);
-      $('.app_usuario_value').val(user_id);
+      $(".fakeLoader").css("display", "none");
+      $('#table_select_all').prop('checked',false);
+      if(!$('#multiple_edit').hasClass('multiple_on')){ 
+        $('#info_messages').addClass("d-inline");
+        $('#info_messages').removeClass("d-none");
+        $('#info_messages').html(data['status']);
+        $('.app_usuario_value').val(user_id);
+      }
+      else{
+        $('#alert_message').addClass('show');
+        $('#alert_message').removeClass('d-none');
+        $("#info-modal").modal("hide");
+        $('#alert_text_message').html(data['status']);
+        Navarra.project_types.config.item_selected="";
+        Navarra.project_types.config.data_dashboard = "";
+      }
       update_all();
     }
   });
 }
 
 function disable_file(){
+  $(".fakeLoader").css("display", "block");
   var app_ids = getapp_ids();
   $.ajax({
     type: 'PATCH',
@@ -3230,15 +3284,27 @@ function disable_file(){
       app_ids: app_ids
     },
     success: function(data) {
-      $('#info_messages').addClass("d-inline");
-      $('#info_messages').removeClass("d-none");
-      $('#info_messages').html(data['status']);
-      update_all();
+      $(".fakeLoader").css("display", "none");
+      $('#table_select_all').prop('checked',false);
+      if(!$('#multiple_edit').hasClass('multiple_on')){ 
+        $('#info_messages').addClass("d-inline");
+        $('#info_messages').removeClass("d-none");
+        $('#info_messages').html(data['status']);
+      } else{
+        $('#alert_message').addClass('show');
+        $('#alert_message').removeClass('d-none');
+        $("#info-modal").modal("hide");
+        $('#alert_text_message').html(data['status']);
+      }
+      Navarra.project_types.config.item_selected="";
+      Navarra.project_types.config.data_dashboard = "";
+      setTimeout(function(){update_all(); }, 3000);
     }
   });
 }
 
 function delete_file(){
+  $(".fakeLoader").css("display", "block");
   var project_type_id = Navarra.dashboards.config.project_type_id;
   var app_ids = getapp_ids();
   $.ajax({
@@ -3250,6 +3316,8 @@ function delete_file(){
       project_type_id: project_type_id
     },
     success: function(data) {
+      $(".fakeLoader").css("display", "none");
+      $('#table_select_all').prop('checked',false);
       $('#alert_message').addClass('show');
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
@@ -3264,7 +3332,7 @@ function delete_file(){
 function getapp_ids(){
   var app_ids = [];
   if($('#multiple_edit').hasClass("multiple_on")){
-    $('#table_visible .custom-control-input:checked').each(function(){
+    $('#table_visible .custom-control-input:checked').not('.just_header').each(function(){
       app_ids.push($(this).attr('id').split('_')[2]);
     });
     console.log(app_ids)
@@ -3282,7 +3350,6 @@ function update_all(){
   if (heatmap_actived != '') {
     Navarra.geomaps.heatmap_data();
   }
-  var attribute_filters = Navarra.project_types.config.attribute_filters;
 }
 
 function set_script(data_script,field_type_id,field_id,value,isnested,event){
@@ -3374,10 +3441,13 @@ function changeSelected(index){
   } else{
     $('#table_visible tr:nth-child('+(index+1)+')').removeClass('tr_checked');
   }
-  if($('#table_visible .custom-control-input:checked').length>=2){
+  if($('#table_visible .custom-control-input:checked').not('.just_header').length>=2){
     $('#multiple_edit').removeClass('d-none');
   } else{
     $('#multiple_edit').addClass('d-none');
+  }
+  if($('#table_visible .custom-control-input:checked').not('.just_header').length==0){
+    $('#table_select_all').prop('checked',false);
   }
 }
 

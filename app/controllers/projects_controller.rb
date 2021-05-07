@@ -9,23 +9,17 @@ class ProjectsController < ApplicationController
 
   # Elimina un registro (row_active = false)
   def destroy_form
-    app_id = params[:app_id]
+    app_ids = params[:app_ids]
     project_type_id = params[:project_type_id]
-    if app_id.present?
-      @project = Project.find(app_id)
-      if @project.present?
-        if @project.destroy_form
-          # Actualiza la vista
-          @project_type = ProjectType.find(project_type_id)
-          @project_type.destroy_view
-          @project_type.create_view
-          render json: {status: 'El registro fue eliminado correctamente.'}
-        else
-          render json: {status: 'Error. No se pudo eliminar el registro.'}
-        end
-      else
-        render json: {status: 'Error. No se encontró el registro.'}
+    if app_ids.present? && project_type_id.present?
+      app_ids.each do |app_id|
+        @project = Project.find(app_id)
+        @project.destroy_form
+        @project_type = ProjectType.find(project_type_id)
+        @project_type.destroy_view
+        @project_type.create_view
       end
+      render json: {status: 'Eliminación completada.'}
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
@@ -33,18 +27,13 @@ class ProjectsController < ApplicationController
 
   # Deshabilita un registro (row_enabled = false)
   def disable_form
-    app_id = params[:app_id]
-    if app_id.present?
-      @project = Project.find(app_id)
-      if @project.present?
-        if @project.disable_form
-          render json: {status: 'Registro deshabilitado.'}
-        else
-          render json: {status: 'Error. No se pudo deshabilitar el registro.'}
-        end
-      else
-        render json: {status: 'Error. No se encontró el registro.'}
+    app_ids = params[:app_ids]
+    if app_ids.present?
+      app_ids.each do |app_id|
+        @project = Project.find(app_id)
+        @project.disable_form
       end
+      render json: {status: 'Deshabilitación completada.'}
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
@@ -54,20 +43,17 @@ class ProjectsController < ApplicationController
   def update_form
 
     # Padres
-    app_id = params[:app_id]
+    app_ids = params[:app_ids]
     properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
 
-    if app_id.present? && properties.present?
-      @project = Project.find(app_id)
-      if @project.present?
-        if @project.update_form(properties)
-          render json: {status: 'Registro actualizado.'}
-        else
-          render json: {status: 'Error. No se pudo actualizar el registro.'}
-        end
-      else
-        render json: {status: 'Error. No se encontró el registro.'}
+    if app_ids.present? && properties.present?
+      app_ids.each do |app_id|
+        @project = Project.find(app_id)
+        @project.update_form(properties)
       end
+      render json: {status: 'Actualización completada.'}
+    else
+      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
 
     # Hijos
@@ -90,19 +76,14 @@ class ProjectsController < ApplicationController
 
   # Cambia el propietario del registro
   def change_owner
-    app_id = params[:app_id]
+    app_ids = params[:app_ids]
     user_id = params[:user_id]
-    if app_id.present? && user_id.present?
-      @project = Project.find(app_id)
-      if @project.present?
-        if @project.change_owner(user_id)
-          render json: {status: 'Registro reasignado.'}
-        else
-          render json: {status: 'Error. No se pudo reasignado el registro.'}
-        end
-      else
-        render json: {status: 'Error. No se encontró el registro.'}
+    if app_ids.present? && user_id.present?
+      app_ids.each do |app_id|
+        @project = Project.find(app_id)
+        @project.change_owner(user_id.to_i)
       end
+      render json: {status: 'Reasignación completada.'}
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
@@ -110,19 +91,14 @@ class ProjectsController < ApplicationController
 
   # Cambia el estado del registro
   def change_status
-    app_id = params[:app_id]
+    app_ids = params[:app_ids]
     status_id = params[:status_id]
-    if app_id.present? && status_id.present?
-      @project = Project.find(app_id)
-      if @project.present?
-        if @project.change_status(status_id)
-          render json: {status: 'Estado actualizado.'}
-        else
-          render json: {status: 'Error. No se pudo actualizar el estado.'}
-        end
-      else
-        render json: {status: 'Error. No se encontró el registro.'}
+    if app_ids.present? && status_id.present?
+      app_ids.each do |app_id|
+        @project = Project.find(app_id)
+        @project.change_status(status_id.to_i)
       end
+      render json: {status: 'Actualización completada.'}
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
