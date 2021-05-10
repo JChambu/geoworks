@@ -139,7 +139,6 @@ $(document).ready(function () {
   });
 
 function select_layer(layer){
-  console.log("Layer "+layer)
   if(layer!=undefined){
     layer_selected = layer;
   } else{
@@ -148,11 +147,8 @@ function select_layer(layer){
   
   check_layers = document.querySelectorAll('input.leaflet-control-layers-selector');
   for (l = 0; l < check_layers.length; l++) {
-    console.log("Capa buscada" + layer_selected);
       var name_layer_project = $(check_layers[l]).next().html().substring(1);
       if(layer_selected == name_layer_project){
-        console.log(name_layer_project);
-        console.log("Encontro")
         $(check_layers[l]).click();
         $("#layersDropdown").click();
       }
@@ -183,12 +179,9 @@ function switch_filtered_layer(){
   $('#checkboxlabel_'+id_switch).prop("id",texto.replace("checkbox_","checkboxlabel_"));
   $('#switchlabel_'+id_switch).prop("id",texto.replace("checkbox_","switchlabel_"));
   if($('#'+texto).prop("checked")){
-    console.log("Cambia")
     select_layer(id_switch);
     select_layer(texto.split('_')[1]);
-  } else{
-    console.log("No cambia")
-  }
+  } 
 }
 // terminan funciones para modal de capas
 
