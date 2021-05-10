@@ -130,8 +130,8 @@ Navarra.geomaps = function() {
       $('#basemaps_container').append(new_item);    
     });
     var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
-                    '<input class="custom-control-input" checked=true onchange="select_layer()" id="checkbox_'+Navarra.dashboards.config.name_project+'" type="checkbox" name="radio_mapabase">'+
-                    '<label class="string optional control-label custom-control-label" for="checkbox_'+Navarra.dashboards.config.name_project+'"> </label>'+
+                    '<input class="custom-control-input" checked=true onchange="select_layer()" id="checkbox_'+Navarra.dashboards.config.name_layer+'" type="checkbox" name="radio_mapabase">'+
+                    '<label class="string optional control-label custom-control-label" for="checkbox_'+Navarra.dashboards.config.name_layer+'"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>'+Navarra.dashboards.config.name_project+'</label></a>';
       $('#activeproject_container').append(new_item);    
@@ -810,7 +810,7 @@ Navarra.geomaps = function() {
 
   function current_layer() {
     name_layer = Navarra.dashboards.config.name_layer;
-    var labelLayer = Navarra.dashboards.config.name_project;
+    var labelLayer = Navarra.dashboards.config.name_layer;
     workspace = Navarra.dashboards.config.current_tenement;
     cql_filter = "1 = 1";
 
@@ -981,8 +981,6 @@ Navarra.geomaps = function() {
       CQL_FILTER: cql_filter_selected
     })
 
-    console.log(cql_filter_selected)
-    console.log(cql_filter_not_selected)
     project_current_selected = layerProjectsSelected.getLayer(current_layer).addTo(mymap);
     if(data_from_navarra!=""){
       layerControl.addOverlay(project_current_selected, "Seleccionados", null, {
@@ -999,7 +997,7 @@ Navarra.geomaps = function() {
 
   function layers_internal() {
     current_layer = Navarra.dashboards.config.name_layer;
-    current_layer_name = Navarra.dashboards.config.name_project;
+    current_layer_name = Navarra.dashboards.config.name_layer;
 
     // verifica que capas estás chequeadas
     var active_internal_layers=[];
@@ -1115,7 +1113,7 @@ Navarra.geomaps = function() {
           })
 
           projectsa = layerSubProjects.getLayer(layer_current);
-          layerControl.addOverlay(projectsa, label_layer, null, {
+          layerControl.addOverlay(projectsa, layer, null, {
             sortLayers: true
           });
           //genera Modal de capas internas
@@ -1125,14 +1123,14 @@ Navarra.geomaps = function() {
                     '<a class="dropdown-item d-flex" href="#" style="justify-content:space-between">'+
                     '<div class="d-inline mr-3">'+
                     '<div class="custom-control custom-checkbox" style="display: inline-block;">'+
-                    '<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+label_layer+'" type="checkbox" name="radio_mapabase">'+
-                    '<label id="checkboxlabel_'+label_layer+'" class="string optional control-label custom-control-label" for="checkbox_'+label_layer+'"> </label>'+
+                    '<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+layer+'" type="checkbox" name="radio_mapabase">'+
+                    '<label id="checkboxlabel_'+layer+'" class="string optional control-label custom-control-label" for="checkbox_'+layer+'"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>'+label_layer+'</label>'+
                     '</div>'+
                     '<div class="custom-control custom-switch d-inline">'+
-                    '<input type="checkbox" id="switch_'+label_layer+'" class="custom-control-input layer_filter_switch" onchange="switch_filtered_layer()">'+
-                    '<label id="switchlabel_'+label_layer+'" class="custom-control-label custom-role-colour" for="switch_'+label_layer+'">Filtrados</label>'+
+                    '<input type="checkbox" id="switch_'+layer+'" class="custom-control-input layer_filter_switch" onchange="switch_filtered_layer()">'+
+                    '<label id="switchlabel_'+layer+'" class="custom-control-label custom-role-colour" for="switch_'+layer+'">Filtrados</label>'+
                     '</div></a>'+
                     '</div>'
 
@@ -1165,7 +1163,7 @@ Navarra.geomaps = function() {
           })
 
           projectsa = layerSubProjects.getLayer(layer_current_intersect);
-          layerControl.addOverlay(projectsa, label_layer+ "-filtrados", null, {
+          layerControl.addOverlay(projectsa, layer+ "-filtrados", null, {
             sortLayers: true
           });
           layer_array.push(projectsa);
