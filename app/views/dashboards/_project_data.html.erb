@@ -163,6 +163,7 @@ function get_string_filter(){
 <div class="card-header chart-header-bg-transparent py-1 px-2 card_data">
   Datos
   <a data-toggle="modal" id="show_report"><i class="fas fa-clipboard-list ml-3" title="Reporte" style="cursor: pointer;" ></i></a>
+  <a onclick="download_geojson()"><i class="fas fa-code ml-2" title="Geojson" style="cursor: pointer;" ></i></a>
 
   <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown-columns">
     <i class="fas fa-plus ml-2" style="font-size: 0.8em; cursor: pointer;" title="Agregar Columna"></i>
@@ -240,9 +241,9 @@ function get_string_filter(){
             <% if field.field_type_id != 11 && field.field_type_id != 7  %>
             <% index=index+1 %>
             <% if !field.popup %>
-              <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" class="d-none" id=<%="columnfake_"+field.name %>>
+              <th class="d-none header_column" id=<%="columnfake_"+field.name %>>
             <% else %>
-              <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" id=<%="columnfake_"+field.name %>>
+              <th class="header_column" id=<%="columnfake_"+field.name %>>
             <% end %>
                 <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
                   <p style="color:white; margin-bottom: 0px; white-space: nowrap;"><%= field.name %></p>

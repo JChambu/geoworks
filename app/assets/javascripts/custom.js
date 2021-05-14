@@ -2,6 +2,7 @@
 var xhr_kpi = null;
 var xhr_chart = null;
 var xhr_table = null;
+var xhr_geojson = null;
 var xhr_table_search = null;
 var xhr_info = null;
 var xhr_report = null;
@@ -3452,3 +3453,62 @@ function changeSelected(index){
 }
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
+
+
+//****** FUNCIONES PARA EXPORTAR GEOJSON*****
+
+function download_geojson() {
+ // $(".fakeLoader").css("display", "block");
+  var type_box = 'polygon';
+  var size_box = Navarra.dashboards.config.size_polygon;
+  if (size_box.length == 0) {
+    var size_box = [];
+    type_box = 'extent';
+    size_ext = Navarra.dashboards.config.size_box;
+    size_box[0] = size_ext['_southWest']['lng'];
+    size_box[1] = size_ext['_southWest']['lat'];
+    size_box[2] = size_ext['_northEast']['lng'];
+    size_box[3] = size_ext['_northEast']['lat'];
+  }
+  var column_visibles = [];
+  $('.header_column').not('.d-none').find(':input').each(function(){
+    column_visibles.push($(this).val());
+  })
+  console.log(column_visibles)
+
+  var attribute_filters = Navarra.project_types.config.attribute_filters;
+  var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+
+  var project_type_id = Navarra.dashboards.config.project_type_id;
+  var filter_value = $("#choose").val();
+  var filter_by_column = $(".filter_by_column").val();
+  var order_by_column = $(".order_by_column").val();
+  var from_date = Navarra.project_types.config.from_date;
+  var to_date = Navarra.project_types.config.to_date;
+
+  if (xhr_geojson && xhr_geojson.readyState != 4) {
+    xhr_geojson.abort();
+  }
+  xhr_geojson = $.ajax({
+    type: 'GET',
+    url: '/project_types/download_geojson',
+    datatype: 'json',
+    data: {
+      filter_value: filter_value,
+      filter_by_column: filter_by_column,
+      order_by_column: order_by_column,
+      project_type_id: project_type_id,
+      type_box: type_box,
+      size_box: size_box,
+      data_conditions: attribute_filters,
+      filtered_form_ids: filtered_form_ids,
+      from_date: from_date,
+      to_date: to_date,
+      fields: column_visibles
+    },
+
+    success: function(data) {
+      $(".fakeLoader").css("display", "none");
+      }
+  });
+}
