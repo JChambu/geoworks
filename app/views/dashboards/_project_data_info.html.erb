@@ -7,6 +7,18 @@
       Navarra.geomaps.current_layer();
     });
   });
+var can_edit_yes;
+var can_edit_subforms_yes;
+var can_edit_status_yes;
+
+  function close_alert(){
+      $('#alert_message').removeClass('show');
+      $('#alert_message').addClass('d-none');
+  };
+
+  var can_edit_yes;
+  var can_edit_subforms_yes;
+  var can_edit_status_yes;
 
   function show_confirmation(div_confirmation){
     if(!Navarra.dashboards.config.has_field_errors){
@@ -19,32 +31,48 @@
       $('#'+div_confirmation).addClass("d-inline");
       $('#'+div_confirmation).removeClass("d-none");
       if(div_confirmation=='edit_confirmation'){
-        $('.info_input_disabled').not('.readonly_field').not('.is_child_field').removeClass('disabled');
-        $('.info_input_disabled').not('.readonly_field').not('.is_child_field').addClass('info_input');
-        $('.info_input_disabled').not('.readonly_field').not('.is_child_field').prop('disabled', false);
-        $('.info_input_disabled').not('.readonly_field').not('.is_child_field').removeClass('info_input_disabled');
-        // muestra campos vacíos
-        $('.empty_field').not('.hidden_field').not('.is_child_field').removeClass('d-none');
-        //muestra campos ocultos en subtítulos
+        can_edit_yes = $('#can_edit_yes').val();
+        can_edit_subforms_yes = $('#can_edit_subforms_yes').val();
+        can_edit_status_yes = $('#can_edit_status_yes').val();
+
+        if(can_edit_yes == 1 && can_edit_subforms_yes == 0 && can_edit_status_yes == 0){
+          var field_to_edit = $('.info_input_disabled').not('.readonly_field').not('.is_child_field').not('.input_status');
+        }
+        if(can_edit_yes == 1 && can_edit_subforms_yes == 1 && can_edit_status_yes == 0){
+          var field_to_edit = $('.info_input_disabled').not('.readonly_field').not('.input_status');;
+        }
+        if(can_edit_yes == 1 && can_edit_subforms_yes == 1 && can_edit_status_yes == 1){
+          var field_to_edit = $('.info_input_disabled').not('.readonly_field');
+        }
+        if(can_edit_yes == 1 && can_edit_subforms_yes == 0 && can_edit_status_yes == 1){
+          var field_to_edit = $('.info_input_disabled').not('.readonly_field').not('.is_child_field');
+        }
+
+        if(can_edit_yes == 0 && can_edit_subforms_yes == 1 && can_edit_status_yes == 0){
+          var field_to_edit = $('.is_child_field').not('.readonly_field');
+        }
+        if(can_edit_yes == 0 && can_edit_subforms_yes == 1 && can_edit_status_yes == 1){
+          var field_to_edit = $('.input_status , .is_child_field').not('.readonly_field');
+        }
+        if(can_edit_yes == 0 && can_edit_subforms_yes == 0 && can_edit_status_yes == 1){
+          var field_to_edit = $('.input_status').not('.readonly_field');
+        }
+
+        field_to_edit.removeClass('disabled');
+        field_to_edit.addClass('info_input');
+        field_to_edit.prop('disabled', false);
+        field_to_edit.removeClass('info_input_disabled');
+        if(can_edit_yes ==1 || can_edit_subforms_yes==1){
+          // muestra campos vacíos
+          $('.empty_field').not('.hidden_field').not('.is_child_field').removeClass('d-none');
+          //muestra campos ocultos en subtítulos
           $("div[class*='subtile_hidden']").not('.hidden_field').removeClass('d-none');
-          textarea_adjust_height();
+      }
+        textarea_adjust_height();
         set_script_all();
         calculate_all(true);
       }
 
-      if(div_confirmation=='edit_confirmation_child'){
-        $('.info_input_disabled').not('.readonly_field').removeClass('disabled');
-        $('.info_input_disabled').not('.readonly_field').addClass('info_input');
-        $('.info_input_disabled').not('.readonly_field').prop('disabled', false);
-        $('.info_input_disabled').not('.readonly_field').removeClass('info_input_disabled');
-        // muestra campos vacíos
-        $('.empty_field').not('.hidden_field').removeClass('d-none');
-        //muestra campos ocultos en subtítulos
-          $("div[class*='subtile_hidden']").not('.hidden_field').removeClass('d-none');
-          textarea_adjust_height();
-        set_script_all();
-        calculate_all(true);
-      }
       if(div_confirmation=='owner_confirmation'){
         // trae opciones de usuarios
         var project_type_id = Navarra.dashboards.config.project_type_id;
@@ -90,16 +118,38 @@
     $('.div_confirmation').addClass("d-none");
     $('.div_confirmation').removeClass("d-inline");
     if(option_save=="edit_confirmation"){
-      edit_file(false);
-    }
-    if(option_save=="edit_confirmation_child"){
-      edit_file(true);
+      var edit_data =  false;
+      var edit_status = false;
+      var edit_parents = false;
+      var edit_childs = false;
+      if(can_edit_yes==1 || can_edit_subforms_yes==1){
+        edit_data = true;
+      }
+      if(can_edit_yes==1){
+        edit_parents = true;
+      }
+      if(can_edit_subforms_yes==1){
+        edit_childs = true;
+      }
+      if(can_edit_status_yes==1){
+        edit_status = true;
+      }
+       if(can_edit_yes==1 || can_edit_subforms_yes==1){
+        edit_file(edit_parents, edit_childs, edit_status);
+      }
+      if(can_edit_status_yes==1 && !edit_data){
+        edit_file_status(false);
+      }
+
     }
     if(option_save=="owner_confirmation"){
       change_owner();
     }
     if(option_save=="disable_confirmation"){
       disable_file();
+    }
+    if(option_save=="delete_confirmation"){
+      delete_file();
     }
   }
   function disabled_fields(){
@@ -114,7 +164,7 @@
     <div class="modal-dialog" style="max-width: none;">
       <div class="modal-content">
         <div class="modal-header pt-2 pb-2">
-          <h4 class="modal-title"> Datos del registro </h4>
+          <h4 class="modal-title" id="info_title"></h4>
             <i class="fas fa-eye-slash" style="margin-top: 0.25rem; position: absolute;right: 2.8rem;cursor:pointer" title="Mostrar/Esconder Campos Ocultos" onclick="show_hidden_fields()"></i>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close_info"><span aria-hidden="true">&times;</span>
           </button>
@@ -123,43 +173,59 @@
           <div id="info_body"></div>
         </div>
         <div class="modal-footer" style="height: 8vh;flex-wrap: nowrap;">
-          <div class="d-none text-left div_confirmation" id="info_messages" style="width: 70%;">
+          <div class="d-none text-left div_confirmation" id="info_messages" style="width: 65%;">
           </div>
-          <div class="d-none text-left div_confirmation" id="edit_confirmation" style="width: 70%;">
+          <div class="d-none text-left div_confirmation" id="edit_confirmation" style="width: 65%;">
             <p class="m-0 d-inline">Guardar Cambios?</p>
             <button type="button" class="btn btn-secondary p-0" onclick="save_info('edit_confirmation')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
-           <div class="d-none text-left div_confirmation" id="edit_confirmation_child" style="width: 70%;">
+          <div class="d-none text-left div_confirmation" id="edit_confirmation_child" style="width: 65%;">
             <p class="m-0 d-inline">Guardar Cambios?</p>
             <button type="button" class="btn btn-secondary p-0" onclick="save_info('edit_confirmation_child')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
-          <div class="d-none text-left div_confirmation" id="lat_long_edit" style="width: 70%;">
+          <div class="d-none text-left div_confirmation" id="lat_long_edit" style="width: 65%;">
             <p class="m-0" style="font-size: 0.8em">Lat: -34.5656 Lon: -71.4783</p>
             <button type="button" class="btn btn-secondary pt-0 pb-0 pl-1 pr-1" onclick="save_info()" >Guardar</button>
             <button type="button" class="btn btn-secondary pt-0 pb-0 pl-1 pr-1" data-dismiss="modal">Cancelar</button>
           </div>
-          <div class="d-none text-left div_confirmation" id="owner_confirmation" style="width: 70%;">
+          <div class="d-none text-left div_confirmation" id="owner_confirmation" style="width: 65%;">
             <select class="form-control form-control-sm d-inline p-0" id="owner_change_select" style="width: 68%">
             </select>
             <button type="button" class="btn btn-secondary p-0" onclick="save_info('owner_confirmation')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
-          <div class="d-none text-left div_confirmation" id="disable_confirmation" style="width: 70%;">
+          <div class="d-none text-left div_confirmation" id="disable_confirmation" style="width: 65%;">
             <p class="m-0 d-inline">Desactivar Registro?</p>
             <button type="button" class="btn btn-secondary p-0" onclick="save_info('disable_confirmation')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
-          <div class="d-none text-left div_confirmation" id="history" style="width: 70%;">
+          <div class="d-none text-left div_confirmation" id="delete_confirmation" style="width: 65%;">
+            <p class="m-0 d-inline">Eliminar Registro?</p>
+            <button type="button" class="btn btn-secondary p-0" onclick="save_info('delete_confirmation')" style="width: 35px">SI</button>
+            <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
+          </div>
+          <div class="d-none text-left div_confirmation" id="history" style="width: 65%;">
           </div>
           <div class="d-inline text-right" style="width: 30%;">
-            <% if can? :data, :edit %>
-              <% if can? :data, :edit_subforms %>
-                <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation_child')"></i>
+            <% if (can? :data, :edit) || (can? :data, :edit_subforms) || (can? :data, :edit_status) %>
+              <% if can? :data, :edit %>
+                <input class="d-none" id="can_edit_yes" value="1" >
               <% else %>
-                <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation')"></i>
+                <input class="d-none" id="can_edit_yes" value="0">
               <% end %>
+              <% if can? :data, :edit_subforms %>
+                <input class="d-none" id="can_edit_subforms_yes" value="1" >
+              <% else %>
+                <input class="d-none" id="can_edit_subforms_yes" value="0">
+              <% end %>
+              <% if can? :data, :edit_status %>
+                <input class="d-none" id="can_edit_status_yes" value="1" >
+              <% else %>
+                <input class="d-none" id="can_edit_status_yes" value="0">
+              <% end %>
+              <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation')"></i>
             <% end %>
             <% if can? :data, :edit_geom %>
               <i class="fas fa-map-marker-alt" style="cursor: pointer;" title="Próximamente" onclick="show_confirmation('lat_long_edit')"></i>
@@ -168,7 +234,10 @@
               <i class="fas fa-user-edit" style="cursor: pointer;" title="Cambiar Propietario" onclick="show_confirmation('owner_confirmation')"></i>
             <% end %>
             <% if can? :data, :disable %>
-            <i class="fas fa-archive" style="cursor: pointer;" title="Desactivar" onclick="show_confirmation('disable_confirmation')"></i>
+              <i class="fas fa-archive" style="cursor: pointer;" title="Deshabilitar" onclick="show_confirmation('disable_confirmation')"></i>
+            <% end %>
+            <% if can? :data, :destroy %>
+              <i class="fas fa-trash" style="cursor: pointer;" title="Eliminar" onclick="show_confirmation('delete_confirmation')"></i>
             <% end %>
             <i class="fas fa-history" style="cursor: pointer;" title="Próximamente" onclick="show_confirmation('history')"></i>
           </div>
@@ -176,4 +245,12 @@
       </div>
     </div>
   </div>
+  <div class="alert alert-dismissible fade position-absolute w-100 p-2 d-none" id="alert_message" role="alert" style="top: 90vh; z-index: 1000;">
+    <div class="modal-content w-auto float-right">
+      <div class="modal-body mr-5" id="alert_text_message" style="color: #aaa"></div>
+      <button type="button" class="close" style="color: #aaa" onclick="close_alert()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+</div>
 <% end %>

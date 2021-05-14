@@ -9,6 +9,7 @@ es:
   edit_subforms: 'Editar Hijos'
   edit_geom: 'Editar Geometría'
   edit_owner: 'Editar Propietario'
+  edit_status: 'Editar Estado'
   disable: 'Deshabilitar'
   choice_lists: 'Listados'
   customers: 'Corporaciones'
