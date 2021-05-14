@@ -84,6 +84,24 @@ resize_filters = function(){
   }
 }
 
+set_layer_filter = function(){
+  // coloca las capas como filtradas
+  $('.layer_filter_switch').each(function(){
+    if(!$(this).prop("checked")) {
+      $('.layer_filter_switch').click();
+    }
+  })
+}
+
+remove_layer_filter = function(){
+  // coloca las capas como NO filtradas
+  $('.layer_filter_switch').each(function(){
+    if($(this).prop("checked")) {
+      $('.layer_filter_switch').click();
+    }
+  })
+}
+
 Navarra.dashboards.action_show = function(){
 
   var init = function(){
@@ -150,6 +168,8 @@ Navarra.dashboards.action_show = function(){
       $(this).remove();
       if($(".filter_container").length==0){
         $(".fa-search-location").css("color", "#9b9b9b");
+        //elimina los filtros del modal de capas
+        remove_layer_filter();
       } else{
         $(".fa-search-location").css("color", "#d3d800");
       }
@@ -252,5 +272,7 @@ Navarra.dashboards.action_show = function(){
     height_time_slider: height_time_slider,
     height_filters: height_filters,
     height_charts: height_charts,
+    set_layer_filter: set_layer_filter,
+    remove_layer_filter: remove_layer_filter
   }
 }();

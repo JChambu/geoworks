@@ -226,6 +226,12 @@ div.custom-menu.show {
   max-height: 45vh !important;
   overflow: auto;
 }
+.leaflet-control-layers-base , .leaflet-control-layers-overlays, .leaflet-control-layers-separator{
+  display:none;
+}
+.leaflet-control-layers-toggle{
+  display:block!important;
+}
 .leaflet-control-layers {
   background-color: rgba(58, 63, 68, 0.5) !important;
 }
@@ -638,4 +644,18 @@ div.custom-menu.show {
 .p_popup{
   margin:0px!important;
   font-size:1.1em;
+}
+
+/* modal layer control */
+.custom_dropdown_container{
+  position: absolute;
+  transform: translate3d(10px, 40px, 0px);
+  top: 0px;
+  left: 0px;
+}
+
+.custom_dropdown{
+  position: static!important;
+  transform: none !important;
+  border:none!important;
 }
