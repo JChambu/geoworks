@@ -2296,7 +2296,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
       url:  "/projects/search_statuses.json",
       type: "GET",
       data: { project_type_id: project_type_id },
-      success: function(data_status) {       
+      success: function(data_status) {
         var new_icon = document.createElement('DIV');
         new_icon.className = "status_info_icon";
         if(!is_multiple){new_icon.style.background = father_status.status_color;}
@@ -2318,11 +2318,11 @@ function show_item_info(appid_info, from_map, is_multiple) {
           if(father_status.status_id==status.id){
             found_status=true;
             new_option.selected = true;
-          }    
+          }
           new_p.appendChild(new_option);
         });
         if(!found_status || is_multiple){new_p.selectedIndex = -1;}
-        document.getElementById("status_container_info").appendChild(new_p);  
+        document.getElementById("status_container_info").appendChild(new_p);
           $('.multiselect_status').multiselect({
                 maxHeight: 450,
                 buttonClass: 'text-left mb-1 form-control form-control-sm input_status info_input_disabled',
@@ -2900,7 +2900,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
         }
         verify_count_elements ++;
       }); // termina for Each de padres
-      
+
       if(verify_count_elements!= father_fields.length){
         set_error_message("Error: no se pudieron traer todos los campos");
       }
@@ -2967,7 +2967,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
           }
         });
         calculate_all(true);
-        
+
     }//end Success
   }); //end ajax
 }
@@ -3042,7 +3042,7 @@ function edit_file(edit_parent, edit_child, edit_status){
   $('#info_messages').removeClass("text-danger");
   if(!edit_child){array_child_edited=[]}
 
-  if(!$('#multiple_edit').hasClass('multiple_on')){    
+  if(!$('#multiple_edit').hasClass('multiple_on')){
     $(".required_field").each(function() {
       $(this).parent().closest('div').css("border-bottom","none");
       if( (edit_parent && !edit_child && this.classList.contains('is_child_field')) ||
@@ -3171,7 +3171,7 @@ function edit_file(edit_parent, edit_child, edit_status){
       filechange = false;
       array_child_edited = [];
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){ 
+      if(!$('#multiple_edit').hasClass('multiple_on')){
         $('#info_messages').addClass("d-inline");
         $('#info_messages').removeClass("d-none");
         $('#info_messages').html(data['status']);
@@ -3215,7 +3215,7 @@ function edit_file_status(edit_data){
     success: function(data) {
       $(".fakeLoader").css("display", "none");
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){ 
+      if(!$('#multiple_edit').hasClass('multiple_on')){
         $('#info_messages').addClass("d-inline");
         $('#info_messages').removeClass("d-none");
         if(edit_data){
@@ -3255,7 +3255,7 @@ function change_owner(){
     success: function(data) {
       $(".fakeLoader").css("display", "none");
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){ 
+      if(!$('#multiple_edit').hasClass('multiple_on')){
         $('#info_messages').addClass("d-inline");
         $('#info_messages').removeClass("d-none");
         $('#info_messages').html(data['status']);
@@ -3287,7 +3287,7 @@ function disable_file(){
     success: function(data) {
       $(".fakeLoader").css("display", "none");
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){ 
+      if(!$('#multiple_edit').hasClass('multiple_on')){
         $('#info_messages').addClass("d-inline");
         $('#info_messages').removeClass("d-none");
         $('#info_messages').html(data['status']);
