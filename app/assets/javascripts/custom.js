@@ -3486,29 +3486,18 @@ function download_geojson() {
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
 
-  if (xhr_geojson && xhr_geojson.readyState != 4) {
-    xhr_geojson.abort();
-  }
-  xhr_geojson = $.ajax({
-    type: 'GET',
-    url: '/project_types/download_geojson',
-    datatype: 'json',
-    data: {
-      filter_value: filter_value,
-      filter_by_column: filter_by_column,
-      order_by_column: order_by_column,
-      project_type_id: project_type_id,
-      type_box: type_box,
-      size_box: size_box,
-      data_conditions: attribute_filters,
-      filtered_form_ids: filtered_form_ids,
-      from_date: from_date,
-      to_date: to_date,
-      fields: column_visibles
-    },
+  url = "/project_types/export_geojson.json?filter_value=" + filter_value
+  + "&filter_by_column=" + filter_by_column
+  + "&order_by_column=" + order_by_column
+  + "&project_type_id=" + project_type_id
+  + "&type_box=" + type_box
+  + "&size_box=" + JSON.stringify(size_box)
+  + "&attribute_filters=" + attribute_filters
+  + "&filtered_form_ids=" + filtered_form_ids
+  + "&from_date=" + from_date
+  + "&to_date=" + to_date
+  + "&fields=" + JSON.stringify(column_visibles)
 
-    success: function(data) {
-      $(".fakeLoader").css("display", "none");
-      }
-  });
+  window.open(url, '_blank');
+
 }
