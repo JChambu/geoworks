@@ -170,7 +170,7 @@ function open_layer_container(){
 }
 
 function switch_filtered_layer(){
-  var id_switch = event.target.id.split('_')[1];
+  var id_switch = event.target.id.substring(7);
   var texto = $('#checkbox_'+id_switch).attr('id');
   if(texto.indexOf("-filtrados") > -1){
     texto = texto.replace("-filtrados","");
@@ -185,7 +185,7 @@ function switch_filtered_layer(){
   $('#switchlabel_'+id_switch).prop("id",texto.replace("checkbox_","switchlabel_"));
   if($('#'+texto).prop("checked")){
     select_layer(id_switch);
-    select_layer(texto.split('_')[1]);
+    select_layer(texto.substring(9));
   } 
 }
 // terminan funciones para modal de capas
