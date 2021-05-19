@@ -3480,6 +3480,7 @@ function download_geojson() {
   var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
 
   var project_type_id = Navarra.dashboards.config.project_type_id;
+  var name_project = Navarra.dashboards.config.name_project
   var filter_value = $("#choose").val();
   var filter_by_column = $(".filter_by_column").val();
   var order_by_column = $(".order_by_column").val();
@@ -3490,6 +3491,7 @@ function download_geojson() {
   + "&filter_by_column=" + filter_by_column
   + "&order_by_column=" + order_by_column
   + "&project_type_id=" + project_type_id
+  + "&name_project=" + name_project
   + "&type_box=" + type_box
   + "&size_box=" + JSON.stringify(size_box)
   + "&attribute_filters=" + attribute_filters
