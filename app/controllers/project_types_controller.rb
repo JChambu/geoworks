@@ -126,6 +126,35 @@ class ProjectTypesController < ApplicationController
     @csv_load = ProjectType.read_csv(@project_type.file)
   end
 
+  def export_geojson
+
+    filter_value = params[:filter_value]
+    filter_by_column = params[:filter_by_column]
+    order_by_column = params[:order_by_column]
+    project_type_id = params[:project_type_id]
+    name_project = params[:name_project]
+    type_box = params[:type_box]
+    size_box = params[:size_box]
+    attribute_filters = params[:attribute_filters]
+    filtered_form_ids = params[:filtered_form_ids]
+    from_date = params[:from_date]
+    to_date = params[:to_date]
+    fields = params[:fields]
+
+    # Parsea los parametros stringify
+    size_box = JSON.parse(size_box)
+    attribute_filters = JSON.parse(attribute_filters) unless attribute_filters.nil?
+    filtered_form_ids = JSON.parse(filtered_form_ids) unless filtered_form_ids.nil?
+    fields = JSON.parse(fields)
+
+    file = ProjectType.export_geojsonn filter_value, filter_by_column, order_by_column, project_type_id, type_box, size_box, attribute_filters, filtered_form_ids, from_date, to_date, fields, current_user.id
+
+    respond_to do |format|
+      format.json { send_data file.to_json, filename: "#{name_project}-#{Date.today}.geojson", type: "text/plain" }
+    end
+
+  end
+
   def filters
     respond_to do |format|
       format.js

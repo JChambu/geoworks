@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get 'project_types/search_data_dashboard' => 'project_types#search_data_dashboard'
   get 'project_types/search_father_children_and_photos_data' => 'project_types#search_father_children_and_photos_data'
   get 'project_types/search_report_data' => 'project_types#search_report_data'
+  get 'project_types/export_geojson' => 'project_types#export_geojson'
   get 'project_types/filter_heatmap' => 'project_types#filter_heatmap'
   get 'project_types/graph3' => 'project_types#graph2'
   get 'project_types/project_type_layers' => 'project_types#project_type_layers'
