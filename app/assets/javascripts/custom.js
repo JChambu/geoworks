@@ -121,6 +121,7 @@ function capitalize(s) {
 };
 
 function init_chart_doughnut(size_box = null, create_time_s = true) {
+  console.log("Inicia graficos")
   // no calcula la función si los gráficos están escondidos
   if (!$('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded')) {
     return;
@@ -185,7 +186,7 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         to_date: to_date
       },
       success: function(data) {
-
+        console.log("SUCCESS")
         data_charts = data;
         draw_charts();
 
