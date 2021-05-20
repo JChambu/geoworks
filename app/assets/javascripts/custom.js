@@ -1132,6 +1132,7 @@ function draw_charts() {
 //****** FUNCIONES PARA TABLA DE DATOS*****
 // Función para traer todos los datos de los registros contenidos y filtrados
 function init_data_dashboard(haschange,close_info) {
+  console.log("Ingresa a INIT DATA")
   //Evita calcular la tabla si está oculta o si no existe por autorización de roles
   if ($('#status-view').hasClass('status-view-condensed') || $('.table_data_container').length==0) {
     return;
@@ -1195,67 +1196,64 @@ function init_data_dashboard(haschange,close_info) {
     },
 
     success: function(data) {
+      console.log("SUCCESS !!!!!!!!!!!")
       var fields = document.querySelectorAll(".field_key");
       var data_dashboard = data.data
 
       // borramos los datos anteriores
-      document.getElementById("tbody_visible").remove();
-      var new_body = document.createElement("TBODY");
-      new_body.style.className = "project_data_div";
-      new_body.id = "tbody_visible";
-      document.getElementById("table_visible").appendChild(new_body);
+      $("#tbody_visible").empty();
       $(".width_only").html("");
 
-      // llenado de la tabla de datos
+      // verificamos columnas ocultas
+      var array_column_hidden = [];
+      $('#table_hidden th').each(function(){
+        if($(this).is(':hidden')){
+          array_column_hidden.push(false);
+        } else{
+          array_column_hidden.push(true);
+        }
+      })
+
       var found_id = -1;
       var appid_selected = 0;
+
+      //creación de los DOM de la tabla
+      var array_datos = [];
       data_dashboard.forEach(function(element, index) {
         var new_row = document.createElement("TR");
+        new_row.id="row_table_data"+index;
         new_row.style.cursor = "pointer";
         new_row.className = "row_data";
         var data_properties = element.properties;
+        
+        var new_celd="";
         fields.forEach(function(column, indexColumn) {
           var column_name = column.value;
-          var new_celd = document.createElement("TD");
+          appid_info = data_properties["app_id"];
+          appid_selected = data_properties["app_id"];
           if (column.value == "#_action") {
-            var new_icon = document.createElement('I');
-            new_icon.className = "fas fa-info-circle";
-            new_icon.style.marginRight = '10px';
-            new_celd.appendChild(new_icon);
-            new_celd.title = "Más Información";
-            appid_info = data_properties["app_id"];
-            new_celd.setAttribute('onclick', 'show_item_info(' + appid_info + ',false)');
+            var new_dom = "<i class='fas fa-info-circle' style='margin-right:10px' title='Más Información' onclick='show_item_info(" + appid_info + ",false)'></i>"
+            array_datos.push(new_dom);
           }
           if (column.value == "#_select") {
-            var new_check = document.createElement('DIV');
-            new_check.className = "custom-control custom-checkbox";
-            var new_icon = document.createElement('INPUT');
-            new_icon.type="checkbox";
-            new_icon.className="custom-control-input";
-            appid_info = data_properties["app_id"];
-            new_icon.id="check_select_"+appid_info;
-            new_icon.setAttribute("onChange","changeSelected("+index+")");
-            new_check.appendChild(new_icon);
-            var new_icon = document.createElement('LABEL');
-            new_icon.className="string optional control-label custom-control-label";
-            new_icon.htmlFor="check_select_"+appid_info;
-            new_check.appendChild(new_icon);
-
-            new_celd.title = "Seleccionar";
-            new_celd.appendChild(new_check);
+            var new_dom = "<div class='custom-control custom-checkbox' title='Seleccionar'>"+
+                  "<input type='checkbox' class='custom-control-input' id='check_select_"+appid_info+"' onchange='changeSelected("+index+")'>"+
+                  "<label class='string optional control-label custom-control-label' for='check_select_"+appid_info+"'></label>"+
+                  "</div>"
+            array_datos.push(new_dom);
           }
           if (column.value == "#") {
             if (isNaN(per_page_value)) {
-              new_celd.innerHTML = (index + 1);
+               array_datos.push(index+1);
               document.getElementById('columnfake_datacount').innerHTML=(index + 1);
             } else {
-              new_celd.innerHTML = (index + 1) + (active_page - 1) * per_page_value;
+               array_datos.push((index + 1) + (active_page - 1) * per_page_value);
               document.getElementById('columnfake_datacount').innerHTML=(index + 1) + (active_page - 1) * per_page_value;
             }
           }
-          if (column.value != "#" && column.value != "#_action") {
+          if (column.value != "#" && column.value != "#_action" && column.value != "#_select") {
             if (data_properties[column_name] != undefined) {
-              new_celd.innerHTML = data_properties[column_name];
+              array_datos.push(data_properties[column_name]);
               //agraga el máximo valor a la tabla cabecera para tener 2 tablas con el mismo ancho de columnas
               var celd_width = document.getElementById('columnfake_data_'+column_name);
               if(celd_width.innerHTML=="" || celd_width.innerHTML.length< data_properties[column_name].length){
@@ -1263,27 +1261,41 @@ function init_data_dashboard(haschange,close_info) {
               }
               // termina ajuste de ancho
               if (column.value == "app_id") {
-                appid_selected = data_properties[column_name];
+                
                 if (Navarra.project_types.config.item_selected == data_properties[column_name]) {
                   found_id = index + 1;
                   Navarra.project_types.config.data_dashboard = "app_id = '" + appid_selected + "'";
                 }
               }
+              
+            } else{
+              array_datos.push("");
             }
           }
-          new_row.setAttribute('onclick', 'show_item(' + index + ',' + appid_selected + ')');
-          new_celd.className = "custom_row";
-          if ($('#table_hidden th:nth-child(' + (indexColumn + 1) + ')').is(':hidden')) {
-            new_celd.style.display = "none";
-          };
-          new_row.appendChild(new_celd);
+          var text_hidden = "";
+          if(!array_column_hidden[indexColumn]){
+            text_hidden = "style = 'display:none'";
+          }
+          new_celd += "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+index+","+appid_selected+")'></td>"
+          
         });
         document.getElementById("tbody_visible").appendChild(new_row);
+        $('#row_table_data'+index).html(new_celd);
+        // termina DOMs de la tabla
+
         $('table tbody tr:nth-child(' + (found_id) + ')').addClass('found');
       });
+
+        // comienza llenado de la tabla
+              $("._columnname").each(function(index_data){
+                $(this).html(array_datos[index_data]);
+              });
+        // termina llenado de la tabla
+
       $(".fakeLoader").css("display", "none");
+      console.log("Termina de dibujar tabla")
     }
-  })
+  });
 
   if (Navarra.project_types.config.item_selected != "" && Navarra.project_types.config.data_dashboard.substring(0, 14) != "strToLowerCase") {
     Navarra.geomaps.current_layer();
@@ -3032,7 +3044,6 @@ function textarea_adjust_height() {
 
 function edit_file(edit_parent, edit_child, edit_status){
   textarea_adjust_height()
-  $(".fakeLoader").css("display", "block");
   //verifica requeridos si no es edición múltiple
 
   var required_field_number = 0;
@@ -3072,6 +3083,7 @@ function edit_file(edit_parent, edit_child, edit_status){
     return;
   }
 
+  $(".fakeLoader").css("display", "block");
   var app_ids = getapp_ids();
   // Arma Json properties padres
   if(filechange){
