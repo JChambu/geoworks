@@ -12,6 +12,7 @@ var statuschange;
 
 var father_fields;
 var array_child_edited;
+var data_dashboard=[];
 
 Number.prototype.format = function(n, x, s, c) {
   var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
@@ -1198,7 +1199,11 @@ function init_data_dashboard(haschange,close_info) {
     success: function(data) {
       console.log("SUCCESS !!!!!!!!!!!")
       var fields = document.querySelectorAll(".field_key");
-      var data_dashboard = data.data
+      if(JSON.stringify(data_dashboard) == JSON.stringify(data.data)){
+        $(".fakeLoader").css("display", "none");
+        return;
+      }
+      data_dashboard = data.data
 
       // borramos los datos anteriores
       $("#tbody_visible").empty();
@@ -1260,8 +1265,7 @@ function init_data_dashboard(haschange,close_info) {
                 celd_width.innerHTML = data_properties[column_name];
               }
               // termina ajuste de ancho
-              if (column.value == "app_id") {
-                
+              if (column.value == "app_id") {     
                 if (Navarra.project_types.config.item_selected == data_properties[column_name]) {
                   found_id = index + 1;
                   Navarra.project_types.config.data_dashboard = "app_id = '" + appid_selected + "'";
