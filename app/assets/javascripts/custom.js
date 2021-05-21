@@ -2,6 +2,7 @@
 var xhr_kpi = null;
 var xhr_chart = null;
 var xhr_table = null;
+var xhr_geojson = null;
 var xhr_table_search = null;
 var xhr_info = null;
 var xhr_report = null;
@@ -2295,7 +2296,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
       url:  "/projects/search_statuses.json",
       type: "GET",
       data: { project_type_id: project_type_id },
-      success: function(data_status) {       
+      success: function(data_status) {
         var new_icon = document.createElement('DIV');
         new_icon.className = "status_info_icon";
         if(!is_multiple){new_icon.style.background = father_status.status_color;}
@@ -2317,11 +2318,11 @@ function show_item_info(appid_info, from_map, is_multiple) {
           if(father_status.status_id==status.id){
             found_status=true;
             new_option.selected = true;
-          }    
+          }
           new_p.appendChild(new_option);
         });
         if(!found_status || is_multiple){new_p.selectedIndex = -1;}
-        document.getElementById("status_container_info").appendChild(new_p);  
+        document.getElementById("status_container_info").appendChild(new_p);
           $('.multiselect_status').multiselect({
                 maxHeight: 450,
                 buttonClass: 'text-left mb-1 form-control form-control-sm input_status info_input_disabled',
@@ -2899,7 +2900,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
         }
         verify_count_elements ++;
       }); // termina for Each de padres
-      
+
       if(verify_count_elements!= father_fields.length){
         set_error_message("Error: no se pudieron traer todos los campos");
       }
@@ -2966,7 +2967,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
           }
         });
         calculate_all(true);
-        
+
     }//end Success
   }); //end ajax
 }
@@ -3041,7 +3042,7 @@ function edit_file(edit_parent, edit_child, edit_status){
   $('#info_messages').removeClass("text-danger");
   if(!edit_child){array_child_edited=[]}
 
-  if(!$('#multiple_edit').hasClass('multiple_on')){    
+  if(!$('#multiple_edit').hasClass('multiple_on')){
     $(".required_field").each(function() {
       $(this).parent().closest('div').css("border-bottom","none");
       if( (edit_parent && !edit_child && this.classList.contains('is_child_field')) ||
@@ -3170,7 +3171,7 @@ function edit_file(edit_parent, edit_child, edit_status){
       filechange = false;
       array_child_edited = [];
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){ 
+      if(!$('#multiple_edit').hasClass('multiple_on')){
         $('#info_messages').addClass("d-inline");
         $('#info_messages').removeClass("d-none");
         $('#info_messages').html(data['status']);
@@ -3214,7 +3215,7 @@ function edit_file_status(edit_data){
     success: function(data) {
       $(".fakeLoader").css("display", "none");
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){ 
+      if(!$('#multiple_edit').hasClass('multiple_on')){
         $('#info_messages').addClass("d-inline");
         $('#info_messages').removeClass("d-none");
         if(edit_data){
@@ -3254,7 +3255,7 @@ function change_owner(){
     success: function(data) {
       $(".fakeLoader").css("display", "none");
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){ 
+      if(!$('#multiple_edit').hasClass('multiple_on')){
         $('#info_messages').addClass("d-inline");
         $('#info_messages').removeClass("d-none");
         $('#info_messages').html(data['status']);
@@ -3286,7 +3287,7 @@ function disable_file(){
     success: function(data) {
       $(".fakeLoader").css("display", "none");
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){ 
+      if(!$('#multiple_edit').hasClass('multiple_on')){
         $('#info_messages').addClass("d-inline");
         $('#info_messages').removeClass("d-none");
         $('#info_messages').html(data['status']);
@@ -3452,3 +3453,52 @@ function changeSelected(index){
 }
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
+
+
+//****** FUNCIONES PARA EXPORTAR GEOJSON*****
+
+function download_geojson() {
+ // $(".fakeLoader").css("display", "block");
+  var type_box = 'polygon';
+  var size_box = Navarra.dashboards.config.size_polygon;
+  if (size_box.length == 0) {
+    var size_box = [];
+    type_box = 'extent';
+    size_ext = Navarra.dashboards.config.size_box;
+    size_box[0] = size_ext['_southWest']['lng'];
+    size_box[1] = size_ext['_southWest']['lat'];
+    size_box[2] = size_ext['_northEast']['lng'];
+    size_box[3] = size_ext['_northEast']['lat'];
+  }
+  var column_visibles = [];
+  $('.header_column').not('.d-none').find(':input').each(function(){
+    column_visibles.push($(this).val());
+  })
+  console.log(column_visibles)
+
+  var attribute_filters = Navarra.project_types.config.attribute_filters;
+  var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+  var project_type_id = Navarra.dashboards.config.project_type_id;
+  var name_project = Navarra.dashboards.config.name_project
+  var filter_value = $("#choose").val();
+  var filter_by_column = $(".filter_by_column").val();
+  var order_by_column = $(".order_by_column").val();
+  var from_date = Navarra.project_types.config.from_date;
+  var to_date = Navarra.project_types.config.to_date;
+
+  url = "/project_types/export_geojson.json?filter_value=" + filter_value
+  + "&filter_by_column=" + filter_by_column
+  + "&order_by_column=" + order_by_column
+  + "&project_type_id=" + project_type_id
+  + "&name_project=" + name_project
+  + "&type_box=" + type_box
+  + "&size_box=" + JSON.stringify(size_box)
+  + "&attribute_filters=" + JSON.stringify(attribute_filters)
+  + "&filtered_form_ids=" + JSON.stringify(filtered_form_ids)
+  + "&from_date=" + from_date
+  + "&to_date=" + to_date
+  + "&fields=" + JSON.stringify(column_visibles)
+
+  window.open(url, '_blank');
+
+}

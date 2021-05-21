@@ -462,6 +462,13 @@ div.custom-menu.show {
 }
 
 /*estilo para tabla de datos */
+.header_column{
+  height: 8vh; 
+  padding-top: 0px!important; 
+  vertical-align: top!important; 
+  min-width: 100px; 
+  cursor:  pointer;
+}
 .icons{
   color: inherit!important;
   display: inline-block;
