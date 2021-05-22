@@ -2,11 +2,13 @@
 var xhr_kpi = null;
 var xhr_chart = null;
 var xhr_table = null;
+var xhr_geojson = null;
 var xhr_table_search = null;
 var xhr_info = null;
 var xhr_report = null;
 var data_charts;
 var filechange;
+var statuschange;
 
 var father_fields;
 var array_child_edited;
@@ -78,7 +80,12 @@ function init_kpi(size_box = null) {
 
         if (element['title'] == 'Seleccionado') {
           if ($("#choose").val() == "") {
-            data_pagination(element['data'][0]['count'], 1);
+            if ($(".active_page").length == 0) {
+              var active_page = 1
+            } else {
+              var active_page = parseInt($(".active_page").html());
+            }
+            data_pagination(element['data'][0]['count'], active_page);
           }
           $('.total_files').val(element['data'][0]['count']);
         }
@@ -1129,8 +1136,9 @@ function init_data_dashboard(haschange,close_info) {
   if ($('#status-view').hasClass('status-view-condensed') || $('.table_data_container').length==0) {
     return;
   }
+  $('#multiple_edit').addClass('d-none');
   //cierra modal de información del registro
-  if(!close_info){}else{$("#info-modal").modal("hide");}
+  if(close_info){$("#info-modal").modal("hide");}
   $(".fakeLoader").css("display", "block");
   var type_box = 'polygon';
   var size_box = Navarra.dashboards.config.size_polygon;
@@ -1193,14 +1201,10 @@ function init_data_dashboard(haschange,close_info) {
       // borramos los datos anteriores
       document.getElementById("tbody_visible").remove();
       var new_body = document.createElement("TBODY");
-      new_body.style.visibility = "hidden";
-      new_body.id = "tbody_hidden";
-      document.getElementById("table_hidden").appendChild(new_body);
-      document.getElementById("tbody_hidden").remove();
-      var new_body = document.createElement("TBODY");
       new_body.style.className = "project_data_div";
       new_body.id = "tbody_visible";
       document.getElementById("table_visible").appendChild(new_body);
+      $(".width_only").html("");
 
       // llenado de la tabla de datos
       var found_id = -1;
@@ -1222,16 +1226,42 @@ function init_data_dashboard(haschange,close_info) {
             appid_info = data_properties["app_id"];
             new_celd.setAttribute('onclick', 'show_item_info(' + appid_info + ',false)');
           }
+          if (column.value == "#_select") {
+            var new_check = document.createElement('DIV');
+            new_check.className = "custom-control custom-checkbox";
+            var new_icon = document.createElement('INPUT');
+            new_icon.type="checkbox";
+            new_icon.className="custom-control-input";
+            appid_info = data_properties["app_id"];
+            new_icon.id="check_select_"+appid_info;
+            new_icon.setAttribute("onChange","changeSelected("+index+")");
+            new_check.appendChild(new_icon);
+            var new_icon = document.createElement('LABEL');
+            new_icon.className="string optional control-label custom-control-label";
+            new_icon.htmlFor="check_select_"+appid_info;
+            new_check.appendChild(new_icon);
+
+            new_celd.title = "Seleccionar";
+            new_celd.appendChild(new_check);
+          }
           if (column.value == "#") {
             if (isNaN(per_page_value)) {
               new_celd.innerHTML = (index + 1);
+              document.getElementById('columnfake_datacount').innerHTML=(index + 1);
             } else {
               new_celd.innerHTML = (index + 1) + (active_page - 1) * per_page_value;
+              document.getElementById('columnfake_datacount').innerHTML=(index + 1) + (active_page - 1) * per_page_value;
             }
           }
           if (column.value != "#" && column.value != "#_action") {
             if (data_properties[column_name] != undefined) {
               new_celd.innerHTML = data_properties[column_name];
+              //agraga el máximo valor a la tabla cabecera para tener 2 tablas con el mismo ancho de columnas
+              var celd_width = document.getElementById('columnfake_data_'+column_name);
+              if(celd_width.innerHTML=="" || celd_width.innerHTML.length< data_properties[column_name].length){
+                celd_width.innerHTML = data_properties[column_name];
+              }
+              // termina ajuste de ancho
               if (column.value == "app_id") {
                 appid_selected = data_properties[column_name];
                 if (Navarra.project_types.config.item_selected == data_properties[column_name]) {
@@ -1248,8 +1278,7 @@ function init_data_dashboard(haschange,close_info) {
           };
           new_row.appendChild(new_celd);
         });
-        document.getElementById("tbody_visible").appendChild(new_row.cloneNode(true));
-        document.getElementById("tbody_hidden").appendChild(new_row);
+        document.getElementById("tbody_visible").appendChild(new_row);
         $('table tbody tr:nth-child(' + (found_id) + ')').addClass('found');
       });
       $(".fakeLoader").css("display", "none");
@@ -1357,6 +1386,11 @@ function data_pagination(selected, active_page) {
   } else {
     $('#page_numbers').replaceWith('<ul class="pagination pagination-sm m-0" id="page_numbers"></ul>');
   }
+  // si la página activa no existe vuelve a la página 1
+    if($('.active_page').length==0){
+      $('.page_data').last().addClass('active_page');
+      init_data_dashboard(false); // cómo la página no existe vuelve a buscar los datos, cancelando el ajax anterior
+    }
   //Pagina activa
   $(".page_data").click(function() {
     active_page = parseInt($(this).html());
@@ -1792,7 +1826,7 @@ function init_report() {
   check_layers = document.querySelectorAll('input:checked.leaflet-control-layers-selector');
   for (l = 0; l < check_layers.length; l++) {
     if (check_layers[l].type == 'checkbox') {
-      var name_layer_project = $(check_layers[l]).next().html().substring(1).split(" (Datos Filtrados)")[0];
+      var name_layer_project = $(check_layers[l]).next().html().substring(1).split("-filtrados")[0];
       active_layers.push(name_layer_project);
     }
   }
@@ -1894,7 +1928,7 @@ function init_report() {
         new_a = document.createElement('A');
         new_a.setAttribute("data-toggle", "dropdown");
         new_a.setAttribute("aria-haspopup", true);
-        new_a.setAttribute("onclick", "open_drop_down_report(event)");
+     //   new_a.setAttribute("onclick", "open_drop_down_report(event)");
         new_a.id = "dropdown_project_" + element.name_layer;
         new_a.setAttribute("aria-expanded", false);
         var new_element = document.createElement('I');
@@ -2202,7 +2236,21 @@ function export_to_excel(table, name, filename) {
 
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
-function show_item_info(appid_info, from_map) {
+function show_item_info(appid_info, from_map, is_multiple) {
+  if(is_multiple){
+    $('#multiple_edit').addClass("multiple_on");
+    var total_files_to_edit = $('#table_visible .custom-control-input:checked').not('.just_header').length;
+    $('#info_title').html(total_files_to_edit + " registros seleccionados ");
+  } else{
+      $('#multiple_edit').removeClass("multiple_on");
+      if( $('#table_visible .custom-control-input:checked').length>0){
+        // si se llamó a edición simple pero hay multiple registros seleccionados, se limpia la selección
+        $('#table_select_all').prop('checked',false);
+        $('#multiple_edit').addClass("d-none");
+        unselect_item_all();
+      }
+    $('#info_title').html(" Datos del registro ");
+  }
   Navarra.dashboards.config.has_field_errors = false;
   var project_type_id = Navarra.dashboards.config.project_type_id;
   Navarra.project_types.config.id_item_displayed = appid_info;
@@ -2218,7 +2266,6 @@ function show_item_info(appid_info, from_map) {
       app_id: appid_info
     },
     success: function(data) {
-
       console.log('Padres e hijos sin actualizar');
       console.log(data);
 
@@ -2228,6 +2275,7 @@ function show_item_info(appid_info, from_map) {
       $(".fa-eye-slash").css("color", "#9b9b9b");
 
       filechange = false;
+      statuschange = false;
       //borra datos anteriores
       var arraymultiselect=[];
       var arraymultiselectChild=[];
@@ -2238,17 +2286,61 @@ function show_item_info(appid_info, from_map) {
       document.getElementById('modal_info').appendChild(new_body);
 
       // estado del registro
+      // trae datos de los estados
       var father_status = data.father_status;
       var new_div = document.createElement('DIV');
-      new_div.className = "d-flex align-items-center mb-3";
-      var new_icon = document.createElement('DIV');
-      new_icon.className = "status_info_icon";
-      new_icon.style.background = father_status.status_color;
-      new_div.appendChild(new_icon);
-      var new_p = document.createElement('H5');
-      new_p.innerHTML = father_status.status_name;
-      new_div.appendChild(new_p);
+      new_div.className = "d-flex align-items-center mb-3 field_div";
+      new_div.id="status_container_info";
       document.getElementById('info_body').appendChild(new_div);
+      $.ajax({
+      url:  "/projects/search_statuses.json",
+      type: "GET",
+      data: { project_type_id: project_type_id },
+      success: function(data_status) {
+        var new_icon = document.createElement('DIV');
+        new_icon.className = "status_info_icon";
+        if(!is_multiple){new_icon.style.background = father_status.status_color;}
+        document.getElementById("status_container_info").appendChild(new_icon);
+        var new_p = document.createElement('SELECT');
+        new_p.className = "multiselect_field form-control form-control-sm multiselect_status input_status info_input_disabled";
+        new_p.style.width="90%";
+        new_p.setAttribute("onChange","changeStatus(event)");
+        new_p.disabled = true;
+        var status_options = data_status.data;
+        var found_status = false;
+        status_options.forEach(function(status) {
+          var new_option = document.createElement('OPTION');
+          new_option.text=status.name;
+          if(status.status_type=="Heredable"){
+            new_option.disabled = true;
+          }
+          new_option.value=status.id+"|"+status.color;
+          if(father_status.status_id==status.id){
+            found_status=true;
+            new_option.selected = true;
+          }
+          new_p.appendChild(new_option);
+        });
+        if(!found_status || is_multiple){new_p.selectedIndex = -1;}
+        document.getElementById("status_container_info").appendChild(new_p);
+          $('.multiselect_status').multiselect({
+                maxHeight: 450,
+                buttonClass: 'text-left mb-1 form-control form-control-sm input_status info_input_disabled',
+                buttonWidth: '100%',
+                nonSelectedText: 'Seleccionar',
+                selectedClass: 'selected_multiple_item',
+                delimiterText: '\n',
+                numberDisplayed: 0,
+                allSelectedText: false,
+                enableFiltering: true,
+                enableCaseInsensitiveFiltering: true,
+                filterPlaceholder: 'Buscar',
+                includeFilterClearBtn: false,
+                includeSelectAllOption: false,
+                dropRight: true,
+              });
+      }
+      });
 
       //fotos del registro
       var verify_count_elements_photos = 0
@@ -2337,7 +2429,11 @@ function show_item_info(appid_info, from_map) {
                 var new_p = document.createElement('TEXTAREA');
                 new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
                 if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
-                new_p.setAttribute("onChange","calculate_all(false)");
+                if(!is_multiple){
+                  new_p.setAttribute("onChange","calculate_all(false)");
+                } else{
+                  new_p.setAttribute('onChange', 'changeFile()');
+                }
               }
               var found_nested = false;
               if (element.field_type_id == 2 || element.field_type_id == 10) {
@@ -2403,12 +2499,11 @@ function show_item_info(appid_info, from_map) {
                     }
                   }
                   new_p.appendChild(new_option);
-                  if(!found_option){new_p.selectedIndex = -1;}
+                  if(!found_option || is_multiple){new_p.selectedIndex = -1;}
                   //Comienza Anidados opciones
                   if(item.nested_items!=null){
                     new_option.setAttribute('data-type',item.name);
                     var items_field_nested = item.nested_items;
-                    var found_option_nested = false;
                     items_field_nested.forEach(function(item_nested) {
                     var new_option_nested = document.createElement('OPTION');
                     new_option_nested.text=item_nested.name;
@@ -2419,18 +2514,26 @@ function show_item_info(appid_info, from_map) {
                     new_option_nested.setAttribute('data-type',item.name);
                     new_p_nested.appendChild(new_option_nested);
                     });
-                    new_p_nested.value=values_nested;
+                    if(!is_multiple){
+                      new_p_nested.value=values_nested;
+                    } else{
+                      new_p_nested.selectedIndex=-1;
+                    }
                   }
                   //termina anidados opciones
                 });
-                if(found_nested){new_p.value=values;}
+                if(found_nested ){new_p.value=values;}
                 new_p.setAttribute('onChange', 'changeFile()');
                 if(found_nested){
                   new_p.setAttribute('onChange', 'set_nested(event)');
                 }
                 if(element.data_script!=""){
-                  if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
-                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event  )');
+                  if(!is_multiple){
+                    if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
+                    new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +found_nested+',event  )');
+                  } else{
+                    new_p.setAttribute('onChange', 'changeFile()');
+                  }
                 }
               }
 
@@ -2453,8 +2556,12 @@ function show_item_info(appid_info, from_map) {
                 new_p.value="";
                 new_p.setAttribute('onChange', 'changeFile()');
                 if(element.data_script!=""){
-                  if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
-                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event )');
+                  if(!is_multiple){
+                    if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
+                    new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event )');
+                  } else{
+                    new_p.setAttribute('onChange', 'changeFile()');
+                  }
                  }
               }
               if (element.field_type_id == 5) {
@@ -2462,16 +2569,22 @@ function show_item_info(appid_info, from_map) {
                 new_p.type = "number";
                 new_p.className = "form-control form-control-sm info_input_disabled";
                 if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
-                new_p.setAttribute("onChange","calculate_all(false)");
+                if(!is_multiple){
+                  new_p.setAttribute("onChange","calculate_all(false)");
+                } else{
+                  new_p.setAttribute('onChange', 'changeFile()');
+                }
               }
               new_p.disabled = true;
               if (element.value != null && element.field_type_id != 10 && element.field_type_id != 2) {
-                new_p.value = element.value;
+                if(!is_multiple){
+                  new_p.value = element.value;
+                }
               }
-              if(element.required==true){
+              if(element.required==true && !is_multiple){
                 new_p.classList.add('required_field');
               }
-              if(element.read_only==true || element.can_edit==false){
+              if(element.read_only==true || element.can_edit==false || (is_multiple && element.calculated_field!="") || (is_multiple && element.data_script!="") ){
                 new_p.classList.add('readonly_field');
               }
 
@@ -2508,7 +2621,6 @@ function show_item_info(appid_info, from_map) {
               });
             }
           }
-
           } //termina campo padre
           else {// Dibuja campos hijos
             var new_row = document.createElement('DIV');
@@ -2788,6 +2900,7 @@ function show_item_info(appid_info, from_map) {
         }
         verify_count_elements ++;
       }); // termina for Each de padres
+
       if(verify_count_elements!= father_fields.length){
         set_error_message("Error: no se pudieron traer todos los campos");
       }
@@ -2807,7 +2920,11 @@ function show_item_info(appid_info, from_map) {
         if(this.id.substring(0,12)=="fieldchildid"){
           changeChild(this.id.split('|')[2]);
         } else{
-          calculate_all(false);
+          if(!is_multiple){
+            calculate_all(false);
+          } else{
+            changeFile();
+          }
         }
     });
 
@@ -2818,7 +2935,7 @@ function show_item_info(appid_info, from_map) {
               } else{
                 var buttonClass = 'text-left form-control form-control-sm info_input_disabled is_child_field';
               }
-              $('#fieldchildid|'+arraymultiselect[x]+'|'+arraymultiselectChild[x]).multiselect({
+              $('#fieldchildid\\|'+arraymultiselect[x]+'\\|'+arraymultiselectChild[x]).multiselect({
                 maxHeight: 450,
                 buttonClass: buttonClass,
                 buttonWidth: '100%',
@@ -2913,38 +3030,49 @@ function textarea_adjust_height() {
 
 //****** FUNCIONES PARA EDICION DE REGISTROS *****
 
-function edit_file(width_childs){
-  //verifica requeridos
+function edit_file(edit_parent, edit_child, edit_status){
   textarea_adjust_height()
+  $(".fakeLoader").css("display", "block");
+  //verifica requeridos si no es edición múltiple
+
   var required_field_number = 0;
   $('#info_messages').html("");
+  $('#alert_text_message').html("");
   $('#info_messages').addClass("d-none");
   $('#info_messages').removeClass("text-danger");
-  if(!width_childs){array_child_edited=[]}
-  $(".required_field").each(function() {
-    $(this).parent().closest('div').css("border-bottom","none");
-    if(!width_childs && this.classList.contains('is_child_field')){
-    }else{
-      if(this.value == null || this.value == ""){
-        $(this).parent().closest('div').css("border-bottom","solid 2px #dc3545");
-        required_field_number++;
+  if(!edit_child){array_child_edited=[]}
+
+  if(!$('#multiple_edit').hasClass('multiple_on')){
+    $(".required_field").each(function() {
+      $(this).parent().closest('div').css("border-bottom","none");
+      if( (edit_parent && !edit_child && this.classList.contains('is_child_field')) ||
+        (!edit_parent && edit_child && !this.classList.contains('is_child_field'))){}else{
+        if(this.value == null || this.value == ""){
+          $(this).parent().closest('div').css("border-bottom","solid 2px #dc3545");
+          required_field_number++;
+        }
       }
+    });
+    if(required_field_number>0){
+      $('#info_messages').html("Complete los campos requeridos");
+      $('#info_messages').addClass("text-danger");
+      $('#info_messages').removeClass("d-none");
+      return;
     }
-  });
-  if(required_field_number>0){
-    $('#info_messages').html("Complete los campos requeridos");
-    $('#info_messages').addClass("text-danger");
-    $('#info_messages').removeClass("d-none");
-    return;
   }
+
   if(!filechange && array_child_edited.length==0){
-    $('#info_messages').html("No hay cambios a guardar");
-    $('#info_messages').addClass("text-danger");
-    $('#info_messages').removeClass("d-none");
+    if(!statuschange){
+      $('#info_messages').html("No hay cambios a guardar");
+      $('#info_messages').addClass("text-danger");
+      $('#info_messages').removeClass("d-none");
+    } else {
+      edit_file_status(false);
+    }
     return;
   }
 
-  var app_id = Navarra.project_types.config.id_item_displayed;
+  var app_ids = getapp_ids();
   // Arma Json properties padres
   if(filechange){
     var properties_to_save = new Object();
@@ -2994,22 +3122,22 @@ function edit_file(width_childs){
         var id_field_child_properties = this.id.split('|')[4];
 
         if(id_child_properties==array_child_edited[z]){
-        if($('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val()!="" && $('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val()!=null ){
+        if($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!="" && $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!=null ){
           if(fiel_type_properties==2){
             var array_val = [];
-            array_val.push($('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val());
+            array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
             if(document.getElementById('fieldchildid|'+id_field_child_properties+'|'+id_child_properties).classList.contains('nested')){
-              array_val.push($('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties+'_nested').val());
+              array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties+'_nested').val());
             }
             var value_field_properties = array_val;
           }else{
             if( fiel_type_properties == 4){
-             var value_field_properties = $('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val().toLowerCase() == 'true' ? true : false;;
+             var value_field_properties = $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val().toLowerCase() == 'true' ? true : false;;
             } else{
               if( fiel_type_properties == 5){
-              var value_field_properties = parseFloat($('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val());
+              var value_field_properties = parseFloat($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
               } else{
-                var value_field_properties = $('#fieldchildid|'+id_field_child_properties+'|'+id_child_properties).val();
+                var value_field_properties = $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val();
               }
             }
           }
@@ -3034,69 +3162,195 @@ function edit_file(width_childs){
     url: '/projects/update_form',
     datatype: 'JSON',
     data: {
-      app_id: app_id,
+      app_ids: app_ids,
       properties: JSON.stringify(properties_to_save),
       subforms: child_edited_all
     },
     success: function(data) {
+      $(".fakeLoader").css("display", "none");
       filechange = false;
       array_child_edited = [];
-      $('#info_messages').addClass("d-inline");
-      $('#info_messages').removeClass("d-none");
-      $('#info_messages').html(data['status']);
+      $('#table_select_all').prop('checked',false);
+      if(!$('#multiple_edit').hasClass('multiple_on')){
+        $('#info_messages').addClass("d-inline");
+        $('#info_messages').removeClass("d-none");
+        $('#info_messages').html(data['status']);
+      } else{
+        $('#alert_message').addClass('show');
+        $('#alert_message').removeClass('d-none');
+        $("#info-modal").modal("hide");
+        $('#alert_text_message').html(data['status']);
+        Navarra.project_types.config.item_selected="";
+        Navarra.project_types.config.data_dashboard = "";
+      }
+      if(edit_status && statuschange){
+        edit_file_status(true);
+      } else{
+        update_all();
+      }
+    }
+  });
+}
+
+function edit_file_status(edit_data){
+  $(".fakeLoader").css("display", "block");
+  if(!statuschange){
+    $('#info_messages').html("No hay cambios a guardar");
+    $('#info_messages').addClass("text-danger");
+    $('#info_messages').removeClass("d-none");
+    return;
+  } else {
+    $('#info_messages').removeClass("text-danger");
+  }
+  var app_ids = getapp_ids();
+  var status_id = $(".input_status").val().split('|')[0];
+  $.ajax({
+    type: 'PATCH',
+    url: '/projects/change_status',
+    datatype: 'JSON',
+    data: {
+      app_ids: app_ids,
+      status_id: status_id
+    },
+    success: function(data) {
+      $(".fakeLoader").css("display", "none");
+      $('#table_select_all').prop('checked',false);
+      if(!$('#multiple_edit').hasClass('multiple_on')){
+        $('#info_messages').addClass("d-inline");
+        $('#info_messages').removeClass("d-none");
+        if(edit_data){
+          $('#info_messages').html($('#info_messages').html()+"<br>" +data['status']);
+        } else{
+          $('#info_messages').html(data['status']);
+        }
+      } else{
+        $('#alert_message').addClass('show');
+        $('#alert_message').removeClass('d-none');
+        $("#info-modal").modal("hide");
+         if(edit_data){
+          $('#alert_text_message').html($('#alert_text_message').html()+"<br>" +data['status']);
+        } else{
+          $('#alert_text_message').html(data['status']);
+        }
+        Navarra.project_types.config.item_selected="";
+        Navarra.project_types.config.data_dashboard = "";
+      }
       update_all();
     }
   });
 }
 
 function change_owner(){
-  var app_id = Navarra.project_types.config.id_item_displayed;
+  $(".fakeLoader").css("display", "block");
+  var app_ids = getapp_ids();
   var user_id = $("#owner_change_select").val();
   $.ajax({
     type: 'PATCH',
     url: '/projects/change_owner',
     datatype: 'JSON',
     data: {
-      app_id: app_id,
+      app_ids: app_ids,
       user_id: user_id
     },
     success: function(data) {
-      $('#info_messages').addClass("d-inline");
-      $('#info_messages').removeClass("d-none");
-      $('#info_messages').html(data['status']);
-      $('.app_usuario_value').val(user_id);
+      $(".fakeLoader").css("display", "none");
+      $('#table_select_all').prop('checked',false);
+      if(!$('#multiple_edit').hasClass('multiple_on')){
+        $('#info_messages').addClass("d-inline");
+        $('#info_messages').removeClass("d-none");
+        $('#info_messages').html(data['status']);
+        $('.app_usuario_value').val(user_id);
+      }
+      else{
+        $('#alert_message').addClass('show');
+        $('#alert_message').removeClass('d-none');
+        $("#info-modal").modal("hide");
+        $('#alert_text_message').html(data['status']);
+        Navarra.project_types.config.item_selected="";
+        Navarra.project_types.config.data_dashboard = "";
+      }
       update_all();
     }
   });
 }
 
 function disable_file(){
-  var app_id = Navarra.project_types.config.id_item_displayed;
+  $(".fakeLoader").css("display", "block");
+  var app_ids = getapp_ids();
   $.ajax({
     type: 'PATCH',
     url: '/projects/disable_form',
     datatype: 'JSON',
     data: {
-      app_id: app_id
+      app_ids: app_ids
     },
     success: function(data) {
-      $('#info_messages').addClass("d-inline");
-      $('#info_messages').removeClass("d-none");
-      $('#info_messages').html(data['status']);
+      $(".fakeLoader").css("display", "none");
+      $('#table_select_all').prop('checked',false);
+      if(!$('#multiple_edit').hasClass('multiple_on')){
+        $('#info_messages').addClass("d-inline");
+        $('#info_messages').removeClass("d-none");
+        $('#info_messages').html(data['status']);
+      } else{
+        $('#alert_message').addClass('show');
+        $('#alert_message').removeClass('d-none');
+        $("#info-modal").modal("hide");
+        $('#alert_text_message').html(data['status']);
+      }
+      Navarra.project_types.config.item_selected="";
+      Navarra.project_types.config.data_dashboard = "";
+      setTimeout(function(){update_all(); }, 3000);
+    }
+  });
+}
+
+function delete_file(){
+  $(".fakeLoader").css("display", "block");
+  var project_type_id = Navarra.dashboards.config.project_type_id;
+  var app_ids = getapp_ids();
+  $.ajax({
+    type: 'PATCH',
+    url: '/projects/destroy_form',
+    datatype: 'JSON',
+    data: {
+      app_ids: app_ids,
+      project_type_id: project_type_id
+    },
+    success: function(data) {
+      $(".fakeLoader").css("display", "none");
+      $('#table_select_all').prop('checked',false);
+      $('#alert_message').addClass('show');
+      $('#alert_message').removeClass('d-none');
+      $("#info-modal").modal("hide");
+      $('#alert_text_message').html(data['status']);
+      Navarra.project_types.config.item_selected="";
+      Navarra.project_types.config.data_dashboard = "";
       update_all();
     }
   });
 }
 
+function getapp_ids(){
+  var app_ids = [];
+  if($('#multiple_edit').hasClass("multiple_on")){
+    $('#table_visible .custom-control-input:checked').not('.just_header').each(function(){
+      app_ids.push($(this).attr('id').split('_')[2]);
+    });
+    console.log(app_ids)
+  } else{
+    app_ids.push(Navarra.project_types.config.id_item_displayed);
+  }
+  return app_ids
+}
+
 function update_all(){
-  init_data_dashboard(true,false);
   Navarra.geomaps.current_layer();
   Navarra.geomaps.show_kpis();
+  init_data_dashboard(true,false);
   var heatmap_actived = Navarra.project_types.config.heatmap_field;
   if (heatmap_actived != '') {
     Navarra.geomaps.heatmap_data();
   }
-  var attribute_filters = Navarra.project_types.config.attribute_filters;
 }
 
 function set_script(data_script,field_type_id,field_id,value,isnested,event){
@@ -3160,6 +3414,13 @@ function changeFile(){
   filechange = true;
 }
 
+function changeStatus(event){
+  statuschange = true;
+  var color_status = event.target.value.split("|")[1];
+  $(".status_info_icon").css("background",color_status);
+
+}
+
 Array.prototype.unique=function(a){
   return function(){return this.filter(a)}}(function(a,b,c){return c.indexOf(a,b+1)<0
 });
@@ -3175,4 +3436,69 @@ function set_error_message(message){
     $('#edit_confirmation_child').removeClass("d-inline");
 }
 
+function changeSelected(index){
+  if(event.target.checked){
+    $('#table_visible tr:nth-child('+(index+1)+')').addClass('tr_checked');
+  } else{
+    $('#table_visible tr:nth-child('+(index+1)+')').removeClass('tr_checked');
+  }
+  if($('#table_visible .custom-control-input:checked').not('.just_header').length>=2){
+    $('#multiple_edit').removeClass('d-none');
+  } else{
+    $('#multiple_edit').addClass('d-none');
+  }
+  if($('#table_visible .custom-control-input:checked').not('.just_header').length==0){
+    $('#table_select_all').prop('checked',false);
+  }
+}
+
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
+
+
+//****** FUNCIONES PARA EXPORTAR GEOJSON*****
+
+function download_geojson() {
+ // $(".fakeLoader").css("display", "block");
+  var type_box = 'polygon';
+  var size_box = Navarra.dashboards.config.size_polygon;
+  if (size_box.length == 0) {
+    var size_box = [];
+    type_box = 'extent';
+    size_ext = Navarra.dashboards.config.size_box;
+    size_box[0] = size_ext['_southWest']['lng'];
+    size_box[1] = size_ext['_southWest']['lat'];
+    size_box[2] = size_ext['_northEast']['lng'];
+    size_box[3] = size_ext['_northEast']['lat'];
+  }
+  var column_visibles = [];
+  $('.header_column').not('.d-none').find(':input').each(function(){
+    column_visibles.push($(this).val());
+  })
+  console.log(column_visibles)
+
+  var attribute_filters = Navarra.project_types.config.attribute_filters;
+  var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+  var project_type_id = Navarra.dashboards.config.project_type_id;
+  var name_project = Navarra.dashboards.config.name_project
+  var filter_value = $("#choose").val();
+  var filter_by_column = $(".filter_by_column").val();
+  var order_by_column = $(".order_by_column").val();
+  var from_date = Navarra.project_types.config.from_date;
+  var to_date = Navarra.project_types.config.to_date;
+
+  url = "/project_types/export_geojson.json?filter_value=" + filter_value
+  + "&filter_by_column=" + filter_by_column
+  + "&order_by_column=" + order_by_column
+  + "&project_type_id=" + project_type_id
+  + "&name_project=" + name_project
+  + "&type_box=" + type_box
+  + "&size_box=" + JSON.stringify(size_box)
+  + "&attribute_filters=" + JSON.stringify(attribute_filters)
+  + "&filtered_form_ids=" + JSON.stringify(filtered_form_ids)
+  + "&from_date=" + from_date
+  + "&to_date=" + to_date
+  + "&fields=" + JSON.stringify(column_visibles)
+
+  window.open(url, '_blank');
+
+}

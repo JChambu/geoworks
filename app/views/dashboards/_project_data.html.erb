@@ -41,6 +41,17 @@ $("#show_report").click(function(){
   init_report();
 });
 
+// selecciona o deselecciona todos los registros
+$('#table_select_all').click(function(){
+  if($(this).prop('checked')){
+    show_item_all();
+    $('#multiple_edit').removeClass('d-none');
+  } else {
+    unselect_item_all();
+    $('#multiple_edit').addClass('d-none');
+  }
+})
+
 });
 
 //ordena descendente y ascendente
@@ -65,23 +76,23 @@ function search_column(index){
 
 //oculta columnas
 function hide_column(index){
-  index+=2;
- $('#table_hidden tr td:nth-child('+index+')').hide();
+  index+=3;
+ $('#table_hidden tr td:nth-child('+index+')').addClass("d-none");
  $('#table_hidden tr th:nth-child('+index+')').addClass("d-none");
  $('#table_visible tr td:nth-child('+index+')').hide();
  $('#table_visible tr th:nth-child('+index+')').addClass("d-none");
- $('.addcolumns a:nth-child('+(index-2)+')').removeClass("d-none");
+ $('.addcolumns a:nth-child('+(index-3)+')').removeClass("d-none");
  $('.fa-plus').removeClass("d-none");
 }
 
 //muestra columnas
 function show_column(index,){
-  index+=2;
- $('#table_hidden tr td:nth-child('+index+')').show()
+  index+=3;
+ $('#table_hidden tr td:nth-child('+index+')').removeClass("d-none")
  $('#table_hidden tr th:nth-child('+index+')').removeClass("d-none")
  $('#table_visible tr td:nth-child('+index+')').show()
  $('#table_visible tr th:nth-child('+index+')').removeClass("d-none")
- $('.addcolumns a:nth-child('+(index-2)+')').addClass("d-none");
+ $('.addcolumns a:nth-child('+(index-3)+')').addClass("d-none");
  if($(".addcolumns").children().length == $(".column_data.d-none").length){
    $('.fa-plus').addClass("d-none");
  }
@@ -89,18 +100,61 @@ function show_column(index,){
 
 //mostrar dato en el mapa
 function show_item(index, appid_selected){
+ if(event.target.id.substring(0,13)=="check_select_"){return;}
  if($('table tbody tr:nth-child('+(index+1)+')').hasClass('found')){
   $('table tbody tr:nth-child('+(index+1)+')').removeClass('found');
-  Navarra.project_types.config.data_dashboard="";
+  var string_filter = get_string_filter();
+  var text_to_replace = "or app_id = '"+appid_selected+"'";
+  var text_to_replace1 = "app_id = '"+appid_selected+"' or";
+  var text_to_replace2 = "app_id = '"+appid_selected+"'";
+  string_filter = string_filter.replace(text_to_replace,"").replace(text_to_replace1,"").replace(text_to_replace2,"");
+  Navarra.project_types.config.data_dashboard=string_filter;
   Navarra.project_types.config.item_selected="";
   $("#info-modal").modal('hide');
  }else{
-   $('table tbody tr').removeClass('found');
+   $('table tbody tr').not('.tr_checked').removeClass('found');
    $('table tbody tr:nth-child('+(index+1)+')').addClass('found');
-   Navarra.project_types.config.data_dashboard="app_id = '"+appid_selected+"'";
+   var string_filter = get_string_filter();
+   if(string_filter==""){
+    string_filter = "app_id = '"+appid_selected+"'"; 
+   } else {
+    string_filter += "or app_id = '"+appid_selected+"'";
+   }
+   Navarra.project_types.config.data_dashboard=string_filter;
    Navarra.project_types.config.item_selected= appid_selected;
   }
   Navarra.geomaps.current_layer();
+}
+
+//mostrar dato en el mapa
+function show_item_all(){
+  $('#table_visible .custom-control-input').prop('checked',true);
+    $('#table_visible tr').addClass('tr_checked');
+  $('table tbody tr').addClass('found');
+  var string_filter = get_string_filter();
+  Navarra.project_types.config.data_dashboard=string_filter;
+  Navarra.geomaps.current_layer();
+}
+
+function unselect_item_all(){
+  $('#table_visible .custom-control-input').prop('checked',false);
+  $('#table_visible tr').removeClass('tr_checked');
+  $('table tbody tr').removeClass('found');
+  Navarra.project_types.config.data_dashboard="";
+  Navarra.geomaps.current_layer();
+}
+
+function get_string_filter(){
+  var array_ids = [];
+  $('#table_visible .custom-control-input:checked').not('.just_header').each(function(){
+      array_ids.push($(this).attr('id').split('_')[2]);
+    });
+  var string_filter=""
+  for(x=0;x<array_ids.length;x++){
+    if(x>0){string_filter+= " or "}
+    string_filter+="app_id = '"+array_ids[x]+"'";
+  }
+  return string_filter;
 }
 
 
@@ -109,9 +163,13 @@ function show_item(index, appid_selected){
 <div class="card-header chart-header-bg-transparent py-1 px-2 card_data">
   Datos
   <a data-toggle="modal" id="show_report"><i class="fas fa-clipboard-list ml-3" title="Reporte" style="cursor: pointer;" ></i></a>
+  <a onclick="download_geojson()"><i class="fas fa-code ml-2" title="Exportar GeoJSON" style="cursor: pointer;" ></i></a>
 
   <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown-columns">
     <i class="fas fa-plus ml-2" style="font-size: 0.8em; cursor: pointer;" title="Agregar Columna"></i>
+  </a>
+  <a class="d-none" id="multiple_edit" onclick="show_item_info(0,false,true)">
+    <i class="fas fa-edit ml-2" style="font-size: 0.8em; cursor: pointer;" title="Editar Registros"></i>
   </a>
   <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; overflow-y: auto;">
     <% if !@fields.nil? %>
@@ -166,6 +224,13 @@ function show_item(index, appid_selected){
           <p style="color:white; margin-bottom: 0px"></p>
           <input type="text" class="d-none field_key" value="#_action">
         </th>
+        <th style="padding-top: 0px; vertical-align: top;">
+          <div class="custom-control custom-checkbox" title="Seleccionar Todo">
+            <input class="custom-control-input field_key" id="table_select_all" type="checkbox" value="#_select">
+            <label class="string optional control-label custom-control-label" for="table_select_all"> </label>
+          </div>
+
+        </th>
         <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
           <p style="color:white; margin-bottom: 0px">#</p>
           <input type="text" class="d-none field_key" value="#">
@@ -176,9 +241,9 @@ function show_item(index, appid_selected){
             <% if field.field_type_id != 11 && field.field_type_id != 7  %>
             <% index=index+1 %>
             <% if !field.popup %>
-              <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" class="d-none" id=<%="columnfake_"+field.name %>>
+              <th class="d-none header_column" id=<%="columnfake_"+field.name %>>
             <% else %>
-              <th style="height: 8vh; padding-top: 0px; vertical-align: top; min-width: 100px; cursor:  pointer;" id=<%="columnfake_"+field.name %>>
+              <th class="header_column" id=<%="columnfake_"+field.name %>>
             <% end %>
                 <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
                   <p style="color:white; margin-bottom: 0px; white-space: nowrap;"><%= field.name %></p>
@@ -197,6 +262,25 @@ function show_item(index, appid_selected){
       </tr>
     </thead>
     <tbody id="tbody_hidden" style="visibility: hidden;">
+      <tr>
+        <td class="custom_row width_only"></td>
+        <td class="custom_row width_only"></td>
+        <td class="custom_row width_only" id="columnfake_datacount"></td>
+        <% if !@fields.nil? %>
+        <% index = 0 %>
+          <% @fields.each do |field|  %>
+            <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+            <% index=index+1 %>
+            <% if !field.popup %>
+              <td class="d-none custom_row width_only" id=<%="columnfake_data_"+field.key %>></td>
+            <% else %>
+              <td class="custom_row width_only" id=<%="columnfake_data_"+field.key %>></td>
+              <% end %>
+            <% end %>
+          <% end %>  
+      <% end %>    
+      </tr>
+       
     </tbody>
   </table>
 </div>
@@ -205,6 +289,12 @@ function show_item(index, appid_selected){
     <thead style="visibility: hidden; border-bottom: solid transparent">
       <tr class="data_fields">
         <th></th>
+        <th>
+          <div class="custom-control custom-checkbox">
+            <input class="custom-control-input field_key just_header" id="table_select_all_hidden" type="checkbox">
+            <label class="string optional control-label custom-control-label" for="table_select_all_hidden"> </label>
+          </div>
+        </th>
         <th>#</th>
         <% if !@fields.nil? %>
         <% @fields.each do |field|  %>

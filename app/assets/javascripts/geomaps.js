@@ -16,6 +16,7 @@ Navarra.geomaps = function() {
   var last_lat = 0;
   var last_long = 0;
   var inn = ""
+  var first_time_internal_layers = true;
 
   var init = function() {
 
@@ -117,6 +118,30 @@ Navarra.geomaps = function() {
       "Claro": grayscale,
       "Oscuro": CartoDB_DarkMatter
     };
+
+    //genera Modal de mapas base y proyecto activo
+    Object.keys(baseMaps).forEach(function(key,index){
+      if(index==0){var checked_text ="checked=true"} else {checked_text=""}
+      var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+                    '<input class="custom-control-input" '+checked_text +' onchange="select_layer()" id="mapabase_'+key+'" type="radio" name="radio_mapabase">'+
+                    '<label class="string optional control-label custom-control-label" for="mapabase_'+key+'"> </label>'+
+                    '</div>'+
+                    '<label for=mapa_base1>'+key+'</label></a>';
+      $('#basemaps_container').append(new_item);    
+    });
+    var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+                    '<input class="custom-control-input" checked=true onchange="select_layer()" id="checkbox_'+Navarra.dashboards.config.name_layer+'" type="checkbox" name="radio_mapabase">'+
+                    '<label class="string optional control-label custom-control-label" for="checkbox_'+Navarra.dashboards.config.name_layer+'"> </label>'+
+                    '</div>'+
+                    '<label for=mapa_base1>'+Navarra.dashboards.config.name_project+'</label></a>';
+      $('#activeproject_container').append(new_item);    
+      var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_Seleccionados"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+                    '<input class="custom-control-input" onchange="select_layer()" id="checkbox_Seleccionados" type="checkbox" name="radio_mapabase">'+
+                    '<label class="string optional control-label custom-control-label" for="checkbox_Seleccionados"> </label>'+
+                    '</div>'+
+                    '<label for=mapa_base1>Seleccionados</label></a>';
+      $('#activeproject_container').append(new_item);    
+    // termina modal mapa base y proyecto activo
 
     var overlays = {};
 
@@ -785,7 +810,7 @@ Navarra.geomaps = function() {
 
   function current_layer() {
     name_layer = Navarra.dashboards.config.name_layer;
-    var labelLayer = Navarra.dashboards.config.name_project;
+    var labelLayer = Navarra.dashboards.config.name_layer;
     workspace = Navarra.dashboards.config.current_tenement;
     cql_filter = "1 = 1";
 
@@ -863,7 +888,7 @@ Navarra.geomaps = function() {
     var data_from_navarra = Navarra.project_types.config.data_dashboard;
     if (data_from_navarra != "") {
       cql_filter_data_not_selected = " and NOT (" + data_from_navarra + " )";
-      cql_filter_data_selected = " and " + data_from_navarra;
+      cql_filter_data_selected = " and (" + data_from_navarra + " )";
       var geometry_draw_array = Navarra.dashboards.config.size_polygon;
 
       if (geometry_draw_array.length > 0) {
@@ -956,18 +981,25 @@ Navarra.geomaps = function() {
       CQL_FILTER: cql_filter_selected
     })
 
+    console.log(cql_filter_selected)
+    console.log(cql_filter_not_selected)
     project_current_selected = layerProjectsSelected.getLayer(current_layer).addTo(mymap);
     if(data_from_navarra!=""){
-      layerControl.addOverlay(project_current_selected, " Seleccionados", null, {
+      layerControl.addOverlay(project_current_selected, "Seleccionados", null, {
         sortLayers: false
       });
+      $('#checkbox_div_Seleccionados').removeClass('d-none');
+      $('#checkbox_Seleccionados').prop("checked",true);
+    } else{
+      $('#checkbox_div_Seleccionados').addClass('d-none');
+      $('#checkbox_Seleccionados').prop("checked",false);
     }
   }
 
 
   function layers_internal() {
     current_layer = Navarra.dashboards.config.name_layer;
-    current_layer_name = Navarra.dashboards.config.name_project;
+    current_layer_name = Navarra.dashboards.config.name_layer;
 
     // verifica que capas estás chequeadas
     var active_internal_layers=[];
@@ -976,7 +1008,7 @@ Navarra.geomaps = function() {
       if(check_layers[l].type=='checkbox'){
         var name_layer_project = $(check_layers[l]).next().html().substring(1);
 
-        if(name_layer_project.toLowerCase()!=current_layer_name.toLowerCase() && name_layer_project.toLowerCase()!=" seleccionados" )
+        if(name_layer_project.toLowerCase()!=current_layer_name.toLowerCase() && name_layer_project.toLowerCase()!="seleccionados" )
         active_internal_layers.push(name_layer_project);
       }
     }
@@ -987,7 +1019,7 @@ Navarra.geomaps = function() {
       mymap.removeLayer(layer_array[x]);
       layerControl.removeLayer(layer_array[x]);
     }
-    layer_array=[];
+    layer_array=[];layers_internal
 
     if(xhr_current_layer && xhr_current_layer.readyState != 4) {
       xhr_current_layer.abort();
@@ -1083,9 +1115,29 @@ Navarra.geomaps = function() {
           })
 
           projectsa = layerSubProjects.getLayer(layer_current);
-          layerControl.addOverlay(projectsa, label_layer, null, {
+          layerControl.addOverlay(projectsa, layer, null, {
             sortLayers: true
           });
+          //genera Modal de capas internas
+          if(first_time_internal_layers){
+            var new_item = 
+                    '<div>'+
+                    '<a class="dropdown-item d-flex" href="#" style="justify-content:space-between">'+
+                    '<div class="d-inline mr-3">'+
+                    '<div class="custom-control custom-checkbox" style="display: inline-block;">'+
+                    '<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+layer+'" type="checkbox" name="radio_mapabase">'+
+                    '<label id="checkboxlabel_'+layer+'" class="string optional control-label custom-control-label" for="checkbox_'+layer+'"> </label>'+
+                    '</div>'+
+                    '<label for=mapa_base1>'+label_layer+'</label>'+
+                    '</div>'+
+                    '<div class="custom-control custom-switch d-inline">'+
+                    '<input type="checkbox" id="switch_'+layer+'" class="custom-control-input layer_filter_switch" onchange="switch_filtered_layer()">'+
+                    '<label id="switchlabel_'+layer+'" class="custom-control-label custom-role-colour" for="switch_'+layer+'">Filtrados</label>'+
+                    '</div></a>'+
+                    '</div>'
+
+            $('#projects_container').append(new_item);
+          }
           layer_array.push(projectsa);
 
           // genera capa con los datos que se intersectan con la capa activa
@@ -1094,8 +1146,7 @@ Navarra.geomaps = function() {
           var current_layer_filters = Navarra.project_types.config.current_layer_filters.replace(/'/g,"''");
           cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + name_layer + "', 'the_geom', '" + current_layer_filters + "')))";
 
-       //   cql_filter = "1 = 1 and INTERSECTS(the_geom, collectGeometries(queryCollection('geoworks:arriendochile', 'the_geom', '1 = 1 and comune = ''Independencia'' AND row_enabled = true'))) AND row_enabled = true";
-          // genera capa con todos los datos, sin tener en cuenta la intersección con la capa activa
+       // genera capa con todos los datos, sin tener en cuenta la intersección con la capa activa
           layer_current_intersect = workspace + ":" + layer;
 
           layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
@@ -1114,22 +1165,24 @@ Navarra.geomaps = function() {
           })
 
           projectsa = layerSubProjects.getLayer(layer_current_intersect);
-          layerControl.addOverlay(projectsa, label_layer+ " (Datos Filtrados)", null, {
+          layerControl.addOverlay(projectsa, layer+ "-filtrados", null, {
             sortLayers: true
           });
           layer_array.push(projectsa);
         }) // Cierra each data
+        
+        first_time_internal_layers = false;
 
         //vuelve a checkear las capas anteriormente checkeadas
         var check_layers = document.querySelectorAll('.leaflet-control-layers-selector');
         for(l=0; l<check_layers.length; l++){
           if(check_layers[l].type=='checkbox'){
-          var name_layer_project = $(check_layers[l]).next().html().substring(1);
-          if(active_internal_layers.indexOf(name_layer_project)>=0){
-            check_layers[l].click();
+            var name_layer_project = $(check_layers[l]).next().html().substring(1);
+            if(active_internal_layers.indexOf(name_layer_project)>=0){
+              check_layers[l].click();
+            }
           }
         }
-      }
     } // Cierra success
   }) // Cierra ajax
 } // Cierra layers_internal
@@ -1163,6 +1216,13 @@ Navarra.geomaps = function() {
           layerControl.addOverlay(layer_outer, v.name, null, {
             sortLayers: true
           });
+          //genera Modal de capas externas
+          var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+                    '<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+v.name+'" type="checkbox" name="radio_mapabase">'+
+                    '<label class="string optional control-label custom-control-label" for="checkbox_'+v.name+'"> </label>'+
+                    '</div>'+
+                    '<label for=mapa_base1>'+v.name+'</label></a>';
+          $('#externallayers_container').append(new_item);
         })
       }
     })

@@ -126,6 +126,35 @@ class ProjectTypesController < ApplicationController
     @csv_load = ProjectType.read_csv(@project_type.file)
   end
 
+  def export_geojson
+
+    filter_value = params[:filter_value]
+    filter_by_column = params[:filter_by_column]
+    order_by_column = params[:order_by_column]
+    project_type_id = params[:project_type_id]
+    name_project = params[:name_project]
+    type_box = params[:type_box]
+    size_box = params[:size_box]
+    attribute_filters = params[:attribute_filters]
+    filtered_form_ids = params[:filtered_form_ids]
+    from_date = params[:from_date]
+    to_date = params[:to_date]
+    fields = params[:fields]
+
+    # Parsea los parametros stringify
+    size_box = JSON.parse(size_box)
+    attribute_filters = JSON.parse(attribute_filters) unless attribute_filters.nil?
+    filtered_form_ids = JSON.parse(filtered_form_ids) unless filtered_form_ids.nil?
+    fields = JSON.parse(fields)
+
+    file = ProjectType.export_geojsonn filter_value, filter_by_column, order_by_column, project_type_id, type_box, size_box, attribute_filters, filtered_form_ids, from_date, to_date, fields, current_user.id
+
+    respond_to do |format|
+      format.json { send_data file.to_json, filename: "#{name_project}-#{Date.today}.geojson", type: "text/plain" }
+    end
+
+  end
+
   def filters
     respond_to do |format|
       format.js
@@ -237,7 +266,7 @@ class ProjectTypesController < ApplicationController
   def search_father_children_and_photos_data
 
     project_type_id = params[:project_type_id]
-    project_id = params[:app_id]
+    project_id = params[:app_id].to_i
 
     # Busca el rol del usuario
     customer_name = Apartment::Tenant.current
@@ -254,7 +283,9 @@ class ProjectTypesController < ApplicationController
     father_fields = ProjectField.where(project_type_id: project_type_id).order(:sort)
 
     # Busca los datos almacenados en el properties de los padres
-    father_properties = Project.where(id: project_id).pluck(:properties).first
+    unless project_id == 0
+      father_properties = Project.where(id: project_id).pluck(:properties).first
+    end
 
     father_fields_array = []
 
@@ -427,7 +458,16 @@ class ProjectTypesController < ApplicationController
 
       else
 
-        father_data = father_properties[f_field.key]
+        # Si el project_id es 0, se están editando múltiples registros por lo que se devuelven los values vacíos
+        unless project_id == 0
+          father_data = father_properties[f_field.key]
+        else
+          if f_field.field_type_id == 2 || f_field.field_type_id == 10
+            father_data = []
+          else
+            father_data = ''
+          end
+        end
 
       end
 
@@ -464,17 +504,25 @@ class ProjectTypesController < ApplicationController
       father_photos_array.push(f_photo_hash)
     end
 
-    father_status = Project
-      .joins(:project_status)
-      .where(id: project_id)
-      .pluck(:project_status_id, :name, :color)
-      .first
+    unless project_id == 0
+      father_status = Project
+        .joins(:project_status)
+        .where(id: project_id)
+        .pluck(:project_status_id, :name, :color)
+        .first
+    end
 
     father_status_hash = {}
 
-    father_status_hash['status_id'] = father_status[0]
-    father_status_hash['status_name'] = father_status[1]
-    father_status_hash['status_color'] = father_status[2]
+    unless project_id == 0
+      father_status_hash['status_id'] = father_status[0]
+      father_status_hash['status_name'] = father_status[1]
+      father_status_hash['status_color'] = father_status[2]
+    else
+      father_status_hash['status_id'] = ''
+      father_status_hash['status_name'] = ''
+      father_status_hash['status_color'] = ''
+    end
 
     data = {}
 
