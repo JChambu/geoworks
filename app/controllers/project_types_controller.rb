@@ -279,17 +279,6 @@ class ProjectTypesController < ApplicationController
         .first
     end
 
-    # Busca el rol del usuario
-    customer_name = Apartment::Tenant.current
-    Apartment::Tenant.switch 'public' do
-      customer_id = Customer.where(subdomain: customer_name).pluck(:id)
-      @user_rol = UserCustomer
-        .where(user_id: current_user.id)
-        .where(customer_id: customer_id)
-        .pluck(:role_id)
-        .first
-    end
-
     # Busca los campos del padre
     father_fields = ProjectField.where(project_type_id: project_type_id).order(:sort)
 
