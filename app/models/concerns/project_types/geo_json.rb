@@ -3,8 +3,8 @@ module ProjectTypes::GeoJson
 
   included do
     validate :is_file_type_valid?, if: :file_exist?
-
   end
+
   def save_file
     @directory = Geoworks::Shp.save(self.file, "shape")
     self.directory_name = @directory.split("/").last
@@ -50,70 +50,70 @@ module ProjectTypes::GeoJson
       end
   end
 
-
-    def load_file
-      a = []
-      self.file.each do |f|
-          if @f == "application/geo+json" || @f =="application/octet-stream"
-            load_geojson(self.id, self.name_layer, self.type_geometry, self.user_id)
-          end
-      end
-      a
+  def load_file
+    a = []
+    self.file.each do |f|
+        if @f == "application/geo+json" || @f =="application/octet-stream"
+          load_geojson(self.id, self.name_layer, self.type_geometry, self.user_id)
+        end
     end
+    a
+  end
 
-    def load_geojson project_type_id, name_layer, type_geometry, user_id
+  def load_geojson project_type_id, name_layer, type_geometry, user_id
 
-      require 'rgeo/geo_json'
+    require 'rgeo/geo_json'
 
-      @directory = save_file
-      file_name = @directory[1].split('.').first
-      items = []
-      fields = {}
-      count_insert = 0
-      count_errors = 0
-      ct = Apartment::Tenant.current
-      items = {}
-      st1 = JSON.parse(File.read("#{@directory[0]}/#{file_name}.geojson"))
-      data = RGeo::GeoJSON.decode(st1, :json_parser => :json)
-      project_status = ProjectStatus.where(project_type_id: self.id, name: 'Default').first
-      data.each do |a|
-        if a.geometry.geometry_type.to_s.downcase == self.type_geometry.downcase
-          properties = a.properties
-          properties.each do |idx, value|
-            field_type = ProjectField.where(name: idx, project_type_id: project_type_id, field_type_id: (FieldType.where(name: 'Texto').pluck(:id))).first_or_create!
-            fields[field_type.key] = value
-          end
-          ProjectField.where(name: 'app_usuario', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Texto').pluck(:id))).first_or_create!
-          ProjectField.where(name: 'app_estado', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Texto').pluck(:id))).first_or_create!
-          ProjectField.where(name: 'app_id', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Texto').pluck(:id))).first_or_create!
-          ProjectField.where(name: 'gwm_created_at', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Fecha').pluck(:id))).first_or_create!
-          ProjectField.where(name: 'gwm_updated_at', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Fecha').pluck(:id))).first_or_create!
-          fields['app_usuario'] = user_id
-          fields['app_estado'] = project_status.id
-          fields['gwm_created_at'] = Date.current
-          fields['gwm_updated_at'] = Date.current
+    @directory = save_file
+    file_name = @directory[1].split('.').first
+    items = []
+    fields = {}
+    count_insert = 0
+    count_errors = 0
+    ct = Apartment::Tenant.current
+    items = {}
+    st1 = JSON.parse(File.read("#{@directory[0]}/#{file_name}.geojson"))
+    data = RGeo::GeoJSON.decode(st1, :json_parser => :json)
+    project_status = ProjectStatus.where(project_type_id: self.id, name: 'Default').first
+    data.each do |a|
+      if a.geometry.geometry_type.to_s.downcase == self.type_geometry.downcase
+        properties = a.properties
+        properties.each do |idx, value|
+          field_type = ProjectField.where(name: idx, project_type_id: project_type_id, field_type_id: (FieldType.where(name: 'Texto').pluck(:id))).first_or_create!
+          fields[field_type.key] = value
+        end
+        ProjectField.where(name: 'app_usuario', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Texto').pluck(:id))).first_or_create!
+        ProjectField.where(name: 'app_estado', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Texto').pluck(:id))).first_or_create!
+        ProjectField.where(name: 'app_id', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Texto').pluck(:id))).first_or_create!
+        ProjectField.where(name: 'gwm_created_at', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Fecha').pluck(:id))).first_or_create!
+        ProjectField.where(name: 'gwm_updated_at', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Fecha').pluck(:id))).first_or_create!
+        fields['app_usuario'] = user_id
+        fields['app_estado'] = project_status.id
+        fields['gwm_created_at'] = Date.current
+        fields['gwm_updated_at'] = Date.current
 
-          the_geom = a.geometry.as_text
-          row = Project.create(
-            properties: fields,
-            project_type_id: project_type_id,
-            the_geom:the_geom,
-            user_id: user_id,
-            project_status_id: project_status.id,
-            gwm_created_at: Time.zone.now,
-            gwm_updated_at: Time.zone.now
-          )
-          if row.valid?
-            row.properties.merge!('app_id': row.id)
-            row.save
-            count_insert += count_insert
-          else
-            count_errors += count_errors
-          end
+        the_geom = a.geometry.as_text
+        row = Project.create(
+          properties: fields,
+          project_type_id: project_type_id,
+          the_geom:the_geom,
+          user_id: user_id,
+          project_status_id: project_status.id,
+          gwm_created_at: Time.zone.now,
+          gwm_updated_at: Time.zone.now
+        )
+        if row.valid?
+          row.properties.merge!('app_id': row.id)
+          row.save
+          count_insert += count_insert
         else
           count_errors += count_errors
         end
+      else
+        count_errors += count_errors
       end
-      return count_errors, count_insert
     end
+    return count_errors, count_insert
   end
+
+end

@@ -84,6 +84,24 @@ resize_filters = function(){
   }
 }
 
+set_layer_filter = function(){
+  // coloca las capas como filtradas
+  $('.layer_filter_switch').each(function(){
+    if(!$(this).prop("checked")) {
+      $('.layer_filter_switch').click();
+    }
+  })
+}
+
+remove_layer_filter = function(){
+  // coloca las capas como NO filtradas
+  $('.layer_filter_switch').each(function(){
+    if($(this).prop("checked")) {
+      $('.layer_filter_switch').click();
+    }
+  })
+}
+
 Navarra.dashboards.action_show = function(){
 
   var init = function(){
@@ -98,6 +116,7 @@ Navarra.dashboards.action_show = function(){
       $(".fa-spinner").css("color", "#9b9b9b");
       Navarra.project_types.config.field_point_colors = '';
       $('#colored_points').remove();
+      Navarra.geomaps.get_zoomextent();
       Navarra.geomaps.wms_filter();
       Navarra.geomaps.point_colors_data();
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
@@ -146,9 +165,15 @@ Navarra.dashboards.action_show = function(){
         })
         Navarra.project_types.config.filtered_form_ids = updated_filters;
       }
-
-      $(".fa-filter").css("color", "#9b9b9b");
       $(this).remove();
+      if($(".filter_container").length==0){
+        $(".fa-search-location").css("color", "#9b9b9b");
+        //elimina los filtros del modal de capas
+        remove_layer_filter();
+      } else{
+        $(".fa-search-location").css("color", "#d3d800");
+      }
+      Navarra.geomaps.get_zoomextent();
       Navarra.geomaps.wms_filter();
 
       // TODO: Esto se debería revisar cuando se actualice la herramienta de colorear puntos
@@ -247,5 +272,7 @@ Navarra.dashboards.action_show = function(){
     height_time_slider: height_time_slider,
     height_filters: height_filters,
     height_charts: height_charts,
+    set_layer_filter: set_layer_filter,
+    remove_layer_filter: remove_layer_filter
   }
 }();

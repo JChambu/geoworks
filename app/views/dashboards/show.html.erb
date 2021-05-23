@@ -13,62 +13,27 @@
     <% if !@dashboard.nil? %>
       Navarra.dashboards.config.dashboard_id = <%= @dashboard.id %>
     <% end %>
-    <% if @extent.length > 0  %>
+    <% if @extent.length > 0 %>
       Navarra.dashboards.config.minx = <%= @extent[0].minx %>
-      Navarra.dashboards.config.miny = <%= @extent[0].miny  %>
-      Navarra.dashboards.config.maxx = <%= @extent[0].maxx  %>
+      Navarra.dashboards.config.miny = <%= @extent[0].miny %>
+      Navarra.dashboards.config.maxx = <%= @extent[0].maxx %>
       Navarra.dashboards.config.maxy = <%= @extent[0].maxy %>
     <% end %>
 
-    // TODO: Ahora que se aplican los filtros en los datos esta lógica
-    // se está duplicando hay que unficarla con el controlador
-
-    // Carga filtro por atributos y owner
-    <% if @project_filter %>
-
-      <% if !@project_filter.properties.nil? %>
-        <% @project_filter.properties.each do |p| %>
-
-          var field_key = '<%= p[0] %>';
-          var operator = '=';
-          var value = '<%= p[1] %>';
-
-          // Aplica modificaciones si el value es array
-          if (value.match(/&quot;/g) != null) {
-            value = value.replace(/&quot;/g, '\"')
-          }
-
-          var filter = field_key + '|' + operator + '|\'' + value + '\'';
-          Navarra.project_types.config.attribute_filters.push(filter);
-
-        <% end %>
+    <% if !@project_filters.nil? %>
+      // Carga filtros por atributos y owner
+      <% if !@user_attribute_filter.nil? %>
+        Navarra.project_types.config.attribute_filters.push('<%= raw @user_attribute_filter %>');
       <% end %>
-      Navarra.project_types.config.owner = <%= @project_filter.owner %>;
-    <% end %>
-
-    <% if @cross_layer_filter %>
-      <% if !@cross_layer_filter.properties.nil? %>
-        <% @cross_layer_filter.properties.each do |f| %>
-
-        var field_key = '<%= f[0] %>';
-        var operator = '=';
-        var value = '<%= f[1] %>';
-
-        // Aplica modificaciones si el value es array
-        if (value.match(/&quot;/g) != null) {
-          value = value.replace(/&quot;/g, '\"')
-        }
-
-        var contained_filter = field_key + '|' + operator + '|\'' + value + '\'';
-        Navarra.project_types.config.cross_layer_filter.push(contained_filter);
-
+      Navarra.project_types.config.owner = <%= @project_filters.owner %>;
+      // Carga filtros intercapa
+      <% if !@project_filters.cross_layer_filter_id.nil? %>
+        <% if !@user_cross_layer_filter.nil? %>
+          Navarra.project_types.config.cross_layer_filter.push('<%= raw @user_cross_layer_filter %>');
         <% end %>
+        Navarra.project_types.config.cross_layer_owner = <%= @cross_layer_filter.owner %>;
+        Navarra.project_types.config.cross_layer = '<%= @cross_layer %>';
       <% end %>
-      Navarra.project_types.config.cross_layer_owner = <%= @cross_layer_filter.owner %>;
-    <% end %>
-
-    <% if @cross_layer %>
-      Navarra.project_types.config.cross_layer = '<%= @cross_layer %>';
     <% end %>
 
     //cerrar paneles laterales
@@ -166,7 +131,66 @@
       }
     }
 
-  </script>
+//Funciones para modal de capas
+$(document).ready(function () {
+    $(".custom_dropdown_container").click(function (e) {
+      e.stopPropagation();
+    });
+    var leaflet_layer_position = $('.leaflet-control-layers-toggle').offset();
+    var top_position = (leaflet_layer_position.top-10)+"px";
+    var left_position = (leaflet_layer_position.left-10)+"px";
+    $('#custom_layer_control').css("top",top_position);
+    $('#custom_layer_control').css("left",left_position);
+  });
+
+function select_layer(layer){
+  if(layer!=undefined){
+    layer_selected = layer;
+  } else{
+    layer_selected = event.target.id.split('_')[1];
+  }
+  
+  check_layers = document.querySelectorAll('input.leaflet-control-layers-selector');
+  for (l = 0; l < check_layers.length; l++) {
+      var name_layer_project = $(check_layers[l]).next().html().substring(1);
+      if(layer_selected == name_layer_project){
+        $(check_layers[l]).click();
+        $("#layersDropdown").click();
+      }
+  }
+}
+
+function open_layer_container(){
+  var id_title = event.target.id.split('-')[0];
+  if($('#'+id_title).hasClass('d-none')){
+    $('#'+id_title).removeClass('d-none');
+  } else{
+    $('#'+id_title).addClass('d-none');
+  } 
+}
+
+function switch_filtered_layer(){
+  var id_switch = event.target.id.substring(7);
+  var texto = $('#checkbox_'+id_switch).attr('id');
+  if(texto.indexOf("-filtrados") > -1){
+    texto = texto.replace("-filtrados","");
+  } else{
+    texto+= "-filtrados";
+  }
+  $('#checkbox_'+id_switch).prop("id",texto);
+  $('#switch_'+id_switch).prop("id",texto.replace("checkbox_","switch_"));
+  $('#checkboxlabel_'+id_switch).prop("for",texto);
+  $('#switchlabel_'+id_switch).prop("for",texto.replace("checkbox_","switch_"));
+  $('#checkboxlabel_'+id_switch).prop("id",texto.replace("checkbox_","checkboxlabel_"));
+  $('#switchlabel_'+id_switch).prop("id",texto.replace("checkbox_","switchlabel_"));
+  if($('#'+texto).prop("checked")){
+    select_layer(id_switch);
+    select_layer(texto.substring(9));
+  } 
+}
+// terminan funciones para modal de capas
+
+</script>
 
 <% end %>
 
@@ -297,3 +321,28 @@
 <%= render :partial =>'project_data_report' %>
 
 <%= render :partial =>'project_data_info' %>
+
+
+
+<div class="nav-item dropdown" id="custom_layer_control" style="position: absolute;z-index: 3000;">
+      <a class="nav-link dropdown-toggle nocaret" href="#" id="layersDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 30px; height: 30px; margin: 10px">
+      </a>
+      <div class="dropdown-menu custom_dropdown_container" aria-labelledby="layersDropdown" style="z-index: 2000; width: max-content">
+         
+          <a class="dropdown-item" href="#" id="basemaps_container-title" onclick="open_layer_container()">Mapas Base</a>
+          <div class="modal-content custom_dropdown d-none" id="basemaps_container">
+          </div>
+
+          <a class="dropdown-item" href="#" id="activeproject_container-title" onclick="open_layer_container()">Proyecto Activo</a>
+          <div class="modal-content custom_dropdown d-none" id="activeproject_container">
+          </div>
+
+           <a class="dropdown-item" href="#" id="projects_container-title" onclick="open_layer_container()">Otros Proyectos</a>
+          <div class="modal-content custom_dropdown d-none" id="projects_container">
+          </div>
+
+           <a class="dropdown-item" href="#" id="externallayers_container-title" onclick="open_layer_container()">Capas Externas</a>
+          <div class="modal-content custom_dropdown d-none" id="externallayers_container">
+          </div>          
+      </div>
+    </div>

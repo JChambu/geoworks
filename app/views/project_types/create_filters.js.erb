@@ -2,18 +2,13 @@ table = '<%= @table %>';
 field_name = '<%= @field_name %>';
 field_key = '<%= params[:q][:project_field]%>';
 operator = '<%= raw params[:q][:filters] %>';
-value = '<%= params[:q][:input_value] %>';
+value = '<%= raw params[:q][:input_value] %>';
 filtered_form_ids = '<%= @filtered_form_ids %>';
 
-// Aplica modificaciones si el value es array
-if (value.match(/&quot;/g) != null) {
-  value = value.replace(/&quot;/g, '\"')
-  value_view = value.replace(/[\[\]\"]/g, "")
-} else {
-  value_view = value
-}
+// Quita los corchetes de los listados
+value_view = value.replace(/[\[\]\"]/g, "")
 
-var filter = field_key + '|' + operator + '|\'' + value + '\'';
+var filter = field_key + '|' + operator + '|' + value;
 
 // Guarda el filtro dependiendo si es para la tabla padres o hijos
 if (table == 'form_filter') {
@@ -27,7 +22,7 @@ var filter_view = field_name + " " + operator + " " + value_view;
 // Elimina y vuelve a agregar el item al card Filtros Activos
 $('#filter-body').append(
   $('<div>', { // item
-    'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow ' + table,
+    'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow filter_container ' + table,
     'id': filter,
     'value': filtered_form_ids
   }).append(
@@ -45,13 +40,18 @@ $('#filter-body').append(
 
 resize_filters();
 resize_graphics();
+set_layer_filter();
 
 $("#filters-modal").modal('hide');
 //$("#filters-modal").remove();
-$(".fa-filter").css("color", "#d3d800");
+$(".fa-search-location").css("color", "#d3d800");
 var point_color = Navarra.project_types.config.field_point_colors;
 if (point_color == '') {
+  Navarra.geomaps.get_zoomextent();
   Navarra.geomaps.wms_filter();
 } else {
+  Navarra.geomaps.get_zoomextent();
   Navarra.geomaps.point_colors_data();
 }
+
+//coloca las capas de proyectos como filtradas

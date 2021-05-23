@@ -77,11 +77,8 @@ class GraphicsController < ApplicationController
   end
 
   def update_sort
-
     sort = params[:sort_data]
     sort.each do |s, p|
-      p s
-      p p
       @graphic = Graphic.find(s)
       @graphic.update_sort!(p)
     end
