@@ -111,9 +111,9 @@ function init_kpi(size_box = null) {
        // }
 
       }); // Cierra forEach
+      $('#div_pagination').css("visibility","visible");
     } // Cierra success
   }); // Cierra ajax
-  $('#div_pagination').css("visibility","visible");
 }; // Cierra init_kpi
 
 function capitalize(s) {
