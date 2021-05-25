@@ -22,6 +22,7 @@ Number.prototype.format = function(n, x, s, c) {
 };
 
 function init_kpi(size_box = null) {
+  $('#div_pagination').css("visibility","hidden");
   $('.tile_count').empty();
   html = ' <div class="spinner-border" style="margin:10px" role="status">'+
         '<span class="sr-only">Loading...</span>'+
@@ -112,6 +113,7 @@ function init_kpi(size_box = null) {
       }); // Cierra forEach
     } // Cierra success
   }); // Cierra ajax
+  $('#div_pagination').css("visibility","visible");
 }; // Cierra init_kpi
 
 function capitalize(s) {
