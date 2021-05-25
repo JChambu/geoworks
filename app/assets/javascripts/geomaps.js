@@ -981,8 +981,6 @@ Navarra.geomaps = function() {
       CQL_FILTER: cql_filter_selected
     })
 
-    console.log(cql_filter_selected)
-    console.log(cql_filter_not_selected)
     project_current_selected = layerProjectsSelected.getLayer(current_layer).addTo(mymap);
     if(data_from_navarra!=""){
       layerControl.addOverlay(project_current_selected, "Seleccionados", null, {

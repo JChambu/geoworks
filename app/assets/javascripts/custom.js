@@ -121,7 +121,6 @@ function capitalize(s) {
 };
 
 function init_chart_doughnut(size_box = null, create_time_s = true) {
-  console.log("Inicia graficos")
   // no calcula la función si los gráficos están escondidos
   if (!$('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded')) {
     return;
@@ -1134,7 +1133,6 @@ function draw_charts() {
 //****** FUNCIONES PARA TABLA DE DATOS*****
 // Función para traer todos los datos de los registros contenidos y filtrados
 function init_data_dashboard(haschange,close_info) {
-  console.log("Ingresa a INIT DATA")
   //Evita calcular la tabla si está oculta o si no existe por autorización de roles
   if ($('#status-view').hasClass('status-view-condensed') || $('.table_data_container').length==0) {
     return;
@@ -1298,7 +1296,6 @@ function init_data_dashboard(haschange,close_info) {
         // termina llenado de la tabla
 
       $(".fakeLoader").css("display", "none");
-      console.log("Termina de dibujar tabla")
     }
   });
 
@@ -1400,14 +1397,15 @@ function data_pagination(selected, active_page) {
       numbers += '<li class="page_foward invisible"><a>></a></li>';
     }
     $('#page_numbers').replaceWith('<ul class="pagination pagination-sm m-0" id="page_numbers">' + numbers + '</ul>');
-  } else {
-    $('#page_numbers').replaceWith('<ul class="pagination pagination-sm m-0" id="page_numbers"></ul>');
-  }
   // si la página activa no existe vuelve a la página 1
     if($('.active_page').length==0){
       $('.page_data').last().addClass('active_page');
       init_data_dashboard(false); // cómo la página no existe vuelve a buscar los datos, cancelando el ajax anterior
     }
+  } else {
+    $('#page_numbers').replaceWith('<ul class="pagination pagination-sm m-0" id="page_numbers"></ul>');
+  }
+  
   //Pagina activa
   $(".page_data").click(function() {
     active_page = parseInt($(this).html());
@@ -3207,7 +3205,6 @@ function edit_file(edit_parent, edit_child, edit_status){
           var indexval=indexColumn+1;
           app_ids.forEach(function(row_element){
             if($('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html()!=properties_to_save[column.value] ){
-              console.log("Cambia "+column.value)
               $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(properties_to_save[column.value]);
               $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-weight","bold");
               $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-size","1.5em");
@@ -3539,7 +3536,6 @@ function download_geojson() {
   $('.header_column').not('.d-none').find(':input').each(function(){
     column_visibles.push($(this).val());
   })
-  console.log(column_visibles)
 
   var attribute_filters = Navarra.project_types.config.attribute_filters;
   var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
