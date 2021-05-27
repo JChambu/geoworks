@@ -329,6 +329,7 @@ Navarra.geomaps = function() {
     layers_external();
     show_kpis();
     init_time_slider();
+    prueba();
 
     mymap.on('moveend', onMapZoomedMoved);
     if (markers != undefined) {
@@ -951,7 +952,7 @@ Navarra.geomaps = function() {
       format_options: 'callback:getJson',
       CQL_FILTER: cql_filter_not_selected
     })
-
+    console.log(layerProjects)
     project_current = layerProjects.getLayer(current_layer).addTo(mymap);
     layerControl.addOverlay(project_current, labelLayer, null, {
       sortLayers: false
@@ -1228,7 +1229,6 @@ Navarra.geomaps = function() {
     })
   }
 
-var project_names=["ArriendosChile","PoligonosChile"];
   function popup() {
     MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
@@ -1352,6 +1352,83 @@ function get_zoomextent(){
        }
     });
   }
+}
+
+function prueba(){
+  var owsrootUrl = 'http://localhost:8600/geoserver/wfs';
+
+var defaultParameters = {
+          service: 'WFS',
+          version: '1.0.0',
+          request: 'GetFeature',
+          typeName: 'poligonoschile',
+          outputFormat: 'application/json'
+};
+var parameters = L.Util.extend(defaultParameters);
+
+var URL = owsrootUrl + L.Util.getParamString(parameters);
+  
+  $.ajax({
+        url: URL,
+        success: function (data) {
+          
+        var geojson = new L.geoJson(data, {
+          style: {"color":"#2ECCFA","weight":2},
+          onEachFeature: function(feature, layer){
+          layer.bindPopup("Has hecho click en " + feature.properties.superficie ,{autoClose:false});
+      }}
+    ).addTo(mymap);
+        geojson.openPopup();
+        var newpopup = L.popup({
+  closeOnClick: false,
+  autoClose: false
+}).setContent("popup 1");
+var newpopup2 = L.popup({
+  closeOnClick: false,
+  autoClose: false
+}).setContent("popup2");
+var newpopup3 = L.popup({
+  closeOnClick: false,
+  autoClose: false
+}).setContent("popup3");
+      var marker1 = new  L.marker([-34, -68]).addTo(mymap).bindPopup(newpopup);
+
+  }
+});
+
+  var layers = {};
+  /*
+    // agrega registros NO seleccionados en la tabla
+    layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
+      layers: current_layer, //nombre de la capa (ver get capabilities)
+      format: 'image/png',
+      transparent: 'true',
+      opacity: 1,
+      version: '1.0.0', //wms version (ver get capabilities)
+      tiled: true,
+      maxZoom: 20,
+      styles: style,
+      INFO_FORMAT: 'application/json',
+      format_options: 'callback:getJson',
+      CQL_FILTER: cql_filter_not_selected
+    })*/
+
+    // Initialize the WFST layer 
+    
+    /*
+    layers.drawnItems = L.wfst(null,{
+        // Required
+        url : 'http://localhost:8600/geoserver/wms',
+        typeNS: 'geoworks',
+        typeName: 'poligonoschile',
+        featureNS: 'geoworks',
+        featureType: 'poligonoschile'
+     //   featureNS : 'arriendochile',
+     //   featureType : 'point',
+     //   primaryKeyField: 'id'
+    }).addTo(mymap);
+    
+*/
 }
 
   return {

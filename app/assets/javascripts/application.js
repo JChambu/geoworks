@@ -29,6 +29,7 @@
 //= require leaflet/leaflet.layerindex.js
 //= require leaflet/rtree.js
 //= require leaflet/leaflet.wms.js
+//= require leaflet/leaflet.wfs.js
 //= require leaflet/spin.js
 //= require leaflet/leaflet.spin.js
 //= require jquery-ui/widgets/sortable
