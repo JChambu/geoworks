@@ -147,7 +147,7 @@ function select_layer(layer){
   if(layer!=undefined){
     layer_selected = layer;
   } else{
-    layer_selected = event.target.id.split('_')[1];
+    layer_selected = event.target.id.substring(9);
   }
   
   check_layers = document.querySelectorAll('input.leaflet-control-layers-selector');
