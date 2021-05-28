@@ -7,6 +7,7 @@ var xhr_popup = null;
 Navarra.namespace("geomaps");
 var first_layer=false;
 var layer_array=[];
+var labels;
 Navarra.geomaps = function() {
   var mymap, markers, editableLayers, projects, layerProjects, layerProjectsSelected, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
   var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current,project_current_selected,current_tenement;
@@ -140,6 +141,12 @@ Navarra.geomaps = function() {
                     '<label class="string optional control-label custom-control-label" for="checkbox_Seleccionados"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>Seleccionados</label></a>';
+      $('#activeproject_container').append(new_item);  
+      var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_Etiquetas"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+                    '<input class="custom-control-input" onchange="Navarra.geomaps.show_labels()" id="checkbox_Etiquetas" type="checkbox" name="radio_mapabase">'+
+                    '<label class="string optional control-label custom-control-label" for="checkbox_Etiquetas"> </label>'+
+                    '</div>'+
+                    '<label for=mapa_base1>Etiquetas</label></a>';
       $('#activeproject_container').append(new_item);    
     // termina modal mapa base y proyecto activo
 
@@ -329,7 +336,6 @@ Navarra.geomaps = function() {
     layers_external();
     show_kpis();
     init_time_slider();
-    prueba();
 
     mymap.on('moveend', onMapZoomedMoved);
     if (markers != undefined) {
@@ -456,7 +462,56 @@ Navarra.geomaps = function() {
 
 
   function wms_filter() {
+    var cql_filter = getCQLFilter(false);
+    var heatmap_actived = Navarra.project_types.config.heatmap_field;
+    if (heatmap_actived != '') {
+      Navarra.geomaps.heatmap_data();
+    }
 
+    switch (type_geometry) {
+      case 'Point':
+        style = 'poi_new';
+        break;
+      case 'Polygon':
+        style = 'polygon_new';
+        break;
+      default:
+        style = 'poi_new';
+    }
+
+    mymap.removeLayer(project_current);
+    mymap.removeLayer(project_current_selected);
+    if (typeof(projectss) !== 'undefined') {
+      mymap.removeLayer(projectss);
+    }
+
+    current_tenement = Navarra.dashboards.config.current_tenement;
+    layer_current = current_tenement + ":" + name_layer;
+    projectFilterLayer = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
+      layers: layer_current, //nombre de la capa (ver get capabilities)
+      format: 'image/png',
+      transparent: 'true',
+      opacity: 1,
+      version: '1.0.0', //wms version (ver get capabilities)
+      tiled: true,
+      maxZoom: 20,
+      styles: style,
+      INFO_FORMAT: 'application/json',
+      format_options: 'callback:getJson',
+      CQL_FILTER: cql_filter
+    })
+    console.log("Filtro")
+    console.log(cql_filter)
+    projectss = projectFilterLayer.getLayer(layer_current).addTo(mymap);
+    // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
+    //show_kpis();
+    //show_data_dashboard();
+    //recalcula las capas internas
+    Navarra.project_types.config.current_layer_filters = cql_filter;
+    layers_internal();
+  }
+
+  function getCQLFilter(set_bbox){
     var cql_filter = 'project_type_id = ' + Navarra.dashboards.config.project_type_id;
 
     // Aplica filtros por hijos generados por el usuario
@@ -511,7 +566,6 @@ Navarra.geomaps = function() {
       }
 
       cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + cl_name + "', 'the_geom', '" + cl_clasue + "')))"
-
     }
 
     // Aplica filtro de time_slider
@@ -523,51 +577,33 @@ Navarra.geomaps = function() {
     } else {
       cql_filter += ' AND row_enabled = true'
     }
-
-    var heatmap_actived = Navarra.project_types.config.heatmap_field;
-    if (heatmap_actived != '') {
-      Navarra.geomaps.heatmap_data();
-    }
-
-    switch (type_geometry) {
-      case 'Point':
-        style = 'poi_new';
-        break;
-      case 'Polygon':
-        style = 'polygon_new';
-        break;
-      default:
-        style = 'poi_new';
-    }
-
-    mymap.removeLayer(project_current);
-    mymap.removeLayer(project_current_selected);
-    if (typeof(projectss) !== 'undefined') {
-      mymap.removeLayer(projectss);
-    }
-
-    current_tenement = Navarra.dashboards.config.current_tenement;
-    layer_current = current_tenement + ":" + name_layer;
-    projectFilterLayer = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
-      layers: layer_current, //nombre de la capa (ver get capabilities)
-      format: 'image/png',
-      transparent: 'true',
-      opacity: 1,
-      version: '1.0.0', //wms version (ver get capabilities)
-      tiled: true,
-      maxZoom: 20,
-      styles: style,
-      INFO_FORMAT: 'application/json',
-      format_options: 'callback:getJson',
-      CQL_FILTER: cql_filter
-    })
-    projectss = projectFilterLayer.getLayer(layer_current).addTo(mymap);
-    // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
-    //show_kpis();
-    //show_data_dashboard();
-    //recalcula las capas internas
-    Navarra.project_types.config.current_layer_filters = cql_filter;
-    layers_internal();
+    if(set_bbox){
+      var geometry_draw_array = Navarra.dashboards.config.size_polygon;
+      if (geometry_draw_array.length == 0) {
+        var size_ext = Navarra.dashboards.config.size_box;
+        var bbox_text = " AND BBOX(the_geom, "+size_ext['_southWest']['lng']+", "+size_ext['_southWest']['lat']+", "+size_ext['_northEast']['lng']+", "+size_ext['_northEast']['lat']+")";
+        cql_filter += bbox_text;
+      } else{
+        var geometry_draw = "MULTIPOLYGON(";
+        for (xx = 0; xx < geometry_draw_array.length; xx++) {
+          if (xx > 0) {
+            geometry_draw += ",((";
+          } else {
+            geometry_draw += "((";
+          }
+          for (x = 0; x < geometry_draw_array[xx].length; x++) {
+            if (x > 0) {
+              geometry_draw += " , ";
+            }
+            geometry_draw += geometry_draw_array[xx][x][0] + " " + geometry_draw_array[xx][x][1];
+          }
+          geometry_draw += "))";
+        }
+        geometry_draw += ")";
+        cql_filter += " and WITHIN(the_geom, " + geometry_draw + ")";
+      }
+  }
+    return cql_filter;
   }
 
   // NOTE: La herramienta Colorear Puntos está descontinuada
@@ -953,6 +989,7 @@ Navarra.geomaps = function() {
       CQL_FILTER: cql_filter_not_selected
     })
     console.log(layerProjects)
+    console.log(cql_filter_not_selected)
     project_current = layerProjects.getLayer(current_layer).addTo(mymap);
     layerControl.addOverlay(project_current, labelLayer, null, {
       sortLayers: false
@@ -1354,81 +1391,52 @@ function get_zoomextent(){
   }
 }
 
-function prueba(){
-  var owsrootUrl = 'http://localhost:8600/geoserver/wfs';
 
-var defaultParameters = {
-          service: 'WFS',
-          version: '1.0.0',
-          request: 'GetFeature',
-          typeName: 'poligonoschile',
-          outputFormat: 'application/json'
-};
-var parameters = L.Util.extend(defaultParameters);
-
-var URL = owsrootUrl + L.Util.getParamString(parameters);
-  
+function show_labels(){
+  if($('#checkbox_Etiquetas').prop('checked')==false){
+    mymap.removeLayer(labels);
+  }else{
+    var cql_filter =  getCQLFilter(true);
+  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
+  var defaultParameters = {
+    service: 'WFS',
+    version: '1.0.0',
+    request: 'GetFeature',
+    typeName: Navarra.dashboards.config.name_layer,
+    outputFormat: 'application/json',
+    CQL_FILTER: cql_filter
+  };
+  var parameters = L.Util.extend(defaultParameters);
+  var URL = owsrootUrl + L.Util.getParamString(parameters);
   $.ajax({
-        url: URL,
-        success: function (data) {
-          
-        var geojson = new L.geoJson(data, {
-          style: {"color":"#2ECCFA","weight":2},
-          onEachFeature: function(feature, layer){
-          layer.bindPopup("Has hecho click en " + feature.properties.superficie ,{autoClose:false});
-      }}
-    ).addTo(mymap);
-        geojson.openPopup();
-        var newpopup = L.popup({
-  closeOnClick: false,
-  autoClose: false
-}).setContent("popup 1");
-var newpopup2 = L.popup({
-  closeOnClick: false,
-  autoClose: false
-}).setContent("popup2");
-var newpopup3 = L.popup({
-  closeOnClick: false,
-  autoClose: false
-}).setContent("popup3");
-      var marker1 = new  L.marker([-34, -68]).addTo(mymap).bindPopup(newpopup);
-
+    url: URL,
+    success: function (data) {
+    labels = new L.LayerGroup();
+    var geojson = new L.geoJson(data, {
+      onEachFeature: function(feature, layer){
+        switch (type_geometry) {
+          case 'Point':
+            var latlng_new = layer._latlng;
+          break;
+          case 'Polygon':
+            var latlongs = layer._latlngs;
+            var poligon_new = new L.Polygon(latlongs);
+            var center = poligon_new.getBounds().getCenter();
+            var latlng_new = new L.LatLng(center.lat,center.lng)
+          break;
+        }
+        
+        var popupContent1 = '<p>'+feature.properties.nmero+'</p>';
+        var popup_new = new L.Popup({closeButton:false, className: 'custom_label', autoPan:false});
+        popup_new.setLatLng(latlng_new);
+        popup_new.setContent(popupContent1);
+        labels.addLayer(popup_new)
+      }
+    });
+    mymap.addLayer(labels);
+    }
+  });
   }
-});
-
-  var layers = {};
-  /*
-    // agrega registros NO seleccionados en la tabla
-    layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
-      layers: current_layer, //nombre de la capa (ver get capabilities)
-      format: 'image/png',
-      transparent: 'true',
-      opacity: 1,
-      version: '1.0.0', //wms version (ver get capabilities)
-      tiled: true,
-      maxZoom: 20,
-      styles: style,
-      INFO_FORMAT: 'application/json',
-      format_options: 'callback:getJson',
-      CQL_FILTER: cql_filter_not_selected
-    })*/
-
-    // Initialize the WFST layer 
-    
-    /*
-    layers.drawnItems = L.wfst(null,{
-        // Required
-        url : 'http://localhost:8600/geoserver/wms',
-        typeNS: 'geoworks',
-        typeName: 'poligonoschile',
-        featureNS: 'geoworks',
-        featureType: 'poligonoschile'
-     //   featureNS : 'arriendochile',
-     //   featureType : 'point',
-     //   primaryKeyField: 'id'
-    }).addTo(mymap);
-    
-*/
 }
 
   return {
@@ -1443,6 +1451,7 @@ var newpopup3 = L.popup({
     layers_external: layers_external,
     popup: popup,
     close_all_popups: close_all_popups,
-    get_zoomextent: get_zoomextent
+    get_zoomextent: get_zoomextent,
+    show_labels:show_labels
   }
 }();

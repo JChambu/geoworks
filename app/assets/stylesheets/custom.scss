@@ -349,6 +349,14 @@ div.custom-menu.show {
   cursor:pointer;
 }
 
+/*Modifica el popup de los Labels */
+.custom_label .leaflet-popup-content-wrapper{
+  padding:0px 2px 0px 2px!important;
+}
+.custom_label  .leaflet-popup-content{
+  line-height: 0.2em;
+}
+
 /* Evita los elementos de leaflet de la derecha se superpongan con el sidebar */
 .leaflet-right {
   margin-right: 30%;
