@@ -1416,6 +1416,7 @@ function show_labels(setbbox){
   };
   var parameters = L.Util.extend(defaultParameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
+  var label_fields = $('.field_label');
   $.ajax({
     url: URL,
     success: function (data) {
@@ -1433,8 +1434,13 @@ function show_labels(setbbox){
             var latlng_new = new L.LatLng(center.lat,center.lng)
           break;
         }
-        
-        var popupContent1 = '<p>'+feature.properties.nmero+'</p>';
+        var popupContent1 = "";
+        label_fields.each(function(){
+          key_label = $(this).val();
+          if(feature.properties[key_label]!=null){
+            popupContent1 += '<p>'+feature.properties[key_label]+'</p>';
+          }
+        });
         var popup_new = new L.Popup({closeButton:false, closeOnClick:false, className: 'custom_label', autoPan:false});
         popup_new.setLatLng(latlng_new);
         popup_new.setContent(popupContent1);

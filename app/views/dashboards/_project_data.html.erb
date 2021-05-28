@@ -52,6 +52,10 @@ $('#table_select_all').click(function(){
   }
 })
 
+//Oculta labels si no está en el modelo de datos
+  if($('.field_label').length==0){
+    $('#checkbox_Etiquetas').prop("disabled",true);
+  }
 });
 
 //ordena descendente y ascendente
@@ -175,6 +179,9 @@ function get_string_filter(){
     <% if !@fields.nil? %>
     <% index = 0 %>
       <% @fields.each do |field|  %>
+        <%if field.heatmap_field %>
+        <input class="d-none field_label" value=<%=field.key%>>
+        <% end %>
         <% if field.field_type_id != 11 && field.field_type_id != 7  %>
           <% index=index+1 %>
           <% if !field.popup %>
