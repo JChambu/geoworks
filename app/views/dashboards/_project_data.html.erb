@@ -103,10 +103,10 @@ function show_column(index,){
 }
 
 //mostrar dato en el mapa
-function show_item(index, appid_selected){
+function show_item(appid_selected){
  if(event.target.id.substring(0,13)=="check_select_"){return;}
- if($('table tbody tr:nth-child('+(index+1)+')').hasClass('found')){
-  $('table tbody tr:nth-child('+(index+1)+')').removeClass('found');
+ if($('#row_table_data'+appid_selected).hasClass('found')){
+  $('#row_table_data'+appid_selected).removeClass('found');
   var string_filter = get_string_filter();
   var text_to_replace = "or app_id = '"+appid_selected+"'";
   var text_to_replace1 = "app_id = '"+appid_selected+"' or";
@@ -117,7 +117,7 @@ function show_item(index, appid_selected){
   $("#info-modal").modal('hide');
  }else{
    $('table tbody tr').not('.tr_checked').removeClass('found');
-   $('table tbody tr:nth-child('+(index+1)+')').addClass('found');
+   $('#row_table_data'+appid_selected).addClass('found');
    var string_filter = get_string_filter();
    if(string_filter==""){
     string_filter = "app_id = '"+appid_selected+"'"; 
@@ -206,7 +206,7 @@ function get_string_filter(){
     <i class="fas fa-times view-data" id="view-data-hidden"></i>
   </div>
 
-  <div class="mt-1" style="float: right;">
+  <div class="mt-1" id="div_pagination" style="float: right;">
     <div class="dropdown" style="display: inline-block;">
       <h6 class="dropdown-toggle select_perpage m-0 mr-3"  id="dropdownMenuButton" data-toggle   ="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 0.8em; cursor: pointer;">
         20/pág
