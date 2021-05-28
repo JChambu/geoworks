@@ -143,7 +143,7 @@ Navarra.geomaps = function() {
                     '<label for=mapa_base1>Seleccionados</label></a>';
       $('#activeproject_container').append(new_item);  
       var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_Etiquetas"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
-                    '<input class="custom-control-input" onchange="Navarra.geomaps.show_labels()" id="checkbox_Etiquetas" type="checkbox" name="radio_mapabase">'+
+                    '<input class="custom-control-input" onchange="Navarra.geomaps.show_labels(true)" id="checkbox_Etiquetas" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_Etiquetas"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>Etiquetas</label></a>';
@@ -509,6 +509,8 @@ Navarra.geomaps = function() {
     //recalcula las capas internas
     Navarra.project_types.config.current_layer_filters = cql_filter;
     layers_internal();
+    // espera unos segundos para que el mapa se acomode
+    show_labels(false);
   }
 
   function getCQLFilter(set_bbox){
@@ -1392,11 +1394,17 @@ function get_zoomextent(){
 }
 
 
-function show_labels(){
-  if($('#checkbox_Etiquetas').prop('checked')==false){
-    mymap.removeLayer(labels);
-  }else{
-    var cql_filter =  getCQLFilter(true);
+function show_labels(setbbox){
+  if(labels!=undefined){
+      mymap.removeLayer(labels);      
+    }
+  if($('#checkbox_Etiquetas').prop('checked')==true){
+    if(setbbox){
+      var cql_filter =  getCQLFilter(true);
+    }else{
+      var cql_filter =  getCQLFilter(false);
+    }
+  $(".fakeLoader").css("display", "block");  
   var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
   var defaultParameters = {
     service: 'WFS',
@@ -1427,13 +1435,14 @@ function show_labels(){
         }
         
         var popupContent1 = '<p>'+feature.properties.nmero+'</p>';
-        var popup_new = new L.Popup({closeButton:false, className: 'custom_label', autoPan:false});
+        var popup_new = new L.Popup({closeButton:false, closeOnClick:false, className: 'custom_label', autoPan:false});
         popup_new.setLatLng(latlng_new);
         popup_new.setContent(popupContent1);
         labels.addLayer(popup_new)
       }
     });
     mymap.addLayer(labels);
+    $(".fakeLoader").css("display", "none");
     }
   });
   }
