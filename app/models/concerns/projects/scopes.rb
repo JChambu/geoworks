@@ -29,6 +29,7 @@ module Projects::Scopes
           query = Project
             .joins(:user, :project_status)
             .where(project_type_id: project_type_id)
+            .where('projects.row_active = true')
             .select(select)
             .group('p_name')
             .order('p_name')
