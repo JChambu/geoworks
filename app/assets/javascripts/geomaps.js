@@ -1283,6 +1283,8 @@ Navarra.geomaps = function() {
 
           var cc = JSON.parse(info);
           if (cc['features'].length > 0) {
+            console.log("Feature click")
+            console.log(latlng)
             var prop = cc['features'][0]['properties'];
             project_name_feature = cc['features'][0]['id'];
             project_name = project_name_feature.split('.fid')[0];
@@ -1441,6 +1443,8 @@ function show_labels(setbbox){
         });
         var popup_new = new L.Popup({closeButton:false, closeOnClick:false, className: 'custom_label', autoPan:false});
         popup_new.setLatLng(latlng_new);
+        console.log("LATLONG")
+        console.log(latlng_new)
         popup_new.setContent(popupContent1);
         labels.addLayer(popup_new)
       }
