@@ -346,8 +346,8 @@ Navarra.geomaps = function() {
         Navarra.dashboards.config.draw_disabled = true;
         Navarra.dashboards.config.size_box = mymap.getBounds();
         Navarra.dashboards.config.size_polygon = [];
-        init_kpi();
         init_data_dashboard(true);
+        init_kpi();
         init_chart_doughnut();
       });
     })
@@ -363,8 +363,8 @@ Navarra.geomaps = function() {
       arr1.push(arr1[0])
       size_box.push(arr1);
       Navarra.dashboards.config.size_polygon.push(arr1);
-      show_kpis()
       show_data_dashboard();
+      show_kpis()
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
       if (heatmap_actived != '') {
         Navarra.geomaps.heatmap_data();
@@ -385,8 +385,8 @@ Navarra.geomaps = function() {
       Navarra.dashboards.config.size_polygon = [];
       Navarra.dashboards.config.draw_disabled = true;
       size_box = [];
-      init_kpi();
       init_data_dashboard(true);
+      init_kpi();
       init_chart_doughnut();
       var heatmap_actived = Navarra.project_types.config.heatmap_field;
       if (heatmap_actived != '') {
@@ -448,8 +448,8 @@ Navarra.geomaps = function() {
     myLocalStorage.setItem('longitude', mymap.getCenter().lng);
     checked = Navarra.dashboards.config.draw_disabled;
     if (checked) {
-      show_kpis();
       show_data_dashboard();
+      show_kpis();
     }
   }
 
@@ -981,8 +981,6 @@ Navarra.geomaps = function() {
       CQL_FILTER: cql_filter_selected
     })
 
-    console.log(cql_filter_selected)
-    console.log(cql_filter_not_selected)
     project_current_selected = layerProjectsSelected.getLayer(current_layer).addTo(mymap);
     if(data_from_navarra!=""){
       layerControl.addOverlay(project_current_selected, "Seleccionados", null, {
@@ -1344,8 +1342,8 @@ function get_zoomextent(){
       success: function(data) {
         if(data.data[0].miny==null || data.data[0].minx==null || data.data[0].maxy==null || data.data[0].maxx==null){
           //no hay datos que mostrar
-          show_kpis();
           show_data_dashboard();
+          show_kpis();
         } else{
           mymap.fitBounds([[data.data[0].miny, data.data[0].minx],[data.data[0].maxy, data.data[0].maxx]]);
         }
