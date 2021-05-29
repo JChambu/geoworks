@@ -500,8 +500,7 @@ Navarra.geomaps = function() {
       format_options: 'callback:getJson',
       CQL_FILTER: cql_filter
     })
-    console.log("Filtro")
-    console.log(cql_filter)
+
     projectss = projectFilterLayer.getLayer(layer_current).addTo(mymap);
     // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
     //show_kpis();
@@ -980,6 +979,7 @@ Navarra.geomaps = function() {
     layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
       layers: current_layer, //nombre de la capa (ver get capabilities)
       format: 'image/png',
+      crs: L.CRS.EPSG4326,
       transparent: 'true',
       opacity: 1,
       version: '1.0.0', //wms version (ver get capabilities)
@@ -990,8 +990,7 @@ Navarra.geomaps = function() {
       format_options: 'callback:getJson',
       CQL_FILTER: cql_filter_not_selected
     })
-    console.log(layerProjects)
-    console.log(cql_filter_not_selected)
+
     project_current = layerProjects.getLayer(current_layer).addTo(mymap);
     layerControl.addOverlay(project_current, labelLayer, null, {
       sortLayers: false
@@ -1283,8 +1282,6 @@ Navarra.geomaps = function() {
 
           var cc = JSON.parse(info);
           if (cc['features'].length > 0) {
-            console.log("Feature click")
-            console.log(latlng)
             var prop = cc['features'][0]['properties'];
             project_name_feature = cc['features'][0]['id'];
             project_name = project_name_feature.split('.fid')[0];
@@ -1409,10 +1406,11 @@ function show_labels(setbbox){
   var defaultParameters = {
     service: 'WFS',
     version: '1.0.0',
+    crs: L.CRS.EPSG4326,
     request: 'GetFeature',
     typeName: Navarra.dashboards.config.name_layer,
     outputFormat: 'application/json',
-    CQL_FILTER: cql_filter
+    CQL_FILTER: cql_filter,
   };
   var parameters = L.Util.extend(defaultParameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
@@ -1443,8 +1441,6 @@ function show_labels(setbbox){
         });
         var popup_new = new L.Popup({closeButton:false, closeOnClick:false, className: 'custom_label', autoPan:false});
         popup_new.setLatLng(latlng_new);
-        console.log("LATLONG")
-        console.log(latlng_new)
         popup_new.setContent(popupContent1);
         labels.addLayer(popup_new)
       }
