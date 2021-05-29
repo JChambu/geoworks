@@ -203,7 +203,29 @@ class Project < ApplicationRecord
     properties.each do |key, value|
       self.properties[key] = value
     end
+
+    Rails.logger.debug ''
+    Rails.logger.debug ' ************* Fecha ANTES update ************* '
+    Rails.logger.debug self.gwm_updated_at
+    Rails.logger.debug ' ********************************************** '
+    Rails.logger.debug ''
+
+    Rails.logger.debug ''
+    Rails.logger.debug ' ************* Posibles fechas ************* '
+    Rails.logger.debug Time.now
+    Rails.logger.debug Time.zone.now
+    Rails.logger.debug Time.now.utc
+    Rails.logger.debug ' ******************************************* '
+    Rails.logger.debug ''
+
     self.gwm_updated_at = Time.now # TODO: Corregir zona horaria
+
+    Rails.logger.debug ''
+    Rails.logger.debug ' *************** Fecha actualizada *************** '
+    Rails.logger.debug self.gwm_updated_at
+    Rails.logger.debug ' ************************************************* '
+    Rails.logger.debug ''
+
     save!
   end
 
