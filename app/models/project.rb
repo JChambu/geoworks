@@ -218,7 +218,7 @@ class Project < ApplicationRecord
     Rails.logger.debug ' ******************************************* '
     Rails.logger.debug ''
 
-    self.gwm_updated_at = Time.zone.now # TODO: Corregir zona horaria
+    self.gwm_updated_at = Time.zone.now
 
     Rails.logger.debug ''
     Rails.logger.debug ' *************** Fecha actualizada *************** '
