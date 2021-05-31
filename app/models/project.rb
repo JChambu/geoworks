@@ -188,14 +188,14 @@ class Project < ApplicationRecord
   def change_status status_id
     self.properties['app_estado'] = status_id
     self.project_status_id = status_id
-    self.gwm_updated_at = Time.now # TODO: Corregir zona horaria
+    self.gwm_updated_at = Time.zone.now
     save!
     update_inheritable_statuses
   end
 
   def disable_form
     self.row_enabled = false
-    self.disabled_at = Time.now# TODO: Corregir zona horaria
+    self.disabled_at = Time.zone.now
     save!
   end
 
@@ -203,7 +203,7 @@ class Project < ApplicationRecord
     properties.each do |key, value|
       self.properties[key] = value
     end
-    self.gwm_updated_at = Time.now # TODO: Corregir zona horaria
+    self.gwm_updated_at = Time.zone.now
     save!
   end
 

@@ -25,10 +25,11 @@ module Projects::Scopes
           select = "users.name as p_name"  if field_key == 'app_usuario'
           select = "project_statuses.name as p_name" if field_key == 'app_estado'
 
-          # TODO: Acá debería buscar sólo los no eliminados
           query = Project
             .joins(:user, :project_status)
             .where(project_type_id: project_type_id)
+            .where(row_active: true)
+            .where(current_season: true)
             .select(select)
             .group('p_name')
             .order('p_name')
@@ -51,6 +52,8 @@ module Projects::Scopes
             .select("project_data_children.properties->>'#{subfield.id}' as p_name")
             .joins(:project)
             .where(projects: {project_type_id: project_type_id})
+            .where(row_active: true)
+            .where(current_season: true)
             .group('p_name')
             .order('p_name')
           data.push({field_type_name: subfield.field_type.name, values: query})
