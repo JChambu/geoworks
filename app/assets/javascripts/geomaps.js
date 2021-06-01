@@ -1452,6 +1452,54 @@ function show_labels(setbbox){
   }
 }
 
+function edit_geometry_in_map(id_selected){ 
+  cql_filter_edit_geometry = "app_id = "+id_selected;
+  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
+  var defaultParameters = {
+    service: 'WFS',
+    version: '1.0.0',
+    crs: L.CRS.EPSG4326,
+    request: 'GetFeature',
+    typeName: Navarra.dashboards.config.name_layer,
+    outputFormat: 'application/json',
+    CQL_FILTER: cql_filter_edit_geometry,
+  };
+  var parameters = L.Util.extend(defaultParameters);
+  var URL = owsrootUrl + L.Util.getParamString(parameters);
+  $.ajax({
+    url: URL,
+    success: function (data) {
+    var geojson = new L.geoJson(data, {
+      onEachFeature: function(feature, layer){
+        switch (type_geometry) {
+          case 'Point':
+          var  myIcon = L.icon({
+            iconUrl: "/assets/leaflet/custom_icon.png",
+            iconSize: [44, 66],
+            iconAnchor: [22, 65],
+            shadowUrl: "/assets/leaflet/marker-shadow.png",
+            shadowSize: [68, 95],
+            shadowAnchor: [22, 94]
+          });
+          
+          var marker = new L.Marker(layer._latlng); 
+          marker.setIcon(myIcon);
+          marker.addTo(mymap)
+          break;
+          case 'Polygon':
+            var latlongs = layer._latlngs;
+            var poligon_new = new L.Polygon(latlongs);
+            var center = poligon_new.getBounds().getCenter();
+            var latlng_new = new L.LatLng(center.lat,center.lng)
+          break;
+        }
+      }
+    });
+ //   mymap.addLayer(geometry_to_edit);
+    }
+  });
+}
+
   return {
     init: init,
     wms_filter: wms_filter,
@@ -1465,6 +1513,7 @@ function show_labels(setbbox){
     popup: popup,
     close_all_popups: close_all_popups,
     get_zoomextent: get_zoomextent,
-    show_labels:show_labels
+    show_labels:show_labels,
+    edit_geometry_in_map: edit_geometry_in_map
   }
 }();

@@ -22,7 +22,7 @@ var can_edit_status_yes;
 
   function show_confirmation(div_confirmation){
     if(!Navarra.dashboards.config.has_field_errors){
-      if(div_confirmation=="lat_long_edit" || div_confirmation=="history"){
+      if(div_confirmation=="history"){
         return;
       }
       disabled_fields();
@@ -71,6 +71,9 @@ var can_edit_status_yes;
         textarea_adjust_height();
         set_script_all();
         calculate_all(true);
+      }
+      if(div_confirmation=="lat_long_edit"){
+        edit_geometry();
       }
 
       if(div_confirmation=='owner_confirmation'){
@@ -228,7 +231,7 @@ var can_edit_status_yes;
               <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation')"></i>
             <% end %>
             <% if can? :data, :edit_geom %>
-              <i class="fas fa-map-marker-alt" style="cursor: pointer;" title="Próximamente" onclick="show_confirmation('lat_long_edit')"></i>
+              <i class="fas fa-map-marker-alt" style="cursor: pointer;" title="Editar geometría" onclick="show_confirmation('lat_long_edit')"></i>
             <% end %>
             <% if can? :data, :edit_owner %>
               <i class="fas fa-user-edit" style="cursor: pointer;" title="Cambiar Propietario" onclick="show_confirmation('owner_confirmation')"></i>
