@@ -56,11 +56,25 @@ class Admin::UsersController < ApplicationController
   def create
     respond_to do |format|
       if @user.save
+
         @user_customers = UserCustomer.new
         @user_customers[:user_id] = @user.id
-        @current_tenant = params[:user][:customer_id]
-        @customer = Customer.where(subdomain: @current_tenant).first
-        @user_customers[:customer_id] = @current_tenant.to_i
+        @customer_id = params[:user][:customer_id]
+        @subdomain = Customer.where(id: @customer_id).pluck(:subdomain)
+        DeviseCustomMailer.confirmation_instructions(user, token, opts={foo: @subdomain}).deliver
+
+
+        puts ''
+        puts ' *************************** users controller ct *************************** '
+        p params.to_json
+        puts ' *********************************************************** '
+        puts ''
+
+
+
+
+
+        @user_customers[:customer_id] = @customer_id
         @user_customers[:role_id] = params[:role_id]['id'].to_i
         @user_customers.save!
         params[:id] = @user.id
@@ -72,6 +86,7 @@ class Admin::UsersController < ApplicationController
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
+
   end
 
   # PATCH/PUT /users/1
