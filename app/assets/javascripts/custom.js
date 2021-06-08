@@ -457,7 +457,7 @@ function draw_charts() {
           if(isNaN(a)){
             return a.localeCompare(b);
             } else{
-            //  return a-b;
+              return a-b;
             }
         }
       }); //lo ordena en español para colocar la ñ en su lugar. sort() la coloca al final
@@ -473,7 +473,7 @@ function draw_charts() {
             if(isNaN(a)){
               return a.localeCompare(b);
             } else{
-             // return a-b;
+              return a-b;
             }
           }
         }); //lo ordena en español
