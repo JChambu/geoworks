@@ -9,7 +9,7 @@ var first_layer=false;
 var layer_array=[];
 var labels;
 Navarra.geomaps = function() {
-  var mymap, markers, editableLayers, projects, layerProjects, layerProjectsSelected, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
+  var mymap, markers,polygon_edit, editableLayers, projects, layerProjects, layerProjectsSelected, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
   var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current,project_current_selected,current_tenement;
   var ss = [];
   var size_box = [];
@@ -338,10 +338,7 @@ Navarra.geomaps = function() {
     init_time_slider();
 
     mymap.on('moveend', onMapZoomedMoved);
-    if (markers != undefined) {
-      mymap.removeLayer(markers);
-    }
-
+    
 
     mymap.on('draw:drawstart', function(e) {
       Navarra.dashboards.config.draw_disabled = false;
@@ -1471,33 +1468,95 @@ function edit_geometry_in_map(id_selected){
     success: function (data) {
     var geojson = new L.geoJson(data, {
       onEachFeature: function(feature, layer){
+        close_all_popups();
         switch (type_geometry) {
           case 'Point':
-          var  myIcon = L.icon({
-            iconUrl: "/assets/leaflet/custom_icon.png",
-            iconSize: [44, 66],
-            iconAnchor: [22, 65],
-            shadowUrl: "/assets/leaflet/marker-shadow.png",
-            shadowSize: [68, 95],
-            shadowAnchor: [22, 94]
-          });
-          
-          var marker = new L.Marker(layer._latlng); 
-          marker.setIcon(myIcon);
-          marker.addTo(mymap)
+            var latlongs = [];
+            latlongs.push(layer._latlng);
           break;
           case 'Polygon':
-            var latlongs = layer._latlngs;
-            var poligon_new = new L.Polygon(latlongs);
-            var center = poligon_new.getBounds().getCenter();
-            var latlng_new = new L.LatLng(center.lat,center.lng)
+            var latlongs = layer._latlngs[0];
           break;
         }
+        var  myIcon = L.icon({
+            iconUrl: "/assets/leaflet/custom_icon.png",
+            iconSize: [44, 56],
+            iconAnchor: [22, 55],
+            shadowUrl: "/assets/leaflet/marker-shadow.png",
+            shadowSize: [41, 41],
+            shadowAnchor: [10, 40]
+          });
+        var  myIcon_selected = L.icon({
+            iconUrl: "/assets/leaflet/custom_icon_selected.png",
+            iconSize: [44, 56],
+            iconAnchor: [22, 55],
+            shadowUrl: "/assets/leaflet/marker-shadow.png",
+            shadowSize: [41, 41],
+            shadowAnchor: [10, 40]
+          });
+          delete_markers();
+          markers = new L.LayerGroup();
+          var marker_options = {
+            opacity: 0.6,
+            draggable: true,
+          }
+          var polygon_options = {
+            fillOpacity: 0.2,
+            color: "#FFFFFF",
+            fillColor:"#FFFFFF"
+          }
+          latlongs.forEach(function(latlong, index){
+            marker = new L.Marker(latlong, marker_options); 
+            if(index==0){
+              var lat_marker = (marker.getLatLng().lat).toFixed(6);
+              var long_marker = (marker.getLatLng().lng).toFixed(6);
+              $('#marker_position').html("Lat:"+lat_marker+" Long:"+long_marker);
+              marker.setOpacity(1);
+            }    
+            marker.setIcon(myIcon);         
+            marker.on('drag', function(e) {
+              var lat_marker = (e.latlng.lat).toFixed(6);
+              var long_marker = (e.latlng.lng).toFixed(6);
+              $('#marker_position').html("Lat:"+lat_marker+" Long:"+long_marker);
+              if(type_geometry=="Polygon"){
+                if (polygon_edit != undefined) {
+                  mymap.removeLayer(polygon_edit);
+                }
+                polygon_edit = new L.LayerGroup();
+                // busca coordenadas de los puntos
+                var coordinates_newpol = [];
+                markers.eachLayer(function (layer) {
+                  coordinates_newpol.push(layer.getLatLng());
+                });
+                var poligon_new = new L.Polygon(coordinates_newpol, polygon_options);
+                polygon_edit.addLayer(poligon_new);
+                mymap.addLayer(polygon_edit);
+              }
+
+
+            });
+            if(type_geometry=="Polygon"){
+              marker.on('dragstart', function(event) {
+              markers.eachLayer(function (layer) {
+                layer.setOpacity(0.6);
+              });
+              event.target.setOpacity(1)
+            });
+            }
+            
+          markers.addLayer(marker);
+          })
+          mymap.addLayer(markers);
       }
     });
- //   mymap.addLayer(geometry_to_edit);
     }
   });
+}
+
+function delete_markers(){
+  if (markers != undefined) {
+    mymap.removeLayer(markers);
+  }
 }
 
   return {
@@ -1514,6 +1573,7 @@ function edit_geometry_in_map(id_selected){
     close_all_popups: close_all_popups,
     get_zoomextent: get_zoomextent,
     show_labels:show_labels,
-    edit_geometry_in_map: edit_geometry_in_map
+    edit_geometry_in_map: edit_geometry_in_map,
+    delete_markers: delete_markers
   }
 }();

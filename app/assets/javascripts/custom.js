@@ -2255,6 +2255,7 @@ function export_to_excel(table, name, filename) {
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
 function show_item_info(appid_info, from_map, is_multiple) {
+  Navarra.geomaps.delete_markers();
   if(is_multiple){
     $('#multiple_edit').addClass("multiple_on");
     var total_files_to_edit = $('#table_visible .custom-control-input:checked').not('.just_header').length;
