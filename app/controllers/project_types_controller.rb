@@ -1058,20 +1058,24 @@ class ProjectTypesController < ApplicationController
     end
 
     @project_type = ProjectType.new(project_type_params)
-
     respond_to do |format|
-      if @project_type.save
 
-        HasProjectType.create(user_id: current_user.id, project_type_id: @project_type.id)
-        ProjectType.add_layer_geoserver(params[:project_type][:name_layer])
-        format.html { redirect_to root_path(), notice: 'El proyecto se creó correctamente.' }
-        format.json { render :show, status: :created, location: @project_type }
-      else
+      if ProjectType.exists?(:name) || ProjectType.exists?(:name_layer)
         format.html { render :new, status: :no_created}
         format.json { render json: @project_type.errors, status: :unprocessable_entity }
+      else
+        if @project_type.save
+          HasProjectType.create(user_id: current_user.id, project_type_id: @project_type.id)
+          ProjectType.add_layer_geoserver(params[:project_type][:name_layer])
+          format.html { redirect_to root_path(), notice: 'El proyecto se creó correctamente.' }
+          format.json { render :show, status: :created, location: @project_type }
+        else
+          format.html { render :new, status: :no_created}
+          format.json { render json: @project_type.errors, status: :unprocessable_entity }
+        end
       end
     end
-
+    
   end
 
 
