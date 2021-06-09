@@ -1728,6 +1728,7 @@ function set_time_slider_filter() {
  // init_data_dashboard(true);
   Navarra.geomaps.current_layer();
  // Navarra.geomaps.show_kpis();
+ show_labels(false);
 }
 
 //Función para eliminar el timeslider como filtro

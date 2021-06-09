@@ -349,6 +349,33 @@ div.custom-menu.show {
   cursor:pointer;
 }
 
+/*Modifica el popup de los Labels */
+.custom_label .leaflet-popup-content-wrapper{
+  padding:0px!important;
+  background: transparent !important;
+  border: none;
+  box-shadow:none!important;
+}
+.custom_label  .leaflet-popup-content{
+  line-height: 0.2em;
+  background: transparent;
+  color: black!important;
+  text-shadow: none;
+  font-weight: bold;
+  white-space: nowrap;
+  margin-bottom: -5px!important;
+}
+.custom_label p{
+  cursor:default!important;
+  text-align:center!important;
+  margin: 10px 0 !important;
+}
+.custom_label  .leaflet-popup-tip{
+  background: transparent!important;
+  box-shadow:none!important;
+  border:solid 2px black;
+}
+
 /* Evita los elementos de leaflet de la derecha se superpongan con el sidebar */
 .leaflet-right {
   margin-right: 30%;
