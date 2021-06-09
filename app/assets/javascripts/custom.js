@@ -440,8 +440,8 @@ function draw_charts() {
       }) //cierra each b
     }) //cierra each reg
 
-    //Verifica valores del label en el eje x si hay más de una serie
-    if (lab_all.length > 1) {
+    //Verifica valores del label en el eje x para unificar si hay varias series
+    // también se verifica el orden de los valores numéricos
       Array.prototype.unique = function(a) {
         return function() {
           return this.filter(a)
@@ -454,7 +454,11 @@ function draw_charts() {
       lab_acumulado = lab_acumulado.sort(); //ordena con sort, lo que coloca los null al final
       lab_acumulado = lab_acumulado.sort(function(a, b) {
         if (a != null) {
-          return a.localeCompare(b);
+          if(isNaN(a)){
+            return a.localeCompare(b);
+            } else{
+              return a-b;
+            }
         }
       }); //lo ordena en español para colocar la ñ en su lugar. sort() la coloca al final
       var indexnull = lab_acumulado.indexOf(null);
@@ -466,7 +470,11 @@ function draw_charts() {
         var lab_temporal_ordenado = lab_all[l].slice().sort();
         var lab_temporal_ordenado = lab_temporal_ordenado.sort(function(a, b) {
           if (a != null) {
-            return a.localeCompare(b);
+            if(isNaN(a)){
+              return a.localeCompare(b);
+            } else{
+              return a-b;
+            }
           }
         }); //lo ordena en español
         var indexnull = lab_temporal_ordenado.indexOf(null);
@@ -496,7 +504,7 @@ function draw_charts() {
           }
         }
       }
-    } // fin de unificación de labels en el eje x para varias series
+    // fin de unificación de labels en el eje x para varias series y orden numérico
 
     // Arranca armando series
     $.each(reg, function(a, b) {
