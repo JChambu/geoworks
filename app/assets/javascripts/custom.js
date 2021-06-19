@@ -3518,9 +3518,6 @@ function changeSelected(){
   }
 }
 
-function edit_geometry(){
-  Navarra.geomaps.edit_geometry_in_map(Navarra.project_types.config.id_item_displayed);
-}
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
 
