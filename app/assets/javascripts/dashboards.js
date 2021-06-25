@@ -57,7 +57,13 @@ Navarra.dashboards.config = {
   type_geometry: '',
   current_tenement: '',
   user_name: '',
-  has_field_errors: ''
+  has_field_errors: '',
+  field_geometric_calculated: [],
+  field_geometric_calculated_all: [],
+  field_geometric_calculated_length: 0,
+  field_geometric_calculated_length_all: 0,
+  field_geometric_calculated_count: 0,
+  field_geometric_calculated_count_all: 0
 };
 
 resize_graphics = function(){

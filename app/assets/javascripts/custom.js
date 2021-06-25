@@ -1145,6 +1145,8 @@ function init_data_dashboard(haschange,close_info) {
   $(".fakeLoader").css("display", "block");
   var type_box = 'polygon';
   var size_box = Navarra.dashboards.config.size_polygon;
+  console.log("Poligono de seleccion")
+  console.log(size_box)
   if (size_box.length == 0) {
     var size_box = [];
     type_box = 'extent';

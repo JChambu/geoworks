@@ -1450,7 +1450,6 @@ Navarra.geomaps = function() {
                   }
                   // si es polígono dibuja el polígono de otro color
                   if(type_geometry=="Polygon"){
-                    console.log(cc['features'][0]['geometry']['coordinates'])
                     create_polygon_selected(cc['features'][0]['geometry']['coordinates']);
                   }
                 } // Cierra success
@@ -1704,7 +1703,6 @@ function create_polygon_edit(){
   polygon_edit_vertexs.forEach(function (layer) {
     coordinates_newpol.push(layer.getLatLng());
   });
-  console.log(coordinates_newpol)
   var poligon_new = new L.Polygon(coordinates_newpol, polygon_options);
   poligon_new.on('click',function(ev){
     var nearest_point, index_vertex;
@@ -1747,23 +1745,56 @@ function save_geometry(){
     $('.confirmation_success_geometry').removeClass('d-none');
     return;
   }
-  /*
+  if(type_geometry=="Polygon"){
+    var geometry_polygon_to_edit = []
+    polygon_edit_vertexs.forEach(function(vertex){
+      var vertex_edit = [];
+      vertex_edit.push(vertex._latlng.lng);
+      vertex_edit.push(vertex._latlng.lat);
+      geometry_polygon_to_edit.push(vertex_edit);
+    });
+    var data_to_edit = {
+          id: geometries_to_edit[0].id,
+          latLng: geometry_polygon_to_edit,
+        }
+    geometries_to_save = [];
+    geometries_to_save.push(data_to_edit);
+    console.log("Datos a guardar")
+    console.log(geometries_to_save)
+ } else{
+    console.log("Datos a guardar")
+    geometries_to_save = geometries_to_edit;
+    console.log(geometries_to_save)
+  }
   $.ajax({
-      url:  "/projects/sgeometry.json",
+    //CREAR NUEVO METODO PARA GUARDAR LAS GEOMETRIAS
+      url:  "/projects/save_geometry.json",
+      type: "GET",
+      data: { geometries_to_edit: geometries_to_save },
+      success: function(data_status) {
+        $('#confirmation_success_geometry_text').html(data_status);
+        search_geometric_calculation_fields();
+      }
+    });
+}
+
+function save_geometry_width_calculated_fields(){
+  var data_to_edit = {
+          edited_field: Navarra.dashboards.config.field_geometric_calculated_all
+        }
+    console.log("Datos que se envían")
+    console.log(data_to_edit)
+  $.ajax({
+      url:  "/projects/save_geometry_fields.json",
       type: "GET",
       data: { geometries_to_edit: geometries_to_edit },
       success: function(data_status) {
-        geometries_to_edit=[];
+        delete_markers();
+        var text_join = $('#confirmation_success_geometry_text').html() + data_status
+        $('#confirmation_success_geometry_text').html(text_join);
+        $('.confirmation_success_geometry').removeClass('d-none');
       }
     });
-    */
-  if(type_geometry=="Polygon"){
-    $('#confirmation_success_geometry_text').html('registro editado correctamente');
-  } else{
-    $('#confirmation_success_geometry_text').html(geometries_to_edit.length+' registros editados correctamente');
-  }
-  delete_markers();
-  $('.confirmation_success_geometry').removeClass('d-none');
 }
 
 function close_success_message_geometry(){
@@ -1791,6 +1822,108 @@ function create_polygon_selected(coordinates_newpol_selected){
   mymap.addLayer(polygon_selected);
 }
 
+// función para traer los campos padres y verificar si tienen algún calculo geométrico
+function search_geometric_calculation_fields(){
+  $.ajax({
+    type: 'GET',
+    url: '/project_types/search_father_children_and_photos_data',
+    datatype: 'json',
+    data: {
+      project_type_id: Navarra.dashboards.config.project_type_id,
+      app_id: 2438
+    },
+    success: function(data) {
+      //variables necesarias para disparar el guardado de los campos luego de todos los success de las apis de geolocalización.
+      Navarra.dashboards.config.field_geometric_calculated_count = 0;
+      Navarra.dashboards.config.field_geometric_calculated_count_all = 0;
+      Navarra.dashboards.config.field_geometric_calculated_length = 0;
+      Navarra.dashboards.config.field_geometric_calculated_length_all = 0;
+      Navarra.dashboards.config.field_geometric_calculated_all = [];
+      Navarra.dashboards.config.field_geometric_calculated = [];
+      data.father_fields.forEach(function(field){
+        if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}'){
+          Navarra.dashboards.config.field_geometric_calculated_length ++;
+        }
+      });
+      if(type_geometry=="Polygon"){
+        var centroid = get_centroid();
+        var geom = {
+          id: geometries_to_edit[0].id,
+          latLng: {
+            lat: centroid.geometry.coordinates[1],
+            lng: centroid.geometry.coordinates[0]
+          }
+        }
+        data.father_fields.forEach(function(field){
+          if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}'){
+            var calculated_field = field.calculated_field;          
+            Navarra.dashboards.config.field_geometric_calculated_length_all = Navarra.dashboards.config.field_geometric_calculated_length;
+            Navarra.calculated_and_script_fields.Calculate(calculated_field,"", "","", "geometry_edition",field.key,geom);
+          }
+          });
+      }
+      else {
+        geometries_to_edit.forEach(function(geom){
+         data.father_fields.forEach(function(field){
+          if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}'){
+            var calculated_field = field.calculated_field;          
+            Navarra.dashboards.config.field_geometric_calculated_length_all = Navarra.dashboards.config.field_geometric_calculated_length * geometries_to_edit.length;
+            Navarra.calculated_and_script_fields.Calculate(calculated_field,"", "","", "geometry_edition",field.key,geom);
+          }
+          });
+       });
+      }
+   }
+  }); 
+}
+
+function get_area(){
+  polygon = create_polygon_turf();
+  var area = turf.area(polygon);
+  return area;
+}
+function get_centroid(){
+  polygon = create_polygon_turf();
+  var centroid = turf.centroid(polygon);
+  return centroid;
+}
+function create_polygon_turf(){
+  var coordinates_newpol1=[];
+  var coordinates_newpol2=[];
+  polygon_edit_vertexs.forEach(function (layer,index) {
+    var coordinates_newpol = [];
+    coordinates_newpol.push(layer.getLatLng().lng);
+    coordinates_newpol.push(layer.getLatLng().lat);
+    coordinates_newpol1.push(coordinates_newpol)
+  });
+  var coordinates_newpol = [];
+    coordinates_newpol.push(polygon_edit_vertexs[0].getLatLng().lng);
+    coordinates_newpol.push(polygon_edit_vertexs[0].getLatLng().lat);
+    coordinates_newpol1.push(coordinates_newpol)
+    coordinates_newpol2.push(coordinates_newpol1)
+    var polygon = turf.polygon(coordinates_newpol2);
+    return polygon;
+}
+
+function get_latlng(){
+  var coordinates_newpol1=[];
+  var coordinates_newpol2=[];
+  polygon_edit_vertexs.forEach(function (layer,index) {
+    var coordinates_newpol = [];
+    coordinates_newpol.push(layer.getLatLng().lng);
+    coordinates_newpol.push(layer.getLatLng().lat);
+    coordinates_newpol1.push(coordinates_newpol)
+  });
+  var coordinates_newpol = [];
+    coordinates_newpol.push(polygon_edit_vertexs[0].getLatLng().lng);
+    coordinates_newpol.push(polygon_edit_vertexs[0].getLatLng().lat);
+    coordinates_newpol1.push(coordinates_newpol)
+    coordinates_newpol2.push(coordinates_newpol1)
+    var polygon = turf.polygon(coordinates_newpol2);
+    var area = turf.area(polygon);
+    return area;
+}
+
   return {
     init: init,
     wms_filter: wms_filter,
@@ -1808,6 +1941,9 @@ function create_polygon_selected(coordinates_newpol_selected){
     edit_geometry_in_map: edit_geometry_in_map,
     delete_markers: delete_markers,
     save_geometry: save_geometry,
-    close_success_message_geometry: close_success_message_geometry
+    close_success_message_geometry: close_success_message_geometry,
+    save_geometry_width_calculated_fields: save_geometry_width_calculated_fields,
+    get_area: get_area,
+    get_latlng:get_latlng
   }
 }();
