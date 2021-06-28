@@ -393,7 +393,7 @@ div.custom-menu.show {
 .custom_label  .leaflet-popup-tip{
   background: transparent!important;
   box-shadow:none!important;
-  border:solid 2px black;
+  border:none;
 }
 
 /* Evita los elementos de leaflet de la derecha se superpongan con el sidebar */
