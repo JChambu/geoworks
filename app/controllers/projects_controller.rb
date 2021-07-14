@@ -92,6 +92,8 @@ class ProjectsController < ApplicationController
 
       if @project_type.type_geometry == 'Point'
 
+        new_geom = "POINT(#{geom['lng']} #{geom['lat']})"
+
       else
 
         points_array = []
