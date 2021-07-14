@@ -1739,6 +1739,7 @@ function delete_markers(){
 }
 
 function save_geometry(){
+  console.log("save_geometry")
   if(geometries_to_edit.length==0){
     delete_markers();
     $('#confirmation_success_geometry_text').html('Sin cambios para editar');
@@ -1762,8 +1763,20 @@ function save_geometry(){
     console.log("Datos a guardar")
     console.log(geometries_to_save)
  } else{
-    console.log("Datos a guardar")
-    geometries_to_save = geometries_to_edit;
+    console.log("Datos a guardar formato punto");
+    geometries_to_save = [];
+    geometries_to_edit.forEach(function(geom){
+      console.log(geom);
+      var latlong_geom = {
+          lat: geom.latLng.lat,
+          lng: geom.latLng.lng,
+        }
+      var data_to_edit = {
+          id: geom.id,
+          latLng: latlong_geom,
+        }
+      geometries_to_save.push(data_to_edit)  
+    });
     console.log(geometries_to_save)
   }
   $.ajax({
@@ -1776,6 +1789,7 @@ function save_geometry(){
         project_type_id: Navarra.dashboards.config.project_type_id
       },
       success: function(data_status) {
+        console.log("success en save geometry")
         $('#confirmation_success_geometry_text').html(data_status);
         search_geometric_calculation_fields();
       }
@@ -1783,15 +1797,21 @@ function save_geometry(){
 }
 
 function save_geometry_width_calculated_fields(){
-  var data_to_edit = {
-          edited_field: Navarra.dashboards.config.field_geometric_calculated_all
+  console.log("ingresa a save_geometry_width_calculated_fields")
+  console.log(Navarra.dashboards.config.field_geometric_calculated_all);
+  edited_field_calculated_all = [];
+  Navarra.dashboards.config.field_geometric_calculated_all.forEach(function(field){
+    var edited_field_calculated = {
+          data_field: field
         }
+      edited_field_calculated_all.push(edited_field_calculated);
+  });
     console.log("Datos que se envían")
-    console.log(data_to_edit)
+    console.log(edited_field_calculated_all)
   $.ajax({
       url:  "/projects/save_geometry_fields.json",
       type: "GET",
-      data: { geometries_to_edit: geometries_to_edit },
+      data: { geometries_to_edit: edited_field_calculated_all },
       success: function(data_status) {
         delete_markers();
         var text_join = $('#confirmation_success_geometry_text').html() + data_status
@@ -1834,7 +1854,7 @@ function search_geometric_calculation_fields(){
     datatype: 'json',
     data: {
       project_type_id: Navarra.dashboards.config.project_type_id,
-      app_id: 2438
+      app_id: 0
     },
     success: function(data) {
       //variables necesarias para disparar el guardado de los campos luego de todos los success de las apis de geolocalización.
