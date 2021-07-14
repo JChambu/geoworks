@@ -1795,19 +1795,21 @@ function save_geometry(){
 
         $('#confirmation_success_geometry_text').html(data['status']);
         search_geometric_calculation_fields();
+        current_layer();
       }
     });
 }
 
 function save_geometry_width_calculated_fields(){
-  console.log("ingresa a save_geometry_width_calculated_fields")
-  console.log(Navarra.dashboards.config.field_geometric_calculated_all);
   edited_field_calculated_all = [];
   Navarra.dashboards.config.field_geometric_calculated_all.forEach(function(field){
-    var edited_field_calculated = {
-          data_field: field
+    field.forEach(function(field_calculated){
+      var edited_field_calculated = {
+          data_field: field_calculated
         }
       edited_field_calculated_all.push(edited_field_calculated);
+    });
+    
   });
     console.log("Datos que se envían")
     console.log(edited_field_calculated_all)
