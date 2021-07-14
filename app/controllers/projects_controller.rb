@@ -114,6 +114,8 @@ class ProjectsController < ApplicationController
     @project_type.destroy_view
     @project_type.create_view
 
+    render json: {status: 'Edición completada.'}
+
   end
 
 
