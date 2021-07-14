@@ -1788,9 +1788,12 @@ function save_geometry(){
         geometries_to_edit: geometries_to_save,
         project_type_id: Navarra.dashboards.config.project_type_id
       },
-      success: function(data_status) {
-        console.log("success en save geometry")
-        $('#confirmation_success_geometry_text').html(data_status);
+      success: function(data) {
+
+        console.log('Response update_geom');
+        console.log(data);
+
+        $('#confirmation_success_geometry_text').html(data['status']);
         search_geometric_calculation_fields();
       }
     });
