@@ -74,6 +74,47 @@ class ProjectsController < ApplicationController
 
   end
 
+
+  def update_geom
+
+    geometries = params[:geometries_to_edit]
+    project_type_id = params[:project_type_id]
+
+    # Busca el tipo de geometría
+    @project_type = ProjectType.find(project_type_id)
+
+    # Cicla todas las geometrías a editar
+    geometries.each do |i, row|
+
+      app_id = row['id']
+      geom = row['latLng']
+      @project = Project.find(app_id)
+
+      if @project_type.type_geometry == 'Point'
+
+      else
+
+        points_array = []
+        geom.each do |a,x|
+          point = "#{x[0]} #{x[1]}"
+          points_array << point
+        end
+        points_array << points_array[0]
+        points_array_str = points_array.join(', ')
+        new_geom = "POLYGON((#{points_array_str}))"
+
+      end
+
+      @project.update_geom new_geom
+
+    end
+
+    @project_type.destroy_view
+    @project_type.create_view
+
+  end
+
+
   # Cambia el propietario del registro
   def change_owner
     app_ids = params[:app_ids]

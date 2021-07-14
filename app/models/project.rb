@@ -207,6 +207,12 @@ class Project < ApplicationRecord
     save!
   end
 
+  def update_geom new_geom
+    self.the_geom = new_geom
+    self.gwm_updated_at = Time.now
+    save!
+  end
+
   def self.filter_equal_records_with_timer timer
 
     case timer

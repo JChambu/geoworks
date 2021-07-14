@@ -1768,9 +1768,13 @@ function save_geometry(){
   }
   $.ajax({
     //CREAR NUEVO METODO PARA GUARDAR LAS GEOMETRIAS
-      url:  "/projects/save_geometry.json",
-      type: "GET",
-      data: { geometries_to_edit: geometries_to_save },
+      type: 'PATCH',
+      url:  "/projects/update_geom",
+      datatype: 'JSON',
+      data: {
+        geometries_to_edit: geometries_to_save,
+        project_type_id: Navarra.dashboards.config.project_type_id
+      },
       success: function(data_status) {
         $('#confirmation_success_geometry_text').html(data_status);
         search_geometric_calculation_fields();
