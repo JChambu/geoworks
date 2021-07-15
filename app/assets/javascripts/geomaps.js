@@ -1803,9 +1803,7 @@ function save_geometry_width_calculated_fields() {
   edited_field_calculated_all = [];
   Navarra.dashboards.config.field_geometric_calculated_all.forEach(function(field) {
     field.forEach(function(field_calculated) {
-      var edited_field_calculated = {
-        data_field: field_calculated
-      }
+      var edited_field_calculated = field_calculated;
       edited_field_calculated_all.push(edited_field_calculated);
     });
 
@@ -1819,7 +1817,8 @@ function save_geometry_width_calculated_fields() {
     url: '/projects/update_calculated_fields',
     datatype: 'JSON',
     data: {
-      calculated_fields: edited_field_calculated_all
+      calculated_fields: edited_field_calculated_all,
+      project_type_id: Navarra.dashboards.config.project_type_id
     },
     success: function(data_status) {
 
