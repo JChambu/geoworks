@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   get 'project_types/get_extent' => 'project_types#get_extent'
   patch 'projects/update_form' => 'projects#update_form'
   patch 'projects/update_geom' => 'projects#update_geom'
+  patch 'projects/update_calculated_fields' => 'projects#update_calculated_fields'
   patch 'projects/change_owner' => 'projects#change_owner'
   patch 'projects/change_status' => 'projects#change_status'
   patch 'projects/disable_form' => 'projects#disable_form'

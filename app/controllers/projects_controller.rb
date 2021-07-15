@@ -119,6 +119,10 @@ class ProjectsController < ApplicationController
   end
 
 
+  def update_calculated_fields
+  end
+
+
   # Cambia el propietario del registro
   def change_owner
     app_ids = params[:app_ids]
