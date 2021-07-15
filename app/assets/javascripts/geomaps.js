@@ -1810,15 +1810,22 @@ function save_geometry_width_calculated_fields() {
     });
 
   });
-  console.log("Datos que se envían")
+
+  console.log("Params update_calculated_fields")
   console.log(edited_field_calculated_all)
+
   $.ajax({
-    url: "/projects/save_geometry_fields.json",
-    type: "GET",
+    type: 'PATCH',
+    url: '/projects/update_calculated_fields',
+    datatype: 'JSON',
     data: {
       geometries_to_edit: edited_field_calculated_all
     },
     success: function(data_status) {
+
+      console.log("Response update_calculated_fields")
+      console.log(edited_field_calculated_all)
+
       delete_markers();
       var text_join = $('#confirmation_success_geometry_text').html() + data_status
       $('#confirmation_success_geometry_text').html(text_join);
