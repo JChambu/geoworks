@@ -120,6 +120,48 @@ class ProjectsController < ApplicationController
 
 
   def update_calculated_fields
+
+    calculated_fields = params[:calculated_fields]
+    project_type_id = params[:project_type_id]
+
+    calculated_fields.each do |i, data|
+
+      id = data['id']
+      key = data['field_key']
+      value = data['value_calculated']
+
+      project = Project.find(id)
+
+      value_cargado = project.properties[key]
+
+      unless value_cargado == value
+
+        # Buscamos el key de localidad
+        key_localidad = ProjectField
+          .where(calculated_field: '{"localidad":"54,419"}')
+          .where(project_type_id: project_type_id)
+          .pluck(:key)
+          .first
+
+        if !key_localidad.nil?
+          new_properties = {
+            key => value,
+            key_localidad => ''
+          }
+        else
+          new_properties = {
+            key => value,
+          }
+        end
+
+        project.update_form new_properties
+
+      else
+
+      end
+
+    end
+
   end
 
 
