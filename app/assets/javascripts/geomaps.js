@@ -1795,7 +1795,6 @@ function save_geometry(){
 
         $('#confirmation_success_geometry_text').html(data['status']);
         search_geometric_calculation_fields();
-        current_layer();
       }
     });
 }
