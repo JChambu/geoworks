@@ -131,26 +131,26 @@ Navarra.geomaps = function() {
                     '<label class="string optional control-label custom-control-label" for="mapabase_'+key+'"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>'+key+'</label></a>';
-      $('#basemaps_container').append(new_item);    
+      $('#basemaps_container').append(new_item);
     });
     var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
                     '<input class="custom-control-input" checked=true onchange="select_layer()" id="checkbox_'+Navarra.dashboards.config.name_layer+'" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_'+Navarra.dashboards.config.name_layer+'"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>'+Navarra.dashboards.config.name_project+'</label></a>';
-      $('#activeproject_container').append(new_item);    
+      $('#activeproject_container').append(new_item);
       var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_Seleccionados"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
                     '<input class="custom-control-input" onchange="select_layer()" id="checkbox_Seleccionados" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_Seleccionados"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>Seleccionados</label></a>';
-      $('#activeproject_container').append(new_item);  
+      $('#activeproject_container').append(new_item);
       var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_Etiquetas"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
                     '<input class="custom-control-input" onchange="Navarra.geomaps.show_labels(true)" id="checkbox_Etiquetas" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_Etiquetas"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>Etiquetas</label></a>';
-      $('#activeproject_container').append(new_item);    
+      $('#activeproject_container').append(new_item);
     // termina modal mapa base y proyecto activo
 
     var overlays = {};
@@ -341,7 +341,7 @@ Navarra.geomaps = function() {
           new_a.appendChild(img);
           new_a.setAttribute('onclick','Navarra.geomaps.edit_geometry_in_map()')
           container.appendChild(new_a);
-          
+
           var new_div = L.DomUtil.create('DIV');
           new_div.className = "confirmation_geometry d-none"
 
@@ -372,7 +372,7 @@ Navarra.geomaps = function() {
           new_p.className="m-0";
           new_div.appendChild(new_p);
           container.appendChild(new_div);
-  
+
           var new_div = L.DomUtil.create('DIV');
           new_div.className = "confirmation_success_geometry d-none";
           var new_i = L.DomUtil.create('I');
@@ -384,12 +384,12 @@ Navarra.geomaps = function() {
           new_p.id="confirmation_success_geometry_text"
           new_div.appendChild(new_p);
           container.appendChild(new_div);
-          
+
 
           return container;
         },
       });
-  
+
       L.control.Edit= function(opts) {
         return new L.Control.Edit(opts);
       }
@@ -417,7 +417,7 @@ Navarra.geomaps = function() {
     mymap.on('click', function(ev){
       if (Navarra.dashboards.config.size_polygon.length != 0){
         var coord = ev.latlng;
-        var polyPoints = Navarra.dashboards.config.size_polygon[0];      
+        var polyPoints = Navarra.dashboards.config.size_polygon[0];
         var x = ev.latlng.lat
         var y = ev.latlng.lng;
         var inside = false;
@@ -441,7 +441,7 @@ Navarra.geomaps = function() {
         mymap.removeLayer(polygon_selected);
       }
     });
-    
+
 
     mymap.on('draw:drawstart', function(e) {
       Navarra.dashboards.config.draw_disabled = false;
@@ -477,7 +477,7 @@ Navarra.geomaps = function() {
         Navarra.geomaps.heatmap_data();
       }
       Navarra.dashboards.config.draw_disabled = true;
-      
+
     });
 
 
@@ -1259,7 +1259,7 @@ Navarra.geomaps = function() {
           });
           //genera Modal de capas internas
           if(first_time_internal_layers){
-            var new_item = 
+            var new_item =
                     '<div>'+
                     '<a class="dropdown-item d-flex" href="#" style="justify-content:space-between">'+
                     '<div class="d-inline mr-3">'+
@@ -1309,7 +1309,7 @@ Navarra.geomaps = function() {
           });
           layer_array.push(projectsa);
         }) // Cierra each data
-        
+
         first_time_internal_layers = false;
 
         //vuelve a checkear las capas anteriormente checkeadas
@@ -1438,7 +1438,7 @@ Navarra.geomaps = function() {
                   if(isdifferent){
                     document.getElementById("popup_created").appendChild(div_popup);
                   }
-                  
+
                   inn = document.getElementById("popup_created").innerHTML;
                   checked = $('#select').hasClass('active');
 
@@ -1505,7 +1505,7 @@ function get_zoomextent(){
 
 function show_labels(setbbox){
   if(labels!=undefined){
-      mymap.removeLayer(labels);      
+      mymap.removeLayer(labels);
     }
   if($('#checkbox_Etiquetas').prop('checked')==true){
     if(setbbox){
@@ -1513,7 +1513,7 @@ function show_labels(setbbox){
     }else{
       var cql_filter =  getCQLFilter(false);
     }
-  $(".fakeLoader").css("display", "block");  
+  $(".fakeLoader").css("display", "block");
   var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
   var defaultParameters = {
     service: 'WFS',
@@ -1604,7 +1604,7 @@ function edit_geometry_in_map(){
             var latlongs = layer._latlngs[0];
           break;
         }
-          
+
           latlongs.forEach(function(latlong, index){
             marker_new = create_marker(latlong,index,layer.feature.properties.app_id, false);
             markers.addLayer(marker_new);
@@ -1638,18 +1638,18 @@ function create_marker(latlong,index, title_id, is_aditional_marker){
       draggable: true,
       title: title_id
     }
-  marker = new L.Marker(latlong, marker_options); 
+  marker = new L.Marker(latlong, marker_options);
   if(index==0){
     var lat_marker = (marker.getLatLng().lat).toFixed(6);
     var long_marker = (marker.getLatLng().lng).toFixed(6);
     $('#marker_position').html("Lat:"+lat_marker+" Long:"+long_marker);
-  }    
-  marker.setIcon(myIcon);         
+  }
+  marker.setIcon(myIcon);
   marker.on('drag', function(e) {
     var lat_marker = (e.latlng.lat).toFixed(6);
     var long_marker = (e.latlng.lng).toFixed(6);
     $('#marker_position').html("Lat:"+lat_marker+" Long:"+long_marker);
-    if(type_geometry=="Polygon"){ 
+    if(type_geometry=="Polygon"){
       create_polygon_edit();
     }
   });
@@ -1682,9 +1682,9 @@ function create_marker(latlong,index, title_id, is_aditional_marker){
         });
       }
     });
-  }    
+  }
   if(type_geometry=="Polygon" && !is_aditional_marker){
-    polygon_edit_vertexs.push(marker)}        
+    polygon_edit_vertexs.push(marker)}
   return marker;
 }
 
@@ -1716,7 +1716,7 @@ function create_polygon_edit(){
     var new_title= polygon_edit_vertexs[0].options.title;
       var marker_new = create_marker(new L.latLng(ev.latlng.lat,ev.latlng.lng),0,new_title,true);
       polygon_edit_vertexs.splice(index_vertex+1, 0, marker_new);
-      markers.addLayer(marker_new);     
+      markers.addLayer(marker_new);
       mymap.addLayer(markers);
       create_polygon_edit;
   })
@@ -1775,7 +1775,7 @@ function save_geometry(){
           id: geom.id,
           latLng: latlong_geom,
         }
-      geometries_to_save.push(data_to_edit)  
+      geometries_to_save.push(data_to_edit)
     });
     console.log(geometries_to_save)
   }
@@ -1884,7 +1884,7 @@ function search_geometric_calculation_fields(){
         }
         data.father_fields.forEach(function(field){
           if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}'){
-            var calculated_field = field.calculated_field;          
+            var calculated_field = field.calculated_field;
             Navarra.dashboards.config.field_geometric_calculated_length_all = Navarra.dashboards.config.field_geometric_calculated_length;
             Navarra.calculated_and_script_fields.Calculate(calculated_field,"", "","", "geometry_edition",field.key,geom);
           }
@@ -1894,7 +1894,7 @@ function search_geometric_calculation_fields(){
         geometries_to_edit.forEach(function(geom){
          data.father_fields.forEach(function(field){
           if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}'){
-            var calculated_field = field.calculated_field;          
+            var calculated_field = field.calculated_field;
             Navarra.dashboards.config.field_geometric_calculated_length_all = Navarra.dashboards.config.field_geometric_calculated_length * geometries_to_edit.length;
             Navarra.calculated_and_script_fields.Calculate(calculated_field,"", "","", "geometry_edition",field.key,geom);
           }
@@ -1902,7 +1902,7 @@ function search_geometric_calculation_fields(){
        });
       }
    }
-  }); 
+  });
 }
 
 function get_area(){
