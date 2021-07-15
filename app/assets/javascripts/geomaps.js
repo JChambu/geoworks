@@ -1799,30 +1799,32 @@ function save_geometry(){
     });
 }
 
-function save_geometry_width_calculated_fields(){
+function save_geometry_width_calculated_fields() {
   edited_field_calculated_all = [];
-  Navarra.dashboards.config.field_geometric_calculated_all.forEach(function(field){
-    field.forEach(function(field_calculated){
+  Navarra.dashboards.config.field_geometric_calculated_all.forEach(function(field) {
+    field.forEach(function(field_calculated) {
       var edited_field_calculated = {
-          data_field: field_calculated
-        }
+        data_field: field_calculated
+      }
       edited_field_calculated_all.push(edited_field_calculated);
     });
-    
+
   });
-    console.log("Datos que se envían")
-    console.log(edited_field_calculated_all)
+  console.log("Datos que se envían")
+  console.log(edited_field_calculated_all)
   $.ajax({
-      url:  "/projects/save_geometry_fields.json",
-      type: "GET",
-      data: { geometries_to_edit: edited_field_calculated_all },
-      success: function(data_status) {
-        delete_markers();
-        var text_join = $('#confirmation_success_geometry_text').html() + data_status
-        $('#confirmation_success_geometry_text').html(text_join);
-        $('.confirmation_success_geometry').removeClass('d-none');
-      }
-    });
+    url: "/projects/save_geometry_fields.json",
+    type: "GET",
+    data: {
+      geometries_to_edit: edited_field_calculated_all
+    },
+    success: function(data_status) {
+      delete_markers();
+      var text_join = $('#confirmation_success_geometry_text').html() + data_status
+      $('#confirmation_success_geometry_text').html(text_join);
+      $('.confirmation_success_geometry').removeClass('d-none');
+    }
+  });
 }
 
 function close_success_message_geometry(){
