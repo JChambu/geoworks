@@ -1819,7 +1819,7 @@ function save_geometry_width_calculated_fields() {
     url: '/projects/update_calculated_fields',
     datatype: 'JSON',
     data: {
-      geometries_to_edit: edited_field_calculated_all
+      calculated_fields: edited_field_calculated_all
     },
     success: function(data_status) {
 
