@@ -231,7 +231,8 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                             var data_calculated = {
                                 id: geom.id,
                                 field_key: field_key,
-                                value_calculated: data.ubicacion.provincia.nombre
+                                value_calculated: data.ubicacion.provincia.nombre,
+                                remove_location:true
                             }
                             Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
                             save_geometry_after_all_success_ajaxs();
@@ -245,7 +246,8 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                             var data_calculated = {
                                 id: geom.id,
                                 field_key: field_key,
-                                value_calculated: data.ubicacion.municipio.nombre
+                                value_calculated: data.ubicacion.municipio.nombre,
+                                remove_location:true
                             }
                             Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
                             save_geometry_after_all_success_ajaxs();

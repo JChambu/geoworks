@@ -1739,16 +1739,30 @@ function delete_markers(){
 }
 
 function save_geometry(){
-  console.log("save_geometry")
   if(geometries_to_edit.length==0){
     delete_markers();
     $('#confirmation_success_geometry_text').html('Sin cambios para editar');
     $('.confirmation_success_geometry').removeClass('d-none');
     return;
   }
+  search_geometric_calculation_fields();
+
+}
+
+function save_geometry_width_calculated_fields() {
+  //geometry
   if(type_geometry=="Polygon"){
     var geometry_polygon_to_edit = []
     polygon_edit_vertexs.forEach(function(vertex){
+      //fields
+      edited_field_calculated_all = [];
+      Navarra.dashboards.config.field_geometric_calculated_all.forEach(function(field) {
+        field.forEach(function(field_calculated) {
+          if(field_calculated.id == geometries_to_edit[0].id){
+            edited_field_calculated_all.push(field_calculated);
+          }
+        });
+      });
       var vertex_edit = [];
       vertex_edit.push(vertex._latlng.lng);
       vertex_edit.push(vertex._latlng.lat);
@@ -1757,16 +1771,24 @@ function save_geometry(){
     var data_to_edit = {
           id: geometries_to_edit[0].id,
           latLng: geometry_polygon_to_edit,
+          fields_calculated: edited_field_calculated_all
         }
     geometries_to_save = [];
     geometries_to_save.push(data_to_edit);
-    console.log("Datos a guardar")
-    console.log(geometries_to_save)
+
  } else{
     console.log("Datos a guardar formato punto");
     geometries_to_save = [];
     geometries_to_edit.forEach(function(geom){
-      console.log(geom);
+      //fields
+      edited_field_calculated_all = [];
+      Navarra.dashboards.config.field_geometric_calculated_all.forEach(function(field) {
+        field.forEach(function(field_calculated) {
+          if(field_calculated.id == geom.id){
+            edited_field_calculated_all.push(field_calculated);
+          }
+        });
+      });
       var latlong_geom = {
           lat: geom.latLng.lat,
           lng: geom.latLng.lng,
@@ -1774,50 +1796,20 @@ function save_geometry(){
       var data_to_edit = {
           id: geom.id,
           latLng: latlong_geom,
+          fields_calculated: edited_field_calculated_all
         }
       geometries_to_save.push(data_to_edit)
     });
-    console.log(geometries_to_save)
   }
-  $.ajax({
-    //CREAR NUEVO METODO PARA GUARDAR LAS GEOMETRIAS
-      type: 'PATCH',
-      url:  "/projects/update_geom",
-      datatype: 'JSON',
-      data: {
-        geometries_to_edit: geometries_to_save,
-        project_type_id: Navarra.dashboards.config.project_type_id
-      },
-      success: function(data) {
 
-        console.log('Response update_geom');
-        console.log(data);
-
-        $('#confirmation_success_geometry_text').html(data['status']);
-        search_geometric_calculation_fields();
-      }
-    });
-}
-
-function save_geometry_width_calculated_fields() {
-  edited_field_calculated_all = [];
-  Navarra.dashboards.config.field_geometric_calculated_all.forEach(function(field) {
-    field.forEach(function(field_calculated) {
-      var edited_field_calculated = field_calculated;
-      edited_field_calculated_all.push(edited_field_calculated);
-    });
-
-  });
-
-  console.log("Params update_calculated_fields")
-  console.log(edited_field_calculated_all)
-
+  console.log("GEOM")
+  console.log(geometries_to_save)
   $.ajax({
     type: 'PATCH',
     url: '/projects/update_calculated_fields',
     datatype: 'JSON',
     data: {
-      calculated_fields: edited_field_calculated_all,
+      data_to_edit: geometries_to_save,
       project_type_id: Navarra.dashboards.config.project_type_id
     },
     success: function(data_status) {
@@ -1826,8 +1818,7 @@ function save_geometry_width_calculated_fields() {
       console.log(edited_field_calculated_all)
 
       delete_markers();
-      var text_join = $('#confirmation_success_geometry_text').html() + data_status
-      $('#confirmation_success_geometry_text').html(text_join);
+      $('#confirmation_success_geometry_text').html(data_status['status']);
       $('.confirmation_success_geometry').removeClass('d-none');
     }
   });
