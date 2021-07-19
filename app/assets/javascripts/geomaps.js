@@ -1813,10 +1813,11 @@ function save_geometry_width_calculated_fields() {
       project_type_id: Navarra.dashboards.config.project_type_id
     },
     success: function(data_status) {
-
       console.log("Response update_calculated_fields")
       console.log(edited_field_calculated_all)
-
+      // refresca las capas current y selected
+      project_current._source.refreshOverlay();
+      project_current_selected._source.refreshOverlay();
       delete_markers();
       $('#confirmation_success_geometry_text').html(data_status['status']);
       $('.confirmation_success_geometry').removeClass('d-none');
