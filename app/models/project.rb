@@ -207,7 +207,10 @@ class Project < ApplicationRecord
     save!
   end
 
-  def update_geom new_geom
+  def update_geom_and_calculated_fields new_geom, new_properties
+    new_properties.each do |key, value|
+      self.properties[key] = value
+    end
     self.the_geom = new_geom
     self.gwm_updated_at = Time.now
     save!

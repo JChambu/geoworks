@@ -1802,7 +1802,7 @@ function save_geometry_width_calculated_fields() {
     });
   }
 
-  console.log("GEOM")
+  console.log("Params update_calculated_fields")
   console.log(geometries_to_save)
   $.ajax({
     type: 'PATCH',

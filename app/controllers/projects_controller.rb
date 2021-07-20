@@ -121,46 +121,74 @@ class ProjectsController < ApplicationController
 
   def update_calculated_fields
 
-    calculated_fields = params[:calculated_fields]
+    data_to_edit = params[:data_to_edit]
     project_type_id = params[:project_type_id]
 
-    calculated_fields.each do |i, data|
+    # Busca el tipo de geometría
+    @project_type = ProjectType.find(project_type_id)
+
+    data_to_edit.each do |i, data|
 
       id = data['id']
-      key = data['field_key']
-      value = data['value_calculated']
+      geom = data['latLng']
+      calculated_fields = data['fields_calculated']
 
-      project = Project.find(id)
+      @project = Project.find(id)
 
-      value_cargado = project.properties[key]
+      # Arma nueva geometría
+      if @project_type.type_geometry == 'Point'
 
-      unless value_cargado == value
-
-        # Buscamos el key de localidad
-        key_localidad = ProjectField
-          .where(calculated_field: '{"localidad":"54,419"}')
-          .where(project_type_id: project_type_id)
-          .pluck(:key)
-          .first
-
-        if !key_localidad.nil?
-          new_properties = {
-            key => value,
-            key_localidad => ''
-          }
-        else
-          new_properties = {
-            key => value,
-          }
-        end
-
-        project.update_form new_properties
+        @new_geom = "POINT(#{geom['lng']} #{geom['lat']})"
 
       else
+
+        points_array = []
+        geom.each do |a,x|
+          point = "#{x[0]} #{x[1]}"
+          points_array << point
+        end
+        points_array << points_array[0]
+        points_array_str = points_array.join(', ')
+        @new_geom = "POLYGON((#{points_array_str}))"
+
+      end
+
+      @new_properties = {}
+
+      calculated_fields.each do |n, field|
+
+        key = field['field_key']
+        value = field['value_calculated']
+        remove_location = field['remove_location']
+
+        value_cargado = @project.properties[key]
+
+        if value_cargado != value
+
+          @new_properties[key] = value
+
+          # Elimina la localidad si se modifican provincia o departamento
+          if remove_location
+            key_localidad = ProjectField
+              .where(calculated_field: '{"localidad":"54,419"}')
+              .where(project_type_id: project_type_id)
+              .pluck(:key)
+              .first
+            @new_properties[key_localidad] = []
+          end
+
+        end
 
       end
 
     end
+
+    @project.update_geom_and_calculated_fields(@new_geom, @new_properties)
+
+    @project_type.destroy_view
+    @project_type.create_view
+
+    render json: {status: 'Edición completada.'}
 
   end
 
