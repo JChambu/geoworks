@@ -75,7 +75,7 @@ class ProjectsController < ApplicationController
   end
 
 
-  def update_calculated_fields
+  def update_geom_and_calculated_fields
 
     data_to_edit = params[:data_to_edit]
     project_type_id = params[:project_type_id]

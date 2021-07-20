@@ -1802,18 +1802,18 @@ function save_geometry_width_calculated_fields() {
     });
   }
 
-  console.log("Params update_calculated_fields")
+  console.log("Params update_geom_and_calculated_fields")
   console.log(geometries_to_save)
   $.ajax({
     type: 'PATCH',
-    url: '/projects/update_calculated_fields',
+    url: '/projects/update_geom_and_calculated_fields',
     datatype: 'JSON',
     data: {
       data_to_edit: geometries_to_save,
       project_type_id: Navarra.dashboards.config.project_type_id
     },
     success: function(data_status) {
-      console.log("Response update_calculated_fields")
+      console.log("Response update_geom_and_calculated_fields")
       console.log(edited_field_calculated_all)
       // refresca las capas current y selected
       project_current._source.refreshOverlay();
