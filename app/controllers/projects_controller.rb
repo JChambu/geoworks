@@ -136,10 +136,8 @@ class ProjectsController < ApplicationController
         end
 
       end
-
+      @project.update_geom_and_calculated_fields(@new_geom, @new_properties)
     end
-
-    @project.update_geom_and_calculated_fields(@new_geom, @new_properties)
 
     @project_type.destroy_view
     @project_type.create_view
