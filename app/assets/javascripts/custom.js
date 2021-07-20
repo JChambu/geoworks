@@ -1301,7 +1301,7 @@ function init_data_dashboard(haschange,close_info) {
 
         // comienza llenado de la tabla
               $("._columnname").each(function(index_data){
-                $(this).html(array_datos[index_data]);
+                $(this).html(array_datos[index_data].toString());
               });
         // termina llenado de la tabla
 
@@ -3215,8 +3215,8 @@ function edit_file(edit_parent, edit_child, edit_status){
         if(properties_to_save[column.value]!=undefined){
           var indexval=indexColumn+1;
           app_ids.forEach(function(row_element){
-            if($('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html()!=properties_to_save[column.value] ){
-              $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(properties_to_save[column.value]);
+            if($('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html()!=properties_to_save[column.value].toString() ){
+              $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(properties_to_save[column.value].toString());
               $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-weight","bold");
               $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-size","1.5em");
             }
