@@ -1078,7 +1078,9 @@ Navarra.geomaps = function() {
     }
 
     // agrega registros NO seleccionados en la tabla
-    layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
+    var randint = Math.floor( Math.random() * 200000 ) + 1;
+    console.log(randint)
+    layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms?random=" + randint, {
       layers: current_layer, //nombre de la capa (ver get capabilities)
       format: 'image/png',
       crs: L.CRS.EPSG4326,
@@ -1090,7 +1092,7 @@ Navarra.geomaps = function() {
       styles: style,
       INFO_FORMAT: 'application/json',
       format_options: 'callback:getJson',
-      CQL_FILTER: cql_filter_not_selected
+      CQL_FILTER: cql_filter_not_selected,
     })
 
     project_current = layerProjects.getLayer(current_layer).addTo(mymap);
@@ -1134,7 +1136,6 @@ Navarra.geomaps = function() {
       $('#checkbox_Seleccionados').prop("checked",false);
     }
   }
-
 
   function layers_internal() {
     current_layer = Navarra.dashboards.config.name_layer;
@@ -1777,7 +1778,6 @@ function save_geometry_width_calculated_fields() {
     geometries_to_save.push(data_to_edit);
 
  } else{
-    console.log("Datos a guardar formato punto");
     geometries_to_save = [];
     geometries_to_edit.forEach(function(geom){
       //fields
@@ -1813,11 +1813,7 @@ function save_geometry_width_calculated_fields() {
       project_type_id: Navarra.dashboards.config.project_type_id
     },
     success: function(data_status) {
-      console.log("Response update_geom_and_calculated_fields")
-      console.log(edited_field_calculated_all)
-      // refresca las capas current y selected
-      project_current._source.refreshOverlay();
-      project_current_selected._source.refreshOverlay();
+      Navarra.geomaps.current_layer();
       delete_markers();
       $('#confirmation_success_geometry_text').html(data_status['status']);
       $('.confirmation_success_geometry').removeClass('d-none');
