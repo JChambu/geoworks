@@ -1527,6 +1527,8 @@ function show_labels(setbbox){
   };
   var parameters = L.Util.extend(defaultParameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
+  console.log("URL")
+  console.log(URL)
   var label_fields = $('.field_label');
   console.log(label_fields)
   $.ajax({
