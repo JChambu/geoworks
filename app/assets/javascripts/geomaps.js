@@ -1524,8 +1524,7 @@ function show_labels(setbbox){
     crs: L.CRS.EPSG4326,
     request: 'GetFeature',
     typeName: Navarra.dashboards.config.name_layer,
-    outputFormat: 'application/json',
-    CQL_FILTER: 'project_type_id = 6 AND row_enabled = true'
+    outputFormat: 'application/json'
   };
   var parameters = L.Util.extend(defaultParameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
