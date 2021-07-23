@@ -1514,6 +1514,8 @@ function show_labels(setbbox){
     }else{
       var cql_filter =  getCQLFilter(false);
     }
+    console.log("CQL FILTER")
+    console.log(cql_filter)
   $(".fakeLoader").css("display", "block");
   var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
   var defaultParameters = {
@@ -1522,8 +1524,7 @@ function show_labels(setbbox){
     crs: L.CRS.EPSG4326,
     request: 'GetFeature',
     typeName: Navarra.dashboards.config.name_layer,
-    outputFormat: 'application/json',
-    CQL_FILTER: cql_filter,
+    outputFormat: 'application/json'
   };
   var parameters = L.Util.extend(defaultParameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
