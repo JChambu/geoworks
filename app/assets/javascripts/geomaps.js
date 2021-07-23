@@ -1517,7 +1517,8 @@ function show_labels(setbbox){
     console.log("CQL FILTER")
     console.log(cql_filter)
   $(".fakeLoader").css("display", "block");
-  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
+  //var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
+  var owsrootUrl = "http://st.geoworks.com.ar:8600/geoserver/wfs"
   var defaultParameters = {
     service: 'WFS',
     layers: current_layer,
