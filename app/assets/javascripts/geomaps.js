@@ -1521,7 +1521,7 @@ function show_labels(setbbox){
   var owsrootUrl = "http://st.geoworks.com.ar:8600/geoserver/wfs"
   var defaultParameters = {
     service: 'WFS',
-    layers: current_layer,
+    layers: "prueba",
     version: '1.0.0',
     crs: L.CRS.EPSG4326,
     request: 'GetFeature',
