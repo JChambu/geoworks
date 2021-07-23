@@ -187,7 +187,6 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         to_date: to_date
       },
       success: function(data) {
-        console.log("SUCCESS")
         data_charts = data;
         draw_charts();
 
@@ -1239,7 +1238,7 @@ function init_data_dashboard(haschange,close_info) {
         new_row.id="row_table_data"+data_properties["app_id"];
         new_row.style.cursor = "pointer";
         new_row.className = "row_data";
-        
+
         var new_celd="";
         fields.forEach(function(column, indexColumn) {
           var column_name = column.value;
@@ -1274,13 +1273,13 @@ function init_data_dashboard(haschange,close_info) {
                 celd_width.innerHTML = data_properties[column_name];
               }
               // termina ajuste de ancho
-              if (column.value == "app_id") {     
+              if (column.value == "app_id") {
                 if (Navarra.project_types.config.item_selected == data_properties[column_name]) {
                   found_id = data_properties["app_id"];
                   Navarra.project_types.config.data_dashboard = "app_id = '" + appid_selected + "'";
                 }
               }
-              
+
             } else{
               array_datos.push("");
             }
@@ -1290,7 +1289,7 @@ function init_data_dashboard(haschange,close_info) {
             text_hidden = "style = 'display:none'";
           }
           new_celd += "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'></td>"
-          
+
         });
         document.getElementById("tbody_visible").appendChild(new_row);
         $('#row_table_data'+data_properties["app_id"]).html(new_celd);
@@ -1415,7 +1414,7 @@ function data_pagination(selected, active_page) {
   } else {
     $('#page_numbers').replaceWith('<ul class="pagination pagination-sm m-0" id="page_numbers"></ul>');
   }
-  
+
   //Pagina activa
   $(".page_data").click(function() {
     active_page = parseInt($(this).html());
@@ -2263,6 +2262,7 @@ function export_to_excel(table, name, filename) {
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
 function show_item_info(appid_info, from_map, is_multiple) {
+  Navarra.geomaps.delete_markers();
   if(is_multiple){
     $('#multiple_edit').addClass("multiple_on");
     var total_files_to_edit = $('#table_visible .custom-control-input:checked').not('.just_header').length;
@@ -2292,8 +2292,6 @@ function show_item_info(appid_info, from_map, is_multiple) {
       app_id: appid_info
     },
     success: function(data) {
-      console.log('Padres e hijos sin actualizar');
-      console.log(data);
 
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
@@ -3408,7 +3406,6 @@ function getapp_ids(){
     $('#table_visible .custom-control-input:checked').not('.just_header').each(function(){
       app_ids.push($(this).attr('id').split('_')[2]);
     });
-    console.log(app_ids)
   } else{
     app_ids.push(Navarra.project_types.config.id_item_displayed);
   }
@@ -3524,6 +3521,7 @@ function changeSelected(){
     $('#table_select_all').prop('checked',false);
   }
 }
+
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
 
