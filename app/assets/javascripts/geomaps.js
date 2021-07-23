@@ -1517,15 +1517,13 @@ function show_labels(setbbox){
     console.log("CQL FILTER")
     console.log(cql_filter)
   $(".fakeLoader").css("display", "block");
-  //var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
-  var owsrootUrl = "http://st.geoworks.com.ar:8600/geoserver/wfs"
+  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
   var defaultParameters = {
     service: 'WFS',
-    layers: "prueba",
     version: '1.0.0',
     crs: L.CRS.EPSG4326,
     request: 'GetFeature',
-    typeName: "prueba",
+    typeName: Navarra.dashboards.config.name_layer,
     outputFormat: 'application/json',
     CQL_FILTER: cql_filter
   };
@@ -1586,6 +1584,8 @@ function edit_geometry_in_map(){
     }
     cql_filter_edit_geometry += " and app_id = "+app_id_popup;
   }
+  console.log("Name layer")
+  console.log(Navarra.dashboards.config.name_layer)
   $('.confirmation_geometry').removeClass('d-none');
   var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
   var defaultParameters = {
