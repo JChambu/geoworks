@@ -439,8 +439,8 @@ function draw_charts() {
       }) //cierra each b
     }) //cierra each reg
 
-    //Verifica valores del label en el eje x si hay más de una serie
-    if (lab_all.length > 1) {
+    //Verifica valores del label en el eje x para unificar si hay varias series
+    // también se verifica el orden de los valores numéricos
       Array.prototype.unique = function(a) {
         return function() {
           return this.filter(a)
@@ -453,7 +453,11 @@ function draw_charts() {
       lab_acumulado = lab_acumulado.sort(); //ordena con sort, lo que coloca los null al final
       lab_acumulado = lab_acumulado.sort(function(a, b) {
         if (a != null) {
-          return a.localeCompare(b);
+          if(isNaN(a)){
+            return a.localeCompare(b);
+            } else{
+              return a-b;
+            }
         }
       }); //lo ordena en español para colocar la ñ en su lugar. sort() la coloca al final
       var indexnull = lab_acumulado.indexOf(null);
@@ -465,7 +469,11 @@ function draw_charts() {
         var lab_temporal_ordenado = lab_all[l].slice().sort();
         var lab_temporal_ordenado = lab_temporal_ordenado.sort(function(a, b) {
           if (a != null) {
-            return a.localeCompare(b);
+            if(isNaN(a)){
+              return a.localeCompare(b);
+            } else{
+              return a-b;
+            }
           }
         }); //lo ordena en español
         var indexnull = lab_temporal_ordenado.indexOf(null);
@@ -495,7 +503,7 @@ function draw_charts() {
           }
         }
       }
-    } // fin de unificación de labels en el eje x para varias series
+    // fin de unificación de labels en el eje x para varias series y orden numérico
 
     // Arranca armando series
     $.each(reg, function(a, b) {
@@ -1197,6 +1205,7 @@ function init_data_dashboard(haschange,close_info) {
     },
 
     success: function(data) {
+      console.log("SUCCESS !!!!!!!!!!!")
       var fields = document.querySelectorAll(".field_key");
       if(JSON.stringify(data_dashboard) == JSON.stringify(data.data)){
         $(".fakeLoader").css("display", "none");
@@ -1291,7 +1300,7 @@ function init_data_dashboard(haschange,close_info) {
 
         // comienza llenado de la tabla
               $("._columnname").each(function(index_data){
-                $(this).html(array_datos[index_data]);
+                $(this).html(array_datos[index_data].toString());
               });
         // termina llenado de la tabla
 
@@ -3204,8 +3213,8 @@ function edit_file(edit_parent, edit_child, edit_status){
         if(properties_to_save[column.value]!=undefined){
           var indexval=indexColumn+1;
           app_ids.forEach(function(row_element){
-            if($('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html()!=properties_to_save[column.value] ){
-              $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(properties_to_save[column.value]);
+            if($('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html()!=properties_to_save[column.value].toString() ){
+              $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(properties_to_save[column.value].toString());
               $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-weight","bold");
               $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-size","1.5em");
             }

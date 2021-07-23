@@ -11,7 +11,7 @@ class ProjectDataChild < ApplicationRecord
   def update_subform properties
     attributes = {
       properties: properties,
-      gwm_updated_at: Time.now - 3.hours # TODO: Corregir zona horaria
+      gwm_updated_at: Time.zone.now
     }
     self.update_attributes(attributes)
   end
