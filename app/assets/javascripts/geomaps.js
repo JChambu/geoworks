@@ -1504,6 +1504,7 @@ function get_zoomextent(){
 
 
 function show_labels(setbbox){
+  console.log("Ingresa a show_labels")
   if(labels!=undefined){
       mymap.removeLayer(labels);
     }
@@ -1527,9 +1528,11 @@ function show_labels(setbbox){
   var parameters = L.Util.extend(defaultParameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
   var label_fields = $('.field_label');
+  console.log(label_fields)
   $.ajax({
     url: URL,
     success: function (data) {
+      console.log(data)
     labels = new L.LayerGroup();
     var geojson = new L.geoJson(data, {
       onEachFeature: function(feature, layer){
@@ -1538,6 +1541,7 @@ function show_labels(setbbox){
             var latlng_new = layer._latlng;
           break;
           case 'Polygon':
+          console.log("es polígono")
             var latlongs = layer._latlngs;
             var poligon_new = new L.Polygon(latlongs);
             var center = poligon_new.getBounds().getCenter();
@@ -1546,6 +1550,7 @@ function show_labels(setbbox){
         }
         var popupContent1 = "";
         label_fields.each(function(){
+          console.log("para cada campo "+$(this).val())
           key_label = $(this).val();
           if(feature.properties[key_label]!=null){
             popupContent1 += '<p>'+feature.properties[key_label]+'</p>';
