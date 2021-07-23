@@ -1516,6 +1516,7 @@ function show_labels(setbbox){
     }
     console.log("Name layer")
   console.log(Navarra.dashboards.config.name_layer)
+  console.log(Navarra.dashboards.cu)
     console.log("CQL FILTER")
     console.log(cql_filter)
   $(".fakeLoader").css("display", "block");
@@ -1525,7 +1526,7 @@ function show_labels(setbbox){
     version: '1.0.0',
     crs: L.CRS.EPSG4326,
     request: 'GetFeature',
-    typeName: 'amandes:'+Navarra.dashboards.config.name_layer,
+    typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
     outputFormat: 'application/json',
     CQL_FILTER: cql_filter
   };
