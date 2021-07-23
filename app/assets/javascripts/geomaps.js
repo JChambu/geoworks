@@ -1525,7 +1525,7 @@ function show_labels(setbbox){
     version: '1.0.0',
     crs: L.CRS.EPSG4326,
     request: 'GetFeature',
-    typeName: Navarra.dashboards.config.name_layer,
+    typeName: "prueba",
     outputFormat: 'application/json',
     CQL_FILTER: cql_filter
   };
