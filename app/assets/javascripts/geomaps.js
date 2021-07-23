@@ -1520,11 +1520,13 @@ function show_labels(setbbox){
   var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
   var defaultParameters = {
     service: 'WFS',
+    layers: current_layer,
     version: '1.0.0',
     crs: L.CRS.EPSG4326,
     request: 'GetFeature',
     typeName: Navarra.dashboards.config.name_layer,
-    outputFormat: 'application/json'
+    outputFormat: 'application/json',
+    CQL_FILTER: cql_filter
   };
   var parameters = L.Util.extend(defaultParameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
