@@ -1079,7 +1079,6 @@ Navarra.geomaps = function() {
 
     // agrega registros NO seleccionados en la tabla
     var randint = Math.floor( Math.random() * 200000 ) + 1;
-    console.log(randint)
     layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms?random=" + randint, {
       layers: current_layer, //nombre de la capa (ver get capabilities)
       format: 'image/png',
@@ -1804,6 +1803,7 @@ function save_geometry_width_calculated_fields() {
 
   console.log("Params update_geom_and_calculated_fields")
   console.log(geometries_to_save)
+
   $.ajax({
     type: 'PATCH',
     url: '/projects/update_geom_and_calculated_fields',
