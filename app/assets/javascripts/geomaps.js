@@ -1514,6 +1514,8 @@ function show_labels(setbbox){
     }else{
       var cql_filter =  getCQLFilter(false);
     }
+    console.log("Name layer")
+  console.log(Navarra.dashboards.config.name_layer)
     console.log("CQL FILTER")
     console.log(cql_filter)
   $(".fakeLoader").css("display", "block");
@@ -1584,8 +1586,7 @@ function edit_geometry_in_map(){
     }
     cql_filter_edit_geometry += " and app_id = "+app_id_popup;
   }
-  console.log("Name layer")
-  console.log(Navarra.dashboards.config.name_layer)
+
   $('.confirmation_geometry').removeClass('d-none');
   var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
   var defaultParameters = {
