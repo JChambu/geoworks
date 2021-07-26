@@ -1513,6 +1513,7 @@ function show_labels(setbbox){
     }else{
       var cql_filter =  getCQLFilter(false);
     }
+
   $(".fakeLoader").css("display", "block");
   var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
   var defaultParameters = {
@@ -1520,9 +1521,9 @@ function show_labels(setbbox){
     version: '1.0.0',
     crs: L.CRS.EPSG4326,
     request: 'GetFeature',
-    typeName: Navarra.dashboards.config.name_layer,
+    typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
     outputFormat: 'application/json',
-    CQL_FILTER: cql_filter,
+    CQL_FILTER: cql_filter
   };
   var parameters = L.Util.extend(defaultParameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
@@ -1575,6 +1576,7 @@ function edit_geometry_in_map(){
     }
     cql_filter_edit_geometry += " and app_id = "+app_id_popup;
   }
+
   $('.confirmation_geometry').removeClass('d-none');
   var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
   var defaultParameters = {
@@ -1582,7 +1584,7 @@ function edit_geometry_in_map(){
     version: '1.0.0',
     crs: L.CRS.EPSG4326,
     request: 'GetFeature',
-    typeName: Navarra.dashboards.config.name_layer,
+    typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
     outputFormat: 'application/json',
     CQL_FILTER: cql_filter_edit_geometry,
   };
