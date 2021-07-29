@@ -11,6 +11,8 @@ var filechange;
 var statuschange;
 
 var father_fields;
+var child_elements;
+var children_fields;
 var array_child_edited;
 var data_dashboard=[];
 
@@ -2549,12 +2551,12 @@ function show_item_info(appid_info, from_map, is_multiple) {
                 if(found_nested ){new_p.value=values;}
                 new_p.setAttribute('onChange', 'changeFile()');
                 if(found_nested){
-                  new_p.setAttribute('onChange', 'set_nested(event)');
+                  new_p.setAttribute('onChange', 'set_nested(event,true)');
                 }
                 if(element.data_script!=""){
                   if(!is_multiple){
                     if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
-                    new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +found_nested+',event  )');
+                    new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +found_nested+',event ,true )');
                   } else{
                     new_p.setAttribute('onChange', 'changeFile()');
                   }
@@ -2582,7 +2584,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
                 if(element.data_script!=""){
                   if(!is_multiple){
                     if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
-                    new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event )');
+                    new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event ,true)');
                   } else{
                     new_p.setAttribute('onChange', 'changeFile()');
                   }
@@ -2693,9 +2695,9 @@ function show_item_info(appid_info, from_map, is_multiple) {
               children_fields.forEach(function(element_child_field) {
                 var new_row1 = document.createElement('DIV');
                 if (element_child_field.hidden) {
-                  new_row1.className = "form-row d-none hidden_field";
+                  new_row1.className = "form-row d-none hidden_field row_field";
                 } else {
-                  new_row1.className = "form-row";
+                  new_row1.className = "form-row row_field";
                 }
                 if ((element_child_field.value == null && element_child_field.field_type_id != 11) || (element_child_field.value == "" && element_child_field.field_type_id != 11) || (element_child_field.value == " " && element_child_field.field_type_id != 11)) {
                   new_row1.classList.add("d-none");
@@ -2740,6 +2742,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
                 if (element_child_field.field_type_id != 11) {
                   var new_celd = document.createElement('DIV');
                   new_celd.className = "col-md-6 field_div";
+                  if(element_child_field.field_type_id == 10){new_celd.classList.add("ok_button")}
 
                   // Adapta el código a los diferentes tipos de campos
                   if (element_child_field.field_type_id == 1) {
@@ -2840,7 +2843,21 @@ function show_item_info(appid_info, from_map, is_multiple) {
                     var id_child = element_child.children_id;
                     arraymultiselect.push(id_field);
                     arraymultiselectChild.push(id_child);
+                    
                     new_p.setAttribute('onChange','changeChild('+element_child.children_id+',' +found_nested +',event)');
+
+                    // Script en hijos
+                    if(element_child_field.data_script!=""){
+                      if(!is_multiple){
+                        if(element_child_field.value==null){isnull_value=null}else{isnull_value="\""+element_child_field.value+"\""}
+                          var id_child_toScript = element_child_field.field_id+"|"+element_child.children_id;
+                          new_p.setAttribute('onChange', 'set_script('+element_child_field.data_script+ ',' +element_child_field.field_type_id+ ', "' +id_child_toScript +'",' +isnull_value+',' +found_nested +',event , false)');
+                      } else{
+                        new_p.setAttribute('onChange','changeChild('+element_child.children_id+',' +found_nested +',event)');
+                      }
+                    }
+                 //
+          
                   }
                   if (element_child_field.field_type_id == 3) {
                     var new_p = document.createElement('INPUT');
@@ -2857,7 +2874,22 @@ function show_item_info(appid_info, from_map, is_multiple) {
                     new_option.text="NO";
                     new_option.value="false";
                     new_p.appendChild(new_option);
-                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
+                    new_p.value="";
+
+                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+')');
+
+                    // Script en hijos
+                    if(element_child_field.data_script!=""){
+                      if(!is_multiple){
+                        if(element_child_field.value==null){isnull_value=null}else{isnull_value="\""+element_child_field.value+"\""}
+                          var id_child_toScript = element_child_field.field_id+"|"+element_child.children_id;
+                          new_p.setAttribute('onChange', 'set_script('+element_child_field.data_script+ ',' +element_child_field.field_type_id+ ', "' +id_child_toScript +'",' +isnull_value+',' +false +',event , false)');
+                      } else{
+                        new_p.setAttribute('onChange','changeChild('+element_child.children_id+')');
+                      }
+                    }
+                 //
+
                   }
                   if (element_child_field.field_type_id == 5) {
                     var new_p = document.createElement('INPUT');
@@ -2984,12 +3016,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
         Navarra.project_types.config.item_selected = appid_info;
         Navarra.geomaps.current_layer();
       }
-      //Ejecuta Script de campos padres
-        father_fields.forEach(function(element) {
-          if(element.data_script!=""){
-            Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,true);
-          }
-        });
+      //Ejecuta Script de campos padres e hijos
+        set_script_all();
         calculate_all(true);
 
     }//end Success
@@ -3422,24 +3450,38 @@ function update_all(){
   }
 }
 
-function set_script(data_script,field_type_id,field_id,value,isnested,event){
+function set_script(data_script,field_type_id,field_id,value,isnested,event, isparent){
+  console.log("ingresa a datascript "+field_id)
   // Script de campos padres
-  filechange = true;
+  if(isparent){
+    filechange = true;
+  } else {
+    array_child_edited.push(field_id.split('|')[1]);
+  }
   if(data_script!=""){
-    Navarra.calculated_and_script_fields.Script(JSON.stringify(data_script),field_type_id, field_id,value, false);
+    Navarra.calculated_and_script_fields.Script(JSON.stringify(data_script),field_type_id, field_id,value, false, isparent);
   }
   if(isnested){
-    set_nested(event)
+    set_nested(event,isparent)
   }
 }
 
 function set_script_all(){
   //Ejecuta Script de campos padres
-        father_fields.forEach(function(element) {
+    father_fields.forEach(function(element) {
+      if(element.data_script!=""){
+        Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,false,true);
+      }
+    });
+    //Ejecuta Script de campos hijos
+    child_elements.forEach(function(element_child){
+        children_fields.forEach(function(element) {
+          var id_child_toScript = element.field_id+"|"+element_child.children_id;
           if(element.data_script!=""){
-            Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,false);
+            Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,id_child_toScript,element.value,true,false);
           }
         });
+      });
 }
 
 function calculate_change(calculated_field,field_type_id,field_id,value){
@@ -3457,25 +3499,32 @@ function calculate_all(first_time){
         });
 }
 
-function set_nested(event){
+function set_nested(event, isparent){
   filechange = true;
   var id_event = event.target.id;
-  var id_event_nested = id_event+"_nested";
-  var attribute_nested = document.getElementById(id_event).options[document.getElementById(id_event).selectedIndex].getAttribute('data-type');
-  $("#"+id_event_nested).val("");
-  $("#"+id_event_nested+" option").each(function() {
-    if(this.getAttribute('data-type')==attribute_nested){
-       $(this).removeClass('d-none')
-    } else{
-      $(this).addClass('d-none');
-    }
-  });
+  var id_event_jquery = event.target.id.replaceAll('|','\\|');
+  var id_event_nested = id_event_jquery+"_nested";
+  if(document.getElementById(id_event).selectedIndex==-1){
+    $("#"+id_event_nested+" option").each(function() {
+        $(this).addClass('d-none');
+    });
+  } else{
+    var attribute_nested = document.getElementById(id_event).options[document.getElementById(id_event).selectedIndex].getAttribute('data-type');
+    $("#"+id_event_nested).val("");
+    $("#"+id_event_nested+" option").each(function() {
+      if(this.getAttribute('data-type')==attribute_nested){
+        $(this).removeClass('d-none')
+      } else{
+        $(this).addClass('d-none');
+      }
+    });
+  }
 }
 
 function changeChild(id_child_edited,isnested,event){
   array_child_edited.push(id_child_edited);
   if(isnested){
-    set_nested(event)
+    set_nested(event,false)
   }
 }
 

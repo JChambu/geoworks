@@ -1,22 +1,28 @@
 Navarra.namespace("calculated_and_script_fields");
 Navarra.calculated_and_script_fields = function() {
 
-function Script(data_script, field_type_id , field_id , value, initial) {
+function Script(data_script, field_type_id , field_id , value, initial, isparent) {
     var is_multiple = $('#multiple_edit').hasClass("multiple_on");
     var scriptString = data_script;
     var field_type = field_type_id
     var id_field = field_id;
+    if(isparent){
+        var texto_campo_id = "#field_id_"+id_field;
+    } else{
+        var texto_campo_id = "#fieldchildid\\|"+id_field.split('|')[0]+"\\|"+id_field.split('|')[1];
+    }
+    
     if(field_type==4){
         // si el campo tipo booleano tiene un Script y viene con valor nulo, se asigna valor = false por primera vez
-       if(value==null && initial && !is_multiple){$('#field_id_'+id_field).val("false")}
+       if(value==null && initial && !is_multiple){$(texto_campo_id).val("false")}
         try{
             var scriptObj = JSON.parse(scriptString);
-            if($('#field_id_'+id_field).val()=="true"){
+            if($(texto_campo_id).val()=="true"){
                 var scriptTrue = scriptObj.true;
             } else{
-                var scriptTrue = scriptObj.false;
-            }
-            script_ejecute(scriptTrue, initial, field_id);
+              var scriptTrue = scriptObj.false;
+           }
+            script_ejecute(scriptTrue, initial, field_id, isparent);
         } catch(e){
             set_error_message("Error en el atributo script del campo ID:"+field_id);
         } 
@@ -25,12 +31,12 @@ function Script(data_script, field_type_id , field_id , value, initial) {
     try{
         var scriptObjMulti = JSON.parse(scriptString);
         var arrayMultiOption_keys = Object.keys(scriptObjMulti);
-        if($('#field_id_'+id_field).val()!=null){
+        if($(texto_campo_id).val()!=null){
             if(field_type == 2){
                 var valueObj = [];
-                valueObj.push($('#field_id_'+id_field).val());
+                valueObj.push($(texto_campo_id).val());
             } else {
-                var valueObj = $('#field_id_'+id_field).val();
+                var valueObj = $(texto_campo_id).val();
             }
             for(xx=0;xx<arrayMultiOption_keys.length;xx++){
                 var encontro = false;
@@ -45,7 +51,7 @@ function Script(data_script, field_type_id , field_id , value, initial) {
                 if(encontro==false){
                     scriptTrue = scriptObj.false;
                 }
-                script_ejecute(scriptTrue, initial, field_id);
+                script_ejecute(scriptTrue, initial, field_id, isparent);
             }
         }
     } catch(e){
@@ -54,7 +60,9 @@ function Script(data_script, field_type_id , field_id , value, initial) {
  }
 
 }
-function script_ejecute(scriptTrue, initial, field_id){
+function script_ejecute(scriptTrue, initial, field_id, isparent){
+    console.log("Script a analizar")
+    console.log(scriptTrue)
 var is_multiple = $('#multiple_edit').hasClass("multiple_on");
  try{
     var hiddenTrue = JSON.parse(scriptTrue.hiddenTrue);
@@ -66,42 +74,72 @@ var is_multiple = $('#multiple_edit').hasClass("multiple_on");
 
     if(!is_multiple){
         for(x=0;x<hiddenTrue.length;x++){
-            if($('#field_id_'+hiddenTrue[x]).length>0){
-                $('#field_id_'+hiddenTrue[x]).parent().closest('.row_field').addClass("d-none");
-                $('#field_id_'+hiddenTrue[x]).parent().closest('.row_field').addClass("hidden_field");
+            if(isparent){
+                var texto_campo_id_script = "#field_id_"+hiddenTrue[x];
+            } else{
+                var texto_campo_id_script = "#fieldchildid\\|"+hiddenTrue[x]+"\\|"+field_id.split('|')[1];
+            }
+            if($(texto_campo_id_script).length>0){
+                $(texto_campo_id_script).parent().closest('.row_field').addClass("d-none");
+                $(texto_campo_id_script).parent().closest('.row_field').addClass("hidden_field");
             }
         }
-    
         for(x=0;x<hiddenFalse.length;x++){
-            if($('#field_id_'+hiddenFalse[x]).length>0){
+            if(isparent){
+                var texto_campo_id_script = "#field_id_"+hiddenFalse[x];
+            } else{
+                var texto_campo_id_script = "#fieldchildid\\|"+hiddenFalse[x]+"\\|"+field_id.split('|')[1];
+            }
+            
+            if($(texto_campo_id_script).length>0){
                 if(initial){
-                    $('#field_id_'+hiddenFalse[x]).parent().closest('.row_field').not('.empty_field').removeClass("d-none");
-                    $('#field_id_'+hiddenFalse[x]).parent().closest('.row_field').removeClass("hidden_field");
+                    $(texto_campo_id_script).parent().closest('.row_field').not('.empty_field').removeClass("d-none");
+                    $(texto_campo_id_script).parent().closest('.row_field').removeClass("hidden_field");
                 } else{
-                    $('#field_id_'+hiddenFalse[x]).parent().closest('.row_field').removeClass("d-none");
-                    $('#field_id_'+hiddenFalse[x]).parent().closest('.row_field').removeClass("hidden_field");
+                    $(texto_campo_id_script).parent().closest('.row_field').removeClass("d-none");
+                    $(texto_campo_id_script).parent().closest('.row_field').removeClass("hidden_field");
                 }
             }
         }
         for(x=0;x<requiredTrue.length;x++){
-            if($('#field_id_'+requiredTrue[x]).length>0){
-                $('#field_id_'+requiredTrue[x]).addClass("required_field");
+            if(isparent){
+                var texto_campo_id_script = "#field_id_"+requiredTrue[x];
+            } else{
+                var texto_campo_id_script = "#fieldchildid\\|"+requiredTrue[x]+"\\|"+field_id.split('|')[1];
+            }
+            if($(texto_campo_id_script).length>0){
+                $(texto_campo_id_script).addClass("required_field");
             }
         }
         for(x=0;x<requiredFalse.length;x++){
-            if($('#field_id_'+requiredFalse[x]).length>0){
-                $('#field_id_'+requiredFalse[x]).removeClass("required_field");
-                $('#field_id_'+requiredFalse[x]).parent().closest('div').css("border-bottom","none");
+            if(isparent){
+                var texto_campo_id_script = "#field_id_"+requiredFalse[x];
+            } else{
+                var texto_campo_id_script = "#fieldchildid\\|"+requiredFalse[x]+"\\|"+field_id.split('|')[1];
+            }
+            if($(texto_campo_id_script).length>0){
+                $(texto_campo_id_script).removeClass("required_field");
+                $(texto_campo_id_script).parent().closest('div').css("border-bottom","none");
             }
         }
         for(x=0;x<readOnlyTrue.length;x++){
-            if($('#field_id_'+readOnlyTrue[x]).length>0){
-                $('#field_id_'+readOnlyTrue[x]).addClass("readonly_field");
+            if(isparent){
+                var texto_campo_id_script = "#field_id_"+readOnlyTrue[x];
+            } else{
+                var texto_campo_id_script = "#fieldchildid\\|"+readOnlyTrue[x]+"\\|"+field_id.split('|')[1];
+            }
+            if($(texto_campo_id_script).length>0){
+                $(texto_campo_id_script).addClass("readonly_field");
             }
         }
         for(x=0;x<readOnlyFalse.length;x++){
-            if($('#field_id_'+readOnlyFalse[x]).length>0){
-                $('#field_id_'+readOnlyFalse[x]).removeClass("readonly_field");
+            if(isparent){
+                var texto_campo_id_script = "#field_id_"+readOnlyFalse[x];
+            } else{
+                var texto_campo_id_script = "#fieldchildid\\|"+readOnlyFalse[x]+"\\|"+field_id.split('|')[1];
+            }
+            if($(texto_campo_id_script).length>0){
+                $(texto_campo_id_script).removeClass("readonly_field");
             }
         }
     }
@@ -109,11 +147,16 @@ var is_multiple = $('#multiple_edit').hasClass("multiple_on");
     var scriptValue = scriptTrue.setValue;
     var arraykeys = Object.keys(scriptValue);
     for(x=0;x<arraykeys.length;x++){
-        if($('#field_id_'+arraykeys[x]).length>0){
+        if(isparent){
+            var texto_campo_id_script = "#field_id_"+arraykeys[x];
+        } else{
+            var texto_campo_id_script = "#fieldchildid\\|"+arraykeys[x]+"\\|"+field_id.split('|')[1];
+        }
+        if($(texto_campo_id_script).length>0){
             if(!is_multiple){
-                $('#field_id_'+arraykeys[x]).val(scriptValue[arraykeys[x]]);
+                $(texto_campo_id_script).val(scriptValue[arraykeys[x]]);
             } else{
-                $('#field_id_'+arraykeys[x]).addClass('readonly_field');
+                $(texto_campo_id_script).addClass('readonly_field');
             }
         }
     }
