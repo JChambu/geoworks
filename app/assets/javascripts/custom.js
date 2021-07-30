@@ -1207,7 +1207,6 @@ function init_data_dashboard(haschange,close_info) {
     },
 
     success: function(data) {
-      console.log("SUCCESS !!!!!!!!!!!")
       var fields = document.querySelectorAll(".field_key");
       if(JSON.stringify(data_dashboard) == JSON.stringify(data.data)){
         $(".fakeLoader").css("display", "none");
@@ -2456,7 +2455,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
                 new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
                 if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
                 if(!is_multiple){
-                  new_p.setAttribute("onChange","calculate_all(false)");
+                  new_p.setAttribute("onChange","calculate_all(false,true)");
                 } else{
                   new_p.setAttribute('onChange', 'changeFile()');
                 }
@@ -2596,7 +2595,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
                 new_p.className = "form-control form-control-sm info_input_disabled";
                 if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
                 if(!is_multiple){
-                  new_p.setAttribute("onChange","calculate_all(false)");
+                  new_p.setAttribute("onChange","calculate_all(false,true)");
                 } else{
                   new_p.setAttribute('onChange', 'changeFile()');
                 }
@@ -2749,7 +2748,11 @@ function show_item_info(appid_info, from_map, is_multiple) {
                     var new_p = document.createElement('TEXTAREA');
                     new_p.className = "form-control form-control-sm info_input_disabled textarea_input is_child_field";
                     new_p.style.minHeight = '22px';
-                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
+                    if(!is_multiple){
+                      new_p.setAttribute("onChange","calculate_all(false,false,"+element_child.children_id+")");
+                    } else{
+                      new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
+                    }
                   }
                   var found_nested = false;
                   if (element_child_field.field_type_id == 2 || element_child_field.field_type_id == 10) {
@@ -2775,8 +2778,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
                           values = element_child_field.value[0];
                           values_nested = element_child_field.value[1];
                         } else{
-                          //comentado hasta edición de hijos
-                         // set_error_message("Error en subformulario, listados anidados : "+element_child_field.name);
+                          set_error_message("Error en subformulario, listados anidados : "+element_child_field.name);
                         }
                       }
                       var new_p_nested = document.createElement('SELECT');
@@ -2810,10 +2812,9 @@ function show_item_info(appid_info, from_map, is_multiple) {
                               found_option=true;
                               new_option.selected = true;
                             }
-                          }
+                           }
                           } else{
-                            //Comentado hasta la edición de hijos
-                            //set_error_message("Error en subformulario, listados: "+element_child_field.name);
+                            set_error_message("Error en subformulario, listados: "+element_child_field.name);
                           }
                        }
                      }
@@ -2895,7 +2896,11 @@ function show_item_info(appid_info, from_map, is_multiple) {
                     var new_p = document.createElement('INPUT');
                     new_p.type = "number";
                     new_p.className = "form-control form-control-sm info_input_disabled is_child_field";
-                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
+                    if(!is_multiple){
+                      new_p.setAttribute("onChange","calculate_all(false,false,"+element_child.children_id+")");
+                    } else{
+                      new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
+                    }
                   }
                   new_p.disabled = true;
                   if (element_child_field.value != null && element_child_field.field_type_id != 10 && element_child_field.field_type_id != 2) {
@@ -2974,10 +2979,14 @@ function show_item_info(appid_info, from_map, is_multiple) {
       });
       $('.date_field').on('dp.change', function(e){
         if(this.id.substring(0,12)=="fieldchildid"){
-          changeChild(this.id.split('|')[2]);
+          if(!is_multiple){
+            calculate_all(false,false,this.id.split('|')[2]);
+          } else{
+            changeChild(this.id.split('|')[2]);
+          }
         } else{
           if(!is_multiple){
-            calculate_all(false);
+            calculate_all(false,true);
           } else{
             changeFile();
           }
@@ -3016,9 +3025,10 @@ function show_item_info(appid_info, from_map, is_multiple) {
         Navarra.project_types.config.item_selected = appid_info;
         Navarra.geomaps.current_layer();
       }
-      //Ejecuta Script de campos padres e hijos
+      //Ejecuta Script y calculados de campos padres e hijos
         set_script_all();
-        calculate_all(true);
+        calculate_all(true,true);
+        calculate_all(true,false);
 
     }//end Success
   }); //end ajax
@@ -3451,7 +3461,6 @@ function update_all(){
 }
 
 function set_script(data_script,field_type_id,field_id,value,isnested,event, isparent){
-  console.log("ingresa a datascript "+field_id)
   // Script de campos padres
   if(isparent){
     filechange = true;
@@ -3484,19 +3493,46 @@ function set_script_all(){
       });
 }
 
+/* chequear si hace falta esta funcion
 function calculate_change(calculated_field,field_type_id,field_id,value){
   if(calculated_field!=""){
     Navarra.calculated_and_script_fields.Calculate(JSON.stringify(calculated_field),field_type_id, field_id,value, "data_edition");
   }
 }
-function calculate_all(first_time){
+*/
+
+function calculate_all(first_time, isparent, id_child_calculate){
   //Ejecuta Calculate de campos padres
-  if(!first_time){filechange = true;}
-        father_fields.forEach(function(element) {
+  if(isparent){
+    if(!first_time){filechange = true;}
+      father_fields.forEach(function(element) {
+        if(element.calculated_field!="" && element.field_type_id!=11){
+          Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,element.field_id,element.value,"data_edition",null,null,true);
+        }
+      });
+    } else{
+      //Ejecuta Calculate de campos hijos
+      if(!first_time){
+        array_child_edited.push(id_child_calculate);
+        //ejecuta calculate para el hijo cambiado
+        children_fields.forEach(function(element) {
+          var id_child_toScript = element.field_id+"|"+id_child_calculate;
           if(element.calculated_field!="" && element.field_type_id!=11){
-            Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,element.field_id,element.value,"data_edition");
+            Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,"data_edition",null,null,false);
           }
         });
+      } else{
+        //ejecuta calculate para todos los hijos
+        child_elements.forEach(function(element_child){
+          children_fields.forEach(function(element) {
+            var id_child_toScript = element.field_id+"|"+element_child.children_id;
+            if(element.calculated_field!="" && element.field_type_id!=11){
+              Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,"data_edition",null,null,false);
+            }
+          });
+        });
+      }
+    }
 }
 
 function set_nested(event, isparent){
