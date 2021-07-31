@@ -348,11 +348,12 @@ function switch_filtered_layer(){
 </div>
 <% if can? :data, :edit_geom %>
   <input id="edit_geom_control" value="true">
-  <!-- Oculto 
-            <button type="button" class="btn btn-secondary pt-0 pb-0 pl-1 pr-1" onclick="save_info()" >Guardar</button>
-            <button type="button" class="btn btn-secondary pt-0 pb-0 pl-1 pr-1" data-dismiss="modal" onclick="Navarra.geomaps.delete_markers()">Cancelar</button>
-            -->
 <%else %>
   <input id="edit_geom_control" value="false">
+<% end %>
+<% if can? :data, :new %>
+  <input id="new_geom_control" value="true">
+<%else %>
+  <input id="new_geom_control" value="false">
 <% end %>
 

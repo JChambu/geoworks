@@ -402,6 +402,11 @@ div.custom-menu.show {
   transition:1s;
 }
 
+/*cursor crosshair para leaflet */
+.cursor-crosshair{
+  cursor: crosshair!important;
+}
+
 /* Modifica el scroll del navagador */
 ::-webkit-scrollbar {
   width: 10px;
