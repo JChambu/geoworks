@@ -255,8 +255,10 @@ class Project < ApplicationRecord
         .where("small_geom.project_status_id = ?", status.inherit_status_id)
         .where("small_geom.row_active = true")
         .where("small_geom.current_season = true")
+        .where("small_geom.row_enabled = true")
         .where("big_geom.row_active = true")
         .where("big_geom.current_season = true")
+        .where("big_geom.row_enabled = true")
         .filter_equal_records_with_timer(status.timer)
         .uniq
 
