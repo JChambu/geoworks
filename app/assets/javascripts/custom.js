@@ -10,8 +10,8 @@ var data_charts;
 var filechange;
 var statuschange;
 
-var father_fields;
-var child_elements;
+var father_fields = [];
+var child_elements = [];
 var children_fields;
 var array_child_edited;
 var data_dashboard=[];
@@ -2262,8 +2262,11 @@ function export_to_excel(table, name, filename) {
 
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
-function show_item_info(appid_info, from_map, is_multiple) {
-  Navarra.geomaps.delete_markers();
+function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
+  if(!is_new_file){
+    $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
+  }
+  Navarra.geomaps.delete_markers(is_new_file);
   if(is_multiple){
     $('#multiple_edit').addClass("multiple_on");
     var total_files_to_edit = $('#table_visible .custom-control-input:checked').not('.just_header').length;
@@ -2494,7 +2497,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
                   if(element.required==true){
                     new_p_nested.classList.add('required_field');
                   }
-                  if(element.read_only==true || element.can_edit==false){
+                  //Permite editar readonly si es nuevo registro y no tiene un campo calculado automáticamente, siempre y cuando tenga autorización de edición
+                  if((element.read_only==true && !is_new_file) || (element.read_only==true && is_new_file && element.calculated_field!="") || element.can_edit==false){
                     new_p_nested.classList.add('readonly_field');
                   }
                   var id_field_nested = element.field_id+"_nested";
@@ -2609,7 +2613,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
               if(element.required==true && !is_multiple){
                 new_p.classList.add('required_field');
               }
-              if(element.read_only==true || element.can_edit==false || (is_multiple && element.calculated_field!="") || (is_multiple && element.data_script!="") ){
+              if((element.read_only==true && !is_new_file) || (element.read_only==true && is_new_file && element.calculated_field!="") || element.can_edit==false || (is_multiple && element.calculated_field!="") || (is_multiple && element.data_script!="")){
                 new_p.classList.add('readonly_field');
               }
 
@@ -2787,6 +2791,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
                       if(element_child_field.required==true){
                         new_p_nested.classList.add('required_field');
                       }
+                      // agregar condición de readonly para hijos cuando son nuevos
                       if(element_child_field.read_only==true || element_child_field.can_edit==false){
                         new_p_nested.classList.add('readonly_field');
                       }
@@ -2909,6 +2914,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
                   if(element_child_field.required==true){
                     new_p.classList.add('required_field');
                   }
+                  // agregar condición de readonly para hijos cuando son nuevos
                   if(element_child_field.read_only==true || element_child_field.can_edit==false){
                     new_p.classList.add('readonly_field');
                   }
@@ -3030,6 +3036,11 @@ function show_item_info(appid_info, from_map, is_multiple) {
         calculate_all(true,true);
         calculate_all(true,false);
 
+        //si viene de nuevo registro abre edición
+        if($("#confirmation_geometry_button").hasClass('confirmation_geometry_button_new')){
+          show_confirmation('edit_confirmation');
+        }
+
     }//end Success
   }); //end ajax
 }
@@ -3063,10 +3074,15 @@ function show_hidden_fields() {
 }
 
 function open_subtitle(fields, ischild) {
+  var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   if (fields != "") {
     fields.forEach(function(field_id) {
       if ($(".subtile_hidden" + ischild + field_id).length > 0) {
-        $(".subtile_hidden" + ischild + field_id).not('.empty_field').not('.hidden_field').removeClass("d-none");
+        if(is_new_file){
+          $(".subtile_hidden" + ischild + field_id).not('.hidden_field').removeClass("d-none");
+        } else{
+          $(".subtile_hidden" + ischild + field_id).not('.empty_field').not('.hidden_field').removeClass("d-none");
+        }
         $(".subtile_hidden" + ischild + field_id).addClass("subtile_visible" + ischild + field_id);
         $(".subtile_hidden" + ischild + field_id).removeClass("subtile_hidden" + ischild + field_id);
       } else {
@@ -3093,6 +3109,7 @@ function textarea_adjust_height() {
 //****** FUNCIONES PARA EDICION DE REGISTROS *****
 
 function edit_file(edit_parent, edit_child, edit_status){
+  var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   textarea_adjust_height()
   //verifica requeridos si no es edición múltiple
 
@@ -3218,16 +3235,28 @@ function edit_file(edit_parent, edit_child, edit_status){
 
   console.log("Hijos a actualizar")
   console.log(child_edited_all);
-
-  $.ajax({
-    type: 'PATCH',
-    url: '/projects/update_form',
-    datatype: 'JSON',
-    data: {
+  
+  if(is_new_file){
+    var url_post = '/projects/new_form';
+    var data_to_save = {
+      properties: JSON.stringify(properties_to_save),
+      subforms: child_edited_all,
+      geom: Navarra.geomaps.get_geometries_to_save()
+    }
+    console.log(data_to_save)
+  } else {
+    var url_post = '/projects/update_form';
+    var data_to_save = {
       app_ids: app_ids,
       properties: JSON.stringify(properties_to_save),
       subforms: child_edited_all
-    },
+    }
+  }
+  $.ajax({
+    type: 'PATCH',
+    url: url_post,
+    datatype: 'JSON',
+    data: data_to_save,
     success: function(data) {
       $(".fakeLoader").css("display", "none");
       filechange = false;
@@ -3246,6 +3275,7 @@ function edit_file(edit_parent, edit_child, edit_status){
         Navarra.project_types.config.data_dashboard = "";
       }
        //Ajustar valor en la tabla
+       //OJO PARA NUEVOS REGISTROS CREAR NUEVA FILA!!!!!!!!!!!!!!!
       var fields = document.querySelectorAll(".field_key");
       fields.forEach(function(column, indexColumn) {
         if(properties_to_save[column.value]!=undefined){
@@ -3269,6 +3299,7 @@ function edit_file(edit_parent, edit_child, edit_status){
 }
 
 function edit_file_status(edit_data){
+  // Hay que revisar para nuevos registros!!!!!!!!!!!!!!!!!!!!
   $(".fakeLoader").css("display", "block");
   if(!statuschange){
     $('#info_messages').html("No hay cambios a guardar");
