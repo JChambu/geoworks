@@ -41,37 +41,24 @@ class ProjectsController < ApplicationController
 
   # Actualiza la columna properties
   def update_form
-
-    # Padres
     app_ids = params[:app_ids]
     properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
-
+    subforms = params[:subforms] # FIXME: los paremetros llegan como string
     if app_ids.present? && properties.present?
       app_ids.each do |app_id|
         @project = Project.find(app_id)
         @project.update_form(properties)
       end
-      render json: {status: 'Actualización completada.'}
-    else
-      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
-
-    # Hijos
-    subforms = params[:subforms] # FIXME: los paremetros llegan como string
-
-    if subforms.present?
+    if app_ids.present? && subforms.present?
       subforms.each do |i, sf|
         child_id = sf['child_id']
         properties = sf['properties']
         @project_data_children = ProjectDataChild.find(child_id)
-        if @project_data_children.update_subform(properties)
-          render json: {status: 'Registro actualizado.'}
-        else
-          render json: {status: 'Error. No se pudo actualizar el registro.'}
-        end
+        @project_data_children.update_subform(properties)
       end
     end
-
+    render json: {status: 'Actualización completada.'}
   end
 
 
