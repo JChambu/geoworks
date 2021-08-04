@@ -325,7 +325,7 @@ Navarra.geomaps = function() {
     $('.leaflet-draw-draw-marker').addClass('unselectable')
 
     //agrega boton EdiciónGeográfica si tiene permiso de edición geométrica
-    if($('#edit_geom_control').val()){
+    if($('#edit_geom_control').val() == "true"){
       L.Control.Edit = L.Control.extend({
         onAdd: function(map) {
           var container = L.DomUtil.create('DIV');
