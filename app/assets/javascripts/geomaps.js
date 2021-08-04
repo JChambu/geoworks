@@ -327,13 +327,15 @@ Navarra.geomaps = function() {
 
     //agrega boton EdiciónGeográfica si tiene permiso de edición geométrica o permiso de nuevo
     // AGREGAR PERMISO DE NUEVO REGISTRO
-    if($('#edit_geom_control').val()){
+    if($('#edit_geom_control').val()=="true" || $('#new_geom_control').val()=="true"){
       L.Control.Edit = L.Control.extend({
         onAdd: function(map) {
           var container = L.DomUtil.create('DIV');
           container.className = "leaflet-control-zoom leaflet-bar leaflet-control";
           // botón edición
-          if($('#edit_geom_control').val()){
+          console.log($('#edit_geom_control').val())
+          if($('#edit_geom_control').val()=="true"){
+            console.log("Ingresa")
             var new_a = L.DomUtil.create('A');
             new_a.className = "leaflet-draw-draw-polygon";
             new_a.title = "Editar Geometrías"
@@ -348,7 +350,7 @@ Navarra.geomaps = function() {
           }
 
           // botón creación
-          if($('#new_geom_control').val()){
+          if($('#new_geom_control').val()=="true"){
             var new_a = L.DomUtil.create('A');
             new_a.className = "leaflet-draw-draw-polygon";
             new_a.title = "Nueva Geometría";

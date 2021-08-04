@@ -170,31 +170,49 @@ function get_string_filter(){
     <a data-toggle="modal" id="show_report"><i class="fas fa-clipboard-list ml-3" title="Reporte" style="cursor: pointer;" ></i></a>
     <a onclick="download_geojson()"><i class="fas fa-code ml-2" title="Exportar GeoJSON" style="cursor: pointer;" ></i></a>
   <% end %>
-
-  <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown-columns">
-    <i class="fas fa-plus ml-2" style="font-size: 0.8em; cursor: pointer;" title="Agregar Columna"></i>
-  </a>
-  <a class="d-none" id="multiple_edit" onclick="show_item_info(0,false,true)">
-    <i class="fas fa-edit ml-2" style="font-size: 0.8em; cursor: pointer;" title="Editar Registros"></i>
-  </a>
-  <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; overflow-y: auto;">
-    <% if !@fields.nil? %>
-    <% index = 0 %>
-      <% @fields.each do |field|  %>
-        <%if field.heatmap_field %>
-        <input class="d-none field_label" value=<%=field.key%>>
-        <% end %>
-        <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-          <% index=index+1 %>
-          <% if !field.popup %>
-            <a class="dropdown-item column_data" onclick="show_column(<%=index%>)"><%= field.name %></a>
-          <% else %>
-            <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>
+  <div class="d-inline">
+    <a data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="dropdown-columns">
+      <i class="fas fa-plus ml-2" style="font-size: 0.8em; cursor: pointer;" title="Agregar Columna"></i>
+    </a>
+    <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; overflow-y: auto;">
+      <% if !@fields.nil? %>
+      <% index = 0 %>
+        <% @fields.each do |field|  %>
+          <%if field.heatmap_field %>
+          <input class="d-none field_label" value=<%=field.key%>>
+          <% end %>
+          <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+            <% index=index+1 %>
+            <% if !field.popup %>
+              <a class="dropdown-item column_data" onclick="show_column(<%=index%>)"><%= field.name %></a>
+            <% else %>
+              <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>
+            <% end %>
           <% end %>
         <% end %>
       <% end %>
-    <% end %>
+    </div>
   </div>
+  <div class="d-inline">
+    <a data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="dropdown-subfields">
+      <i class="fas fa-clone ml-2" style="font-size: 0.8em; cursor: pointer;" title="Agregar Subformularios"></i>
+    </a>
+    <div class="dropdown-menu addsubfields scroll" aria-labelledby="dropdown-subfields" style="max-height: 40vh; overflow-y: auto;">
+      <% if !@fields.nil? %>
+        <% index = 0 %>
+        <% @fields.each do |field|  %>
+          <% if field.field_type_id == 7  %>
+            <% index=index+1 %>
+              <a class="dropdown-item subfields_data" onclick="show_subfield(<%=index%>)"><%= field.name %></a>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <a class="d-none" id="multiple_edit" onclick="show_item_info(0,false,true)">
+    <i class="fas fa-edit ml-2" style="font-size: 0.8em; cursor: pointer;" title="Editar Registros"></i>
+  </a>
+  
   <input id="choose" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0 ml-2" placeholder="Buscar" style="width: 0%; transition:1.5s;"  >
   <input type="text" class="choose_column d-none">
   <input type="text" class="filter_by_column d-none">
