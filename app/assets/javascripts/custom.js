@@ -1212,8 +1212,6 @@ function init_data_dashboard(haschange,close_info) {
     },
 
     success: function(data) {
-      console.log("Datos para armado de tabla")
-      console.log(data)
       var fields = document.querySelectorAll(".field_key");
       if(JSON.stringify(data_dashboard) == JSON.stringify(data.data)){
         $(".fakeLoader").css("display", "none");
@@ -2273,7 +2271,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
   if(!is_new_file){
     $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
   }
-  Navarra.geomaps.delete_markers(is_new_file);
   if(is_multiple){
     $('#multiple_edit').addClass("multiple_on");
     var total_files_to_edit = $('#table_visible .custom-control-input:checked').not('.just_header').length;
@@ -2315,6 +2312,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       arraymultiselect=[];
       arraymultiselectChild=[];
       array_child_edited = [];
+      child_elements = [];
       document.getElementById('info_body').remove();
       var new_body = document.createElement('DIV');
       new_body.id = 'info_body';
@@ -2684,7 +2682,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             child_elements = element.value;
             verify_count_elements_childs = 0;
             child_elements.forEach(function(element_child) {
-              console.log(element_child)
               var new_row1 = create_new_row_child_date(element_child);
               new_row.appendChild(new_row1);
               var new_row1 = create_new_row_child(element_child, element.field_id, element.name, is_multiple,false);
@@ -2764,14 +2761,15 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       }
       //Ejecuta Script y calculados de campos padres e hijos
         set_script_all();
-        calculate_all(true,true);
-        calculate_all(true,false);
-
+        if(!is_new_file){
+          calculate_all(true,true);
+          calculate_all(true,false);
+        }
         //si viene de nuevo registro abre edición
         if($("#confirmation_geometry_button").hasClass('confirmation_geometry_button_new')){
           show_confirmation('edit_confirmation');
         }
-
+        Navarra.geomaps.delete_markers(is_new_file);
     }//end Success
   }); //end ajax
 }
@@ -3564,21 +3562,26 @@ function set_script_all(){
       });
 }
 
-/* chequear si hace falta esta funcion
-function calculate_change(calculated_field,field_type_id,field_id,value){
-  if(calculated_field!=""){
-    Navarra.calculated_and_script_fields.Calculate(JSON.stringify(calculated_field),field_type_id, field_id,value, "data_edition");
-  }
-}
-*/
 
 function calculate_all(first_time, isparent, id_child_calculate){
+  var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
+  if(is_new_file){var type_calculation = "new_file"} else{ var type_calculation = "data_edition"}
   //Ejecuta Calculate de campos padres
   if(isparent){
     if(!first_time){filechange = true;}
       father_fields.forEach(function(element) {
         if(element.calculated_field!="" && element.field_type_id!=11){
-          Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,element.field_id,element.value,"data_edition",null,null,true);
+          if(element.calculated_field=='{"provincia":""}' || element.calculated_field=='{"municipio":""}'){
+            if(Navarra.dashboards.config.type_geometry == "Polygon"){
+              var geom = Navarra.geomaps.get_geom_to_calculate();
+            } else{
+              var geom1 = Navarra.geomaps.get_geometries_to_save();
+              var geom = {
+                latLng: new L.latLng(geom1[0].latLng.lat,geom1[0].latLng.lng)
+              }
+            }
+          } else{ var geom = null}
+          Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,element.field_id,element.value,type_calculation,null,geom,true);
         }
       });
     } else{
@@ -3589,7 +3592,7 @@ function calculate_all(first_time, isparent, id_child_calculate){
         children_fields.forEach(function(element) {
           var id_child_toScript = element.field_id+"|"+id_child_calculate;
           if(element.calculated_field!="" && element.field_type_id!=11){
-            Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,"data_edition",null,null,false);
+            Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
           }
         });
       } else{
@@ -3598,7 +3601,7 @@ function calculate_all(first_time, isparent, id_child_calculate){
           children_fields.forEach(function(element) {
             var id_child_toScript = element.field_id+"|"+element_child.children_id;
             if(element.calculated_field!="" && element.field_type_id!=11){
-              Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,"data_edition",null,null,false);
+              Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
             }
           });
         });

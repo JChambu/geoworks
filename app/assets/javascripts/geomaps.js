@@ -333,9 +333,7 @@ Navarra.geomaps = function() {
           var container = L.DomUtil.create('DIV');
           container.className = "leaflet-control-zoom leaflet-bar leaflet-control";
           // botón edición
-          console.log($('#edit_geom_control').val())
           if($('#edit_geom_control').val()=="true"){
-            console.log("Ingresa")
             var new_a = L.DomUtil.create('A');
             new_a.className = "leaflet-draw-draw-polygon";
             new_a.title = "Editar Geometrías"
@@ -1953,14 +1951,7 @@ function search_geometric_calculation_fields(){
         }
       });
       if(type_geometry=="Polygon"){
-        var centroid = get_centroid();
-        var geom = {
-          id: geometries_to_edit[0].id,
-          latLng: {
-            lat: centroid.geometry.coordinates[1],
-            lng: centroid.geometry.coordinates[0]
-          }
-        }
+        var geom = get_geom_to_calculate();
         data.father_fields.forEach(function(field){
           if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}'){
             var calculated_field = field.calculated_field;
@@ -1984,6 +1975,17 @@ function search_geometric_calculation_fields(){
   });
 }
 
+function get_geom_to_calculate(){
+    var centroid = get_centroid();
+    var geom = {
+      id: geometries_to_edit[0].id,
+      latLng: {
+        lat: centroid.geometry.coordinates[1],
+        lng: centroid.geometry.coordinates[0]
+      }
+    }
+  return geom;
+}
 function new_geometry(event){
   event.stopPropagation();
   $('.leaflet-container').addClass('cursor-crosshair');
@@ -2140,6 +2142,7 @@ function get_latlng(){
     get_area: get_area,
     get_latlng:get_latlng,
     new_geometry: new_geometry,
-    get_geometries_to_save: get_geometries_to_save
+    get_geometries_to_save: get_geometries_to_save,
+    get_geom_to_calculate: get_geom_to_calculate
   }
 }();
