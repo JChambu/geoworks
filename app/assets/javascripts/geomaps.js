@@ -1788,6 +1788,7 @@ function delete_markers(){
 }
 
 function save_geometry(){
+  console.log("Ingresa a guardar geometría")
   event.stopPropagation();
   var is_new_geom =$('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   if(geometries_to_edit.length==0){
@@ -1805,6 +1806,7 @@ function save_geometry(){
   }
 
   if($('#confirmation_geometry_button').hasClass('confirmation_geometry_button_edit')){
+    console.log("Va a buscar campos calculados")
     search_geometric_calculation_fields();
   }
   if(is_new_geom){
@@ -1941,6 +1943,7 @@ function create_polygon_selected(coordinates_newpol_selected){
 
 // función para traer los campos padres y verificar si tienen algún calculo geométrico
 function search_geometric_calculation_fields(){
+  console.log("Ingresa a buscar campos padres")
   $.ajax({
     type: 'GET',
     url: '/project_types/search_father_children_and_photos_data',
@@ -1950,6 +1953,7 @@ function search_geometric_calculation_fields(){
       app_id: 0
     },
     success: function(data) {
+      console.log("success campos padres")
       //variables necesarias para disparar el guardado de los campos luego de todos los success de las apis de geolocalización.
       Navarra.dashboards.config.field_geometric_calculated_count = 0;
       Navarra.dashboards.config.field_geometric_calculated_count_all = 0;
