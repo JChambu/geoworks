@@ -8,10 +8,10 @@
       Navarra.geomaps.current_layer();
     });
     // función al cerrar modal de info del registro
-    console.log($('#modal_info'))
     $('#info-modal').on('hidden.bs.modal', function (e)  {
       $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
       $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_edit');
+      Navarra.geomaps.delete_markers();
     });
   });
 var can_edit_yes;

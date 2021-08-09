@@ -1768,10 +1768,8 @@ function cancel_geometry(event){
   }
 }
 
-function delete_markers(is_new_file){
-  if (!is_new_file){
-    $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
-  }
+function delete_markers(){
+  $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
   $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_edit');
   geometries_to_edit=[];
   $('.confirmation_geometry').addClass('d-none');
@@ -1791,17 +1789,25 @@ function delete_markers(is_new_file){
 
 function save_geometry(){
   event.stopPropagation();
+  var is_new_geom =$('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   if(geometries_to_edit.length==0){
     delete_markers();
     $('#confirmation_success_geometry_text').html('Sin cambios para editar');
     $('.confirmation_success_geometry').removeClass('d-none');
     return;
   }
+  if(polygon_edit_vertexs.length<3 && is_new_geom && type_geometry=="Polygon"){
+    delete_markers();
+    $('#confirmation_success_geometry_text').html('Geometría no válida');
+    $('.confirmation_success_geometry').removeClass('d-none');
+    set_onclick_map(true);
+    return;
+  }
 
   if($('#confirmation_geometry_button').hasClass('confirmation_geometry_button_edit')){
     search_geometric_calculation_fields();
   }
-  if($('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new')){
+  if(is_new_geom){
     if(type_geometry=="Polygon"){
       var geometry_polygon_to_edit = []
       polygon_edit_vertexs.forEach(function(vertex){
@@ -1835,6 +1841,7 @@ function save_geometry(){
 
 function save_geometry_width_calculated_fields() {
   //geometry
+  console.log("Ingresa a guardar geometría con cálculos")
   if(type_geometry=="Polygon"){
     var geometry_polygon_to_edit = []
     polygon_edit_vertexs.forEach(function(vertex){
@@ -1865,6 +1872,8 @@ function save_geometry_width_calculated_fields() {
     geometries_to_edit.forEach(function(geom){
       //fields
       edited_field_calculated_all = [];
+      console.log("Todos los campos a calcular")
+      console.log(Navarra.dashboards.config.field_geometric_calculated_all)
       Navarra.dashboards.config.field_geometric_calculated_all.forEach(function(field) {
         field.forEach(function(field_calculated) {
           if(field_calculated.id == geom.id){
@@ -1885,6 +1894,8 @@ function save_geometry_width_calculated_fields() {
     });
   }
 
+  console.log("Envía Ajax")
+  console.log(geometries_to_save)
   $.ajax({
     type: 'PATCH',
     url: '/projects/update_geom_and_calculated_fields',
@@ -1894,6 +1905,7 @@ function save_geometry_width_calculated_fields() {
       project_type_id: Navarra.dashboards.config.project_type_id
     },
     success: function(data_status) {
+      console.log("Success save")
       Navarra.geomaps.current_layer();
       delete_markers();
       $('#confirmation_success_geometry_text').html(data_status['status']);
