@@ -1966,6 +1966,7 @@ function search_geometric_calculation_fields(){
           Navarra.dashboards.config.field_geometric_calculated_length ++;
         }
       });
+      console.log("Cantidad de campos calculados "+Navarra.dashboards.config.field_geometric_calculated_length)
       if(type_geometry=="Polygon"){
         var geom = get_geom_to_calculate();
         data.father_fields.forEach(function(field){
@@ -1980,6 +1981,7 @@ function search_geometric_calculation_fields(){
         geometries_to_edit.forEach(function(geom){
          data.father_fields.forEach(function(field){
           if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}'){
+            console.log("Es un campo a calcular "+field.calculated_field+"-"+field.name)
             var calculated_field = field.calculated_field;
             Navarra.dashboards.config.field_geometric_calculated_length_all = Navarra.dashboards.config.field_geometric_calculated_length * geometries_to_edit.length;
             Navarra.calculated_and_script_fields.Calculate(calculated_field,"", "","", "geometry_edition",field.key,geom);
@@ -1987,6 +1989,8 @@ function search_geometric_calculation_fields(){
           });
        });
       }
+      //Si no hay campos a calcular ir a guardar
+      if(Navarra.dashboards.config.field_geometric_calculated_length==0){save_geometry_width_calculated_fields()}
    }
   });
 }
