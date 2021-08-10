@@ -1899,6 +1899,7 @@ function search_geometric_calculation_fields(){
           });
        });
       }
+      if(Navarra.dashboards.config.field_geometric_calculated_length==0){save_geometry_width_calculated_fields()}
    }
   });
 }
