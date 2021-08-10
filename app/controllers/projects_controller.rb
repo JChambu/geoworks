@@ -104,7 +104,8 @@ class ProjectsController < ApplicationController
 
       # Arma el properties con los campos calculados a modificar
       @new_properties = {}
-      if !fields_calculated.nil do
+
+      unless calculated_fields.nil?
         calculated_fields.each do |n, field|
 
           key = field['field_key']
@@ -125,7 +126,6 @@ class ProjectsController < ApplicationController
             end
           end
         end
-
       end
       @project.update_geom_and_calculated_fields(@new_geom, @new_properties)
     end
