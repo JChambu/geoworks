@@ -122,7 +122,9 @@ class ProjectsController < ApplicationController
                 .where(project_type_id: project_type_id)
                 .pluck(:key)
                 .first
-              @new_properties[key_localidad] = []
+              unless key_localidad.nil?
+                @new_properties[key_localidad] = []
+              end
             end
           end
         end
