@@ -104,26 +104,30 @@ class ProjectsController < ApplicationController
 
       # Arma el properties con los campos calculados a modificar
       @new_properties = {}
-      calculated_fields.each do |n, field|
 
-        key = field['field_key']
-        value = field['value_calculated']
-        remove_location = field['remove_location']
-        loaded_value = @project.properties[key]
+      unless calculated_fields.nil?
+        calculated_fields.each do |n, field|
 
-        if loaded_value != value
-          @new_properties[key] = value
-          # Elimina la localidad si se modifican provincia o departamento
-          if remove_location
-            key_localidad = ProjectField
-              .where(calculated_field: '{"localidad":"54,419"}')
-              .where(project_type_id: project_type_id)
-              .pluck(:key)
-              .first
-            @new_properties[key_localidad] = []
+          key = field['field_key']
+          value = field['value_calculated']
+          remove_location = field['remove_location']
+          loaded_value = @project.properties[key]
+
+          if loaded_value != value
+            @new_properties[key] = value
+            # Elimina la localidad si se modifican provincia o departamento
+            if remove_location
+              key_localidad = ProjectField
+                .where(calculated_field: '{"localidad":"54,419"}')
+                .where(project_type_id: project_type_id)
+                .pluck(:key)
+                .first
+              unless key_localidad.nil?
+                @new_properties[key_localidad] = []
+              end
+            end
           end
         end
-
       end
       @project.update_geom_and_calculated_fields(@new_geom, @new_properties)
     end
