@@ -2303,14 +2303,23 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
   if (xhr_info && xhr_info.readyState != 4) {
     xhr_info.abort();
   }
-  xhr_info = $.ajax({
-    type: 'GET',
-    url: '/project_types/search_father_children_and_photos_data',
-    datatype: 'json',
-    data: {
+  if(is_new_file || is_multiple){
+    var url_get = '/project_types/search_father_fields_data';
+    var data = {
+      project_type_id: project_type_id,
+    }
+  } else{
+    var url_get = '/project_types/search_father_children_and_photos_data';
+    var data = {
       project_type_id: project_type_id,
       app_id: appid_info
-    },
+    }
+  }
+  xhr_info = $.ajax({
+    type: 'GET',
+    url: url_get,
+    datatype: 'json',
+    data: data,
     success: function(data) {
 
       $('.div_confirmation').addClass("d-none");
@@ -3102,7 +3111,19 @@ function set_multiselect_style_childs(){
 
 function open_new_child(element_field_id, element_name, element_key,is_multiple){
   event.target.style.visibility = "hidden";
-  //LUEGO CAMBIAR A AJAX SOLICITANDO CAMPOS DE HIJOS
+  $.ajax({
+    type: 'GET',
+    url: '/project_subfields/show_subfields',
+    datatype: 'json',
+    data: {
+      project_type_id: Navarra.dashboards.config.project_type_id,
+      element_field_id: element_field_id
+    },
+    success: function(data) {
+      console.log(data);
+      //luego pasar código dentro del success!!!!!
+    }
+  })
   child_elements_hardcode = child_elements[0];
   child_elements_hardcode.children_id = 0;
   var new_row1 = create_new_row_child(child_elements_hardcode, element_field_id,element_name,is_multiple,true);
@@ -3304,14 +3325,17 @@ function edit_file(edit_parent, edit_child, edit_status){
   console.log(child_edited_all);
   
   if(is_new_file){
-    var url_post = '/projects/new_form';
+    var type_ajax = 'POST';
+    var url_post = '/projects/create_form';
     var data_to_save = {
+      project_type_id: Navarra.dashboards.config.project_type_id,
       properties: JSON.stringify(properties_to_save),
       subforms: child_edited_all,
       geom: Navarra.geomaps.get_geometries_to_save()
     }
     console.log(data_to_save)
   } else {
+    var type_ajax = 'PATCH';
     var url_post = '/projects/update_form';
     var data_to_save = {
       app_ids: app_ids,
@@ -3320,7 +3344,7 @@ function edit_file(edit_parent, edit_child, edit_status){
     }
   }
   $.ajax({
-    type: 'PATCH',
+    type: type_ajax,
     url: url_post,
     datatype: 'JSON',
     data: data_to_save,
