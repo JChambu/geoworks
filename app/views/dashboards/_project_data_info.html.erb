@@ -76,6 +76,13 @@ var can_edit_status_yes;
           //muestra campos ocultos en subtítulos
           $("div[class*='subtile_hidden']").not('.hidden_field').removeClass('d-none');
       }
+        //muestra campos subformularios aunque estén vacíos
+        $('.div_subforms').removeClass('d-none');
+        // muestra ícono add si tiene autorización para crear nuevos subformularios
+        //!!!!!! Cambiar a nueva autorización
+        if(can_edit_yes ==1){
+          $('.add_subforms').removeClass('d-none');
+        }
         textarea_adjust_height();
         set_script_all();
         calculate_all(true,true);

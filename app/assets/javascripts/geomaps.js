@@ -1788,7 +1788,6 @@ function delete_markers(){
 }
 
 function save_geometry(){
-  console.log("Ingresa a guardar geometría")
   event.stopPropagation();
   var is_new_geom =$('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   if(geometries_to_edit.length==0){
@@ -1806,7 +1805,6 @@ function save_geometry(){
   }
 
   if($('#confirmation_geometry_button').hasClass('confirmation_geometry_button_edit')){
-    console.log("Va a buscar campos calculados")
     search_geometric_calculation_fields();
   }
   if(is_new_geom){
@@ -1843,7 +1841,6 @@ function save_geometry(){
 
 function save_geometry_width_calculated_fields() {
   //geometry
-  console.log("Ingresa a guardar geometría con cálculos")
   if(type_geometry=="Polygon"){
     var geometry_polygon_to_edit = []
     polygon_edit_vertexs.forEach(function(vertex){
@@ -1874,8 +1871,6 @@ function save_geometry_width_calculated_fields() {
     geometries_to_edit.forEach(function(geom){
       //fields
       edited_field_calculated_all = [];
-      console.log("Todos los campos a calcular")
-      console.log(Navarra.dashboards.config.field_geometric_calculated_all)
       Navarra.dashboards.config.field_geometric_calculated_all.forEach(function(field) {
         field.forEach(function(field_calculated) {
           if(field_calculated.id == geom.id){
@@ -1896,8 +1891,6 @@ function save_geometry_width_calculated_fields() {
     });
   }
 
-  console.log("Envía Ajax")
-  console.log(geometries_to_save)
   $.ajax({
     type: 'PATCH',
     url: '/projects/update_geom_and_calculated_fields',
@@ -1907,7 +1900,6 @@ function save_geometry_width_calculated_fields() {
       project_type_id: Navarra.dashboards.config.project_type_id
     },
     success: function(data_status) {
-      console.log("Success save")
       Navarra.geomaps.current_layer();
       delete_markers();
       $('#confirmation_success_geometry_text').html(data_status['status']);
@@ -1943,7 +1935,6 @@ function create_polygon_selected(coordinates_newpol_selected){
 
 // función para traer los campos padres y verificar si tienen algún calculo geométrico
 function search_geometric_calculation_fields(){
-  console.log("Ingresa a buscar campos padres")
   $.ajax({
     type: 'GET',
     url: '/project_types/search_father_children_and_photos_data',
@@ -1953,7 +1944,6 @@ function search_geometric_calculation_fields(){
       app_id: 0
     },
     success: function(data) {
-      console.log("success campos padres")
       //variables necesarias para disparar el guardado de los campos luego de todos los success de las apis de geolocalización.
       Navarra.dashboards.config.field_geometric_calculated_count = 0;
       Navarra.dashboards.config.field_geometric_calculated_count_all = 0;
@@ -1966,7 +1956,6 @@ function search_geometric_calculation_fields(){
           Navarra.dashboards.config.field_geometric_calculated_length ++;
         }
       });
-      console.log("Cantidad de campos calculados "+Navarra.dashboards.config.field_geometric_calculated_length)
       if(type_geometry=="Polygon"){
         var geom = get_geom_to_calculate();
         data.father_fields.forEach(function(field){
@@ -1981,7 +1970,6 @@ function search_geometric_calculation_fields(){
         geometries_to_edit.forEach(function(geom){
          data.father_fields.forEach(function(field){
           if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}'){
-            console.log("Es un campo a calcular "+field.calculated_field+"-"+field.name)
             var calculated_field = field.calculated_field;
             Navarra.dashboards.config.field_geometric_calculated_length_all = Navarra.dashboards.config.field_geometric_calculated_length * geometries_to_edit.length;
             Navarra.calculated_and_script_fields.Calculate(calculated_field,"", "","", "geometry_edition",field.key,geom);

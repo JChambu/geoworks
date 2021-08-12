@@ -2416,8 +2416,8 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       subtitles_all_child = [];
       var verify_count_elements = 0; // variable para chequear que se dibujan todos los campos sin error
       father_fields.forEach(function(element) {
-        if (element.field_type_id == 7 && element.value.length == 0) {} else {
-          if (element.field_type_id != 7) { //dibuja campo padre
+          if (element.field_type_id != 7) {
+           //dibuja campo padre
             var new_row = document.createElement('DIV');
             if (element.hidden) {
               new_row.className = "form-row d-none hidden_field row_field";
@@ -2680,9 +2680,13 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
               new_row.classList.add("subtile_hidden" + element.field_id);
             }
             var new_celd = document.createElement('DIV');
+            new_celd.className = 'div_subforms';
+            if (element.field_type_id == 7 && element.value.length == 0) {
+              new_celd.classList.add('d-none');
+            } 
             new_celd.id = "child_container_"+element.key;
             var new_p = document.createElement('I');
-            new_p.className = "fas fa-plus icon_add";
+            new_p.className = "fas fa-plus icon_add d-none add_subforms";
             new_p.setAttribute('onclick','open_new_child('+element.field_id+',"'+element.name+'","'+element.key+'",'+is_multiple+')');
             new_celd.appendChild(new_p);
             var new_p = document.createElement('H6');
@@ -2704,7 +2708,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             }
             document.getElementById('info_body').appendChild(new_row);
           }
-        }
         verify_count_elements ++;
       }); // termina for Each de padres
 
@@ -2713,56 +2716,10 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       }
 
       textarea_adjust_height();
-      $('.date_field').datetimepicker({
-        format: "DD/MM/YYYY",
-        viewMode: "days",
-        locale: moment.locale('en', {
-          week: {
-            dow: 1,
-            doy: 4
-          }
-        }),
-      });
-      $('.date_field').on('dp.change', function(e){
-        if(this.id.substring(0,12)=="fieldchildid"){
-          if(!is_multiple){
-            calculate_all(false,false,this.id.split('|')[2]);
-          } else{
-            changeChild(this.id.split('|')[2]);
-          }
-        } else{
-          if(!is_multiple){
-            calculate_all(false,true);
-          } else{
-            changeFile();
-          }
-        }
-    });
+      set_date_style(is_multiple);
 
       // selectores y multiselectores en hijos
-       for(x=0;x<arraymultiselect.length;x++){
-              if(document.getElementById('fieldchildid|'+arraymultiselect[x]+'|'+arraymultiselectChild[x]).classList.contains("readonly_field")){
-                var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field is_child_field';
-              } else{
-                var buttonClass = 'text-left form-control form-control-sm info_input_disabled is_child_field';
-              }
-              $('#fieldchildid\\|'+arraymultiselect[x]+'\\|'+arraymultiselectChild[x]).multiselect({
-                maxHeight: 450,
-                buttonClass: buttonClass,
-                buttonWidth: '100%',
-                nonSelectedText: 'Seleccionar',
-                selectedClass: 'selected_multiple_item',
-                delimiterText: '\n',
-                numberDisplayed: 0,
-                allSelectedText: false,
-                enableFiltering: true,
-                enableCaseInsensitiveFiltering: true,
-                filterPlaceholder: 'Buscar',
-                includeFilterClearBtn: false,
-                includeSelectAllOption: false,
-                dropRight: true,
-              });
-          }
+          set_multiselect_style_childs();  
 
       //Muestra el punto en el mapa y elimina el seleccionado en la tabla
       if (from_map) {
@@ -2810,15 +2767,15 @@ function create_new_row_child_date(element_child){
   
 function create_new_row_child(element_child, element_field_id, element_name, is_multiple, is_new){
   //campos de los hijos
-  if(!is_new){
-    var classname_field = "info_input_disabled";
-  } else {
-    var classname_field = "info_input";
-  }
   children_fields = element_child.children_fields;
   var verify_count_elements_childs_fields = 0;
   var new_row_container = document.createElement('DIV');
   children_fields.forEach(function(element_child_field) {
+    if(!is_new || (is_new && element_child_field.read_only==true && element_child_field.calculated_field!='') || (is_new && element_child_field.can_edit==false)){
+      var classname_field = "info_input_disabled";
+    } else {
+      var classname_field = "info_input";
+    }
     var new_row1 = document.createElement('DIV');
     if (element_child_field.hidden) {
       new_row1.className = "form-row d-none hidden_field row_field";
@@ -2911,12 +2868,14 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
           }
           var new_p_nested = document.createElement('SELECT');
           new_p_nested.className = "mb-1 multiselect_field form-control form-control-sm "+classname_field+" is_child_field";
-          if(!is_new){new_p_nested.disabled = true};
+          if(!is_new || (is_new && element_child_field.read_only==true && element_child_field.calculated_field!='') || (is_new && element_child_field.can_edit==false)){
+              new_p_nested.disabled = true;
+          };
           if(element_child_field.required==true){
             new_p_nested.classList.add('required_field');
           }
           // agregar condición de readonly para hijos cuando son nuevos
-          if(element_child_field.read_only==true || element_child_field.can_edit==false){
+          if((element_child_field.read_only==true && !is_new)|| element_child_field.can_edit==false || (is_new && element_child_field.read_only==true && element_child_field.calculated_field!='') ) {
             new_p_nested.classList.add('readonly_field');
           }
           var id_field = element_child_field.field_id;
@@ -3031,15 +2990,16 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
           new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
         }
       }
-      if(!is_new){new_p.disabled = true;}
+      if(!is_new || (is_new && element_child_field.read_only==true && element_child_field.calculated_field!='') || (is_new && element_child_field.can_edit==false)){
+        new_p.disabled = true;
+      }
       if (element_child_field.value != null && element_child_field.field_type_id != 10 && element_child_field.field_type_id != 2) {
         new_p.value = element_child_field.value
       }
       if(element_child_field.required==true){
         new_p.classList.add('required_field');
       }
-      // agregar condición de readonly para hijos cuando son nuevos
-      if(element_child_field.read_only==true || element_child_field.can_edit==false){
+      if((element_child_field.read_only==true && !is_new)|| element_child_field.can_edit==false || (is_new && element_child_field.read_only==true && element_child_field.calculated_field!='') ){
         new_p.classList.add('readonly_field');
       }
 
@@ -3086,12 +3046,70 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
   return new_row_container;
 }
 
+function set_date_style(is_multiple){
+  $('.date_field').datetimepicker({
+        format: "DD/MM/YYYY",
+        viewMode: "days",
+        locale: moment.locale('en', {
+          week: {
+            dow: 1,
+            doy: 4
+          }
+        }),
+      });
+      $('.date_field').on('dp.change', function(e){
+        if(this.id.substring(0,12)=="fieldchildid"){
+          if(!is_multiple){
+            calculate_all(false,false,this.id.split('|')[2]);
+          } else{
+            changeChild(this.id.split('|')[2]);
+          }
+        } else{
+          if(!is_multiple){
+            calculate_all(false,true);
+          } else{
+            changeFile();
+          }
+        }
+    });
+}
+
+function set_multiselect_style_childs(){
+  for(x=0;x<arraymultiselect.length;x++){
+    if(document.getElementById('fieldchildid|'+arraymultiselect[x]+'|'+arraymultiselectChild[x]).classList.contains("readonly_field")){
+      var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field is_child_field';
+    } else{
+      var buttonClass = 'text-left form-control form-control-sm info_input_disabled is_child_field';
+    }
+    $('#fieldchildid\\|'+arraymultiselect[x]+'\\|'+arraymultiselectChild[x]).multiselect({
+      maxHeight: 450,
+      buttonClass: buttonClass,
+      buttonWidth: '100%',
+      nonSelectedText: 'Seleccionar',
+      selectedClass: 'selected_multiple_item',
+      delimiterText: '\n',
+      numberDisplayed: 0,
+      allSelectedText: false,
+      enableFiltering: true,
+      enableCaseInsensitiveFiltering: true,
+      filterPlaceholder: 'Buscar',
+      includeFilterClearBtn: false,
+      includeSelectAllOption: false,
+      dropRight: true,
+    });
+  }
+}
+
 function open_new_child(element_field_id, element_name, element_key,is_multiple){
+  event.target.style.visibility = "hidden";
   //LUEGO CAMBIAR A AJAX SOLICITANDO CAMPOS DE HIJOS
-  child_elements_hardcode = child_elements[0]
+  child_elements_hardcode = child_elements[0];
+  child_elements_hardcode.children_id = 0;
   var new_row1 = create_new_row_child(child_elements_hardcode, element_field_id,element_name,is_multiple,true);
   document.getElementById('child_container_'+element_key).appendChild(new_row1);
   textarea_adjust_height();
+  set_date_style(is_multiple);
+  set_multiselect_style_childs();
 }
 
 function open_photo(e) {
@@ -3301,14 +3319,12 @@ function edit_file(edit_parent, edit_child, edit_status){
       subforms: child_edited_all
     }
   }
-  /*
   $.ajax({
     type: 'PATCH',
     url: url_post,
     datatype: 'JSON',
     data: data_to_save,
     success: function(data) {
-      */
       $(".fakeLoader").css("display", "none");
       filechange = false;
       array_child_edited = [];
@@ -3316,7 +3332,7 @@ function edit_file(edit_parent, edit_child, edit_status){
       if(!$('#multiple_edit').hasClass('multiple_on')){
         $('#info_messages').addClass("d-inline");
         $('#info_messages').removeClass("d-none");
-     //   $('#info_messages').html(data['status']);
+        $('#info_messages').html(data['status']);
       } else{
         $('#alert_message').addClass('show');
         $('#alert_message').removeClass('d-none');
@@ -3342,27 +3358,29 @@ function edit_file(edit_parent, edit_child, edit_status){
         document.getElementById("tbody_visible").prepend(new_row);
         $('#row_table_data'+"NUEVOIDCREADO").html(new_celd);
       } else{
-        var fields = document.querySelectorAll(".field_key");
-        fields.forEach(function(column, indexColumn) {
-          if(properties_to_save[column.value]!=undefined){
-            var indexval=indexColumn+1;
-            app_ids.forEach(function(row_element){
-              if($('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html()!=properties_to_save[column.value].toString() ){
-                $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(properties_to_save[column.value].toString());
-                $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-weight","bold");
-                $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-size","1.5em");
-              }
-            });
-          }
-        });
+        if(properties_to_save!=null){// si se modificó el padre
+          var fields = document.querySelectorAll(".field_key");
+          fields.forEach(function(column, indexColumn) {
+            if(properties_to_save[column.value]!=undefined){
+              var indexval=indexColumn+1;
+              app_ids.forEach(function(row_element){
+                if($('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html()!=properties_to_save[column.value].toString() ){
+                  $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(properties_to_save[column.value].toString());
+                  $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-weight","bold");
+                  $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-size","1.5em");
+                }
+              });
+            }
+          });
+        }
       }
       if(edit_status && statuschange){
         edit_file_status(true);
       } else{
         update_all();
       }
- //   }
- // });
+    }
+  });
 }
 
 function edit_file_status(edit_data){
