@@ -2304,7 +2304,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
     xhr_info.abort();
   }
   if(is_new_file || is_multiple){
-    var url_get = '/project_types/search_father_fields_data';
+    var url_get = '/project_fields/show_fields';
     var data = {
       project_type_id: project_type_id,
     }
