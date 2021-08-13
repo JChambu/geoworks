@@ -2395,29 +2395,32 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
               });
       }
       });
-
-      //fotos del registro
-      var verify_count_elements_photos = 0
-      var father_photos = data.father_photos;
-      father_photos.forEach(function(photo) {
-        var new_div = document.createElement('DIV');
-        new_div.className = "photo_div_info";
-        new_div.style.position = "static";
-        var new_photo = document.createElement('IMG');
-        new_photo.className = "photo_info";
-        new_photo.setAttribute('onClick', "open_photo(event)");
-        new_photo.src = "data:image/png;base64," + photo.image;
-        new_div.appendChild(new_photo);
-        var new_photo = document.createElement('P');
-        new_photo.innerHTML = photo.name;
-        new_photo.className = "photo_description";
-        new_div.appendChild(new_photo);
-        document.getElementById('info_body').appendChild(new_div);
-        verify_count_elements_photos++;
-      });
-      if(verify_count_elements_photos!= father_photos.length){
-        set_error_message("Error: no se pudieron traer todas las fotos del registro");
-      }
+      if(!is_new_file || is_multiple){
+        //fotos del registro
+        var verify_count_elements_photos = 0
+        var father_photos = data.father_photos;
+        father_photos.forEach(function(photo) {
+          var new_div = document.createElement('DIV');
+          new_div.className = "photo_div_info";
+          new_div.style.position = "static";
+          var new_photo = document.createElement('IMG');
+          new_photo.className = "photo_info";
+          new_photo.setAttribute('onClick', "open_photo(event)");
+          new_photo.src = "data:image/png;base64," + photo.image;
+          new_div.appendChild(new_photo);
+          var new_photo = document.createElement('P');
+          new_photo.innerHTML = photo.name;
+          new_photo.className = "photo_description";
+          new_div.appendChild(new_photo);
+          document.getElementById('info_body').appendChild(new_div);
+          verify_count_elements_photos++;
+        });
+        if(verify_count_elements_photos!= father_photos.length){
+          set_error_message("Error: no se pudieron traer todas las fotos del registro");
+        }
+      } 
+      // Si es nuevo puede guardar sin hacer cambios en los campos
+      if(is_new_file){changeFile()}
 
       //campos del registro
       father_fields = data.father_fields;
