@@ -13,4 +13,6 @@ class ProjectSubfieldsController < ApplicationController
     redirect_to edit_multiple_project_type_project_fields_path(@project_type_id)
   end
 
+  def show_subfields
+  end
 end
