@@ -39,6 +39,45 @@ class ProjectsController < ApplicationController
     end
   end
 
+  # Crea un nuevo registro
+  def create_form
+
+    project_type_id = params[:project_type_id]
+    project_status_id = params[:project_status_id]
+    properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
+    geom = params[:geom]
+    subforms = params[:subforms] # FIXME: los paremetros llegan como string
+
+    @project_type = ProjectType.find(project_type_id)
+    @project = Project.new()
+
+    # Arma la nueva geometría
+    if @project_type.type_geometry == 'Point'
+      @new_geom = "POINT(#{geom['lng']} #{geom['lat']})"
+    else
+      points_array = []
+      geom.each do |a,x|
+        point = "#{x[0]} #{x[1]}"
+        points_array << point
+      end
+      points_array << points_array[0]
+      points_array_str = points_array.join(', ')
+      @new_geom = "POLYGON((#{points_array_str}))"
+    end
+
+    # Carga los valores
+    @project['properties'] = properties
+    @project['project_type_id'] = project_type_id
+    @project['user_id'] = current_user.id
+    @project['the_geom'] = @new_geom
+    @project['project_status_id'] = project_status_id
+    @project['gwm_created_at'] = Time.zone.now
+    @project['gwm_updated_at'] = Time.zone.now
+
+    render json: {status: 'Creación completada.'}
+
+  end
+
   # Actualiza la columna properties
   def update_form
     app_ids = params[:app_ids]
@@ -258,6 +297,6 @@ class ProjectsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_params
     @properties_keys = params[:project][:properties].keys
-    params.require(:project).permit( :project_type_id, :properties => [@properties_keys]).merge(user_id: current_user.id)
+    params.require(:project).permit(:geom, :project_type_id, :properties => [@properties_keys]).merge(user_id: current_user.id)
   end
 end
