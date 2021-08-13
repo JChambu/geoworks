@@ -134,13 +134,9 @@ var can_edit_status_yes;
     $('.div_confirmation').addClass("d-none");
     $('.div_confirmation').removeClass("d-inline");
     if(option_save=="edit_confirmation"){
-      var edit_data =  false;
       var edit_status = false;
       var edit_parents = false;
       var edit_childs = false;
-      if(can_edit_yes==1 || can_edit_subforms_yes==1){
-        edit_data = true;
-      }
       if(can_edit_yes==1){
         edit_parents = true;
       }
@@ -150,11 +146,8 @@ var can_edit_status_yes;
       if(can_edit_status_yes==1){
         edit_status = true;
       }
-       if(can_edit_yes==1 || can_edit_subforms_yes==1){
+       if(can_edit_yes==1 || can_edit_subforms_yes==1 || can_edit_status_yes==1){
         edit_file(edit_parents, edit_childs, edit_status);
-      }
-      if(can_edit_status_yes==1 && !edit_data){
-        edit_file_status(false);
       }
 
     }

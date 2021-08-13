@@ -2356,10 +2356,14 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
         if(!is_multiple){new_icon.style.background = father_status.status_color;}
         document.getElementById("status_container_info").appendChild(new_icon);
         var new_p = document.createElement('SELECT');
-        new_p.className = "multiselect_field form-control form-control-sm multiselect_status input_status info_input_disabled";
         new_p.style.width="90%";
         new_p.setAttribute("onChange","changeStatus(event)");
-        new_p.disabled = true;
+        if(!is_new_file){
+          new_p.disabled = true;
+          new_p.className = "multiselect_field form-control form-control-sm multiselect_status input_status info_input_disabled";
+        } else{
+          new_p.className = "multiselect_field form-control form-control-sm multiselect_status input_status info_input";
+        }
         var status_options = data_status.data;
         var found_status = false;
         status_options.forEach(function(status) {
@@ -2377,9 +2381,14 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
         });
         if(!found_status || is_multiple){new_p.selectedIndex = -1;}
         document.getElementById("status_container_info").appendChild(new_p);
+        if(is_new_file){
+          var status_style = 'info_input';
+        }else{
+          var status_style = 'info_input_disabled';
+        }
           $('.multiselect_status').multiselect({
                 maxHeight: 450,
-                buttonClass: 'text-left mb-1 form-control form-control-sm input_status info_input_disabled',
+                buttonClass: 'text-left mb-1 form-control form-control-sm input_status '+status_style,
                 buttonWidth: '100%',
                 nonSelectedText: 'Seleccionar',
                 selectedClass: 'selected_multiple_item',
@@ -2693,9 +2702,11 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             }
             var new_celd = document.createElement('DIV');
             new_celd.className = 'div_subforms';
-            if (element.field_type_id == 7 && element.value.length == 0) {
-              new_celd.classList.add('d-none');
-            } 
+            if(!is_new_file && !is_multiple){
+              if (element.field_type_id == 7 && element.value.length == 0) {
+                new_celd.classList.add('d-none');
+              }
+            }
             new_celd.id = "child_container_"+element.key;
             var new_p = document.createElement('I');
             new_p.className = "fas fa-plus icon_add d-none add_subforms";
@@ -2709,14 +2720,16 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             new_row.appendChild(new_celd);
             child_elements = element.value;
             verify_count_elements_childs = 0;
-            child_elements.forEach(function(element_child) {
-              var new_row1 = create_new_row_child_date(element_child);
-              new_row.appendChild(new_row1);
-              var new_row1 = create_new_row_child(element_child, element.field_id, element.name, is_multiple,false);
-              new_row.appendChild(new_row1);
-            }); //termina for Each childs
-            if(verify_count_elements_childs!= child_elements.length){
-              set_error_message("Error: no se pudieron traer todos los subformularios del campo "+element.name);
+            if(!is_new_file && !is_multiple){
+              child_elements.forEach(function(element_child) {
+                var new_row1 = create_new_row_child_date(element_child);
+                new_row.appendChild(new_row1);
+                var new_row1 = create_new_row_child(element_child, element.field_id, element.name, is_multiple,false);
+                new_row.appendChild(new_row1);
+              }); //termina for Each childs
+              if(verify_count_elements_childs!= child_elements.length){
+                set_error_message("Error: no se pudieron traer todos los subformularios del campo "+element.name);
+              }
             }
             document.getElementById('info_body').appendChild(new_row);
           }
@@ -3230,14 +3243,10 @@ function edit_file(edit_parent, edit_child, edit_status){
     }
   }
 
-  if(!filechange && array_child_edited.length==0){
-    if(!statuschange){
-      $('#info_messages').html("No hay cambios a guardar");
-      $('#info_messages').addClass("text-danger");
-      $('#info_messages').removeClass("d-none");
-    } else {
-      edit_file_status(false);
-    }
+  if(!filechange && array_child_edited.length==0 && !statuschange){
+    $('#info_messages').html("No hay cambios a guardar");
+    $('#info_messages').addClass("text-danger");
+    $('#info_messages').removeClass("d-none");
     return;
   }
 
@@ -3327,6 +3336,7 @@ function edit_file(edit_parent, edit_child, edit_status){
   console.log("Hijos a actualizar")
   console.log(child_edited_all);
   
+  var status_id = $(".input_status").val().split('|')[0];
   if(is_new_file){
     var type_ajax = 'POST';
     var url_post = '/projects/create_form';
@@ -3334,6 +3344,7 @@ function edit_file(edit_parent, edit_child, edit_status){
       project_type_id: Navarra.dashboards.config.project_type_id,
       properties: JSON.stringify(properties_to_save),
       subforms: child_edited_all,
+      project_status_id: status_id,
       geom: Navarra.geomaps.get_geometries_to_save()
     }
     console.log(data_to_save)
@@ -3343,7 +3354,8 @@ function edit_file(edit_parent, edit_child, edit_status){
     var data_to_save = {
       app_ids: app_ids,
       properties: JSON.stringify(properties_to_save),
-      subforms: child_edited_all
+      subforms: child_edited_all,
+      project_status_id: status_id,
     }
   }
   $.ajax({
@@ -3400,76 +3412,25 @@ function edit_file(edit_parent, edit_child, edit_status){
             }
           });
         }
-      }
-      if(edit_status && statuschange){
-        edit_file_status(true);
-      } else{
-        update_all();
-      }
-    }
-  });
-}
-
-function edit_file_status(edit_data){
-  // Hay que revisar para nuevos registros!!!!!!!!!!!!!!!!!!!!
-  $(".fakeLoader").css("display", "block");
-  if(!statuschange){
-    $('#info_messages').html("No hay cambios a guardar");
-    $('#info_messages').addClass("text-danger");
-    $('#info_messages').removeClass("d-none");
-    return;
-  } else {
-    $('#info_messages').removeClass("text-danger");
-  }
-  var app_ids = getapp_ids();
-  var status_id = $(".input_status").val().split('|')[0];
-  $.ajax({
-    type: 'PATCH',
-    url: '/projects/change_status',
-    datatype: 'JSON',
-    data: {
-      app_ids: app_ids,
-      status_id: status_id
-    },
-    success: function(data) {
-      $(".fakeLoader").css("display", "none");
-      $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){
-        $('#info_messages').addClass("d-inline");
-        $('#info_messages').removeClass("d-none");
-        if(edit_data){
-          $('#info_messages').html($('#info_messages').html()+"<br>" +data['status']);
-        } else{
-          $('#info_messages').html(data['status']);
+        //Ajustar estado en la tabla
+        /* CHEQUEAR SI HACE FALTA
+        var fields = document.querySelectorAll(".field_key");
+        fields.forEach(function(column, indexColumn) {
+          if(column.value=="app_estado"){
+            var indexval=indexColumn+1;
+            app_ids.forEach(function(row_element){
+              $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(status_id);
+              $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-weight","bold");
+              $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-size","1.5em");
+            });
+          }
+        })
+        */
         }
-      } else{
-        $('#alert_message').addClass('show');
-        $('#alert_message').removeClass('d-none');
-        $("#info-modal").modal("hide");
-         if(edit_data){
-          $('#alert_text_message').html($('#alert_text_message').html()+"<br>" +data['status']);
-        } else{
-          $('#alert_text_message').html(data['status']);
-        }
-        Navarra.project_types.config.item_selected="";
-        Navarra.project_types.config.data_dashboard = "";
-      }
-       //Ajustar valor en la tabla
-      var fields = document.querySelectorAll(".field_key");
-      fields.forEach(function(column, indexColumn) {
-        if(column.value=="app_estado"){
-          var indexval=indexColumn+1;
-          app_ids.forEach(function(row_element){
-            $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(status_id);
-            $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-weight","bold");
-            $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-size","1.5em");
-          });
-        }
-      })
       update_all();
     }
   });
-}
+}  
 
 function change_owner(){
   $(".fakeLoader").css("display", "block");
@@ -3627,14 +3588,16 @@ function set_script_all(){
       }
     });
     //Ejecuta Script de campos hijos
-    child_elements.forEach(function(element_child){
-        children_fields.forEach(function(element) {
-          var id_child_toScript = element.field_id+"|"+element_child.children_id;
-          if(element.data_script!=""){
-            Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,id_child_toScript,element.value,true,false);
-          }
+    if(child_elements!==undefined){
+      child_elements.forEach(function(element_child){
+          children_fields.forEach(function(element) {
+            var id_child_toScript = element.field_id+"|"+element_child.children_id;
+            if(element.data_script!=""){
+              Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,id_child_toScript,element.value,true,false);
+            }
+          });
         });
-      });
+    }
 }
 
 
@@ -3672,14 +3635,16 @@ function calculate_all(first_time, isparent, id_child_calculate){
         });
       } else{
         //ejecuta calculate para todos los hijos
-        child_elements.forEach(function(element_child){
-          children_fields.forEach(function(element) {
-            var id_child_toScript = element.field_id+"|"+element_child.children_id;
-            if(element.calculated_field!="" && element.field_type_id!=11){
-              Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
-            }
+        if(child_elements!==undefined){
+          child_elements.forEach(function(element_child){
+            children_fields.forEach(function(element) {
+              var id_child_toScript = element.field_id+"|"+element_child.children_id;
+              if(element.calculated_field!="" && element.field_type_id!=11){
+                Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
+              }
+            });
           });
-        });
+        }
       }
     }
 }
