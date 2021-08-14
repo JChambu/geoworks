@@ -3136,17 +3136,19 @@ function open_new_child(element_field_id, element_name, element_key,is_multiple)
       element_field_id: element_field_id
     },
     success: function(data) {
-      console.log(data);
-      //luego pasar código dentro del success!!!!!
+      console.log(data)
+      child_elements_new = {
+        children_fields: data,
+        children_id: 0,
+        children_photos: []
+      } 
+      var new_row1 = create_new_row_child(child_elements_new, element_field_id,element_name,is_multiple,true);
+      document.getElementById('child_container_'+element_key).appendChild(new_row1);
+      textarea_adjust_height();
+      set_date_style(is_multiple);
+      set_multiselect_style_childs();
     }
   })
-  child_elements_hardcode = child_elements[0];
-  child_elements_hardcode.children_id = 0;
-  var new_row1 = create_new_row_child(child_elements_hardcode, element_field_id,element_name,is_multiple,true);
-  document.getElementById('child_container_'+element_key).appendChild(new_row1);
-  textarea_adjust_height();
-  set_date_style(is_multiple);
-  set_multiselect_style_childs();
 }
 
 function open_photo(e) {
