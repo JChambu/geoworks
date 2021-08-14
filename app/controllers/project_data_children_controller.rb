@@ -25,6 +25,24 @@ class ProjectDataChildrenController < ApplicationController
   def edit
   end
 
+  def show_children
+
+    project_ids = params[:project_ids]
+    project_field_ids = params[:project_field_ids]
+
+    data = ProjectDataChild
+      .select(:id, :properties, :project_id, :project_field_id)
+      .where(:project_id => project_ids)
+      .where(:project_field_id => project_field_ids)
+      .where(row_active: true)
+      .where(current_season: true)
+
+    grouped_data = data.group_by { |c| c.project_id}
+
+    render json: grouped_data
+
+  end
+
   # POST /project_data_children
   # POST /project_data_children.json
   def create

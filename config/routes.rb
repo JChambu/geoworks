@@ -35,7 +35,7 @@ Rails.application.routes.draw do
   post 'graphics/update_sort' => 'graphics#update_sort', as: :update_sort
   get 'photos/show_photos' => 'photos#show_photos'
   get 'photos_children/show_photos_children' => 'photos_children#show_photos_children'
-
+  get 'project_data_children/show_children' => 'project_data_children#show_children'
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
