@@ -45,7 +45,7 @@ class ProjectsController < ApplicationController
     project_type_id = params[:project_type_id]
     project_status_id = params[:project_status_id]
     properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
-    geom = params[:geom]
+    geom = params[:geom]['0'][:latLng]
     subforms = params[:subforms] # FIXME: los paremetros llegan como string
 
     @project_type = ProjectType.find(project_type_id)
