@@ -15,12 +15,7 @@ $(".option_perpage").click(function(){
   init_data_dashboard(false);
 });
 
-//movimiento de header columnas
-$(".th-hover").hover(function(){
-    $(this).css("top", "-25px");
-    }, function(){
-    $(this).css("top", "0px");
-  });
+  set_hover();
 
   //busqueda por columna al hacer click
   $('#choose').keydown(function(e){
@@ -57,6 +52,16 @@ $('#table_select_all').click(function(){
     $('#checkbox_Etiquetas').prop("disabled",true);
   }
 });
+
+//movimiento de header columnas
+function set_hover(){
+  $(".th-hover").hover(function(){console.log("HOVER")
+    $(this).css("top", "-25px");
+    }, function(){
+    $(this).css("top", "0px");
+  });
+}
+
 
 //ordena descendente y ascendente
 function order_column(index){
@@ -161,7 +166,103 @@ function get_string_filter(){
   return string_filter;
 }
 
+function show_subfield(id_field,name_field){
+  $.ajax({
+    type: 'GET',
+    url: '/project_subfields/show_subfields',
+    datatype: 'json',
+    data: {
+      project_type_id: Navarra.dashboards.config.project_type_id,
+      element_field_id: id_field
+    },
+    success: function(data) {
+      console.log("Datos del hijo")
+      console.log(data)
+      // Agrega cabecera visible
+      var new_column = document.createElement('TH');
+      new_column.className = 'header_column subfield_column subfield_column_'+id_field;
+      var new_div = document.createElement('DIV');
+      new_div.className = "th-hover custom_header";
+      var new_p = document.createElement('P');
+      new_p.className = 'custom_p_header';
+      new_p.innerHTML = name_field.toUpperCase();
+      new_div.appendChild(new_p);
+      var new_div1 = document.createElement('DIV');
+      new_div1.className = 'custom_div_table'
+      var new_icon = document.createElement('I');
+      new_icon.className = "fas fa-chevron-down icons ml-2";
+      new_icon.title = "Extender/Contraer";
+      new_div1.appendChild(new_icon);
+      var new_a = document.createElement('A');
+      new_a.setAttribute("data-toggle","dropdown");
+      new_a.setAttribute("href","#");
+      new_a.id = "link_dropdown_"+id_field;
+      var new_icon = document.createElement('I');
+      new_icon.className = "fas fa-plus icons ml-2";
+      new_icon.title = "Agregar Columna";
+      new_a.appendChild(new_icon);
+      new_div1.appendChild(new_a);
+      //modal con columnas hijo
+      var new_drop = document.createElement("DIV");
+      new_drop.className = "dropdown-menu scroll custom_drop_subforms"
+      new_drop.setAttribute("aria-labelledby","dropdown-subfields");
+      data.forEach(function(child_field){
+        var new_option = document.createElement("A");
+        new_option.className ="dropdown-item"
+        new_option.innerHTML = child_field.name;
+        new_drop.appendChild(new_option);
+      })
+      new_div1.appendChild(new_drop)  
 
+
+
+      var new_icon = document.createElement('I');
+      new_icon.className = "fas fa-times icons ml-2";
+      new_icon.title = "Cerrar";
+      new_icon.setAttribute("onClick","remove_column("+id_field+")");
+      new_div1.appendChild(new_icon);
+      new_div.appendChild(new_div1);
+      new_column.appendChild(new_div);
+      $('#tr_visible').append(new_column);
+      set_hover();
+      // Agrega cabecera oculta
+      var new_column = document.createElement('TH');
+      new_column.className='subfield_column_'+id_field
+      new_column.style.minWidth ='100px';
+      new_column.style.whiteSpace = 'nowrap';
+      new_column.innerHTML = name_field.toUpperCase();
+      $('.data_fields').append(new_column);
+
+      // busca valores
+      var app_ids_table = Navarra.dashboards.app_ids_table;
+      $.ajax({
+      type: 'GET',
+      url: '/project_data_children/show_children',
+      datatype: 'json',
+      data: {
+        project_ids: app_ids_table,
+        project_field_ids: [id_field]
+      },
+      success: function(data_child) {
+        //Agrega celdas a toda la tabla
+        $('.row_data').each(function(row){
+          var new_td = document.createElement('TD');
+          new_td.className="custom_row subfield_column subfield_column_"+id_field;
+          var key_data = $(this).attr("id").substring(14);
+          if(data_child[key_data]!=undefined){
+            new_td.innerHTML= data_child[key_data].length;            
+        }
+          $(this).append(new_td);
+        })
+      }
+    });
+    }
+  });
+}
+
+function remove_column(id_field){
+  $('.subfield_column_'+id_field).remove();
+}
 </script>
 
 <div class="card-header chart-header-bg-transparent py-1 px-2 card_data">
@@ -199,11 +300,10 @@ function get_string_filter(){
     </a>
     <div class="dropdown-menu addsubfields scroll" aria-labelledby="dropdown-subfields" style="max-height: 40vh; overflow-y: auto;">
       <% if !@fields.nil? %>
-        <% index = 0 %>
         <% @fields.each do |field|  %>
           <% if field.field_type_id == 7  %>
-            <% index=index+1 %>
-              <a class="dropdown-item subfields_data" onclick="show_subfield(<%=index%>)"><%= field.name %></a>
+            <% field_name = "\'"+field.name+"\'" %>
+              <a class="dropdown-item subfields_data" onclick="show_subfield(<%=field.id.to_s+','+field_name%>)"><%= field.name %></a>
           <% end %>
         <% end %>
       <% end %>
@@ -246,16 +346,17 @@ function get_string_filter(){
 <div class="table-responsive div_table no_scroll" style="height: 30px; overflow-y: hidden; border-bottom: solid 2px rgba(0,0,0,0.6); background: rgba(81, 89, 96, 0.4);">
   <table class="table table-hover m-0 card-body" id="table_hidden" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
     <thead>
-      <tr>
+      <tr id="tr_visible">
         <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
           <p style="color:white; margin-bottom: 0px"></p>
           <input type="text" class="d-none field_key" value="#_action">
         </th>
-        <th style="padding-top: 0px; vertical-align: top;">
+        <th style="padding-top: 0px; vertical-align: top; white-space: nowrap;">
           <div class="custom-control custom-checkbox" title="Seleccionar Todo">
             <input class="custom-control-input field_key" id="table_select_all" type="checkbox" value="#_select">
             <label class="string optional control-label custom-control-label" for="table_select_all"> </label>
           </div>
+          <i class="fas fa-image icons invisible"></i>
 
         </th>
         <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
@@ -272,9 +373,9 @@ function get_string_filter(){
             <% else %>
               <th class="header_column" id=<%="columnfake_"+field.name %>>
             <% end %>
-                <div class="th-hover" style="position: relative;transition: 1s; top:0px;"  >
-                  <p style="color:white; margin-bottom: 0px; white-space: nowrap;"><%= field.name %></p>
-                  <div style="padding-top: 10px; padding-bottom:20px">
+                <div class="th-hover custom_header">
+                  <p class="custom_p_header"><%= field.name %></p>
+                  <div class="custom_div_table">
                     <i class="fas fa-sort-alpha-down icons" onclick="order_column(<%=index%>)"></i>
                     <i class="fas fa-search icons" onclick="search_column(<%=index%>)"></i>
                     <i class="fas fa-times icons" onclick="hide_column(<%=index%>)"></i>
@@ -306,8 +407,7 @@ function get_string_filter(){
             <% end %>
           <% end %>  
       <% end %>    
-      </tr>
-       
+      </tr> 
     </tbody>
   </table>
 </div>
@@ -317,10 +417,13 @@ function get_string_filter(){
       <tr class="data_fields">
         <th></th>
         <th>
+          <div style="white-space: nowrap;">
           <div class="custom-control custom-checkbox">
             <input class="custom-control-input field_key just_header" id="table_select_all_hidden" type="checkbox">
             <label class="string optional control-label custom-control-label" for="table_select_all_hidden"> </label>
           </div>
+          <i class="fas fa-image icons"></i>
+        </div>
         </th>
         <th>#</th>
         <% if !@fields.nil? %>

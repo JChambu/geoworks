@@ -127,26 +127,26 @@ Navarra.geomaps = function() {
     //genera Modal de mapas base y proyecto activo
     Object.keys(baseMaps).forEach(function(key,index){
       if(index==0){var checked_text ="checked=true"} else {checked_text=""}
-      var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+      var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" >'+
                     '<input class="custom-control-input" '+checked_text +' onchange="select_layer()" id="mapabase_'+key+'" type="radio" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="mapabase_'+key+'"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>'+key+'</label></a>';
       $('#basemaps_container').append(new_item);
     });
-    var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+    var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" >'+
                     '<input class="custom-control-input" checked=true onchange="select_layer()" id="checkbox_'+Navarra.dashboards.config.name_layer+'" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_'+Navarra.dashboards.config.name_layer+'"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>'+Navarra.dashboards.config.name_project+'</label></a>';
       $('#activeproject_container').append(new_item);
-      var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_Seleccionados"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+      var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_Seleccionados"><div class="custom-control custom-checkbox" >'+
                     '<input class="custom-control-input" onchange="select_layer()" id="checkbox_Seleccionados" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_Seleccionados"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>Seleccionados</label></a>';
       $('#activeproject_container').append(new_item);
-      var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_Etiquetas"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+      var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_Etiquetas"><div class="custom-control custom-checkbox" >'+
                     '<input class="custom-control-input" onchange="Navarra.geomaps.show_labels(true)" id="checkbox_Etiquetas" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_Etiquetas"> </label>'+
                     '</div>'+
@@ -1270,7 +1270,7 @@ Navarra.geomaps = function() {
                     '<div>'+
                     '<a class="dropdown-item d-flex" href="#" style="justify-content:space-between">'+
                     '<div class="d-inline mr-3">'+
-                    '<div class="custom-control custom-checkbox" style="display: inline-block;">'+
+                    '<div class="custom-control custom-checkbox" >'+
                     '<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+layer+'" type="checkbox" name="radio_mapabase">'+
                     '<label id="checkboxlabel_'+layer+'" class="string optional control-label custom-control-label" for="checkbox_'+layer+'"> </label>'+
                     '</div>'+
@@ -1363,7 +1363,7 @@ Navarra.geomaps = function() {
             sortLayers: true
           });
           //genera Modal de capas externas
-          var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+          var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" >'+
                     '<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+v.name+'" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_'+v.name+'"> </label>'+
                     '</div>'+

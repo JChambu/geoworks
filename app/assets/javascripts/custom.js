@@ -1224,6 +1224,7 @@ function init_data_dashboard(haschange,close_info) {
       // borramos los datos anteriores
       $("#tbody_visible").empty();
       $(".width_only").html("");
+      Navarra.dashboards.app_ids_table=[];
 
       // verificamos columnas ocultas
       array_column_hidden = [];
@@ -1246,6 +1247,9 @@ function init_data_dashboard(haschange,close_info) {
         new_row.id="row_table_data"+data_properties["app_id"];
         new_row.style.cursor = "pointer";
         new_row.className = "row_data";
+        //agrega el app_id a la variable global
+        Navarra.dashboards.app_ids_table.push(data_properties["app_id"]);
+        console.log(Navarra.dashboards.app_ids_table)
 
         var new_celd="";
         fields.forEach(function(column, indexColumn) {
@@ -1338,9 +1342,12 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
     array_datos.push(new_dom);
   }
   if (column.value == "#_select") {
-    var new_dom = "<div class='custom-control custom-checkbox' title='Seleccionar'>"+
+    var new_dom = "<div>"+
+          "<div class='custom-control custom-checkbox' title='Seleccionar'>"+
           "<input type='checkbox' class='custom-control-input' id='check_select_"+appid_info+"' onchange='changeSelected()'>"+
           "<label class='string optional control-label custom-control-label' for='check_select_"+appid_info+"'></label>"+
+          "</div>"+
+          "<i class='fas fa-image icons' title='Fotos' onClick='Navarra.photos.open_photos("+appid_info+")'></i>"+
           "</div>"
     array_datos.push(new_dom);
   }

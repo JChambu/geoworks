@@ -63,7 +63,8 @@ Navarra.dashboards.config = {
   field_geometric_calculated_length: 0,
   field_geometric_calculated_length_all: 0,
   field_geometric_calculated_count: 0,
-  field_geometric_calculated_count_all: 0
+  field_geometric_calculated_count_all: 0,
+  app_ids_table: []
 };
 
 resize_graphics = function(){
