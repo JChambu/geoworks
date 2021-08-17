@@ -73,6 +73,10 @@ class ProjectsController < ApplicationController
     @project['project_status_id'] = project_status_id
     @project['gwm_created_at'] = Time.zone.now
     @project['gwm_updated_at'] = Time.zone.now
+    @project.save
+
+    @project_type.destroy_view
+    @project_type.create_view
 
     render json: {status: 'Creación completada.'}
 
