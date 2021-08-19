@@ -1249,10 +1249,12 @@ function init_data_dashboard(haschange,close_info) {
         new_row.className = "row_data";
         //agrega el app_id a la variable global
         Navarra.dashboards.app_ids_table.push(data_properties["app_id"]);
-        console.log(Navarra.dashboards.app_ids_table)
 
         var new_celd="";
+        console.log("Campos que llegan")
         fields.forEach(function(column, indexColumn) {
+          console.log(column)
+          console.log(column.value)
           new_celd_create = create_celd_table(column,indexColumn, data_properties, per_page_value, active_page ,index);
           new_celd+=new_celd_create;
         });
@@ -1386,6 +1388,7 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   if(is_new_file && data_properties[column_name]!=undefined){
     new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'>"+data_properties[column_name]+"</td>"
   } else{
+    //console.log("Columna "+column_name)
     new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'></td>"
   }
   return new_celd_create;
@@ -3398,7 +3401,6 @@ function edit_file(edit_parent, edit_child, edit_status){
         new_row.className = "row_data";
         var new_celd="";
         var fields = document.querySelectorAll(".field_key");
-
         fields.forEach(function(column, indexColumn) {
           new_celd_create = create_celd_table(column,indexColumn, properties_to_save, null, null ,-1,true);
           new_celd+=new_celd_create;
@@ -3421,20 +3423,6 @@ function edit_file(edit_parent, edit_child, edit_status){
             }
           });
         }
-        //Ajustar estado en la tabla
-        /* CHEQUEAR SI HACE FALTA
-        var fields = document.querySelectorAll(".field_key");
-        fields.forEach(function(column, indexColumn) {
-          if(column.value=="app_estado"){
-            var indexval=indexColumn+1;
-            app_ids.forEach(function(row_element){
-              $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(status_id);
-              $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-weight","bold");
-              $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-size","1.5em");
-            });
-          }
-        })
-        */
         }
       update_all();
     }

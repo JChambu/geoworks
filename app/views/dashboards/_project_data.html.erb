@@ -55,10 +55,12 @@ $('#table_select_all').click(function(){
 
 //movimiento de header columnas
 function set_hover(){
-  $(".th-hover").hover(function(){console.log("HOVER")
-    $(this).css("top", "-25px");
+  $(".th-hover").hover(function(){
+    $(this).find('p').css('opacity',0);
+    $(this).find('div').css('opacity',1);
     }, function(){
-    $(this).css("top", "0px");
+    $(this).find('p').css('opacity',1);
+    $(this).find('div').css('opacity',0);
   });
 }
 
@@ -176,11 +178,13 @@ function show_subfield(id_field,name_field){
       element_field_id: id_field
     },
     success: function(data) {
+      //Oculta opción
+      $('#open_subform'+id_field).addClass('d-none');
       console.log("Datos del hijo")
       console.log(data)
       // Agrega cabecera visible
-      var new_column = document.createElement('TH');
-      new_column.className = 'header_column subfield_column subfield_column_'+id_field;
+      var new_column_subform = document.createElement('TH');
+      new_column_subform.className = 'border-0 header_column subfield_column_'+id_field;
       var new_div = document.createElement('DIV');
       new_div.className = "th-hover custom_header";
       var new_p = document.createElement('P');
@@ -189,10 +193,6 @@ function show_subfield(id_field,name_field){
       new_div.appendChild(new_p);
       var new_div1 = document.createElement('DIV');
       new_div1.className = 'custom_div_table'
-      var new_icon = document.createElement('I');
-      new_icon.className = "fas fa-chevron-down icons ml-2";
-      new_icon.title = "Extender/Contraer";
-      new_div1.appendChild(new_icon);
       var new_a = document.createElement('A');
       new_a.setAttribute("data-toggle","dropdown");
       new_a.setAttribute("href","#");
@@ -206,25 +206,60 @@ function show_subfield(id_field,name_field){
       var new_drop = document.createElement("DIV");
       new_drop.className = "dropdown-menu scroll custom_drop_subforms"
       new_drop.setAttribute("aria-labelledby","dropdown-subfields");
+
+      // Agrega subcabecera foto y fecha
+      var new_column = document.createElement('TH');
+      new_column.style.minWidth = "130px";
+      new_column.style.display = "inline-block";
+      new_column.className = 'subfield_column_'+id_field;
+      $('#tr_subfields').append(new_column);
+
+      var subforms_count = 0;
       data.forEach(function(child_field){
-        var new_option = document.createElement("A");
-        new_option.className ="dropdown-item"
-        new_option.innerHTML = child_field.name;
-        new_drop.appendChild(new_option);
+        if(child_field.hidden==false && child_field.field_type_id!=11 && child_field.can_read == true){
+          subforms_count++;
+          var new_option = document.createElement("A");
+          new_option.className ="dropdown-item "+id_field+'subfield'
+          new_option.innerHTML = child_field.name;
+          new_option.id = id_field+'_subfield_'+child_field.field_id;
+          new_option.setAttribute('onClick','open_subcolumn(event)');
+          new_drop.appendChild(new_option);
+
+          //Agrega Subcabecera
+          var new_column = document.createElement('TH');
+          new_column.className = 'header_column d-none '+'subfield_column_'+id_field+" " + id_field+"sub"+child_field.field_id;
+          new_column.style.whiteSpace = "nowrap";
+          var new_tr = document.createElement('TR');
+          new_tr.className = "th-hover custom_header";
+          new_tr.style.display = "inline-block";
+          var new_p = document.createElement('P');
+          new_p.className = 'custom_p_header';
+          new_p.innerHTML = child_field.name;
+          new_tr.appendChild(new_p);
+          var new_div1 = document.createElement('DIV');
+          new_div1.className = 'custom_div_table'
+          var new_icon = document.createElement('I');
+          new_icon.className = "fas fa-times icons";
+          new_icon.title = "Cerrar";
+          new_icon.setAttribute("onClick","remove_subcolumn("+id_field+","+child_field.field_id+")");
+          new_div1.appendChild(new_icon);
+          new_tr.appendChild(new_div1);
+          new_column.appendChild(new_tr);
+          $('#tr_subfields').append(new_column);
+        }
       })
       new_div1.appendChild(new_drop)  
-
-
-
       var new_icon = document.createElement('I');
       new_icon.className = "fas fa-times icons ml-2";
       new_icon.title = "Cerrar";
       new_icon.setAttribute("onClick","remove_column("+id_field+")");
       new_div1.appendChild(new_icon);
       new_div.appendChild(new_div1);
-      new_column.appendChild(new_div);
-      $('#tr_visible').append(new_column);
+      new_column_subform.appendChild(new_div);
+      new_column_subform.setAttribute('colspan',subforms_count);
+      $('#tr_visible').append(new_column_subform);
       set_hover();
+
       // Agrega cabecera oculta
       var new_column = document.createElement('TH');
       new_column.className='subfield_column_'+id_field
@@ -245,23 +280,99 @@ function show_subfield(id_field,name_field){
       },
       success: function(data_child) {
         //Agrega celdas a toda la tabla
+        if(Object.keys(data_child).length==0){
+            $('#link_dropdown_'+id_field).addClass('disabled')
+            $('#link_dropdown_'+id_field).find('i').attr('title','No hay datos para mostrar');
+          }
         $('.row_data').each(function(row){
           var new_td = document.createElement('TD');
-          new_td.className="custom_row subfield_column subfield_column_"+id_field;
-          var key_data = $(this).attr("id").substring(14);
+          new_td.className="custom_row subfield_column_"+id_field;
+          var key_data = $(this).attr("id").substring(14);          
           if(data_child[key_data]!=undefined){
-            new_td.innerHTML= data_child[key_data].length;            
+            data_child[key_data].forEach(function(column,indexColumn){
+              var new_sub_column = document.createElement('TR');
+              new_sub_column.style.display = 'flex';
+              if(indexColumn==0){
+                  new_sub_column.style.borderTop= 'none';
+                } else {
+                  new_sub_column.style.borderTop= 'solid 1px rgba(0,0,0,0.5)';
+                }
+              // agrega icono de foto
+              var new_cel_subform = document.createElement('TD');
+                new_cel_subform.style.border='none';   
+                new_cel_subform.style.width='30px';
+                var new_icon = document.createElement('I');
+                new_icon.className = "fas fa-image icons";
+                new_icon.setAttribute('onClick', 'Navarra.photos.open_photos('+column.id+',true)')
+                new_cel_subform.appendChild(new_icon);
+                new_sub_column.appendChild(new_cel_subform);
+
+              // agrega fecha de creación
+              var new_cel_subform = document.createElement('TD');
+                new_cel_subform.style.border='none';   
+                // pedir a backend fecha de creación
+                new_cel_subform.innerHTML = '01/01/2021'
+                new_cel_subform.style.width='100px';
+                new_sub_column.appendChild(new_cel_subform);
+
+              var sub_columns_visibles = $('.'+id_field+'subfield');
+              sub_columns_visibles.each(function(index){
+                var colname = $(this).attr('id').split('_')[2];
+                var new_cel_subform = document.createElement('TD');
+                new_cel_subform.className = id_field+"sub"+colname + " d-none";
+                new_cel_subform.style.whiteSpace='nowrap';
+                new_cel_subform.style.border='none';
+                if(column.properties[colname]!=undefined){
+                  new_cel_subform.innerHTML = column.properties[colname];
+                }
+                new_sub_column.appendChild(new_cel_subform);
+              })
+              new_td.appendChild(new_sub_column);
+            })           
         }
           $(this).append(new_td);
         })
       }
     });
+   //ajusta ubicación del modal
+    $('.custom_div_table').on('show.bs.dropdown', function(event) {
+      var top_table = (parseInt($(".table_data_container").css("top"))+50)+'px';
+      $('.custom_drop_subforms').css('margin-top',top_table);
+      var width_table = (parseInt($(".table_data_container").css("width"))-200)+'px';
+      $('.custom_drop_subforms').css('margin-left',width_table);
+    });
     }
   });
 }
 
+function open_subcolumn(event){
+  var id_field = event.target.id.split('_')[0];
+  var id_subfield = event.target.id.split('_')[2];
+  $('.'+id_field+'sub'+id_subfield).removeClass('d-none');
+  $(event.target).addClass('d-none');
+  $('#table_visible_container').css('height','60px');
+  var width_array = [];
+  //Ajusta ancho columnas
+    $('.'+id_field+'sub'+id_subfield).each(function(){
+      width_array.push($(this).width());
+    });
+    console.log(width_array)
+    var max = Math.max.apply(Math,width_array);
+    if(max>200){max=200}
+      console.log(max)
+    max = (parseInt(max)+30)+'px';
+    console.log(max)
+    $('.'+id_field+'sub'+id_subfield).css('whiteSpace',"normal");
+    $('.'+id_field+'sub'+id_subfield).css('minWidth',max);
+}
+function remove_subcolumn(id_field,id_subfield){
+  $('.'+id_field+'sub'+id_subfield).addClass('d-none');
+  $('#'+id_field+'_subfield_'+id_subfield).removeClass('d-none');
+}
+
 function remove_column(id_field){
   $('.subfield_column_'+id_field).remove();
+  $('#open_subform'+id_field).removeClass('d-none');
 }
 </script>
 
@@ -279,9 +390,6 @@ function remove_column(id_field){
       <% if !@fields.nil? %>
       <% index = 0 %>
         <% @fields.each do |field|  %>
-          <%if field.heatmap_field %>
-          <input class="d-none field_label" value=<%=field.key%>>
-          <% end %>
           <% if field.field_type_id != 11 && field.field_type_id != 7  %>
             <% index=index+1 %>
             <% if !field.popup %>
@@ -303,7 +411,7 @@ function remove_column(id_field){
         <% @fields.each do |field|  %>
           <% if field.field_type_id == 7  %>
             <% field_name = "\'"+field.name+"\'" %>
-              <a class="dropdown-item subfields_data" onclick="show_subfield(<%=field.id.to_s+','+field_name%>)"><%= field.name %></a>
+              <a class="dropdown-item subfields_data" id="open_subform<%=field.id%>" onclick="show_subfield(<%=field.id.to_s+','+field_name%>)"><%= field.name %></a>
           <% end %>
         <% end %>
       <% end %>
@@ -343,15 +451,15 @@ function remove_column(id_field){
     </nav>
   </div>
 </div>
-<div class="table-responsive div_table no_scroll" style="height: 30px; overflow-y: hidden; border-bottom: solid 2px rgba(0,0,0,0.6); background: rgba(81, 89, 96, 0.4);">
+<div class="table-responsive div_table no_scroll" id="table_visible_container" style="height: 30px; overflow-y: hidden; border-bottom: solid 2px rgba(0,0,0,0.6); background: rgba(81, 89, 96, 0.4);">
   <table class="table table-hover m-0 card-body" id="table_hidden" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
     <thead>
       <tr id="tr_visible">
-        <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
+        <th class="border-0" style="padding-top: 0px; vertical-align: top; cursor: pointer;">
           <p style="color:white; margin-bottom: 0px"></p>
           <input type="text" class="d-none field_key" value="#_action">
         </th>
-        <th style="padding-top: 0px; vertical-align: top; white-space: nowrap;">
+        <th class="border-0" style="padding-top: 0px; vertical-align: top; white-space: nowrap;">
           <div class="custom-control custom-checkbox" title="Seleccionar Todo">
             <input class="custom-control-input field_key" id="table_select_all" type="checkbox" value="#_select">
             <label class="string optional control-label custom-control-label" for="table_select_all"> </label>
@@ -359,7 +467,7 @@ function remove_column(id_field){
           <i class="fas fa-image icons invisible"></i>
 
         </th>
-        <th style="padding-top: 0px; vertical-align: top; cursor: pointer;">
+        <th class="border-0" style="padding-top: 0px; vertical-align: top; cursor: pointer;">
           <p style="color:white; margin-bottom: 0px">#</p>
           <input type="text" class="d-none field_key" value="#">
         </th>
@@ -369,9 +477,9 @@ function remove_column(id_field){
             <% if field.field_type_id != 11 && field.field_type_id != 7  %>
             <% index=index+1 %>
             <% if !field.popup %>
-              <th class="d-none header_column" id=<%="columnfake_"+field.name %>>
+              <th class="d-none header_column border-0" id=<%="columnfake_"+field.name %>>
             <% else %>
-              <th class="header_column" id=<%="columnfake_"+field.name %>>
+              <th class="header_column border-0" id=<%="columnfake_"+field.name %>>
             <% end %>
                 <div class="th-hover custom_header">
                   <p class="custom_p_header"><%= field.name %></p>
@@ -384,6 +492,26 @@ function remove_column(id_field){
                 </div>
               </th>
               <% else %>
+            <% end %>
+          <% end %>
+        <% end %>
+      </tr>
+      <tr id="tr_subfields">
+        <th class="border-0"></th>
+        <th class="border-0"></th>
+        <th class="border-0"></th>
+        <% if !@fields.nil? %>
+          <% @fields.each do |field|  %>
+            <%if field.heatmap_field %>
+              <input class="d-none field_label" value=<%=field.key%>>
+            <% end %>
+            <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+              <% if !field.popup %>
+                <th class="d-none header_column border-0">
+              <% else %>
+                <th class="header_column border-0">
+              <% end %>
+              <p class="custom_p_header"></p>
             <% end %>
           <% end %>
         <% end %>
@@ -419,7 +547,7 @@ function remove_column(id_field){
         <th>
           <div style="white-space: nowrap;">
           <div class="custom-control custom-checkbox">
-            <input class="custom-control-input field_key just_header" id="table_select_all_hidden" type="checkbox">
+            <input class="custom-control-input just_header" id="table_select_all_hidden" type="checkbox">
             <label class="string optional control-label custom-control-label" for="table_select_all_hidden"> </label>
           </div>
           <i class="fas fa-image icons"></i>

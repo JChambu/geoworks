@@ -1429,10 +1429,17 @@ Navarra.geomaps = function() {
                   });
                   app_id_popup=prop["app_id"];
                   if(Navarra.dashboards.config.name_project==data["project_name"]){
+                    var div_popup_icon = document.createElement('DIV');
+                    div_popup_icon.style.textAlign = 'right';
+                    var new_p = document.createElement('I');
+                    new_p.setAttribute("onclick",'Navarra.photos.open_photos('+app_id_popup+',false)');
+                    new_p.className="fas fa-image info_icon";
+                    div_popup_icon.appendChild(new_p);
                     var new_p = document.createElement('I');
                     new_p.setAttribute("onclick",'show_item_info('+app_id_popup+',true)');
                     new_p.className="fas fa-info-circle info_icon";
-                    div_popup.appendChild(new_p);
+                    div_popup_icon.appendChild(new_p);
+                    div_popup.appendChild(div_popup_icon);
                   }
 
                   var isdifferent=true;

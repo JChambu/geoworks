@@ -363,7 +363,7 @@ div.custom-menu.show {
 .info_icon{
   font-size: 1.5em;
   color: white;
-  margin-left: 90%;
+  margin: 5px;
   margin-top: 5px;
   margin-bottom:5px;
   cursor:pointer;
@@ -519,8 +519,8 @@ div.custom-menu.show {
 
 /*estilo para tabla de datos */
 .header_column{
-  height: 8vh; 
   padding-top: 0px!important; 
+  padding-bottom: 0px!important; 
   vertical-align: top!important; 
   min-width: 100px; 
   cursor:  pointer;
@@ -534,21 +534,26 @@ div.custom-menu.show {
   color:white; 
   margin-bottom: 0px; 
   white-space: nowrap;
+  opacity:1;
+  transition:1s;
 }
+
 .custom_div_table{
-  padding-top: 10px; 
-  padding-bottom:20px
+  opacity:0;
+  transition: 1s;
+  position: absolute;
+  top:0px;
+  width:100%;
+  text-align:center
 }
-.subfield_column{
-  background: rgba(0,0,0,0.4);
-}
+
 .custom_drop_subforms{
-  max-height:40vh;
+  max-height:35vh;
   overflow-y:auto;
   position:fixed!important;
   transform:none!important;
+  width:200px;
 }
-
 .icons{
   color: inherit!important;
   display: inline-block;
@@ -760,36 +765,40 @@ div.custom-menu.show {
 }
 
 /* modal fotos */
+.custom_modal_photos{
+  width:auto;
+  height:42vh;
+  top:9vh;
+  left:0.5%;
+}
+.custom_modal_photos_max{
+  height: 90vh!important;
+}
 .slider_photos_container{
-  width: 100%;
-  display: flex;
-  align-items: center;
-  height:100%;
-  justify-content: space-around;
+  display:inline-block;
 }
 .photo_container{
-  width: 95%;
-  height:inherit;
+  display: inline-block;
+  vertical-align:top;
   text-align:center;
 }
 .photo_mini_container{
-  width: 10%;
-  float:right;
+  width: 50px;
+  display: inline-block;
+  vertical-align:top;
   height:100%;
   overflow-y:auto;
-}
-.photo_descrip_container{
-  width: 20%;
-  position:absolute;
-  left:5%;
-  top: 5vh;
-  overflow-y:auto;
+  margin-left:5px;
 }
 .photo{
-  height:100%;
+  height:34.4vh;
+}
+.photo_max{
+  height:82vh !important;
 }
 .photo_mini{
   width: 100%;
   cursor: pointer;
   padding: 5px;
+  padding:2px;
 }

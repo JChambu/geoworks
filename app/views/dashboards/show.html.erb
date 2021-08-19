@@ -190,6 +190,16 @@ function switch_filtered_layer(){
 }
 // terminan funciones para modal de capas
 
+//funciones para modal de fotos
+function max_photo(){
+  $('.photo').addClass('photo_max');
+  $('.custom_modal_photos').addClass('custom_modal_photos_max');
+}
+function min_photo(){
+  $('.photo').removeClass('photo_max');
+  $('.custom_modal_photos').removeClass('custom_modal_photos_max');
+}
+
 </script>
 
 <% end %>
@@ -250,7 +260,7 @@ function switch_filtered_layer(){
 
 <%= form_for :q, :html => {:class => 'd-flex justify-content-end', :method => :get} do |f| %>
 
-  <div id="map">
+  <div id="map" ondragover="Navarra.photos.allowDrop(event)" ondrop="Navarra.photos.drop(event)">
   </div>
 
   <div style="position: absolute;width: 30%; left: 70%" id="sidebar_all" class="charts-container">
@@ -357,18 +367,19 @@ function switch_filtered_layer(){
   <input id="new_geom_control" value="false">
 <% end %>
 
-<div id="photos-modal" class="modal fade">
-  <div class="modal-dialog mw-100 m-0">
-    <div class="modal-content vh-100">
-      <div class="modal-header">
-        <h4 class="modal-title" id="photo_title"> FOTOS </h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
+<div id="photos-modal" class="modal fade card text-light chart-bg-transparent pb-0 pt-0 custom_modal_photos" data-backdrop="false" draggable=true ondragstart="Navarra.photos.drag_photos(event)">
+  <div class="modal-dialog m-0 mw-100">
+    <div class="modal-content" style="background: rgba(81, 89, 96, 0.5);">
+      <div class="card-header chart-header-bg-transparent py-1 px-2">
+        <p id="photo_title" class="m-1 d-inline"></p>
+        <div class="view-data-container" >
+            <i class="fas fa-window-maximize view-data" onclick="min_photo()"></i>
+            <i class="fas fa-square view-data" onclick="max_photo()"></i>
+            <i class="fas fa-times view-data" type="button" class="close" data-dismiss="modal" aria-label="Close"></i>
+          </div>
       </div>
-      <div class="modal-body h-100">
+      <div class="modal-body p-1">
         <div class="slider_photos_container">
-          <div class="photo_descrip_container"></div>
           <div class="photo_container"></div>
           <div class="photo_mini_container"></div>
         </div>
