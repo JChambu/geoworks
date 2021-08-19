@@ -31,7 +31,7 @@ class ProjectDataChildrenController < ApplicationController
     project_field_ids = params[:project_field_ids]
 
     data = ProjectDataChild
-      .select(:id, :properties, :project_id, :project_field_id)
+      .select(:id, :properties, :project_id, :project_field_id, :gwm_created_at)
       .where(:project_id => project_ids)
       .where(:project_field_id => project_field_ids)
       .where(row_active: true)
