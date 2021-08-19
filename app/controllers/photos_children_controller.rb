@@ -7,12 +7,14 @@ class PhotosChildrenController < ApplicationController
     child_photos = PhotoChild
       .where(project_data_child_id: project_data_child_id)
       .where(row_active: true)
+      .order(gwm_created_at: :desc)
 
     child_photos_array = []
     child_photos.each do |c_photo|
       c_photo_hash = {}
       c_photo_hash['id'] = c_photo.id
       c_photo_hash['name'] = c_photo.name
+      c_photo_hash['gwm_created_at'] = c_photo.gwm_created_at
       c_photo_hash['image'] = c_photo.image
       child_photos_array.push(c_photo_hash)
     end

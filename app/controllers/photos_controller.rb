@@ -7,6 +7,7 @@ class PhotosController < ApplicationController
       father_photos = Photo
         .where(project_id: project_id)
         .where(row_active: true)
+        .order(gwm_created_at: :desc)
 
       father_photos_array = []
 
@@ -14,6 +15,7 @@ class PhotosController < ApplicationController
         f_photo_hash = {}
         f_photo_hash['id'] = f_photo.id
         f_photo_hash['name'] = f_photo.name
+        f_photo_hash['gwm_created_at'] = f_photo.gwm_created_at
         f_photo_hash['image'] = f_photo.image
         father_photos_array.push(f_photo_hash)
       end
