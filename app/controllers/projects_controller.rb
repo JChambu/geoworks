@@ -87,21 +87,32 @@ class ProjectsController < ApplicationController
     app_ids = params[:app_ids]
     properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
     subforms = params[:subforms] # FIXME: los paremetros llegan como string
-    if app_ids.present? && properties.present?
-      app_ids.each do |app_id|
-        @project = Project.find(app_id)
-        @project.update_form(properties)
+    project_status_id = params[:project_status_id]
+
+    if app_ids.present?
+
+      if properties.present? || project_status_id.present?
+        app_ids.each do |app_id|
+          @project = Project.find(app_id)
+          @project.update_form(properties, project_status_id.to_i)
+        end
       end
-    end
-    if app_ids.present? && subforms.present?
-      subforms.each do |i, sf|
-        child_id = sf['child_id']
-        properties = sf['properties']
-        @project_data_children = ProjectDataChild.find(child_id)
-        @project_data_children.update_subform(properties)
+
+      if subforms.present?
+        subforms.each do |i, sf|
+          child_id = sf['child_id']
+          properties = sf['properties']
+          @project_data_children = ProjectDataChild.find(child_id)
+          @project_data_children.update_subform(properties)
+        end
       end
+
+      render json: {status: 'Actualización completada.'}
+
+    else
+      render json: {status: 'Faltan parámetros para completar la acción.'}
     end
-    render json: {status: 'Actualización completada.'}
+
   end
 
 
@@ -175,21 +186,6 @@ class ProjectsController < ApplicationController
         @project.change_owner(user_id.to_i)
       end
       render json: {status: 'Reasignación completada.'}
-    else
-      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
-    end
-  end
-
-  # Cambia el estado del registro
-  def change_status
-    app_ids = params[:app_ids]
-    status_id = params[:status_id]
-    if app_ids.present? && status_id.present?
-      app_ids.each do |app_id|
-        @project = Project.find(app_id)
-        @project.change_status(status_id.to_i)
-      end
-      render json: {status: 'Actualización completada.'}
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end

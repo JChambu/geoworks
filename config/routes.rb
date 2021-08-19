@@ -25,7 +25,6 @@ Rails.application.routes.draw do
   patch 'projects/update_form' => 'projects#update_form'
   patch 'projects/update_geom_and_calculated_fields' => 'projects#update_geom_and_calculated_fields'
   patch 'projects/change_owner' => 'projects#change_owner'
-  patch 'projects/change_status' => 'projects#change_status'
   patch 'projects/disable_form' => 'projects#disable_form'
   patch 'projects/destroy_form' => 'projects#destroy_form'
   post 'project_statuses/options', as: 'project_statuses_options'
