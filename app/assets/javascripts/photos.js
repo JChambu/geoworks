@@ -25,6 +25,7 @@ function open_photos(app_id, ischild) {
             //borra datos anteriores
             $('.photo_container').empty();
             $('.photo_mini_container').empty();
+            $('.date_container').empty();
             $('#photo_title').html("No hay fotos para este registro");
             $('#photos-modal').modal('show');
             data.forEach(function(photo,index) {

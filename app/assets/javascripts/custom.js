@@ -1473,7 +1473,8 @@ function create_subforms_table(){
         id_subfield: $(this).attr('id').split('_')[2]
       }
       subheader_open.push(subheader_object);
-    })
+    });
+    console.log("Va a actualizar la columna "+id)
     $('.subfield_column_'+id).remove();
     $(this).click();
   });

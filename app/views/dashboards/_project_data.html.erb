@@ -282,8 +282,7 @@ function show_subfield(id_field,name_field){
           }
         $('.row_data').each(function(row){
           var new_td = document.createElement('TD');
-          new_td.className="custom_row subfield_column_"+id_field;
-          new_td.style.minWidth = '150px';
+          new_td.className="custom_row custon_row_child subfield_column_"+id_field;
           var key_data = $(this).attr("id").substring(14);          
           if(data_child[key_data]!=undefined){
             data_child[key_data].forEach(function(column,indexColumn){
@@ -296,7 +295,8 @@ function show_subfield(id_field,name_field){
                 }
               // agrega icono de foto
               var new_cel_subform = document.createElement('TD');
-                new_cel_subform.style.border='none';   
+                new_cel_subform.style.border='none'; 
+                new_cel_subform.style.padding='5px';   
                 new_cel_subform.style.width='30px';
                 var new_icon = document.createElement('I');
                 new_icon.className = "fas fa-image icons";
@@ -307,7 +307,7 @@ function show_subfield(id_field,name_field){
               // agrega fecha de creación
               var new_cel_subform = document.createElement('TD');
                 new_cel_subform.style.border='none';   
-                // pedir a backend fecha de creación
+                new_cel_subform.style.padding='5px';  
                 var created_date = column.gwm_created_at.split('T')[0];
                 var created_time = column.gwm_created_at.split('T')[1].substring(0,5)
                 new_cel_subform.innerHTML = created_date.split('-')[2]+'/'+created_date.split('-')[1]+'/'+created_date.split('-')[0].substring(2)+" "+created_time;
@@ -318,6 +318,7 @@ function show_subfield(id_field,name_field){
               sub_columns_visibles.each(function(index){
                 var colname = $(this).attr('id').split('_')[2];
                 var new_cel_subform = document.createElement('TD');
+                new_cel_subform.style.padding='5px';  
                 new_cel_subform.className = id_field+"sub"+colname + " d-none";
                 new_cel_subform.style.whiteSpace='nowrap';
                 new_cel_subform.style.border='none';
