@@ -180,11 +180,10 @@ function show_subfield(id_field,name_field){
     success: function(data) {
       //Oculta opción
       $('#open_subform'+id_field).addClass('d-none');
-      console.log("Datos del hijo")
-      console.log(data)
       // Agrega cabecera visible
       var new_column_subform = document.createElement('TH');
       new_column_subform.className = 'border-0 header_column subfield_column_'+id_field;
+      new_column_subform.id = 'header_column_'+id_field;
       var new_div = document.createElement('DIV');
       new_div.className = "th-hover custom_header";
       var new_p = document.createElement('P');
@@ -209,15 +208,12 @@ function show_subfield(id_field,name_field){
 
       // Agrega subcabecera foto y fecha
       var new_column = document.createElement('TH');
-      new_column.style.minWidth = "130px";
-      new_column.style.display = "inline-block";
+      new_column.style.minWidth = "150px";
       new_column.className = 'subfield_column_'+id_field;
       $('#tr_subfields').append(new_column);
 
-      var subforms_count = 0;
       data.forEach(function(child_field){
         if(child_field.hidden==false && child_field.field_type_id!=11 && child_field.can_read == true){
-          subforms_count++;
           var new_option = document.createElement("A");
           new_option.className ="dropdown-item "+id_field+'subfield'
           new_option.innerHTML = child_field.name;
@@ -231,7 +227,7 @@ function show_subfield(id_field,name_field){
           new_column.style.whiteSpace = "nowrap";
           var new_tr = document.createElement('TR');
           new_tr.className = "th-hover custom_header";
-          new_tr.style.display = "inline-block";
+          new_tr.style.display = 'inline-block'
           var new_p = document.createElement('P');
           new_p.className = 'custom_p_header';
           new_p.innerHTML = child_field.name;
@@ -256,7 +252,7 @@ function show_subfield(id_field,name_field){
       new_div1.appendChild(new_icon);
       new_div.appendChild(new_div1);
       new_column_subform.appendChild(new_div);
-      new_column_subform.setAttribute('colspan',subforms_count);
+      new_column_subform.setAttribute('colspan',1);
       $('#tr_visible').append(new_column_subform);
       set_hover();
 
@@ -287,6 +283,7 @@ function show_subfield(id_field,name_field){
         $('.row_data').each(function(row){
           var new_td = document.createElement('TD');
           new_td.className="custom_row subfield_column_"+id_field;
+          new_td.style.minWidth = '150px';
           var key_data = $(this).attr("id").substring(14);          
           if(data_child[key_data]!=undefined){
             data_child[key_data].forEach(function(column,indexColumn){
@@ -311,8 +308,10 @@ function show_subfield(id_field,name_field){
               var new_cel_subform = document.createElement('TD');
                 new_cel_subform.style.border='none';   
                 // pedir a backend fecha de creación
-                new_cel_subform.innerHTML = '01/01/2021'
-                new_cel_subform.style.width='100px';
+                var created_date = column.gwm_created_at.split('T')[0];
+                var created_time = column.gwm_created_at.split('T')[1].substring(0,5)
+                new_cel_subform.innerHTML = created_date.split('-')[2]+'/'+created_date.split('-')[1]+'/'+created_date.split('-')[0].substring(2)+" "+created_time;
+                new_cel_subform.style.width='120px';
                 new_sub_column.appendChild(new_cel_subform);
 
               var sub_columns_visibles = $('.'+id_field+'subfield');
@@ -332,6 +331,9 @@ function show_subfield(id_field,name_field){
         }
           $(this).append(new_td);
         })
+        if(Object.keys(data_child).length!=0){
+          open_subheaders(id_field);
+        }
       }
     });
    //ajusta ubicación del modal
@@ -356,24 +358,45 @@ function open_subcolumn(event){
     $('.'+id_field+'sub'+id_subfield).each(function(){
       width_array.push($(this).width());
     });
-    console.log(width_array)
     var max = Math.max.apply(Math,width_array);
     if(max>200){max=200}
-      console.log(max)
     max = (parseInt(max)+30)+'px';
-    console.log(max)
     $('.'+id_field+'sub'+id_subfield).css('whiteSpace',"normal");
     $('.'+id_field+'sub'+id_subfield).css('minWidth',max);
+    // ajusta colspan
+    var new_colsapan =  parseInt($('#header_column_'+id_field).attr('colspan'))+1;
+    $('#header_column_'+id_field).attr('colspan',new_colsapan);
 }
 function remove_subcolumn(id_field,id_subfield){
   $('.'+id_field+'sub'+id_subfield).addClass('d-none');
   $('#'+id_field+'_subfield_'+id_subfield).removeClass('d-none');
+  // ajusta colspan
+    var new_colsapan =  parseInt($('#header_column_'+id_field).attr('colspan'))-1;
+    $('#header_column_'+id_field).attr('colspan',new_colsapan);
+  verify_close_subheader();
 }
 
 function remove_column(id_field){
   $('.subfield_column_'+id_field).remove();
   $('#open_subform'+id_field).removeClass('d-none');
+  verify_close_subheader();
 }
+
+function verify_close_subheader(){
+  // verifica subcolumnas abiertas
+  var count_open_subforms = 0;
+  var field_subforms_open = $('.subfields_data.d-none');
+  field_subforms_open.each(function(){
+    var id = $(this).attr('id').substring(12);
+    var subfields = $('.'+id+'subfield.d-none');
+    count_open_subforms += subfields.length;
+  });
+  if(count_open_subforms==0){
+     $('#table_visible_container').css('height','30px');
+  }
+}
+
+
 </script>
 
 <div class="card-header chart-header-bg-transparent py-1 px-2 card_data">

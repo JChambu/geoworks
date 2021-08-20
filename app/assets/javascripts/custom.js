@@ -22,6 +22,7 @@ var arraymultiselectChild=[];
 var verify_count_elements_childs = 0;
 var array_datos = [];
 var array_column_hidden = [];
+var subheader_open = [];
 
 Number.prototype.format = function(n, x, s, c) {
   var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
@@ -1251,10 +1252,7 @@ function init_data_dashboard(haschange,close_info) {
         Navarra.dashboards.app_ids_table.push(data_properties["app_id"]);
 
         var new_celd="";
-        console.log("Campos que llegan")
         fields.forEach(function(column, indexColumn) {
-          console.log(column)
-          console.log(column.value)
           new_celd_create = create_celd_table(column,indexColumn, data_properties, per_page_value, active_page ,index);
           new_celd+=new_celd_create;
         });
@@ -1272,6 +1270,9 @@ function init_data_dashboard(haschange,close_info) {
         // termina llenado de la tabla
 
       $(".fakeLoader").css("display", "none");
+
+       // Verifica si tiene que crear tabla de subformularios
+      create_subforms_table();
     }
   });
 
@@ -1333,6 +1334,7 @@ function init_data_dashboard(haschange,close_info) {
       }
     }
   }
+ 
 }
 
 function create_celd_table(column, indexColumn, data_properties, per_page_value, active_page, index,is_new_file){
@@ -1388,7 +1390,6 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   if(is_new_file && data_properties[column_name]!=undefined){
     new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'>"+data_properties[column_name]+"</td>"
   } else{
-    //console.log("Columna "+column_name)
     new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'></td>"
   }
   return new_celd_create;
@@ -1458,6 +1459,35 @@ function data_pagination(selected, active_page) {
     init_data_dashboard(false);
   });
 }
+
+function create_subforms_table(){
+  // verifica subcolumnas abiertas
+  subheader_open = [];
+  var field_subforms_open = $('.subfields_data.d-none');
+  field_subforms_open.each(function(){
+    var id = $(this).attr('id').substring(12);
+    var subfields = $('.'+id+'subfield.d-none');
+    subfields.each(function(){
+      subheader_object = {
+        id_field: id,
+        id_subfield: $(this).attr('id').split('_')[2]
+      }
+      subheader_open.push(subheader_object);
+    })
+    $('.subfield_column_'+id).remove();
+    $(this).click();
+  });
+}
+
+function open_subheaders(id_field){
+  subheader_open.forEach(function(subheader){
+    if(subheader.id_field ==  id_field){
+      $('#'+id_field+'_subfield_'+subheader.id_subfield).click();
+    }
+  })
+}
+
+
 //****** TERMINAN FUNCIONES PARA TABLA DE DATOS*****
 
 
@@ -2414,7 +2444,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
               });
       }
       });
-      if(!is_new_file || is_multiple){
+      if(!is_new_file && !is_multiple){
         //fotos del registro
         var verify_count_elements_photos = 0
         var father_photos = data.father_photos;
@@ -2472,7 +2502,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             } else {
               new_celd.className = "col-md-5";
             }
-            var new_p = document.createElement('H6');
+            var new_p = document.createElement('H7');
             if (element.field_type_id == 11) {
               new_p.className = "bg-primary pl-1";
               new_p.style.cursor = "pointer";
@@ -2722,7 +2752,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             new_p.className = "fas fa-plus icon_add d-none add_subforms";
             new_p.setAttribute('onclick','open_new_child('+element.field_id+',"'+element.name+'","'+element.key+'",'+is_multiple+')');
             new_celd.appendChild(new_p);
-            var new_p = document.createElement('H6');
+            var new_p = document.createElement('H7');
             new_p.innerHTML = element.name + ":";
             new_p.style.borderBottom = "solid 1px";
             new_p.style.display = "inline-block";
@@ -2782,7 +2812,7 @@ function create_new_row_child_date(element_child){
   new_row1.className = "form-row";
   var new_celd = document.createElement('DIV');
   new_celd.className = "col-md-5 ml-3";
-  var new_p = document.createElement('H6');
+  var new_p = document.createElement('H7');
   new_p.innerHTML = "<span style='font-size:2em;position:absolute;margin-top:-5px;margin-left:-30px'>&#8594</span> Fecha:";
   new_p.style.margin = "0px";
   new_celd.appendChild(new_p);
@@ -2836,7 +2866,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
     if(element_child_field.can_read==false){
         new_celd.classList.add('canot_read');
     }
-    var new_p = document.createElement('H6');
+    var new_p = document.createElement('H7');
     if (element_child_field.field_type_id == 11) {
       new_p.className = "bg-primary pl-1";
       new_p.style.cursor = "pointer";
