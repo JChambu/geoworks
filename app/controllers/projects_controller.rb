@@ -65,20 +65,32 @@ class ProjectsController < ApplicationController
       @new_geom = "POLYGON((#{points_array_str}))"
     end
 
+    datetime = Time.zone.now
+
+    properties['app_id'] = 0
+    properties['app_usuario'] = current_user.id
+    properties['app_estado'] = project_status_id.to_i
+    properties['gwm_created_at'] = datetime.to_date
+    properties['gwm_updated_at'] = datetime.to_date
+
     # Carga los valores
     @project['properties'] = properties
     @project['project_type_id'] = project_type_id
     @project['user_id'] = current_user.id
     @project['the_geom'] = @new_geom
     @project['project_status_id'] = project_status_id
-    @project['gwm_created_at'] = Time.zone.now
-    @project['gwm_updated_at'] = Time.zone.now
-    @project.save
+    @project['gwm_created_at'] = datetime
+    @project['gwm_updated_at'] = datetime
+
+    if @project.save
+      @project['properties'].merge!('app_id': @project.id)
+      @project.save!
+    end
 
     @project_type.destroy_view
     @project_type.create_view
 
-    render json: {status: 'Creación completada.'}
+    render json: {status: 'Creación completada.', id: @project.id}
 
   end
 
