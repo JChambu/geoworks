@@ -168,113 +168,119 @@ function get_string_filter(){
   return string_filter;
 }
 
-function show_subfield(id_field,name_field){
+function show_subfield(field_ids){
+  var app_ids_table = Navarra.dashboards.app_ids_table;
   $.ajax({
     type: 'GET',
-    url: '/project_subfields/show_subfields',
+    url: '/project_data_children/show_children',
     datatype: 'json',
     data: {
-      project_type_id: Navarra.dashboards.config.project_type_id,
-      element_field_id: id_field
+      project_ids: app_ids_table,
+      project_field_ids: field_ids
     },
     success: function(data) {
-      //Oculta opción
-      $('#open_subform'+id_field).addClass('d-none');
-      // Agrega cabecera visible
-      var new_column_subform = document.createElement('TH');
-      new_column_subform.className = 'border-0 header_column subfield_column_'+id_field;
-      new_column_subform.id = 'header_column_'+id_field;
-      var new_div = document.createElement('DIV');
-      new_div.className = "th-hover custom_header";
-      var new_p = document.createElement('P');
-      new_p.className = 'custom_p_header';
-      new_p.innerHTML = name_field.toUpperCase();
-      new_div.appendChild(new_p);
-      var new_div1 = document.createElement('DIV');
-      new_div1.className = 'custom_div_table'
-      var new_a = document.createElement('A');
-      new_a.setAttribute("data-toggle","dropdown");
-      new_a.setAttribute("href","#");
-      new_a.id = "link_dropdown_"+id_field;
-      var new_icon = document.createElement('I');
-      new_icon.className = "fas fa-plus icons ml-2";
-      new_icon.title = "Agregar Columna";
-      new_a.appendChild(new_icon);
-      new_div1.appendChild(new_a);
-      //modal con columnas hijo
-      var new_drop = document.createElement("DIV");
-      new_drop.className = "dropdown-menu scroll custom_drop_subforms"
-      new_drop.setAttribute("aria-labelledby","dropdown-subfields");
+      console.log("datos")
+      console.log(data)
+      var count_columns = $('#tr_visible').find('th').length;
+      var column_par = count_columns%2;
+      data.forEach(function(father_field){
+        console.log(father_field)
+        var id_field = father_field.project_field_id;
+        console.log("Field_id "+id_field)
+        //Oculta opción
+        $('#open_subform'+id_field).addClass('d-none');
+        // Agrega cabecera visible
+        var new_column_subform = document.createElement('TH');
+        new_column_subform.className = 'border-0 header_column subfield_column_'+id_field;
+        if(column_par==0){new_column_subform.classList.add('zebra')}
+        new_column_subform.id = 'header_column_'+id_field;
+        var new_div = document.createElement('DIV');
+        new_div.className = "th-hover custom_header";
+        var new_p = document.createElement('P');
+        new_p.className = 'custom_p_header';
+        new_p.innerHTML = father_field.project_field_name.toUpperCase();
+        new_div.appendChild(new_p);
+        var new_div1 = document.createElement('DIV');
+        new_div1.className = 'custom_div_table'
+        var new_a = document.createElement('A');
+        new_a.setAttribute("data-toggle","dropdown");
+        new_a.setAttribute("href","#");
+        new_a.id = "link_dropdown_"+id_field;
+        var new_icon = document.createElement('I');
+        new_icon.className = "fas fa-plus icons ml-2";
+        new_icon.title = "Agregar Columna";
+        new_a.appendChild(new_icon);
+        new_div1.appendChild(new_a);
+        //modal con columnas hijo
+        var new_drop = document.createElement("DIV");
+        new_drop.className = "dropdown-menu scroll custom_drop_subforms"
+        new_drop.setAttribute("aria-labelledby","dropdown-subfields");
+  
+        // Agrega subcabecera foto y fecha
+        var new_column = document.createElement('TH');
+        new_column.style.minWidth = "154px";
+        new_column.className = 'header_column subfield_column_'+id_field;
+        if(column_par==0){new_column.classList.add('zebra')}
+        new_column.innerHTML = "Fecha"
+        $('#tr_subfields').append(new_column);
+        
+        father_field.head.forEach(function(child_field){
+          if(child_field.hidden==false && child_field.field_type_id!=11 && child_field.can_read == true){
+            var new_option = document.createElement("A");
+            new_option.className ="dropdown-item "+id_field+'subfield'
+            new_option.innerHTML = child_field.name;
+            new_option.id = id_field+'_subfield_'+child_field.field_id;
+            new_option.setAttribute('onClick','open_subcolumn(event)');
+            new_drop.appendChild(new_option);
+    
+            //Agrega Subcabecera
+            var new_column = document.createElement('TH');
+            new_column.className = 'header_column d-none '+'subfield_column_'+id_field+" " + id_field+"sub"+child_field.field_id;
+            if(column_par==0){new_column.classList.add('zebra')}
+            new_column.style.whiteSpace = "nowrap";
+            var new_tr = document.createElement('TR');
+            new_tr.className = "th-hover custom_header";
+            new_tr.style.display = 'inline-block'
+            var new_p = document.createElement('P');
+            new_p.className = 'custom_p_header';
+            new_p.innerHTML = child_field.name;
+            new_tr.appendChild(new_p);
+            var new_div1 = document.createElement('DIV');
+            new_div1.className = 'custom_div_table'
+            var new_icon = document.createElement('I');
+            new_icon.className = "fas fa-times icons";
+            new_icon.title = "Cerrar";
+            new_icon.setAttribute("onClick","remove_subcolumn("+id_field+","+child_field.field_id+")");
+            new_div1.appendChild(new_icon);
+            new_tr.appendChild(new_div1);
+            new_column.appendChild(new_tr);
+            $('#tr_subfields').append(new_column);
+          }
+        })
+        new_div1.appendChild(new_drop)  
+        var new_icon = document.createElement('I');
+        new_icon.className = "fas fa-times icons ml-2";
+        new_icon.title = "Cerrar";
+        new_icon.setAttribute("onClick","remove_column("+id_field+")");
+        new_div1.appendChild(new_icon);
+        new_div.appendChild(new_div1);
+        new_column_subform.appendChild(new_div);
+        new_column_subform.setAttribute('colspan',1);
+        $('#tr_visible').append(new_column_subform);
+        set_hover();
 
-      // Agrega subcabecera foto y fecha
-      var new_column = document.createElement('TH');
-      new_column.style.minWidth = "150px";
-      new_column.className = 'subfield_column_'+id_field;
-      $('#tr_subfields').append(new_column);
+        // Agrega cabecera oculta
+        var new_column = document.createElement('TH');
+        new_column.className='subfield_column_'+id_field
+        new_column.style.minWidth ='100px';
+        new_column.style.whiteSpace = 'nowrap';
+        new_column.innerHTML = father_field.project_field_name.toUpperCase();
+        $('.data_fields').append(new_column);
 
-      data.forEach(function(child_field){
-        if(child_field.hidden==false && child_field.field_type_id!=11 && child_field.can_read == true){
-          var new_option = document.createElement("A");
-          new_option.className ="dropdown-item "+id_field+'subfield'
-          new_option.innerHTML = child_field.name;
-          new_option.id = id_field+'_subfield_'+child_field.field_id;
-          new_option.setAttribute('onClick','open_subcolumn(event)');
-          new_drop.appendChild(new_option);
-
-          //Agrega Subcabecera
-          var new_column = document.createElement('TH');
-          new_column.className = 'header_column d-none '+'subfield_column_'+id_field+" " + id_field+"sub"+child_field.field_id;
-          new_column.style.whiteSpace = "nowrap";
-          var new_tr = document.createElement('TR');
-          new_tr.className = "th-hover custom_header";
-          new_tr.style.display = 'inline-block'
-          var new_p = document.createElement('P');
-          new_p.className = 'custom_p_header';
-          new_p.innerHTML = child_field.name;
-          new_tr.appendChild(new_p);
-          var new_div1 = document.createElement('DIV');
-          new_div1.className = 'custom_div_table'
-          var new_icon = document.createElement('I');
-          new_icon.className = "fas fa-times icons";
-          new_icon.title = "Cerrar";
-          new_icon.setAttribute("onClick","remove_subcolumn("+id_field+","+child_field.field_id+")");
-          new_div1.appendChild(new_icon);
-          new_tr.appendChild(new_div1);
-          new_column.appendChild(new_tr);
-          $('#tr_subfields').append(new_column);
-        }
-      })
-      new_div1.appendChild(new_drop)  
-      var new_icon = document.createElement('I');
-      new_icon.className = "fas fa-times icons ml-2";
-      new_icon.title = "Cerrar";
-      new_icon.setAttribute("onClick","remove_column("+id_field+")");
-      new_div1.appendChild(new_icon);
-      new_div.appendChild(new_div1);
-      new_column_subform.appendChild(new_div);
-      new_column_subform.setAttribute('colspan',1);
-      $('#tr_visible').append(new_column_subform);
-      set_hover();
-
-      // Agrega cabecera oculta
-      var new_column = document.createElement('TH');
-      new_column.className='subfield_column_'+id_field
-      new_column.style.minWidth ='100px';
-      new_column.style.whiteSpace = 'nowrap';
-      new_column.innerHTML = name_field.toUpperCase();
-      $('.data_fields').append(new_column);
-
-      // busca valores
-      var app_ids_table = Navarra.dashboards.app_ids_table;
-      $.ajax({
-      type: 'GET',
-      url: '/project_data_children/show_children',
-      datatype: 'json',
-      data: {
-        project_ids: app_ids_table,
-        project_field_ids: [id_field]
-      },
-      success: function(data_child) {
+      // valores para la tabla
+      var data_child = father_field.body
+      console.log("datos body")
+      console.log(data_child)
         //Agrega celdas a toda la tabla
         if(Object.keys(data_child).length==0){
             $('#link_dropdown_'+id_field).addClass('disabled')
@@ -282,7 +288,8 @@ function show_subfield(id_field,name_field){
           }
         $('.row_data').each(function(row){
           var new_td = document.createElement('TD');
-          new_td.className="custom_row custon_row_child subfield_column_"+id_field;
+          new_td.className="custom_row custom_row_child subfield_column_"+id_field;
+          if(column_par==0){new_td.classList.add('zebra')}
           var key_data = $(this).attr("id").substring(14);          
           if(data_child[key_data]!=undefined){
             data_child[key_data].forEach(function(column,indexColumn){
@@ -329,24 +336,25 @@ function show_subfield(id_field,name_field){
               })
               new_td.appendChild(new_sub_column);
             })           
-        }
+          }
           $(this).append(new_td);
         })
         if(Object.keys(data_child).length!=0){
           open_subheaders(id_field);
         }
-      }
-    });
-   //ajusta ubicación del modal
-    $('.custom_div_table').on('show.bs.dropdown', function(event) {
-      var top_table = (parseInt($(".table_data_container").css("top"))+50)+'px';
-      $('.custom_drop_subforms').css('margin-top',top_table);
-      var width_table = (parseInt($(".table_data_container").css("width"))-200)+'px';
-      $('.custom_drop_subforms').css('margin-left',width_table);
-    });
-    }
-  });
+        //ajusta ubicación del modal
+        $('.custom_div_table').on('show.bs.dropdown', function(event) {
+          var top_table = (parseInt($(".table_data_container").css("top"))+50)+'px';
+          $('.custom_drop_subforms').css('margin-top',top_table);
+          var width_table = (parseInt($(".table_data_container").css("width"))-200)+'px';
+          $('.custom_drop_subforms').css('margin-left',width_table);
+        });
+      });//end forEach
+    }//end success
+  });//end ajax
+
 }
+
 
 function open_subcolumn(event){
   var id_field = event.target.id.split('_')[0];
@@ -435,7 +443,7 @@ function verify_close_subheader(){
         <% @fields.each do |field|  %>
           <% if field.field_type_id == 7  %>
             <% field_name = "\'"+field.name+"\'" %>
-              <a class="dropdown-item subfields_data" id="open_subform<%=field.id%>" onclick="show_subfield(<%=field.id.to_s+','+field_name%>)"><%= field.name %></a>
+              <a class="dropdown-item subfields_data" id="open_subform<%=field.id%>" onclick="show_subfield(<%='['+field.id.to_s+']'%>)"><%= field.name %></a>
           <% end %>
         <% end %>
       <% end %>
@@ -564,7 +572,7 @@ function verify_close_subheader(){
   </table>
 </div>
 <div class="table-responsive div_table scroll table_scroll"  style="position: relative; z-index: 10; transition: 1s; background: rgba(81, 89, 96, 0.4);">
-  <table class="table table-hover m-0 card-body" id="table_visible" style="font-size: 0.8em; position: relative;top: -45px; text-align: center;">
+  <table class="table table-hover m-0 card-body" id="table_visible" style="font-size: 0.8em; position: relative;top: -50px; text-align: center;">
     <thead style="visibility: hidden; border-bottom: solid transparent">
       <tr class="data_fields">
         <th></th>

@@ -1387,8 +1387,13 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   if(!array_column_hidden[indexColumn]){
     text_hidden = "style = 'display:none'";
   }
-  if(is_new_file && data_properties[column_name]!=undefined){
-    new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'>"+data_properties[column_name]+"</td>"
+  if(is_new_file && (data_properties[column_name]!=undefined || column_name=="#_action" || column_name == "#_select")){
+    if(data_properties[column_name]!=undefined){
+      new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'>"+data_properties[column_name]+"</td>"
+    }
+    if(column_name=="#_action" || column_name == "#_select"){
+      new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'>"+new_dom+"</td>"
+    }
   } else{
     new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'></td>"
   }
@@ -1464,6 +1469,7 @@ function create_subforms_table(){
   // verifica subcolumnas abiertas
   subheader_open = [];
   var field_subforms_open = $('.subfields_data.d-none');
+  var field_ids = [];
   field_subforms_open.each(function(){
     var id = $(this).attr('id').substring(12);
     var subfields = $('.'+id+'subfield.d-none');
@@ -1474,10 +1480,14 @@ function create_subforms_table(){
       }
       subheader_open.push(subheader_object);
     });
-    console.log("Va a actualizar la columna "+id)
+    field_ids.push(id);
+    console.log("Campos a crear")
+    console.log(field_ids)
     $('.subfield_column_'+id).remove();
-    $(this).click();
   });
+  if(field_subforms_open.length>0){
+    show_subfield(field_ids)
+  }
 }
 
 function open_subheaders(id_field){
@@ -3380,6 +3390,10 @@ function edit_file(edit_parent, edit_child, edit_status){
   console.log(child_edited_all);
   
   var status_id = $(".input_status").val().split('|')[0];
+  console.log("Valor del estado ")
+  console.log($(".input_status"))
+   console.log($(".input_status").val())
+  console.log(status_id)
   if(is_new_file){
     var type_ajax = 'POST';
     var url_post = '/projects/create_form';
@@ -3400,6 +3414,7 @@ function edit_file(edit_parent, edit_child, edit_status){
       subforms: child_edited_all,
       project_status_id: status_id,
     }
+    console.log(data_to_save)
   }
   $.ajax({
     type: type_ajax,
