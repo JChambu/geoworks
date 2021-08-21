@@ -2409,6 +2409,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
         var new_p = document.createElement('SELECT');
         new_p.style.width="90%";
         new_p.setAttribute("onChange","changeStatus(event)");
+        new_p.id = "input_status";
         if(!is_new_file){
           new_p.disabled = true;
           new_p.className = "multiselect_field form-control form-control-sm multiselect_status input_status info_input_disabled";
@@ -3390,9 +3391,9 @@ function edit_file(edit_parent, edit_child, edit_status){
   console.log(child_edited_all);
   
   console.log("Valor del estado ")
-  console.log($(".input_status"))
-  console.log($(".input_status").val())
-  var status_id = $(".input_status").val().split('|')[0];
+  console.log($("#input_status"))
+  console.log($("#input_status").val())
+  var status_id = $("#input_status").val().split('|')[0];
   console.log(status_id)
   if(is_new_file){
     var type_ajax = 'POST';
