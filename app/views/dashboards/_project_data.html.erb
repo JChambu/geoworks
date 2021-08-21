@@ -181,9 +181,9 @@ function show_subfield(field_ids){
     success: function(data) {
       console.log("datos")
       console.log(data)
-      var count_columns = $('#tr_visible').find('th').length;
-      var column_par = count_columns%2;
       data.forEach(function(father_field){
+        var count_columns = $('#tr_visible').find('th').length;
+        var column_par = count_columns%2;
         console.log(father_field)
         var id_field = father_field.project_field_id;
         console.log("Field_id "+id_field)
