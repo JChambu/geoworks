@@ -205,7 +205,7 @@ class ProjectsController < ApplicationController
 
 
   def search_statuses
-    @project_statuses_data = ProjectStatus.where(project_type_id: params[:project_type_id])
+    @project_statuses_data = ProjectStatus.where(project_type_id: params[:project_type_id]).order(status_type: :desc)
     render json: {data: @project_statuses_data}
   end
 
