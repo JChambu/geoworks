@@ -71,10 +71,11 @@ var can_edit_status_yes;
         field_to_edit.prop('disabled', false);
         field_to_edit.removeClass('info_input_disabled');
         if(can_edit_yes ==1 || can_edit_subforms_yes==1){
-          // muestra campos vacíos
-          $('.empty_field').not('.hidden_field').not('.is_child_field').removeClass('d-none');
+          // muestra campos vacíos que no están dentro de un subtitulo y le quita la propiedad vacío 
+          $('.empty_field').not('.hidden_field').not('.is_child_field').not(("div[class*='subtile_hidden']")).removeClass('d-none');
+          $('.empty_field').not('.hidden_field').not('.is_child_field').removeClass('empty_field');
           //muestra campos ocultos en subtítulos
-          $("div[class*='subtile_hidden']").not('.hidden_field').removeClass('d-none');
+          // $("div[class*='subtile_hidden']").not('.hidden_field').removeClass('d-none');
       }
         //muestra campos subformularios aunque estén vacíos
         $('.div_subforms').removeClass('d-none');
