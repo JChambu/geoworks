@@ -99,20 +99,8 @@ class ProjectFieldsController < ApplicationController
 
     end
 
-    father_status = ProjectStatus
-      .where(project_type_id: project_type_id)
-      .pluck(:id, :name, :color)
-      .first
-
-    father_status_hash = {
-      status_id: father_status[0],
-      status_name: father_status[1],
-      status_color: father_status[2]
-    }
-
     data = {
       father_fields: father_fields_array,
-      father_status: father_status_hash
     }
 
     render json: data
