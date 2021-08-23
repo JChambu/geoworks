@@ -315,9 +315,11 @@ function show_subfield(field_ids){
               var new_cel_subform = document.createElement('TD');
                 new_cel_subform.style.border='none';   
                 new_cel_subform.style.padding='5px';  
-                var created_date = column.gwm_created_at.split('T')[0];
-                var created_time = column.gwm_created_at.split('T')[1].substring(0,5)
-                new_cel_subform.innerHTML = created_date.split('-')[2]+'/'+created_date.split('-')[1]+'/'+created_date.split('-')[0].substring(2)+" "+created_time;
+                if(column.gwm_created_at!=null){
+                  var created_date = column.gwm_created_at.split('T')[0];
+                  var created_time = column.gwm_created_at.split('T')[1].substring(0,5)
+                  new_cel_subform.innerHTML = created_date.split('-')[2]+'/'+created_date.split('-')[1]+'/'+created_date.split('-')[0].substring(2)+" "+created_time;
+                }
                 new_cel_subform.style.width='120px';
                 new_sub_column.appendChild(new_cel_subform);
 

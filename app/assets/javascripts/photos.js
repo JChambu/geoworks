@@ -33,10 +33,14 @@ function open_photos(app_id, ischild) {
                 new_photo.className = "photo_mini";
                 new_photo.src = "data:image/png;base64," + photo.image;
                 new_photo.setAttribute('onClick','Navarra.photos.open_photo_mini()');
-                var created_date = photo.gwm_created_at.split('T')[0];
-                var created_time = photo.gwm_created_at.split('T')[1].substring(0,5);
-                var date_time = created_date.split('-')[2]+'/'+created_date.split('-')[1]+'/'+created_date.split('-')[0].substring(2)+" "+created_time;
-                new_photo.setAttribute('date',date_time);
+                if(photo.gwm_created_at!=null){
+                    var created_date = photo.gwm_created_at.split('T')[0];
+                    var created_time = photo.gwm_created_at.split('T')[1].substring(0,5);
+                    var date_time = created_date.split('-')[2]+'/'+created_date.split('-')[1]+'/'+created_date.split('-')[0].substring(2)+" "+created_time;
+                    new_photo.setAttribute('date',date_time);
+                } else {
+                    new_photo.setAttribute('date','');
+                }
                 new_photo.title = photo.name;
                 if(index==0){
                     new_photo.style.border = 'solid 2px white';
