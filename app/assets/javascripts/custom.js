@@ -3304,6 +3304,13 @@ function edit_file(edit_parent, edit_child, edit_status){
     return;
   }
 
+  if($("#input_status").val()==null){
+    $('#info_messages').html("Agregue un Estado válido");
+    $('#info_messages').addClass("text-danger");
+    $('#info_messages').removeClass("d-none");
+    return;
+  }
+
   $(".fakeLoader").css("display", "block");
   var app_ids = getapp_ids();
   // Arma Json properties padres
@@ -3390,11 +3397,8 @@ function edit_file(edit_parent, edit_child, edit_status){
   console.log("Hijos a actualizar")
   console.log(child_edited_all);
   
-  console.log("Valor del estado ")
-  console.log($("#input_status"))
-  console.log($("#input_status").val())
+  
   var status_id = $("#input_status").val().split('|')[0];
-  console.log(status_id)
   if(is_new_file){
     var type_ajax = 'POST';
     var url_post = '/projects/create_form';
