@@ -224,6 +224,7 @@ Navarra.dashboards.action_show = function(){
           $(".leaflet-control-scale-line").css("display", "none");
           init_data_dashboard(false);
         }
+        verify_scroll_table();
     });
     //Minimizar la pantalla
     $("#view-data-hidden").on("click", function() {
@@ -260,6 +261,7 @@ Navarra.dashboards.action_show = function(){
           $(".leaflet-control-scale-line").css("display", "none");
           init_data_dashboard(false);
         }
+        verify_scroll_table();
     });
 
     $(".graphics").on('click','canvas',function(){

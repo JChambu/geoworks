@@ -1273,6 +1273,8 @@ function init_data_dashboard(haschange,close_info) {
 
        // Verifica si tiene que crear tabla de subformularios
       create_subforms_table();
+      // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
+      verify_scroll_table();
     }
   });
 
@@ -1498,6 +1500,13 @@ function open_subheaders(id_field){
   })
 }
 
+function verify_scroll_table(){
+  if(document.getElementById('table_visible').scrollHeight>parseInt(document.getElementById('div_table_data').style.height)){
+    $('#thead_table_visible').addClass('scroll_false');
+  } else{
+    $('#thead_table_visible').removeClass('scroll_false');
+  }
+}
 
 //****** TERMINAN FUNCIONES PARA TABLA DE DATOS*****
 

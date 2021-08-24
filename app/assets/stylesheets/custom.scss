@@ -572,13 +572,14 @@ div.custom-menu.show {
 .found {
   background: #d3d80080!important;
 }
+
 /* Hide scrollbar for Chrome, Safari and Opera */
-.no_scroll::-webkit-scrollbar {
+.no_scroll::-webkit-scrollbar:horizontal {
   display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
-.no_scroll {
+.no_scroll:horizontal {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
@@ -587,7 +588,9 @@ div.custom-menu.show {
   height: 15px;
 }
 
-
+.scroll_false{
+  border-right: solid 29px transparent;
+}
 /* estilo para tabla reporte */
 .modal-report{
   width: 100%;

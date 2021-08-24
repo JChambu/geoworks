@@ -283,6 +283,7 @@ function show_subfield(field_ids){
         $('.row_data').each(function(row){
           var new_td = document.createElement('TD');
           new_td.className="custom_row custom_row_child subfield_column_"+id_field;
+          new_td.style.minWidth = '154px';
           if(column_par==0){new_td.classList.add('zebra')}
           var key_data = $(this).attr("id").substring(14);          
           if(data_child[key_data]!=undefined){
@@ -501,7 +502,7 @@ function verify_open_columns(){
 </div>
 <div class="table-responsive div_table no_scroll" id="table_visible_container" style="height: 30px; overflow-y: hidden; border-bottom: solid 2px rgba(0,0,0,0.6); background: rgba(81, 89, 96, 0.4);">
   <table class="table table-hover m-0 card-body" id="table_hidden" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
-    <thead>
+    <thead  id="thead_table_visible" class="scroll_false">
       <tr id="tr_visible">
         <th class="border-0" style="padding-top: 0px; vertical-align: top; cursor: pointer;">
           <p style="color:white; margin-bottom: 0px"></p>
