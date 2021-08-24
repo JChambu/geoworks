@@ -179,14 +179,10 @@ function show_subfield(field_ids){
       project_field_ids: field_ids
     },
     success: function(data) {
-      console.log("datos")
-      console.log(data)
       data.forEach(function(father_field){
         var count_columns = $('#tr_visible').find('th').length;
         var column_par = count_columns%2;
-        console.log(father_field)
         var id_field = father_field.project_field_id;
-        console.log("Field_id "+id_field)
         //Oculta opción
         $('#open_subform'+id_field).addClass('d-none');
         // Agrega cabecera visible
@@ -201,13 +197,13 @@ function show_subfield(field_ids){
         new_p.innerHTML = father_field.project_field_name.toUpperCase();
         new_div.appendChild(new_p);
         var new_div1 = document.createElement('DIV');
-        new_div1.className = 'custom_div_table'
+        new_div1.className = 'custom_div_table custom_onclick'
         var new_a = document.createElement('A');
         new_a.setAttribute("data-toggle","dropdown");
         new_a.setAttribute("href","#");
         new_a.id = "link_dropdown_"+id_field;
         var new_icon = document.createElement('I');
-        new_icon.className = "fas fa-plus icons ml-2";
+        new_icon.className = "fas fa-plus icons ml-2 custom_onclick_icon";
         new_icon.title = "Agregar Columna";
         new_a.appendChild(new_icon);
         new_div1.appendChild(new_a);
@@ -279,8 +275,6 @@ function show_subfield(field_ids){
 
       // valores para la tabla
       var data_child = father_field.body
-      console.log("datos body")
-      console.log(data_child)
         //Agrega celdas a toda la tabla
         if(Object.keys(data_child).length==0){
             $('#link_dropdown_'+id_field).addClass('disabled')
@@ -345,12 +339,19 @@ function show_subfield(field_ids){
           open_subheaders(id_field);
         }
         //ajusta ubicación del modal
-        $('.custom_div_table').on('show.bs.dropdown', function(event) {
+        $('.custom_onclick , .custom_onclick_icon').on('click', function(event) {
+          var x = event.clientX + 'px';
+          console.log("Click x "+x)
+          var y = event.clientY +'px';
+          $('.custom_onclick').on('show.bs.dropdown', function(event) {
+            console.log("X "+x)
           var top_table = (parseInt($(".table_data_container").css("top"))+50)+'px';
-          $('.custom_drop_subforms').css('margin-top',top_table);
+          $('.custom_drop_subforms').css('margin-top',y);
           var width_table = (parseInt($(".table_data_container").css("width"))-200)+'px';
-          $('.custom_drop_subforms').css('margin-left',width_table);
+          $('.custom_drop_subforms').css('margin-left',x);
         });
+        });
+        
       });//end forEach
     }//end success
   });//end ajax
@@ -364,6 +365,11 @@ function open_subcolumn(event){
   $('.'+id_field+'sub'+id_subfield).removeClass('d-none');
   $(event.target).addClass('d-none');
   $('#table_visible_container').css('height','60px');
+  var count_open_subforms = verify_open_columns();
+  if(count_open_subforms==1){
+    var new_height = (parseInt($('#div_table_data').css('height')) - 30 ) + 'px';
+    $('#div_table_data').css('height',new_height);
+  }
   var width_array = [];
   //Ajusta ancho columnas
     $('.'+id_field+'sub'+id_subfield).each(function(){
@@ -378,6 +384,7 @@ function open_subcolumn(event){
     var new_colsapan =  parseInt($('#header_column_'+id_field).attr('colspan'))+1;
     $('#header_column_'+id_field).attr('colspan',new_colsapan);
 }
+
 function remove_subcolumn(id_field,id_subfield){
   $('.'+id_field+'sub'+id_subfield).addClass('d-none');
   $('#'+id_field+'_subfield_'+id_subfield).removeClass('d-none');
@@ -395,6 +402,15 @@ function remove_column(id_field){
 
 function verify_close_subheader(){
   // verifica subcolumnas abiertas
+  var count_open_subforms = verify_open_columns();
+  if(count_open_subforms==0){
+     $('#table_visible_container').css('height','30px');
+     var new_height = (parseInt($('#div_table_data').css('height')) + 30 ) + 'px';
+     $('#div_table_data').css('height',new_height);
+  }
+}
+
+function verify_open_columns(){
   var count_open_subforms = 0;
   var field_subforms_open = $('.subfields_data.d-none');
   field_subforms_open.each(function(){
@@ -402,9 +418,7 @@ function verify_close_subheader(){
     var subfields = $('.'+id+'subfield.d-none');
     count_open_subforms += subfields.length;
   });
-  if(count_open_subforms==0){
-     $('#table_visible_container').css('height','30px');
-  }
+  return count_open_subforms;
 }
 
 
@@ -573,7 +587,7 @@ function verify_close_subheader(){
     </tbody>
   </table>
 </div>
-<div class="table-responsive div_table scroll table_scroll"  style="position: relative; z-index: 10; transition: 1s; background: rgba(81, 89, 96, 0.4);">
+<div class="table-responsive div_table scroll table_scroll"  style="position: relative; z-index: 10; transition: 1s; background: rgba(81, 89, 96, 0.4);" id="div_table_data">
   <table class="table table-hover m-0 card-body" id="table_visible" style="font-size: 0.8em; position: relative;top: -50px; text-align: center;">
     <thead style="visibility: hidden; border-bottom: solid transparent">
       <tr class="data_fields">

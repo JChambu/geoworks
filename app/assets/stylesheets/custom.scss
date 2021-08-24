@@ -409,7 +409,7 @@ div.custom-menu.show {
 
 /* Modifica el scroll del navagador */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 15px;
   background-color: rgba(232, 235, 239, 0.5);
 }
 ::-webkit-scrollbar-thumb {
@@ -583,8 +583,8 @@ div.custom-menu.show {
   scrollbar-width: none;  /* Firefox */
 }
 .scroll::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
 }
 
 
@@ -619,6 +619,12 @@ div.custom-menu.show {
 }
 
 /* estilo para popup info registro */
+.info_subtitle{
+  margin-left: -10px;
+  font-size: 1.1em;
+  margin-top: 10px;
+  cursor:pointer;
+}
 .info_input{
   height:auto !important;
   line-height:1 !important;

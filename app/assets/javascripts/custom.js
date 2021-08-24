@@ -2515,14 +2515,13 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             }
             var new_celd = document.createElement('DIV');
             if (element.field_type_id == 11) {
-              new_celd.className = "col-md-12";
+              new_celd.className = "col-md-12 info_subtitle";
             } else {
               new_celd.className = "col-md-5";
             }
             var new_p = document.createElement('H7');
             if (element.field_type_id == 11) {
               new_p.className = "bg-primary pl-1";
-              new_p.style.cursor = "pointer";
               new_p.setAttribute("onClick", "open_subtitle(" + element.calculated_field + ",'')");
               if (element.calculated_field != "") {
                 try{
