@@ -354,6 +354,7 @@ function show_subfield(field_ids){
         });
         
       });//end forEach
+      verify_scroll_table();
     }//end success
   });//end ajax
 
@@ -384,6 +385,7 @@ function open_subcolumn(event){
     // ajusta colspan
     var new_colsapan =  parseInt($('#header_column_'+id_field).attr('colspan'))+1;
     $('#header_column_'+id_field).attr('colspan',new_colsapan);
+    verify_scroll_table();
 }
 
 function remove_subcolumn(id_field,id_subfield){
@@ -393,6 +395,7 @@ function remove_subcolumn(id_field,id_subfield){
     var new_colsapan =  parseInt($('#header_column_'+id_field).attr('colspan'))-1;
     $('#header_column_'+id_field).attr('colspan',new_colsapan);
   verify_close_subheader();
+  verify_scroll_table();
 }
 
 function remove_column(id_field){
@@ -409,6 +412,7 @@ function verify_close_subheader(){
      var new_height = (parseInt($('#div_table_data').css('height')) + 30 ) + 'px';
      $('#div_table_data').css('height',new_height);
   }
+  verify_scroll_table();
 }
 
 function verify_open_columns(){
