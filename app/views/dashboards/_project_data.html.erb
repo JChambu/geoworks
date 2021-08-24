@@ -341,11 +341,9 @@ function show_subfield(field_ids){
         }
         //ajusta ubicación del modal
         $('.custom_onclick , .custom_onclick_icon').on('click', function(event) {
-          var x = event.clientX + 'px';
-          console.log("Click x "+x)
+          var x = (event.clientX -50) + 'px';
           var y = event.clientY +'px';
           $('.custom_onclick').on('show.bs.dropdown', function(event) {
-            console.log("X "+x)
           var top_table = (parseInt($(".table_data_container").css("top"))+50)+'px';
           $('.custom_drop_subforms').css('margin-top',y);
           var width_table = (parseInt($(".table_data_container").css("width"))-200)+'px';
@@ -368,7 +366,8 @@ function open_subcolumn(event){
   $(event.target).addClass('d-none');
   $('#table_visible_container').css('height','60px');
   var count_open_subforms = verify_open_columns();
-  if(count_open_subforms==1){
+  if(count_open_subforms==1 && !$('#div_table_data').hasClass('min_height_on')){
+    $('#div_table_data').addClass("min_height_on");
     var new_height = (parseInt($('#div_table_data').css('height')) - 30 ) + 'px';
     $('#div_table_data').css('height',new_height);
   }
@@ -411,6 +410,7 @@ function verify_close_subheader(){
      $('#table_visible_container').css('height','30px');
      var new_height = (parseInt($('#div_table_data').css('height')) + 30 ) + 'px';
      $('#div_table_data').css('height',new_height);
+     $('#div_table_data').removeClass("min_height_on");
   }
   verify_scroll_table();
 }
