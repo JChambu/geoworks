@@ -85,12 +85,38 @@ class ProjectsController < ApplicationController
     if @project.save
       @project['properties'].merge!('app_id': @project.id)
       @project.save!
+
+      if subforms.present?
+
+        children = []
+        subforms.each do |i, sf|
+
+          project_data_children = ProjectDataChild.new
+          project_data_children.properties = sf['properties']
+          project_data_children.project_id = @project.id
+          project_data_children.project_field_id = sf['field_id']
+          project_data_children.user_id = current_user.id
+          project_data_children.gwm_created_at = datetime
+          project_data_children.gwm_updated_at = datetime
+
+          if project_data_children.save
+            children << project_data_children.id
+          end
+
+        end
+
+      end
+
+      @project_type.destroy_view
+      @project_type.create_view
+
+      render json: {status: 'Creación completada.', id: @project.id, children: children}
+
+    else
+
+      render json: {status: 'Error en la creación.', id: '', children: ''}
+
     end
-
-    @project_type.destroy_view
-    @project_type.create_view
-
-    render json: {status: 'Creación completada.', id: @project.id}
 
   end
 
