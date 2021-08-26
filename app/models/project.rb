@@ -193,7 +193,8 @@ class Project < ApplicationRecord
 
   def update_form properties, project_status_id
     update_status = ''
-    if project_status_id.present? && self.project_status_id != project_status_id
+    # NOTE: cuando es 0 es porque al controlador llega nulo
+    if project_status_id != 0 && self.project_status_id != project_status_id
       self.properties['app_estado'] = project_status_id
       self.project_status_id = project_status_id
       update_status = true
