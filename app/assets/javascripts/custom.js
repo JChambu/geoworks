@@ -2383,8 +2383,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
     datatype: 'json',
     data: data,
     success: function(data) {
-      console.log("Datos que llegan")
-      console.log(data)
+
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
       $("#info-modal").modal('show');
@@ -3358,8 +3357,7 @@ function edit_file(edit_parent, edit_child, edit_status){
   } else {
     var properties_to_save = null;
   }
-    console.log("Padre a actualizar")
-    console.log(properties_to_save)
+
 
   //envio de Json hijos
   var child_edited_all = [];
@@ -3407,9 +3405,7 @@ function edit_file(edit_parent, edit_child, edit_status){
     }
   }
 
-  console.log("Hijos a actualizar")
-  console.log(child_edited_all);
-  
+
   if($("#input_status").val()==null){
     var status_id = null;
   } else{
@@ -3425,7 +3421,10 @@ function edit_file(edit_parent, edit_child, edit_status){
       project_status_id: status_id,
       geom: Navarra.geomaps.get_geometries_to_save()
     }
+
+    console.log('PARAMS create_form');
     console.log(data_to_save)
+
   } else {
     var type_ajax = 'PATCH';
     var url_post = '/projects/update_form';
@@ -3435,7 +3434,10 @@ function edit_file(edit_parent, edit_child, edit_status){
       subforms: child_edited_all,
       project_status_id: status_id,
     }
+
+    console.log('PARAMS update_form');
     console.log(data_to_save)
+
   }
   $.ajax({
     type: type_ajax,
@@ -3443,6 +3445,10 @@ function edit_file(edit_parent, edit_child, edit_status){
     datatype: 'JSON',
     data: data_to_save,
     success: function(data) {
+
+      console.log('RESPONSE create_form/update_form');
+      console.log(data)
+
       $(".fakeLoader").css("display", "none");
       filechange = false;
       array_child_edited = [];
@@ -3494,7 +3500,7 @@ function edit_file(edit_parent, edit_child, edit_status){
             });
           }
         }
-      } else {alert("Tabla cerrada")}
+      } else {}
       update_all();
     }
   });
