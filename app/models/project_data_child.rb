@@ -14,6 +14,20 @@ class ProjectDataChild < ApplicationRecord
       gwm_updated_at: Time.zone.now
     }
     self.update_attributes(attributes)
+
+  end
+
+  def create_subform properties, project_id, project_field_id, user_id
+
+
+    self.properties = properties
+    self.project_id = project_id
+    self.project_field_id = project_field_id
+    self.user_id = user_id
+    self.gwm_created_at = Time.zone.now
+    self.gwm_updated_at = Time.zone.now
+    save!
+
   end
 
 end

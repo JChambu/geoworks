@@ -88,21 +88,16 @@ class ProjectsController < ApplicationController
 
       if subforms.present?
 
-        children = []
+        subforms_created = []
         subforms.each do |i, sf|
 
-          project_data_children = ProjectDataChild.new
-          project_data_children.properties = sf['properties']
-          project_data_children.project_id = @project.id
-          project_data_children.project_field_id = sf['field_id']
-          project_data_children.user_id = current_user.id
-          project_data_children.gwm_created_at = datetime
-          project_data_children.gwm_updated_at = datetime
+          project_field_id = sf['field_id']
+          child_id = sf['child_id'].to_i
+          properties = sf['properties']
 
-          if project_data_children.save
-            children << project_data_children.id
-          end
-
+          @project_data_children = ProjectDataChild.new
+          @project_data_children.create_subform(properties, @project.id, project_field_id, current_user.id)
+          subforms_created << @project_data_children.id
         end
 
       end
@@ -110,7 +105,7 @@ class ProjectsController < ApplicationController
       @project_type.destroy_view
       @project_type.create_view
 
-      render json: {status: 'Creación completada.', id: @project.id, children: children}
+      render json: {status: 'Creación completada.', id: @project.id, subforms_created: subforms_created}
 
     else
 
@@ -120,7 +115,7 @@ class ProjectsController < ApplicationController
 
   end
 
-  # Actualiza la columna properties
+  # Actualiza registros padre
   def update_form
     app_ids = params[:app_ids]
     properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
@@ -129,24 +124,35 @@ class ProjectsController < ApplicationController
 
     if app_ids.present?
 
-      if properties.present? || project_status_id.present?
-        app_ids.each do |app_id|
-          @project = Project.find(app_id)
-          @project.update_form(properties, project_status_id.to_i)
+      app_ids.each do |app_id|
+
+        @project = Project.find(app_id)
+        @project.update_form(properties, project_status_id.to_i)
+
+        # Si vienen hijos, los crea o actualiza
+        if subforms.present?
+
+          @subforms_created = []
+          subforms.each do |i, sf|
+
+            project_field_id = sf['field_id']
+            child_id = sf['child_id'].to_i
+            properties = sf['properties']
+
+            # Si el child_id es 0, el hijo se crea, sino se actualiza
+            if child_id == 0
+              @project_data_children = ProjectDataChild.new
+              @project_data_children.create_subform(properties, app_id, project_field_id, current_user.id)
+              @subforms_created << @project_data_children.id
+            else
+              @project_data_children = ProjectDataChild.find(child_id)
+              @project_data_children.update_subform(properties)
+            end
+
+          end
         end
       end
-
-      if subforms.present?
-        subforms.each do |i, sf|
-          child_id = sf['child_id']
-          properties = sf['properties']
-          @project_data_children = ProjectDataChild.find(child_id)
-          @project_data_children.update_subform(properties)
-        end
-      end
-
-      render json: {status: 'Actualización completada.'}
-
+      render json: {status: 'Actualización completada.', subforms_created: @subforms_created}
     else
       render json: {status: 'Faltan parámetros para completar la acción.'}
     end

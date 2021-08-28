@@ -193,6 +193,11 @@ class Project < ApplicationRecord
 
   def update_form properties, project_status_id
     update_status = ''
+    if properties.present?
+      properties.each do |key, value|
+        self.properties[key] = value
+      end
+    end
     # NOTE: cuando es 0 es porque al controlador llega nulo
     if project_status_id != 0 && self.project_status_id != project_status_id
       self.properties['app_estado'] = project_status_id
@@ -202,11 +207,6 @@ class Project < ApplicationRecord
       update_status = false
     end
 
-    if properties.present?
-      properties.each do |key, value|
-        self.properties[key] = value
-      end
-    end
     self.gwm_updated_at = Time.zone.now
     save!
 
