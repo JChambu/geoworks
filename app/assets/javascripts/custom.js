@@ -3369,12 +3369,12 @@ function edit_file(edit_parent, edit_child, edit_status){
       var properties_child_to_save = new Object();
       var id_field_father_properties;
       $('.field_key_child_json').each(function() {
-        id_field_father_properties = this.id.split('|')[0];
         var id_child_properties = this.id.split('|')[2];
         var fiel_type_properties = this.id.split('|')[3];
         var id_field_child_properties = this.id.split('|')[4];
 
         if(id_child_properties==array_child_edited[z]){
+        id_field_father_properties = this.id.split('|')[0];
         if($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!="" && $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!=null ){
           if(fiel_type_properties==2){
             var array_val = [];
