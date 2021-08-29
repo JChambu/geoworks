@@ -3364,6 +3364,8 @@ function edit_file(edit_parent, edit_child, edit_status){
   if(array_child_edited.length>0){
     array_child_edited = array_child_edited.unique();
     for(z=0;z<array_child_edited.length;z++){
+      console.log("Iteración en hijos editados")
+      console.log(array_child_edited[z])
       var properties_child_to_save = new Object();
       var id_field_father_properties;
       $('.field_key_child_json').each(function() {
@@ -3393,15 +3395,21 @@ function edit_file(edit_parent, edit_child, edit_status){
             }
           }
           properties_child_to_save[id_field_child_properties] = value_field_properties;
+          console.log("properties to save después")
+          console.log(properties_child_to_save)
           }
         }
       });
       var child_data = new Object();
-      child_data.IdFather = Navarra.project_types.config.id_item_displayed;
-      child_data.field_id = id_field_father_properties;
+      child_data.IdFather = app_ids;
+      child_data.field_id = parseInt(id_field_father_properties);
       child_data.child_id = array_child_edited[z];
       child_data.properties = properties_child_to_save;
+      console.log("Objeto nuevo")
+      console.log(child_data)
       child_edited_all.push(child_data);
+      console.log("Array a enviar")
+      console.log(child_edited_all)
     }
   }
 
@@ -3644,7 +3652,7 @@ function set_script(data_script,field_type_id,field_id,value,isnested,event, isp
   if(isparent){
     filechange = true;
   } else {
-    array_child_edited.push(field_id.split('|')[1]);
+    array_child_edited.push(parseInt(field_id.split('|')[1]));
   }
   if(data_script!=""){
     Navarra.calculated_and_script_fields.Script(JSON.stringify(data_script),field_type_id, field_id,value, false, isparent);
@@ -3699,7 +3707,7 @@ function calculate_all(first_time, isparent, id_child_calculate){
     } else{
       //Ejecuta Calculate de campos hijos
       if(!first_time){
-        array_child_edited.push(id_child_calculate);
+        array_child_edited.push(parseInt(id_child_calculate));
         //ejecuta calculate para el hijo cambiado
         children_fields.forEach(function(element) {
           var id_child_toScript = element.field_id+"|"+id_child_calculate;
