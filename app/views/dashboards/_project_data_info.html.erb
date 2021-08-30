@@ -171,15 +171,15 @@ var can_edit_status_yes;
 
 <% if can? :data, :visualizer %>
   <div id="info-modal" class="modal fade show" aria-modal="true" data-backdrop=false style="width: 30%; margin-left: 70.2% !important;top: 4.2vh">
-    <div class="modal-dialog" style="max-width: none;">
+    <div class="modal-dialog" style="max-width: none; margin-bottom: 0px;">
       <div class="modal-content">
-        <div class="modal-header pt-2 pb-2">
+        <div class="modal-header pt-2 pb-2" style="height: 6.8vh">
           <h6 class="modal-title" id="info_title"></h6>
             <i class="fas fa-eye-slash" style="margin-top: 0.25rem; position: absolute;right: 2.8rem;cursor:pointer" title="Mostrar/Esconder Campos Ocultos" onclick="show_hidden_fields()"></i>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close_info"><span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body" id="modal_info" style="height: 74vh; overflow-y: auto;">
+        <div class="modal-body" id="modal_info" style="height: 77vh; overflow-y: auto;">
           <div id="info_body"></div>
         </div>
         <div class="modal-footer" style="height: 8vh;flex-wrap: nowrap;">

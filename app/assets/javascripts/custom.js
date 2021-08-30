@@ -3461,18 +3461,14 @@ function edit_file(edit_parent, edit_child, edit_status){
       filechange = false;
       array_child_edited = [];
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){
-        $('#info_messages').addClass("d-inline");
-        $('#info_messages').removeClass("d-none");
-        $('#info_messages').html(data['status']);
-      } else{
-        $('#alert_message').addClass('show');
-        $('#alert_message').removeClass('d-none');
-        $("#info-modal").modal("hide");
-        $('#alert_text_message').html(data['status']);
-        Navarra.project_types.config.item_selected="";
-        Navarra.project_types.config.data_dashboard = "";
-      }
+      // Muestra mensaje
+      $('#alert_message').addClass('show');
+      $('#alert_message').removeClass('d-none');
+      $("#info-modal").modal("hide");
+      $('#alert_text_message').html(data['status']);
+      Navarra.project_types.config.item_selected="";
+      Navarra.project_types.config.data_dashboard = "";
+      
        //Ajustar valor en la tabla si está visible
       if(!$('#status-view').hasClass('status-view-condensed')){
         if(is_new_file){
@@ -3529,20 +3525,13 @@ function change_owner(){
     success: function(data) {
       $(".fakeLoader").css("display", "none");
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){
-        $('#info_messages').addClass("d-inline");
-        $('#info_messages').removeClass("d-none");
-        $('#info_messages').html(data['status']);
-        $('.app_usuario_value').val(user_id);
-      }
-      else{
-        $('#alert_message').addClass('show');
-        $('#alert_message').removeClass('d-none');
-        $("#info-modal").modal("hide");
-        $('#alert_text_message').html(data['status']);
-        Navarra.project_types.config.item_selected="";
-        Navarra.project_types.config.data_dashboard = "";
-      }
+      // Muestra mensaje
+      $('#alert_message').addClass('show');
+      $('#alert_message').removeClass('d-none');
+      $("#info-modal").modal("hide");
+      $('#alert_text_message').html(data['status']);
+      Navarra.project_types.config.item_selected="";
+      Navarra.project_types.config.data_dashboard = "";
       //Ajustar valor en la tabla
       var fields = document.querySelectorAll(".field_key");
       fields.forEach(function(column, indexColumn) {
@@ -3573,16 +3562,11 @@ function disable_file(){
     success: function(data) {
       $(".fakeLoader").css("display", "none");
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){
-        $('#info_messages').addClass("d-inline");
-        $('#info_messages').removeClass("d-none");
-        $('#info_messages').html(data['status']);
-      } else{
-        $('#alert_message').addClass('show');
-        $('#alert_message').removeClass('d-none');
-        $("#info-modal").modal("hide");
-        $('#alert_text_message').html(data['status']);
-      }
+      // Muestra Mensaje
+      $('#alert_message').addClass('show');
+      $('#alert_message').removeClass('d-none');
+      $("#info-modal").modal("hide");
+      $('#alert_text_message').html(data['status']);
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       //elimina las filas de la tabla
