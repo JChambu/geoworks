@@ -1583,6 +1583,11 @@ function show_labels(setbbox){
 function edit_geometry_in_map(event){
   event.stopPropagation();
   set_onclick_map(true);
+  //Cierra modal lateral
+  $("#info-modal").modal("hide");
+  Navarra.project_types.config.item_selected="";
+  Navarra.project_types.config.data_dashboard = "";
+
   delete_markers();
   $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
   $('#confirmation_geometry_button').addClass('confirmation_geometry_button_edit');
@@ -2003,6 +2008,11 @@ function get_geom_to_calculate(){
 }
 function new_geometry(event){
   event.stopPropagation();
+  //Cierra modal lateral
+  $("#info-modal").modal("hide");
+  Navarra.project_types.config.item_selected="";
+  Navarra.project_types.config.data_dashboard = "";
+  
   $('.leaflet-container').addClass('cursor-crosshair');
   delete_markers();
   $('#confirmation_geometry_button').addClass('confirmation_geometry_button_new');

@@ -3504,7 +3504,12 @@ function edit_file(edit_parent, edit_child, edit_status){
             });
           }
         }
-      } else {}
+      }
+      // Verifica si tiene que crear tabla de subformularios
+      create_subforms_table();
+      // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
+      verify_scroll_table();
+      
       update_all();
     }
   });
