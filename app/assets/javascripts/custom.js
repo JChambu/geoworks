@@ -2871,6 +2871,9 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
     } else {
       new_row1.className = "form-row row_field";
     }
+    if(element_child_field.can_read==false){
+        new_row1.classList.add('canot_read');
+    }
     if(!is_new){
       if ((element_child_field.value == null && element_child_field.field_type_id != 11) || (element_child_field.value == "" && element_child_field.field_type_id != 11) || (element_child_field.value == " " && element_child_field.field_type_id != 11)) {
         new_row1.classList.add("d-none");
@@ -2887,9 +2890,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
     } else {
       new_celd.className = "col-md-5 ml-3";
     }
-    if(element_child_field.can_read==false){
-        new_celd.classList.add('canot_read');
-    }
+    
     var new_p = document.createElement('H7');
     if (element_child_field.field_type_id == 11) {
       new_p.className = "bg-primary pl-1";
@@ -3307,6 +3308,8 @@ function edit_file(edit_parent, edit_child, edit_status){
       $('#info_messages').removeClass("d-none");
       return;
     }
+  }
+  if(is_new_file){
     if($("#input_status").val()==null){
       $('#info_messages').html("Agregue un Estado válido");
       $('#info_messages').addClass("text-danger");
@@ -3413,7 +3416,6 @@ function edit_file(edit_parent, edit_child, edit_status){
     }
   }
 
-
   if($("#input_status").val()==null){
     var status_id = null;
   } else{
@@ -3509,7 +3511,7 @@ function edit_file(edit_parent, edit_child, edit_status){
       create_subforms_table();
       // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
       verify_scroll_table();
-      
+
       update_all();
     }
   });
