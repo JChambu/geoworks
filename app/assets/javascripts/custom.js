@@ -2773,6 +2773,8 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             }
             new_celd.id = "child_container_"+element.key;
             // si tiene autorización para nuevos hijos
+            console.log("Va a crear botón más")
+            console.log($('#new_subform_control').val()=="true")
             if($('#new_subform_control').val()=="true"){
               var new_p = document.createElement('I');
               new_p.className = "fas fa-plus icon_add d-none add_subforms";
@@ -3368,54 +3370,71 @@ function edit_file(edit_parent, edit_child, edit_status){
   //envio de Json hijos
   var child_edited_all = [];
   if(array_child_edited.length>0){
+    // array_child_edited es un array que contiene los id de los hijos modificados. 0 para nuevos hijos
     array_child_edited = array_child_edited.unique();
+    console.log("Array child edited")
+    console.log(array_child_edited)
     for(z=0;z<array_child_edited.length;z++){
       console.log("Iteración en hijos editados")
       console.log(array_child_edited[z])
-      var properties_child_to_save = new Object();
       var id_field_father_properties;
+      // crea array único de ids de campos padres
+      var array_field_id_father_grouped = [];
       $('.field_key_child_json').each(function() {
         var id_child_properties = this.id.split('|')[2];
-        var fiel_type_properties = this.id.split('|')[3];
         var id_field_child_properties = this.id.split('|')[4];
-
         if(id_child_properties==array_child_edited[z]){
-        id_field_father_properties = this.id.split('|')[0];
-        if($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!="" && $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!=null ){
-          if(fiel_type_properties==2){
-            var array_val = [];
-            array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
-            if(document.getElementById('fieldchildid|'+id_field_child_properties+'|'+id_child_properties).classList.contains('nested')){
-              array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties+'_nested').val());
-            }
-            var value_field_properties = array_val;
-          }else{
-            if( fiel_type_properties == 4){
-             var value_field_properties = $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val().toLowerCase() == 'true' ? true : false;;
-            } else{
-              if( fiel_type_properties == 5){
-              var value_field_properties = parseFloat($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
-              } else{
-                var value_field_properties = $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val();
-              }
-            }
-          }
-          properties_child_to_save[id_field_child_properties] = value_field_properties;
-          console.log("properties to save después")
-          console.log(properties_child_to_save)
+          id_field_father_properties = this.id.split('|')[0];
+          if($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!="" && $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!=null ){
+            array_field_id_father_grouped.push(id_field_father_properties);
           }
         }
       });
-      var child_data = new Object();
-      child_data.IdFather = app_ids;
-      child_data.field_id = parseInt(id_field_father_properties);
-      child_data.child_id = array_child_edited[z];
-      child_data.properties = properties_child_to_save;
-      console.log("Objeto nuevo")
-      console.log(child_data)
-      child_edited_all.push(child_data);
-      console.log("Array a enviar")
-      console.log(child_edited_all)
+      array_field_id_father_grouped = array_field_id_father_grouped.unique();
+      for (zz=0; zz<array_field_id_father_grouped.length; zz++){
+        var properties_child_to_save = new Object();
+        $('.field_key_child_json').each(function() {
+          var id_child_properties = this.id.split('|')[2];
+          var fiel_type_properties = this.id.split('|')[3];
+          var id_field_child_properties = this.id.split('|')[4];
+          id_field_father_properties = this.id.split('|')[0];
+          if(id_child_properties==array_child_edited[z] && id_field_father_properties==array_field_id_father_grouped[zz]){
+            if($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!="" && $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!=null ){
+              if(fiel_type_properties==2){
+                var array_val = [];
+                array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
+                if(document.getElementById('fieldchildid|'+id_field_child_properties+'|'+id_child_properties).classList.contains('nested')){
+                  array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties+'_nested').val());
+                }
+                var value_field_properties = array_val;
+              }else{
+                if( fiel_type_properties == 4){
+                var value_field_properties = $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val().toLowerCase() == 'true' ? true : false;;
+                } else{
+                  if( fiel_type_properties == 5){
+                  var value_field_properties = parseFloat($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
+                  } else{
+                    var value_field_properties = $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val();
+                  }
+                }
+              }
+              properties_child_to_save[id_field_child_properties] = value_field_properties;
+              console.log("properties to save después")
+              console.log(properties_child_to_save)
+              }
+            }
+          });
+          var child_data = new Object();
+          child_data.IdFather = app_ids;
+          child_data.field_id = parseInt(array_field_id_father_grouped[zz]);
+          child_data.child_id = array_child_edited[z];
+          child_data.properties = properties_child_to_save;
+          console.log("Objeto nuevo")
+          console.log(child_data)
+          child_edited_all.push(child_data);
+          console.log("Array a enviar")
+          console.log(child_edited_all)
+      }
     }
   }
 
