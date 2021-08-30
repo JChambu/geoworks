@@ -2772,10 +2772,13 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
               }
             }
             new_celd.id = "child_container_"+element.key;
-            var new_p = document.createElement('I');
-            new_p.className = "fas fa-plus icon_add d-none add_subforms";
-            new_p.setAttribute('onclick','open_new_child('+element.field_id+',"'+element.name+'","'+element.key+'",'+is_multiple+')');
-            new_celd.appendChild(new_p);
+            // si tiene autorización para nuevos hijos
+            if($('#new_subform_control').val()=="true"){
+              var new_p = document.createElement('I');
+              new_p.className = "fas fa-plus icon_add d-none add_subforms";
+              new_p.setAttribute('onclick','open_new_child('+element.field_id+',"'+element.name+'","'+element.key+'",'+is_multiple+')');
+              new_celd.appendChild(new_p);
+            }
             var new_p = document.createElement('H7');
             new_p.innerHTML = element.name + ":";
             new_p.style.borderBottom = "solid 1px";
