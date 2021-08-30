@@ -1,5 +1,6 @@
 es:
   new: 'Nuevo'
+  new_subform: 'Nuevo Hijo'
   edit: 'Editar'
   destroy: 'Baja'
   visualizer: 'Consultar'
