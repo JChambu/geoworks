@@ -2012,7 +2012,6 @@ function new_geometry(event){
   $("#info-modal").modal("hide");
   Navarra.project_types.config.item_selected="";
   Navarra.project_types.config.data_dashboard = "";
-  
   $('.leaflet-container').addClass('cursor-crosshair');
   delete_markers();
   $('#confirmation_geometry_button').addClass('confirmation_geometry_button_new');
