@@ -104,6 +104,7 @@ class ProjectsController < ApplicationController
 
       @project_type.destroy_view
       @project_type.create_view
+      @project.update_inheritable_statuses
 
       render json: {status: 'Creación completada.', id: @project.id, subforms_created: subforms_created}
 
