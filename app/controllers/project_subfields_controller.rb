@@ -19,6 +19,17 @@ class ProjectSubfieldsController < ApplicationController
     child_fields = ProjectSubfield.where(project_field_id: project_field_id).order(:sort)
     child_fields_array = []
 
+    # Busca el rol del usuario
+    customer_name = Apartment::Tenant.current
+    Apartment::Tenant.switch 'public' do
+      customer_id = Customer.where(subdomain: customer_name).pluck(:id)
+      @user_rol = UserCustomer
+        .where(user_id: current_user.id)
+        .where(customer_id: customer_id)
+        .pluck(:role_id)
+        .first
+    end
+
     child_fields.each do |c_field|
 
       # Si el rol del usuario está dentro de los roles que pueden ver el campo (o no hay ningún rol configurado), el campo se agrega al json
