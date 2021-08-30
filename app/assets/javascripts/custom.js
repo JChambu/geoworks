@@ -3172,7 +3172,7 @@ function set_multiselect_style_childs(){
     if(document.getElementById('fieldchildid|'+arraymultiselect[x]+'|'+arraymultiselectChild[x]).classList.contains("readonly_field")){
       var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field is_child_field';
     } else{
-      var buttonClass = 'text-left form-control form-control-sm info_input_disabled is_child_field';
+      var buttonClass = 'text-left form-control form-control-sm info_input is_child_field';
     }
     $('#fieldchildid\\|'+arraymultiselect[x]+'\\|'+arraymultiselectChild[x]).multiselect({
       maxHeight: 450,
