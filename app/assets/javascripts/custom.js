@@ -3511,6 +3511,7 @@ function edit_file(edit_parent, edit_child, edit_status){
           });
           document.getElementById("tbody_visible").prepend(new_row);
           $('#row_table_data'+id_new).html(new_celd);
+          Navarra.dashboards.app_ids_table.push(id_new);
         } else{
           if(properties_to_save!=null){// si se modificó el padre
             var fields = document.querySelectorAll(".field_key");
@@ -3528,11 +3529,12 @@ function edit_file(edit_parent, edit_child, edit_status){
             });
           }
         }
+        // Verifica si tiene que crear tabla de subformularios
+        create_subforms_table();
+        // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
+        verify_scroll_table();
       }
-      // Verifica si tiene que crear tabla de subformularios
-      create_subforms_table();
-      // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
-      verify_scroll_table();
+
 
       update_all();
     }
