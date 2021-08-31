@@ -31,6 +31,17 @@ class ProjectDataChildrenController < ApplicationController
     project_field_ids = params[:project_field_ids]
     @respuesta_array = []
 
+    # Busca el rol del usuario
+    customer_name = Apartment::Tenant.current
+    Apartment::Tenant.switch 'public' do
+      customer_id = Customer.where(subdomain: customer_name).pluck(:id)
+      @user_rol = UserCustomer
+        .where(user_id: current_user.id)
+        .where(customer_id: customer_id)
+        .pluck(:role_id)
+        .first
+    end
+
     project_field_ids.each do |pfid|
 
       father_field = ProjectField.where(id: pfid).pluck(:name).first
