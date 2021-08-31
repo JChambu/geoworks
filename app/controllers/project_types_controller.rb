@@ -349,6 +349,7 @@ class ProjectTypesController < ApplicationController
           .where(row_active: true)
           .where(current_season: true)
           .where(row_enabled: true)
+          .order(gwm_created_at: :desc)
 
         children_data_array = []
 
