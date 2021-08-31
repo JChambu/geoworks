@@ -824,3 +824,44 @@ div.custom-menu.show {
   padding: 5px;
   padding:2px;
 }
+
+/* modal pdf */
+.custom_modal_pdf{
+  width:60vh;
+  height:90vh;
+  top:9vh;
+  left:0.5%;
+}
+.white_transparent{
+  background:rgba(250,250,250,0.8);
+  color: #9b9b9b;
+}
+.pdf_header{
+  text-align: center;
+  padding: 10px;
+  border-bottom: solid 1px;
+}
+.pdf_title{
+  font-size: 0.8em;
+  text-align:center;
+  border:none;
+  margin: 0px 5%;
+  width: 45%;
+}
+.pdf_powered{
+  font-size:0.5em;
+  margin: 0px;
+}
+.img_pdf{
+  width: 12%;
+  margin: 0px 4%;
+}
+.logo_pdf{
+  width: 100%;
+  margin: 0px;
+}
+.div_powered{
+  display:inline-block;
+  width:12%;
+  margin: 0px 4%
+}

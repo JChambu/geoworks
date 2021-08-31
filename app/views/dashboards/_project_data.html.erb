@@ -36,6 +36,13 @@ $("#show_report").click(function(){
   init_report();
 });
 
+// Modal PDF
+$("#show_pdf").click(function(){
+  $("#pdf-modal").modal('show'); 
+  $("#view-data-hidden").click();
+  Navarra.pdf.init();
+});
+
 // selecciona o deselecciona todos los registros
 $('#table_select_all').click(function(){
   if($(this).prop('checked')){
@@ -431,6 +438,7 @@ function verify_open_columns(){
 
 <div class="card-header chart-header-bg-transparent py-1 px-2 card_data">
   Datos
+  <a data-toggle="modal" id="show_pdf"><i class="fas fa-file-pdf ml-3" title="Generar Reporte PDF" style="cursor: pointer;" ></i></a>
   <% if can? :data, :export %>
     <a data-toggle="modal" id="show_report"><i class="fas fa-clipboard-list ml-3" title="Reporte" style="cursor: pointer;" ></i></a>
     <a onclick="download_geojson()"><i class="fas fa-code ml-2" title="Exportar GeoJSON" style="cursor: pointer;" ></i></a>

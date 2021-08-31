@@ -394,3 +394,28 @@ function min_photo(){
   </div>
 </div>
 
+<div id="pdf-modal" class="modal fade card text-light chart-bg-transparent pb-0 pt-0 custom_modal_pdf" data-backdrop="false">
+  <div class="modal-dialog m-0 mw-100">
+    <div class="modal-content white_transparent" style="min-height:89.5vh">
+      <div class="card-header chart-header-bg-transparent py-1 px-2 white_transparent">
+        <p class="m-1 d-inline">Generador de Reporte PDF</p>
+        <div class="view-data-container" >
+            <i class="fas fa-save view-data" onclick="save_pdf()"></i>
+            <i class="fas fa-edit view-data" onclick="edit_pdf()"></i>
+            <i class="fas fa-times view-data" type="button" class="close" data-dismiss="modal" aria-label="Close"></i>
+          </div>
+      </div>
+      <div class="modal-body p-1">
+        <div class="pdf_header">
+          <%= image_tag "gw_dispositivos_2.png", class: 'img_pdf' %>
+          <input type="text" disabled="true" value="TITULO DEL REPORTE" class="pdf_title">
+          <div class="div_powered">
+            <p class="pdf_powered">powered by</p>
+            <%= image_tag "logo_gw_hor_2.png", class: 'logo_pdf' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
