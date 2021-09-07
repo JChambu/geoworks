@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
 
+  get 'customers/search_customer'
   get 'project_types/maps' => 'project_types#maps'
   get 'project_types/search_name_layer' => 'project_types#search_name_layer'
   get 'project_types/kpi' => 'project_types#kpi'
