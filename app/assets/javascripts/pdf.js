@@ -24,8 +24,6 @@ function init() {
                     });
                 row_selected_child = $('#table_visible tr:nth-child('+index+') .custom_row_child tr');
                     row_selected_child.each(function(){
-                        console.log("ROW selected!!!!")
-                        console.log(this)
                         var field_child = $(this).find('td');
                         var id_child_json = 0;
                         var id_father_json = 0;
@@ -60,12 +58,15 @@ function init() {
 
 function create_pdf_view(){
     $('#pdf_body').empty();
+    get_logo();
+    var currentdate = new Date(); 
+    var today = currentdate.getDate() + "/" + (currentdate.getMonth()+1)  + "/"  + currentdate.getFullYear() ;
+    $('#pdf_created').html("Flavia Arias - "+today)
     pdf_values_all.forEach(function(pdf_object){
         var pdf_content = "<div class = 'div_pdf div_pdf"+pdf_object['id']+"'>";
         pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:0.7em'>"+Navarra.dashboards.config.name_project+"</p>";
         Object.keys(pdf_object['properties']).forEach(function(key) {
-            pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_object['properties'][key]['name']+": </p>";
-            pdf_content += "<p class='p_pdf element_pdf' style='font-size:0.5em'>"+pdf_object['properties'][key]['value']+"</p></div>";
+            pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_object['properties'][key]['name']+": "+pdf_object['properties'][key]['value']+"</p></div>";
         });
         pdf_content += "</div>"
         pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos"+pdf_object['id']+"'></div>"
@@ -76,8 +77,7 @@ function create_pdf_view(){
             var pdf_content = "<div class = 'div_pdf div_pdf_child div_pdf_child"+child_key+"'>";
             pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:0.6em'>"+pdf_object['children'][child_key]['name_field']+": "+pdf_object['children'][child_key]['date']+"</p>";
             Object.keys(pdf_object['children'][child_key]['properties']).forEach(function(key_c) {
-                pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_object['children'][child_key]['properties'][key_c]['name']+": </p>";
-                pdf_content += "<p class='p_pdf element_pdf' style='font-size:0.5em'>"+pdf_object['children'][child_key]['properties'][key_c]['value']+"</p></div>";
+                pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_object['children'][child_key]['properties'][key_c]['name']+": "+pdf_object['children'][child_key]['properties'][key_c]['value']+"</p></div>";
             });
             pdf_content += "</div>"
             pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos_child"+child_key+"'></div>"
@@ -113,9 +113,14 @@ function get_photo(app_id, ischild){
                 if($('.'+container+app_id).outerHeight()>55){
                     $('.'+container+app_id).removeClass('div_pdf');
                     $('.'+container+app_id).addClass('div_pdf_expanded');
-                    $('.'+container+app_id+' div').addClass('d-inline-flex');
-                    $('.'+container+app_id+' div').addClass('sub_div_pdf_expanded');
-                    $('.'+container+app_id+' div').removeClass('d-flex');
+                    var x_screen_half = tamVentana()[1]*0.64*0.44;
+                    $('.'+container+app_id+' div').each(function(){
+                        if($(this).find('p').outerWidth()<x_screen_half){
+                            $(this).addClass('d-inline-flex');
+                            $(this).addClass('sub_div_pdf_expanded');
+                            $(this).removeClass('d-flex');
+                        }
+                    });
                 } else{
                     $('.'+container+app_id).addClass('w-100');
                 }
@@ -137,6 +142,27 @@ function get_photo(app_id, ischild){
     });
 }
 
+function get_logo(){
+    $.ajax({
+        type: 'GET',
+        url: '/customers/search_customer',
+        datatype: 'JSON',
+        data: {
+            current_tenement: Navarra.dashboards.config.current_tenement
+        },
+        success: function(data) {
+            $('#logo_coorp_pdf').attr("src",'data:image/png;base64,'+data.logo);
+            console.log('RESPONSE search_customer');
+            console.log(data);
+        },
+        error: function( jqXHR, textStatus, errorThrown ) {
+            console.log(jqXHR);
+            console.log(textStatus);
+            console.log(errorThrown);
+        }
+    });
+}
+
 function save_pdf(){
     var num_pages = 0;
     var y_screen = tamVentana()[1]*0.9;
@@ -146,12 +172,21 @@ function save_pdf(){
     var y_proportion = y_page/y_screen;
     var x_proportion = x_page/x_screen;
     var altura = 0;
-    var margin_pdf = 20;
+    var margin_pdf = 10;
     var last_y = 0;
     const doc = new jsPDF({
     orientation: 'p',
     format: 'a4'
     });
+    doc.setFontSize(7);
+    doc.setTextColor(84, 84, 84);
+    doc.text("powerd by",176,20);
+    doc.setTextColor(0, 0, 0);
+    var logo_gw = new Image()
+    logo_gw.src = '/assets/logo_gw_hor_2.png';
+    doc.addImage(logo_gw, 'PNG', 165, 20 , 29, 9);
+    var height_line = $('.pdf_header').outerHeight() * y_proportion + 14;
+    doc.line(10,height_line,200,height_line); 
     var element_pdf = $('.element_pdf');
     element_pdf.each(function(index){
         var x_pdf = this.offsetLeft * x_proportion;
@@ -160,7 +195,7 @@ function save_pdf(){
             if(altura>(y_page - 20)) {
                 num_pages ++;
                 doc.addPage();
-                margin_pdf += 20;
+                margin_pdf += 30;
             }
         }
         last_y = y_pdf;
@@ -168,7 +203,10 @@ function save_pdf(){
         var font_size_pdf = parseFloat(this.style.fontSize)*12/0.6;
         doc.setFontSize(font_size_pdf);
         if(this.nodeName==='P'){
-            doc.text(this.innerHTML, x_pdf, altura);
+            var width_pdf = this.offsetWidth * x_proportion;
+            var longtext = this.innerHTML;
+            var splitTitle = doc.splitTextToSize(longtext, width_pdf);
+            doc.text(x_pdf , altura, splitTitle);
         }
         
         if(this.nodeName==='INPUT'){
@@ -177,12 +215,13 @@ function save_pdf(){
         if(this.nodeName==='IMG'){
             var width_pdf = this.offsetWidth * x_proportion;
             var height_pdf = this.offsetHeight * y_proportion;
-            doc.addImage(this.src, 'JPEG', x_pdf , altura , width_pdf, height_pdf);
+            doc.addImage(this.src, 'JPEG', x_pdf , (altura - 2) , width_pdf, height_pdf);
         }
         
  });
-    doc.save("two-by-four.pdf");
+    doc.save("reporte.pdf");
 }
+
 
 function tamVentana() {
   var tam = [0, 0];

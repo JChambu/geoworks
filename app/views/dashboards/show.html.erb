@@ -407,12 +407,16 @@ function min_photo(){
             <i class="fas fa-times view-data" type="button" class="close" data-dismiss="modal" aria-label="Close"></i>
           </div>
       </div>
-      <div class="modal-body p-1 pl-4 pr-4" id="canvas_pdf" style="position: relative;">
+      <div class="modal-body p-1 pl-4 pr-4 pt-2" id="canvas_pdf" style="position: relative;">
         <div class="pdf_header">
-          <%= image_tag "gw_dispositivos_2.png", class: 'logo_coorp_pdf' %>
-          <input type="text" disabled="true" value="TITULO DEL REPORTE" class="pdf_title element_pdf" style="font-size:0.8em">
+          <img id="logo_coorp_pdf" class="logo_coorp_pdf element_pdf">
+          <div class="w-100 text-center" style = "line-height: 1;">
+            <p class="pdf_title element_pdf" style="font-size:0.8em">REPORTE</p>
+            <br/>
+            <p class="element_pdf pdf_title" style="font-size:0.6em" id="pdf_created"></p>
+          </div>
           <div class="div_powered">
-            <p class="pdf_powered element_pdf">powered by</p>
+            <p class="pdf_powered">powered by</p>
             <%= image_tag "logo_gw_hor_2.png", class: 'logo_pdf' %>
           </div>
         </div>

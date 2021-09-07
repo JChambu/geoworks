@@ -850,20 +850,20 @@ div.custom-menu.show {
   border-bottom: solid 1px;
 }
 .pdf_title{
-  font-size: 0.8em;
   text-align:center;
   border:none;
-  margin: 0px 5%;
-  width: 45%;
+  display:inline-block;
+  margin: 0px !important;
   background:transparent;
 }
 .pdf_powered{
-  font-size:0.5em;
-  margin: 5px 0px -5px 0px;
+  font-size: 0.5em;
+  margin: 8px 0px -8px 20px;
 }
 .logo_coorp_pdf{
-  width: 12%;
-  margin: 0px 4%;
+  height: 5vh;
+  position: absolute;
+  left: 7%;
 }
 
 .logo_pdf{
@@ -871,9 +871,10 @@ div.custom-menu.show {
   margin: 0px;
 }
 .div_powered{
-  display:inline-block;
-  width:12%;
-  margin: 0px 4%
+  position: absolute;
+  top: 15px;
+  left: 46vh;
+  width:16%;
 }
 .title_pdf{
   line-height: 1!important;
