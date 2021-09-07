@@ -202,6 +202,7 @@ function show_subfield(field_ids){
         var new_p = document.createElement('P');
         new_p.className = 'custom_p_header';
         new_p.innerHTML = father_field.project_field_name.toUpperCase();
+        new_p.id = 'header_columntext_'+id_field;
         new_div.appendChild(new_p);
         var new_div1 = document.createElement('DIV');
         new_div1.className = 'custom_div_table custom_onclick'
@@ -247,6 +248,7 @@ function show_subfield(field_ids){
             var new_p = document.createElement('P');
             new_p.className = 'custom_p_header';
             new_p.innerHTML = child_field.name;
+            new_p.id = id_field+"_subheader_"+child_field.field_id;
             new_tr.appendChild(new_p);
             var new_div1 = document.createElement('DIV');
             new_div1.className = 'custom_div_table'
@@ -282,6 +284,8 @@ function show_subfield(field_ids){
 
       // valores para la tabla
       var data_child = father_field.body
+      console.log("Datos de la tabla hijos ")
+      console.log(data_child)
         //Agrega celdas a toda la tabla
         if(Object.keys(data_child).length==0){
             $('#link_dropdown_'+id_field).addClass('disabled')
@@ -319,6 +323,7 @@ function show_subfield(field_ids){
                 new_cel_subform.style.border='none';   
                 new_cel_subform.style.padding='5px';  
                 new_cel_subform.className='child_celd';
+                new_cel_subform.id = id_field+"_childdate_"+column.id;
                 if(column.gwm_created_at!=null){
                   var created_date = column.gwm_created_at.split('T')[0];
                   var created_time = column.gwm_created_at.split('T')[1].substring(0,5)
@@ -333,8 +338,10 @@ function show_subfield(field_ids){
                 var new_cel_subform = document.createElement('TD');
                 new_cel_subform.style.padding='5px';  
                 new_cel_subform.className = id_field+"sub"+colname + " d-none child_celd";
+                new_cel_subform.id = id_field+"_subceld_"+colname + "_" + column.id ;
                 new_cel_subform.style.whiteSpace='nowrap';
                 new_cel_subform.style.border='none';
+                new_cel_subform
                 if(column.properties[colname]!=undefined){
                   new_cel_subform.innerHTML = column.properties[colname];
                 }
