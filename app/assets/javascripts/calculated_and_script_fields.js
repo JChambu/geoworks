@@ -213,6 +213,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
             }
 
             if(CalculateObj_keys[k]=="semanaDesde"){
+                console.log("Ingresa a Semana Desde")
                 if(!is_multiple){
                     if(isparent){
                         var val_from = $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).val();
@@ -439,30 +440,9 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
     // Cálculos permitidos al crear registro
     if(edition_type== "new_file"){
 
-        for(k=0;k<CalculateObj_keys.length;k++){
-            if(isparent){
-                var texto_campo_id_new = "#field_id_"+id_field;
-            } else{
-                var texto_campo_id_new = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
-            }    
-            
+        for(k=0;k<CalculateObj_keys.length;k++){            
             if(CalculateObj_keys[k]=="sessionVariable"){
-                //Ajax para solicitar datos
-                /*
-                $.ajax({
-                    type: 'GET',
-                    url: '/project_types/get_usermail',
-                    datatype: 'json',
-                    data: {
-                    },
-                    success: function(data) {
-
-                    }
-                });
-                */
-                var sessionVariable = "correo@gmail.com"
-                $(texto_campo_id_new).val(sessionVariable);
-
+                // eliminado por utilizarse app_usuario
             }
             if(CalculateObj_keys[k]=="time"){   
                 var today=new Date();
@@ -470,7 +450,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                 var mm = String(today. getMonth() + 1). padStart(2, '0');
                 var yyyy = today. getFullYear();      
                 today_time = dd + '/' + mm + '/' + yyyy;
-                $(texto_campo_id_new).val(today_time);
+                $(texto_campo_id).val(today_time);
             }
             if(CalculateObj_keys[k]=="ID"){
                 var today=new Date();
@@ -482,27 +462,28 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                 var ss = String(today. getSeconds()). padStart(2, '0');
                 
                 today_id = String(yyyy).substr(2)+mm+dd+ '.' + hh+min+ss;
-                //Ajax para solicitar datos
-                /*
+                data = {
+                    current_tenement: Navarra.dashboards.config.current_tenement,
+                }
+                console.log('PARAMS get_user_id_and_customer_id');
+                console.log(data);
                 $.ajax({
                     type: 'GET',
-                    url: '/project_types/get_userid_and_corporation_id',
-                    datatype: 'json',
-                    data: {
-                    },
+                    url: '/users/get_user_id_and_customer_id',
+                    datatype: 'JSON',
+                    data: data,
                     success: function(data) {
-
+                    console.log('RESPONSE get_userid_and_customerid');
+                    console.log(data);
+                    var id_unique = data.customer_id + "."+data.user_id+"-"+today_id
+                    $(texto_campo_id).val(id_unique);
                     }
                 });
-                */
-
-                //CustomerId + "."+UserId+"-"+today_id
-                var IDUnico = today_id;
-                $(texto_campo_id_new).val(IDUnico);
+            
             }
             if(CalculateObj_keys[k]=="semanaTomate"){
                 number_of_week = getWeekNumber(new Date())[1]
-                $(texto_campo_id_new).val(number_of_week);
+                $(texto_campo_id).val(number_of_week);
             }
             //Iscamen
             if(CalculateObj_keys[k]=="codigo_fenologia"){

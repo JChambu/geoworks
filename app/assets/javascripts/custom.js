@@ -13,6 +13,7 @@ var statuschange;
 var father_fields = [];
 var child_elements = [];
 var children_fields;
+var children_fields_all;
 var array_child_edited;
 var data_dashboard=[];
 var subtitles_all = [];
@@ -2340,6 +2341,7 @@ function export_to_excel(table, name, filename) {
 function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
   console.log("es nuevo? "+is_new_file)
   console.log("id a abrir "+appid_info)
+  children_fields_all = new Object;
   if(!is_new_file){
     $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
   } else {
@@ -2862,6 +2864,8 @@ function create_new_row_child_date(element_child){
 function create_new_row_child(element_child, element_field_id, element_name, is_multiple, is_new){
   //campos de los hijos
   children_fields = element_child.children_fields;
+  if(children_fields_all[element_field_id]==undefined){children_fields_all[element_field_id]=new Object}
+  children_fields_all[element_field_id] = children_fields;
   var verify_count_elements_childs_fields = 0;
   var new_row_container = document.createElement('DIV');
   children_fields.forEach(function(element_child_field) {
@@ -2929,7 +2933,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
         new_p.className = "form-control form-control-sm "+classname_field+" textarea_input is_child_field";
         new_p.style.minHeight = '22px';
         if(!is_multiple){
-          new_p.setAttribute("onChange","calculate_all(false,false,"+element_child.children_id+")");
+          new_p.setAttribute("onChange","calculate_all(false,false,"+element_child.children_id+","+element_field_id+")");
         } else{
           new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
         }
@@ -3046,6 +3050,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
       if (element_child_field.field_type_id == 3) {
         var new_p = document.createElement('INPUT');
         new_p.className = "form-control form-control-sm "+classname_field+" date_field is_child_field";
+        new_p.setAttribute("id_field_father",element_field_id)
       }
       if (element_child_field.field_type_id == 4) {
         var new_p = document.createElement('SELECT');
@@ -3080,7 +3085,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
         new_p.type = "number";
         new_p.className = "form-control form-control-sm "+classname_field+" is_child_field";
         if(!is_multiple){
-          new_p.setAttribute("onChange","calculate_all(false,false,"+element_child.children_id+")");
+          new_p.setAttribute("onChange","calculate_all(false,false,"+element_child.children_id+","+element_field_id+")");
         } else{
           new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
         }
@@ -3155,7 +3160,11 @@ function set_date_style(is_multiple){
       $('.date_field').on('dp.change', function(e){
         if(this.id.substring(0,12)=="fieldchildid"){
           if(!is_multiple){
-            calculate_all(false,false,this.id.split('|')[2]);
+            var id_field_father = this.getAttribute('id_field_father');
+            console.log(this)
+            console.log(this.getAttribute('id_field_father'))
+            console.log("Campo padre en campos fechas "+id_field_father)
+            calculate_all(false,false,this.id.split('|')[2],id_field_father);
           } else{
             changeChild(this.id.split('|')[2]);
           }
@@ -3217,6 +3226,7 @@ function open_new_child(element_field_id, element_name, element_key,is_multiple)
       textarea_adjust_height();
       set_date_style(is_multiple);
       set_multiselect_style_childs();
+      calculate_all(false,false,0, element_field_id,true)
     }
   })
 }
@@ -3698,7 +3708,7 @@ function set_script_all(){
 }
 
 
-function calculate_all(first_time, isparent, id_child_calculate){
+function calculate_all(first_time, isparent, id_child_calculate , id_field_child_calculate, is_new_child){
   var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   if(is_new_file){var type_calculation = "new_file"} else{ var type_calculation = "data_edition"}
   //Ejecuta Calculate de campos padres
@@ -3720,16 +3730,30 @@ function calculate_all(first_time, isparent, id_child_calculate){
         }
       });
     } else{
+      console.log("es nuevo hijo? "+is_new_child)
+      if(is_new_child!=undefined){
+        is_new_file = is_new_child;
+        if(is_new_file){var type_calculation = "new_file"} else{ var type_calculation = "data_edition"}
+      }
+        console.log(is_new_file)
       //Ejecuta Calculate de campos hijos
+      console.log("Va a calcular hijos")
+      console.log("Es primera vez? "+first_time)
       if(!first_time){
         array_child_edited.push(parseInt(id_child_calculate));
         //ejecuta calculate para el hijo cambiado
-        children_fields.forEach(function(element) {
-          var id_child_toScript = element.field_id+"|"+id_child_calculate;
-          if(element.calculated_field!="" && element.field_type_id!=11){
-            Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
-          }
-        });
+        console.log(children_fields_all)
+        console.log("Campo padre a calcular")
+        console.log(id_field_child_calculate)
+          children_fields_all[id_field_child_calculate].forEach(function(element) {
+            console.log("elemento")
+            console.log(element)
+            var id_child_toScript = element.field_id+"|"+id_child_calculate;
+            console.log("idchild calculated "+id_child_calculate)
+            if(element.calculated_field!="" && element.field_type_id!=11){
+              Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
+            }
+          });
       } else{
         //ejecuta calculate para todos los hijos
         if(child_elements!==undefined){
