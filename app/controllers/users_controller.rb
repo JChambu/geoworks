@@ -5,6 +5,16 @@ class UsersController < ApplicationController
   def edit
   end
 
+  # Busca user_id y customer_id para creación de "id único" en front
+  def get_user_id_and_customer_id
+    customer_id = Customer.where(subdomain: params[:current_tenement]).pluck(:id).first
+    data = {
+      user_id: current_user.id,
+      customer_id: customer_id
+    }
+    render json: data
+  end
+
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
