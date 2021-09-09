@@ -187,6 +187,8 @@ function show_subfield(field_ids){
     },
     success: function(data) {
       data.forEach(function(father_field){
+        console.log("Datos que llegan")
+        console.log(father_field)
         var count_columns = $('#tr_visible').find('th').length;
         var column_par = count_columns%2;
         var id_field = father_field.project_field_id;
@@ -249,6 +251,13 @@ function show_subfield(field_ids){
             new_p.className = 'custom_p_header';
             new_p.innerHTML = child_field.name;
             new_p.id = id_field+"_subheader_"+child_field.field_id;
+            if(child_field.calculated_field == '{"ID":""}'){
+              var unique_id = true;
+            } else {
+              var unique_id = false
+            }
+            new_p.setAttribute('unique_id',unique_id);
+        
             new_tr.appendChild(new_p);
             var new_div1 = document.createElement('DIV');
             new_div1.className = 'custom_div_table'

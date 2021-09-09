@@ -40,9 +40,11 @@ function init() {
                                 } else{
                                     var id_father_field_json = this.id.split('_')[2];
                                     var column_child_name = $('#'+id_father_json+'_subheader_'+id_father_field_json ).html();
+                                    var column_child_unique_id = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr('unique_id');
                                     pdf_values['children'][id_child_json]['properties'][id_father_field_json] =  new Object;
                                     pdf_values['children'][id_child_json]['properties'][id_father_field_json]['value'] = this.innerHTML;
                                     pdf_values['children'][id_child_json]['properties'][id_father_field_json]['name'] = column_child_name;
+                                    pdf_values['children'][id_child_json]['properties'][id_father_field_json]['unique_id'] = $('#header_columntext_'+id_father_json).attr("unique_id");
                                 }
                              }
                         })
@@ -148,7 +150,8 @@ function get_logo(){
         url: '/customers/search_customer',
         datatype: 'JSON',
         data: {
-            current_tenement: Navarra.dashboards.config.current_tenement
+            //current_tenement: Navarra.dashboards.config.current_tenement
+            current_tenement: "public"
         },
         success: function(data) {
             $('#logo_coorp_pdf').attr("src",'data:image/png;base64,'+data.logo);
