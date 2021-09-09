@@ -30,7 +30,13 @@ class DashboardsController < ApplicationController
     if !@project_type.nil?
 
       @fields = ProjectField.where(project_type_id: @project_type.id).order(:sort)
-      @fields_all = ProjectField.joins(:project_type).where(project_types: {enabled_as_layer: true}).order('project_types.level DESC', :sort)
+      # Campos de los proyectos que están por encima del proyecto actual
+      @top_level_fields = ProjectField
+        .joins(:project_type)
+        .where(project_types: {enabled_as_layer: true})
+        .where.not(project_type_id: @project_type.id)
+        .where('project_types.level > ?', @project_type.level)
+        .order('project_types.level DESC', :sort)
       @project_types_all = ProjectType.where(enabled_as_layer: true).order(level: :desc)
       @current_tenant = Apartment::Tenant.current
 
