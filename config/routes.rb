@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get 'projects/search_data' => 'projects#search_data'
   get 'projects/search_statuses' => 'projects#search_statuses'
   get 'projects/search_users' => 'projects#search_users'
+  get 'projects/search_data_for_pdf' => 'projects#search_data_for_pdf'
   get 'projects/popup' => 'projects#popup'
   get 'project_types/get_extent' => 'project_types#get_extent'
   post 'projects/create_form' => 'projects#create_form'
