@@ -44,7 +44,7 @@ function init() {
                                     pdf_values['children'][id_child_json]['properties'][id_father_field_json] =  new Object;
                                     pdf_values['children'][id_child_json]['properties'][id_father_field_json]['value'] = this.innerHTML;
                                     pdf_values['children'][id_child_json]['properties'][id_father_field_json]['name'] = column_child_name;
-                                    pdf_values['children'][id_child_json]['properties'][id_father_field_json]['unique_id'] = $('#header_columntext_'+id_father_json).attr("unique_id");
+                                    pdf_values['children'][id_child_json]['properties'][id_father_field_json]['unique_id'] = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr("unique_id");
                                 }
                              }
                         })
@@ -63,33 +63,102 @@ function create_pdf_view(){
     get_logo();
     var currentdate = new Date(); 
     var today = currentdate.getDate() + "/" + (currentdate.getMonth()+1)  + "/"  + currentdate.getFullYear() ;
-    $('#pdf_created').html("Flavia Arias - "+today)
-    pdf_values_all.forEach(function(pdf_object){
-        var pdf_content = "<div class = 'div_pdf div_pdf"+pdf_object['id']+"'>";
-        pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:0.7em'>"+Navarra.dashboards.config.name_project+"</p>";
-        Object.keys(pdf_object['properties']).forEach(function(key) {
-            pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_object['properties'][key]['name']+": "+pdf_object['properties'][key]['value']+"</p></div>";
-        });
-        pdf_content += "</div>"
-        pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos"+pdf_object['id']+"'></div>"
-        $('#pdf_body').append(pdf_content);
-        get_photo(pdf_object['id'],false);
-        // Campos hijos
-        Object.keys(pdf_object['children']).forEach(function(child_key){
-            var pdf_content = "<div class = 'div_pdf div_pdf_child div_pdf_child"+child_key+"'>";
-            pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:0.6em'>"+pdf_object['children'][child_key]['name_field']+": "+pdf_object['children'][child_key]['date']+"</p>";
-            Object.keys(pdf_object['children'][child_key]['properties']).forEach(function(key_c) {
-                pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_object['children'][child_key]['properties'][key_c]['name']+": "+pdf_object['children'][child_key]['properties'][key_c]['value']+"</p></div>";
+    $('#pdf_created').html("Flavia Arias - "+today);
+    if(!$('#set_subfield_grouped').hasClass('grouped')){
+        // Ordenado por geometría
+        pdf_values_all.forEach(function(pdf_object){
+            var pdf_content = "<div class = 'div_pdf div_pdf"+pdf_object['id']+"'>";
+            pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:0.7em'>"+Navarra.dashboards.config.name_project+"</p>";
+            Object.keys(pdf_object['properties']).forEach(function(key) {
+                pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_object['properties'][key]['name']+": "+pdf_object['properties'][key]['value']+"</p></div>";
             });
             pdf_content += "</div>"
-            pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos_child"+child_key+"'></div>"
+            pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos"+pdf_object['id']+"'></div>"
             $('#pdf_body').append(pdf_content);
-            get_photo(child_key,true);
-        })
-    });
+            get_photo(pdf_object['id'],false,pdf_object['id'],false);
+            // Campos hijos
+            Object.keys(pdf_object['children']).forEach(function(child_key){
+                var pdf_content = "<div class = 'div_pdf div_pdf_child div_pdf_child"+child_key+"'>";
+                pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:0.6em'>"+pdf_object['children'][child_key]['name_field']+": "+pdf_object['children'][child_key]['date']+"</p>";
+                Object.keys(pdf_object['children'][child_key]['properties']).forEach(function(key_c) {
+                    pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_object['children'][child_key]['properties'][key_c]['name']+": "+pdf_object['children'][child_key]['properties'][key_c]['value']+"</p></div>";
+                });
+                pdf_content += "</div>"
+                pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos_child"+child_key+"'></div>"
+                $('#pdf_body').append(pdf_content);
+                get_photo(child_key,true,child_key,false);
+            })
+        });
+    } else {
+        //Ordenado por indicador único de hijos
+        //Crea objeto ordenado
+        var pdf_values_all_sorted = new Object;
+        pdf_values_all.forEach(function(pdf_object){
+            Object.keys(pdf_object['children']).forEach(function(child_key){
+                Object.keys(pdf_object['children'][child_key]['properties']).forEach(function(key_c) {
+                    var unique_id = pdf_object['children'][child_key]['properties'][key_c]['unique_id'];
+                    var unique_id_value = JSON.stringify(pdf_object['children'][child_key]['properties']);
+                    var id_field_father = pdf_object['children'][child_key]['id_field'];
+                    if(pdf_values_all_sorted[unique_id_value] ==  undefined){
+                        pdf_values_all_sorted[unique_id_value] = new Object;
+                    }
+                    if(pdf_values_all_sorted[unique_id_value][id_field_father] ==  undefined){
+                        pdf_values_all_sorted[unique_id_value][id_field_father] = new Object;
+                        pdf_values_all_sorted[unique_id_value][id_field_father]['fathers'] = new Object;
+                        pdf_values_all_sorted[unique_id_value][id_field_father]['ids'] = [];
+                    }
+                    if(unique_id=="true"){
+                        var unique_id_number = pdf_object['children'][child_key]['properties'][key_c]['value'];
+                        pdf_values_all_sorted[unique_id_value][id_field_father]['unique_id'] = unique_id_number;
+                    }
+                    pdf_values_all_sorted[unique_id_value][id_field_father]['child'] = pdf_object['children'][child_key];
+                    pdf_values_all_sorted[unique_id_value][id_field_father]['ids'].push(child_key);
+                    pdf_values_all_sorted[unique_id_value][id_field_father]['fathers'][pdf_object['id']] = pdf_object['properties'];
+                });
+            });
+        });
+        console.log("Objeto ordenado")
+        console.log(pdf_values_all_sorted)
+        //Dibuja objeto ordenado
+        Object.keys(pdf_values_all_sorted).forEach(function(key_unique, index){
+            Object.keys(pdf_values_all_sorted[key_unique]).forEach(function(id_field_father, index_father_field){
+                var pdf_content = "<div class = 'div_pdf div_pdf_child"+index+"_"+index_father_field+"'>";
+                pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:0.7em'>"+pdf_values_all_sorted[key_unique][id_field_father]['child']['name_field']+"</p>";
+                if(pdf_values_all_sorted[key_unique][id_field_father]['unique_id']!=undefined){
+                    pdf_content += "<p class='title_pdf mt-1 mb-0 element_pdf' style='font-size:0.7em'>"+pdf_values_all_sorted[key_unique][id_field_father]['unique_id']+"</p>";    
+                }
+                pdf_content += "<p class='title_pdf mt-1 mb-1 element_pdf' style='font-size:0.7em'>"+pdf_values_all_sorted[key_unique][id_field_father]['child']['date']+"</p>";
+                Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['child']['properties']).forEach(function(key) {
+                    pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['value']+"</p></div>";
+                });
+                pdf_content += "</div>"
+                pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos_child"+index+"_"+index_father_field+"'></div>"
+                $('#pdf_body').append(pdf_content);
+                //cambiar modelo para que traiga fotos de un array de ids
+                get_photo(pdf_values_all_sorted[key_unique][id_field_father]['ids'].unique()[0],true,index+"_"+index_father_field,true);
+            // Campos padres
+                Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['fathers']).forEach(function(father_key){
+                    var pdf_content = "<div class = 'div_pdf div_pdf_child div_pdf"+father_key+"_"+index+"_"+index_father_field+"'>";
+                    pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:0.6em'>"+Navarra.dashboards.config.name_project+"</p>";
+                    Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key]).forEach(function(key_f) {
+                        pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['value']+"</p></div>";
+                    });
+                pdf_content += "</div>"
+                pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos"+father_key+"_"+index+"_"+index_father_field+"'></div>"
+                $('#pdf_body').append(pdf_content);
+                get_photo(father_key,false,father_key+"_"+index+"_"+index_father_field,true);
+                })
+            });
+        });
+    }
 }
 
-function get_photo(app_id, ischild){
+function get_photo(app_id, ischild, id_container,is_grouped){
+    if(is_grouped && ischild){
+        var height_max = 100
+    } else{
+        var height_max = 55
+    }
     if(ischild){
         var container = 'div_pdf_child';
         var container_photos = 'div_pdf_photos_child';
@@ -112,11 +181,12 @@ function get_photo(app_id, ischild){
         data: data_get,
         success: function(data) {
             if(data.length==0){
-                if($('.'+container+app_id).outerHeight()>55){
-                    $('.'+container+app_id).removeClass('div_pdf');
-                    $('.'+container+app_id).addClass('div_pdf_expanded');
+
+                if($('.'+container+id_container).outerHeight()>height_max){
+                    $('.'+container+id_container).removeClass('div_pdf');
+                    $('.'+container+id_container).addClass('div_pdf_expanded');
                     var x_screen_half = tamVentana()[1]*0.64*0.44;
-                    $('.'+container+app_id+' div').each(function(){
+                    $('.'+container+id_container+' div').each(function(){
                         if($(this).find('p').outerWidth()<x_screen_half){
                             $(this).addClass('d-inline-flex');
                             $(this).addClass('sub_div_pdf_expanded');
@@ -124,21 +194,21 @@ function get_photo(app_id, ischild){
                         }
                     });
                 } else{
-                    $('.'+container+app_id).addClass('w-100');
+                    $('.'+container+id_container).addClass('w-100');
                 }
             } else{
                 var img_pdf = "<div class='pt-4'>";
-                var height_container = $('.'+container+app_id).outerHeight() - 30;
-                var width_container = $('.'+container+app_id).outerWidth()
+                var height_container = $('.'+container+id_container).outerHeight() - 30;
+                var width_container = $('.'+container+id_container).outerWidth()
                 if(height_container*data.length + 4*data.length > width_container){
-                    height_container = ($('.'+container+app_id).outerWidth() / data.length) - 4;
+                    height_container = ($('.'+container+id_container).outerWidth() / data.length) - 4;
                 }
                 data.forEach(function(photo){
                     img_pdf += "<img style='height: "+height_container+"px' src= 'data:image/png;base64,"+photo.image+"' class='img_pdf element_pdf'/>"
                 });
                 img_pdf +="</div>"
-                $('.'+container_photos+app_id).removeClass('d-none');
-                $('.'+container_photos+app_id).append(img_pdf)
+                $('.'+container_photos+id_container).removeClass('d-none');
+                $('.'+container_photos+id_container).append(img_pdf)
             }
         }
     });
@@ -150,18 +220,12 @@ function get_logo(){
         url: '/customers/search_customer',
         datatype: 'JSON',
         data: {
-            //current_tenement: Navarra.dashboards.config.current_tenement
-            current_tenement: "public"
+            current_tenement: Navarra.dashboards.config.current_tenement
         },
         success: function(data) {
             $('#logo_coorp_pdf').attr("src",'data:image/png;base64,'+data.logo);
-            console.log('RESPONSE search_customer');
-            console.log(data);
         },
         error: function( jqXHR, textStatus, errorThrown ) {
-            console.log(jqXHR);
-            console.log(textStatus);
-            console.log(errorThrown);
         }
     });
 }
@@ -225,7 +289,16 @@ function save_pdf(){
     doc.save("reporte.pdf");
 }
 
-
+function set_subfield_grouped(){
+    if($('#set_subfield_grouped').hasClass('grouped')){
+        $('#set_subfield_grouped').removeClass('grouped');
+        $('#set_subfield_grouped').removeClass('icon_selected');
+    } else {
+        $('#set_subfield_grouped').addClass('grouped');
+        $('#set_subfield_grouped').addClass('icon_selected');
+    }
+    create_pdf_view();
+}
 function tamVentana() {
   var tam = [0, 0];
   if (typeof window.innerWidth != 'undefined')
@@ -252,6 +325,7 @@ function tamVentana() {
 
 return {
     init: init,
-    save_pdf: save_pdf
+    save_pdf: save_pdf,
+    set_subfield_grouped: set_subfield_grouped
 }
 }();
