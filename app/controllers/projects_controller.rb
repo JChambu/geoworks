@@ -13,7 +13,7 @@ class ProjectsController < ApplicationController
     projects = []
     top_level_project_type_ids.each do |project_type_id|
       data = Project
-        .select('sec.id, sec.properties, sec.project_type_id, sec.gwm_created_at, project_statuses.name AS status_name, project_statuses.color AS status_color')
+        .select('main.id AS cross_layer_record, sec.id, sec.properties, sec.project_type_id, sec.gwm_created_at, project_statuses.name AS status_name, project_statuses.color AS status_color')
         .from('projects main')
         .joins('INNER JOIN projects sec ON ST_Intersects(main.the_geom, sec.the_geom)')
         .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
