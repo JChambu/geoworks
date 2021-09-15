@@ -33,7 +33,6 @@ class DashboardsController < ApplicationController
       # Campos de los proyectos que están por encima del proyecto actual
       @top_level_fields = ProjectField
         .joins(:project_type)
-        .where(project_types: {enabled_as_layer: true})
         .where.not(project_type_id: @project_type.id)
         .where('project_types.level > ?', @project_type.level)
         .order('project_types.level DESC', :sort)

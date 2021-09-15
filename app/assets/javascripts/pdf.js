@@ -14,12 +14,12 @@ function init() {
                 pdf_values['children'] = new Object;
                 var row_selected = $('#table_visible tr:nth-child('+index+') td').not('.custom_row_child').not('.child_celd');
                 row_selected.each(function(index_column){
-                    if(index_column>2 && this.innerHTML!='' && this.style.display!='none'){
+                    if(index_column>2 && this.innerHTML!='' && !this.classList.contains('d-none')){
                         var column_name = $('#tr_visible th:nth-child('+(index_column+1)+')')[0];
                         var column_key = $('#tr_visible th:nth-child('+(index_column+1)+') input')[0];
                         pdf_values['properties'][column_key.value]= new Object;
                         pdf_values['properties'][column_key.value]['value'] = this.innerHTML;
-                        pdf_values['properties'][column_key.value]['name'] = column_name['id'].split("columnfake_")[1];
+                        pdf_values['properties'][column_key.value]['name'] = column_name.getAttribute('key_name');
                     }
                     });
                 row_selected_child = $('#table_visible tr:nth-child('+index+') .custom_row_child tr');
@@ -61,9 +61,6 @@ function init() {
 function create_pdf_view(){
     $('#pdf_body').empty();
     get_logo();
-    var currentdate = new Date(); 
-    var today = currentdate.getDate() + "/" + (currentdate.getMonth()+1)  + "/"  + currentdate.getFullYear() ;
-    $('#pdf_created').html("Flavia Arias - "+today);
     if(!$('#set_subfield_grouped').hasClass('grouped')){
         // Ordenado por geometría
         pdf_values_all.forEach(function(pdf_object){
@@ -224,6 +221,9 @@ function get_logo(){
         },
         success: function(data) {
             $('#logo_coorp_pdf').attr("src",'data:image/png;base64,'+data.logo);
+            var currentdate = new Date(); 
+            var today = currentdate.getDate() + "/" + (currentdate.getMonth()+1)  + "/"  + currentdate.getFullYear() ;
+            $('#pdf_created').html(data.username+" - "+today);
         },
         error: function( jqXHR, textStatus, errorThrown ) {
         }

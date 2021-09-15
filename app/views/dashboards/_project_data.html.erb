@@ -1,5 +1,5 @@
 <script type="text/javascript">
-
+var top_level_project_type_ids = [];
 //scroll de ambas tablas simultáneamente
 $(document).ready(function () {
     $(".div_table").on("scroll", function() {
@@ -73,44 +73,43 @@ function set_hover(){
 
 
 //ordena descendente y ascendente
-function order_column(index){
-  var column_order=$('#field_key'+index).val();
+function order_column(key){
+  var column_order=$('#field_key'+key).val();
   $('.order_by_column').val(column_order);
   init_data_dashboard(false);
 }
 
 //abre buscar x  columna
-function search_column(index){
+function search_column(key){
   $('#choose').val('');
-  var texto_buscar=$('#field_key'+index).val();
+  var texto_buscar=$('#field_key'+key).val();
  $('#choose').attr("placeholder", "Buscar "+texto_buscar);
  $('.filter_by_column').val(texto_buscar);
  $('#choose').css("width","25%");
  $('#choose').removeClass("p-0");
  $('#choose').focus();
- $('.choose_column').val(index);
 }
 
 
 //oculta columnas
-function hide_column(index){
-  index+=3;
- $('#table_hidden tr td:nth-child('+index+')').addClass("d-none");
- $('#table_hidden tr th:nth-child('+index+')').addClass("d-none");
- $('#table_visible tr td:nth-child('+index+')').hide();
- $('#table_visible tr th:nth-child('+index+')').addClass("d-none");
- $('.addcolumns a:nth-child('+(index-3)+')').removeClass("d-none");
+function hide_column(key){
+ $('#columnfake_'+key).addClass("d-none");
+ $('#subcolumnfake_'+key).addClass("d-none");
+ $('#columnfake_data_'+key).addClass("d-none");
+ $('#column_'+key).addClass("d-none");
+ $('.celd_key'+key).addClass("d-none");
+ $('#addcolumn_'+key).removeClass("d-none");
  $('.fa-plus').removeClass("d-none");
 }
 
 //muestra columnas
-function show_column(index,){
-  index+=3;
- $('#table_hidden tr td:nth-child('+index+')').removeClass("d-none")
- $('#table_hidden tr th:nth-child('+index+')').removeClass("d-none")
- $('#table_visible tr td:nth-child('+index+')').show()
- $('#table_visible tr th:nth-child('+index+')').removeClass("d-none")
- $('.addcolumns a:nth-child('+(index-3)+')').addClass("d-none");
+function show_column(key){
+ $('#columnfake_'+key).removeClass("d-none");
+ $('#subcolumnfake_'+key).removeClass("d-none");
+ $('#columnfake_data_'+key).removeClass("d-none");
+ $('#column_'+key).removeClass("d-none");
+ $('.celd_key'+key).removeClass("d-none");
+ $('#addcolumn_'+key).addClass("d-none");
  if($(".addcolumns").children().length == $(".column_data.d-none").length){
    $('.fa-plus').addClass("d-none");
  }
@@ -175,6 +174,7 @@ function get_string_filter(){
   return string_filter;
 }
 
+// FUNCIONES PARA TRAER DATOS DE SUBFORMULARIOS
 function show_subfield(field_ids){
   var app_ids_table = Navarra.dashboards.app_ids_table;
   $.ajax({
@@ -380,8 +380,71 @@ function show_subfield(field_ids){
       verify_scroll_table();
     }//end success
   });//end ajax
-
 }
+
+// FUNCIONES PARA TRAER COLUMNAS DE CAPAS SUPERIORES
+function get_layer_data(){
+  var app_ids_table = Navarra.dashboards.app_ids_table;
+    data = {
+      top_level_project_type_ids: top_level_project_type_ids,
+      project_ids: app_ids_table,
+    }
+
+    console.log('PARAMS search_data_for_pdf');
+    console.log(data);
+
+    $.ajax({
+      type: 'GET',
+      url: '/projects/search_data_for_pdf',
+      datatype: 'JSON',
+      data: data,
+      success: function(data) {
+        data.forEach(function(data_project){
+        console.log("Datos que llegan")
+        console.log(data_project)
+        data_project.forEach(function(row_layer){
+            properties_layer= row_layer['properties'];
+          Object.keys(properties_layer).forEach(function(prop){
+            $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).html(row_layer['properties'][prop]);
+          })
+        });//end forEach      
+      });
+      },
+    });
+}
+
+function show_column_layer(key_layer,id_layer){
+  if(top_level_project_type_ids.indexOf(id_layer)<0){
+    top_level_project_type_ids.push(id_layer);
+    console.log("busca datos")
+    get_layer_data();
+  }
+  $('#columnfake_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
+  $('#subcolumnfake_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
+  $('#columnfake_data_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
+  $('#column_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
+  $('.celdlayer_key'+id_layer+'\\|'+key_layer).removeClass("d-none");
+  $('#addcolumn_layer_'+key_layer+'_'+id_layer).addClass("d-none");
+}
+
+function hide_column_layer(key_layer,id_layer){
+  $('#columnfake_layer_'+key_layer+"_"+id_layer).addClass("d-none");
+  $('#subcolumnfake_layer_'+key_layer+"_"+id_layer).addClass("d-none");
+  $('#columnfake_data_layer_'+key_layer+"_"+id_layer).addClass("d-none");
+  $('#column_layer_'+key_layer+"_"+id_layer).addClass("d-none");
+  $('.celdlayer_key'+id_layer+'\\|'+key_layer).addClass("d-none");
+  $('#addcolumn_layer_'+key_layer+'_'+id_layer).removeClass("d-none");
+}
+
+function create_layers_table(){
+  top_level_project_type_ids = [];
+  $('.addcolumns_layers a.d-none').each(function(){
+    console.log(this)
+    this.click();
+  })
+  console.log("va a armar tabla de capas")
+}
+// TERMINAN FUNCIONES DE CAPAS SUPERIORES
 
 
 function open_subcolumn(event){
@@ -467,14 +530,12 @@ function verify_open_columns(){
     </a>
     <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; overflow-y: auto;">
       <% if !@fields.nil? %>
-      <% index = 0 %>
         <% @fields.each do |field|  %>
           <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-            <% index=index+1 %>
             <% if !field.popup %>
-              <a class="dropdown-item column_data" onclick="show_column(<%=index%>)"><%= field.name %></a>
+              <a class="dropdown-item column_data"  onclick="show_column(<%="'"+field.key+"'"%>)" id=<%="addcolumn_"+field.key %>><%= field.name %></a>
             <% else %>
-              <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>
+              <a class="dropdown-item column_data d-none" onclick="show_column(<%="'"+field.key+"'"%>)" id=<%="addcolumn_"+field.key %>><%= field.name %></a>
             <% end %>
           <% end %>
         <% end %>
@@ -496,12 +557,34 @@ function verify_open_columns(){
       <% end %>
     </div>
   </div>
+
+  <div class="d-inline">
+    <a data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="dropdown-columns-layers">
+      <i class="fas fa-layer-group ml-2" style="font-size: 0.8em; cursor: pointer;" title="Agregar Columna de Capas"></i>
+    </a>
+    <div class="dropdown-menu addcolumns_layers scroll" aria-labelledby="dropdown-columns-layers" style="max-height: 40vh; overflow-y: auto;">
+      <% name_layer = ""%>
+      <% if !@top_level_fields.nil? %>
+        <% @top_level_fields.each do |field|  %>
+          <% if field.project_type.name_layer !=name_layer %>
+            <ul class="nav nav-list">
+              <li class="nav-header ml-1"><%= field.project_type.name %></li>
+            </ul>
+            <% name_layer = field.project_type.name_layer %>  
+          <% end %>
+          <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+            <a class="dropdown-item column_data_layer" onclick="show_column_layer(<%="'"+field.key+"','"+field.project_type.id.to_s+"'"%>)" id=<%="addcolumn_layer_"+field.key+"_"+field.project_type.id.to_s %>><%= field.name %></a>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
   <a class="d-none" id="multiple_edit" onclick="show_item_info(0,false,true)">
     <i class="fas fa-edit ml-2" style="font-size: 0.8em; cursor: pointer;" title="Editar Registros"></i>
   </a>
   
   <input id="choose" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0 ml-2" placeholder="Buscar" style="width: 0%; transition:1.5s;"  >
-  <input type="text" class="choose_column d-none">
   <input type="text" class="filter_by_column d-none">
   <input type="text" class="order_by_column d-none">
   <input type="text" class="total_files d-none">
@@ -546,27 +629,41 @@ function verify_open_columns(){
           <i class="fas fa-image icons invisible"></i>
 
         </th>
-        <th class="border-0" style="padding-top: 0px; vertical-align: top; cursor: pointer;">
-          <p style="color:white; margin-bottom: 0px">#</p>
+        <th class="border-0" style="padding-top: 0px; vertical-align: top; cursor: pointer;">#
           <input type="text" class="d-none field_key" value="#">
+          <div id="layer_container_visible">
+            <% if !@top_level_fields.nil? %>
+              <% @top_level_fields.each do |field|  %>
+                <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+                  <th class="header_column border-0 header_column_layer d-none " id=<%="columnfake_layer_"+field.key+"_"+field.project_type.id.to_s %> key_name=<%=field.name %>>
+                    <div class="th-hover custom_header">
+                      <p class="custom_p_header" ><%= field.name %></p>
+                      <div class="custom_div_table">
+                        <i class="fas fa-times icons" onclick="hide_column_layer(<%="'"+field.key+"','"+field.project_type.id.to_s+"'"%>)"></i>
+                        <input type="text" class="d-none field_key_layer" id=<%= "headlayer"+field.project_type.id.to_s+"|"+field.key %> value=<%= field.id %>>
+                      </div>
+                    </div>
+                  </th>
+                <% end %>
+              <% end %>
+            <% end %>
+          </div>
         </th>
         <% if !@fields.nil? %>
-        <% index = 0 %>
           <% @fields.each do |field|  %>
             <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-            <% index=index+1 %>
             <% if !field.popup %>
-              <th class="d-none header_column border-0" id=<%="columnfake_"+field.name %>>
+              <th class="d-none header_column border-0" id=<%="columnfake_"+field.key %> key_name=<%=field.name %>>
             <% else %>
-              <th class="header_column border-0" id=<%="columnfake_"+field.name %>>
+              <th class="header_column border-0" id=<%="columnfake_"+field.key %> key_name=<%=field.name %> >
             <% end %>
                 <div class="th-hover custom_header">
                   <p class="custom_p_header"><%= field.name %></p>
                   <div class="custom_div_table">
-                    <i class="fas fa-sort-alpha-down icons" onclick="order_column(<%=index%>)"></i>
-                    <i class="fas fa-search icons" onclick="search_column(<%=index%>)"></i>
-                    <i class="fas fa-times icons" onclick="hide_column(<%=index%>)"></i>
-                    <input type="text" class="d-none field_key" id=<%= "field_key"+index.to_s %> value=<%= field.key %>>
+                    <i class="fas fa-sort-alpha-down icons" onclick="order_column(<%="'"+field.key+"'"%>)"></i>
+                    <i class="fas fa-search icons" onclick="search_column(<%="'"+field.key+"'"%>)"></i>
+                    <i class="fas fa-times icons" onclick="hide_column(<%="'"+field.key+"'"%>)"></i>
+                    <input type="text" class="d-none field_key" id=<%= "field_key"+field.key %> value=<%= field.key %>>
                   </div>
                 </div>
               </th>
@@ -579,6 +676,15 @@ function verify_open_columns(){
         <th class="border-0"></th>
         <th class="border-0"></th>
         <th class="border-0"></th>
+        <% if !@top_level_fields.nil? %>
+          <% @top_level_fields.each do |field|  %>
+            <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+                <th class="header_column border-0 d-none" id=<%="subcolumnfake_layer_"+field.key+"_"+field.project_type.id.to_s %>>
+                  <p class="custom_p_header"></p>
+                </th>
+            <% end %>
+          <% end %>
+        <% end %>
         <% if !@fields.nil? %>
           <% @fields.each do |field|  %>
             <%if field.heatmap_field %>
@@ -586,11 +692,12 @@ function verify_open_columns(){
             <% end %>
             <% if field.field_type_id != 11 && field.field_type_id != 7  %>
               <% if !field.popup %>
-                <th class="d-none header_column border-0">
+                <th class="d-none header_column border-0" id=<%="subcolumnfake_"+field.key %>>
               <% else %>
-                <th class="header_column border-0">
+                <th class="header_column border-0" id=<%="subcolumnfake_"+field.key %>>
               <% end %>
               <p class="custom_p_header"></p>
+            </th>
             <% end %>
           <% end %>
         <% end %>
@@ -601,6 +708,15 @@ function verify_open_columns(){
         <td class="custom_row width_only"></td>
         <td class="custom_row width_only"></td>
         <td class="custom_row width_only" id="columnfake_datacount"></td>
+        <!-- body oculto en primera tabla para ancho de columna -->
+          <% if !@top_level_fields.nil? %>
+          <% @top_level_fields.each do |field|  %>
+            <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+              <td class="custom_row width_only d-none" id=<%="columnfake_data_layer_"+field.key+"_"+field.project_type.id.to_s %>></td>
+            <% end %>
+          <% end %>  
+          <% end %>    
+        
         <% if !@fields.nil? %>
         <% index = 0 %>
           <% @fields.each do |field|  %>
@@ -613,7 +729,7 @@ function verify_open_columns(){
               <% end %>
             <% end %>
           <% end %>  
-      <% end %>    
+        <% end %>    
       </tr> 
     </tbody>
   </table>
@@ -632,14 +748,28 @@ function verify_open_columns(){
           <i class="fas fa-image icons"></i>
         </div>
         </th>
-        <th>#</th>
+        <th>#
+          <div id="layer_container_hidden">
+            <% if !@top_level_fields.nil? %>
+              <% @top_level_fields.each do |field|  %>
+                <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+                  <th class="header_column border-0 d-none" id=<%="column_layer_"+field.key+"_"+field.project_type.id.to_s %>>
+                    <div class="th-hover custom_header">
+                      <p class="custom_p_header" ><%= field.name %></p>
+                    </div>
+                  </th>
+                <% end %>
+              <% end %>
+            <% end %>
+          </div>
+        </th>
         <% if !@fields.nil? %>
         <% @fields.each do |field|  %>
           <% if field.field_type_id != 11 && field.field_type_id != 7  %>
            <% if !field.popup %>
-            <th style="min-width: 100px; white-space: nowrap;" class="d-none" id=<%="column_"+field.name %>><%= field.name %></th>
+            <th style="min-width: 100px; white-space: nowrap;" class="d-none" id=<%="column_"+field.key %>><%= field.name %></th>
            <% else %>
-            <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.name %>><%= field.name %></th>
+            <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.key %>><%= field.name %></th>
            <% end %>
           <% end %>
         <% end %>
