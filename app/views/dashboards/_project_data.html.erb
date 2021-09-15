@@ -635,7 +635,7 @@ function verify_open_columns(){
             <% if !@top_level_fields.nil? %>
               <% @top_level_fields.each do |field|  %>
                 <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-                  <th class="header_column border-0 header_column_layer d-none " id=<%="columnfake_layer_"+field.key+"_"+field.project_type.id.to_s %> key_name=<%=field.name %>>
+                  <th class="header_column border-0 header_column_layer d-none " id=<%="columnfake_layer_"+field.key+"_"+field.project_type.id.to_s %>>
                     <div class="th-hover custom_header">
                       <p class="custom_p_header" ><%= field.name %></p>
                       <div class="custom_div_table">
@@ -653,9 +653,9 @@ function verify_open_columns(){
           <% @fields.each do |field|  %>
             <% if field.field_type_id != 11 && field.field_type_id != 7  %>
             <% if !field.popup %>
-              <th class="d-none header_column border-0" id=<%="columnfake_"+field.key %> key_name=<%=field.name %>>
+              <th class="d-none header_column border-0" id=<%="columnfake_"+field.key %>>
             <% else %>
-              <th class="header_column border-0" id=<%="columnfake_"+field.key %> key_name=<%=field.name %> >
+              <th class="header_column border-0" id=<%="columnfake_"+field.key %>>
             <% end %>
                 <div class="th-hover custom_header">
                   <p class="custom_p_header"><%= field.name %></p>
