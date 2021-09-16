@@ -27,6 +27,8 @@ Navarra.project_types.config = {
   data_dashboard:'',
   from_date: '',
   to_date: '',
+  from_date_subforms: '',
+  to_date_subforms: '',
   item_selected:"",
   id_item_displayed:'',
   current_layer_filters: ""

@@ -439,39 +439,6 @@ div.custom-menu.show {
   width: 100%;
 }
 
-/* Modifica el estilo del time_slider */
-.irs-from ,.irs-to ,.irs-single {
-  margin-top:5px;
-}
-.irs--flat .irs-grid-text { /* texto */
-  color: #e8ebef !important;
- // text-shadow: 1px 1px 1px #2c2e34;
-}
-.irs--flat .irs-grid-pol { /* regla */
-  background-color: #e8ebefCC !important;
-}
-.irs--flat .irs-line { /* barra fondo */
-  background-color: #e8ebefCC !important;
-}
-.irs--flat .irs-min, .irs--flat .irs-max { /* label fondo */
-  color: #798088 !important;
-  background-color: #e8ebefCC !important;
-  margin-top:5px;
-}
-.time-slider-inactive{
-  background-color: #272B3099 !important;
-}
-.time-slider-inactive:before{
-  border-top-color: #272B3099 !important;
-}
-.time-slider-active{
-  background-color: #d3d800 !important;
-  color: #484b4f !important;
-}
-.time-slider-active:before{
-  border-top-color: #d3d800 !important;
-}
-
 /*custom checkbox and radio*/
 .custom-checkbox .custom-control-input:checked~.custom-control-label::before{
   background-color:#d3d800;

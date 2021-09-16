@@ -21,7 +21,7 @@ $(window).on('resize', function() {
   $('#timeslider-container').css('height',height_time_slider);
   height_filters = $('#filter-container').height()+4;
   $('#filter-container').css('height',height_filters);
-  resize_graphics()
+  resize_graphics();
 });
 
 // Establece alto de mapa y sidebar al cargar
@@ -29,11 +29,12 @@ $(document).ready(function() {
   var height_browser = window.innerHeight
   var height_dashboard = height_browser - 60
   $("#map").css("height", height_dashboard);
-    height_time_slider = $('#timeslider-container').height()+4;
-    $('#timeslider-container').css('height','0px');
-    height_filters = $('#filter-container').height()+4;
-    $('#filter-container').css('height','0px');
-  resize_graphics()
+  height_time_slider = $('#timeslider-container').height()+4;
+  $('#timeslider-container').css('height','0px');
+  height_filters = $('#filter-container').height()+4;
+  $('#filter-container').css('height','0px');
+  resize_graphics();
+  $('#charts-container').css('height','0px');
 });
 
 Navarra.namespace("dashboards.action_show");

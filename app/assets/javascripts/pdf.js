@@ -16,7 +16,6 @@ function init() {
                 row_selected.each(function(index_column){
                     if(index_column>2 && this.innerHTML!='' && !this.classList.contains('d-none')){
                         var column_name = $('#tr_visible th:nth-child('+(index_column+1)+')')[0].childNodes[1].childNodes[1];
-                        console.log(column_name)
                         var column_key = $('#tr_visible th:nth-child('+(index_column+1)+') input')[0];
                         pdf_values['properties'][column_key.value]= new Object;
                         pdf_values['properties'][column_key.value]['value'] = this.innerHTML;

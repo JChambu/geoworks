@@ -24,6 +24,8 @@ var verify_count_elements_childs = 0;
 var array_datos = [];
 var array_column_hidden = [];
 var subheader_open = [];
+var time_slider_data_subform;
+var time_slider_data;
 
 Number.prototype.format = function(n, x, s, c) {
   var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
@@ -67,6 +69,8 @@ function init_kpi(size_box = null) {
   var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
+  var from_date_subforms = Navarra.project_types.config.from_date_subforms;
+  var to_date_subforms = Navarra.project_types.config.to_date_subforms;
 
   if (xhr_kpi && xhr_kpi.readyState != 4) {
     xhr_kpi.abort();
@@ -84,6 +88,8 @@ function init_kpi(size_box = null) {
       filtered_form_ids: filtered_form_ids,
       from_date: from_date,
       to_date: to_date,
+      from_date_subforms: from_date_subforms,
+      to_date_subforms: to_date_subforms
     },
     dashboard_id: dashboard_id,
     success: function(data) {
@@ -178,6 +184,8 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
     var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
     var from_date = Navarra.project_types.config.from_date;
     var to_date = Navarra.project_types.config.to_date;
+    var from_date_subforms = Navarra.project_types.config.from_date_subforms;
+    var to_date_subforms = Navarra.project_types.config.to_date_subforms;
 
     if (xhr_chart && xhr_chart.readyState != 4) {
       xhr_chart.abort();
@@ -195,7 +203,9 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         data_conditions: attribute_filters,
         filtered_form_ids: filtered_form_ids,
         from_date: from_date,
-        to_date: to_date
+        to_date: to_date,
+        from_date_subforms: from_date_subforms,
+        to_date_subforms: to_date_subforms
       },
       success: function(data) {
         data_charts = data;
@@ -1192,6 +1202,8 @@ function init_data_dashboard(haschange,close_info) {
   var order_by_column = $(".order_by_column").val();
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
+  var from_date_subforms = Navarra.project_types.config.from_date_subforms;
+  var to_date_subforms = Navarra.project_types.config.to_date_subforms;
 
   if (xhr_table && xhr_table.readyState != 4) {
     xhr_table.abort();
@@ -1212,7 +1224,9 @@ function init_data_dashboard(haschange,close_info) {
       data_conditions: attribute_filters,
       filtered_form_ids: filtered_form_ids,
       from_date: from_date,
-      to_date: to_date
+      to_date: to_date,
+      from_date_subforms: from_date_subforms,
+      to_date_subforms: to_date_subforms
     },
 
     success: function(data) {
@@ -1532,113 +1546,32 @@ function adjust_colum_width(){
   });
 }
 
-
-
 //****** TERMINAN FUNCIONES PARA TABLA DE DATOS*****
 
 
 //****** FUNCIONES PARA TIMESLIDER*****
 
-// Función para iniciar por primera vez el timeslider
+// Función para iniciar por primera vez el datetime-picker
 function init_time_slider() {
-  var milisec_day = 86400000;
-  var today = new Date();
-  var today_string = today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
-  var today_format = changeformatDate(today_string, "day");
-  var min_date = dateToTS(today_format) - 5 * milisec_day;
-  var max_date = dateToTS(today_format) + 5 * milisec_day;
-  var from_date = dateToTS(today_format) - 2 * milisec_day;
-  var to_date = dateToTS(today_format) + 2 * milisec_day;
-  var step_time_slider = milisec_day;
-  create_time_slider(min_date, max_date, from_date, to_date, step_time_slider);
   // arma datetimepicker con formato incial por día y le manda los datos del timeslider
-  $('#time_slider_from').datetimepicker({
-    format: "DD/MM/YYYY",
-    viewMode: "days",
-    locale: moment.locale('en', {
-      week: {
-        dow: 1,
-        doy: 4
-      }
-    }),
-  });
-  $('#time_slider_to').datetimepicker({
-    format: "DD/MM/YYYY",
-    viewMode: "days",
-    locale: moment.locale('en', {
-      week: {
-        dow: 1,
-        doy: 4
-      }
-    }),
-  });
-  $('#time_slider_from').val(tsToDate(min_date));
-  $('#time_slider_to').val(tsToDate(max_date));
-}
-
-//Función para crear el time-slider al inciar y al cambiar la configuración
-function create_time_slider(min_date, max_date, from_date, to_date, step_time_slider) {
-  $('#filter-time-body').prepend(
-    $('<div>', {
-      'id': 'time_slider_item',
-      'style': 'margin-top:10px',
-    }).append(
-      $("<input>", {
-        'id': 'time_slider'
+  $("#time_slider_from_forms , #time_slider_to_forms , #time_slider_from_subforms , #time_slider_to_subforms"  ).each(function() {
+    $(this).datetimepicker({
+      format: "DD/MM/YYYY",
+      viewMode: "days",
+      locale: moment.locale('en', {
+        week: {
+          dow: 1,
+          doy: 4
+        }
       }),
-      $("<div>", {
-        'class': 'dropdown-divider',
-      })
-    )
-  )
-  $('#filter-time-body').prepend(
-    $("<i>", {
-      'id': 'time_slider_item-save',
-      'class': 'fas fa-calendar-check float-right',
-      'style': 'font-size: 1.5em ; margin-top: -16px; margin-right:4px; color: rgba(250,250,250,0.8); cursor:pointer',
-      'onclick': 'set_time_slider_filter()',
-    })
-  )
-  $('#filter-time-body').prepend(
-    $("<i>", {
-      'id': 'time_slider_item-clear',
-      'class': 'fas fa-calendar-times float-right',
-      'style': 'font-size: 1.5em; margin-top: -16px; margin-right:-16px; color: rgba(250,250,250,0.8); cursor:pointer',
-      'onclick': 'clear_time_slider_filter(true)',
-    })
-  )
-  $("#time_slider").ionRangeSlider({
-    skin: "flat",
-    type: "double",
-    step: step_time_slider,
-    grid: true,
-    grid_snap: true,
-    min: min_date,
-    max: max_date,
-    from: from_date,
-    to: to_date,
-    prettify: tsToDate,
-    onChange: function(data) {
-      set_time_slider_color();
-    },
-    onFinish: function(data) {
-      set_time_slider_values(data);
-    },
-    onStart: function(data) {
-      set_time_slider_values(data);
-    },
+    });
   });
-
-  $('.irs-min , .irs-max  ').css("cursor", "pointer");
-  $('.irs-min , .irs-max  ').attr("data-toggle", "modal");
-  $('.irs-min , .irs-max  ').attr("data-target", "#time-slider-modal");
-  set_time_slider_color();
 }
 
 //Función que cambia el estilo del datetimepicker según la selección por día,seman,mes o año
-function change_step_time_slider() {
-  if ($('#time_slider_step').val() == 'day') {
-    $("#time_slider_from , #time_slider_to").each(function() {
+function change_step_time_slider(origin) {
+  if ($('#time_slider_step_'+origin).val() == 'day') {
+    $("#time_slider_from_"+origin+" , #time_slider_to_"+origin).each(function() {
       $(this).val('');
       $(this).off('dp.change');
       $(this).data('DateTimePicker').destroy();
@@ -1648,8 +1581,8 @@ function change_step_time_slider() {
       });
     })
   }
-  if ($('#time_slider_step').val() == 'week') {
-    $("#time_slider_from , #time_slider_to").each(function() {
+  if ($('#time_slider_step_'+origin).val() == 'week') {
+    $("#time_slider_from_"+origin+" , #time_slider_to_"+origin).each(function() {
       $(this).val('');
       $(this).data('DateTimePicker').destroy();
       $(this).datetimepicker({
@@ -1665,8 +1598,8 @@ function change_step_time_slider() {
       });
     })
   }
-  if ($('#time_slider_step').val() == 'month') {
-    $("#time_slider_from , #time_slider_to").each(function() {
+  if ($('#time_slider_step_'+origin).val() == 'month') {
+    $("#time_slider_from_"+origin+" , #time_slider_to_"+origin).each(function() {
       $(this).val('');
       $(this).data('DateTimePicker').destroy();
       $(this).datetimepicker({
@@ -1676,8 +1609,8 @@ function change_step_time_slider() {
       $(this).off('dp.change');
     })
   }
-  if ($('#time_slider_step').val() == 'year') {
-    $("#time_slider_from , #time_slider_to").each(function() {
+  if ($('#time_slider_step_'+origin).val() == 'year') {
+    $("#time_slider_from_"+origin+" , #time_slider_to_"+origin).each(function() {
       $(this).val('');
       $(this).off('dp.change');
       $(this).data('DateTimePicker').destroy();
@@ -1689,171 +1622,94 @@ function change_step_time_slider() {
   }
 }
 
-// Función que manda los valores del modal datetimepicker al timeslider
-function set_time_slider() {
-  if ($("#time_slider_from").val() == '' || $("#time_slider_to").val() == '') {
-    return
-  }
-  var step_date = $('#time_slider_step').val();
-  if (step_date == 'day' || step_date == 'month') {
-    var min_date = dateToTS(new Date(changeformatDate($('#time_slider_from').val(), step_date)));
-    var max_date = dateToTS(new Date(changeformatDate($('#time_slider_to').val(), step_date)));
-  }
-  if (step_date == 'week') {
-    min_date = dateToTS(getDateOfISOWeek(($('#time_slider_from').val().split('-')[1]).substring(4), $('#time_slider_from').val().split('-')[0]));
-    max_date = dateToTS(getDateOfISOWeek(($('#time_slider_to').val().split('-')[1]).substring(4), $('#time_slider_to').val().split('-')[0]));
-  }
+//Función para aplicar el timeslider como filtro
+function set_time_slider_filter() {
+  //toma los valores from y to y los asigna a las variables globales
+  //Formularios
+  var step_date_forms = $('#time_slider_step_forms').val();
+  var from_forms = $('#time_slider_from_forms').val();
+  var to_forms = $('#time_slider_to_forms').val();
 
-  if (step_date == 'day' || step_date == 'month' || step_date == 'week') {
-    var milisec_day = 86400000;
-    if (step_date == 'day') {
-      range = 1;
-      var step_time_slider = milisec_day;
-    }
-    if (step_date == 'week') {
-      range = 7;
-      var step_time_slider = milisec_day * 7;
-    }
-    if (step_date == 'month') {
-      range = 31;
-      var step_time_slider = milisec_day * 31;
-    }
-    var total_range = (dateToTS(max_date) - dateToTS(min_date)) / (milisec_day * range);
-    var from_date = dateToTS(min_date) + range * milisec_day;
-    var to_date = dateToTS(min_date) + Math.floor(total_range) * 31 * milisec_day;
+  if (step_date_forms == 'day') {
+    from_forms = from_forms.split('/')[2] + '-' + from_forms.split('/')[1] + '-' + from_forms.split('/')[0];
+    to_forms = to_forms.split('/')[2] + '-' + to_forms.split('/')[1] + '-' + to_forms.split('/')[0];
   }
-
-  if (step_date == 'year') {
-    min_date = $('#time_slider_from').val();
-    max_date = $('#time_slider_to').val();
-    from_date = parseInt(min_date) + 1;
-    to_date = parseInt(max_date) - 1;
-    var step_time_slider = 1;
-  }
-  if (max_date <= min_date) {
-    return
-  }
-  $('#time_slider_item').remove();
-  $('#time_slider_item-save').remove();
-  $('#time_slider_item-clear').remove();
-  $('#time-slider-modal').modal('toggle');
-  clear_time_slider_filter(false);
-  create_time_slider(min_date, max_date, dateToTS(from_date), dateToTS(to_date), step_time_slider);
-}
-
-// función que toma el dato y lo convierte en formato "prety" para colocarlo en las etiquetas del timeslider
-function tsToDate(ts) {
-  var step_date = $('#time_slider_step').val();
-  if (step_date == 'day' || step_date == 'month' || step_date == 'week') {
-    var lang = "es-AR";
-    var d = new Date(ts);
-    var d_year = d.getFullYear();
-    var d_month = d.getMonth() + 1;
-    var d_day = d.getDate();
-    if (step_date == 'day') {
-      var d_format = d_day + '/' + d_month + '/' + d_year;
-    }
-    if (step_date == 'month') {
-      var month_names = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'set', 'oct', 'nov', 'dic'];
-      var d_format = month_names[d_month - 1] + '/' + d_year;
-    }
-    if (step_date == 'week') {
-      number_of_week = getWeekNumber(d);
-      var d_format = number_of_week[0] + '-Sem ' + number_of_week[1];
-    }
-  } else {
-    d_format = ts
-  }
-  return d_format;
-}
-
-// Función para colocar el timeslider en gris (no aplicado)
-function set_time_slider_color() {
-  var colored_element = ['.irs-bar', '.irs-from', '.irs-to', '.irs-single', '.irs-handle>i:first-child'];
-  colored_element.forEach(function(element) {
-    $(element).addClass('time-slider-inactive');
-    $(element).removeClass('time-slider-active');
-  })
-}
-
-//Función para tomar los datos del from y del to y convertirlos en fechas
-function set_time_slider_values(data) {
-  var from_pretty = data.from_pretty;
-  var to_pretty = data.to_pretty;
-  var step_date = $('#time_slider_step').val();
-  if (step_date == 'day') {
-    from_pretty = from_pretty.split('/')[2] + '-' + from_pretty.split('/')[1] + '-' + from_pretty.split('/')[0];
-    to_pretty = to_pretty.split('/')[2] + '-' + to_pretty.split('/')[1] + '-' + to_pretty.split('/')[0];
-  }
-  if (step_date == 'week') {
-    var dateofweek = getDateOfISOWeek((from_pretty.split('-')[1]).substring(4), from_pretty.split('-')[0])
-    from_pretty = dateofweek.getFullYear() + '-' + (dateofweek.getMonth() + 1) + '-' + dateofweek.getDate();
-    var dateofweek = getDateOfISOWeek((to_pretty.split('-')[1]).substring(4), to_pretty.split('-')[0])
+  if (step_date_forms == 'week') {
+    var dateofweek = getDateOfISOWeek((from_forms.split('-')[1]).substring(4), from_forms.split('-')[0])
+    from_forms = dateofweek.getFullYear() + '-' + (dateofweek.getMonth() + 1) + '-' + dateofweek.getDate();
+    var dateofweek = getDateOfISOWeek((to_forms.split('-')[1]).substring(4), to_forms.split('-')[0]);
     //+6días
     var milisec_day = 86400000;
     var lastdayofweek = new Date(dateToTS(dateofweek) + 6 * milisec_day);
-    to_pretty = lastdayofweek.getFullYear() + '-' + (lastdayofweek.getMonth() + 1) + '-' + lastdayofweek.getDate();
+    to_forms = lastdayofweek.getFullYear() + '-' + (lastdayofweek.getMonth() + 1) + '-' + lastdayofweek.getDate();
   }
-  if (step_date == 'month') {
-    var month_names = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'set', 'oct', 'nov', 'dic'];
-    from_pretty = from_pretty.split('/')[1] + '-' + (jQuery.inArray(from_pretty.split('/')[0], month_names) + 1) + '-1';
-    last_day = new Date(to_pretty.split('/')[1], (jQuery.inArray(to_pretty.split('/')[0], month_names) + 1), 0);
+  if (step_date_forms == 'month') {
+    from_forms = from_forms.split('/')[1] + '-' + from_forms.split('/')[0] + '-1';
+    last_day = new Date(to_forms.split('/')[1], to_forms.split('/')[0] , 0);
     last_day = last_day.getDate();
-    to_pretty = to_pretty.split('/')[1] + '-' + (jQuery.inArray(to_pretty.split('/')[0], month_names) + 1) + '-' + last_day;
+    to_forms = to_forms.split('/')[1] + '-' + to_forms.split('/')[0] + '-' + last_day;
   }
-  if (step_date == 'year') {
-    from_pretty = from_pretty + '-1-1';
-    to_pretty = to_pretty + '-12-31';
+  if (step_date_forms == 'year') {
+    from_forms = from_forms + '-1-1';
+    to_forms = to_forms + '-12-31';
   }
-  from_pretty += ' 00:00';
-  to_pretty += ' 23:59:59.99';
-  $('#time-slider-from-value').val(from_pretty);
-  $('#time-slider-to-value').val(to_pretty);
-}
+  from_forms += ' 00:00';
+  to_forms += ' 23:59:59.99';
 
-//Función para aplicar el timeslider como filtro
-function set_time_slider_filter() {
-  var colored_element = ['.irs-bar', '.irs-from', '.irs-to', '.irs-single', '.irs-handle>i:first-child'];
-  colored_element.forEach(function(element) {
-    $(element).addClass('time-slider-active');
-    $(element).removeClass('time-slider-inactive');
-  });
-  if ($('#prev_bar') != undefined)($('#prev_bar').remove());
-  var width_clone = (100 * parseFloat($('.irs-bar').css('width')) / parseFloat($('.irs-bar').parent().css('width'))) + '%';
-  var left_clone = (100 * parseFloat($('.irs-bar').css('left')) / parseFloat($('.irs-bar').parent().css('width'))) + '%';
-  var prev_bar = $('.irs-bar').clone();
-  prev_bar.attr('id', 'prev_bar');
-  prev_bar.appendTo('.irs--flat');
-  var styletext = 'background:#d3d800!important;left:' + left_clone + ';width:' + width_clone;
-  $('#prev_bar').attr('style', styletext);
+  //Subformularios
+  var step_date_subforms = $('#time_slider_step_subforms').val();
+  var from_subforms = $('#time_slider_from_subforms').val();
+  var to_subforms = $('#time_slider_to_subforms').val();
 
-  //toma los valores from y to y los asigna a las variables globales
-  Navarra.project_types.config.from_date = $('#time-slider-from-value').val();
-  Navarra.project_types.config.to_date = $('#time-slider-to-value').val();
+  if (step_date_subforms == 'day') {
+    from_subforms = from_subforms.split('/')[2] + '-' + from_subforms.split('/')[1] + '-' + from_subforms.split('/')[0];
+    to_subforms = to_subforms.split('/')[2] + '-' + to_subforms.split('/')[1] + '-' + to_subforms.split('/')[0];
+  }
+  if (step_date_subforms == 'week') {
+    var dateofweek = getDateOfISOWeek((from_subforms.split('-')[1]).substring(4), from_subforms.split('-')[0]);
+    from_subforms = dateofweek.getFullYear() + '-' + (dateofweek.getMonth() + 1) + '-' + dateofweek.getDate();
+    var dateofweek = getDateOfISOWeek((to_subforms.split('-')[1]).substring(4), to_subforms.split('-')[0]);
+    //+6días
+    var milisec_day = 86400000;
+    var lastdayofweek = new Date(dateToTS(dateofweek) + 6 * milisec_day);
+    to_subforms = lastdayofweek.getFullYear() + '-' + (lastdayofweek.getMonth() + 1) + '-' + lastdayofweek.getDate();
+  }
+  if (step_date_subforms == 'month') {
+    from_subforms = from_subforms.split('/')[1] + '-' + from_subforms.split('/')[0] + '-1';
+    last_day = new Date(to_subforms.split('/')[1], to_subforms.split('/')[0] , 0);
+    last_day = last_day.getDate();
+    to_subforms = to_subforms.split('/')[1] + '-' + to_subforms.split('/')[0] + '-' + last_day;
+  }
+  if (step_date_subforms == 'year') {
+    from_subforms = from_subforms + '-1-1';
+    to_subforms = to_subforms + '-12-31';
+  }
+  from_subforms += ' 00:00';
+  to_subforms += ' 23:59:59.99';
+
+
+  Navarra.project_types.config.from_date_subforms = from_subforms;
+  Navarra.project_types.config.to_date_subforms = to_subforms;
+  Navarra.project_types.config.from_date = from_forms;
+  Navarra.project_types.config.to_date = to_forms;
 
   //zoom_extent a datos filtrados
   Navarra.geomaps.get_zoomextent();
   // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
- // init_data_dashboard(true);
   Navarra.geomaps.current_layer();
- // Navarra.geomaps.show_kpis();
- show_labels(false);
+  Navarra.geomaps.show_labels(false);
 }
 
 //Función para eliminar el timeslider como filtro
 function clear_time_slider_filter(refresh_data) {
-  Navarra.project_types.config.from_date = "";
-  Navarra.project_types.config.to_date = "";
-  if ($('#prev_bar') != undefined)($('#prev_bar').remove());
-  set_time_slider_color();
-  if (refresh_data) {
+    Navarra.project_types.config.from_date_subforms = "";
+    Navarra.project_types.config.to_date_subforms = "";
+    Navarra.project_types.config.from_date = "";
+    Navarra.project_types.config.to_date = "";  
       //zoom_extent a datos filtrados
     Navarra.geomaps.get_zoomextent(true);
     // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
-  //  init_data_dashboard(true);
     Navarra.geomaps.current_layer();
-    //Navarra.geomaps.show_kpis();
-  }
 }
 
 
@@ -2398,12 +2254,17 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       project_type_id: project_type_id,
     }
   } else{
+    var from_date_subforms = Navarra.project_types.config.from_date;
+    var to_date_subforms = Navarra.project_types.config.to_date;
     var url_get = '/project_types/search_father_children_and_photos_data';
     var data = {
       project_type_id: project_type_id,
-      app_id: appid_info
+      app_id: appid_info,
+      from_date_subforms: from_date_subforms,
+      to_date_subforms: to_date_subforms
     }
   }
+  console.log(data)
   xhr_info = $.ajax({
     type: 'GET',
     url: url_get,
