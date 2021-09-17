@@ -217,7 +217,7 @@ function get_logo(){
         url: '/customers/search_customer',
         datatype: 'JSON',
         data: {
-            current_tenement: Navarra.dashboards.config.current_tenement;
+            current_tenement: Navarra.dashboards.config.current_tenement
         },
         success: function(data) {
             $('#logo_coorp_pdf').attr("src",'data:image/png;base64,'+data.logo);
