@@ -191,8 +191,6 @@ function show_subfield(field_ids){
     },
     success: function(data) {
       data.forEach(function(father_field){
-        console.log("Datos que llegan")
-        console.log(father_field)
         var count_columns = $('#tr_visible').find('th').length;
         var column_par = count_columns%2;
         var id_field = father_field.project_field_id;
@@ -297,8 +295,6 @@ function show_subfield(field_ids){
 
       // valores para la tabla
       var data_child = father_field.body
-      console.log("Datos de la tabla hijos ")
-      console.log(data_child)
         //Agrega celdas a toda la tabla
         if(Object.keys(data_child).length==0){
             $('#link_dropdown_'+id_field).addClass('disabled')
@@ -364,9 +360,11 @@ function show_subfield(field_ids){
             })           
           }
           $(this).append(new_td);
-        })
+        });
         if(Object.keys(data_child).length!=0){
           open_subheaders(id_field);
+        } else {
+          open_subheaders_no_data(id_field);
         }
         //ajusta ubicación del modal
         $('.custom_onclick , .custom_onclick_icon').on('click', function(event) {
@@ -394,9 +392,6 @@ function get_layer_data(){
       project_ids: app_ids_table,
     }
 
-    console.log('PARAMS search_data_for_pdf');
-    console.log(data);
-
     $.ajax({
       type: 'GET',
       url: '/projects/search_data_for_pdf',
@@ -404,8 +399,6 @@ function get_layer_data(){
       data: data,
       success: function(data) {
         data.forEach(function(data_project){
-        console.log("Datos que llegan")
-        console.log(data_project)
         data_project.forEach(function(row_layer){
             properties_layer= row_layer['properties'];
           Object.keys(properties_layer).forEach(function(prop){
@@ -420,7 +413,6 @@ function get_layer_data(){
 function show_column_layer(key_layer,id_layer){
   if(top_level_project_type_ids.indexOf(id_layer)<0){
     top_level_project_type_ids.push(id_layer);
-    console.log("busca datos")
     get_layer_data();
   }
   $('#columnfake_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
@@ -443,10 +435,8 @@ function hide_column_layer(key_layer,id_layer){
 function create_layers_table(){
   top_level_project_type_ids = [];
   $('.addcolumns_layers a.d-none').each(function(){
-    console.log(this)
     this.click();
   })
-  console.log("va a armar tabla de capas")
 }
 // TERMINAN FUNCIONES DE CAPAS SUPERIORES
 

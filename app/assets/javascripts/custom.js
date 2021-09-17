@@ -1501,8 +1501,6 @@ function create_subforms_table(){
       subheader_open.push(subheader_object);
     });
     field_ids.push(id);
-    console.log("Campos a crear")
-    console.log(field_ids)
     $('.subfield_column_'+id).remove();
   });
   if(field_subforms_open.length>0){
@@ -1514,6 +1512,14 @@ function open_subheaders(id_field){
   subheader_open.forEach(function(subheader){
     if(subheader.id_field ==  id_field){
       $('#'+id_field+'_subfield_'+subheader.id_subfield).click();
+    }
+  })
+}
+
+function open_subheaders_no_data(id_field){
+  subheader_open.forEach(function(subheader){
+    if(subheader.id_field ==  id_field){
+      $('#'+id_field+'_subfield_'+subheader.id_subfield).addClass('d-none');
     }
   })
 }
