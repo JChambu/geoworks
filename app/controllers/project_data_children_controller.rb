@@ -30,6 +30,8 @@ class ProjectDataChildrenController < ApplicationController
     project_ids = params[:project_ids]
     project_field_ids = params[:project_field_ids]
     @respuesta_array = []
+    from_date_subforms = params[:from_date_subforms]
+    to_date_subforms = params[:to_date_subforms]
 
     # Busca el rol del usuario
     customer_name = Apartment::Tenant.current
@@ -129,6 +131,12 @@ class ProjectDataChildrenController < ApplicationController
         .where(row_active: true)
         .where(current_season: true)
 
+      # Aplica time_slider para hijos
+      unless from_date_subforms.blank? || to_date_subforms.blank?
+        data = data.where("gwm_created_at BETWEEN '#{from_date_subforms}' AND '#{to_date_subforms}'")
+      else
+        data = data.where(row_enabled: true)
+      end
 
 
       # Agrupa los hijos por padre
