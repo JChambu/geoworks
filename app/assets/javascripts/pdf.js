@@ -20,7 +20,6 @@ function init() {
                         pdf_values['properties'][column_key.value]= new Object;
                         pdf_values['properties'][column_key.value]['value'] = this.innerHTML;
                         pdf_values['properties'][column_key.value]['name'] = column_name.innerHTML;
-                       // pdf_values['properties'][column_key.value]['name'] = column_name.getAttribute('key_name');
                     }
                     });
                 row_selected_child = $('#table_visible tr:nth-child('+index+') .custom_row_child tr');
@@ -66,9 +65,9 @@ function create_pdf_view(){
         // Ordenado por geometría
         pdf_values_all.forEach(function(pdf_object){
             var pdf_content = "<div class = 'div_pdf div_pdf"+pdf_object['id']+"'>";
-            pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:0.7em'>"+Navarra.dashboards.config.name_project+"</p>";
+            pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:1.2vh'>"+Navarra.dashboards.config.name_project+"</p>";
             Object.keys(pdf_object['properties']).forEach(function(key) {
-                pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_object['properties'][key]['name']+": "+pdf_object['properties'][key]['value']+"</p></div>";
+                pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.9vh' >"+pdf_object['properties'][key]['name']+": "+pdf_object['properties'][key]['value']+"</p></div>";
             });
             pdf_content += "</div>"
             pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos"+pdf_object['id']+"'></div>"
@@ -77,9 +76,9 @@ function create_pdf_view(){
             // Campos hijos
             Object.keys(pdf_object['children']).forEach(function(child_key){
                 var pdf_content = "<div class = 'div_pdf div_pdf_child div_pdf_child"+child_key+"'>";
-                pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:0.6em'>"+pdf_object['children'][child_key]['name_field']+": "+pdf_object['children'][child_key]['date']+"</p>";
+                pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:1vh'>"+pdf_object['children'][child_key]['name_field']+": "+pdf_object['children'][child_key]['date']+"</p>";
                 Object.keys(pdf_object['children'][child_key]['properties']).forEach(function(key_c) {
-                    pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_object['children'][child_key]['properties'][key_c]['name']+": "+pdf_object['children'][child_key]['properties'][key_c]['value']+"</p></div>";
+                    pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1vh' >"+pdf_object['children'][child_key]['properties'][key_c]['name']+": "+pdf_object['children'][child_key]['properties'][key_c]['value']+"</p></div>";
                 });
                 pdf_content += "</div>"
                 pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos_child"+child_key+"'></div>"
@@ -121,13 +120,13 @@ function create_pdf_view(){
         Object.keys(pdf_values_all_sorted).forEach(function(key_unique, index){
             Object.keys(pdf_values_all_sorted[key_unique]).forEach(function(id_field_father, index_father_field){
                 var pdf_content = "<div class = 'div_pdf div_pdf_child"+index+"_"+index_father_field+"'>";
-                pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:0.7em'>"+pdf_values_all_sorted[key_unique][id_field_father]['child']['name_field']+"</p>";
+                pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:1.2vh'>"+pdf_values_all_sorted[key_unique][id_field_father]['child']['name_field']+"</p>";
                 if(pdf_values_all_sorted[key_unique][id_field_father]['unique_id']!=undefined){
-                    pdf_content += "<p class='title_pdf mt-1 mb-0 element_pdf' style='font-size:0.7em'>"+pdf_values_all_sorted[key_unique][id_field_father]['unique_id']+"</p>";    
+                    pdf_content += "<p class='title_pdf mt-1 mb-0 element_pdf' style='font-size:1.2vh'>"+pdf_values_all_sorted[key_unique][id_field_father]['unique_id']+"</p>";    
                 }
-                pdf_content += "<p class='title_pdf mt-1 mb-1 element_pdf' style='font-size:0.7em'>"+pdf_values_all_sorted[key_unique][id_field_father]['child']['date']+"</p>";
+                pdf_content += "<p class='title_pdf mt-1 mb-1 element_pdf' style='font-size:1.2vh'>"+pdf_values_all_sorted[key_unique][id_field_father]['child']['date']+"</p>";
                 Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['child']['properties']).forEach(function(key) {
-                    pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['value']+"</p></div>";
+                    pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1vh' >"+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['value']+"</p></div>";
                 });
                 pdf_content += "</div>"
                 pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos_child"+index+"_"+index_father_field+"'></div>"
@@ -137,9 +136,9 @@ function create_pdf_view(){
             // Campos padres
                 Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['fathers']).forEach(function(father_key){
                     var pdf_content = "<div class = 'div_pdf div_pdf_child div_pdf"+father_key+"_"+index+"_"+index_father_field+"'>";
-                    pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:0.6em'>"+Navarra.dashboards.config.name_project+"</p>";
+                    pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:1vh'>"+Navarra.dashboards.config.name_project+"</p>";
                     Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key]).forEach(function(key_f) {
-                        pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.5em' >"+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['value']+"</p></div>";
+                        pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1vh' >"+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['value']+"</p></div>";
                     });
                 pdf_content += "</div>"
                 pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos"+father_key+"_"+index+"_"+index_father_field+"'></div>"
@@ -218,7 +217,8 @@ function get_logo(){
         url: '/customers/search_customer',
         datatype: 'JSON',
         data: {
-            current_tenement: Navarra.dashboards.config.current_tenement
+          //  current_tenement: Navarra.dashboards.config.current_tenement;
+            current_tenement: "public"
         },
         success: function(data) {
             $('#logo_coorp_pdf').attr("src",'data:image/png;base64,'+data.logo);
@@ -234,7 +234,9 @@ function get_logo(){
 function save_pdf(){
     var num_pages = 0;
     var y_screen = tamVentana()[1]*0.9;
+    console.log("alto "+y_screen)
     var x_screen = tamVentana()[1]*0.64;
+    console.log("ancho "+x_screen)
     var y_page = 290;
     var x_page = 210;
     var y_proportion = y_page/y_screen;
@@ -253,7 +255,7 @@ function save_pdf(){
     var logo_gw = new Image()
     logo_gw.src = '/assets/logo_gw_hor_2.png';
     doc.addImage(logo_gw, 'PNG', 165, 20 , 29, 9);
-    var height_line = $('.pdf_header').outerHeight() * y_proportion + 14;
+    var height_line = $('.pdf_header').outerHeight() * y_proportion + 10;
     doc.line(10,height_line,200,height_line); 
     var element_pdf = $('.element_pdf');
     element_pdf.each(function(index){
@@ -268,18 +270,15 @@ function save_pdf(){
         }
         last_y = y_pdf;
         altura = y_pdf - (y_page * num_pages) + margin_pdf;
-        var font_size_pdf = parseFloat(this.style.fontSize)*12/0.6;
+        var font_size_pdf = parseFloat(this.style.fontSize)*10;
         doc.setFontSize(font_size_pdf);
         if(this.nodeName==='P'){
-            var width_pdf = this.offsetWidth * x_proportion;
+            var width_pdf = this.parentNode.offsetWidth * x_proportion;
             var longtext = this.innerHTML;
             var splitTitle = doc.splitTextToSize(longtext, width_pdf);
             doc.text(x_pdf , altura, splitTitle);
         }
         
-        if(this.nodeName==='INPUT'){
-            doc.text(this.value, x_pdf , altura);
-        }
         if(this.nodeName==='IMG'){
             var width_pdf = this.offsetWidth * x_proportion;
             var height_pdf = this.offsetHeight * y_proportion;
