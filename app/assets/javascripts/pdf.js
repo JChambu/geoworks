@@ -1,6 +1,7 @@
 Navarra.namespace("pdf");
 Navarra.pdf = function() {
 var pdf_values_all = [];
+var imgData_pdf;
 
 function init() {
     pdf_values_all = [];
@@ -65,9 +66,9 @@ function create_pdf_view(){
         // Ordenado por geometría
         pdf_values_all.forEach(function(pdf_object){
             var pdf_content = "<div class = 'div_pdf div_pdf"+pdf_object['id']+"'>";
-            pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:1.2vh'>"+Navarra.dashboards.config.name_project+"</p>";
+            pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:1.3vh'>"+Navarra.dashboards.config.name_project+"</p>";
             Object.keys(pdf_object['properties']).forEach(function(key) {
-                pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:0.9vh' >"+pdf_object['properties'][key]['name']+": "+pdf_object['properties'][key]['value']+"</p></div>";
+                pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1vh' >"+pdf_object['properties'][key]['name']+": "+pdf_object['properties'][key]['value']+"</p></div>";
             });
             pdf_content += "</div>"
             pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos"+pdf_object['id']+"'></div>"
@@ -76,9 +77,9 @@ function create_pdf_view(){
             // Campos hijos
             Object.keys(pdf_object['children']).forEach(function(child_key){
                 var pdf_content = "<div class = 'div_pdf div_pdf_child div_pdf_child"+child_key+"'>";
-                pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:1vh'>"+pdf_object['children'][child_key]['name_field']+": "+pdf_object['children'][child_key]['date']+"</p>";
+                pdf_content += "<p class='title_pdf mt-3 mb-1 element_pdf' style='font-size:1.1vh'>"+pdf_object['children'][child_key]['name_field']+": "+pdf_object['children'][child_key]['date']+"</p>";
                 Object.keys(pdf_object['children'][child_key]['properties']).forEach(function(key_c) {
-                    pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1vh' >"+pdf_object['children'][child_key]['properties'][key_c]['name']+": "+pdf_object['children'][child_key]['properties'][key_c]['value']+"</p></div>";
+                    pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1.1vh' >"+pdf_object['children'][child_key]['properties'][key_c]['name']+": "+pdf_object['children'][child_key]['properties'][key_c]['value']+"</p></div>";
                 });
                 pdf_content += "</div>"
                 pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos_child"+child_key+"'></div>"
@@ -120,13 +121,13 @@ function create_pdf_view(){
         Object.keys(pdf_values_all_sorted).forEach(function(key_unique, index){
             Object.keys(pdf_values_all_sorted[key_unique]).forEach(function(id_field_father, index_father_field){
                 var pdf_content = "<div class = 'div_pdf div_pdf_child"+index+"_"+index_father_field+"'>";
-                pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:1.2vh'>"+pdf_values_all_sorted[key_unique][id_field_father]['child']['name_field']+"</p>";
+                pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:1.3vh'>"+pdf_values_all_sorted[key_unique][id_field_father]['child']['name_field']+"</p>";
                 if(pdf_values_all_sorted[key_unique][id_field_father]['unique_id']!=undefined){
-                    pdf_content += "<p class='title_pdf mt-1 mb-0 element_pdf' style='font-size:1.2vh'>"+pdf_values_all_sorted[key_unique][id_field_father]['unique_id']+"</p>";    
+                    pdf_content += "<p class='title_pdf mt-1 mb-0 element_pdf' style='font-size:1.3vh'>"+pdf_values_all_sorted[key_unique][id_field_father]['unique_id']+"</p>";    
                 }
-                pdf_content += "<p class='title_pdf mt-1 mb-1 element_pdf' style='font-size:1.2vh'>"+pdf_values_all_sorted[key_unique][id_field_father]['child']['date']+"</p>";
+                pdf_content += "<p class='title_pdf mt-1 mb-1 element_pdf' style='font-size:1.3vh'>"+pdf_values_all_sorted[key_unique][id_field_father]['child']['date']+"</p>";
                 Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['child']['properties']).forEach(function(key) {
-                    pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1vh' >"+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['value']+"</p></div>";
+                    pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1.1vh' >"+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['value']+"</p></div>";
                 });
                 pdf_content += "</div>"
                 pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos_child"+index+"_"+index_father_field+"'></div>"
@@ -136,9 +137,9 @@ function create_pdf_view(){
             // Campos padres
                 Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['fathers']).forEach(function(father_key){
                     var pdf_content = "<div class = 'div_pdf div_pdf_child div_pdf"+father_key+"_"+index+"_"+index_father_field+"'>";
-                    pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:1vh'>"+Navarra.dashboards.config.name_project+"</p>";
+                    pdf_content += "<p class='title_pdf mt-3 mb-1 element_pdf' style='font-size:1.1vh'>"+Navarra.dashboards.config.name_project+"</p>";
                     Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key]).forEach(function(key_f) {
-                        pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1vh' >"+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['value']+"</p></div>";
+                        pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1.1vh' >"+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['value']+"</p></div>";
                     });
                 pdf_content += "</div>"
                 pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos"+father_key+"_"+index+"_"+index_father_field+"'></div>"
@@ -148,6 +149,23 @@ function create_pdf_view(){
             });
         });
     }
+    //agrega mapa
+    var mapContainer = document.getElementById('map');
+    $('.leaflet-top').addClass('d-none');
+    html2canvas(mapContainer, {
+        useCORS: true,
+    }).then(function(canvas) {
+         imgData_pdf = canvas.toDataURL(
+                    'image/png');
+         var new_map_pdf = document.createElement("IMG");
+         new_map_pdf.src = imgData_pdf;
+         new_map_pdf.style.width = '90%'
+         new_map_pdf.style.marginTop = '20px';
+         new_map_pdf.id = "map_pdf";
+         $('#pdf_body').append(new_map_pdf);
+         $('.leaflet-top').removeClass('d-none');
+    });
+    
 }
 
 function get_photo(app_id, ischild, id_container,is_grouped){
@@ -241,6 +259,7 @@ function save_pdf(){
     var y_proportion = y_page/y_screen;
     var x_proportion = x_page/x_screen;
     var altura = 0;
+    var altura_final = 0;
     var margin_pdf = 10;
     var last_y = 0;
     const doc = new jsPDF({
@@ -269,22 +288,35 @@ function save_pdf(){
         }
         last_y = y_pdf;
         altura = y_pdf - (y_page * num_pages) + margin_pdf;
-        var font_size_pdf = parseFloat(this.style.fontSize)*10;
+        var font_size_pdf = parseFloat(this.style.fontSize)*9;
         doc.setFontSize(font_size_pdf);
         if(this.nodeName==='P'){
             var width_pdf = this.parentNode.offsetWidth * x_proportion;
             var longtext = this.innerHTML;
             var splitTitle = doc.splitTextToSize(longtext, width_pdf);
             doc.text(x_pdf , altura, splitTitle);
+            altura_final = altura;
         }
         
         if(this.nodeName==='IMG'){
             var width_pdf = this.offsetWidth * x_proportion;
             var height_pdf = this.offsetHeight * y_proportion;
             doc.addImage(this.src, 'JPEG', x_pdf , (altura - 2) , width_pdf, height_pdf);
-        }
-        
+            if(altura_final < (altura + height_pdf ) ){
+                altura_final = altura + height_pdf;
+            }
+        }        
  });
+    // imprime mapa
+    var width_map_pdf = document.getElementById('map_pdf').offsetWidth * x_proportion;
+    var height_map_pdf = document.getElementById('map_pdf').offsetHeight * y_proportion;
+    if(altura_final + (190 * height_map_pdf/width_map_pdf)>(y_page - 20)) {
+        num_pages ++;
+        doc.addPage();
+        margin_pdf += 30;
+        altura_final = 10;
+    }
+    doc.addImage(imgData_pdf, 'PNG', 10, (altura_final + 10), 190 , 190 * height_map_pdf/width_map_pdf)
     doc.save("reporte.pdf");
 }
 

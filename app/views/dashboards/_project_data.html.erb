@@ -100,6 +100,7 @@ function hide_column(key){
  $('.celd_key'+key).addClass("d-none");
  $('#addcolumn_'+key).removeClass("d-none");
  $('.fa-plus').removeClass("d-none");
+ adjust_colum_width();
 }
 
 //muestra columnas
@@ -113,6 +114,7 @@ function show_column(key){
  if($(".addcolumns").children().length == $(".column_data.d-none").length){
    $('.fa-plus').addClass("d-none");
  }
+ adjust_colum_width();
 }
 
 //mostrar dato en el mapa

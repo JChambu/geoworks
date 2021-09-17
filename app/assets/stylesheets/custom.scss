@@ -398,7 +398,7 @@ div.custom-menu.show {
 
 /* Evita los elementos de leaflet de la derecha se superpongan con el sidebar */
 .leaflet-right {
-  margin-right: 30%;
+  margin-right: 0%;
   transition:1s;
 }
 
@@ -409,7 +409,6 @@ div.custom-menu.show {
 
 /* Modifica el scroll del navagador */
 ::-webkit-scrollbar {
-  width: 15px;
   background-color: rgba(232, 235, 239, 0.5);
 }
 ::-webkit-scrollbar-thumb {
@@ -550,8 +549,8 @@ div.custom-menu.show {
   scrollbar-width: none;  /* Firefox */
 }
 .scroll::-webkit-scrollbar {
-  width: 15px;
-  height: 15px;
+  width: 2.5vh;
+  height: 2.5vh;
 }
 
 .scroll_false{

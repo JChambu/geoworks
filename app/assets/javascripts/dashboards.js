@@ -21,10 +21,10 @@ $(window).on('resize', function() {
   if(!$('#status-view').hasClass('status-view-condensed')){
     if($('#status-view').hasClass('status-view-expanded')){
       $(".table_data_container").css("top", $("#nav_bar").innerHeight());
-      var height_table = height_browser - $("#nav_bar").innerHeight() - height_card - 40;
+      var height_table = height_browser - $("#nav_bar").innerHeight() - height_card - 50;
       $(".table_scroll").css("height", height_table);
     } else {
-        var height_table = height_browser*.5 - height_card - 40;
+        var height_table = height_browser*.5 - height_card - 50;
         $(".table_scroll").css("height", height_table);
     }
   }
@@ -224,6 +224,12 @@ Navarra.dashboards.action_show = function(){
         var height_card=$(".card_data").innerHeight()
         var height_table = height_browser - $("#nav_bar").innerHeight() - height_card - 40;
         $(".table_scroll").css("height", height_table);
+        if($('#sidebar_all').hasClass('charts-container') || $('#sidebar_all').hasClass('timeslider-container') || $('#sidebar_all').hasClass('filter-container') ){
+          $(".table_data_container").css("width", "70%");
+        }
+        if($('#sidebar_all').hasClass('charts-container_expanded') || $('#sidebar_all').hasClass('timeslider-container_expanded') || $('#sidebar_all').hasClass('filter-container_expanded')){
+          $(".table_data_container").css("width", "40%");
+        }
         if(status_view_condensed){
           $("#collapse_data").css("max-height", "100vh");
           $("#collapse_data").css("transition", "2s");
@@ -271,6 +277,13 @@ Navarra.dashboards.action_show = function(){
           $(".leaflet-control-scale-line").css("display", "none");
           init_data_dashboard(false);
         }
+        if(!$('#sidebar_all').hasClass('charts-container_expanded')){
+          $(".table_data_container").css("width", "70%");
+        }
+        if(!$('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded') ){
+          $(".table_data_container").css("width", "100%");
+        }
+        
         verify_scroll_table();
     });
 
