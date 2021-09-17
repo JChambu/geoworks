@@ -1711,6 +1711,9 @@ function set_time_slider_filter() {
   Navarra.geomaps.get_zoomextent();
   // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
   Navarra.geomaps.current_layer();
+  // Fuerza el rearmado de la tabla
+    data_dashboard = "";
+    init_data_dashboard(false,false);
   Navarra.geomaps.show_labels(false);
 }
 
@@ -2234,8 +2237,6 @@ function export_to_excel(table, name, filename) {
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
 function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
-  console.log("es nuevo? "+is_new_file)
-  console.log("id a abrir "+appid_info)
   children_fields_all = new Object;
   if(!is_new_file){
     $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
@@ -2675,8 +2676,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             }
             new_celd.id = "child_container_"+element.key;
             // si tiene autorización para nuevos hijos
-            console.log("Va a crear botón más")
-            console.log($('#new_subform_control').val()=="true")
             if($('#new_subform_control').val()=="true"){
               var new_p = document.createElement('I');
               new_p.className = "fas fa-plus icon_add d-none add_subforms";
@@ -3061,9 +3060,6 @@ function set_date_style(is_multiple){
         if(this.id.substring(0,12)=="fieldchildid"){
           if(!is_multiple){
             var id_field_father = this.getAttribute('id_field_father');
-            console.log(this)
-            console.log(this.getAttribute('id_field_father'))
-            console.log("Campo padre en campos fechas "+id_field_father)
             calculate_all(false,false,this.id.split('|')[2],id_field_father);
           } else{
             changeChild(this.id.split('|')[2]);
@@ -3282,11 +3278,7 @@ function edit_file(edit_parent, edit_child, edit_status){
   if(array_child_edited.length>0){
     // array_child_edited es un array que contiene los id de los hijos modificados. 0 para nuevos hijos
     array_child_edited = array_child_edited.unique();
-    console.log("Array child edited")
-    console.log(array_child_edited)
     for(z=0;z<array_child_edited.length;z++){
-      console.log("Iteración en hijos editados")
-      console.log(array_child_edited[z])
       var id_field_father_properties;
       // crea array único de ids de campos padres
       var array_field_id_father_grouped = [];
@@ -3633,26 +3625,16 @@ function calculate_all(first_time, isparent, id_child_calculate , id_field_child
         }
       });
     } else{
-      console.log("es nuevo hijo? "+is_new_child)
       if(is_new_child!=undefined){
         is_new_file = is_new_child;
         if(is_new_file){var type_calculation = "new_file"} else{ var type_calculation = "data_edition"}
       }
-        console.log(is_new_file)
       //Ejecuta Calculate de campos hijos
-      console.log("Va a calcular hijos")
-      console.log("Es primera vez? "+first_time)
       if(!first_time){
         array_child_edited.push(parseInt(id_child_calculate));
         //ejecuta calculate para el hijo cambiado
-        console.log(children_fields_all)
-        console.log("Campo padre a calcular")
-        console.log(id_field_child_calculate)
           children_fields_all[id_field_child_calculate].forEach(function(element) {
-            console.log("elemento")
-            console.log(element)
             var id_child_toScript = element.field_id+"|"+id_child_calculate;
-            console.log("idchild calculated "+id_child_calculate)
             if(element.calculated_field!="" && element.field_type_id!=11){
               Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
             }
