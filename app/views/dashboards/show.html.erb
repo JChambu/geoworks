@@ -388,19 +388,19 @@ function min_photo(){
       </div>
 </div>
 <% if can? :data, :edit_geom %>
-  <input id="edit_geom_control" value="true">
+  <input class="d-none" id="edit_geom_control" value="true">
 <%else %>
-  <input id="edit_geom_control" value="false">
+  <input class="d-none" id="edit_geom_control" value="false">
 <% end %>
 <% if can? :data, :new %>
-  <input id="new_geom_control" value="true">
+  <input class="d-none" id="new_geom_control" value="true">
 <%else %>
-  <input id="new_geom_control" value="false">
+  <input class="d-none" id="new_geom_control" value="false">
 <% end %>
 <% if can? :data, :new_subform %>
-  <input id="new_subform_control" value="true">
+  <input class="d-none" id="new_subform_control" value="true">
 <%else %>
-  <input id="new_subform_control" value="false">
+  <input class="d-none" id="new_subform_control" value="false">
 <% end %>
 
 <div id="photos-modal" class="modal fade card text-light chart-bg-transparent pb-0 pt-0 custom_modal_photos" data-backdrop="false" draggable=true ondragstart="Navarra.photos.drag_photos(event)">

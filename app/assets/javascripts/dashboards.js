@@ -12,22 +12,28 @@ $(document).ready(function () {
 // Establece alto de mapa y sidebar al redimensionar
 $(window).on('resize', function() {
   var height_browser = window.innerHeight
-  var height_dashboard = height_browser - 60
+  var height_dashboard = height_browser - $('#nav_bar').innerHeight();
   $("#map").css("height", height_dashboard);
   var height_card=$(".card_data").innerHeight()
   var height_table = height_browser/2 - height_card -50
- // $(".table_scroll").css("height", height_table);
-  height_time_slider = $('#timeslider-container').height()+4;
-  $('#timeslider-container').css('height',height_time_slider);
-  height_filters = $('#filter-container').height()+4;
-  $('#filter-container').css('height',height_filters);
   resize_graphics();
+  //altura de tabla
+  if(!$('#status-view').hasClass('status-view-condensed')){
+    if($('#status-view').hasClass('status-view-expanded')){
+      $(".table_data_container").css("top", $("#nav_bar").innerHeight());
+      var height_table = height_browser - $("#nav_bar").innerHeight() - height_card - 40;
+      $(".table_scroll").css("height", height_table);
+    } else {
+        var height_table = height_browser*.5 - height_card - 40;
+        $(".table_scroll").css("height", height_table);
+    }
+  }
 });
 
 // Establece alto de mapa y sidebar al cargar
 $(document).ready(function() {
-  var height_browser = window.innerHeight
-  var height_dashboard = height_browser - 60
+  var height_browser = window.innerHeight;
+  var height_dashboard = height_browser - $('#nav_bar').innerHeight();
   $("#map").css("height", height_dashboard);
   height_time_slider = $('#timeslider-container').height()+4;
   $('#timeslider-container').css('height','0px');
@@ -206,16 +212,17 @@ Navarra.dashboards.action_show = function(){
     //Ventana inferior datos
     //Expandir toda la pantalla
     $("#view-data-expanded").on("click", function() {
+      $('#status-view').addClass('status-view-expanded');
       $(".table_data_container").css("background", "rgba(0, 0, 0, 0.2)");
       var status_view_condensed = $('#status-view').hasClass('status-view-condensed');
         $('#status-view').removeClass('status-view-condensed');
         $(".table_data_container").css("transition-delay", "0s");
-        $(".table_data_container").css("top", "8.5vh");
+        $(".table_data_container").css("top", $("#nav_bar").innerHeight());
         $(".leaflet-right").css("display", "none");
         $(".leaflet-left").css("display", "none");
         var height_browser = window.innerHeight
         var height_card=$(".card_data").innerHeight()
-        var height_table = height_browser*.923 - height_card -50
+        var height_table = height_browser - $("#nav_bar").innerHeight() - height_card - 40;
         $(".table_scroll").css("height", height_table);
         if(status_view_condensed){
           $("#collapse_data").css("max-height", "100vh");
@@ -230,6 +237,7 @@ Navarra.dashboards.action_show = function(){
     //Minimizar la pantalla
     $("#view-data-hidden").on("click", function() {
       $('#status-view').addClass('status-view-condensed');
+      $('#status-view').removeClass('status-view-expanded');
       $(".table_data_container").css("transition-delay", "0.3s");
       $(".table_data_container").css("background", "transparent");
       $(".table_data_container").css("top", "97vh");
@@ -246,11 +254,12 @@ Navarra.dashboards.action_show = function(){
       $(".table_data_container").css("background", "rgba(0, 0, 0, 0.2)");
       var status_view_condensed = $('#status-view').hasClass('status-view-condensed');
         $('#status-view').removeClass('status-view-condensed');
+        $('#status-view').removeClass('status-view-expanded');
         $(".table_data_container").css("transition-delay", "0s");
-        $(".table_data_container").css("top", "50.8vh");
+        $(".table_data_container").css("top", "50vh");
         var height_browser = window.innerHeight
         var height_card=$(".card_data").innerHeight()
-        var height_table = height_browser*.5 - height_card -50
+        var height_table = height_browser*.5 - height_card - 40;
         $(".table_scroll").css("height", height_table);
         $(".leaflet-right").css("display", "inline-flex");
         $(".leaflet-left").css("display", "block");
