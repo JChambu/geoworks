@@ -1513,7 +1513,7 @@ function open_subheaders(id_field){
     if(subheader.id_field ==  id_field){
       $('#'+id_field+'_subfield_'+subheader.id_subfield).click();
     }
-  })
+  });
 }
 
 function open_subheaders_no_data(id_field){
@@ -1521,7 +1521,7 @@ function open_subheaders_no_data(id_field){
     if(subheader.id_field ==  id_field){
       $('#'+id_field+'_subfield_'+subheader.id_subfield).addClass('d-none');
     }
-  })
+  });
 }
 
 function verify_scroll_table(){
