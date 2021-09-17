@@ -69,8 +69,7 @@ function init_kpi(size_box = null) {
   var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
-  var from_date_subforms = Navarra.project_types.config.from_date_subforms;
-  var to_date_subforms = Navarra.project_types.config.to_date_subforms;
+
 
   if (xhr_kpi && xhr_kpi.readyState != 4) {
     xhr_kpi.abort();
@@ -88,8 +87,6 @@ function init_kpi(size_box = null) {
       filtered_form_ids: filtered_form_ids,
       from_date: from_date,
       to_date: to_date,
-      from_date_subforms: from_date_subforms,
-      to_date_subforms: to_date_subforms
     },
     dashboard_id: dashboard_id,
     success: function(data) {
@@ -184,8 +181,6 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
     var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
     var from_date = Navarra.project_types.config.from_date;
     var to_date = Navarra.project_types.config.to_date;
-    var from_date_subforms = Navarra.project_types.config.from_date_subforms;
-    var to_date_subforms = Navarra.project_types.config.to_date_subforms;
 
     if (xhr_chart && xhr_chart.readyState != 4) {
       xhr_chart.abort();
@@ -204,8 +199,6 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         filtered_form_ids: filtered_form_ids,
         from_date: from_date,
         to_date: to_date,
-        from_date_subforms: from_date_subforms,
-        to_date_subforms: to_date_subforms
       },
       success: function(data) {
         data_charts = data;
@@ -1202,8 +1195,6 @@ function init_data_dashboard(haschange,close_info) {
   var order_by_column = $(".order_by_column").val();
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
-  var from_date_subforms = Navarra.project_types.config.from_date_subforms;
-  var to_date_subforms = Navarra.project_types.config.to_date_subforms;
 
   if (xhr_table && xhr_table.readyState != 4) {
     xhr_table.abort();
@@ -1225,8 +1216,6 @@ function init_data_dashboard(haschange,close_info) {
       filtered_form_ids: filtered_form_ids,
       from_date: from_date,
       to_date: to_date,
-      from_date_subforms: from_date_subforms,
-      to_date_subforms: to_date_subforms
     },
 
     success: function(data) {
@@ -1630,63 +1619,88 @@ function set_time_slider_filter() {
   var from_forms = $('#time_slider_from_forms').val();
   var to_forms = $('#time_slider_to_forms').val();
 
-  if (step_date_forms == 'day') {
-    from_forms = from_forms.split('/')[2] + '-' + from_forms.split('/')[1] + '-' + from_forms.split('/')[0];
-    to_forms = to_forms.split('/')[2] + '-' + to_forms.split('/')[1] + '-' + to_forms.split('/')[0];
+  if(from_forms!=""){
+    if (step_date_forms == 'day') {
+      from_forms = from_forms.split('/')[2] + '-' + from_forms.split('/')[1] + '-' + from_forms.split('/')[0];
+    }
+    if (step_date_forms == 'week') {
+      var dateofweek = getDateOfISOWeek((from_forms.split('-')[1]).substring(4), from_forms.split('-')[0])
+      from_forms = dateofweek.getFullYear() + '-' + (dateofweek.getMonth() + 1) + '-' + dateofweek.getDate();
+    }
+    if (step_date_forms == 'month') {
+      from_forms = from_forms.split('/')[1] + '-' + from_forms.split('/')[0] + '-1';
+    }
+    if (step_date_forms == 'year') {
+      from_forms = from_forms + '-1-1';
+    }
+    from_forms += ' 00:00';
   }
-  if (step_date_forms == 'week') {
-    var dateofweek = getDateOfISOWeek((from_forms.split('-')[1]).substring(4), from_forms.split('-')[0])
-    from_forms = dateofweek.getFullYear() + '-' + (dateofweek.getMonth() + 1) + '-' + dateofweek.getDate();
-    var dateofweek = getDateOfISOWeek((to_forms.split('-')[1]).substring(4), to_forms.split('-')[0]);
-    //+6días
-    var milisec_day = 86400000;
-    var lastdayofweek = new Date(dateToTS(dateofweek) + 6 * milisec_day);
-    to_forms = lastdayofweek.getFullYear() + '-' + (lastdayofweek.getMonth() + 1) + '-' + lastdayofweek.getDate();
+  
+  if(to_forms!=""){
+    if (step_date_forms == 'day') {
+      to_forms = to_forms.split('/')[2] + '-' + to_forms.split('/')[1] + '-' + to_forms.split('/')[0];
+    }
+    if (step_date_forms == 'week') {
+      var dateofweek = getDateOfISOWeek((to_forms.split('-')[1]).substring(4), to_forms.split('-')[0]);
+      //+6días
+      var milisec_day = 86400000;
+      var lastdayofweek = new Date(dateToTS(dateofweek) + 6 * milisec_day);
+      to_forms = lastdayofweek.getFullYear() + '-' + (lastdayofweek.getMonth() + 1) + '-' + lastdayofweek.getDate();
+    }
+    if (step_date_forms == 'month') {
+      last_day = new Date(to_forms.split('/')[1], to_forms.split('/')[0] , 0);
+      last_day = last_day.getDate();
+      to_forms = to_forms.split('/')[1] + '-' + to_forms.split('/')[0] + '-' + last_day;
+    }
+    if (step_date_forms == 'year') {
+      to_forms = to_forms + '-12-31';
+    }
+    to_forms += ' 23:59:59.99';
   }
-  if (step_date_forms == 'month') {
-    from_forms = from_forms.split('/')[1] + '-' + from_forms.split('/')[0] + '-1';
-    last_day = new Date(to_forms.split('/')[1], to_forms.split('/')[0] , 0);
-    last_day = last_day.getDate();
-    to_forms = to_forms.split('/')[1] + '-' + to_forms.split('/')[0] + '-' + last_day;
-  }
-  if (step_date_forms == 'year') {
-    from_forms = from_forms + '-1-1';
-    to_forms = to_forms + '-12-31';
-  }
-  from_forms += ' 00:00';
-  to_forms += ' 23:59:59.99';
 
   //Subformularios
   var step_date_subforms = $('#time_slider_step_subforms').val();
   var from_subforms = $('#time_slider_from_subforms').val();
   var to_subforms = $('#time_slider_to_subforms').val();
 
-  if (step_date_subforms == 'day') {
-    from_subforms = from_subforms.split('/')[2] + '-' + from_subforms.split('/')[1] + '-' + from_subforms.split('/')[0];
-    to_subforms = to_subforms.split('/')[2] + '-' + to_subforms.split('/')[1] + '-' + to_subforms.split('/')[0];
+  if(from_subforms!=""){
+    if (step_date_subforms == 'day') {
+      from_subforms = from_subforms.split('/')[2] + '-' + from_subforms.split('/')[1] + '-' + from_subforms.split('/')[0];
+    }
+    if (step_date_subforms == 'week') {
+      var dateofweek = getDateOfISOWeek((from_subforms.split('-')[1]).substring(4), from_subforms.split('-')[0]);
+      from_subforms = dateofweek.getFullYear() + '-' + (dateofweek.getMonth() + 1) + '-' + dateofweek.getDate();
+    }
+    if (step_date_subforms == 'month') {
+      from_subforms = from_subforms.split('/')[1] + '-' + from_subforms.split('/')[0] + '-1';
+    }
+    if (step_date_subforms == 'year') {
+      from_subforms = from_subforms + '-1-1';
+    }
+    from_subforms += ' 00:00';
   }
-  if (step_date_subforms == 'week') {
-    var dateofweek = getDateOfISOWeek((from_subforms.split('-')[1]).substring(4), from_subforms.split('-')[0]);
-    from_subforms = dateofweek.getFullYear() + '-' + (dateofweek.getMonth() + 1) + '-' + dateofweek.getDate();
-    var dateofweek = getDateOfISOWeek((to_subforms.split('-')[1]).substring(4), to_subforms.split('-')[0]);
-    //+6días
-    var milisec_day = 86400000;
-    var lastdayofweek = new Date(dateToTS(dateofweek) + 6 * milisec_day);
-    to_subforms = lastdayofweek.getFullYear() + '-' + (lastdayofweek.getMonth() + 1) + '-' + lastdayofweek.getDate();
-  }
-  if (step_date_subforms == 'month') {
-    from_subforms = from_subforms.split('/')[1] + '-' + from_subforms.split('/')[0] + '-1';
-    last_day = new Date(to_subforms.split('/')[1], to_subforms.split('/')[0] , 0);
-    last_day = last_day.getDate();
-    to_subforms = to_subforms.split('/')[1] + '-' + to_subforms.split('/')[0] + '-' + last_day;
-  }
-  if (step_date_subforms == 'year') {
-    from_subforms = from_subforms + '-1-1';
-    to_subforms = to_subforms + '-12-31';
-  }
-  from_subforms += ' 00:00';
-  to_subforms += ' 23:59:59.99';
 
+  if(to_subforms!=""){
+    if (step_date_subforms == 'day') {
+      to_subforms = to_subforms.split('/')[2] + '-' + to_subforms.split('/')[1] + '-' + to_subforms.split('/')[0];
+    }
+    if (step_date_subforms == 'week') {
+      var dateofweek = getDateOfISOWeek((to_subforms.split('-')[1]).substring(4), to_subforms.split('-')[0]);
+      //+6días
+      var milisec_day = 86400000;
+      var lastdayofweek = new Date(dateToTS(dateofweek) + 6 * milisec_day);
+      to_subforms = lastdayofweek.getFullYear() + '-' + (lastdayofweek.getMonth() + 1) + '-' + lastdayofweek.getDate();
+    }
+    if (step_date_subforms == 'month') {
+      last_day = new Date(to_subforms.split('/')[1], to_subforms.split('/')[0] , 0);
+      last_day = last_day.getDate();
+      to_subforms = to_subforms.split('/')[1] + '-' + to_subforms.split('/')[0] + '-' + last_day;
+    }
+    if (step_date_subforms == 'year') {
+      to_subforms = to_subforms + '-12-31';
+    }
+    to_subforms += ' 23:59:59.99';
+  }
 
   Navarra.project_types.config.from_date_subforms = from_subforms;
   Navarra.project_types.config.to_date_subforms = to_subforms;
