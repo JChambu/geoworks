@@ -1722,10 +1722,18 @@ function clear_time_slider_filter(refresh_data) {
     Navarra.project_types.config.to_date_subforms = "";
     Navarra.project_types.config.from_date = "";
     Navarra.project_types.config.to_date = "";  
+    $('#time_slider_from_forms').val("");
+    $('#time_slider_to_forms').val("");
+    $('#time_slider_from_subforms').val("");
+    $('#time_slider_to_subforms').val("");
       //zoom_extent a datos filtrados
     Navarra.geomaps.get_zoomextent(true);
     // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
     Navarra.geomaps.current_layer();
+    // Fuerza el rearmado de la tabla
+    data_dashboard = "";
+    init_data_dashboard(false,false);
+    Navarra.geomaps.show_labels(false);
 }
 
 
