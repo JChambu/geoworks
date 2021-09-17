@@ -21,13 +21,14 @@ $(window).on('resize', function() {
   if(!$('#status-view').hasClass('status-view-condensed')){
     if($('#status-view').hasClass('status-view-expanded')){
       $(".table_data_container").css("top", $("#nav_bar").innerHeight());
-      var height_table = height_browser - $("#nav_bar").innerHeight() - height_card - 50;
+      var height_table = height_browser - $("#nav_bar").innerHeight() - height_card - 100;
       $(".table_scroll").css("height", height_table);
     } else {
-        var height_table = height_browser*.5 - height_card - 50;
+        var height_table = height_browser*.5 - height_card - 100;
         $(".table_scroll").css("height", height_table);
     }
   }
+    alert("RESIZE " +height_table )
 });
 
 // Establece alto de mapa y sidebar al cargar
