@@ -267,6 +267,8 @@ class ProjectTypesController < ApplicationController
 
     project_type_id = params[:project_type_id]
     project_id = params[:app_id].to_i
+    from_date_subforms = params[:from_date_subforms]
+    to_date_subforms = params[:to_date_subforms]
 
     # Busca el rol del usuario
     customer_name = Apartment::Tenant.current
@@ -348,8 +350,14 @@ class ProjectTypesController < ApplicationController
           .where(project_field_id: f_field.id)
           .where(row_active: true)
           .where(current_season: true)
-          .where(row_enabled: true)
           .order(gwm_created_at: :desc)
+
+        # Aplica time_slider para hijos
+        unless from_date_subforms.blank? || to_date_subforms.blank?
+          children_data = data.where("gwm_created_at BETWEEN '#{from_date_subforms}' AND '#{to_date_subforms}'")
+        else
+          children_data = data.where(row_enabled: true)
+        end
 
         children_data_array = []
 
