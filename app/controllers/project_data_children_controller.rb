@@ -129,14 +129,10 @@ class ProjectDataChildrenController < ApplicationController
         .where(row_active: true)
         .where(current_season: true)
 
-      grouped_data = data.group_by do |c|
 
-        puts ''
-        p c
-        puts ''
 
-        c.project_id
-      end
+      # Agrupa los hijos por padre
+      grouped_data = data.group_by { |c| c.project_id }
 
       respuesta_hash = {
         project_field_name: father_field,
