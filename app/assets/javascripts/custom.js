@@ -1662,7 +1662,6 @@ function set_time_slider_filter() {
   var step_date_subforms = $('#time_slider_step_subforms').val();
   var from_subforms = $('#time_slider_from_subforms').val();
   var to_subforms = $('#time_slider_to_subforms').val();
-
   if(from_subforms!=""){
     if (step_date_subforms == 'day') {
       from_subforms = from_subforms.split('/')[2] + '-' + from_subforms.split('/')[1] + '-' + from_subforms.split('/')[0];
@@ -2269,8 +2268,8 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       project_type_id: project_type_id,
     }
   } else{
-    var from_date_subforms = Navarra.project_types.config.from_date;
-    var to_date_subforms = Navarra.project_types.config.to_date;
+    var from_date_subforms = Navarra.project_types.config.from_date_subforms;
+    var to_date_subforms = Navarra.project_types.config.to_date_subforms;
     var url_get = '/project_types/search_father_children_and_photos_data';
     var data = {
       project_type_id: project_type_id,

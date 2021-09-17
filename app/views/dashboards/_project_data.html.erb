@@ -177,8 +177,8 @@ function get_string_filter(){
 // FUNCIONES PARA TRAER DATOS DE SUBFORMULARIOS
 function show_subfield(field_ids){
   var app_ids_table = Navarra.dashboards.app_ids_table;
-  var from_date_subforms = Navarra.project_types.config.from_date;
-  var to_date_subforms = Navarra.project_types.config.to_date;
+  var from_date_subforms = Navarra.project_types.config.from_date_subforms;
+  var to_date_subforms = Navarra.project_types.config.to_date_subforms;
   $.ajax({
     type: 'GET',
     url: '/project_data_children/show_children',
