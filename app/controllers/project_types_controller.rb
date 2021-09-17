@@ -354,9 +354,9 @@ class ProjectTypesController < ApplicationController
 
         # Aplica time_slider para hijos
         unless from_date_subforms.blank? || to_date_subforms.blank?
-          children_data = data.where("gwm_created_at BETWEEN '#{from_date_subforms}' AND '#{to_date_subforms}'")
+          children_data = children_data.where("gwm_created_at BETWEEN '#{from_date_subforms}' AND '#{to_date_subforms}'")
         else
-          children_data = data.where(row_enabled: true)
+          children_data = children_data.where(row_enabled: true)
         end
 
         children_data_array = []
