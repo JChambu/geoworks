@@ -242,47 +242,6 @@ function min_photo(){
   </div>
 </div>
 
-<div id="time-slider-modal" class="modal fade d-none">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title" id="chartModalLabel"> Rango Temporal </h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-row">
-          <div class="col-md-6">
-            <label class="string optional control-label" for="time_slider_step">Intervalo</label>
-            <select class="form-control form-control-sm" id="time_slider_step" onchange="change_step_time_slider()" style="cursor:pointer;">
-              <option value="day" label="Día"></option>
-              <option value="week" label="Semana"></option>
-              <option value="month" label="Mes"></option>
-              <option value="year" label="Año"></option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row mt-3">
-          <div class="col-md-6">
-            <label class="string optional control-label" for="time_slider_from">Desde</label>
-            <input class="string optional form-control form-control-sm" type="text" id="time_slider_from" style="cursor:pointer">
-          </div>
-          <div class="col-md-6">
-            <label class="string optional control-label" for="time_slider_to">Hasta</label>
-            <input class="string optional form-control form-control-sm" type="text" id="time_slider_to" style="cursor: pointer;">
-          </div>
-        </div>
-        <input type="text" class="d-none" id="modal_timeslider_from">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-        <input type="button"  value="Guardar" onclick="set_time_slider()" class="btn btn-primary">
-      </div>
-    </div>
-  </div>
-</div>
-
 <%= form_for :q, :html => {:class => 'd-flex justify-content-end', :method => :get} do |f| %>
 
   <div id="map" ondragover="Navarra.photos.allowDrop(event)" ondrop="Navarra.photos.drop(event)">
@@ -290,7 +249,7 @@ function min_photo(){
 
   <div style="position: absolute;width: 30%; left: 70%" id="sidebar_all">
 
-  <div class="sidebar pt-1 px-1" id="timeslider-container" style="position: relative; z-index: 500">
+  <div class="sidebar pt-1 px-1 d-none" id="timeslider-container" style="position: relative; z-index: 500">
     <div class="card text-light chart-bg-transparent pb-0 pt-0" >
       <div class="card-header chart-header-bg-transparent py-1 px-2">
         <div class="view-data-container" >

@@ -40,7 +40,7 @@ $(window).on('resize', function() {
 
 // Establece alto de mapa y sidebar al cargar
 $(document).ready(function() {
-  $('#time-slider-modal').removeClass('d-none');
+  $('#timeslider-container').removeClass('d-none');
   var height_browser = window.innerHeight;
   var height_dashboard = height_browser - $('#nav_bar').innerHeight();
   $("#map").css("height", height_dashboard);
