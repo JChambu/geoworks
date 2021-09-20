@@ -287,6 +287,11 @@ function show_subfield(field_ids){
         $('#tr_visible').append(new_column_subform);
         set_hover();
 
+        // agrega body oculto
+        var new_column_width_only = document.createElement("TD");
+        new_column_width_only.className = "custom_row width_only"
+        $('#tbody_hidden tr').append(new_column_width_only);
+
         // Agrega cabecera oculta
         var new_column = document.createElement('TH');
         new_column.className='subfield_column_'+id_field
@@ -452,7 +457,6 @@ function open_subcolumn(event){
   $('#table_visible_container').css('height','60px');
   var count_open_subforms = verify_open_columns();
   if(count_open_subforms==1 && !$('#div_table_data').hasClass('min_height_on')){
-    console.log("Ajusta alto")
     $('#div_table_data').addClass("min_height_on");
     var new_height = (parseInt($('#div_table_data').css('height')) - 30 ) + 'px';
     $('#div_table_data').css('height',new_height);
@@ -486,6 +490,7 @@ function remove_subcolumn(id_field,id_subfield){
 }
 
 function remove_column(id_field){
+  // elimina columna de campos subformularios
   $('.subfield_column_'+id_field).remove();
   $('#open_subform'+id_field).removeClass('d-none');
   verify_close_subheader();
@@ -496,7 +501,7 @@ function verify_close_subheader(){
   console.log("verifica subcabeceras")
   // verifica subcolumnas abiertas
   var count_open_subforms = verify_open_columns();
-  if(count_open_subforms==0){
+  if(count_open_subforms==0 && $('#div_table_data').hasClass('min_height_on')){
      $('#table_visible_container').css('height','30px');
      var new_height = (parseInt($('#div_table_data').css('height')) + 30 ) + 'px';
      $('#div_table_data').css('height',new_height);

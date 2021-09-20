@@ -1533,6 +1533,7 @@ function verify_scroll_table(){
 }
 
 function adjust_colum_width(){
+  console.log("ancho de columna")
   $('.width_only').each(function(index){
     var index_col = index+1;
     var cel_width = $('#tbody_visible tr:nth-child(1) td:nth-child('+index_col+')');

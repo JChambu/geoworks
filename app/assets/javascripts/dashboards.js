@@ -23,17 +23,24 @@ $(window).on('resize', function() {
       $(".table_data_container").css("top", $("#nav_bar").innerHeight());
       var height_table = height_browser - $("#nav_bar").innerHeight() - height_card - 50;
       $(".table_scroll").css("height", height_table);
-      verify_height_table()
     } else {
         var height_table = height_browser*.5 - height_card - 50;
         $(".table_scroll").css("height", height_table);
-        verify_height_table();
     }
+    setTimeout(function(){
+      console.log('Va a verificar alto tabla')
+      var height_browser = window.innerHeight;
+      if($(".table_data_container").innerHeight() + $(".table_data_container").offset().top>height_browser){
+        var new_height = (parseInt($('#div_table_data').css('height')) - 30 ) + 'px';
+        $('#div_table_data').css('height',new_height);
+      }
+    },2000)
   }
 });
 
 // Establece alto de mapa y sidebar al cargar
 $(document).ready(function() {
+  $('#time-slider-modal').removeClass('d-none');
   var height_browser = window.innerHeight;
   var height_dashboard = height_browser - $('#nav_bar').innerHeight();
   $("#map").css("height", height_dashboard);
@@ -304,6 +311,7 @@ Navarra.dashboards.action_show = function(){
 
 function verify_height_table(){
   setTimeout(function(){
+    console.log('Va a verificar alto tabla')
     var height_browser = window.innerHeight;
     if($(".table_data_container").innerHeight() + $(".table_data_container").offset().top>height_browser){
       var new_height = (parseInt($('#div_table_data').css('height')) - 30 ) + 'px';
@@ -319,6 +327,6 @@ function verify_height_table(){
     height_filters: height_filters,
     height_charts: height_charts,
     set_layer_filter: set_layer_filter,
-    remove_layer_filter: remove_layer_filter
+    remove_layer_filter: remove_layer_filter,
   }
 }();
