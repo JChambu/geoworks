@@ -249,11 +249,13 @@ function get_logo(){
 }
 
 function save_pdf(){
+    if(document.getElementById('map_pdf') == undefined){
+        alert("Espere la imagen del mapa antes de guardar el pdf")
+        return;   
+    }
     var num_pages = 0;
     var y_screen = tamVentana()[1]*0.9;
-    console.log("alto "+y_screen)
     var x_screen = tamVentana()[1]*0.64;
-    console.log("ancho "+x_screen)
     var y_page = 290;
     var x_page = 210;
     var y_proportion = y_page/y_screen;
