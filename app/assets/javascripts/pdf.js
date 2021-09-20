@@ -253,6 +253,7 @@ function save_pdf(){
         alert("Espere la imagen del mapa antes de guardar el pdf")
         return;   
     }
+    $('#pdf-modal').modal('hide');
     var num_pages = 0;
     var y_screen = tamVentana()[1]*0.9;
     var x_screen = tamVentana()[1]*0.64;
