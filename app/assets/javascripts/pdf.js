@@ -274,7 +274,7 @@ function save_pdf(){
     doc.text("powerd by",176,20);
     doc.setTextColor(0, 0, 0);
     var logo_gw = new Image()
-    logo_gw.src = '/assets/logo_gw_hor_2.png';
+    logo_gw.src = $('#img_logo_gw').attr('src');
     doc.addImage(logo_gw, 'PNG', 165, 20 , 29, 9);
     var height_line = $('.pdf_header').outerHeight() * y_proportion + 10;
     doc.line(10,height_line,200,height_line); 

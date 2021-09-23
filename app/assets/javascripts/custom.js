@@ -2195,8 +2195,8 @@ function set_subtitles() {
   });
 }
 
-// exportar tabla a excel
-function table_to_excel() {
+// exportar reporte a excel
+function report_to_excel() {
   var origin_table = document.getElementById('table_visible_report');
   var clone_table = origin_table.cloneNode(true);
   clone_table.id = "clone_table";
@@ -2217,6 +2217,72 @@ function table_to_excel() {
     }
   });
   export_to_excel('clone_table', 'geoworks', 'reporte.xls')
+}
+
+// exportar tabla a excel
+function table_to_excel() {
+  var clone_table =  document.createElement("TABLE");
+  clone_table.id = "clone_table";
+  clone_table.style.display = "none";
+  var origin_head = document.getElementById('thead_table_visible');
+  var clone_head = origin_head.cloneNode(true);
+  clone_table.appendChild(clone_head);
+  var origin_body = document.getElementById('tbody_visible');
+  var clone_body = origin_body.cloneNode(true);
+  clone_table.appendChild(clone_body);
+  
+  $('body').append(clone_table);
+  //remueve divs de la cabecera
+  document.querySelectorAll('#clone_table .custom_onclick').forEach(e => e.parentNode.removeChild(e));
+  //elimina primeras columnas y columnas ocultas de la cabecera
+  var th_clone = document.querySelectorAll('#clone_table th');
+  th_clone.forEach(function(e) {
+    if (e.classList.contains('d-none') || e.classList.contains('head_key#_action') || e.classList.contains('head_key#_select') ) {
+      e.parentNode.removeChild(e);
+    } 
+  });
+  // limpia la fila de subcabeceras
+  var tr_th =  document.querySelectorAll('#clone_table th tr');
+  tr_th.forEach(function(e){
+    new_p = document.createElement('P');
+    new_p.innerHTML = e.firstChild.innerHTML;
+    e.parentNode.appendChild(new_p);
+    e.parentNode.removeChild(e);
+  })
+   //elimina primeras columnas y columnas ocultas del cuerpo
+  var td_clone = document.querySelectorAll('#clone_table td');
+  td_clone.forEach(function(e) {
+    if (e.classList.contains('d-none') || e.classList.contains('celd_key#_action') || e.classList.contains('celd_key#_select') ) {
+      e.parentNode.removeChild(e);
+    } else {
+      if(e.classList.contains('_columnname')){
+        e.setAttribute("rowspan",1);
+      }
+    }
+  });
+
+  $('#clone_table.row_data').each(function(){
+    console.log("FILA !!!")
+    console.log(this)
+    $(this).first().each(function(){
+      console.log("CELDA")
+      console.log(this)
+    })
+  });
+
+  var column_count = $('.column_data.d-none').length + $('.column_data_layer.d-none').length 
+  console.log("Cantidad de columnas "+column_count)
+  // acomoda las columnas de hijos
+  var td_th = document.querySelectorAll('#clone_table td tr');
+  td_th.forEach(function(e){
+    for(c=0;c<column_count;c++){
+      console.log("Agrega celda")
+      var new_celd =  document.createElement("TD");
+      e.prepend(new_celd);
+    }
+  });
+
+  export_to_excel('clone_table', 'geoworks', 'tabla.xls')
 }
 
 function export_to_excel(table, name, filename) {

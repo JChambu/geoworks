@@ -58,6 +58,15 @@ $('#table_select_all').click(function(){
   if($('.field_label').length==0){
     $('#checkbox_Etiquetas').prop("disabled",true);
   }
+
+// Habilita botón guardar si la tabla abierta es una tabla ya guardada 
+  $("#save_table_button").click(function(){
+    if($('#table_id').val()!=""){
+      $('#save_table_button_edit').removeClass('d-none');
+    } else {
+      $('#save_table_button_edit').addClass('d-none');
+    }
+  });
 });
 
 //movimiento de header columnas
@@ -433,7 +442,7 @@ function show_column_layer(key_layer,id_layer){
   $('#columnfake_data_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
   $('#column_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
   $('.celdlayer_key'+id_layer+'\\|'+key_layer).removeClass("d-none");
-  $('#addcolumn_layer_'+key_layer+'_'+id_layer).addClass("d-none");
+  $('#addcolumn_layer\\|'+key_layer+'\\|'+id_layer).addClass("d-none");
   adjust_colum_width();
   verify_scroll_table();
 }
@@ -444,7 +453,7 @@ function hide_column_layer(key_layer,id_layer){
   $('#columnfake_data_layer_'+key_layer+"_"+id_layer).addClass("d-none");
   $('#column_layer_'+key_layer+"_"+id_layer).addClass("d-none");
   $('.celdlayer_key'+id_layer+'\\|'+key_layer).addClass("d-none");
-  $('#addcolumn_layer_'+key_layer+'_'+id_layer).removeClass("d-none");
+  $('#addcolumn_layer\\|'+key_layer+'\\|'+id_layer).removeClass("d-none");
   adjust_colum_width();
   verify_scroll_table();
 }
@@ -532,13 +541,114 @@ function verify_open_columns(){
   return count_open_subforms;
 }
 
+function save_table(is_new){
+  if(is_new){
+    table_id = "";
+    table_name = $('#table_new_name').val();
+  } else {
+    table_id = $('#table_id').val();
+    table_name = $('#table_name').val(); 
+  }
+  var p_field_keys = [];
+  $('.column_data.d-none').each(function(){
+    p_field_keys.push(this.id.substring(10));
+  });
+  var project_subfields = [];
+   $('.subfields_data.d-none').each(function(){
+    var id_subfield_father = this.id.substring(12);
+    var subfields_ids = [];
+       $('.'+id_subfield_father+'subfield.d-none').each(function(){
+        subfields_ids.push(this.id.split('_')[2]);
+       });
+    var subfield_table = {
+      p_field_id : id_subfield_father,
+      p_subfields_ids: subfields_ids
+    }
+    project_subfields.push(subfield_table);
+  });
+  var cross_layers = [];
+  var cross_layers_fields = [];
+  var cross_layer_id = 0;
+  $('.column_data_layer.d-none').each(function(index){
+    if((cross_layer_id != this.id.split('|')[2] && cross_layer_id!=0)){
+      cross_layer = {
+        project_type_id: cross_layer_id,
+        p_field_keys: cross_layers_fields
+      }
+      cross_layers.push(cross_layer);
+      cross_layers_fields = [];
+    }
+      cross_layers_fields.push(this.id.split('|')[1]);
+      cross_layer_id = this.id.split('|')[2];    
+      console.log("cross_layer_id "+cross_layer_id)
+
+      if((index+1)==$('.column_data_layer.d-none').length){
+        cross_layer = {
+          project_type_id: cross_layer_id,
+          p_field_keys: cross_layers_fields
+        }
+      cross_layers.push(cross_layer);
+      cross_layers_fields = [];
+    }
+  });
+
+  var per_page = $(".select_perpage").html();
+  var per_page_value = parseInt(per_page);
+  var filter_value = $("#choose").val();
+  var filter_by_column = $(".filter_by_column").val();
+  var order_by_column = $(".order_by_column").val();
+  var settings = {
+    current_layer: {
+      p_field_keys: p_field_keys,
+      project_subfields: project_subfields
+    },
+    cross_layers: cross_layers, 
+    per_page: per_page_value,
+    order_by: order_by_column,
+    filter_by: {
+      key: filter_by_column,
+      value: filter_value,
+    }
+  }
+  console.log(settings)
+  var table_to_save = {
+    settings: settings,
+    name: table_name,
+    table_id: table_id
+  }
+  $.ajax({
+    type: 'POST',
+    url:  'table_settings/create',
+    datatype: 'JSON',
+    data: table_to_save,
+    success: function(data) {
+      console.log(data)
+    }
+  });
+}
+
 
 </script>
 
 <div class="card-header chart-header-bg-transparent py-1 px-2 card_data">
   Datos
-  <a data-toggle="modal" id="show_pdf"><i class="fas fa-file-pdf ml-3" title="Generar Reporte PDF" style="cursor: pointer;" ></i></a>
+  <input type="text" class="d-none" disabled="true" id="table_id">
+  <input type="text" class="d-none" disabled="true" id="table_name">
+  <a class="d-none" data-toggle="dropdown" id="save_table_button" href="#" aria-haspopup="true" aria-expanded="false" >
+    <i class="fas fa-save ml-3" title="Guardar Tabla" style="cursor: pointer;" ></i>
+  </a>
+  <div class="dropdown-menu scroll p-2" aria-labelledby="save_table_button" style="background: rgba(58, 63, 68, 0.8);">
+    <button class="btn btn-primary p-1 d-none" id="save_table_button_edit" type="button" onclick="save_table(false)">Guardar</button>
+    <button class="btn btn-primary p-1 ml-2" type="button" onclick="save_table(true)">Guardar Como</button>
+     <input type="text" class="string optional form-control form-control-sm d-inline border-0 w-auto" placeholder="Nombre de la tabla" id="table_new_name">
+    <button class="btn btn-secondary p-1 ml-2" data-dismiss="modal" type="button">Cancelar</button>
+  </div>
+  <a data-toggle="modal" id="show_pdf"><i class="fas fa-file-pdf ml-2" title="Generar Reporte PDF" style="cursor: pointer;" ></i>
+  </a>
   <% if can? :data, :export %>
+    <a onclick="table_to_excel()" class="d-none">
+      <i class="fas fa-download ml-2" style="font-size: 0.8em; cursor: pointer;" title="Descargar Tabla"></i>
+    </a>
     <a data-toggle="modal" id="show_report"><i class="fas fa-clipboard-list ml-3" title="Reporte" style="cursor: pointer;" ></i></a>
     <a onclick="download_geojson()"><i class="fas fa-code ml-2" title="Exportar GeoJSON" style="cursor: pointer;" ></i></a>
   <% end %>
@@ -591,7 +701,7 @@ function verify_open_columns(){
             <% name_layer = field.project_type.name_layer %>  
           <% end %>
           <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-            <a class="dropdown-item column_data_layer" onclick="show_column_layer(<%="'"+field.key+"','"+field.project_type.id.to_s+"'"%>)" id=<%="addcolumn_layer_"+field.key+"_"+field.project_type.id.to_s %>><%= field.name %></a>
+            <a class="dropdown-item column_data_layer" onclick="show_column_layer(<%="'"+field.key+"','"+field.project_type.id.to_s+"'"%>)" id=<%="addcolumn_layer|"+field.key+"|"+field.project_type.id.to_s %>><%= field.name %></a>
           <% end %>
         <% end %>
       <% end %>
@@ -635,11 +745,11 @@ function verify_open_columns(){
   <table class="table table-hover m-0 card-body" id="table_hidden" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
     <thead  id="thead_table_visible" class="scroll_false">
       <tr id="tr_visible">
-        <th class="border-0" style="padding-top: 0px; vertical-align: top; cursor: pointer;">
+        <th class="border-0 head_key#_action" style="padding-top: 0px; vertical-align: top; cursor: pointer;">
           <p style="color:white; margin-bottom: 0px"></p>
           <input type="text" class="d-none field_key" value="#_action">
         </th>
-        <th class="border-0" style="padding-top: 0px; vertical-align: top; white-space: nowrap;">
+        <th class="border-0 head_key#_select" style="padding-top: 0px; vertical-align: top; white-space: nowrap;">
           <div class="custom-control custom-checkbox" title="Seleccionar Todo">
             <input class="custom-control-input field_key" id="table_select_all" type="checkbox" value="#_select">
             <label class="string optional control-label custom-control-label" for="table_select_all"> </label>
@@ -691,8 +801,8 @@ function verify_open_columns(){
         <% end %>
       </tr>
       <tr id="tr_subfields">
-        <th class="border-0"></th>
-        <th class="border-0"></th>
+        <th class="border-0 head_key#_action"></th>
+        <th class="border-0 head_key#_select"></th>
         <th class="border-0"></th>
         <% if !@top_level_fields.nil? %>
           <% @top_level_fields.each do |field|  %>

@@ -376,7 +376,7 @@ Navarra.geomaps = function() {
           new_div.appendChild(new_p);
 
           var new_a = L.DomUtil.create('BUTTON');
-          new_a.className = "btn btn-secondary p-0 m-1";
+          new_a.className = "btn btn-primary p-0 m-1";
           new_a.innerHTML = "SI";
           new_a.id = "confirmation_geometry_button";
           new_a.type="button";
