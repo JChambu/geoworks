@@ -2254,29 +2254,30 @@ function table_to_excel() {
   td_clone.forEach(function(e) {
     if (e.classList.contains('d-none') || e.classList.contains('celd_key#_action') || e.classList.contains('celd_key#_select') ) {
       e.parentNode.removeChild(e);
-    } else {
-      if(e.classList.contains('_columnname')){
-        e.setAttribute("rowspan",1);
-      }
-    }
-  });
-
-  $('#clone_table.row_data').each(function(){
-    console.log("FILA !!!")
-    console.log(this)
-    $(this).first().each(function(){
-      console.log("CELDA")
-      console.log(this)
-    })
+    } 
   });
 
   var column_count = $('.column_data.d-none').length + $('.column_data_layer.d-none').length 
-  console.log("Cantidad de columnas "+column_count)
+  subcolumn_count = 0;
   // acomoda las columnas de hijos
   var td_th = document.querySelectorAll('#clone_table td tr');
-  td_th.forEach(function(e){
-    for(c=0;c<column_count;c++){
-      console.log("Agrega celda")
+  var id_subcolumn_before = 0;
+  var subcolumn_open_count_before = 0;
+  td_th.forEach(function(e,index){
+    //resta la celda del icono imagen
+    var subcolumn_open_count = $(e).find('td').length-1;
+    var id_subcolumn = $(e).find('td').eq(1).attr('id').split('_')[0];
+    if(index==0){first_subcolumn_id = id_subcolumn}
+    if(id_subcolumn_before!=0 && id_subcolumn_before!=id_subcolumn){
+      subcolumn_count+=subcolumn_open_count_before;
+    }
+    id_subcolumn_before = id_subcolumn;
+    subcolumn_open_count_before = subcolumn_open_count;
+    if(id_subcolumn==first_subcolumn_id){
+      subcolumn_count = 0;
+    }
+    column_count_total = column_count + subcolumn_count;
+    for(c=0;c<column_count_total;c++){
       var new_celd =  document.createElement("TD");
       e.prepend(new_celd);
     }

@@ -634,7 +634,7 @@ function save_table(is_new){
   Datos
   <input type="text" class="d-none" disabled="true" id="table_id">
   <input type="text" class="d-none" disabled="true" id="table_name">
-  <a class="d-none" data-toggle="dropdown" id="save_table_button" href="#" aria-haspopup="true" aria-expanded="false" >
+  <a data-toggle="dropdown" id="save_table_button" href="#" aria-haspopup="true" aria-expanded="false" >
     <i class="fas fa-save ml-3" title="Guardar Tabla" style="cursor: pointer;" ></i>
   </a>
   <div class="dropdown-menu scroll p-2" aria-labelledby="save_table_button" style="background: rgba(58, 63, 68, 0.8);">
@@ -646,7 +646,7 @@ function save_table(is_new){
   <a data-toggle="modal" id="show_pdf"><i class="fas fa-file-pdf ml-2" title="Generar Reporte PDF" style="cursor: pointer;" ></i>
   </a>
   <% if can? :data, :export %>
-    <a onclick="table_to_excel()" class="d-none">
+    <a onclick="table_to_excel()">
       <i class="fas fa-download ml-2" style="font-size: 0.8em; cursor: pointer;" title="Descargar Tabla"></i>
     </a>
     <a data-toggle="modal" id="show_report"><i class="fas fa-clipboard-list ml-3" title="Reporte" style="cursor: pointer;" ></i></a>
