@@ -36,6 +36,11 @@ class DashboardsController < ApplicationController
         .where.not(project_type_id: @project_type.id)
         .where('project_types.level > ?', @project_type.level)
         .order('project_types.level DESC', :sort)
+
+      @table_configuration = TableConfiguration
+        .where(project_type_id: @project_type.id)
+        .where(user_id: current_user.id)
+
       @project_types_all = ProjectType.where(enabled_as_layer: true).order(level: :desc)
       @current_tenant = Apartment::Tenant.current
 
