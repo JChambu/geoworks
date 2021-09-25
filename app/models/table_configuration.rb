@@ -1,0 +1,2 @@
+class TableConfiguration < ApplicationRecord
+end
