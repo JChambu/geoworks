@@ -30,6 +30,16 @@ class DashboardsController < ApplicationController
     if !@project_type.nil?
 
       @fields = ProjectField.where(project_type_id: @project_type.id).order(:sort)
+      # Busca el rol del usuario
+      customer_name = Apartment::Tenant.current
+      Apartment::Tenant.switch 'public' do
+        customer_id = Customer.where(subdomain: customer_name).pluck(:id)
+        @user_rol = UserCustomer
+          .where(user_id: current_user.id)
+          .where(customer_id: customer_id)
+          .pluck(:role_id)
+          .first
+      end
       # Campos de los proyectos que están por encima del proyecto actual
       @top_level_fields = ProjectField
         .joins(:project_type)
