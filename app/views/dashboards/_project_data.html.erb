@@ -558,11 +558,14 @@ function adjust_table_height(){
 
 function save_table(is_new){
   if(is_new){
-    table_id = "";
-    table_name = $('#table_new_name').val();
+    var table_name = $('#table_new_name').val();
+    var type_method = "POST";
+    var url = '/table_configurations/create_table';
   } else {
-    table_id = $('#table_id').val();
-    table_name = $('#table_name').val(); 
+    var table_id = $('#table_id').val();
+    var table_name = $('#table_name').val(); 
+    var type_method = "PATCH";
+    var url = "'/table_configurations/edit_table'"
   }
   var p_field_keys = [];
   $('.column_data.d-none').each(function(){
@@ -607,9 +610,8 @@ function save_table(is_new){
   });
 
   var per_page = $(".select_perpage").html();
-  if (!isNaN(per_page_value)) {
-    var per_page_value = parseInt(per_page);
-  } else {
+  var per_page_value = parseInt(per_page);
+  if (isNaN(per_page_value)) {
     var per_page_value = "";
   }
   var filter_value = $("#choose").val();
@@ -635,12 +637,19 @@ function save_table(is_new){
     table_id: table_id
   }
   $.ajax({
-    type: 'POST',
-    url:  '/table_configurations/create_table',
+    type: type_method,
+    url:  url,
     datatype: 'JSON',
     data: table_to_save,
     success: function(data) {
       console.log(data)
+      // cambiar a nuevo id!!!!!!!!!!!!!!
+      if(is_new){
+        var table_new_id = 0;
+        // agrega nueva tabla al modal de tablas
+        var new_a = '<a class="dropdown-item" href="#" onclick="open_panel(\'view-data-middle\','+table_new_id+')">'+table_name+'</a>';
+        $('#tables_container').prepend(new_a);
+      }
     }
   });
 }

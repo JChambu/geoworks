@@ -1219,6 +1219,7 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
     },
 
     success: function(data) {
+      console.log("Llega al success ")
       var fields = document.querySelectorAll(".field_key");
       if(JSON.stringify(data_dashboard) == JSON.stringify(data.data) && !is_saved){
         $(".fakeLoader").css("display", "none");
@@ -1268,8 +1269,9 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
       });
 
         // comienza llenado de la tabla
-          $("._columnname").each(function(index_data){
-            $(this).html(array_datos[index_data].toString());
+          var column_to_fill =  document.querySelectorAll('._columnname');
+          column_to_fill.forEach(function(col,index_data){
+            col.innerHTML = array_datos[index_data].toString();
           });
         // termina llenado de la tabla
 
@@ -1487,8 +1489,6 @@ function data_pagination(selected, active_page) {
 
 function create_subforms_table(subfield_ids_saved){
   // verifica subcolumnas abiertas
-  console.log("Viene de abrir una tabla???")
-  console.log(subfield_ids_saved)
   subheader_open = [];
   var field_subforms_open = $('.subfields_data.d-none');
   var field_ids = [];
@@ -1514,8 +1514,6 @@ function create_subforms_table(subfield_ids_saved){
 }
 
 function open_subheaders(id_field){
-  console.log("Subcabeceras abiertas")
-  console.log(subheader_open)
   subheader_open.forEach(function(subheader){
     if(subheader.id_field ==  id_field){
       $('#'+id_field+'_subfield_'+subheader.id_subfield).click();

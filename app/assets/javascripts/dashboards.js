@@ -288,7 +288,8 @@ function verify_height_table(){
       var new_height = (parseInt($('#div_table_data').css('height')) - 30 ) + 'px';
       $('#div_table_data').css('height',new_height);
     }
-  },2000)
+  },2000);
+  console.log("Termina verify")
 }
 
 open_table_middle = function(only_open){
