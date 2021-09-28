@@ -1487,6 +1487,8 @@ function data_pagination(selected, active_page) {
 
 function create_subforms_table(subfield_ids_saved){
   // verifica subcolumnas abiertas
+  console.log("Viene de abrir una tabla???")
+  console.log(subfield_ids_saved)
   subheader_open = [];
   var field_subforms_open = $('.subfields_data.d-none');
   var field_ids = [];
@@ -1512,6 +1514,8 @@ function create_subforms_table(subfield_ids_saved){
 }
 
 function open_subheaders(id_field){
+  console.log("Subcabeceras abiertas")
+  console.log(subheader_open)
   subheader_open.forEach(function(subheader){
     if(subheader.id_field ==  id_field){
       $('#'+id_field+'_subfield_'+subheader.id_subfield).click();
@@ -1536,7 +1540,6 @@ function verify_scroll_table(){
 }
 
 function adjust_colum_width(){
-  console.log("ancho de columna")
   $('.width_only').each(function(index){
     var index_col = index+1;
     var cel_width = $('#tbody_visible tr:nth-child(1) td:nth-child('+index_col+')');

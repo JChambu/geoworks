@@ -474,11 +474,10 @@ function open_subcolumn(event){
   $(event.target).addClass('d-none');
   $('#table_visible_container').css('height','60px');
   var count_open_subforms = verify_open_columns();
-  if(count_open_subforms==1 && !$('#div_table_data').hasClass('min_height_on')){
-    $('#div_table_data').addClass("min_height_on");
-    var new_height = (parseInt($('#div_table_data').css('height')) - 30 ) + 'px';
-    $('#div_table_data').css('height',new_height);
+  if(count_open_subforms>0){
+     $('#table_visible_container').css('height','60px');
   }
+  adjust_table_height();
   var width_array = [];
   //Ajusta ancho columnas
     $('.'+id_field+'sub'+id_subfield).each(function(){
@@ -521,12 +520,10 @@ function remove_column(id_field){
 function verify_close_subheader(){
   // verifica subcolumnas abiertas
   var count_open_subforms = verify_open_columns();
-  if(count_open_subforms==0 && $('#div_table_data').hasClass('min_height_on')){
+  if(count_open_subforms==0){
      $('#table_visible_container').css('height','30px');
-     var new_height = (parseInt($('#div_table_data').css('height')) + 30 ) + 'px';
-     $('#div_table_data').css('height',new_height);
-     $('#div_table_data').removeClass("min_height_on");
   }
+  adjust_table_height();
   verify_scroll_table();
 }
 
@@ -539,6 +536,24 @@ function verify_open_columns(){
     count_open_subforms += subfields.length;
   });
   return count_open_subforms;
+}
+
+function adjust_table_height(){
+  var height_browser = window.innerHeight
+  var height_card=$(".card_data").innerHeight()
+  var height_table_head = $('#table_visible_container').innerHeight();
+  console.log("Altura del head")
+  console.log(height_table_head)
+  if($('#status-view').hasClass('status-view-expanded')){
+    var height_table = height_browser - $("#nav_bar").innerHeight() -height_card - height_table_head - 20;
+    $(".table_scroll").css("height", height_table);
+  } else {
+    if(!$('#status-view').hasClass('status-view-condensed')){
+    var height_table = height_browser*.5 - height_card - height_table_head - 20;
+    $(".table_scroll").css("height", height_table);
+  }
+  }
+  console.log(height_table)
 }
 
 function save_table(is_new){
