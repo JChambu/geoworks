@@ -1155,7 +1155,7 @@ function draw_charts() {
 
 //****** FUNCIONES PARA TABLA DE DATOS*****
 // Función para traer todos los datos de los registros contenidos y filtrados
-function init_data_dashboard(haschange,close_info) {
+function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
   //Evita calcular la tabla si está oculta o si no existe por autorización de roles
   if ($('#status-view').hasClass('status-view-condensed') || $('.table_data_container').length==0) {
     return;
@@ -1220,7 +1220,7 @@ function init_data_dashboard(haschange,close_info) {
 
     success: function(data) {
       var fields = document.querySelectorAll(".field_key");
-      if(JSON.stringify(data_dashboard) == JSON.stringify(data.data)){
+      if(JSON.stringify(data_dashboard) == JSON.stringify(data.data) && !is_saved){
         $(".fakeLoader").css("display", "none");
         return;
       }
@@ -1276,7 +1276,7 @@ function init_data_dashboard(haschange,close_info) {
       $(".fakeLoader").css("display", "none");
 
        // Verifica si tiene que crear tabla de subformularios
-      create_subforms_table();
+      create_subforms_table(subfield_ids_saved);
       // Verifica si tiene que crear tabla de capas
       create_layers_table();
       // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
@@ -1485,7 +1485,7 @@ function data_pagination(selected, active_page) {
   });
 }
 
-function create_subforms_table(){
+function create_subforms_table(subfield_ids_saved){
   // verifica subcolumnas abiertas
   subheader_open = [];
   var field_subforms_open = $('.subfields_data.d-none');
@@ -1503,6 +1503,9 @@ function create_subforms_table(){
     field_ids.push(id);
     $('.subfield_column_'+id).remove();
   });
+  if(subfield_ids_saved!=undefined){
+    subheader_open = subfield_ids_saved;
+  }
   if(field_subforms_open.length>0){
     show_subfield(field_ids)
   }

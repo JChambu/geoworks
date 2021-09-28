@@ -512,13 +512,13 @@ function remove_subcolumn(id_field,id_subfield){
 function remove_column(id_field){
   // elimina columna de campos subformularios
   $('.subfield_column_'+id_field).remove();
+  $('#body_only_width_subform_'+id_field).remove();
   $('#open_subform'+id_field).removeClass('d-none');
   verify_close_subheader();
   adjust_colum_width();
 }
 
 function verify_close_subheader(){
-  console.log("verifica subcabeceras")
   // verifica subcolumnas abiertas
   var count_open_subforms = verify_open_columns();
   if(count_open_subforms==0 && $('#div_table_data').hasClass('min_height_on')){
@@ -580,7 +580,6 @@ function save_table(is_new){
     }
       cross_layers_fields.push(this.id.split('|')[1]);
       cross_layer_id = this.id.split('|')[2];    
-      console.log("cross_layer_id "+cross_layer_id)
 
       if((index+1)==$('.column_data_layer.d-none').length){
         cross_layer = {
@@ -593,7 +592,11 @@ function save_table(is_new){
   });
 
   var per_page = $(".select_perpage").html();
-  var per_page_value = parseInt(per_page);
+  if (!isNaN(per_page_value)) {
+    var per_page_value = parseInt(per_page);
+  } else {
+    var per_page_value = "";
+  }
   var filter_value = $("#choose").val();
   var filter_by_column = $(".filter_by_column").val();
   var order_by_column = $(".order_by_column").val();
@@ -610,7 +613,6 @@ function save_table(is_new){
       value: filter_value,
     }
   }
-  console.log(settings)
   var table_to_save = {
     config: settings,
     name: table_name,
@@ -664,7 +666,7 @@ function save_table(is_new){
             <% if !field.popup %>
               <a class="dropdown-item column_data"  onclick="show_column(<%="'"+field.key+"'"%>)" id=<%="addcolumn_"+field.key %>><%= field.name %></a>
             <% else %>
-              <a class="dropdown-item column_data d-none" onclick="show_column(<%="'"+field.key+"'"%>)" id=<%="addcolumn_"+field.key %>><%= field.name %></a>
+              <a class="dropdown-item column_data d-none is_popup" onclick="show_column(<%="'"+field.key+"'"%>)" id=<%="addcolumn_"+field.key %>><%= field.name %></a>
             <% end %>
           <% end %>
         <% end %>

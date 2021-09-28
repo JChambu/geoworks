@@ -12,14 +12,111 @@ function open_panel(id_panel,id_table){
         table_configuration_id: id_table,
       },
       success: function(data) {
-        console.log("Data!!!!")
-        console.log(data)
+        $('#table_id').val(data.data[0].name);
+        $('#table_id').val(data.data[0].id);
+        var config = data.data[0].config;
+        $("#choose").val(config.filter_by.value);
+        $(".filter_by_column").val(config.filter_by.key);
+        $(".order_by_column").val(config.order_by);
+        var per_page_value = config.per_page;
+        if(per_page_value == ""){
+          per_page_value = "mostrar todo"
+        } else {
+          per_page_value = per_page_value+'/pág';
+        }
+        $(".select_perpage").html(per_page_value)
+        //current_project_fields
+        var current_layer_fields = config.current_layer.p_field_keys;
+        $('.column_data').each(function(){
+          var field_key = $(this).attr('id').substring(10);
+          if(current_layer_fields.indexOf(field_key)>=0 && !$(this).hasClass('d-none')){
+            $(this).click();
+          } 
+          if(current_layer_fields.indexOf(field_key)<0 && $(this).hasClass('d-none')){
+            hide_column(field_key);
+          }
+        });
+         //project_subfields
+        var subfields_ids = [];
+        var subheader_open_saved = [];
+        Object.keys(config.current_layer.project_subfields).forEach(function(key){
+          var id_field_f = config.current_layer.project_subfields[key].p_field_id;
+          subfields_ids.push(id_field_f);
+         // $('.'+id_field_f+'subfield').addClass('d-none');
+          var subfields_ids_children = config.current_layer.project_subfields[key].p_subfields_ids;
+          if(subfields_ids_children!=undefined){
+            subfields_ids_children.forEach(function(id_subfield_child){
+              subheader_object = {
+                id_field: id_field_f,
+                id_subfield: id_subfield_child
+              }
+            subheader_open_saved.push(subheader_object);
+            });
+          }
+        });
+        $('.subfields_data').each(function(){
+          var subfield_id = $(this).attr('id').substring(12);
+          remove_column(subfield_id);
+          if(subfields_ids.indexOf(subfield_id)>=0 ){
+            $(this).addClass('d-none');
+          } else{
+              $(this).removeClass('d-none');
+          }
+
+        });
+
+        //cross_layers_fields
+        Object.keys(config.cross_layers).forEach(function(key){
+          var cross_layer_field_keys = config.cross_layers[key].p_field_keys
+          $('.column_data_layer').each(function(){
+            var field_key = $(this).attr('id').split('|')[1];
+            var cross_layer_id_project = $(this).attr('id').split('|')[2];
+            if(cross_layer_field_keys.indexOf(field_key)>=0 && cross_layer_id_project == config.cross_layers[key].project_type_id && !$(this).hasClass('d-none')){
+              $(this).addClass('d-none');
+            } else{
+              if($(this).hasClass('d-none')){
+                $(this).removeClass('d-none');
+                hide_column_layer(field_key,cross_layer_id_project)
+              }
+            }
+          });
+        });
+
+      init_data_dashboard(true,true,subheader_open_saved,true);
+      if ($('#status-view').hasClass('status-view-condensed')){
+        $('#'+id_panel).click();
+        }
       }
     });
-    
   } else{
-      $('#'+id_panel).click();
+    if(id_panel=="view-data-middle"){
+      //cierra columnas
+      $('.column_data').not('.is_popup').each(function(){
+        var field_key = $(this).attr('id').substring(10);
+        hide_column(field_key);
+      });
+      //abre columnas popup
+      $('.column_data.is_popup').each(function(){
+        var field_key = $(this).attr('id').substring(10);
+        show_column(field_key);
+      });
+      // cierra columnas layers 
+      $('.column_data_layer').each(function(){
+        var field_key = $(this).attr('id').split('|')[1];
+        var cross_layer_id_project = $(this).attr('id').split('|')[2];
+        hide_column_layer(field_key,cross_layer_id_project)
+      });
+      //cierra subformularios
+      $('.subfields_data').each(function(){
+        var subfield_id = $(this).attr('id').substring(12);
+        remove_column(subfield_id);
+      });
+
+      init_data_dashboard(true,true,'{}',true);
+    }
+    $('#'+id_panel).click();
   }
+
 }
 
 </script>
