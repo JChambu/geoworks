@@ -2367,7 +2367,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
     datatype: 'json',
     data: data,
     success: function(data) {
-
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
       $("#info-modal").modal('show');

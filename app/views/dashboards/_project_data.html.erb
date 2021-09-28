@@ -612,13 +612,14 @@ function save_table(is_new){
   }
   console.log(settings)
   var table_to_save = {
-    settings: settings,
+    config: settings,
     name: table_name,
+    project_type_id: Navarra.dashboards.config.project_type_id,
     table_id: table_id
   }
   $.ajax({
     type: 'POST',
-    url:  'table_settings/create',
+    url:  '/table_configurations/create_table',
     datatype: 'JSON',
     data: table_to_save,
     success: function(data) {

@@ -20,4 +20,9 @@ class TableConfigurationsController < ApplicationController
     
   end
 
+  def search_table
+    @table = TableConfiguration.where(id: params[:table_configuration_id])
+    render json: {data: @table}
+  end
+
 end
