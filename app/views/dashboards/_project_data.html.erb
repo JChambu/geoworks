@@ -559,13 +559,18 @@ function adjust_table_height(){
 function save_table(is_new){
   if(is_new){
     var table_name = $('#table_new_name').val();
+    if(table_name==""){
+      $('#text_toast').html("Agregue un nombre para la tabla");
+      $('.toast').toast('show');
+      return;
+    }
     var type_method = "POST";
     var url = '/table_configurations/create_table';
   } else {
     var table_id = $('#table_id').val();
     var table_name = $('#table_name').val(); 
     var type_method = "PATCH";
-    var url = "'/table_configurations/edit_table'"
+    var url = '/table_configurations/edit_table';
   }
   var p_field_keys = [];
   $('.column_data.d-none').each(function(){
@@ -643,14 +648,56 @@ function save_table(is_new){
     data: table_to_save,
     success: function(data) {
       console.log(data)
-      // cambiar a nuevo id!!!!!!!!!!!!!!
+      $('#text_toast').html(data.status);
+      $('.toast').toast('show');
       if(is_new){
-        var table_new_id = 0;
+        var table_new_id = data.table_id;
+        $('#table_id').val(table_new_id);
+        $('#table_name').val($('#table_new_name').val()); 
+        $('#table_name_visible').html($('#table_new_name').val()); 
         // agrega nueva tabla al modal de tablas
-        var new_a = '<a class="dropdown-item" href="#" onclick="open_panel(\'view-data-middle\','+table_new_id+')">'+table_name+'</a>';
+        var new_a = '<a class="dropdown-item d-flex" onclick="open_panel(\'view-data-middle\','+table_new_id+')" href="#" id="dropdown_table'+table_new_id+'"><h7 class="mr-auto">'+table_name+'</h7><i class="fas fa-trash-alt ml-3 invisible icon_delete_table" title="Eliminar" onclick="remove_table(event ,'+table_new_id+')"></i></a>'
         $('#tables_container').prepend(new_a);
       }
+      $('#table_new_name').val(""); 
     }
+  });
+}
+
+function show_trash_tables(event){
+  event.stopPropagation();
+  if($('#show_trash_tables').hasClass('show_trash_tables_on')){
+    $('#show_trash_tables').removeClass('show_trash_tables_on');
+    $('.icon_delete_table').addClass('invisible');
+  } else {
+    $('#show_trash_tables').addClass('show_trash_tables_on');
+    $('.icon_delete_table').removeClass('invisible');
+  }
+}
+
+function remove_table(event,table_id){
+  event.stopPropagation();
+  data = {
+    table_id: table_id
+  }
+
+  $.ajax({
+    type: 'DELETE',
+    url: '/table_configurations/destroy_table',
+    datatype: 'JSON',
+    data: data,
+    success: function(data) {
+        console.log('RESPONSE destroy_table');
+        console.log(data);
+        $('#text_toast').html(data.status);
+        $('.toast').toast('show');
+        $('#dropdown_table'+table_id).remove();
+    },
+    error: function( jqXHR, textStatus, errorThrown ) {
+      console.log(jqXHR);
+      console.log(textStatus);
+      console.log(errorThrown);
+     }
   });
 }
 
@@ -658,7 +705,7 @@ function save_table(is_new){
 </script>
 
 <div class="card-header chart-header-bg-transparent py-1 px-2 card_data">
-  Datos
+  <h7 class="d-inline" id="table_name_visible">Datos</h7>
   <input type="text" class="d-none" disabled="true" id="table_id">
   <input type="text" class="d-none" disabled="true" id="table_name">
   <a data-toggle="dropdown" id="save_table_button" href="#" aria-haspopup="true" aria-expanded="false" >

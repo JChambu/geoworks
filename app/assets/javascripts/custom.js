@@ -3281,7 +3281,7 @@ function edit_file(edit_parent, edit_child, edit_status){
 
   var required_field_number = 0;
   $('#info_messages').html("");
-  $('#alert_text_message').html("");
+  $('#text_toast').html("");
   $('#info_messages').addClass("d-none");
   $('#info_messages').removeClass("text-danger");
   if(!edit_child){array_child_edited=[]}
@@ -3475,7 +3475,8 @@ function edit_file(edit_parent, edit_child, edit_status){
       $('#alert_message').addClass('show');
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
-      $('#alert_text_message').html(data['status']);
+      $('#text_toast').html(data['status']);
+      $('.toast').toast('show');
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       
@@ -3549,7 +3550,8 @@ function change_owner(){
       $('#alert_message').addClass('show');
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
-      $('#alert_text_message').html(data['status']);
+      $('#text_toast').html(data['status']);
+      $('.toast').toast('show');
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       //Ajustar valor en la tabla
@@ -3586,7 +3588,8 @@ function disable_file(){
       $('#alert_message').addClass('show');
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
-      $('#alert_text_message').html(data['status']);
+      $('#text_toast').html(data['status']);
+      $('.toast').toast('show');
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       //elimina las filas de la tabla
@@ -3616,7 +3619,8 @@ function delete_file(){
       $('#alert_message').addClass('show');
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
-      $('#alert_text_message').html(data['status']);
+      $('#text_toast').html(data['status']);
+      $('.toast').toast('show');
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       //elimina las filas de la tabla

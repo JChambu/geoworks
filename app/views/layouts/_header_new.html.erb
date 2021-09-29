@@ -15,6 +15,7 @@ function open_panel(id_panel,id_table){
         console.log("Data table config")
         console.log(data);
         $('#table_id').val(data.data[0].name);
+        $('#table_name_visible').html(data.data[0].name);
         $('#table_id').val(data.data[0].id);
         var config = data.data[0].config;
         $("#choose").val(config.filter_by.value);
@@ -70,19 +71,21 @@ function open_panel(id_panel,id_table){
         });
 
         //cross_layers_fields
+        $('.column_data_layer').each(function(){
+          var field_key = $(this).attr('id').split('|')[1];
+          var cross_layer_id_project = $(this).attr('id').split('|')[2];
+          hide_column_layer(field_key,cross_layer_id_project);
+        });
         if(config.cross_layers!=undefined){
           Object.keys(config.cross_layers).forEach(function(key){
             var cross_layer_field_keys = config.cross_layers[key].p_field_keys
             $('.column_data_layer').each(function(){
               var field_key = $(this).attr('id').split('|')[1];
               var cross_layer_id_project = $(this).attr('id').split('|')[2];
-              if(cross_layer_field_keys.indexOf(field_key)>=0 && cross_layer_id_project == config.cross_layers[key].project_type_id && !$(this).hasClass('d-none')){
+              if(cross_layer_field_keys.indexOf(field_key)>=0 && cross_layer_id_project == config.cross_layers[key].project_type_id ){
                 $(this).addClass('d-none');
               } else{
-                if($(this).hasClass('d-none')){
                   $(this).removeClass('d-none');
-                  hide_column_layer(field_key,cross_layer_id_project)
-                }
               }
             });
           });
@@ -94,6 +97,7 @@ function open_panel(id_panel,id_table){
     });
   } else{
     if(id_panel=="view-data-middle"){
+      $('#table_name_visible').html("Datos");
       $('#table_id').val("");
       $('#table_name').val("");
       //cierra columnas
@@ -275,11 +279,16 @@ function open_panel(id_panel,id_table){
           <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelAdmin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Paneles</a>
             <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels" aria-labelledby="panelAdmin">
               <% if can? :data, :visualizer %>
-                <a class="dropdown-item" href="#" onclick="open_panel('view-data-middle',0)">Tabla de datos</a>
+                <a class="dropdown-item" href="#" onclick="open_panel('view-data-middle',0)">Tabla de datos
+                  <i class="fas fa-edit ml-4" style="font-size: 0.8em;" id="show_trash_tables" title="Eliminar Tablas" onclick="show_trash_tables(event)"></i>
+                </a>
                 <div class="ml-3" id="tables_container" style="font-size:0.8em; max-height: 40vh; overflow-y:auto;">
                   <% if !@table_configuration.nil? %>
                     <% @table_configuration.each do |table| %>
-                      <a class="dropdown-item" href="#" onclick="open_panel(<%= "'view-data-middle',"+table.id.to_s%>)"><%=table.name %></a>
+                      <a class="dropdown-item d-flex" onclick="open_panel(<%= "'view-data-middle',"+table.id.to_s%>)" href="#" id=<%= "dropdown_table"+table.id.to_s%>>
+                        <h7 class="mr-auto" ><%=table.name %></h7>
+                        <i class="fas fa-trash-alt ml-3 invisible icon_delete_table" title="Eliminar" onclick="remove_table(<%= 'event ,'+table.id.to_s%>)"></i>
+                      </a>
                     <% end %>
                   <% end %>
               </div>

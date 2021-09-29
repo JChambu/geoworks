@@ -39,8 +39,8 @@ $(window).on('resize', function() {
   }
 });
 
-// Establece alto de mapa y sidebar al cargar
 $(document).ready(function() {
+  // Establece alto de mapa y sidebar al cargar
   $('#timeslider-container').removeClass('d-none');
   var height_browser = window.innerHeight;
   var height_dashboard = height_browser - $('#nav_bar').innerHeight();
@@ -51,6 +51,14 @@ $(document).ready(function() {
   $('#filter-container').css('height','0px');
   resize_graphics();
   $('#charts-container').css('height','0px');
+
+  // Establece funciones para que el mensaje Toast aparezca y se oculte sin obstaculizar el mapa
+  $('.toast').on('hide.bs.toast', function () {
+    $(this).css('top','-30vh');
+  });
+  $('.toast').on('show.bs.toast', function () {
+    $(this).css('top','9vh');
+  });
 });
 
 Navarra.namespace("dashboards.action_show");

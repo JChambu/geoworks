@@ -250,7 +250,9 @@ function get_logo(){
 
 function save_pdf(){
     if(document.getElementById('map_pdf') == undefined){
-        alert("Espere la imagen del mapa antes de guardar el pdf")
+        var text_toast = "Espere la imagen del mapa antes de guardar el pdf";
+        $('#text_toast').html(text_toast);
+        $('.toast').toast('show');
         return;   
     }
     $('#pdf-modal').modal('hide');

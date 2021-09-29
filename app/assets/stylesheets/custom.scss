@@ -883,3 +883,14 @@ div.custom-menu.show {
 .icon_selected{
   color: rgb(211, 216, 0)!important;
 }
+
+/* Toast */
+.custom_toast {
+  position: absolute;
+  top: -30vh;
+  left: 35%;
+  background: rgba(81, 89, 96, 0.4);
+  z-index: 4000;
+  color: white;
+  width: 30%;
+}
