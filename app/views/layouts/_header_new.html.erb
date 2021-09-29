@@ -31,15 +31,30 @@ function open_panel(id_panel,id_table){
         $(".select_perpage").html(per_page_value)
         //current_project_fields
         var current_layer_fields = config.current_layer.p_field_keys;
-        $('.column_data').each(function(){
+          //cierra los campos abiertos que no pertenecen a la configuración
+        $('.column_data.d-none').each(function(){
           var field_key = $(this).attr('id').substring(10);
-          if(current_layer_fields.indexOf(field_key)>=0 && !$(this).hasClass('d-none')){
+          if(current_layer_fields.indexOf(field_key)<0){
+            hide_column(field_key);
+          }
+        });      
+        // abre los que pertenecen a la configuración de la tabla
+        current_layer_fields.forEach(function(key){
+          if(!$('#addcolumn_'+key).hasClass('d-none')){
+            $('#addcolumn_'+key).click();
+          }
+        });
+        /*
+        $('.column_data').not('d-none').each(function(){
+          var field_key = $(this).attr('id').substring(10);
+          if(current_layer_fields.indexOf(field_key)>=0){
             $(this).click();
           } 
           if(current_layer_fields.indexOf(field_key)<0 && $(this).hasClass('d-none')){
             hide_column(field_key);
           }
         });
+        */
          //project_subfields
          var subfields_ids = [];
          var subheader_open_saved = [];
@@ -60,37 +75,34 @@ function open_panel(id_panel,id_table){
             }
           });
         }
-        $('.subfields_data').each(function(){
+        $('.subfields_data.d-none').each(function(){
           var subfield_id = $(this).attr('id').substring(12);
           remove_column(subfield_id);
-          if(subfields_ids.indexOf(subfield_id)>=0 ){
-            $(this).addClass('d-none');
-          } else{
-              $(this).removeClass('d-none');
-          }
-
+        });
+        $('.subfields_data').removeClass('d-none')
+        subfields_ids.forEach(function(subfield_id){
+          $('#open_subform'+subfield_id).addClass('d-none')
         });
 
         //cross_layers_fields
-        $('.column_data_layer').each(function(){
+        //cierra las columnas de capas que están abiertas
+        $('.column_data_layer.d-none').each(function(){
           var field_key = $(this).attr('id').split('|')[1];
           var cross_layer_id_project = $(this).attr('id').split('|')[2];
           hide_column_layer(field_key,cross_layer_id_project);
         });
+
+        $('.column_data_layer').removeClass('d-none');
         if(config.cross_layers!=undefined){
           Object.keys(config.cross_layers).forEach(function(key){
-            var cross_layer_field_keys = config.cross_layers[key].p_field_keys
-            $('.column_data_layer').each(function(){
-              var field_key = $(this).attr('id').split('|')[1];
-              var cross_layer_id_project = $(this).attr('id').split('|')[2];
-              if(cross_layer_field_keys.indexOf(field_key)>=0 && cross_layer_id_project == config.cross_layers[key].project_type_id ){
-                $(this).addClass('d-none');
-              } else{
-                  $(this).removeClass('d-none');
-              }
+            var cross_layer_field_keys = config.cross_layers[key].p_field_keys;
+            var p_layer_id = config.cross_layers[key].project_type_id;
+            cross_layer_field_keys.forEach(function(sub_key){
+              $('#addcolumn_layer\\|'+sub_key+'\\|'+p_layer_id).addClass('d-none')
             });
           });
         }
+        
       open_table_middle(true);
       console.log("envía información a init_data_dashboard")
       init_data_dashboard(true,true,subheader_open_saved,true);
