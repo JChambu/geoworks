@@ -14,6 +14,7 @@ function open_panel(id_panel,id_table){
       success: function(data) {
         console.log("Data table config")
         console.log(data);
+        $(".fakeLoader").css("display", "block");
         $('#table_id').val(data.data[0].name);
         $('#table_name_visible').html(data.data[0].name);
         $('#table_id').val(data.data[0].id);
@@ -91,12 +92,15 @@ function open_panel(id_panel,id_table){
           });
         }
       open_table_middle(true);
+      console.log("envía información a init_data_dashboard")
       init_data_dashboard(true,true,subheader_open_saved,true);
       
       }
     });
   } else{
     if(id_panel=="view-data-middle"){
+      $(".fakeLoader").css("display", "block");
+      console.log("Entra a armar tabla defaulf")
       $('#table_name_visible').html("Datos");
       $('#table_id').val("");
       $('#table_name').val("");
@@ -121,7 +125,7 @@ function open_panel(id_panel,id_table){
         var subfield_id = $(this).attr('id').substring(12);
         remove_column(subfield_id);
       });
-
+      console.log("envía información a init_data_dashboard")
       init_data_dashboard(true,true,undefined,true);
     }
     $('#'+id_panel).click();
