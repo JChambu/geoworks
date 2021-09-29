@@ -644,7 +644,6 @@ function save_table(is_new){
     datatype: 'JSON',
     data: table_to_save,
     success: function(data) {
-      console.log(data)
       $('#text_toast').html(data.status);
       $('.toast').toast('show');
       if(is_new){
@@ -684,8 +683,6 @@ function remove_table(event,table_id){
     datatype: 'JSON',
     data: data,
     success: function(data) {
-        console.log('RESPONSE destroy_table');
-        console.log(data);
         $('#text_toast').html(data.status);
         $('.toast').toast('show');
         $('#dropdown_table'+table_id).remove();

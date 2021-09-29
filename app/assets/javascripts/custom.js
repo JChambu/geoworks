@@ -1156,7 +1156,6 @@ function draw_charts() {
 //****** FUNCIONES PARA TABLA DE DATOS*****
 // Función para traer todos los datos de los registros contenidos y filtrados
 function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
-  console.log("inicia armado de tabla")
   //Evita calcular la tabla si está oculta o si no existe por autorización de roles
   if ($('#status-view').hasClass('status-view-condensed') || $('.table_data_container').length==0) {
     return;
@@ -1220,7 +1219,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
     },
 
     success: function(data) {
-      console.log("Llega al success ")
       var fields = document.querySelectorAll(".field_key");
       if(JSON.stringify(data_dashboard) == JSON.stringify(data.data) && !is_saved){
         $(".fakeLoader").css("display", "none");
@@ -1268,14 +1266,12 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
 
         $('#row_table_data'+found_id).addClass('found');
       });
-        console.log("Termina armado del DOM")
         // comienza llenado de la tabla
           var column_to_fill =  document.querySelectorAll('._columnname');
           column_to_fill.forEach(function(col,index_data){
             col.innerHTML = array_datos[index_data].toString();
           });
         // termina llenado de la tabla
-        console.log("Termina llenado de tabla")
 
       $(".fakeLoader").css("display", "none");
 
@@ -2366,7 +2362,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       to_date_subforms: to_date_subforms
     }
   }
-  console.log(data)
+
   xhr_info = $.ajax({
     type: 'GET',
     url: url_get,
@@ -3197,7 +3193,6 @@ function open_new_child(element_field_id, element_name, element_key,is_multiple)
       element_field_id: element_field_id
     },
     success: function(data) {
-      console.log(data)
       child_elements_new = {
         children_fields: data,
         children_id: 0,
@@ -3407,8 +3402,6 @@ function edit_file(edit_parent, edit_child, edit_status){
                 }
               }
               properties_child_to_save[id_field_child_properties] = value_field_properties;
-              console.log("properties to save después")
-              console.log(properties_child_to_save)
               }
             }
           });
@@ -3417,11 +3410,7 @@ function edit_file(edit_parent, edit_child, edit_status){
           child_data.field_id = parseInt(array_field_id_father_grouped[zz]);
           child_data.child_id = array_child_edited[z];
           child_data.properties = properties_child_to_save;
-          console.log("Objeto nuevo")
-          console.log(child_data)
           child_edited_all.push(child_data);
-          console.log("Array a enviar")
-          console.log(child_edited_all)
       }
     }
   }
@@ -3442,9 +3431,6 @@ function edit_file(edit_parent, edit_child, edit_status){
       geom: Navarra.geomaps.get_geometries_to_save()
     }
 
-    console.log('PARAMS create_form');
-    console.log(data_to_save)
-
   } else {
     var type_ajax = 'PATCH';
     var url_post = '/projects/update_form';
@@ -3455,9 +3441,6 @@ function edit_file(edit_parent, edit_child, edit_status){
       project_status_id: status_id,
     }
 
-    console.log('PARAMS update_form');
-    console.log(data_to_save)
-
   }
   $.ajax({
     type: type_ajax,
@@ -3465,9 +3448,6 @@ function edit_file(edit_parent, edit_child, edit_status){
     datatype: 'JSON',
     data: data_to_save,
     success: function(data) {
-
-      console.log('RESPONSE create_form/update_form');
-      console.log(data)
 
       $(".fakeLoader").css("display", "none");
       filechange = false;

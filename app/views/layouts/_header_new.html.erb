@@ -12,8 +12,6 @@ function open_panel(id_panel,id_table){
         table_configuration_id: id_table,
       },
       success: function(data) {
-        console.log("Data table config")
-        console.log(data);
         $(".fakeLoader").css("display", "block");
         $('#table_id').val(data.data[0].name);
         $('#table_name_visible').html(data.data[0].name);
@@ -104,7 +102,6 @@ function open_panel(id_panel,id_table){
         }
         
       open_table_middle(true);
-      console.log("envía información a init_data_dashboard")
       init_data_dashboard(true,true,subheader_open_saved,true);
       
       }
@@ -112,7 +109,6 @@ function open_panel(id_panel,id_table){
   } else{
     if(id_panel=="view-data-middle"){
       $(".fakeLoader").css("display", "block");
-      console.log("Entra a armar tabla defaulf")
       $('#table_name_visible').html("Datos");
       $('#table_id').val("");
       $('#table_name').val("");
@@ -126,24 +122,17 @@ function open_panel(id_panel,id_table){
         var field_key = $(this).attr('id').substring(10);
         show_column(field_key);
       });
-      console.log("Termina columnas proyecto default")
-      console.log($('.column_data').length);
       // cierra columnas layers que están abiertas
       $('.column_data_layer.d-none').each(function(){
         var field_key = $(this).attr('id').split('|')[1];
         var cross_layer_id_project = $(this).attr('id').split('|')[2];
         hide_column_layer(field_key,cross_layer_id_project)
       });
-      console.log("Termina columnas proyectos capas")
-      console.log($('.column_data_layer').length);
       //cierra subformularios que están abiertos
       $('.subfields_data.d-none').each(function(){
         var subfield_id = $(this).attr('id').substring(12);
         remove_column(subfield_id);
       });
-      console.log("Termina columnas subproyectos")
-      console.log($('.subfields_data').length);
-      console.log("envía información a init_data_dashboard")
       init_data_dashboard(true,true,undefined,true);
     }
     $('#'+id_panel).click();
