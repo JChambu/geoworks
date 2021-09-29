@@ -104,28 +104,28 @@ function open_panel(id_panel,id_table){
       $('#table_name_visible').html("Datos");
       $('#table_id').val("");
       $('#table_name').val("");
-      //cierra columnas
-      $('.column_data').not('.is_popup').each(function(){
+      //cierra columnas que están abiertas y no son pop_up
+      $('.column_data.d-none').not('.is_popup').each(function(){
         var field_key = $(this).attr('id').substring(10);
         hide_column(field_key);
       });
-      //abre columnas popup
-      $('.column_data.is_popup').each(function(){
+      //abre columnas popup que están cerradas
+      $('.column_data.is_popup').not('.d-none').each(function(){
         var field_key = $(this).attr('id').substring(10);
         show_column(field_key);
       });
       console.log("Termina columnas proyecto default")
       console.log($('.column_data').length);
-      // cierra columnas layers 
-      $('.column_data_layer').each(function(){
+      // cierra columnas layers que están abiertas
+      $('.column_data_layer.d-none').each(function(){
         var field_key = $(this).attr('id').split('|')[1];
         var cross_layer_id_project = $(this).attr('id').split('|')[2];
         hide_column_layer(field_key,cross_layer_id_project)
       });
       console.log("Termina columnas proyectos capas")
       console.log($('.column_data_layer').length);
-      //cierra subformularios
-      $('.subfields_data').each(function(){
+      //cierra subformularios que están abiertos
+      $('.subfields_data.d-none').each(function(){
         var subfield_id = $(this).attr('id').substring(12);
         remove_column(subfield_id);
       });
