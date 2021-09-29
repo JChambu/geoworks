@@ -114,17 +114,23 @@ function open_panel(id_panel,id_table){
         var field_key = $(this).attr('id').substring(10);
         show_column(field_key);
       });
+      console.log("Termina columnas proyecto default")
+      console.log($('.column_data').length);
       // cierra columnas layers 
       $('.column_data_layer').each(function(){
         var field_key = $(this).attr('id').split('|')[1];
         var cross_layer_id_project = $(this).attr('id').split('|')[2];
         hide_column_layer(field_key,cross_layer_id_project)
       });
+      console.log("Termina columnas proyectos capas")
+      console.log($('.column_data_layer').length);
       //cierra subformularios
       $('.subfields_data').each(function(){
         var subfield_id = $(this).attr('id').substring(12);
         remove_column(subfield_id);
       });
+      console.log("Termina columnas subproyectos")
+      console.log($('.subfields_data').length);
       console.log("envía información a init_data_dashboard")
       init_data_dashboard(true,true,undefined,true);
     }
