@@ -21,7 +21,7 @@ class TableConfigurationsController < ApplicationController
 
 
   def edit_table
-    id = params[:id]
+    id = params[:table_id]
     unless id.nil?
       name  = params[:name]
       config = params[:config]
