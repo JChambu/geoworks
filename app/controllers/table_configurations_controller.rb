@@ -17,7 +17,22 @@ class TableConfigurationsController < ApplicationController
     render json: {
       "data": respuesta
     }
-    
+  end
+
+
+  def edit_table
+    id = params[:id]
+    unless id.nil?
+      name  = params[:name]
+      config = params[:config]
+      @table_configuration = TableConfiguration.where(id: id).first
+      @table_configuration.name = name
+      @table_configuration.config = config
+      @table_configuration.save
+      render json: {'status': 'Se actualizó la configuración.'}
+    else
+      render json: {'status': 'Faltan parámetros para completar la acción.'}
+    end
   end
 
   def search_table
