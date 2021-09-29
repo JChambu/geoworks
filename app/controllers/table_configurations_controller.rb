@@ -9,14 +9,16 @@ class TableConfigurationsController < ApplicationController
     @table_configuration.project_type_id = params[:project_type_id]
 
     if @table_configuration.save
-      respuesta = 'Funcionó'
+      render json: {
+        'status': 'La configuración se guardó correctamente.',
+        'table_id': @table_configuration.id
+      }
     else
-      respuesta = 'FAIL'
+      render json: {
+        'status': 'No se pudo guardar la configuración.'
+      }
     end
 
-    render json: {
-      "data": respuesta
-    }
   end
 
 
