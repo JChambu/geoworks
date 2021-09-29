@@ -37,6 +37,17 @@ class TableConfigurationsController < ApplicationController
     end
   end
 
+  def destroy_table
+    id = params[:table_id]
+    unless id.nil?
+      @table_configuration = TableConfiguration.where(id: id).first
+      @table_configuration.destroy
+      render json: {'status': 'Se eliminó la configuración.'}
+    else
+      render json: {'status': 'Faltan parámetros para completar la acción.'}
+    end
+  end
+
   def search_table
     @table = TableConfiguration.where(id: params[:table_configuration_id])
     render json: {data: @table}
