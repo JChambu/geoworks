@@ -185,26 +185,34 @@ class Project < ApplicationRecord
     save!
   end
 
-  def change_status status_id
-    self.properties['app_estado'] = status_id
-    self.project_status_id = status_id
-    self.gwm_updated_at = Time.zone.now
-    save!
-    update_inheritable_statuses
-  end
-
   def disable_form
     self.row_enabled = false
     self.disabled_at = Time.zone.now
     save!
   end
 
-  def update_form properties
-    properties.each do |key, value|
-      self.properties[key] = value
+  def update_form properties, project_status_id
+    update_status = ''
+    if properties.present?
+      properties.each do |key, value|
+        self.properties[key] = value
+      end
     end
+    # NOTE: cuando es 0 es porque al controlador llega nulo
+    if project_status_id != 0 && self.project_status_id != project_status_id
+      self.properties['app_estado'] = project_status_id
+      self.project_status_id = project_status_id
+      update_status = true
+    else
+      update_status = false
+    end
+
     self.gwm_updated_at = Time.zone.now
     save!
+
+    if update_status
+      update_inheritable_statuses
+    end
   end
 
   def update_geom_and_calculated_fields new_geom, new_properties

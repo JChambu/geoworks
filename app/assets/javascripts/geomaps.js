@@ -10,9 +10,10 @@ var layer_array=[];
 var labels;
 var app_id_popup="";
 var geometries_to_edit = [];
+var geometries_to_save;
 var polygon_edit_vertexs =[];
 Navarra.geomaps = function() {
-  var mymap, markers,polygon_edit, polygon_selected, editableLayers, projects, layerProjects, layerProjectsSelected, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
+  var mymap, markers,polygon_edit,polyline_edit, polygon_selected, editableLayers, projects, layerProjects, layerProjectsSelected, MySource, cfg, heatmapLayer, current_tenant, popUpDiv, div, layerControl, url, protocol, port, type_geometry;
   var layerColor, source, baseMaps, overlayMaps, projectFilterLayer, projectss, sld, name_layer, project_current,project_current_selected,current_tenement;
   var ss = [];
   var size_box = [];
@@ -126,26 +127,26 @@ Navarra.geomaps = function() {
     //genera Modal de mapas base y proyecto activo
     Object.keys(baseMaps).forEach(function(key,index){
       if(index==0){var checked_text ="checked=true"} else {checked_text=""}
-      var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+      var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" >'+
                     '<input class="custom-control-input" '+checked_text +' onchange="select_layer()" id="mapabase_'+key+'" type="radio" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="mapabase_'+key+'"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>'+key+'</label></a>';
       $('#basemaps_container').append(new_item);
     });
-    var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+    var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" >'+
                     '<input class="custom-control-input" checked=true onchange="select_layer()" id="checkbox_'+Navarra.dashboards.config.name_layer+'" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_'+Navarra.dashboards.config.name_layer+'"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>'+Navarra.dashboards.config.name_project+'</label></a>';
       $('#activeproject_container').append(new_item);
-      var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_Seleccionados"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+      var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_Seleccionados"><div class="custom-control custom-checkbox" >'+
                     '<input class="custom-control-input" onchange="select_layer()" id="checkbox_Seleccionados" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_Seleccionados"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>Seleccionados</label></a>';
       $('#activeproject_container').append(new_item);
-      var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_Etiquetas"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+      var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_Etiquetas"><div class="custom-control custom-checkbox" >'+
                     '<input class="custom-control-input" onchange="Navarra.geomaps.show_labels(true)" id="checkbox_Etiquetas" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_Etiquetas"> </label>'+
                     '</div>'+
@@ -324,29 +325,52 @@ Navarra.geomaps = function() {
     $('.leaflet-draw-draw-circle').addClass('unselectable')
     $('.leaflet-draw-draw-marker').addClass('unselectable')
 
-    //agrega boton EdiciónGeográfica si tiene permiso de edición geométrica
-    if($('#edit_geom_control').val() == "true"){
+    //agrega boton EdiciónGeográfica si tiene permiso de edición geométrica o permiso de nuevo
+    // AGREGAR PERMISO DE NUEVO REGISTRO
+    if($('#edit_geom_control').val()=="true" || $('#new_geom_control').val()=="true"){
       L.Control.Edit = L.Control.extend({
         onAdd: function(map) {
           var container = L.DomUtil.create('DIV');
           container.className = "leaflet-control-zoom leaflet-bar leaflet-control";
-          var new_a = L.DomUtil.create('A');
-          new_a.className = "leaflet-draw-draw-polygon";
-          new_a.title = "Editar Geometrías"
-          var img = L.DomUtil.create('I');
-          img.className = 'fas fa-edit';
-          img.style.color = "white";
-          img.style.cursor = "pointer"
-          img.style.textShadow = "1px 1px 2px rgba(0,0,0,0.5)"
-          new_a.appendChild(img);
-          new_a.setAttribute('onclick','Navarra.geomaps.edit_geometry_in_map()')
-          container.appendChild(new_a);
+          // botón edición
+          if($('#edit_geom_control').val()=="true"){
+            var new_a = L.DomUtil.create('A');
+            new_a.className = "leaflet-draw-draw-polygon";
+            new_a.title = "Editar Geometrías"
+            var img = L.DomUtil.create('I');
+            img.className = 'fas fa-edit';
+            img.style.color = "white";
+            img.style.cursor = "pointer"
+            img.style.textShadow = "1px 1px 2px rgba(0,0,0,0.5)"
+            new_a.appendChild(img);
+            new_a.setAttribute('onclick','Navarra.geomaps.edit_geometry_in_map(event)')
+            container.appendChild(new_a);
+          }
+
+          // botón creación
+          if($('#new_geom_control').val()=="true"){
+            var new_a = L.DomUtil.create('A');
+            new_a.className = "leaflet-draw-draw-polygon";
+            new_a.title = "Nueva Geometría";
+            var img = L.DomUtil.create('I');
+            if(Navarra.dashboards.config.type_geometry == 'Point'){
+              img.className = 'fas fa-map-marker-alt';
+            } else{
+              img.className = 'fas fa-draw-polygon';
+            }  
+            img.style.color = "white";
+            img.style.cursor = "pointer"
+            img.style.textShadow = "1px 1px 2px rgba(0,0,0,0.5)"
+            new_a.appendChild(img);
+            new_a.setAttribute('onclick','Navarra.geomaps.new_geometry(event)')
+            container.appendChild(new_a);
+          }
 
           var new_div = L.DomUtil.create('DIV');
           new_div.className = "confirmation_geometry d-none"
 
           var new_p = L.DomUtil.create('P');
-          new_p.innerHTML = "Guardar Cambios?";
+          new_p.innerHTML = "Confirmar Geometría?";
           new_p.style.whiteSpace='nowrap';
           new_p.style.margin = '0px'
           new_div.appendChild(new_p);
@@ -354,6 +378,7 @@ Navarra.geomaps = function() {
           var new_a = L.DomUtil.create('BUTTON');
           new_a.className = "btn btn-secondary p-0 m-1";
           new_a.innerHTML = "SI";
+          new_a.id = "confirmation_geometry_button";
           new_a.type="button";
           new_a.style.width = '35px';
           new_a.setAttribute('onClick','Navarra.geomaps.save_geometry()');
@@ -364,7 +389,7 @@ Navarra.geomaps = function() {
           new_a.innerHTML = "NO";
           new_a.type="button";
           new_a.style.width = '35px';
-          new_a.setAttribute('onClick','Navarra.geomaps.delete_markers()');
+          new_a.setAttribute('onClick','Navarra.geomaps.cancel_geometry(event)');
           new_div.appendChild(new_a);
 
           var new_p = document.createElement('P');
@@ -414,25 +439,7 @@ Navarra.geomaps = function() {
     mymap.on('moveend', onMapZoomedMoved);
 
     //Borra polígono dibujado si hace click fuera del mapa
-    mymap.on('click', function(ev){
-      if (Navarra.dashboards.config.size_polygon.length != 0){
-        var coord = ev.latlng;
-        var polyPoints = Navarra.dashboards.config.size_polygon[0];
-        var x = ev.latlng.lat
-        var y = ev.latlng.lng;
-        var inside = false;
-        for (var i = 0, j = polyPoints.length - 1; i < polyPoints.length; j = i++) {
-          var xi = polyPoints[i][1], yi = polyPoints[i][0];
-          var xj = polyPoints[j][1], yj = polyPoints[j][0];
-          var intersect = ((yi > y) != (yj > y))
-            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-          if (intersect) inside = !inside;
-        }
-        if(!inside){
-          remove_polygon_draw();
-        }
-      }
-    });
+    set_onclick_map(true);
 
     //elimina la variable app_id_popup al cerrar el popup
     mymap.on('popupclose', function(e) {
@@ -1263,7 +1270,7 @@ Navarra.geomaps = function() {
                     '<div>'+
                     '<a class="dropdown-item d-flex" href="#" style="justify-content:space-between">'+
                     '<div class="d-inline mr-3">'+
-                    '<div class="custom-control custom-checkbox" style="display: inline-block;">'+
+                    '<div class="custom-control custom-checkbox" >'+
                     '<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+layer+'" type="checkbox" name="radio_mapabase">'+
                     '<label id="checkboxlabel_'+layer+'" class="string optional control-label custom-control-label" for="checkbox_'+layer+'"> </label>'+
                     '</div>'+
@@ -1356,7 +1363,7 @@ Navarra.geomaps = function() {
             sortLayers: true
           });
           //genera Modal de capas externas
-          var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" style="display: inline-block;">'+
+          var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" >'+
                     '<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+v.name+'" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_'+v.name+'"> </label>'+
                     '</div>'+
@@ -1422,10 +1429,17 @@ Navarra.geomaps = function() {
                   });
                   app_id_popup=prop["app_id"];
                   if(Navarra.dashboards.config.name_project==data["project_name"]){
+                    var div_popup_icon = document.createElement('DIV');
+                    div_popup_icon.style.textAlign = 'right';
+                    var new_p = document.createElement('I');
+                    new_p.setAttribute("onclick",'Navarra.photos.open_photos('+app_id_popup+',false)');
+                    new_p.className="fas fa-image info_icon";
+                    div_popup_icon.appendChild(new_p);
                     var new_p = document.createElement('I');
                     new_p.setAttribute("onclick",'show_item_info('+app_id_popup+',true)');
                     new_p.className="fas fa-info-circle info_icon";
-                    div_popup.appendChild(new_p);
+                    div_popup_icon.appendChild(new_p);
+                    div_popup.appendChild(div_popup_icon);
                   }
 
                   var isdifferent=true;
@@ -1470,6 +1484,7 @@ function close_all_popups(){
 }
 
 function get_zoomextent(){
+  event.stopPropagation();
   if(editableLayers.getLayers().length!=0){
     mymap.fitBounds(editableLayers.getBounds());
   } else{
@@ -1565,8 +1580,17 @@ function show_labels(setbbox){
   }
 }
 
-function edit_geometry_in_map(){
+function edit_geometry_in_map(event){
+  event.stopPropagation();
+  set_onclick_map(true);
+  //Cierra modal lateral
+  $("#info-modal").modal("hide");
+  Navarra.project_types.config.item_selected="";
+  Navarra.project_types.config.data_dashboard = "";
+
   delete_markers();
+  $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
+  $('#confirmation_geometry_button').addClass('confirmation_geometry_button_edit');
   var cql_filter_edit_geometry =  getCQLFilter(true);
   if(app_id_popup!="" || type_geometry=="Polygon"){
     if(app_id_popup==""){
@@ -1614,6 +1638,9 @@ function edit_geometry_in_map(){
       }
     });
     mymap.addLayer(markers);
+    if(Navarra.dashboards.config.type_geometry=="Polygon"){
+      create_polygon_edit();
+    }
     }
   });
 }
@@ -1660,6 +1687,16 @@ function create_marker(latlong,index, title_id, is_aditional_marker){
           id: event.target.options.title,
           latLng: event.target.getLatLng()
         }
+    // elimina si hay uno id igual y luego lo agrega
+    var index_to_delete = -1;
+    geometries_to_edit.forEach(function(g, index){
+      if (g.id == event.target.options.title){
+        index_to_delete = index;
+      }
+    })  
+    if(index_to_delete>=0){
+      geometries_to_edit.splice(index_to_delete,1);
+    } 
     geometries_to_edit.push(data_to_edit);
     event.target.setOpacity(1)
   });
@@ -1671,7 +1708,7 @@ function create_marker(latlong,index, title_id, is_aditional_marker){
       event.target.setOpacity(1)
     });
     marker.on('click', function(event){
-      if(markers.getLayers().length>3){
+      if(markers.getLayers().length>3 && mymap.doubleClickZoom._enabled){
         event.target.setIcon(myIcon_selected);
         event.target.on('click',function(event){
           if(markers.getLayers().length>3){
@@ -1699,16 +1736,23 @@ function create_polygon_edit(){
   if (polygon_edit != undefined) {
     mymap.removeLayer(polygon_edit);
   }
+  if (polyline_edit != undefined) {
+    mymap.removeLayer(polyline_edit);
+  }
   polygon_edit = new L.LayerGroup();
+  polyline_edit = new L.LayerGroup();
   // busca coordenadas de los puntos
   var coordinates_newpol = [];
   polygon_edit_vertexs.forEach(function (layer) {
     coordinates_newpol.push(layer.getLatLng());
   });
   var poligon_new = new L.Polygon(coordinates_newpol, polygon_options);
-  poligon_new.on('click',function(ev){
+  coordinates_newpol.push(polygon_edit_vertexs[0].getLatLng());
+  var polyline_new = new L.Polyline(coordinates_newpol, polygon_options);
+  polyline_new.on('click',function(ev){
+     ev.originalEvent.view.L.DomEvent.stopPropagation(ev);
     var nearest_point, index_vertex;
-    poligon_new.getLatLngs()[0].forEach(function(vertex, index){
+    polyline_new.getLatLngs().forEach(function(vertex, index){
       var distance= vertex.distanceTo(new L.latLng(ev.latlng.lat,ev.latlng.lng));
       if(nearest_point==undefined || nearest_point>distance){
         nearest_point = distance;
@@ -1724,9 +1768,21 @@ function create_polygon_edit(){
   })
   polygon_edit.addLayer(poligon_new);
   mymap.addLayer(polygon_edit);
+  polyline_edit.addLayer(polyline_new);
+  mymap.addLayer(polyline_edit);
+}
+
+function cancel_geometry(event){
+  event.stopPropagation();
+  delete_markers();
+  if($('.leaflet-container').hasClass('cursor-crosshair')){
+    set_onclick_map(true);
+  }
 }
 
 function delete_markers(){
+  $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
+  $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_edit');
   geometries_to_edit=[];
   $('.confirmation_geometry').addClass('d-none');
   $('.confirmation_success_geometry').addClass('d-none');
@@ -1736,18 +1792,62 @@ function delete_markers(){
   if (polygon_edit != undefined) {
     mymap.removeLayer(polygon_edit);
   }
+  if (polyline_edit != undefined) {
+    mymap.removeLayer(polyline_edit);
+  }
   polygon_edit_vertexs=[];
   $('#marker_position').html("");
 }
 
 function save_geometry(){
+  event.stopPropagation();
+  var is_new_geom =$('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   if(geometries_to_edit.length==0){
     delete_markers();
     $('#confirmation_success_geometry_text').html('Sin cambios para editar');
     $('.confirmation_success_geometry').removeClass('d-none');
     return;
   }
-  search_geometric_calculation_fields();
+  if(polygon_edit_vertexs.length<3 && is_new_geom && type_geometry=="Polygon"){
+    delete_markers();
+    $('#confirmation_success_geometry_text').html('Geometría no válida');
+    $('.confirmation_success_geometry').removeClass('d-none');
+    set_onclick_map(true);
+    return;
+  }
+
+  if($('#confirmation_geometry_button').hasClass('confirmation_geometry_button_edit')){
+    search_geometric_calculation_fields();
+  }
+  if(is_new_geom){
+    if(type_geometry=="Polygon"){
+      var geometry_polygon_to_edit = []
+      polygon_edit_vertexs.forEach(function(vertex){
+        var vertex_edit = [];
+        vertex_edit.push(vertex._latlng.lng);
+        vertex_edit.push(vertex._latlng.lat);
+        geometry_polygon_to_edit.push(vertex_edit);
+      });
+      var data_to_edit = {
+        latLng: geometry_polygon_to_edit,
+      }
+      geometries_to_save = [];
+      geometries_to_save.push(data_to_edit);
+    } else{
+      geometries_to_save = [];
+      geometries_to_edit.forEach(function(geom){
+      var latlong_geom = {
+        lat: geom.latLng.lat,
+        lng: geom.latLng.lng
+      }
+      var data_to_edit = {
+          latLng: latlong_geom
+        }
+      geometries_to_save.push(data_to_edit)
+    });
+  }
+  open_new_fields();
+  }
 
 }
 
@@ -1802,9 +1902,6 @@ function save_geometry_width_calculated_fields() {
       geometries_to_save.push(data_to_edit)
     });
   }
-
-  console.log("Params update_geom_and_calculated_fields")
-  console.log(geometries_to_save)
 
   $.ajax({
     type: 'PATCH',
@@ -1872,14 +1969,7 @@ function search_geometric_calculation_fields(){
         }
       });
       if(type_geometry=="Polygon"){
-        var centroid = get_centroid();
-        var geom = {
-          id: geometries_to_edit[0].id,
-          latLng: {
-            lat: centroid.geometry.coordinates[1],
-            lng: centroid.geometry.coordinates[0]
-          }
-        }
+        var geom = get_geom_to_calculate();
         data.father_fields.forEach(function(field){
           if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}'){
             var calculated_field = field.calculated_field;
@@ -1899,9 +1989,111 @@ function search_geometric_calculation_fields(){
           });
        });
       }
+      //Si no hay campos a calcular ir a guardar
       if(Navarra.dashboards.config.field_geometric_calculated_length==0){save_geometry_width_calculated_fields()}
    }
   });
+}
+
+function get_geom_to_calculate(){
+    var centroid = get_centroid();
+    var geom = {
+      id: geometries_to_edit[0].id,
+      latLng: {
+        lat: centroid.geometry.coordinates[1],
+        lng: centroid.geometry.coordinates[0]
+      }
+    }
+  return geom;
+}
+function new_geometry(event){
+  event.stopPropagation();
+  //Cierra modal lateral
+  $("#info-modal").modal("hide");
+  Navarra.project_types.config.item_selected="";
+  Navarra.project_types.config.data_dashboard = "";
+  $('.leaflet-container').addClass('cursor-crosshair');
+  delete_markers();
+  $('#confirmation_geometry_button').addClass('confirmation_geometry_button_new');
+  $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_edit');
+  close_all_popups();
+  markers = new L.LayerGroup();
+  set_onclick_map(false);
+}
+
+function open_new_fields(){
+  show_item_info(0,true,false,true);
+  set_onclick_map(true);
+}
+
+function get_geometries_to_save(){
+  return geometries_to_save;
+}
+
+function set_onclick_map(is_default) {
+  if(is_default){
+    // onclick elimina selección fuera del polígono de selección
+    $('.leaflet-container').removeClass("cursor-crosshair");
+    mymap.off('click', on_click_map_create);
+    mymap.on('click', on_click_map_default);
+    mymap.off('dblclick', on_dblclick_map_create);
+    mymap.doubleClickZoom.enable(); 
+      
+  } else{
+    // on click crea geometría en el mapa
+    mymap.off('click', on_click_map_default)
+    mymap.on('click', on_click_map_create);
+    // on doubleclick cierra geometría en el mapa
+    mymap.doubleClickZoom.disable();  
+    mymap.on('dblclick', on_dblclick_map_create);
+  }
+}
+
+function on_click_map_default(ev){
+if (Navarra.dashboards.config.size_polygon.length != 0){
+    var coord = ev.latlng;
+    var polyPoints = Navarra.dashboards.config.size_polygon[0];
+    var x = ev.latlng.lat
+    var y = ev.latlng.lng;
+    var inside = false;
+    for (var i = 0, j = polyPoints.length - 1; i < polyPoints.length; j = i++) {
+      var xi = polyPoints[i][1], yi = polyPoints[i][0];
+      var xj = polyPoints[j][1], yj = polyPoints[j][0];
+      var intersect = ((yi > y) != (yj > y))
+        && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+    }
+    if(!inside){
+      remove_polygon_draw();
+    }
+  }
+}
+
+function on_click_map_create(e){
+  $('.confirmation_geometry').removeClass('d-none');
+  var type_geometry = Navarra.dashboards.config.type_geometry;
+  if(type_geometry == "Point" && markers != undefined){
+    mymap.removeLayer(markers);
+    markers = new L.LayerGroup();
+  }
+  var latlong = new L.LatLng(e.latlng.lat,e.latlng.lng);
+  marker_new = create_marker(latlong,0,0, false);
+  markers.addLayer(marker_new);
+  mymap.addLayer(markers);
+  if(type_geometry == "Polygon"){
+    create_polygon_edit();
+  }
+  var data_to_edit = {
+      id: 0,
+      latLng: latlong
+    }
+    geometries_to_edit = []; 
+    geometries_to_edit.push(data_to_edit);
+  return false;
+}
+
+function on_dblclick_map_create(ev){
+   set_onclick_map(true);
 }
 
 function get_area(){
@@ -1966,11 +2158,15 @@ function get_latlng(){
     get_zoomextent: get_zoomextent,
     show_labels:show_labels,
     edit_geometry_in_map: edit_geometry_in_map,
+    cancel_geometry: cancel_geometry,
     delete_markers: delete_markers,
     save_geometry: save_geometry,
     close_success_message_geometry: close_success_message_geometry,
     save_geometry_width_calculated_fields: save_geometry_width_calculated_fields,
     get_area: get_area,
-    get_latlng:get_latlng
+    get_latlng:get_latlng,
+    new_geometry: new_geometry,
+    get_geometries_to_save: get_geometries_to_save,
+    get_geom_to_calculate: get_geom_to_calculate
   }
 }();

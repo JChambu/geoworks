@@ -10,9 +10,20 @@ var data_charts;
 var filechange;
 var statuschange;
 
-var father_fields;
+var father_fields = [];
+var child_elements = [];
+var children_fields;
+var children_fields_all;
 var array_child_edited;
 var data_dashboard=[];
+var subtitles_all = [];
+var subtitles_all_child = [];
+var arraymultiselect=[];
+var arraymultiselectChild=[];
+var verify_count_elements_childs = 0;
+var array_datos = [];
+var array_column_hidden = [];
+var subheader_open = [];
 
 Number.prototype.format = function(n, x, s, c) {
   var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
@@ -1205,7 +1216,6 @@ function init_data_dashboard(haschange,close_info) {
     },
 
     success: function(data) {
-      console.log("SUCCESS !!!!!!!!!!!")
       var fields = document.querySelectorAll(".field_key");
       if(JSON.stringify(data_dashboard) == JSON.stringify(data.data)){
         $(".fakeLoader").css("display", "none");
@@ -1216,9 +1226,10 @@ function init_data_dashboard(haschange,close_info) {
       // borramos los datos anteriores
       $("#tbody_visible").empty();
       $(".width_only").html("");
+      Navarra.dashboards.app_ids_table=[];
 
       // verificamos columnas ocultas
-      var array_column_hidden = [];
+      array_column_hidden = [];
       $('#table_hidden th').each(function(){
         if($(this).is(':hidden')){
           array_column_hidden.push(false);
@@ -1231,65 +1242,20 @@ function init_data_dashboard(haschange,close_info) {
       var appid_selected = 0;
 
       //creación de los DOM de la tabla
-      var array_datos = [];
+      array_datos = [];
       data_dashboard.forEach(function(element, index) {
         var data_properties = element.properties;
         var new_row = document.createElement("TR");
         new_row.id="row_table_data"+data_properties["app_id"];
         new_row.style.cursor = "pointer";
         new_row.className = "row_data";
+        //agrega el app_id a la variable global
+        Navarra.dashboards.app_ids_table.push(data_properties["app_id"]);
 
         var new_celd="";
         fields.forEach(function(column, indexColumn) {
-          var column_name = column.value;
-          appid_info = data_properties["app_id"];
-          appid_selected = data_properties["app_id"];
-          if (column.value == "#_action") {
-            var new_dom = "<i class='fas fa-info-circle' style='margin-right:10px' title='Más Información' onclick='show_item_info(" + appid_info + ",false)'></i>"
-            array_datos.push(new_dom);
-          }
-          if (column.value == "#_select") {
-            var new_dom = "<div class='custom-control custom-checkbox' title='Seleccionar'>"+
-                  "<input type='checkbox' class='custom-control-input' id='check_select_"+appid_info+"' onchange='changeSelected()'>"+
-                  "<label class='string optional control-label custom-control-label' for='check_select_"+appid_info+"'></label>"+
-                  "</div>"
-            array_datos.push(new_dom);
-          }
-          if (column.value == "#") {
-            if (isNaN(per_page_value)) {
-               array_datos.push(index+1);
-              document.getElementById('columnfake_datacount').innerHTML=(index + 1);
-            } else {
-               array_datos.push((index + 1) + (active_page - 1) * per_page_value);
-              document.getElementById('columnfake_datacount').innerHTML=(index + 1) + (active_page - 1) * per_page_value;
-            }
-          }
-          if (column.value != "#" && column.value != "#_action" && column.value != "#_select") {
-            if (data_properties[column_name] != undefined) {
-              array_datos.push(data_properties[column_name]);
-              //agraga el máximo valor a la tabla cabecera para tener 2 tablas con el mismo ancho de columnas
-              var celd_width = document.getElementById('columnfake_data_'+column_name);
-              if(celd_width.innerHTML=="" || celd_width.innerHTML.length< data_properties[column_name].length){
-                celd_width.innerHTML = data_properties[column_name];
-              }
-              // termina ajuste de ancho
-              if (column.value == "app_id") {
-                if (Navarra.project_types.config.item_selected == data_properties[column_name]) {
-                  found_id = data_properties["app_id"];
-                  Navarra.project_types.config.data_dashboard = "app_id = '" + appid_selected + "'";
-                }
-              }
-
-            } else{
-              array_datos.push("");
-            }
-          }
-          var text_hidden = "";
-          if(!array_column_hidden[indexColumn]){
-            text_hidden = "style = 'display:none'";
-          }
-          new_celd += "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'></td>"
-
+          new_celd_create = create_celd_table(column,indexColumn, data_properties, per_page_value, active_page ,index);
+          new_celd+=new_celd_create;
         });
         document.getElementById("tbody_visible").appendChild(new_row);
         $('#row_table_data'+data_properties["app_id"]).html(new_celd);
@@ -1299,12 +1265,17 @@ function init_data_dashboard(haschange,close_info) {
       });
 
         // comienza llenado de la tabla
-              $("._columnname").each(function(index_data){
-                $(this).html(array_datos[index_data].toString());
-              });
+          $("._columnname").each(function(index_data){
+            $(this).html(array_datos[index_data].toString());
+          });
         // termina llenado de la tabla
 
       $(".fakeLoader").css("display", "none");
+
+       // Verifica si tiene que crear tabla de subformularios
+      create_subforms_table();
+      // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
+      verify_scroll_table();
     }
   });
 
@@ -1366,6 +1337,70 @@ function init_data_dashboard(haschange,close_info) {
       }
     }
   }
+ 
+}
+
+function create_celd_table(column, indexColumn, data_properties, per_page_value, active_page, index,is_new_file){
+  var column_name = column.value;
+  appid_info = data_properties["app_id"];
+  appid_selected = data_properties["app_id"];
+  if (column.value == "#_action") {
+    var new_dom = "<i class='fas fa-info-circle' style='margin-right:10px' title='Más Información' onclick='show_item_info(" + appid_info + ",false)'></i>"
+    array_datos.push(new_dom);
+  }
+  if (column.value == "#_select") {
+    var new_dom = "<div>"+
+          "<div class='custom-control custom-checkbox' title='Seleccionar'>"+
+          "<input type='checkbox' class='custom-control-input' id='check_select_"+appid_info+"' onchange='changeSelected()'>"+
+          "<label class='string optional control-label custom-control-label' for='check_select_"+appid_info+"'></label>"+
+          "</div>"+
+          "<i class='fas fa-image icons' title='Fotos' onClick='Navarra.photos.open_photos("+appid_info+")'></i>"+
+          "</div>"
+    array_datos.push(new_dom);
+  }
+  if (column.value == "#") {
+    if (isNaN(per_page_value)) {
+        array_datos.push(index+1);
+      document.getElementById('columnfake_datacount').innerHTML=(index + 1);
+    } else {
+        array_datos.push((index + 1) + (active_page - 1) * per_page_value);
+      document.getElementById('columnfake_datacount').innerHTML=(index + 1) + (active_page - 1) * per_page_value;
+    }
+  }
+  if (column.value != "#" && column.value != "#_action" && column.value != "#_select") {
+    if (data_properties[column_name] != undefined) {
+      array_datos.push(data_properties[column_name]);
+      //agraga el máximo valor a la tabla cabecera para tener 2 tablas con el mismo ancho de columnas
+      var celd_width = document.getElementById('columnfake_data_'+column_name);
+      if(celd_width.innerHTML=="" || celd_width.innerHTML.length< data_properties[column_name].length){
+        celd_width.innerHTML = data_properties[column_name];
+      }
+      // termina ajuste de ancho
+      if (column.value == "app_id") {
+        if (Navarra.project_types.config.item_selected == data_properties[column_name]) {
+          found_id = data_properties["app_id"];
+          Navarra.project_types.config.data_dashboard = "app_id = '" + appid_selected + "'";
+        }
+      }
+    } else{
+      array_datos.push("");
+    }
+  }
+  var text_hidden = "";
+  if(!array_column_hidden[indexColumn]){
+    text_hidden = "style = 'display:none'";
+  }
+  if(is_new_file && (data_properties[column_name]!=undefined || column_name=="#_action" || column_name == "#_select")){
+    if(data_properties[column_name]!=undefined){
+      new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'>"+data_properties[column_name]+"</td>"
+    }
+    if(column_name=="#_action" || column_name == "#_select"){
+      new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'>"+new_dom+"</td>"
+    }
+  } else{
+    new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'></td>"
+  }
+  return new_celd_create;
 }
 
 //función para paginar datos
@@ -1432,6 +1467,48 @@ function data_pagination(selected, active_page) {
     init_data_dashboard(false);
   });
 }
+
+function create_subforms_table(){
+  // verifica subcolumnas abiertas
+  subheader_open = [];
+  var field_subforms_open = $('.subfields_data.d-none');
+  var field_ids = [];
+  field_subforms_open.each(function(){
+    var id = $(this).attr('id').substring(12);
+    var subfields = $('.'+id+'subfield.d-none');
+    subfields.each(function(){
+      subheader_object = {
+        id_field: id,
+        id_subfield: $(this).attr('id').split('_')[2]
+      }
+      subheader_open.push(subheader_object);
+    });
+    field_ids.push(id);
+    console.log("Campos a crear")
+    console.log(field_ids)
+    $('.subfield_column_'+id).remove();
+  });
+  if(field_subforms_open.length>0){
+    show_subfield(field_ids)
+  }
+}
+
+function open_subheaders(id_field){
+  subheader_open.forEach(function(subheader){
+    if(subheader.id_field ==  id_field){
+      $('#'+id_field+'_subfield_'+subheader.id_subfield).click();
+    }
+  })
+}
+
+function verify_scroll_table(){
+  if(document.getElementById('table_visible').scrollHeight>parseInt(document.getElementById('div_table_data').style.height)){
+    $('#thead_table_visible').addClass('scroll_false');
+  } else{
+    $('#thead_table_visible').removeClass('scroll_false');
+  }
+}
+
 //****** TERMINAN FUNCIONES PARA TABLA DE DATOS*****
 
 
@@ -2261,8 +2338,15 @@ function export_to_excel(table, name, filename) {
 
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
-function show_item_info(appid_info, from_map, is_multiple) {
-  Navarra.geomaps.delete_markers();
+function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
+  console.log("es nuevo? "+is_new_file)
+  console.log("id a abrir "+appid_info)
+  children_fields_all = new Object;
+  if(!is_new_file){
+    $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
+  } else {
+    $('.confirmation_geometry').addClass('d-none');
+  }
   if(is_multiple){
     $('#multiple_edit').addClass("multiple_on");
     var total_files_to_edit = $('#table_visible .custom-control-input:checked').not('.just_header').length;
@@ -2283,14 +2367,23 @@ function show_item_info(appid_info, from_map, is_multiple) {
   if (xhr_info && xhr_info.readyState != 4) {
     xhr_info.abort();
   }
-  xhr_info = $.ajax({
-    type: 'GET',
-    url: '/project_types/search_father_children_and_photos_data',
-    datatype: 'json',
-    data: {
+  if(is_new_file || is_multiple){
+    var url_get = '/project_fields/show_fields';
+    var data = {
+      project_type_id: project_type_id,
+    }
+  } else{
+    var url_get = '/project_types/search_father_children_and_photos_data';
+    var data = {
       project_type_id: project_type_id,
       app_id: appid_info
-    },
+    }
+  }
+  xhr_info = $.ajax({
+    type: 'GET',
+    url: url_get,
+    datatype: 'json',
+    data: data,
     success: function(data) {
 
       $('.div_confirmation').addClass("d-none");
@@ -2301,9 +2394,10 @@ function show_item_info(appid_info, from_map, is_multiple) {
       filechange = false;
       statuschange = false;
       //borra datos anteriores
-      var arraymultiselect=[];
-      var arraymultiselectChild=[];
+      arraymultiselect=[];
+      arraymultiselectChild=[];
       array_child_edited = [];
+      child_elements = [];
       document.getElementById('info_body').remove();
       var new_body = document.createElement('DIV');
       new_body.id = 'info_body';
@@ -2323,13 +2417,18 @@ function show_item_info(appid_info, from_map, is_multiple) {
       success: function(data_status) {
         var new_icon = document.createElement('DIV');
         new_icon.className = "status_info_icon";
-        if(!is_multiple){new_icon.style.background = father_status.status_color;}
+        if(!is_multiple && !is_new_file){new_icon.style.background = father_status.status_color;}
         document.getElementById("status_container_info").appendChild(new_icon);
         var new_p = document.createElement('SELECT');
-        new_p.className = "multiselect_field form-control form-control-sm multiselect_status input_status info_input_disabled";
         new_p.style.width="90%";
         new_p.setAttribute("onChange","changeStatus(event)");
-        new_p.disabled = true;
+        new_p.id = "input_status";
+        if(!is_new_file){
+          new_p.disabled = true;
+          new_p.className = "multiselect_field form-control form-control-sm multiselect_status input_status info_input_disabled";
+        } else{
+          new_p.className = "multiselect_field form-control form-control-sm multiselect_status input_status info_input";
+        }
         var status_options = data_status.data;
         var found_status = false;
         status_options.forEach(function(status) {
@@ -2339,17 +2438,24 @@ function show_item_info(appid_info, from_map, is_multiple) {
             new_option.disabled = true;
           }
           new_option.value=status.id+"|"+status.color;
-          if(father_status.status_id==status.id){
-            found_status=true;
-            new_option.selected = true;
+          if(!is_multiple && !is_new_file){
+            if(father_status.status_id==status.id){
+              found_status=true;
+              new_option.selected = true;
+            }
           }
           new_p.appendChild(new_option);
         });
         if(!found_status || is_multiple){new_p.selectedIndex = -1;}
         document.getElementById("status_container_info").appendChild(new_p);
+        if(is_new_file){
+          var status_style = 'info_input';
+        }else{
+          var status_style = 'info_input_disabled';
+        }
           $('.multiselect_status').multiselect({
                 maxHeight: 450,
-                buttonClass: 'text-left mb-1 form-control form-control-sm input_status info_input_disabled',
+                buttonClass: 'text-left mb-1 form-control form-control-sm input_status '+status_style,
                 buttonWidth: '100%',
                 nonSelectedText: 'Seleccionar',
                 selectedClass: 'selected_multiple_item',
@@ -2365,38 +2471,41 @@ function show_item_info(appid_info, from_map, is_multiple) {
               });
       }
       });
-
-      //fotos del registro
-      var verify_count_elements_photos = 0
-      var father_photos = data.father_photos;
-      father_photos.forEach(function(photo) {
-        var new_div = document.createElement('DIV');
-        new_div.className = "photo_div_info";
-        new_div.style.position = "static";
-        var new_photo = document.createElement('IMG');
-        new_photo.className = "photo_info";
-        new_photo.setAttribute('onClick', "open_photo(event)");
-        new_photo.src = "data:image/png;base64," + photo.image;
-        new_div.appendChild(new_photo);
-        var new_photo = document.createElement('P');
-        new_photo.innerHTML = photo.name;
-        new_photo.className = "photo_description";
-        new_div.appendChild(new_photo);
-        document.getElementById('info_body').appendChild(new_div);
-        verify_count_elements_photos++;
-      });
-      if(verify_count_elements_photos!= father_photos.length){
-        set_error_message("Error: no se pudieron traer todas las fotos del registro");
-      }
+      if(!is_new_file && !is_multiple){
+        //fotos del registro
+        var verify_count_elements_photos = 0
+        var father_photos = data.father_photos;
+        father_photos.forEach(function(photo) {
+          var new_div = document.createElement('DIV');
+          new_div.className = "photo_div_info";
+          new_div.style.position = "static";
+          var new_photo = document.createElement('IMG');
+          new_photo.className = "photo_info";
+          new_photo.setAttribute('onClick', "open_photo(event)");
+          new_photo.src = "data:image/png;base64," + photo.image;
+          new_div.appendChild(new_photo);
+          var new_photo = document.createElement('P');
+          new_photo.innerHTML = photo.name;
+          new_photo.className = "photo_description";
+          new_div.appendChild(new_photo);
+          document.getElementById('info_body').appendChild(new_div);
+          verify_count_elements_photos++;
+        });
+        if(verify_count_elements_photos!= father_photos.length){
+          set_error_message("Error: no se pudieron traer todas las fotos del registro");
+        }
+      } 
+      // Si es nuevo puede guardar sin hacer cambios en los campos
+      if(is_new_file){changeFile()}
 
       //campos del registro
       father_fields = data.father_fields;
-      var subtitles_all = [];
-      var subtitles_all_child = [];
+      subtitles_all = [];
+      subtitles_all_child = [];
       var verify_count_elements = 0; // variable para chequear que se dibujan todos los campos sin error
       father_fields.forEach(function(element) {
-        if (element.field_type_id == 7 && element.value.length == 0) {} else {
-          if (element.field_type_id != 7) { //dibuja campo padre
+          if (element.field_type_id != 7) {
+           //dibuja campo padre
             var new_row = document.createElement('DIV');
             if (element.hidden) {
               new_row.className = "form-row d-none hidden_field row_field";
@@ -2416,14 +2525,13 @@ function show_item_info(appid_info, from_map, is_multiple) {
             }
             var new_celd = document.createElement('DIV');
             if (element.field_type_id == 11) {
-              new_celd.className = "col-md-12";
+              new_celd.className = "col-md-12 info_subtitle";
             } else {
               new_celd.className = "col-md-5";
             }
-            var new_p = document.createElement('H6');
+            var new_p = document.createElement('H7');
             if (element.field_type_id == 11) {
               new_p.className = "bg-primary pl-1";
-              new_p.style.cursor = "pointer";
               new_p.setAttribute("onClick", "open_subtitle(" + element.calculated_field + ",'')");
               if (element.calculated_field != "") {
                 try{
@@ -2454,7 +2562,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
                 new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
                 if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
                 if(!is_multiple){
-                  new_p.setAttribute("onChange","calculate_all(false)");
+                  new_p.setAttribute("onChange","calculate_all(false,true)");
                 } else{
                   new_p.setAttribute('onChange', 'changeFile()');
                 }
@@ -2493,7 +2601,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
                   if(element.required==true){
                     new_p_nested.classList.add('required_field');
                   }
-                  if(element.read_only==true || element.can_edit==false){
+                  //Permite editar readonly si es nuevo registro y no tiene un campo calculado automáticamente, siempre y cuando tenga autorización de edición
+                  if((element.read_only==true && !is_new_file) || (element.read_only==true && is_new_file && element.calculated_field!="") || element.can_edit==false){
                     new_p_nested.classList.add('readonly_field');
                   }
                   var id_field_nested = element.field_id+"_nested";
@@ -2549,12 +2658,12 @@ function show_item_info(appid_info, from_map, is_multiple) {
                 if(found_nested ){new_p.value=values;}
                 new_p.setAttribute('onChange', 'changeFile()');
                 if(found_nested){
-                  new_p.setAttribute('onChange', 'set_nested(event)');
+                  new_p.setAttribute('onChange', 'set_nested(event,true)');
                 }
                 if(element.data_script!=""){
                   if(!is_multiple){
                     if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
-                    new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +found_nested+',event  )');
+                    new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +found_nested+',event ,true )');
                   } else{
                     new_p.setAttribute('onChange', 'changeFile()');
                   }
@@ -2582,7 +2691,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
                 if(element.data_script!=""){
                   if(!is_multiple){
                     if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
-                    new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event )');
+                    new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event ,true)');
                   } else{
                     new_p.setAttribute('onChange', 'changeFile()');
                   }
@@ -2594,7 +2703,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
                 new_p.className = "form-control form-control-sm info_input_disabled";
                 if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
                 if(!is_multiple){
-                  new_p.setAttribute("onChange","calculate_all(false)");
+                  new_p.setAttribute("onChange","calculate_all(false,true)");
                 } else{
                   new_p.setAttribute('onChange', 'changeFile()');
                 }
@@ -2608,7 +2717,7 @@ function show_item_info(appid_info, from_map, is_multiple) {
               if(element.required==true && !is_multiple){
                 new_p.classList.add('required_field');
               }
-              if(element.read_only==true || element.can_edit==false || (is_multiple && element.calculated_field!="") || (is_multiple && element.data_script!="") ){
+              if((element.read_only==true && !is_new_file) || (element.read_only==true && is_new_file && element.calculated_field!="") || element.can_edit==false || (is_multiple && element.calculated_field!="") || (is_multiple && element.data_script!="")){
                 new_p.classList.add('readonly_field');
               }
 
@@ -2646,7 +2755,8 @@ function show_item_info(appid_info, from_map, is_multiple) {
             }
           }
           } //termina campo padre
-          else {// Dibuja campos hijos
+          else {
+          // Dibuja campos hijos
             var new_row = document.createElement('DIV');
             if (element.hidden) {
               new_row.className = "d-none hidden_field";
@@ -2657,271 +2767,43 @@ function show_item_info(appid_info, from_map, is_multiple) {
               new_row.classList.add("subtile_hidden" + element.field_id);
             }
             var new_celd = document.createElement('DIV');
-            var new_p = document.createElement('H6');
+            new_celd.className = 'div_subforms';
+            if(!is_new_file && !is_multiple){
+              if (element.field_type_id == 7 && element.value.length == 0) {
+                new_celd.classList.add('d-none');
+              }
+            }
+            new_celd.id = "child_container_"+element.key;
+            // si tiene autorización para nuevos hijos
+            console.log("Va a crear botón más")
+            console.log($('#new_subform_control').val()=="true")
+            if($('#new_subform_control').val()=="true"){
+              var new_p = document.createElement('I');
+              new_p.className = "fas fa-plus icon_add d-none add_subforms";
+              new_p.setAttribute('onclick','open_new_child('+element.field_id+',"'+element.name+'","'+element.key+'",'+is_multiple+')');
+              new_celd.appendChild(new_p);
+            }
+            var new_p = document.createElement('H7');
             new_p.innerHTML = element.name + ":";
             new_p.style.borderBottom = "solid 1px";
             new_p.style.display = "inline-block";
             new_celd.appendChild(new_p);
             new_row.appendChild(new_celd);
             child_elements = element.value;
-            var verify_count_elements_childs = 0;
-            child_elements.forEach(function(element_child) {
-              var new_row1 = document.createElement('DIV');
-              new_row1.className = "form-row";
-              var new_celd = document.createElement('DIV');
-              new_celd.className = "col-md-5 ml-3";
-              var new_p = document.createElement('H6');
-              new_p.innerHTML = "<span style='font-size:2em;position:absolute;margin-top:-5px;margin-left:-30px'>&#8594</span> Fecha:";
-              new_p.style.margin = "0px";
-              new_celd.appendChild(new_p);
-              new_row1.appendChild(new_celd);
-              var new_celd = document.createElement('DIV');
-              new_celd.className = "col-md-6";
-              var new_p = document.createElement('INPUT');
-              new_p.className = "form-control form-control-sm info_input_disabled readonly_field";
-              new_p.disabled = true;
-              new_p.value = element_child.children_gwm_created_at.split("T")[0] + " " + element_child.children_gwm_created_at.split("T")[1].substring(0, 8);
-              new_p.style.padding = "0px 0.5rem";
-              new_p.style.height = "auto";
-              new_celd.appendChild(new_p);
-              new_row1.appendChild(new_celd);
-              new_row.appendChild(new_row1);
-
-              //campos de los hijos
-              children_fields = element_child.children_fields;
-              var verify_count_elements_childs_fields = 0;
-              children_fields.forEach(function(element_child_field) {
-                var new_row1 = document.createElement('DIV');
-                if (element_child_field.hidden) {
-                  new_row1.className = "form-row d-none hidden_field";
-                } else {
-                  new_row1.className = "form-row";
-                }
-                if ((element_child_field.value == null && element_child_field.field_type_id != 11) || (element_child_field.value == "" && element_child_field.field_type_id != 11) || (element_child_field.value == " " && element_child_field.field_type_id != 11)) {
-                  new_row1.classList.add("d-none");
-                  new_row1.classList.add("empty_field");
-                }
-                if (subtitles_all_child.indexOf(element_child_field.field_id) >= 0) {
-                  new_row1.classList.add("d-none");
-                  new_row1.classList.add("subtile_hidden_child" + element_child_field.field_id);
-                }
-                var new_celd = document.createElement('DIV');
-                if (element_child_field.field_type_id == 11) {
-                  new_celd.className = "col-md-12";
-                } else {
-                  new_celd.className = "col-md-5 ml-3";
-                }
-                if(element_child_field.can_read==false){
-                    new_celd.classList.add('canot_read');
-                }
-                var new_p = document.createElement('H6');
-                if (element_child_field.field_type_id == 11) {
-                  new_p.className = "bg-primary pl-1";
-                  new_p.style.cursor = "pointer";
-                  new_p.setAttribute("onClick", "open_subtitle(" + element_child_field.calculated_field + ",'_child')");
-                  if (element_child_field.calculated_field != "") {
-                    try{
-                      subtitles_all_child = subtitles_all_child.concat(JSON.parse(element_child_field.calculated_field));
-                    }catch(e){
-                      set_error_message("Error de configuración: subtítulo del campo subformulario:"+element_child_field.name);
-                    }
-                  }
-                  new_p.innerHTML = element_child_field.name;
-                } else {
-                  new_p.innerHTML = element_child_field.name + ":";
-                  new_p.classList.add("field_key_child_json");
-                  new_p.id=element.field_id+"|child|"+element_child.children_id+"|"+element_child_field.field_type_id+"|"+element_child_field.field_id;
-                }
-                new_p.style.margin = "0px";
-                new_celd.appendChild(new_p);
-                new_row1.appendChild(new_celd);
-
-
-                if (element_child_field.field_type_id != 11) {
-                  var new_celd = document.createElement('DIV');
-                  new_celd.className = "col-md-6 field_div";
-
-                  // Adapta el código a los diferentes tipos de campos
-                  if (element_child_field.field_type_id == 1) {
-                    var new_p = document.createElement('TEXTAREA');
-                    new_p.className = "form-control form-control-sm info_input_disabled textarea_input is_child_field";
-                    new_p.style.minHeight = '22px';
-                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
-                  }
-                  var found_nested = false;
-                  if (element_child_field.field_type_id == 2 || element_child_field.field_type_id == 10) {
-                    var new_p = document.createElement('SELECT');
-                    if(element_child_field.field_type_id == 10){
-                      new_p.multiple = true;
-                    }
-                    new_p.className = "multiselect_field form-control form-control-sm info_input_disabled is_child_field";
-                    var items_field = element_child_field.other_possible_values;
-                    //verifica si tiene anidados
-                    items_field.forEach(function(item) {
-                      if(item.nested_items!=null){
-                        found_nested = true;
-                      }
-                    });
-                    if(found_nested){ new_p.classList.add('nested')}
-                    values = element_child_field.value;
-                    values_nested = element_child_field.value;
-                    //comienza anidados
-                    if(found_nested){
-                      if(element_child_field.value!=null){
-                        if(Array.isArray(element_child_field.value)){
-                          values = element_child_field.value[0];
-                          values_nested = element_child_field.value[1];
-                        } else{
-                          //comentado hasta edición de hijos
-                         // set_error_message("Error en subformulario, listados anidados : "+element_child_field.name);
-                        }
-                      }
-                      var new_p_nested = document.createElement('SELECT');
-                      new_p_nested.className = "mb-1 multiselect_field form-control form-control-sm info_input_disabled is_child_field";
-                      new_p_nested.disabled = true;
-                      if(element_child_field.required==true){
-                        new_p_nested.classList.add('required_field');
-                      }
-                      if(element_child_field.read_only==true || element_child_field.can_edit==false){
-                        new_p_nested.classList.add('readonly_field');
-                      }
-                      var id_field = element_child_field.field_id;
-                      var id_child = element_child.children_id;
-                      var id_field_nested = element.field_id+"_nested";
-                      new_p_nested.id = "fieldchildid|"+id_field+"|"+id_child+"_nested";
-                      new_p_nested.setAttribute('onChange','changeChild('+element_child.children_id+')')
-                    //termina anidados
-                    }
-
-                    var found_option = false;
-                    items_field.forEach(function(item) {
-                      var new_option = document.createElement('OPTION');
-                      new_option.text=item.name;
-                      new_option.value=item.name;
-                      if(!found_nested){
-                        if(values!=null){
-                          if(Array.isArray(values)){
-                            values_array = values;
-                            for (v=0;v<values_array.length;v++){
-                            if(values_array[v]==item.name){
-                              found_option=true;
-                              new_option.selected = true;
-                            }
-                          }
-                          } else{
-                            //Comentado hasta la edición de hijos
-                            //set_error_message("Error en subformulario, listados: "+element_child_field.name);
-                          }
-                       }
-                     }
-                      new_p.appendChild(new_option);
-                      if(!found_option){new_p.selectedIndex = -1;}
-                      //Comienza Anidados opciones
-                      if(item.nested_items!=null){
-                        new_option.setAttribute('data-type',item.name);
-                        var items_field_nested = item.nested_items;
-                        var found_option_nested = false;
-                        items_field_nested.forEach(function(item_nested) {
-                        var new_option_nested = document.createElement('OPTION');
-                        new_option_nested.text=item_nested.name;
-                        new_option_nested.value=item_nested.name;
-                        if(item.name != values){
-                          new_option_nested.className = "d-none";
-                        }
-                        new_option_nested.setAttribute('data-type',item.name);
-                        new_p_nested.appendChild(new_option_nested);
-                        });
-                        new_p_nested.value=values_nested;
-                      }
-                      //termina anidados opciones
-                    });
-                    if(found_nested){new_p.value=values;}
-                    var id_field = element_child_field.field_id;
-                    var id_child = element_child.children_id;
-                    arraymultiselect.push(id_field);
-                    arraymultiselectChild.push(id_child);
-                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+',' +found_nested +',event)');
-                  }
-                  if (element_child_field.field_type_id == 3) {
-                    var new_p = document.createElement('INPUT');
-                    new_p.className = "form-control form-control-sm info_input_disabled date_field is_child_field";
-                  }
-                  if (element_child_field.field_type_id == 4) {
-                    var new_p = document.createElement('SELECT');
-                    new_p.className = "form-control form-control-sm info_input_disabled is_child_field";
-                    var new_option = document.createElement('OPTION');
-                    new_option.text="SI";
-                    new_option.value="true";
-                    new_p.appendChild(new_option);
-                    var new_option = document.createElement('OPTION');
-                    new_option.text="NO";
-                    new_option.value="false";
-                    new_p.appendChild(new_option);
-                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
-                  }
-                  if (element_child_field.field_type_id == 5) {
-                    var new_p = document.createElement('INPUT');
-                    new_p.type = "number";
-                    new_p.className = "form-control form-control-sm info_input_disabled is_child_field";
-                    new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
-                  }
-                  new_p.disabled = true;
-                  if (element_child_field.value != null && element_child_field.field_type_id != 10 && element_child_field.field_type_id != 2) {
-                    new_p.value = element_child_field.value
-                  }
-                  if(element_child_field.required==true){
-                    new_p.classList.add('required_field');
-                  }
-                  if(element_child_field.read_only==true || element_child_field.can_edit==false){
-                    new_p.classList.add('readonly_field');
-                  }
-
-                  new_p.style.padding = "0px 0.5rem";
-                  new_p.style.height = "auto";
-                  var id_field = element_child_field.field_id;
-                  var id_child = element_child.children_id;
-                  new_p.id = "fieldchildid|"+id_field+"|"+id_child;
-                  new_celd.appendChild(new_p);
-                  if(found_nested){new_celd.appendChild(new_p_nested)}
-                  new_row1.appendChild(new_celd);
-                }
+            verify_count_elements_childs = 0;
+            if(!is_new_file && !is_multiple){
+              child_elements.forEach(function(element_child) {
+                var new_row1 = create_new_row_child_date(element_child);
                 new_row.appendChild(new_row1);
-                verify_count_elements_childs_fields++;
-              });
-              if(verify_count_elements_childs_fields!= children_fields.length){
-                set_error_message("Error: no se pudieron traer todos los campos del subformulario "+element.name);
+                var new_row1 = create_new_row_child(element_child, element.field_id, element.name, is_multiple,false);
+                new_row.appendChild(new_row1);
+              }); //termina for Each childs
+              if(verify_count_elements_childs!= child_elements.length){
+                set_error_message("Error: no se pudieron traer todos los subformularios del campo "+element.name);
               }
-
-              //fotos del hijo
-              var children_photos = element_child.children_photos;
-              var verify_count_elements_childs_photos = 0;
-              children_photos.forEach(function(photo) {
-                var new_div = document.createElement('DIV');
-                new_div.className = "photo_div_info";
-                new_div.style.position = "static";
-                var new_photo = document.createElement('IMG');
-                new_photo.className = "photo_info";
-                new_photo.setAttribute('onClick', "open_photo(event)");
-                new_photo.src = "data:image/png;base64," + photo.image;
-                new_div.appendChild(new_photo);
-                var new_photo = document.createElement('P');
-                new_photo.innerHTML = photo.name;
-                new_photo.className = "photo_description";
-                new_div.appendChild(new_photo);
-                new_row.appendChild(new_div);
-                verify_count_elements_childs_photos++;
-              });
-              if(verify_count_elements_childs_photos!= children_photos.length){
-                set_error_message("Error: no se pudieron traer todas las fotos del campo "+element.name);
-              }
-              verify_count_elements_childs++;
-            }); //termina for Each childs
-            if(verify_count_elements_childs!= child_elements.length){
-              set_error_message("Error: no se pudieron traer todos los subformularios del campo "+element.name);
             }
             document.getElementById('info_body').appendChild(new_row);
           }
-        }
         verify_count_elements ++;
       }); // termina for Each de padres
 
@@ -2930,7 +2812,342 @@ function show_item_info(appid_info, from_map, is_multiple) {
       }
 
       textarea_adjust_height();
-      $('.date_field').datetimepicker({
+      set_date_style(is_multiple);
+
+      // selectores y multiselectores en hijos
+          set_multiselect_style_childs();  
+
+      //Muestra el punto en el mapa y elimina el seleccionado en la tabla
+      if (from_map) {
+        $('table tbody tr').removeClass('found');
+        Navarra.project_types.config.data_dashboard = "app_id = '" + appid_info + "'";
+        Navarra.project_types.config.item_selected = appid_info;
+        Navarra.geomaps.current_layer();
+      }
+      //Ejecuta Script y calculados de campos padres e hijos
+        set_script_all();
+        if(!is_new_file){
+          calculate_all(true,true);
+          calculate_all(true,false);
+        }
+        //si viene de nuevo registro abre edición
+        if($("#confirmation_geometry_button").hasClass('confirmation_geometry_button_new')){
+          show_confirmation('edit_confirmation');
+        }
+    }//end Success
+  }); //end ajax
+}
+
+function create_new_row_child_date(element_child){
+  var new_row1 = document.createElement('DIV');
+  new_row1.className = "form-row";
+  var new_celd = document.createElement('DIV');
+  new_celd.className = "col-md-5 ml-3";
+  var new_p = document.createElement('H7');
+  new_p.innerHTML = "<span style='font-size:2em;position:absolute;margin-top:-5px;margin-left:-30px'>&#8594</span> Fecha:";
+  new_p.style.margin = "0px";
+  new_celd.appendChild(new_p);
+  new_row1.appendChild(new_celd);
+  var new_celd = document.createElement('DIV');
+  new_celd.className = "col-md-6";
+  var new_p = document.createElement('INPUT');
+  new_p.className = "form-control form-control-sm info_input_disabled readonly_field";
+  new_p.disabled = true;
+  new_p.value = element_child.children_gwm_created_at.split("T")[0] + " " + element_child.children_gwm_created_at.split("T")[1].substring(0, 8);
+  new_p.style.padding = "0px 0.5rem";
+  new_p.style.height = "auto";
+  new_celd.appendChild(new_p);
+  new_row1.appendChild(new_celd);
+  return new_row1;
+}
+  
+function create_new_row_child(element_child, element_field_id, element_name, is_multiple, is_new){
+  //campos de los hijos
+  children_fields = element_child.children_fields;
+  if(children_fields_all[element_field_id]==undefined){children_fields_all[element_field_id]=new Object}
+  children_fields_all[element_field_id] = children_fields;
+  var verify_count_elements_childs_fields = 0;
+  var new_row_container = document.createElement('DIV');
+  children_fields.forEach(function(element_child_field) {
+    if(!is_new || (is_new && element_child_field.read_only==true && element_child_field.calculated_field!='') || (is_new && element_child_field.can_edit==false)){
+      var classname_field = "info_input_disabled";
+    } else {
+      var classname_field = "info_input";
+    }
+    var new_row1 = document.createElement('DIV');
+    if (element_child_field.hidden) {
+      new_row1.className = "form-row d-none hidden_field row_field";
+    } else {
+      new_row1.className = "form-row row_field";
+    }
+    if(element_child_field.can_read==false){
+        new_row1.classList.add('canot_read');
+    }
+    if(!is_new){
+      if ((element_child_field.value == null && element_child_field.field_type_id != 11) || (element_child_field.value == "" && element_child_field.field_type_id != 11) || (element_child_field.value == " " && element_child_field.field_type_id != 11)) {
+        new_row1.classList.add("d-none");
+        new_row1.classList.add("empty_field");
+      }
+    }
+    if (subtitles_all_child.indexOf(element_child_field.field_id) >= 0) {
+      new_row1.classList.add("d-none");
+      new_row1.classList.add("subtile_hidden_child" + element_child_field.field_id);
+    }
+    var new_celd = document.createElement('DIV');
+    if (element_child_field.field_type_id == 11) {
+      new_celd.className = "col-md-12";
+    } else {
+      new_celd.className = "col-md-5 ml-3";
+    }
+    
+    var new_p = document.createElement('H7');
+    if (element_child_field.field_type_id == 11) {
+      new_p.className = "bg-primary pl-1";
+      new_p.style.cursor = "pointer";
+      new_p.setAttribute("onClick", "open_subtitle(" + element_child_field.calculated_field + ",'_child')");
+      if (element_child_field.calculated_field != "") {
+        try{
+          subtitles_all_child = subtitles_all_child.concat(JSON.parse(element_child_field.calculated_field));
+        }catch(e){
+          set_error_message("Error de configuración: subtítulo del campo subformulario:"+element_child_field.name);
+        }
+      }
+      new_p.innerHTML = element_child_field.name;
+    } else {
+      new_p.innerHTML = element_child_field.name + ":";
+      new_p.classList.add("field_key_child_json");
+      new_p.id=element_field_id+"|child|"+element_child.children_id+"|"+element_child_field.field_type_id+"|"+element_child_field.field_id;
+    }
+    new_p.style.margin = "0px";
+    new_celd.appendChild(new_p);
+    new_row1.appendChild(new_celd);
+
+    if (element_child_field.field_type_id != 11) {
+      var new_celd = document.createElement('DIV');
+      new_celd.className = "col-md-6 field_div";
+      if(element_child_field.field_type_id == 10){new_celd.classList.add("ok_button")}
+
+      // Adapta el código a los diferentes tipos de campos
+      if (element_child_field.field_type_id == 1) {
+        var new_p = document.createElement('TEXTAREA');
+        new_p.className = "form-control form-control-sm "+classname_field+" textarea_input is_child_field";
+        new_p.style.minHeight = '22px';
+        if(!is_multiple){
+          new_p.setAttribute("onChange","calculate_all(false,false,"+element_child.children_id+","+element_field_id+")");
+        } else{
+          new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
+        }
+      }
+      var found_nested = false;
+      if (element_child_field.field_type_id == 2 || element_child_field.field_type_id == 10) {
+        var new_p = document.createElement('SELECT');
+        if(element_child_field.field_type_id == 10){
+          new_p.multiple = true;
+        }
+        new_p.className = "multiselect_field form-control form-control-sm "+classname_field+" is_child_field";
+        var items_field = element_child_field.other_possible_values;
+        //verifica si tiene anidados
+        items_field.forEach(function(item) {
+          if(item.nested_items!=null){
+            found_nested = true;
+          }
+        });
+        if(found_nested){ new_p.classList.add('nested')}
+        values = element_child_field.value;
+        values_nested = element_child_field.value;
+        //comienza anidados
+        if(found_nested){
+          if(element_child_field.value!=null){
+            if(Array.isArray(element_child_field.value)){
+              values = element_child_field.value[0];
+              values_nested = element_child_field.value[1];
+            } else{
+              set_error_message("Error en subformulario, listados anidados : "+element_child_field.name);
+            }
+          }
+          var new_p_nested = document.createElement('SELECT');
+          new_p_nested.className = "mb-1 multiselect_field form-control form-control-sm "+classname_field+" is_child_field";
+          if(!is_new || (is_new && element_child_field.read_only==true && element_child_field.calculated_field!='') || (is_new && element_child_field.can_edit==false)){
+              new_p_nested.disabled = true;
+          };
+          if(element_child_field.required==true){
+            new_p_nested.classList.add('required_field');
+          }
+          // agregar condición de readonly para hijos cuando son nuevos
+          if((element_child_field.read_only==true && !is_new)|| element_child_field.can_edit==false || (is_new && element_child_field.read_only==true && element_child_field.calculated_field!='') ) {
+            new_p_nested.classList.add('readonly_field');
+          }
+          var id_field = element_child_field.field_id;
+          var id_child = element_child.children_id;
+          var id_field_nested = element_field_id+"_nested";
+          new_p_nested.id = "fieldchildid|"+id_field+"|"+id_child+"_nested";
+          new_p_nested.setAttribute('onChange','changeChild('+element_child.children_id+')')
+        //termina anidados
+        }
+
+        var found_option = false;
+        items_field.forEach(function(item) {
+          var new_option = document.createElement('OPTION');
+          new_option.text=item.name;
+          new_option.value=item.name;
+          if(!found_nested){
+            if(values!=null){
+              if(Array.isArray(values)){
+                values_array = values;
+                for (v=0;v<values_array.length;v++){
+                if(values_array[v]==item.name){
+                  found_option=true;
+                  new_option.selected = true;
+                }
+                }
+              } else{
+                set_error_message("Error en subformulario, listados: "+element_child_field.name);
+              }
+            }
+          }
+          new_p.appendChild(new_option);
+          if(!found_option){new_p.selectedIndex = -1;}
+          //Comienza Anidados opciones
+          if(item.nested_items!=null){
+            new_option.setAttribute('data-type',item.name);
+            var items_field_nested = item.nested_items;
+            var found_option_nested = false;
+            items_field_nested.forEach(function(item_nested) {
+            var new_option_nested = document.createElement('OPTION');
+            new_option_nested.text=item_nested.name;
+            new_option_nested.value=item_nested.name;
+            if(item.name != values){
+              new_option_nested.className = "d-none";
+            }
+            new_option_nested.setAttribute('data-type',item.name);
+            new_p_nested.appendChild(new_option_nested);
+            });
+            new_p_nested.value=values_nested;
+          }
+          //termina anidados opciones
+        });
+        if(found_nested){new_p.value=values;}
+        var id_field = element_child_field.field_id;
+        var id_child = element_child.children_id;
+        arraymultiselect.push(id_field);
+        arraymultiselectChild.push(id_child);
+                    
+        new_p.setAttribute('onChange','changeChild('+element_child.children_id+',' +found_nested +',event)');
+
+        // Script en hijos
+        if(element_child_field.data_script!=""){
+          if(!is_multiple){
+            if(element_child_field.value==null){isnull_value=null}else{isnull_value="\""+element_child_field.value+"\""}
+              var id_child_toScript = element_child_field.field_id+"|"+element_child.children_id;
+              new_p.setAttribute('onChange', 'set_script('+element_child_field.data_script+ ',' +element_child_field.field_type_id+ ', "' +id_child_toScript +'",' +isnull_value+',' +found_nested +',event , false)');
+          } else{
+            new_p.setAttribute('onChange','changeChild('+element_child.children_id+',' +found_nested +',event)');
+          }
+        }
+      //
+          
+      }
+      if (element_child_field.field_type_id == 3) {
+        var new_p = document.createElement('INPUT');
+        new_p.className = "form-control form-control-sm "+classname_field+" date_field is_child_field";
+        new_p.setAttribute("id_field_father",element_field_id)
+      }
+      if (element_child_field.field_type_id == 4) {
+        var new_p = document.createElement('SELECT');
+        new_p.className = "form-control form-control-sm "+classname_field+" is_child_field";
+        var new_option = document.createElement('OPTION');
+        new_option.text="SI";
+        new_option.value="true";
+        new_p.appendChild(new_option);
+        var new_option = document.createElement('OPTION');
+        new_option.text="NO";
+        new_option.value="false";
+        new_p.appendChild(new_option);
+        new_p.value="";
+
+        new_p.setAttribute('onChange','changeChild('+element_child.children_id+')');
+
+        // Script en hijos
+        if(element_child_field.data_script!=""){
+          if(!is_multiple){
+            if(element_child_field.value==null){isnull_value=null}else{isnull_value="\""+element_child_field.value+"\""}
+              var id_child_toScript = element_child_field.field_id+"|"+element_child.children_id;
+              new_p.setAttribute('onChange', 'set_script('+element_child_field.data_script+ ',' +element_child_field.field_type_id+ ', "' +id_child_toScript +'",' +isnull_value+',' +false +',event , false)');
+          } else{
+            new_p.setAttribute('onChange','changeChild('+element_child.children_id+')');
+          }
+        }
+      //
+
+      }
+      if (element_child_field.field_type_id == 5) {
+        var new_p = document.createElement('INPUT');
+        new_p.type = "number";
+        new_p.className = "form-control form-control-sm "+classname_field+" is_child_field";
+        if(!is_multiple){
+          new_p.setAttribute("onChange","calculate_all(false,false,"+element_child.children_id+","+element_field_id+")");
+        } else{
+          new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
+        }
+      }
+      if(!is_new || (is_new && element_child_field.read_only==true && element_child_field.calculated_field!='') || (is_new && element_child_field.can_edit==false)){
+        new_p.disabled = true;
+      }
+      if (element_child_field.value != null && element_child_field.field_type_id != 10 && element_child_field.field_type_id != 2) {
+        new_p.value = element_child_field.value
+      }
+      if(element_child_field.required==true){
+        new_p.classList.add('required_field');
+      }
+      if((element_child_field.read_only==true && !is_new)|| element_child_field.can_edit==false || (is_new && element_child_field.read_only==true && element_child_field.calculated_field!='') ){
+        new_p.classList.add('readonly_field');
+      }
+
+      new_p.style.padding = "0px 0.5rem";
+      new_p.style.height = "auto";
+      var id_field = element_child_field.field_id;
+      var id_child = element_child.children_id;
+      new_p.id = "fieldchildid|"+id_field+"|"+id_child;
+      new_celd.appendChild(new_p);
+      if(found_nested){new_celd.appendChild(new_p_nested)}
+      new_row1.appendChild(new_celd);
+    }
+    new_row_container.appendChild(new_row1);
+    verify_count_elements_childs_fields++;
+  });
+  if(verify_count_elements_childs_fields!= children_fields.length){
+    set_error_message("Error: no se pudieron traer todos los campos del subformulario "+element_name);
+  }
+
+  //fotos del hijo
+  var children_photos = element_child.children_photos;
+  var verify_count_elements_childs_photos = 0;
+  children_photos.forEach(function(photo) {
+    var new_div = document.createElement('DIV');
+    new_div.className = "photo_div_info";
+    new_div.style.position = "static";
+    var new_photo = document.createElement('IMG');
+    new_photo.className = "photo_info";
+    new_photo.setAttribute('onClick', "open_photo(event)");
+    new_photo.src = "data:image/png;base64," + photo.image;
+    new_div.appendChild(new_photo);
+    var new_photo = document.createElement('P');
+    new_photo.innerHTML = photo.name;
+    new_photo.className = "photo_description";
+    new_div.appendChild(new_photo);
+    new_row_container.appendChild(new_div);
+    verify_count_elements_childs_photos++;
+  });
+  if(verify_count_elements_childs_photos!= children_photos.length){
+    set_error_message("Error: no se pudieron traer todas las fotos del campo "+element_name);
+  }
+  verify_count_elements_childs++;
+
+  return new_row_container;
+}
+
+function set_date_style(is_multiple){
+  $('.date_field').datetimepicker({
         format: "DD/MM/YYYY",
         viewMode: "days",
         locale: moment.locale('en', {
@@ -2942,58 +3159,76 @@ function show_item_info(appid_info, from_map, is_multiple) {
       });
       $('.date_field').on('dp.change', function(e){
         if(this.id.substring(0,12)=="fieldchildid"){
-          changeChild(this.id.split('|')[2]);
+          if(!is_multiple){
+            var id_field_father = this.getAttribute('id_field_father');
+            console.log(this)
+            console.log(this.getAttribute('id_field_father'))
+            console.log("Campo padre en campos fechas "+id_field_father)
+            calculate_all(false,false,this.id.split('|')[2],id_field_father);
+          } else{
+            changeChild(this.id.split('|')[2]);
+          }
         } else{
           if(!is_multiple){
-            calculate_all(false);
+            calculate_all(false,true);
           } else{
             changeFile();
           }
         }
     });
+}
 
-      // selectores y multiselectores en hijos
-       for(x=0;x<arraymultiselect.length;x++){
-              if(document.getElementById('fieldchildid|'+arraymultiselect[x]+'|'+arraymultiselectChild[x]).classList.contains("readonly_field")){
-                var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field is_child_field';
-              } else{
-                var buttonClass = 'text-left form-control form-control-sm info_input_disabled is_child_field';
-              }
-              $('#fieldchildid\\|'+arraymultiselect[x]+'\\|'+arraymultiselectChild[x]).multiselect({
-                maxHeight: 450,
-                buttonClass: buttonClass,
-                buttonWidth: '100%',
-                nonSelectedText: 'Seleccionar',
-                selectedClass: 'selected_multiple_item',
-                delimiterText: '\n',
-                numberDisplayed: 0,
-                allSelectedText: false,
-                enableFiltering: true,
-                enableCaseInsensitiveFiltering: true,
-                filterPlaceholder: 'Buscar',
-                includeFilterClearBtn: false,
-                includeSelectAllOption: false,
-                dropRight: true,
-              });
-          }
+function set_multiselect_style_childs(){
+  for(x=0;x<arraymultiselect.length;x++){
+    if(document.getElementById('fieldchildid|'+arraymultiselect[x]+'|'+arraymultiselectChild[x]).classList.contains("readonly_field")){
+      var buttonClass = 'text-left form-control form-control-sm info_input_disabled readonly_field is_child_field';
+    } else{
+      var buttonClass = 'text-left form-control form-control-sm info_input is_child_field';
+    }
+    $('#fieldchildid\\|'+arraymultiselect[x]+'\\|'+arraymultiselectChild[x]).multiselect({
+      maxHeight: 450,
+      buttonClass: buttonClass,
+      buttonWidth: '100%',
+      nonSelectedText: 'Seleccionar',
+      selectedClass: 'selected_multiple_item',
+      delimiterText: '\n',
+      numberDisplayed: 0,
+      allSelectedText: false,
+      enableFiltering: true,
+      enableCaseInsensitiveFiltering: true,
+      filterPlaceholder: 'Buscar',
+      includeFilterClearBtn: false,
+      includeSelectAllOption: false,
+      dropRight: true,
+    });
+  }
+}
 
-      //Muestra el punto en el mapa y elimina el seleccionado en la tabla
-      if (from_map) {
-        $('table tbody tr').removeClass('found');
-        Navarra.project_types.config.data_dashboard = "app_id = '" + appid_info + "'";
-        Navarra.project_types.config.item_selected = appid_info;
-        Navarra.geomaps.current_layer();
-      }
-      //Ejecuta Script de campos padres
-        father_fields.forEach(function(element) {
-          if(element.data_script!=""){
-            Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,true);
-          }
-        });
-        calculate_all(true);
-
-    }//end Success
-  }); //end ajax
+function open_new_child(element_field_id, element_name, element_key,is_multiple){
+  event.target.style.visibility = "hidden";
+  $.ajax({
+    type: 'GET',
+    url: '/project_subfields/show_subfields',
+    datatype: 'json',
+    data: {
+      project_type_id: Navarra.dashboards.config.project_type_id,
+      element_field_id: element_field_id
+    },
+    success: function(data) {
+      console.log(data)
+      child_elements_new = {
+        children_fields: data,
+        children_id: 0,
+        children_photos: []
+      } 
+      var new_row1 = create_new_row_child(child_elements_new, element_field_id,element_name,is_multiple,true);
+      document.getElementById('child_container_'+element_key).appendChild(new_row1);
+      textarea_adjust_height();
+      set_date_style(is_multiple);
+      set_multiselect_style_childs();
+      calculate_all(false,false,0, element_field_id,true)
+    }
+  })
 }
 
 function open_photo(e) {
@@ -3025,10 +3260,15 @@ function show_hidden_fields() {
 }
 
 function open_subtitle(fields, ischild) {
+  var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   if (fields != "") {
     fields.forEach(function(field_id) {
       if ($(".subtile_hidden" + ischild + field_id).length > 0) {
-        $(".subtile_hidden" + ischild + field_id).not('.empty_field').not('.hidden_field').removeClass("d-none");
+        if(is_new_file){
+          $(".subtile_hidden" + ischild + field_id).not('.hidden_field').removeClass("d-none");
+        } else{
+          $(".subtile_hidden" + ischild + field_id).not('.empty_field').not('.hidden_field').removeClass("d-none");
+        }
         $(".subtile_hidden" + ischild + field_id).addClass("subtile_visible" + ischild + field_id);
         $(".subtile_hidden" + ischild + field_id).removeClass("subtile_hidden" + ischild + field_id);
       } else {
@@ -3055,6 +3295,7 @@ function textarea_adjust_height() {
 //****** FUNCIONES PARA EDICION DE REGISTROS *****
 
 function edit_file(edit_parent, edit_child, edit_status){
+  var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   textarea_adjust_height()
   //verifica requeridos si no es edición múltiple
 
@@ -3083,17 +3324,22 @@ function edit_file(edit_parent, edit_child, edit_status){
       return;
     }
   }
-
-  if(!filechange && array_child_edited.length==0){
-    if(!statuschange){
-      $('#info_messages').html("No hay cambios a guardar");
+  if(is_new_file){
+    if($("#input_status").val()==null){
+      $('#info_messages').html("Agregue un Estado válido");
       $('#info_messages').addClass("text-danger");
       $('#info_messages').removeClass("d-none");
-    } else {
-      edit_file_status(false);
+      return;
     }
+  }
+
+  if(!filechange && array_child_edited.length==0 && !statuschange){
+    $('#info_messages').html("No hay cambios a guardar");
+    $('#info_messages').addClass("text-danger");
+    $('#info_messages').removeClass("d-none");
     return;
   }
+
 
   $(".fakeLoader").css("display", "block");
   var app_ids = getapp_ids();
@@ -3129,166 +3375,181 @@ function edit_file(edit_parent, edit_child, edit_status){
   } else {
     var properties_to_save = null;
   }
-    console.log("Padre a actualizar")
-    console.log(properties_to_save)
+
 
   //envio de Json hijos
   var child_edited_all = [];
   if(array_child_edited.length>0){
+    // array_child_edited es un array que contiene los id de los hijos modificados. 0 para nuevos hijos
     array_child_edited = array_child_edited.unique();
+    console.log("Array child edited")
+    console.log(array_child_edited)
     for(z=0;z<array_child_edited.length;z++){
-      var properties_child_to_save = new Object();
+      console.log("Iteración en hijos editados")
+      console.log(array_child_edited[z])
       var id_field_father_properties;
+      // crea array único de ids de campos padres
+      var array_field_id_father_grouped = [];
       $('.field_key_child_json').each(function() {
-        id_field_father_properties = this.id.split('|')[0];
         var id_child_properties = this.id.split('|')[2];
-        var fiel_type_properties = this.id.split('|')[3];
         var id_field_child_properties = this.id.split('|')[4];
-
         if(id_child_properties==array_child_edited[z]){
-        if($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!="" && $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!=null ){
-          if(fiel_type_properties==2){
-            var array_val = [];
-            array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
-            if(document.getElementById('fieldchildid|'+id_field_child_properties+'|'+id_child_properties).classList.contains('nested')){
-              array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties+'_nested').val());
-            }
-            var value_field_properties = array_val;
-          }else{
-            if( fiel_type_properties == 4){
-             var value_field_properties = $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val().toLowerCase() == 'true' ? true : false;;
-            } else{
-              if( fiel_type_properties == 5){
-              var value_field_properties = parseFloat($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
-              } else{
-                var value_field_properties = $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val();
-              }
-            }
-          }
-          properties_child_to_save[id_field_child_properties] = value_field_properties;
+          id_field_father_properties = this.id.split('|')[0];
+          if($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!="" && $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!=null ){
+            array_field_id_father_grouped.push(id_field_father_properties);
           }
         }
       });
-      var child_data = new Object();
-      child_data.IdFather = Navarra.project_types.config.id_item_displayed;
-      child_data.field_id = id_field_father_properties;
-      child_data.child_id = array_child_edited[z];
-      child_data.properties = properties_child_to_save;
-      child_edited_all.push(child_data);
+      array_field_id_father_grouped = array_field_id_father_grouped.unique();
+      for (zz=0; zz<array_field_id_father_grouped.length; zz++){
+        var properties_child_to_save = new Object();
+        $('.field_key_child_json').each(function() {
+          var id_child_properties = this.id.split('|')[2];
+          var fiel_type_properties = this.id.split('|')[3];
+          var id_field_child_properties = this.id.split('|')[4];
+          id_field_father_properties = this.id.split('|')[0];
+          if(id_child_properties==array_child_edited[z] && id_field_father_properties==array_field_id_father_grouped[zz]){
+            if($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!="" && $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!=null ){
+              if(fiel_type_properties==2){
+                var array_val = [];
+                array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
+                if(document.getElementById('fieldchildid|'+id_field_child_properties+'|'+id_child_properties).classList.contains('nested')){
+                  array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties+'_nested').val());
+                }
+                var value_field_properties = array_val;
+              }else{
+                if( fiel_type_properties == 4){
+                var value_field_properties = $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val().toLowerCase() == 'true' ? true : false;;
+                } else{
+                  if( fiel_type_properties == 5){
+                  var value_field_properties = parseFloat($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
+                  } else{
+                    var value_field_properties = $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val();
+                  }
+                }
+              }
+              properties_child_to_save[id_field_child_properties] = value_field_properties;
+              console.log("properties to save después")
+              console.log(properties_child_to_save)
+              }
+            }
+          });
+          var child_data = new Object();
+          child_data.IdFather = app_ids;
+          child_data.field_id = parseInt(array_field_id_father_grouped[zz]);
+          child_data.child_id = array_child_edited[z];
+          child_data.properties = properties_child_to_save;
+          console.log("Objeto nuevo")
+          console.log(child_data)
+          child_edited_all.push(child_data);
+          console.log("Array a enviar")
+          console.log(child_edited_all)
+      }
     }
   }
 
-  console.log("Hijos a actualizar")
-  console.log(child_edited_all);
+  if($("#input_status").val()==null){
+    var status_id = null;
+  } else{
+    var status_id = $("#input_status").val().split('|')[0];
+  }
+  if(is_new_file){
+    var type_ajax = 'POST';
+    var url_post = '/projects/create_form';
+    var data_to_save = {
+      project_type_id: Navarra.dashboards.config.project_type_id,
+      properties: JSON.stringify(properties_to_save),
+      subforms: child_edited_all,
+      project_status_id: status_id,
+      geom: Navarra.geomaps.get_geometries_to_save()
+    }
 
-  $.ajax({
-    type: 'PATCH',
-    url: '/projects/update_form',
-    datatype: 'JSON',
-    data: {
+    console.log('PARAMS create_form');
+    console.log(data_to_save)
+
+  } else {
+    var type_ajax = 'PATCH';
+    var url_post = '/projects/update_form';
+    var data_to_save = {
       app_ids: app_ids,
       properties: JSON.stringify(properties_to_save),
-      subforms: child_edited_all
-    },
+      subforms: child_edited_all,
+      project_status_id: status_id,
+    }
+
+    console.log('PARAMS update_form');
+    console.log(data_to_save)
+
+  }
+  $.ajax({
+    type: type_ajax,
+    url: url_post,
+    datatype: 'JSON',
+    data: data_to_save,
     success: function(data) {
+
+      console.log('RESPONSE create_form/update_form');
+      console.log(data)
+
       $(".fakeLoader").css("display", "none");
       filechange = false;
       array_child_edited = [];
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){
-        $('#info_messages').addClass("d-inline");
-        $('#info_messages').removeClass("d-none");
-        $('#info_messages').html(data['status']);
-      } else{
-        $('#alert_message').addClass('show');
-        $('#alert_message').removeClass('d-none');
-        $("#info-modal").modal("hide");
-        $('#alert_text_message').html(data['status']);
-        Navarra.project_types.config.item_selected="";
-        Navarra.project_types.config.data_dashboard = "";
-      }
-       //Ajustar valor en la tabla
-      var fields = document.querySelectorAll(".field_key");
-      fields.forEach(function(column, indexColumn) {
-        if(properties_to_save[column.value]!=undefined){
-          var indexval=indexColumn+1;
-          app_ids.forEach(function(row_element){
-            if($('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html()!=properties_to_save[column.value].toString() ){
-              $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(properties_to_save[column.value].toString());
-              $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-weight","bold");
-              $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-size","1.5em");
-            }
+      // Muestra mensaje
+      $('#alert_message').addClass('show');
+      $('#alert_message').removeClass('d-none');
+      $("#info-modal").modal("hide");
+      $('#alert_text_message').html(data['status']);
+      Navarra.project_types.config.item_selected="";
+      Navarra.project_types.config.data_dashboard = "";
+      
+       //Ajustar valor en la tabla si está visible
+      if(!$('#status-view').hasClass('status-view-condensed')){
+        if(is_new_file){
+          var id_new = data['id'];
+          var new_row = document.createElement("TR");
+          new_row.id="row_table_data"+id_new;
+          new_row.style.cursor = "pointer";
+          new_row.className = "row_data";
+          var new_celd="";
+          // agrega app_id
+          properties_to_save["app_id"] = id_new;
+          var fields = document.querySelectorAll(".field_key");
+          fields.forEach(function(column, indexColumn) {
+            new_celd_create = create_celd_table(column,indexColumn, properties_to_save, null, null ,-1,true);
+            new_celd+=new_celd_create;
           });
+          document.getElementById("tbody_visible").prepend(new_row);
+          $('#row_table_data'+id_new).html(new_celd);
+          Navarra.dashboards.app_ids_table.push(id_new);
+        } else{
+          if(properties_to_save!=null){// si se modificó el padre
+            var fields = document.querySelectorAll(".field_key");
+            fields.forEach(function(column, indexColumn) {
+              if(properties_to_save[column.value]!=undefined){
+                var indexval=indexColumn+1;
+                app_ids.forEach(function(row_element){
+                  if($('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html()!=properties_to_save[column.value].toString() ){
+                    $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(properties_to_save[column.value].toString());
+                    $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-weight","bold");
+                    $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-size","1.5em");
+                  }
+                });
+              }
+            });
+          }
         }
-      })
-      if(edit_status && statuschange){
-        edit_file_status(true);
-      } else{
-        update_all();
+        // Verifica si tiene que crear tabla de subformularios
+        create_subforms_table();
+        // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
+        verify_scroll_table();
       }
-    }
-  });
-}
 
-function edit_file_status(edit_data){
-  $(".fakeLoader").css("display", "block");
-  if(!statuschange){
-    $('#info_messages').html("No hay cambios a guardar");
-    $('#info_messages').addClass("text-danger");
-    $('#info_messages').removeClass("d-none");
-    return;
-  } else {
-    $('#info_messages').removeClass("text-danger");
-  }
-  var app_ids = getapp_ids();
-  var status_id = $(".input_status").val().split('|')[0];
-  $.ajax({
-    type: 'PATCH',
-    url: '/projects/change_status',
-    datatype: 'JSON',
-    data: {
-      app_ids: app_ids,
-      status_id: status_id
-    },
-    success: function(data) {
-      $(".fakeLoader").css("display", "none");
-      $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){
-        $('#info_messages').addClass("d-inline");
-        $('#info_messages').removeClass("d-none");
-        if(edit_data){
-          $('#info_messages').html($('#info_messages').html()+"<br>" +data['status']);
-        } else{
-          $('#info_messages').html(data['status']);
-        }
-      } else{
-        $('#alert_message').addClass('show');
-        $('#alert_message').removeClass('d-none');
-        $("#info-modal").modal("hide");
-         if(edit_data){
-          $('#alert_text_message').html($('#alert_text_message').html()+"<br>" +data['status']);
-        } else{
-          $('#alert_text_message').html(data['status']);
-        }
-        Navarra.project_types.config.item_selected="";
-        Navarra.project_types.config.data_dashboard = "";
-      }
-       //Ajustar valor en la tabla
-      var fields = document.querySelectorAll(".field_key");
-      fields.forEach(function(column, indexColumn) {
-        if(column.value=="app_estado"){
-          var indexval=indexColumn+1;
-          app_ids.forEach(function(row_element){
-            $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(status_id);
-            $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-weight","bold");
-            $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-size","1.5em");
-          });
-        }
-      })
+
       update_all();
     }
   });
-}
+}  
 
 function change_owner(){
   $(".fakeLoader").css("display", "block");
@@ -3305,20 +3566,13 @@ function change_owner(){
     success: function(data) {
       $(".fakeLoader").css("display", "none");
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){
-        $('#info_messages').addClass("d-inline");
-        $('#info_messages').removeClass("d-none");
-        $('#info_messages').html(data['status']);
-        $('.app_usuario_value').val(user_id);
-      }
-      else{
-        $('#alert_message').addClass('show');
-        $('#alert_message').removeClass('d-none');
-        $("#info-modal").modal("hide");
-        $('#alert_text_message').html(data['status']);
-        Navarra.project_types.config.item_selected="";
-        Navarra.project_types.config.data_dashboard = "";
-      }
+      // Muestra mensaje
+      $('#alert_message').addClass('show');
+      $('#alert_message').removeClass('d-none');
+      $("#info-modal").modal("hide");
+      $('#alert_text_message').html(data['status']);
+      Navarra.project_types.config.item_selected="";
+      Navarra.project_types.config.data_dashboard = "";
       //Ajustar valor en la tabla
       var fields = document.querySelectorAll(".field_key");
       fields.forEach(function(column, indexColumn) {
@@ -3349,16 +3603,11 @@ function disable_file(){
     success: function(data) {
       $(".fakeLoader").css("display", "none");
       $('#table_select_all').prop('checked',false);
-      if(!$('#multiple_edit').hasClass('multiple_on')){
-        $('#info_messages').addClass("d-inline");
-        $('#info_messages').removeClass("d-none");
-        $('#info_messages').html(data['status']);
-      } else{
-        $('#alert_message').addClass('show');
-        $('#alert_message').removeClass('d-none');
-        $("#info-modal").modal("hide");
-        $('#alert_text_message').html(data['status']);
-      }
+      // Muestra Mensaje
+      $('#alert_message').addClass('show');
+      $('#alert_message').removeClass('d-none');
+      $("#info-modal").modal("hide");
+      $('#alert_text_message').html(data['status']);
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       //elimina las filas de la tabla
@@ -3420,62 +3669,133 @@ function update_all(){
   if (heatmap_actived != '') {
     Navarra.geomaps.heatmap_data();
   }
+  Navarra.geomaps.delete_markers();
 }
 
-function set_script(data_script,field_type_id,field_id,value,isnested,event){
+function set_script(data_script,field_type_id,field_id,value,isnested,event, isparent){
   // Script de campos padres
-  filechange = true;
+  if(isparent){
+    filechange = true;
+  } else {
+    array_child_edited.push(parseInt(field_id.split('|')[1]));
+  }
   if(data_script!=""){
-    Navarra.calculated_and_script_fields.Script(JSON.stringify(data_script),field_type_id, field_id,value, false);
+    Navarra.calculated_and_script_fields.Script(JSON.stringify(data_script),field_type_id, field_id,value, false, isparent);
   }
   if(isnested){
-    set_nested(event)
+    set_nested(event,isparent)
   }
 }
 
 function set_script_all(){
   //Ejecuta Script de campos padres
-        father_fields.forEach(function(element) {
-          if(element.data_script!=""){
-            Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,false);
-          }
+    father_fields.forEach(function(element) {
+      if(element.data_script!=""){
+        Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,element.field_id,element.value,false,true);
+      }
+    });
+    //Ejecuta Script de campos hijos
+    if(child_elements!==undefined){
+      child_elements.forEach(function(element_child){
+          children_fields.forEach(function(element) {
+            var id_child_toScript = element.field_id+"|"+element_child.children_id;
+            if(element.data_script!=""){
+              Navarra.calculated_and_script_fields.Script(element.data_script,element.field_type_id,id_child_toScript,element.value,true,false);
+            }
+          });
         });
+    }
 }
 
-function calculate_change(calculated_field,field_type_id,field_id,value){
-  if(calculated_field!=""){
-    Navarra.calculated_and_script_fields.Calculate(JSON.stringify(calculated_field),field_type_id, field_id,value, "data_edition");
-  }
-}
-function calculate_all(first_time){
+
+function calculate_all(first_time, isparent, id_child_calculate , id_field_child_calculate, is_new_child){
+  var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
+  if(is_new_file){var type_calculation = "new_file"} else{ var type_calculation = "data_edition"}
   //Ejecuta Calculate de campos padres
-  if(!first_time){filechange = true;}
-        father_fields.forEach(function(element) {
-          if(element.calculated_field!="" && element.field_type_id!=11){
-            Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,element.field_id,element.value,"data_edition");
-          }
-        });
+  if(isparent){
+    if(!first_time){filechange = true;}
+      father_fields.forEach(function(element) {
+        if(element.calculated_field!="" && element.field_type_id!=11){
+          if((element.calculated_field=='{"provincia":""}' || element.calculated_field=='{"municipio":""}') && is_new_file){
+            if(Navarra.dashboards.config.type_geometry == "Polygon"){
+              var geom = Navarra.geomaps.get_geom_to_calculate();
+            } else{
+              var geom1 = Navarra.geomaps.get_geometries_to_save();
+              var geom = {
+                latLng: new L.latLng(geom1[0].latLng.lat,geom1[0].latLng.lng)
+              }
+            }
+          } else{ var geom = null}
+          Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,element.field_id,element.value,type_calculation,null,geom,true);
+        }
+      });
+    } else{
+      console.log("es nuevo hijo? "+is_new_child)
+      if(is_new_child!=undefined){
+        is_new_file = is_new_child;
+        if(is_new_file){var type_calculation = "new_file"} else{ var type_calculation = "data_edition"}
+      }
+        console.log(is_new_file)
+      //Ejecuta Calculate de campos hijos
+      console.log("Va a calcular hijos")
+      console.log("Es primera vez? "+first_time)
+      if(!first_time){
+        array_child_edited.push(parseInt(id_child_calculate));
+        //ejecuta calculate para el hijo cambiado
+        console.log(children_fields_all)
+        console.log("Campo padre a calcular")
+        console.log(id_field_child_calculate)
+          children_fields_all[id_field_child_calculate].forEach(function(element) {
+            console.log("elemento")
+            console.log(element)
+            var id_child_toScript = element.field_id+"|"+id_child_calculate;
+            console.log("idchild calculated "+id_child_calculate)
+            if(element.calculated_field!="" && element.field_type_id!=11){
+              Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
+            }
+          });
+      } else{
+        //ejecuta calculate para todos los hijos
+        if(child_elements!==undefined){
+          child_elements.forEach(function(element_child){
+            children_fields.forEach(function(element) {
+              var id_child_toScript = element.field_id+"|"+element_child.children_id;
+              if(element.calculated_field!="" && element.field_type_id!=11){
+                Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
+              }
+            });
+          });
+        }
+      }
+    }
 }
 
-function set_nested(event){
+function set_nested(event, isparent){
   filechange = true;
   var id_event = event.target.id;
-  var id_event_nested = id_event+"_nested";
-  var attribute_nested = document.getElementById(id_event).options[document.getElementById(id_event).selectedIndex].getAttribute('data-type');
-  $("#"+id_event_nested).val("");
-  $("#"+id_event_nested+" option").each(function() {
-    if(this.getAttribute('data-type')==attribute_nested){
-       $(this).removeClass('d-none')
-    } else{
-      $(this).addClass('d-none');
-    }
-  });
+  var id_event_jquery = event.target.id.replaceAll('|','\\|');
+  var id_event_nested = id_event_jquery+"_nested";
+  if(document.getElementById(id_event).selectedIndex==-1){
+    $("#"+id_event_nested+" option").each(function() {
+        $(this).addClass('d-none');
+    });
+  } else{
+    var attribute_nested = document.getElementById(id_event).options[document.getElementById(id_event).selectedIndex].getAttribute('data-type');
+    $("#"+id_event_nested).val("");
+    $("#"+id_event_nested+" option").each(function() {
+      if(this.getAttribute('data-type')==attribute_nested){
+        $(this).removeClass('d-none')
+      } else{
+        $(this).addClass('d-none');
+      }
+    });
+  }
 }
 
 function changeChild(id_child_edited,isnested,event){
   array_child_edited.push(id_child_edited);
   if(isnested){
-    set_nested(event)
+    set_nested(event,false)
   }
 }
 

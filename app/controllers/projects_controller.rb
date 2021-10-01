@@ -39,37 +39,123 @@ class ProjectsController < ApplicationController
     end
   end
 
-  # Actualiza la columna properties
-  def update_form
+  # Crea un nuevo registro
+  def create_form
 
-    # Padres
-    app_ids = params[:app_ids]
+    project_type_id = params[:project_type_id]
+    project_status_id = params[:project_status_id]
     properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
-
-    if app_ids.present? && properties.present?
-      app_ids.each do |app_id|
-        @project = Project.find(app_id)
-        @project.update_form(properties)
-      end
-      render json: {status: 'Actualización completada.'}
-    else
-      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
-    end
-
-    # Hijos
+    geom = params[:geom]['0'][:latLng]
     subforms = params[:subforms] # FIXME: los paremetros llegan como string
 
-    if subforms.present?
-      subforms.each do |i, sf|
-        child_id = sf['child_id']
-        properties = sf['properties']
-        @project_data_children = ProjectDataChild.find(child_id)
-        if @project_data_children.update_subform(properties)
-          render json: {status: 'Registro actualizado.'}
-        else
-          render json: {status: 'Error. No se pudo actualizar el registro.'}
+    @project_type = ProjectType.find(project_type_id)
+    @project = Project.new()
+
+    # Arma la nueva geometría
+    if @project_type.type_geometry == 'Point'
+      @new_geom = "POINT(#{geom['lng']} #{geom['lat']})"
+    else
+      points_array = []
+      geom.each do |a,x|
+        point = "#{x[0]} #{x[1]}"
+        points_array << point
+      end
+      points_array << points_array[0]
+      points_array_str = points_array.join(', ')
+      @new_geom = "POLYGON((#{points_array_str}))"
+    end
+
+    datetime = Time.zone.now
+
+    properties['app_id'] = 0
+    properties['app_usuario'] = current_user.id
+    properties['app_estado'] = project_status_id.to_i
+    properties['gwm_created_at'] = datetime.to_date
+    properties['gwm_updated_at'] = datetime.to_date
+
+    # Carga los valores
+    @project['properties'] = properties
+    @project['project_type_id'] = project_type_id
+    @project['user_id'] = current_user.id
+    @project['the_geom'] = @new_geom
+    @project['project_status_id'] = project_status_id
+    @project['gwm_created_at'] = datetime
+    @project['gwm_updated_at'] = datetime
+
+    if @project.save
+      @project['properties'].merge!('app_id': @project.id)
+      @project.save!
+
+      if subforms.present?
+
+        subforms_created = []
+        subforms.each do |i, sf|
+
+          project_field_id = sf['field_id']
+          child_id = sf['child_id'].to_i
+          properties = sf['properties']
+
+          @project_data_children = ProjectDataChild.new
+          @project_data_children.create_subform(properties, @project.id, project_field_id, current_user.id)
+          subforms_created << @project_data_children.id
+        end
+
+      end
+
+      @project_type.destroy_view
+      @project_type.create_view
+      @project.update_inheritable_statuses
+
+      render json: {status: 'Creación completada.', id: @project.id, subforms_created: subforms_created}
+
+    else
+
+      render json: {status: 'Error en la creación.', id: '', children: ''}
+
+    end
+
+  end
+
+  # Actualiza registros padre
+  def update_form
+    app_ids = params[:app_ids]
+    properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
+    subforms = params[:subforms] # FIXME: los paremetros llegan como string
+    project_status_id = params[:project_status_id]
+
+    if app_ids.present?
+
+      app_ids.each do |app_id|
+
+        @project = Project.find(app_id)
+        @project.update_form(properties, project_status_id.to_i)
+
+        # Si vienen hijos, los crea o actualiza
+        if subforms.present?
+
+          @subforms_created = []
+          subforms.each do |i, sf|
+
+            project_field_id = sf['field_id']
+            child_id = sf['child_id'].to_i
+            properties = sf['properties']
+
+            # Si el child_id es 0, el hijo se crea, sino se actualiza
+            if child_id == 0
+              @project_data_children = ProjectDataChild.new
+              @project_data_children.create_subform(properties, app_id, project_field_id, current_user.id)
+              @subforms_created << @project_data_children.id
+            else
+              @project_data_children = ProjectDataChild.find(child_id)
+              @project_data_children.update_subform(properties)
+            end
+
+          end
         end
       end
+      render json: {status: 'Actualización completada.', subforms_created: @subforms_created}
+    else
+      render json: {status: 'Faltan parámetros para completar la acción.'}
     end
 
   end
@@ -154,24 +240,9 @@ class ProjectsController < ApplicationController
     end
   end
 
-  # Cambia el estado del registro
-  def change_status
-    app_ids = params[:app_ids]
-    status_id = params[:status_id]
-    if app_ids.present? && status_id.present?
-      app_ids.each do |app_id|
-        @project = Project.find(app_id)
-        @project.change_status(status_id.to_i)
-      end
-      render json: {status: 'Actualización completada.'}
-    else
-      render json: {status: 'Error. Faltan parámetros para completar la acción.'}
-    end
-  end
-
 
   def search_statuses
-    @project_statuses_data = ProjectStatus.where(project_type_id: params[:project_type_id])
+    @project_statuses_data = ProjectStatus.where(project_type_id: params[:project_type_id]).order(status_type: :desc)
     render json: {data: @project_statuses_data}
   end
 
@@ -275,6 +346,6 @@ class ProjectsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_params
     @properties_keys = params[:project][:properties].keys
-    params.require(:project).permit( :project_type_id, :properties => [@properties_keys]).merge(user_id: current_user.id)
+    params.require(:project).permit(:geom, :project_type_id, :properties => [@properties_keys]).merge(user_id: current_user.id)
   end
 end

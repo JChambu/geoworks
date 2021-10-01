@@ -13,16 +13,18 @@ Rails.application.routes.draw do
   get 'project_types/project_type_layers' => 'project_types#project_type_layers'
   get 'layers/find' => 'layers#find'
   get 'project_fields/field_popup' => 'project_fields#field_popup'
+  get 'project_fields/show_fields' => 'project_fields#show_fields'
+  get 'project_subfields/show_subfields' => 'project_subfields#show_subfields'
   get 'project_types/create_share' => 'project_types#create_share', as: :create_share
   get 'projects/search_data' => 'projects#search_data'
   get 'projects/search_statuses' => 'projects#search_statuses'
   get 'projects/search_users' => 'projects#search_users'
   get 'projects/popup' => 'projects#popup'
   get 'project_types/get_extent' => 'project_types#get_extent'
+  post 'projects/create_form' => 'projects#create_form'
   patch 'projects/update_form' => 'projects#update_form'
   patch 'projects/update_geom_and_calculated_fields' => 'projects#update_geom_and_calculated_fields'
   patch 'projects/change_owner' => 'projects#change_owner'
-  patch 'projects/change_status' => 'projects#change_status'
   patch 'projects/disable_form' => 'projects#disable_form'
   patch 'projects/destroy_form' => 'projects#destroy_form'
   post 'project_statuses/options', as: 'project_statuses_options'
@@ -30,7 +32,10 @@ Rails.application.routes.draw do
   get 'choice_lists/export_csv'=> 'choice_lists#export_csv', as: 'export_csv'
   get 'choice_lists/export_all_csv'=> 'choice_lists#export_all_csv', as: 'export_all_csv'
   post 'graphics/update_sort' => 'graphics#update_sort', as: :update_sort
-
+  get 'photos/show_photos' => 'photos#show_photos'
+  get 'photos_children/show_photos_children' => 'photos_children#show_photos_children'
+  get 'project_data_children/show_children' => 'project_data_children#show_children'
+  get 'users/get_user_id_and_customer_id' => 'users#get_user_id_and_customer_id'
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 

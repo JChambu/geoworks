@@ -63,7 +63,8 @@ Navarra.dashboards.config = {
   field_geometric_calculated_length: 0,
   field_geometric_calculated_length_all: 0,
   field_geometric_calculated_count: 0,
-  field_geometric_calculated_count_all: 0
+  field_geometric_calculated_count_all: 0,
+  app_ids_table: []
 };
 
 resize_graphics = function(){
@@ -223,6 +224,7 @@ Navarra.dashboards.action_show = function(){
           $(".leaflet-control-scale-line").css("display", "none");
           init_data_dashboard(false);
         }
+        verify_scroll_table();
     });
     //Minimizar la pantalla
     $("#view-data-hidden").on("click", function() {
@@ -259,6 +261,7 @@ Navarra.dashboards.action_show = function(){
           $(".leaflet-control-scale-line").css("display", "none");
           init_data_dashboard(false);
         }
+        verify_scroll_table();
     });
 
     $(".graphics").on('click','canvas',function(){

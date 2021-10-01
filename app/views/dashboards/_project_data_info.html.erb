@@ -7,6 +7,12 @@
       Navarra.project_types.config.item_selected="";
       Navarra.geomaps.current_layer();
     });
+    // función al cerrar modal de info del registro
+    $('#info-modal').on('hidden.bs.modal', function (e)  {
+      $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
+      $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_edit');
+      Navarra.geomaps.delete_markers();
+    });
   });
 var can_edit_yes;
 var can_edit_subforms_yes;
@@ -65,14 +71,23 @@ var can_edit_status_yes;
         field_to_edit.prop('disabled', false);
         field_to_edit.removeClass('info_input_disabled');
         if(can_edit_yes ==1 || can_edit_subforms_yes==1){
-          // muestra campos vacíos
-          $('.empty_field').not('.hidden_field').not('.is_child_field').removeClass('d-none');
+          // muestra campos vacíos que no están dentro de un subtitulo y le quita la propiedad vacío 
+          $('.empty_field').not('.hidden_field').not('.is_child_field').not(("div[class*='subtile_hidden']")).removeClass('d-none');
+          $('.empty_field').not('.hidden_field').not('.is_child_field').removeClass('empty_field');
           //muestra campos ocultos en subtítulos
-          $("div[class*='subtile_hidden']").not('.hidden_field').removeClass('d-none');
+          // $("div[class*='subtile_hidden']").not('.hidden_field').removeClass('d-none');
       }
+        //muestra campos subformularios aunque estén vacíos
+        $('.div_subforms').removeClass('d-none');
+        // muestra ícono add si tiene autorización para crear nuevos subformularios
+        //!!!!!! Cambiar a nueva autorización
+        if(can_edit_yes ==1){
+          $('.add_subforms').removeClass('d-none');
+        }
         textarea_adjust_height();
         set_script_all();
-        calculate_all(true);
+        calculate_all(true,true);
+        calculate_all(true,false);
       }
       
       if(div_confirmation=='owner_confirmation'){
@@ -120,13 +135,9 @@ var can_edit_status_yes;
     $('.div_confirmation').addClass("d-none");
     $('.div_confirmation').removeClass("d-inline");
     if(option_save=="edit_confirmation"){
-      var edit_data =  false;
       var edit_status = false;
       var edit_parents = false;
       var edit_childs = false;
-      if(can_edit_yes==1 || can_edit_subforms_yes==1){
-        edit_data = true;
-      }
       if(can_edit_yes==1){
         edit_parents = true;
       }
@@ -136,11 +147,8 @@ var can_edit_status_yes;
       if(can_edit_status_yes==1){
         edit_status = true;
       }
-       if(can_edit_yes==1 || can_edit_subforms_yes==1){
+       if(can_edit_yes==1 || can_edit_subforms_yes==1 || can_edit_status_yes==1){
         edit_file(edit_parents, edit_childs, edit_status);
-      }
-      if(can_edit_status_yes==1 && !edit_data){
-        edit_file_status(false);
       }
 
     }
@@ -163,15 +171,15 @@ var can_edit_status_yes;
 
 <% if can? :data, :visualizer %>
   <div id="info-modal" class="modal fade show" aria-modal="true" data-backdrop=false style="width: 30%; margin-left: 70.2% !important;top: 4.2vh">
-    <div class="modal-dialog" style="max-width: none;">
+    <div class="modal-dialog" style="max-width: none; margin-bottom: 0px;">
       <div class="modal-content">
-        <div class="modal-header pt-2 pb-2">
-          <h4 class="modal-title" id="info_title"></h4>
+        <div class="modal-header pt-2 pb-2" style="height: 6.8vh">
+          <h6 class="modal-title" id="info_title"></h6>
             <i class="fas fa-eye-slash" style="margin-top: 0.25rem; position: absolute;right: 2.8rem;cursor:pointer" title="Mostrar/Esconder Campos Ocultos" onclick="show_hidden_fields()"></i>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close_info"><span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body" id="modal_info" style="height: 74vh; overflow-y: auto;">
+        <div class="modal-body" id="modal_info" style="height: 77vh; overflow-y: auto;">
           <div id="info_body"></div>
         </div>
         <div class="modal-footer" style="height: 8vh;flex-wrap: nowrap;">
