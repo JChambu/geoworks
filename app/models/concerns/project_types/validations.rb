@@ -7,6 +7,9 @@ module ProjectTypes::Validations
               length: { maximum: 255 }
     validates :type_geometry, presence: true
     validates :geo_restriction, exclusion: { in: [nil] }
+    validates :name_layer,  presence: true,
+              uniqueness: { case_sensitive: false },
+              length: { maximum: 255 }
 
   end
 
