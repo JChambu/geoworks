@@ -24,7 +24,6 @@ function Script(data_script, field_type_id , field_id , value, initial) {
  if((field_type==10 || field_type==2)){
     try{
         var scriptObjMulti = JSON.parse(scriptString);
-        console.log("scriptObjMulti")
         var arrayMultiOption_keys = Object.keys(scriptObjMulti);
         if($('#field_id_'+id_field).val()!=null){
             if(field_type == 2){

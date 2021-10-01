@@ -1255,24 +1255,6 @@ function init_data_dashboard(haschange,close_info) {
                   "</div>"
             array_datos.push(new_dom);
           }
-          if (column.value == "#_select") {
-            var new_check = document.createElement('DIV');
-            new_check.className = "custom-control custom-checkbox";
-            var new_icon = document.createElement('INPUT');
-            new_icon.type="checkbox";
-            new_icon.className="custom-control-input";
-            appid_info = data_properties["app_id"];
-            new_icon.id="check_select_"+appid_info;
-            new_icon.setAttribute("onChange","changeSelected("+index+")");
-            new_check.appendChild(new_icon);
-            var new_icon = document.createElement('LABEL');
-            new_icon.className="string optional control-label custom-control-label";
-            new_icon.htmlFor="check_select_"+appid_info;
-            new_check.appendChild(new_icon);
-
-            new_celd.title = "Seleccionar";
-            new_celd.appendChild(new_check);
-          }
           if (column.value == "#") {
             if (isNaN(per_page_value)) {
                array_datos.push(index+1);

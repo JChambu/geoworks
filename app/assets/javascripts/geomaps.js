@@ -1309,8 +1309,6 @@ Navarra.geomaps = function() {
           });
           layer_array.push(projectsa);
         }) // Cierra each data
-        
-        first_time_internal_layers = false;
 
         first_time_internal_layers = false;
 
