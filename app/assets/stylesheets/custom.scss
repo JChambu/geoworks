@@ -258,6 +258,26 @@ div.custom-menu.show {
 .leaflet-draw-edit-remove {
   background-color: rgba(58, 63, 68, 0.5) !important;
 }
+/*Modifica el comportamiento de los botones del draw en el toolbar de Leaflet */
+.leaflet-draw-edit-remove ,  .leaflet-draw-actions {
+  display:none!important;
+}
+
+.confirmation_geometry , .confirmation_success_geometry{
+  background-color: rgba(58, 63, 68, 0.5);
+  color:white;
+  padding:10px;
+  border-radius: 5px;
+  position:absolute;
+  top: 5vh;
+  left: -90px;
+  text-align:center;
+}
+.close-leaflet{
+  cursor:pointer;
+  float:right;
+  color:white;
+}
 
 /* Modifica el estilo del zoom de Leaflet*/
 .leaflet-control-zoom-in,
@@ -347,6 +367,33 @@ div.custom-menu.show {
   margin-top: 5px;
   margin-bottom:5px;
   cursor:pointer;
+}
+
+/*Modifica el popup de los Labels */
+.custom_label .leaflet-popup-content-wrapper{
+  padding:0px!important;
+  background: transparent !important;
+  border: none;
+  box-shadow:none!important;
+}
+.custom_label  .leaflet-popup-content{
+  line-height: 0.2em;
+  background: transparent;
+  color: black!important;
+  text-shadow: none;
+  font-weight: bold;
+  white-space: nowrap;
+  margin-bottom: -5px!important;
+}
+.custom_label p{
+  cursor:default!important;
+  text-align:center!important;
+  margin: 10px 0 !important;
+}
+.custom_label  .leaflet-popup-tip{
+  background: transparent!important;
+  box-shadow:none!important;
+  border:none;
 }
 
 /* Evita los elementos de leaflet de la derecha se superpongan con el sidebar */
@@ -665,4 +712,6 @@ div.custom-menu.show {
   position: static!important;
   transform: none !important;
   border:none!important;
+  max-height: 60vh;
+  overflow-y: auto;
 }

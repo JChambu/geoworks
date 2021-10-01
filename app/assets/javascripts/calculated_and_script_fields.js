@@ -24,7 +24,6 @@ function Script(data_script, field_type_id , field_id , value, initial) {
  if((field_type==10 || field_type==2)){
     try{
         var scriptObjMulti = JSON.parse(scriptString);
-        console.log("scriptObjMulti")
         var arrayMultiOption_keys = Object.keys(scriptObjMulti);
         if($('#field_id_'+id_field).val()!=null){
             if(field_type == 2){
@@ -123,7 +122,7 @@ var is_multiple = $('#multiple_edit').hasClass("multiple_on");
   }
 }
 
-function Calculate(calculated_field, field_type_id , field_id , value, edition_type){
+function Calculate(calculated_field, field_type_id , field_id , value, edition_type, field_key, geom){
   var is_multiple = $('#multiple_edit').hasClass("multiple_on");
   try{ 
     var CalculateObj = JSON.parse(calculated_field);
@@ -213,19 +212,50 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
         }
     }
     //Cálculos permitidos al crear y editar geometrias
-    if(edition_type=="geometry_edition " || edition_type== "new_file"){
+    if(edition_type=="geometry_edition" || edition_type== "new_file"){
         for(k=0;k<CalculateObj_keys.length;k++){
             if(CalculateObj_keys[k]=="superficie"){
-
+                area_calculated = Math.round(Navarra.geomaps.get_area()/10000*100)/100;
+                    var data_calculated = {
+                        id: geom.id,
+                        field_key: field_key,
+                        value_calculated: area_calculated
+                    }
+                    Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
+                save_geometry_after_all_success_ajaxs();
             }
-            if(CalculateObj_keys[k]=="provincia"){
-
+            if(CalculateObj_keys[k]=="provincia" ){
+                 $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom.latLng.lat+'&lon='+geom.latLng.lng, function(data,err) {
+                        // JSON result in `data` variable
+                        if(err=='success'){
+                            var data_calculated = {
+                                id: geom.id,
+                                field_key: field_key,
+                                value_calculated: data.ubicacion.provincia.nombre,
+                                remove_location:true
+                            }
+                            Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
+                            save_geometry_after_all_success_ajaxs();
+                        } 
+                    });
             }
             if(CalculateObj_keys[k]=="municipio"){
-
+                $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom.latLng.lat+'&lon='+geom.latLng.lng, function(data,err) {
+                        // JSON result in `data` variable
+                        if(err=='success'){
+                            var data_calculated = {
+                                id: geom.id,
+                                field_key: field_key,
+                                value_calculated: data.ubicacion.municipio.nombre,
+                                remove_location:true
+                            }
+                            Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
+                            save_geometry_after_all_success_ajaxs();
+                        }
+                    });
             }
             
-        }    
+        }   
     }
     // Cálculos permitidos al crear registro
     if(edition_type== "new_file"){
@@ -265,7 +295,20 @@ function camelCase(str) {
             return match.toUpperCase();
         });
     }
-            
+
+function save_geometry_after_all_success_ajaxs(){
+    //manda a guardar los cambios en la geometría con los campos calulados, sólo cualdo han llegado todos los success de las peticiones ajaxs
+    Navarra.dashboards.config.field_geometric_calculated_count ++;
+    Navarra.dashboards.config.field_geometric_calculated_count_all ++;
+    if(Navarra.dashboards.config.field_geometric_calculated_count==Navarra.dashboards.config.field_geometric_calculated_length){
+        Navarra.dashboards.config.field_geometric_calculated_all.push(Navarra.dashboards.config.field_geometric_calculated);
+        Navarra.dashboards.config.field_geometric_calculated_count=0;
+        Navarra.dashboards.config.field_geometric_calculated=[];
+        if(Navarra.dashboards.config.field_geometric_calculated_count_all==Navarra.dashboards.config.field_geometric_calculated_length_all){
+        Navarra.geomaps.save_geometry_width_calculated_fields(); 
+        }
+    }
+}   
 
 return {
     Script: Script,

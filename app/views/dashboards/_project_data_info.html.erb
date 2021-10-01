@@ -1,5 +1,6 @@
 <script type="text/javascript">
   $(document).ready(function () {
+    Navarra.geomaps.delete_markers();
     $('#close_info').click(function(){
       $('table tbody tr').removeClass('found');
       Navarra.project_types.config.data_dashboard="";
@@ -22,9 +23,10 @@ var can_edit_status_yes;
 
   function show_confirmation(div_confirmation){
     if(!Navarra.dashboards.config.has_field_errors){
-      if(div_confirmation=="lat_long_edit" || div_confirmation=="history"){
+      if(div_confirmation=="history"){
         return;
       }
+
       disabled_fields();
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
@@ -72,7 +74,7 @@ var can_edit_status_yes;
         set_script_all();
         calculate_all(true);
       }
-
+      
       if(div_confirmation=='owner_confirmation'){
         // trae opciones de usuarios
         var project_type_id = Navarra.dashboards.config.project_type_id;
@@ -185,11 +187,6 @@ var can_edit_status_yes;
             <button type="button" class="btn btn-secondary p-0" onclick="save_info('edit_confirmation_child')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
-          <div class="d-none text-left div_confirmation" id="lat_long_edit" style="width: 65%;">
-            <p class="m-0" style="font-size: 0.8em">Lat: -34.5656 Lon: -71.4783</p>
-            <button type="button" class="btn btn-secondary pt-0 pb-0 pl-1 pr-1" onclick="save_info()" >Guardar</button>
-            <button type="button" class="btn btn-secondary pt-0 pb-0 pl-1 pr-1" data-dismiss="modal">Cancelar</button>
-          </div>
           <div class="d-none text-left div_confirmation" id="owner_confirmation" style="width: 65%;">
             <select class="form-control form-control-sm d-inline p-0" id="owner_change_select" style="width: 68%">
             </select>
@@ -226,9 +223,6 @@ var can_edit_status_yes;
                 <input class="d-none" id="can_edit_status_yes" value="0">
               <% end %>
               <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation')"></i>
-            <% end %>
-            <% if can? :data, :edit_geom %>
-              <i class="fas fa-map-marker-alt" style="cursor: pointer;" title="Próximamente" onclick="show_confirmation('lat_long_edit')"></i>
             <% end %>
             <% if can? :data, :edit_owner %>
               <i class="fas fa-user-edit" style="cursor: pointer;" title="Cambiar Propietario" onclick="show_confirmation('owner_confirmation')"></i>

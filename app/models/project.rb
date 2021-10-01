@@ -188,14 +188,14 @@ class Project < ApplicationRecord
   def change_status status_id
     self.properties['app_estado'] = status_id
     self.project_status_id = status_id
-    self.gwm_updated_at = Time.now # TODO: Corregir zona horaria
+    self.gwm_updated_at = Time.zone.now
     save!
     update_inheritable_statuses
   end
 
   def disable_form
     self.row_enabled = false
-    self.disabled_at = Time.now# TODO: Corregir zona horaria
+    self.disabled_at = Time.zone.now
     save!
   end
 
@@ -203,7 +203,16 @@ class Project < ApplicationRecord
     properties.each do |key, value|
       self.properties[key] = value
     end
-    self.gwm_updated_at = Time.now # TODO: Corregir zona horaria
+    self.gwm_updated_at = Time.zone.now
+    save!
+  end
+
+  def update_geom_and_calculated_fields new_geom, new_properties
+    new_properties.each do |key, value|
+      self.properties[key] = value
+    end
+    self.the_geom = new_geom
+    self.gwm_updated_at = Time.now
     save!
   end
 
@@ -246,8 +255,10 @@ class Project < ApplicationRecord
         .where("small_geom.project_status_id = ?", status.inherit_status_id)
         .where("small_geom.row_active = true")
         .where("small_geom.current_season = true")
+        .where("small_geom.row_enabled = true")
         .where("big_geom.row_active = true")
         .where("big_geom.current_season = true")
+        .where("big_geom.row_enabled = true")
         .filter_equal_records_with_timer(status.timer)
         .uniq
 
