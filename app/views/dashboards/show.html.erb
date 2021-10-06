@@ -404,9 +404,14 @@ function min_photo(){
     <div class="modal-content white_transparent" style="min-height:89.5vh">
       <div class="card-header chart-header-bg-transparent py-1 px-2 custom_pdf_header">
         <div class="view-data-container" >
-            <i class="fas fa-save view-data" title="Guardar Reporte" onclick="Navarra.pdf.save_pdf()" ></i>
-            <i class="fas fa-object-group view-data" title="Agrupar/Desagrupar por subformulario" id="set_subfield_grouped" onclick="Navarra.pdf.set_subfield_grouped()"></i>
-            <i class="fas fa-edit view-data" onclick="edit_pdf()"></i>
+          <a data-toggle="dropdown" id="mails_alert_button" href="#" aria-haspopup="true" aria-expanded="true" class="d-none">
+            <i class="fas fa-eye view-data"  title="Mostrar otro destinatario" ></i>
+          </a>
+          <div class="dropdown-menu scroll p-2" id="dropdown_alert_mails" aria-labelledby="mails_alert_button" style="max-height: 80vh; max-width: 80%;overflow-y: auto; position: absolute;">
+          </div>
+            <i class="fas fa-envelope view-data d-none" id="send_alerts_button" title="Enviar Alertas" onclick="Navarra.pdf.send_alerts()" ></i>
+            <i class="fas fa-save view-data d-none" id="save_pdf_button" title="Guardar Reporte" onclick="Navarra.pdf.save_pdf()" ></i>
+            <i class="fas fa-edit view-data d-none" id="edit_pdf_button" onclick="edit_pdf()"></i>
             <i class="fas fa-times view-data" type="button" class="close" data-dismiss="modal" aria-label="Close"></i>
           </div>
       </div>
@@ -414,7 +419,7 @@ function min_photo(){
         <div class="pdf_header">
           <img id="logo_coorp_pdf" class="logo_coorp_pdf element_pdf">
           <div class="w-100 text-center" style = "line-height: 1;">
-            <p class="pdf_title element_pdf" style="font-size:1.5vh">REPORTE</p>
+            <p class="pdf_title element_pdf" id="report_alert_title" style="font-size:1.5vh"></p>
             <br/>
             <p class="element_pdf pdf_title" style="font-size:1.3vh" id="pdf_created"></p>
           </div>

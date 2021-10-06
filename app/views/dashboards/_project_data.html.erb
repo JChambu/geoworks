@@ -36,13 +36,6 @@ $("#show_report").click(function(){
   init_report();
 });
 
-// Modal PDF
-$("#show_pdf").click(function(){
-  $("#pdf-modal").modal('show'); 
-  $("#view-data-hidden").click();
-  Navarra.pdf.init();
-});
-
 // selecciona o deselecciona todos los registros
 $('#table_select_all').click(function(){
   if($(this).prop('checked')){
@@ -67,6 +60,11 @@ $('#table_select_all').click(function(){
       $('#save_table_button_edit').addClass('d-none');
     }
   });
+
+  // evita cierre de modal selectores para reporte de alertas y para agrupar por subformularios en reportes pdf
+  $('#alert_mail , #alert_group , #set_subfield_grouped, #set_subfield_grouped_container' ).click(function(e){
+    e.stopPropagation();
+  })
 });
 
 //movimiento de header columnas
@@ -695,6 +693,90 @@ function remove_table(event,table_id){
   });
 }
 
+function open_share_table(){
+  // Agrega las opciones abiertas en la tabla
+    $('#alert_mail').empty();
+    $('#alert_group').empty();
+     var new_option = "<option></option>";
+      $('#alert_mail').append(new_option);
+      $('#alert_group').append(new_option);
+    $('.column_data_layer.d-none').each(function(){
+      var id_layer = $(this).attr('id').split('|')[2]+'\\|'+$(this).attr('id').split('|')[1];
+      var new_option = "<option value="+id_layer+">"+$(this).html()+"</option>";
+      $('#alert_mail').append(new_option);
+      $('#alert_group').append(new_option);
+    });
+    $('.column_data.d-none').each(function(){
+      var new_option = "<option value="+$(this).attr('id').substring(10)+">"+$(this).html()+"</option>";
+      $('#alert_mail').append(new_option);
+      $('#alert_group').append(new_option);
+    });
+    if($('.subfields_data.d-none').length>0){
+      var new_option = "<option value='suform_grouped'>Subformularios</option>";
+      $('#alert_group').append(new_option);
+    }
+    // elimina color danger
+    $('.custom_row.custom_danger').removeClass('custom_danger')
+}
+
+function open_alert_modal(event){
+  event.stopPropagation();
+  if($('#alert_options').hasClass('d-none')){
+    $('#alert_options').removeClass('d-none');
+  } else {
+    $('#alert_options').addClass('d-none');
+  }
+}
+
+// Modal PDF
+function show_pdf(is_alert){
+  if($('#table_visible .custom-control-input:checked').not('#table_select_all').not('#table_select_all_hidden').length==0){
+    $('#text_toast').html("No hay registros seleccionados");
+    $('.toast').toast('show');
+    return;
+  }
+  $("#pdf-modal").modal('show'); 
+  $("#view-data-hidden").click();
+  Navarra.pdf.init(is_alert);
+}
+
+//Funciones para armar alertas
+function generate_alerts(){
+  //ojo con capas y subformularios
+  if($('#alert_mail').val().split('|').length==3){
+    // Es un campo de capa contenedora
+    var text_celd = "celdlayer";
+  } else {
+    // es campo del proyecto activo
+    var text_celd = "celd";
+  }
+  var alert_mail_key = $('#alert_mail').val();
+  if(alert_mail_key==""){
+    $('#text_toast').html("El campos \"Enviar Alertas a\" no puede estar vacío");
+    $('.toast').toast('show');
+    return;
+  }
+  console.log(alert_mail_key);
+  var pattern_mail = /^\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i
+  var wrong_mail_count = 0
+  $('#table_visible .custom-control-input:checked').each(function(){
+    var id_checked = $(this).attr('id').substring(13);
+    var alert_mail_value = $('.'+text_celd+'_id'+id_checked+'.'+text_celd+'_key'+alert_mail_key).html();
+    console.log(alert_mail_value)
+    //verifica si es formato mail
+    if(!pattern_mail.test(alert_mail_value)) {
+      $('#text_toast').html("Hay destinatarios que no cumplen el formato correcto de e-mail");
+      $('.toast').toast('show');
+      var alert_mail_value = $('.'+text_celd+'_id'+id_checked+'.'+text_celd+'_key'+alert_mail_key).addClass('custom_danger');
+      wrong_mail_count++
+    }
+  });
+  if(wrong_mail_count>0){
+    return;
+  }
+  show_pdf(true);
+}
+
 
 </script>
 
@@ -702,24 +784,55 @@ function remove_table(event,table_id){
   <h7 class="d-inline" id="table_name_visible">Datos</h7>
   <input type="text" class="d-none" disabled="true" id="table_id">
   <input type="text" class="d-none" disabled="true" id="table_name">
-  <a data-toggle="dropdown" id="save_table_button" href="#" aria-haspopup="true" aria-expanded="false" >
-    <i class="fas fa-save ml-3" title="Guardar Tabla" style="cursor: pointer;" ></i>
-  </a>
-  <div class="dropdown-menu scroll p-2" aria-labelledby="save_table_button" style="background: rgba(58, 63, 68, 0.8);">
-    <button class="btn btn-primary p-1 d-none" id="save_table_button_edit" type="button" onclick="save_table(false)">Guardar</button>
-    <button class="btn btn-primary p-1 ml-2" type="button" onclick="save_table(true)">Guardar Como</button>
-     <input type="text" class="string optional form-control form-control-sm d-inline border-0 w-auto" placeholder="Nombre de la tabla" id="table_new_name">
-    <button class="btn btn-secondary p-1 ml-2" data-dismiss="modal" type="button">Cancelar</button>
-  </div>
-  <a data-toggle="modal" id="show_pdf"><i class="fas fa-file-pdf ml-2" title="Generar Reporte PDF" style="cursor: pointer;" ></i>
-  </a>
-  <% if can? :data, :export %>
-    <a onclick="table_to_excel()">
-      <i class="fas fa-download ml-2" style="font-size: 0.8em; cursor: pointer;" title="Descargar Tabla"></i>
+  <div class="d-inline">
+    <a data-toggle="dropdown" id="save_table_button" href="#" aria-haspopup="true" aria-expanded="false" >
+      <i class="fas fa-save ml-3" title="Guardar Tabla" style="cursor: pointer;" ></i>
     </a>
-    <a data-toggle="modal" id="show_report"><i class="fas fa-clipboard-list ml-3" title="Reporte" style="cursor: pointer;" ></i></a>
-    <a onclick="download_geojson()"><i class="fas fa-code ml-2" title="Exportar GeoJSON" style="cursor: pointer;" ></i></a>
-  <% end %>
+    <div class="dropdown-menu scroll p-2" aria-labelledby="save_table_button">
+      <button class="btn btn-primary p-1 d-none" id="save_table_button_edit" type="button" onclick="save_table(false)" style="font-size: 0.8em">Guardar</button>
+      <button class="btn btn-primary p-1 ml-2" type="button" onclick="save_table(true)" style="font-size: 0.8em">Guardar Como</button>
+      <input type="text" class="string optional form-control form-control-sm d-inline border-0 w-auto" placeholder="Nombre de la tabla" id="table_new_name">
+      <button class="btn btn-secondary p-1 ml-2" data-dismiss="modal" type="button" style="font-size: 0.8em">Cancelar</button>
+    </div>
+  </div>
+  <div class="d-inline">  
+    <a data-toggle="dropdown" id="share_table" href="#" aria-haspopup="true" aria-expanded="false"><i class="fas fa-share-square ml-2" onclick="open_share_table()" title="Compartir Datos" style="cursor: pointer;" ></i>
+    </a>
+    <div class="dropdown-menu scroll p-2" aria-labelledby="share_table" style="max-height:44vh; overflow-y:auto;">
+      <a data-toggle="modal" id="show_pdf" onclick="show_pdf(false)" style="cursor: pointer;" class="dropdown-item text-left"><i class="fas fa-file-pdf mr-2"></i> Reporte pdf
+        <div class="custom-control custom-checkbox ml-5"  id="set_subfield_grouped_container" title="Agrupar por Subformularios">
+            <input class="custom-control-input" id="set_subfield_grouped" type="checkbox">
+            <label class="string optional control-label custom-control-label" for="set_subfield_grouped"> </label>
+            <h7 style="font-size:0.8em">Agrupar Subformularios</h7>
+          </div>
+      </a>
+      <a data-toggle="modal" id="show_alert"  onclick="open_alert_modal(event)" style="cursor: pointer;" class="dropdown-item text-left" ><i class="fas fa-bullhorn mr-2" ></i> Alertas
+      </a>
+      <div id="alert_options" class="pl-5 d-none border-bottom border-secondary pb-1" style="font-size: 0.8em">
+        <div class="d-flex">
+          <h7 class="mb-0 w-25">Enviar Alertas a:</h7>
+          <select id="alert_mail" class="form-control form-control-sm w-25 mr-3" style="font-size: 0.8em">
+          </select>
+          <label class="mt-1 mb-0 w-25">Agrupar Alertas por:</label>
+          <select id="alert_group" class="form-control form-control-sm w-25 mt-1" style="font-size: 0.8em">
+          </select>
+        </div>
+        <textarea class="form-control form-control-sm mt-2" id="alert_text" style="width:50vw; height:10vh;resize:none" placeholder="Ingrese el mensaje de Alerta"></textarea>
+        <div class="text-right">
+          <button class="btn btn-primary p-1 mt-2" style="font-size: 1em" type="button" onclick="generate_alerts()">Generar Alertas</button>
+        </div>
+      </div>
+      <% if can? :data, :export %>
+        <a onclick="table_to_excel()" style="cursor: pointer;" class="dropdown-item text-left">
+          <i class="fas fa-download mr-2"></i> Exportar a Excel
+        </a>
+        <a class="dropdown-item text-left d-none" style="cursor: pointer;" data-toggle="modal" id="show_report"><i class="fas fa-clipboard-list mr-3" ></i> Reporte
+        </a>
+        <a onclick="download_geojson()" class="dropdown-item text-left" style="cursor: pointer;"><i class="fas fa-code mr-2" ></i> Exportar a GeoJSON
+        </a>
+      <% end %>
+    </div>
+   </div> 
   <div class="d-inline">
     <a data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="dropdown-columns">
       <i class="fas fa-plus ml-2" style="font-size: 0.8em; cursor: pointer;" title="Agregar Columna"></i>

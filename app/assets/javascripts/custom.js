@@ -1163,6 +1163,9 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
   $('#multiple_edit').addClass('d-none');
   //cierra modal de información del registro
   if(close_info){$("#info-modal").modal("hide");}
+  // descliquea checkbox select_all
+  $('#table_select_all_hidden').prop('checked', false);
+  $('#table_select_all').prop('checked', false);
   $(".fakeLoader").css("display", "block");
   var type_box = 'polygon';
   var size_box = Navarra.dashboards.config.size_polygon;
