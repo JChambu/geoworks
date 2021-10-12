@@ -53,4 +53,12 @@ class TableConfigurationsController < ApplicationController
     render json: {data: @table}
   end
 
+  def send_alerts
+    @to = params[:to]
+    @name_corp = params[:name_corp]
+    @html_content = params[:html_content]
+    @plain_content = params[:plain_content]
+    UserMailer.send_alert(@to,@name_corp,@html_content,@plain_content).deliver_now
+  end  
+
 end

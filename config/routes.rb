@@ -42,7 +42,8 @@ Rails.application.routes.draw do
   get 'photos_children/show_photos_children' => 'photos_children#show_photos_children'
   get 'project_data_children/show_children' => 'project_data_children#show_children'
   get 'users/get_user_id_and_customer_id' => 'users#get_user_id_and_customer_id'
-
+  post 'table_configurations/send_alerts' =>'table_configurations/send_alerts'
+  
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 
 

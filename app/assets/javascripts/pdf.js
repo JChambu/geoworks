@@ -10,13 +10,15 @@ function init(is_alert) {
         $('#send_alerts_button').removeClass('d-none');
         $('#save_pdf_button').addClass('d-none');
         $('#edit_pdf_button').addClass('d-none');
-        $('#report_alert_title').html('ALERTA');
+        $('.pdf_header').addClass('d-none');
+        $('.alert_header').removeClass('d-none');
     } else {
         $('#mails_alert_button').addClass('d-none');
         $('#send_alerts_button').addClass('d-none');
         $('#save_pdf_button').removeClass('d-none');
         $('#edit_pdf_button').removeClass('d-none');
-        $('#report_alert_title').html('REPORTE');
+        $('.pdf_header').removeClass('d-none');
+        $('.alert_header').addClass('d-none');
     }
     pdf_values_all = [];
     var table_check = $('#table_visible .custom-control-input')
@@ -79,11 +81,12 @@ function create_pdf_view(is_alert){
     get_logo();
     var alert_text = $('#alert_text').val();
     if(is_alert){
-        pdf_content = "<textarea disabled = 'true' id='alert_message_pdf' class='alert_message mb-0 mt-4'>"+alert_text+"</textarea>" ;
+        pdf_content = '';
+        // convierte el text area en múltiples elementos <p> para mejor visualización en emails
+        numberOfLineBreaks = (alert_text.split(/\n/g)).forEach(function(line){
+            pdf_content += "<p style = 'margin: 0px 5%;text-align:center;font-size:16px;line-height:18px' >"+line+"</p>" ;
+        });
         $('#pdf_body').append(pdf_content);
-        // ajustamos su altura
-        var height_text = document.getElementById('alert_message_pdf').scrollHeight + "px";
-        $('#alert_message_pdf').css('height', height_text);
     }
     if((!$('#set_subfield_grouped').is(':checked') && !is_alert) || (is_alert && $('#alert_group').val()=="")){
         // Ordenado por geometría;
@@ -91,7 +94,7 @@ function create_pdf_view(is_alert){
             grouped_mail = [];
             create_htm_pdf(pdf_object,index_pdf, is_alert);
             if(is_alert && grouped_mail.length>0){
-                var option_mail = "<a onclick='Navarra.pdf.change_alert_mail("+index_pdf+")' class='dropdown-item text-left custom_cursor'>"+grouped_mail.unique()+"</a>"
+                var option_mail = "<a onclick='Navarra.pdf.change_alert_mail("+index_pdf+")' class='alert_to dropdown-item text-left custom_cursor'>"+grouped_mail.unique()+"</a>"
                 $('#dropdown_alert_mails').append(option_mail);
             }
         });
@@ -129,6 +132,24 @@ function create_pdf_view(is_alert){
         console.log("Objeto ordenado")
         console.log(pdf_values_all_sorted)
         //Dibuja objeto ordenado
+        var text_dnone = '';
+        var alert_mail_key = $('#alert_mail').val();
+        var class_div = "";
+        var class_title = "style='font-size:1.3vh'";
+        var class_p = "style='font-size:1vh'";
+        var class_div_photos = "";
+        var class_div_child = "";
+        var class_title_child = "style='font-size:1.1vh'";
+        var class_p_child = "style='font-size:1.1vh'";
+        if(is_alert){
+            class_div = "style='width:100%;display:block'";
+            class_title = "style='font-size: 14px; font-weight:bold;line-height:16px'";
+            class_p = "style='font-size:12px;margin:0px;line-height:14px'";
+            class_div_photos = "style='width:100%'";
+            class_div_child = "style='width:100%; display:block; padding-left:10px'";
+            class_title_child = "style='font-size: 12px; font-weight:bold;line-height:14px'";
+            class_p_child = "style='font-size: 12px;line-height:14px'";
+        }
         Object.keys(pdf_values_all_sorted).forEach(function(key_unique, index){
             Object.keys(pdf_values_all_sorted[key_unique]).forEach(function(id_field_father, index_father_field){
                 var pdf_content = "";
@@ -137,39 +158,39 @@ function create_pdf_view(is_alert){
                     pdf_content += "<div class='mt-3 "+text_dnone+" alert_mail_conteiner alert_mail_conteiner"+index+"'>"; 
                     grouped_mail = [];
                 }
-                pdf_content += "<div class = 'div_pdf div_pdf_child"+index+"_"+index_father_field+"'>";
-                pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:1.3vh'>"+pdf_values_all_sorted[key_unique][id_field_father]['child']['name_field']+"</p>";
+                pdf_content += "<div class = 'div_pdf div_pdf_child"+index+"_"+index_father_field+"' "+class_div+">";
+                pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' "+class_title+">"+pdf_values_all_sorted[key_unique][id_field_father]['child']['name_field']+"</p>";
                 if(pdf_values_all_sorted[key_unique][id_field_father]['unique_id']!=undefined){
-                    pdf_content += "<p class='title_pdf mt-1 mb-0 element_pdf' style='font-size:1.3vh'>"+pdf_values_all_sorted[key_unique][id_field_father]['unique_id']+"</p>";    
+                    pdf_content += "<p class='title_pdf mt-1 mb-0 element_pdf' "+class_title+">"+pdf_values_all_sorted[key_unique][id_field_father]['unique_id']+"</p>";    
                 }
-                pdf_content += "<p class='title_pdf mt-1 mb-1 element_pdf' style='font-size:1.3vh'>"+pdf_values_all_sorted[key_unique][id_field_father]['child']['date']+"</p>";
+                pdf_content += "<p class='title_pdf mt-1 mb-1 element_pdf' "+class_title+">"+pdf_values_all_sorted[key_unique][id_field_father]['child']['date']+"</p>";
                 Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['child']['properties']).forEach(function(key) {
-                    pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1.1vh' >"+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['value']+"</p></div>";
+                    pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' "+class_p+" >"+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['child']['properties'][key]['value']+"</p></div>";
                 });
                 pdf_content += "</div>"
-                pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos_child"+index+"_"+index_father_field+"'></div>"
+                pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos_child"+index+"_"+index_father_field+"' "+class_div_photos+"></div>"
                 if(is_alert){
                     pdf_content += "</div>";
                 }
                 $('#pdf_body').append(pdf_content);
                 //cambiar modelo para que traiga fotos de un array de ids
-                get_photo(pdf_values_all_sorted[key_unique][id_field_father]['ids'].unique()[0],true,index+"_"+index_father_field,true);
+                get_photo(pdf_values_all_sorted[key_unique][id_field_father]['ids'].unique()[0],true,index+"_"+index_father_field,true,is_alert);
             // Campos padres
                 Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['fathers']).forEach(function(father_key){
                     var pdf_content = "<div class = '"+text_dnone+" div_pdf_child_container div_pdf_child_container"+index+"'>"
-                    pdf_content += "<div class = 'div_pdf div_pdf_child div_pdf"+father_key+"_"+index+"_"+index_father_field+"'>";
-                    pdf_content += "<p class='title_pdf mt-3 mb-1 element_pdf' style='font-size:1.1vh'>"+Navarra.dashboards.config.name_project+"</p>";
+                    pdf_content += "<div class = 'div_pdf div_pdf_child div_pdf"+father_key+"_"+index+"_"+index_father_field+"' "+class_div_child+">";
+                    pdf_content += "<p class='title_pdf mt-3 mb-1 element_pdf' "+class_p_child+">"+Navarra.dashboards.config.name_project+"</p>";
                     Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key]).forEach(function(key_f) {
-                        pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1.1vh' >"+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['value']+"</p></div>";
+                        pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' "+class_p_child+" >"+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['value']+"</p></div>";
                         if(is_alert && key_f == alert_mail_key){
                             grouped_mail.push(pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['value']);
                         }
                     });
                 pdf_content += "</div>";
-                pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos"+father_key+"_"+index+"_"+index_father_field+"'></div>"
+                pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos"+father_key+"_"+index+"_"+index_father_field+"' "+class_div_photos+"></div>"
                 pdf_content += "</div>";
                 $('#pdf_body').append(pdf_content);
-                get_photo(father_key,false,father_key+"_"+index+"_"+index_father_field,true);
+                get_photo(father_key,false,father_key+"_"+index+"_"+index_father_field,true, is_alert);
                 });
                 if(is_alert && grouped_mail.length>0){
                     var option_mail = "<a onclick='Navarra.pdf.change_alert_mail("+index+")' class='dropdown-item text-left custom_cursor'>"+grouped_mail.unique()+"</a>"
@@ -229,42 +250,56 @@ function create_htm_pdf(pdf_object,index_pdf, is_alert){
     var text_dnone = '';
     var alert_mail_key = $('#alert_mail').val();
     var pdf_content = "";
+    var class_div = "";
+    var class_title = "style='font-size:1.3vh'";
+    var class_p = "style='font-size:1vh'";
+    var class_div_photos = "";
+    var class_div_child = "";
+    var class_title_child = "style='font-size:1.1vh'";
+    var class_p_child = "style='font-size:1.1vh'";
     if(is_alert){
         if(index_pdf>0){text_dnone=' invisible '}
         pdf_content += "<div class='mt-3 "+text_dnone+" alert_mail_conteiner alert_mail_conteiner"+index_pdf+"'>";   
+        class_div = "style='width:100%;display:block'";
+        class_title = "style='font-size: 14px; font-weight:bold;line-height:16px'";
+        class_p = "style='font-size:12px;margin:0px;line-height:14px'";
+        class_div_photos = "style='width:100%'";
+        class_div_child = "style='width:100%; display:block; padding-left:10px'";
+        class_title_child = "style='font-size: 12px; font-weight:bold;line-height:14px'";
+        class_p_child = "style='font-size: 12px;line-height:14px'";
     }
-    pdf_content += "<div class = 'div_pdf div_pdf"+pdf_object['id']+"'>";
-    pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' style='font-size:1.3vh'>"+Navarra.dashboards.config.name_project+"</p>";
+    pdf_content += "<div class = 'div_pdf div_pdf"+pdf_object['id']+"' "+class_div+">";
+    pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' "+class_title+">"+Navarra.dashboards.config.name_project+"</p>";
     Object.keys(pdf_object['properties']).forEach(function(key) {
-        pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1vh' >"+pdf_object['properties'][key]['name']+": "+pdf_object['properties'][key]['value']+"</p></div>";
+        pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' "+class_p+" >"+pdf_object['properties'][key]['name']+": "+pdf_object['properties'][key]['value']+"</p></div>";
         if(is_alert && key == alert_mail_key){
             grouped_mail.push(pdf_object['properties'][key]['value']);
         }
     });
     pdf_content += "</div>"
-    pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos"+pdf_object['id']+"'></div>"
+    pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos"+pdf_object['id']+"' "+class_div_photos+"></div>"
     if(is_alert){
         pdf_content += "</div>"
     }
     $('#pdf_body').append(pdf_content);
-    get_photo(pdf_object['id'],false,pdf_object['id'],false);
+    get_photo(pdf_object['id'],false,pdf_object['id'],false,is_alert);
     // Campos hijos
     Object.keys(pdf_object['children']).forEach(function(child_key){
         var pdf_content = "<div class = '"+text_dnone+" div_pdf_child_container div_pdf_child_container"+index_pdf+"'>"
-        pdf_content += "<div class = 'div_pdf div_pdf_child div_pdf_child"+child_key+"'>";
-        pdf_content += "<p class='title_pdf mt-3 mb-1 element_pdf' style='font-size:1.1vh'>"+pdf_object['children'][child_key]['name_field']+": "+pdf_object['children'][child_key]['date']+"</p>";
+        pdf_content += "<div class = 'div_pdf div_pdf_child div_pdf_child"+child_key+"' "+class_div_child+">";
+        pdf_content += "<p class='title_pdf mt-3 mb-1 element_pdf' "+class_title_child+">"+pdf_object['children'][child_key]['name_field']+": "+pdf_object['children'][child_key]['date']+"</p>";
         Object.keys(pdf_object['children'][child_key]['properties']).forEach(function(key_c) {
-            pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' style='font-size:1.1vh' >"+pdf_object['children'][child_key]['properties'][key_c]['name']+": "+pdf_object['children'][child_key]['properties'][key_c]['value']+"</p></div>";
+            pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' "+class_p_child+" >"+pdf_object['children'][child_key]['properties'][key_c]['name']+": "+pdf_object['children'][child_key]['properties'][key_c]['value']+"</p></div>";
         });
         pdf_content += "</div>"
-        pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos_child"+child_key+"'></div>"
+        pdf_content += "<div class='d-none div_pdf_photos div_pdf_photos_child"+child_key+"' "+class_div_photos+"></div>"
         pdf_content += "</div>"
         $('#pdf_body').append(pdf_content);
-        get_photo(child_key,true,child_key,false);
+        get_photo(child_key,true,child_key,false,is_alert);
     });
 }
 
-function get_photo(app_id, ischild, id_container,is_grouped){
+function get_photo(app_id, ischild, id_container,is_grouped, is_alert){
     if(is_grouped && ischild){
         var height_max = 100
     } else{
@@ -291,8 +326,17 @@ function get_photo(app_id, ischild, id_container,is_grouped){
         datatype: 'json',
         data: data_get,
         success: function(data) {
+          if(is_alert){
+            var img_pdf = "<div style='margin-top:20px'>";
+            data.forEach(function(photo){
+                var img_base64 = btoa(atob(photo.image));
+                img_pdf += "<img alt='imagen' style='width: 20%; margin:2px; display: inline-block' src= 'data:image/png;base64,"+img_base64+"' />"
+                });
+                img_pdf +="</div>"
+                $('.'+container_photos+id_container).removeClass('d-none');
+                $('.'+container_photos+id_container).append(img_pdf)
+          } else {
             if(data.length==0){
-
                 if($('.'+container+id_container).outerHeight()>height_max){
                     $('.'+container+id_container).removeClass('div_pdf');
                     $('.'+container+id_container).addClass('div_pdf_expanded');
@@ -322,30 +366,33 @@ function get_photo(app_id, ischild, id_container,is_grouped){
                 $('.'+container_photos+id_container).removeClass('d-none');
                 $('.'+container_photos+id_container).append(img_pdf)
             }
+          }
         }
     });
 }
 
 function get_logo(){
+    var logo_src = document.getElementById('img_logo_gw');
+    const dataUrl = getDataUrl(logo_src);
+    $('#logo_gw2').attr("src",dataUrl);
     $.ajax({
         type: 'GET',
         url: '/customers/search_customer',
         datatype: 'JSON',
         data: {
-            //current_tenement: Navarra.dashboards.config.current_tenement
-            current_tenement: 'public'
+            current_tenement: Navarra.dashboards.config.current_tenement
         },
         success: function(data) {
             if(data.logo!=null){
-                $('#logo_coorp_pdf').attr("src",'data:image/png;base64,'+data.logo);
+                $('.logo_coorp_pdf_src').attr("src",'data:image/png;base64,'+data.logo);
             } else{
-                $('#logo_coorp_pdf').css('visibility','hidden');
-                $('#logo_coorp_pdf').removeClass('element_pdf');
+                $('.logo_coorp_pdf_src').css('visibility','hidden');
+                $('.logo_coorp_pdf_src').removeClass('element_pdf');
             }
             
             var currentdate = new Date(); 
             var today = currentdate.getDate() + "/" + (currentdate.getMonth()+1)  + "/"  + currentdate.getFullYear() ;
-            $('#pdf_created').html(data.username+" - "+today);
+            $('.pdf_created').html(data.username+" - "+today);
         },
         error: function( jqXHR, textStatus, errorThrown ) {
         }
@@ -439,6 +486,40 @@ function save_pdf(){
     doc.save("reporte.pdf");
 }
 
+function send_alerts(){
+    $('.alert_to').each(function(){
+        $(this).click();
+        var alert_to = $(this).html();
+        var alert_mail_content = '<img style="width:200px" src="cid:logo.png"/>'
+        var alert_mail_content = '<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td align="center" style="border: 5px solid #d4dadf;border-radius: 20px;">';
+        alert_mail_content +='<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;"><tr><td align="center" style="padding: 30px 24px; font-family: \'Source Sans Pro\', Helvetica, Arial, sans-serif; font-size:20px; line-height: 20px; color: #666;">'
+        alert_mail_content += $('.alert_header').html();
+        alert_mail_content += '</td></tr></table>';
+        alert_mail_content += '<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;"><tr><td align="left" valign="top" style="padding: 0px 10px 24px 10px; font-family: \'Source Sans Pro\', Helvetica, Arial, sans-serif; color: #666; line-height: 24px;">'
+        // clonamos el body y eliminamos los divs ocultos
+        var body_clone = $('#pdf_body').clone();
+        body_clone.attr('id','body_clone');
+        $("#canvas_alert").empty();
+        $("#canvas_alert").append(body_clone);
+        $('#body_clone').find('div.d-none').remove();
+        alert_mail_content += $('#body_clone').html();
+        $("#canvas_alert").empty();
+        alert_mail_content += '</td></tr></table>';
+        alert_mail_content += '</td></tr></table>';
+        var plain_content = $('#alert_text').val();
+        $.ajax({
+            url: '/table_configurations/send_alerts',
+            type: 'POST',
+            data: {
+                to: alert_to,
+                name_corp: Navarra.dashboards.config.current_tenement,
+                html_content: alert_mail_content,
+                plain_content: plain_content
+            }
+        });
+    })
+}
+
 function tamVentana() {
   var tam = [0, 0];
   if (typeof window.innerWidth != 'undefined')
@@ -463,9 +544,20 @@ function tamVentana() {
   return tam;
 }
 
+function getDataUrl(img) {
+   const canvas = document.createElement('canvas');
+   const ctx = canvas.getContext('2d');
+   canvas.width = img.width;
+   console.log(img.width)
+   canvas.height = img.height;
+   ctx.drawImage(img, 0, 0 , img.width, img.height);
+   return canvas.toDataURL('image/png');
+}
+
 return {
     init: init,
     save_pdf: save_pdf,
-    change_alert_mail: change_alert_mail
+    change_alert_mail: change_alert_mail,
+    send_alerts: send_alerts
 }
 }();

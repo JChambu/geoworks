@@ -415,20 +415,35 @@ function min_photo(){
             <i class="fas fa-times view-data" type="button" class="close" data-dismiss="modal" aria-label="Close"></i>
           </div>
       </div>
-      <div class="modal-body p-1 pl-4 pr-4 pt-2" id="canvas_pdf" style="position: relative;">
+      <div class="modal-body p-1 pl-4 pr-4 pt-2" style="position: relative;">
         <div class="pdf_header">
-          <img id="logo_coorp_pdf" class="logo_coorp_pdf element_pdf">
+          <img class="logo_coorp_pdf logo_coorp_pdf_src element_pdf">
           <div class="w-100 text-center" style = "line-height: 1;">
-            <p class="pdf_title element_pdf" id="report_alert_title" style="font-size:1.5vh"></p>
+            <p class="pdf_title element_pdf" id="report_alert_title" style="font-size:1.5vh">REPORTE</p>
             <br/>
-            <p class="element_pdf pdf_title" style="font-size:1.3vh" id="pdf_created"></p>
+            <p class="element_pdf pdf_title pdf_created" style="font-size:1.3vh"></p>
           </div>
           <div class="div_powered">
             <p class="pdf_powered">powered by</p>
             <%= image_tag "logo_gw_hor_2.png", class: 'logo_pdf' %>
           </div>
         </div>
+         <div class="alert_header text-center p-4">
+          <img class="logo_coorp_pdf_src">
+          <div style = "margin-top: 30px;">
+            <p class="pdf_title element_pdf" style="display: inline-block; font-size: 28px;margin: 0px; color: red; font-weight: bold;">ALERTA</p>
+            <br/>
+            <p class="pdf_created" style="font-size:0.8em; display: inline-block; margin: 0px"></p>
+          </div>
+          <div style="width: 100%; margin-top: 10px; display: inline-block;">
+            <a href="http://www.gisworking.com/" target="_blank" style="text-decoration: none;">
+              <p style="font-size: 0.5em; margin: 8px 0px 0px 20px; line-height:0px; color: #666">powered by</p>
+              <img id="logo_gw2" style="width:20%; margin:0px" %>
+            </a>
+          </div>
+        </div>
         <div id="pdf_body"></div>
+        <div  id="canvas_alert"></div>
       </div>
     </div>
   </div>
