@@ -508,7 +508,7 @@ function send_alerts(){
         alert_mail_content += '</td></tr></table>';
         var plain_content = $('#alert_text').val();
         $.ajax({
-            url: '/table_configurations/send_alerts',
+            url: '/dashboards/send_alerts',
             type: 'POST',
             data: {
                 to: alert_to,
