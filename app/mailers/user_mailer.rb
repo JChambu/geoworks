@@ -20,7 +20,7 @@ class UserMailer < ApplicationMailer
 
   def inline_base64(name, content)
     attachments.inline[name] = { content: Base64.encode64(Base64.decode64(content)),
-                               mime_type: "image/png", encoding: "base64", content_type: "multipart/related" , content_id:"12345"  }
+                               mime_type: "image/png", encoding: "base64" }
   end
 
 end

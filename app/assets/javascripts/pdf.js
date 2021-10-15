@@ -491,7 +491,7 @@ function send_alerts(){
         $(this).click();
         var alert_to = $(this).html();
         var alert_mail_content = '<img style="width:200px" src="cid:logo.png"/>'
-        var alert_mail_content = '<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td align="center" style="border: 5px solid #d4dadf;border-radius: 20px;">';
+        alert_mail_content += '<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td align="center" style="border: 5px solid #d4dadf;border-radius: 20px;">';
         alert_mail_content +='<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;"><tr><td align="center" style="padding: 30px 24px; font-family: \'Source Sans Pro\', Helvetica, Arial, sans-serif; font-size:20px; line-height: 20px; color: #666;">'
         alert_mail_content += $('.alert_header').html();
         alert_mail_content += '</td></tr></table>';
