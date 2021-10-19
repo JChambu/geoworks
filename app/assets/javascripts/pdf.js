@@ -3,6 +3,7 @@ Navarra.pdf = function() {
 var pdf_values_all = [];
 var imgData_pdf;
 var grouped_mail;
+var logo_corp;
 
 function init(is_alert) {
     if(is_alert){
@@ -84,7 +85,7 @@ function create_pdf_view(is_alert){
         pdf_content = '';
         // convierte el text area en múltiples elementos <p> para mejor visualización en emails
         numberOfLineBreaks = (alert_text.split(/\n/g)).forEach(function(line){
-            pdf_content += "<p style = 'margin: 0px 5%;text-align:center;font-size:16px;line-height:18px' >"+line+"</p>" ;
+            pdf_content += "<p class='text_alert_preview' style = 'margin: 0px 5%;text-align:center;font-size:16px;line-height:18px' >"+line+"</p>" ;
         });
         $('#pdf_body').append(pdf_content);
     }
@@ -143,12 +144,12 @@ function create_pdf_view(is_alert){
         var class_p_child = "style='font-size:1.1vh'";
         if(is_alert){
             class_div = "style='width:100%;display:block'";
-            class_title = "style='font-size: 14px; font-weight:bold;line-height:16px'";
-            class_p = "style='font-size:12px;margin:0px;line-height:14px'";
+            class_title = "style='font-size: 14px; font-weight:bold;line-height:16px;color:#666; margin: 30px 0px 10px 0px'";
+            class_p = "style='font-size:12px;margin:0px;line-height:14px;color:#666'";
             class_div_photos = "style='width:100%'";
             class_div_child = "style='width:100%; display:block; padding-left:10px'";
-            class_title_child = "style='font-size: 12px; font-weight:bold;line-height:14px'";
-            class_p_child = "style='font-size: 12px;line-height:14px'";
+            class_title_child = "style='font-size: 12px; font-weight:bold;line-height:14px;color:#666; margin: 30px 0px 10px 0px'";
+            class_p_child = "style='font-size: 12px;line-height:14px; margin: 0px;color:#666'";
         }
         Object.keys(pdf_values_all_sorted).forEach(function(key_unique, index){
             Object.keys(pdf_values_all_sorted[key_unique]).forEach(function(id_field_father, index_father_field){
@@ -179,7 +180,7 @@ function create_pdf_view(is_alert){
                 Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['fathers']).forEach(function(father_key){
                     var pdf_content = "<div class = '"+text_dnone+" div_pdf_child_container div_pdf_child_container"+index+"'>"
                     pdf_content += "<div class = 'div_pdf div_pdf_child div_pdf"+father_key+"_"+index+"_"+index_father_field+"' "+class_div_child+">";
-                    pdf_content += "<p class='title_pdf mt-3 mb-1 element_pdf' "+class_p_child+">"+Navarra.dashboards.config.name_project+"</p>";
+                    pdf_content += "<p class='title_pdf mt-3 mb-1 element_pdf' "+class_title_child+">"+Navarra.dashboards.config.name_project+"</p>";
                     Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key]).forEach(function(key_f) {
                         pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' "+class_p_child+" >"+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['name']+": "+pdf_values_all_sorted[key_unique][id_field_father]['fathers'][father_key][key_f]['value']+"</p></div>";
                         if(is_alert && key_f == alert_mail_key){
@@ -193,7 +194,7 @@ function create_pdf_view(is_alert){
                 get_photo(father_key,false,father_key+"_"+index+"_"+index_father_field,true, is_alert);
                 });
                 if(is_alert && grouped_mail.length>0){
-                    var option_mail = "<a onclick='Navarra.pdf.change_alert_mail("+index+")' class='dropdown-item text-left custom_cursor'>"+grouped_mail.unique()+"</a>"
+                    var option_mail = "<a onclick='Navarra.pdf.change_alert_mail("+index+")' class='alert_to dropdown-item text-left custom_cursor'>"+grouped_mail.unique()+"</a>"
                     $('#dropdown_alert_mails').append(option_mail);
                 }
             });
@@ -221,7 +222,7 @@ function create_pdf_view(is_alert){
                 create_htm_pdf(pdf_object,index_sorted, is_alert);
             });
             if(is_alert && grouped_mail.length>0){
-                var option_mail = "<a onclick='Navarra.pdf.change_alert_mail("+index_sorted+")' class='dropdown-item text-left custom_cursor'>"+grouped_mail.unique()+"</a>"
+                var option_mail = "<a onclick='Navarra.pdf.change_alert_mail("+index_sorted+")' class='alert_to dropdown-item text-left custom_cursor'>"+grouped_mail.unique()+"</a>"
                 $('#dropdown_alert_mails').append(option_mail);
         }
         });
@@ -261,12 +262,12 @@ function create_htm_pdf(pdf_object,index_pdf, is_alert){
         if(index_pdf>0){text_dnone=' invisible '}
         pdf_content += "<div class='mt-3 "+text_dnone+" alert_mail_conteiner alert_mail_conteiner"+index_pdf+"'>";   
         class_div = "style='width:100%;display:block'";
-        class_title = "style='font-size: 14px; font-weight:bold;line-height:16px'";
-        class_p = "style='font-size:12px;margin:0px;line-height:14px'";
+        class_title = "style='font-size: 14px; font-weight:bold;line-height:16px;color:#666; margin: 30px 0px 10px 0px'";
+        class_p = "style='font-size:12px;margin:0px;line-height:14px;color:#666'";
         class_div_photos = "style='width:100%'";
         class_div_child = "style='width:100%; display:block; padding-left:10px'";
-        class_title_child = "style='font-size: 12px; font-weight:bold;line-height:14px'";
-        class_p_child = "style='font-size: 12px;line-height:14px'";
+        class_title_child = "style='font-size: 12px; font-weight:bold;line-height:14px;color:#666; margin: 30px 0px 10px 0px'";
+        class_p_child = "style='font-size: 12px;line-height:14px; margin:0px;color:#666'";
     }
     pdf_content += "<div class = 'div_pdf div_pdf"+pdf_object['id']+"' "+class_div+">";
     pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' "+class_title+">"+Navarra.dashboards.config.name_project+"</p>";
@@ -330,7 +331,7 @@ function get_photo(app_id, ischild, id_container,is_grouped, is_alert){
             var img_pdf = "<div style='margin-top:20px'>";
             data.forEach(function(photo){
                 var img_base64 = btoa(atob(photo.image));
-                img_pdf += "<img alt='imagen' style='width: 20%; margin:2px; display: inline-block' src= 'data:image/png;base64,"+img_base64+"' />"
+                img_pdf += "<img alt='imagen' style='width: 40%; margin:2px 30%;' src= 'data:image/png;base64,"+img_base64+"' />"
                 });
                 img_pdf +="</div>"
                 $('.'+container_photos+id_container).removeClass('d-none');
@@ -385,9 +386,11 @@ function get_logo(){
         success: function(data) {
             if(data.logo!=null){
                 $('.logo_coorp_pdf_src').attr("src",'data:image/png;base64,'+data.logo);
+                logo_corp = data.logo;
             } else{
                 $('.logo_coorp_pdf_src').css('visibility','hidden');
                 $('.logo_coorp_pdf_src').removeClass('element_pdf');
+                logo_corp = '';
             }
             
             var currentdate = new Date(); 
@@ -490,30 +493,41 @@ function send_alerts(){
     $('.alert_to').each(function(){
         $(this).click();
         var alert_to = $(this).html();
-        var alert_mail_content = '<img style="width:200px" src="cid:logo.png"/>'
-        alert_mail_content += '<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td align="center" style="border: 5px solid #d4dadf;border-radius: 20px;">';
-        alert_mail_content +='<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;"><tr><td align="center" style="padding: 30px 24px; font-family: \'Source Sans Pro\', Helvetica, Arial, sans-serif; font-size:20px; line-height: 20px; color: #666;">'
-        alert_mail_content += $('.alert_header').html();
-        alert_mail_content += '</td></tr></table>';
-        alert_mail_content += '<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;"><tr><td align="left" valign="top" style="padding: 0px 10px 24px 10px; font-family: \'Source Sans Pro\', Helvetica, Arial, sans-serif; color: #666; line-height: 24px;">'
-        // clonamos el body y eliminamos los divs ocultos
-        var body_clone = $('#pdf_body').clone();
-        body_clone.attr('id','body_clone');
-        $("#canvas_alert").empty();
-        $("#canvas_alert").append(body_clone);
-        $('#body_clone').find('div.d-none').remove();
-        alert_mail_content += $('#body_clone').html();
-        $("#canvas_alert").empty();
-        alert_mail_content += '</td></tr></table>';
-        alert_mail_content += '</td></tr></table>';
+        var alert_mail_content = '';
+        var header_content = $('#header_alert_text').html();
+        var img_attach_count = 0;
+        var img_attach_src = [];
+        var alert_mail_content = [];
+        $('.text_alert_preview').each(function(){
+            alert_mail_content.push($(this)[0].outerHTML);
+        });
+        $('.alert_mail_conteiner , .div_pdf_child_container').not('.invisible').not('.d-none').children().each(function(){
+            if($(this).hasClass('div_pdf_photos')){
+                var app_img_attach = "app_img_attach"
+                $(this).find('img').each(function(){
+                    img_attach_count ++;
+                    app_img_attach +=img_attach_count+",";
+                    img_attach_src.push($(this).attr('src').split('data:image/png;base64,')[1]);
+                })
+                alert_mail_content.push(app_img_attach)
+            } else{
+                alert_mail_content.push($(this)[0].outerHTML)
+            }
+        });
         var plain_content = $('#alert_text').val();
+        $('#pdf-modal').modal('hide');
+        $('#text_toast').html("Enviando alertas");
+        $('.toast').toast('show');
         $.ajax({
             url: '/dashboards/send_alerts',
             type: 'POST',
             data: {
                 to: alert_to,
                 name_corp: Navarra.dashboards.config.current_tenement,
+                logo_corp: logo_corp,
+                header_content: header_content,
                 html_content: alert_mail_content,
+                img_attach_src: img_attach_src,
                 plain_content: plain_content
             }
         });
@@ -548,7 +562,6 @@ function getDataUrl(img) {
    const canvas = document.createElement('canvas');
    const ctx = canvas.getContext('2d');
    canvas.width = img.width;
-   console.log(img.width)
    canvas.height = img.height;
    ctx.drawImage(img, 0, 0 , img.width, img.height);
    return canvas.toDataURL('image/png');

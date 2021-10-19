@@ -12,9 +12,12 @@ class DashboardsController < ApplicationController
   def send_alerts
     @to = params[:to]
     @name_corp = params[:name_corp]
+    @logo_corp = params[:logo_corp]
+    @header_content = params[:header_content]
     @html_content = params[:html_content]
+    @img_attach_src = params[:img_attach_src]
     @plain_content = params[:plain_content]
-    UserMailer.send_alert(@to,@name_corp,@html_content,@plain_content).deliver_now
+    UserMailer.send_alert(@to,@name_corp,@logo_corp,@header_content,@html_content,@img_attach_src,@plain_content).deliver_now
   end  
 
   def create_graph

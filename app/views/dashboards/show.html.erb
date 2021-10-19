@@ -289,7 +289,7 @@ function min_photo(){
       </div>
     </div>
     </div>
-  <div class="sidebar pt-1 px-1" id="filter-container">
+  <div class="sidebar pt-1 px-1 d-none" id="filter-container">
     <div class="card text-light chart-bg-transparent pb-0 pt-0">
       <div class="card-header chart-header-bg-transparent py-1 px-2">
         <div class="view-data-container status-view-middle" id="status-view-sidebar" >
@@ -306,7 +306,7 @@ function min_photo(){
     </div>
   </div>
     <% if can? :graphics, :visualizer %>
-    <div class="sidebar pt-1 px-1" id="charts-container">
+    <div class="sidebar pt-1 px-1 d-none" id="charts-container">
     <div class="card text-light chart-bg-transparent pb-0 pt-0">
         <div class="card-header chart-header-bg-transparent py-1 px-2">
           <div class="view-data-container status-view-middle" id="status-view-sidebar" >
@@ -429,8 +429,8 @@ function min_photo(){
           </div>
         </div>
          <div class="alert_header text-center p-4">
-          <img class="logo_coorp_pdf_src">
-          <div style = "margin-top: 30px;">
+          <img class="logo_coorp_pdf_src" style="max-width:35%">
+          <div style = "margin-top: 30px;" id="header_alert_text">
             <p class="pdf_title element_pdf" style="display: inline-block; font-size: 28px;margin: 0px; color: red; font-weight: bold;">ALERTA</p>
             <br/>
             <p class="pdf_created" style="font-size:0.8em; display: inline-block; margin: 0px"></p>
@@ -443,7 +443,6 @@ function min_photo(){
           </div>
         </div>
         <div id="pdf_body"></div>
-        <div  id="canvas_alert"></div>
       </div>
     </div>
   </div>

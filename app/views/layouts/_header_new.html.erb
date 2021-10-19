@@ -13,7 +13,7 @@ function open_panel(id_panel,id_table){
       },
       success: function(data) {
         $(".fakeLoader").css("display", "block");
-        $('#table_id').val(data.data[0].name);
+        $('#table_name').val(data.data[0].name);
         $('#table_name_visible').html(data.data[0].name);
         $('#table_id').val(data.data[0].id);
         var config = data.data[0].config;
@@ -42,17 +42,6 @@ function open_panel(id_panel,id_table){
             $('#addcolumn_'+key).click();
           }
         });
-        /*
-        $('.column_data').not('d-none').each(function(){
-          var field_key = $(this).attr('id').substring(10);
-          if(current_layer_fields.indexOf(field_key)>=0){
-            $(this).click();
-          } 
-          if(current_layer_fields.indexOf(field_key)<0 && $(this).hasClass('d-none')){
-            hide_column(field_key);
-          }
-        });
-        */
          //project_subfields
          var subfields_ids = [];
          var subheader_open_saved = [];
