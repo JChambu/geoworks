@@ -98,6 +98,10 @@ function open_panel(id_panel,id_table){
   } else{
     if(id_panel=="view-data-middle"){
       $(".fakeLoader").css("display", "block");
+      $("#choose").val("");
+      $(".filter_by_column").val("");
+      $(".order_by_column").val("");
+      $(".select_perpage").html("")
       $('#table_name_visible').html("Datos");
       $('#table_id').val("");
       $('#table_name').val("");
