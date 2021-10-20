@@ -125,7 +125,8 @@ class ProjectDataChildrenController < ApplicationController
       # # # # # # # # # # # # # #
 
       data = ProjectDataChild
-        .select(:id, :properties, :project_id, :project_field_id, :gwm_created_at)
+        .select(:id, :properties, :project_id, :project_field_id, :gwm_created_at, 'users.name AS username')
+        .joins('INNER JOIN public.users ON users.id = project_data_children.user_id')
         .where(:project_id => project_ids)
         .where(project_field_id: pfid)
         .where(row_active: true)
