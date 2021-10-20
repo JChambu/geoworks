@@ -1228,6 +1228,8 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
         return;
       }
       data_dashboard = data.data
+      console.log("Datos de la tabla")
+      console.log(data.data)
 
       // borramos los datos anteriores
       $("#tbody_visible").empty();
@@ -1259,8 +1261,11 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
         Navarra.dashboards.app_ids_table.push(data_properties["app_id"]);
 
         var new_celd="";
+        console.log("Color del estado")
+        console.log(element)
+        console.log(element.color)
         fields.forEach(function(column, indexColumn) {
-          new_celd_create = create_celd_table(column,indexColumn, data_properties, per_page_value, active_page ,index);
+          new_celd_create = create_celd_table(column,indexColumn, data_properties, per_page_value, active_page ,index,false, element.color);
           new_celd+=new_celd_create;
         });
         document.getElementById("tbody_visible").appendChild(new_row);
@@ -1349,12 +1354,12 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
  
 }
 
-function create_celd_table(column, indexColumn, data_properties, per_page_value, active_page, index,is_new_file){
+function create_celd_table(column, indexColumn, data_properties, per_page_value, active_page, index,is_new_file, status_color){
   var column_name = column.value;
   appid_info = data_properties["app_id"];
   appid_selected = data_properties["app_id"];
   if (column.value == "#_action") {
-    var new_dom = "<i class='fas fa-info-circle' style='margin-right:10px' title='Más Información' onclick='show_item_info(" + appid_info + ",false)'></i>"
+    var new_dom = "<i id='info_icon_table"+appid_info+"' class='fas fa-info-circle' style='margin-right:10px; border-radius: 5px; padding:5px; color:white; background:"+status_color+"' title='Más Información' onclick='show_item_info(" + appid_info + ",false)'></i>"
     array_datos.push(new_dom);
   }
   if (column.value == "#_select") {
@@ -3478,13 +3483,18 @@ function edit_file(edit_parent, edit_child, edit_status){
           properties_to_save["app_id"] = id_new;
           var fields = document.querySelectorAll(".field_key");
           fields.forEach(function(column, indexColumn) {
-            new_celd_create = create_celd_table(column,indexColumn, properties_to_save, null, null ,-1,true);
+            new_celd_create = create_celd_table(column,indexColumn, properties_to_save, null, null ,-1,true, $('.status_info_icon').css( "background-color" ));
             new_celd+=new_celd_create;
           });
           document.getElementById("tbody_visible").prepend(new_row);
           $('#row_table_data'+id_new).html(new_celd);
           Navarra.dashboards.app_ids_table.push(id_new);
         } else{
+          // modifica color del estado
+          app_ids.forEach(function(row_element){
+            $('#info_icon_table'+row_element).css("background",$('.status_info_icon').css( "background-color" ));
+          });
+          // fin color del estado
           if(properties_to_save!=null){// si se modificó el padre
             var fields = document.querySelectorAll(".field_key");
             fields.forEach(function(column, indexColumn) {

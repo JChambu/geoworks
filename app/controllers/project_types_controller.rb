@@ -558,7 +558,7 @@ class ProjectTypesController < ApplicationController
     to_date = params[:to_date]
 
     data = Project
-      .select('DISTINCT main.*')
+      .select('DISTINCT main.* , project_statuses.color')
       .from('projects main')
       .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
       .joins('INNER JOIN public.users ON users.id = main.user_id')
