@@ -1228,8 +1228,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
         return;
       }
       data_dashboard = data.data
-      console.log("Datos de la tabla")
-      console.log(data.data)
 
       // borramos los datos anteriores
       $("#tbody_visible").empty();
@@ -1261,9 +1259,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
         Navarra.dashboards.app_ids_table.push(data_properties["app_id"]);
 
         var new_celd="";
-        console.log("Color del estado")
-        console.log(element)
-        console.log(element.color)
         fields.forEach(function(column, indexColumn) {
           new_celd_create = create_celd_table(column,indexColumn, data_properties, per_page_value, active_page ,index,false, element.color);
           new_celd+=new_celd_create;

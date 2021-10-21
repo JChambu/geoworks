@@ -71,8 +71,6 @@ function init(is_alert) {
             }
         }
     });
-    console.log("Array de datos")
-    console.log(pdf_values_all)
     $('#dropdown_alert_mails').empty();
     create_pdf_view(is_alert);
 }
@@ -105,6 +103,10 @@ function create_pdf_view(is_alert){
         //Crea objeto ordenado
         var text_dnone = '';
         var alert_mail_key = $('#alert_mail').val();
+        if($('#alert_mail').val().split('|').length==2){
+            //viene de capa superiores
+            var alert_mail_key = document.getElementById('alert_mail').options[document.getElementById('alert_mail').selectedIndex].getAttribute('id_field_layer')
+        }
         var pdf_values_all_sorted = new Object;
         pdf_values_all.forEach(function(pdf_object){
             Object.keys(pdf_object['children']).forEach(function(child_key){
@@ -130,11 +132,13 @@ function create_pdf_view(is_alert){
                 });
             });
         });
-        console.log("Objeto ordenado")
-        console.log(pdf_values_all_sorted)
         //Dibuja objeto ordenado
         var text_dnone = '';
         var alert_mail_key = $('#alert_mail').val();
+        if($('#alert_mail').val().split('|').length==2){
+            //viene de capa superiores
+            var alert_mail_key = document.getElementById('alert_mail').options[document.getElementById('alert_mail').selectedIndex].getAttribute('id_field_layer');
+        }
         var class_div = "";
         var class_title = "style='font-size:1.3vh'";
         var class_p = "style='font-size:1vh'";
@@ -213,8 +217,6 @@ function create_pdf_view(is_alert){
                 }
                 pdf_values_all_sorted[grouped_key_value]['objects'].push(pdf_object);
         });
-        console.log("Objeto ordenado")
-        console.log(pdf_values_all_sorted);
         //Dibuja objeto ordenado
         Object.keys(pdf_values_all_sorted).forEach(function(object_grouped, index_sorted){
             grouped_mail = [];
@@ -250,6 +252,10 @@ function create_pdf_view(is_alert){
 function create_htm_pdf(pdf_object,index_pdf, is_alert){
     var text_dnone = '';
     var alert_mail_key = $('#alert_mail').val();
+    if($('#alert_mail').val().split('|').length==2){
+            //viene de capa superiores
+            var alert_mail_key = document.getElementById('alert_mail').options[document.getElementById('alert_mail').selectedIndex].getAttribute('id_field_layer')
+        }
     var pdf_content = "";
     var class_div = "";
     var class_title = "style='font-size:1.3vh'";
