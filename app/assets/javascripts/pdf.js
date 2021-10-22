@@ -103,9 +103,11 @@ function create_pdf_view(is_alert){
         //Crea objeto ordenado
         var text_dnone = '';
         var alert_mail_key = $('#alert_mail').val();
-        if($('#alert_mail').val().split('|').length==2){
-            //viene de capa superiores
-            var alert_mail_key = document.getElementById('alert_mail').options[document.getElementById('alert_mail').selectedIndex].getAttribute('id_field_layer')
+        if($('#alert_mail').val()!=null){
+            if($('#alert_mail').val().split('|').length==2){
+                //viene de capa superiores
+                var alert_mail_key = document.getElementById('alert_mail').options[document.getElementById('alert_mail').selectedIndex].getAttribute('id_field_layer')
+            }
         }
         var pdf_values_all_sorted = new Object;
         pdf_values_all.forEach(function(pdf_object){
@@ -135,9 +137,11 @@ function create_pdf_view(is_alert){
         //Dibuja objeto ordenado
         var text_dnone = '';
         var alert_mail_key = $('#alert_mail').val();
-        if($('#alert_mail').val().split('|').length==2){
-            //viene de capa superiores
-            var alert_mail_key = document.getElementById('alert_mail').options[document.getElementById('alert_mail').selectedIndex].getAttribute('id_field_layer');
+        if($('#alert_mail').val()!=null){
+            if($('#alert_mail').val().split('|').length==2){
+                //viene de capa superiores
+                var alert_mail_key = document.getElementById('alert_mail').options[document.getElementById('alert_mail').selectedIndex].getAttribute('id_field_layer');
+            }
         }
         var class_div = "";
         var class_title = "style='font-size:1.3vh'";
@@ -252,10 +256,12 @@ function create_pdf_view(is_alert){
 function create_htm_pdf(pdf_object,index_pdf, is_alert){
     var text_dnone = '';
     var alert_mail_key = $('#alert_mail').val();
-    if($('#alert_mail').val().split('|').length==2){
+    if($('#alert_mail').val()!=null){
+        if($('#alert_mail').val().split('|').length==2){
             //viene de capa superiores
             var alert_mail_key = document.getElementById('alert_mail').options[document.getElementById('alert_mail').selectedIndex].getAttribute('id_field_layer')
         }
+    }
     var pdf_content = "";
     var class_div = "";
     var class_title = "style='font-size:1.3vh'";
@@ -482,6 +488,7 @@ function save_pdf(){
             }
         }        
  });
+
     // imprime mapa
     var width_map_pdf = document.getElementById('map_pdf').offsetWidth * x_proportion;
     var height_map_pdf = document.getElementById('map_pdf').offsetHeight * y_proportion;
@@ -492,6 +499,7 @@ function save_pdf(){
         altura_final = 10;
     }
     doc.addImage(imgData_pdf, 'PNG', 10, (altura_final + 10), 190 , 190 * height_map_pdf/width_map_pdf)
+    
     doc.save("reporte.pdf");
 }
 

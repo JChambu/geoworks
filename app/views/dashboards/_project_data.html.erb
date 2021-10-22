@@ -746,12 +746,14 @@ function show_pdf(is_alert){
 
 //Funciones para armar alertas
 function generate_alerts(){
-  if($('#alert_mail').val().split('|').length==2){
-    // Es un campo de capa contenedora
-    var text_celd = "celdlayer";
-  } else {
-    // es campo del proyecto activo
-    var text_celd = "celd";
+  if($('#alert_mail').val()!=null){
+    if($('#alert_mail').val().split('|').length==2){
+      // Es un campo de capa contenedora
+      var text_celd = "celdlayer";
+    } else {
+      // es campo del proyecto activo
+      var text_celd = "celd";
+    }
   }
   var alert_mail_key = $('#alert_mail').val();
   if(alert_mail_key==""){

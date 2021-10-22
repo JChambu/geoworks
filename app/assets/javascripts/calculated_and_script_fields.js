@@ -25,6 +25,7 @@ function Script(data_script, field_type_id , field_id , value, initial, isparent
             script_ejecute(scriptTrue, initial, field_id, isparent);
         } catch(e){
             set_error_message("Error en el atributo script del campo ID:"+field_id);
+            console.log("Error "+e)
         } 
 }
  if((field_type==10 || field_type==2)){
@@ -56,6 +57,7 @@ function Script(data_script, field_type_id , field_id , value, initial, isparent
         }
     } catch(e){
         set_error_message("Error en el atributo script del campo ID:"+field_id);
+        console.log("Error "+e)
     }
  }
 
@@ -160,6 +162,7 @@ var is_multiple = $('#multiple_edit').hasClass("multiple_on");
     }
   } catch(e){
     set_error_message("Error en la configuración del script del campo ID:"+field_id);
+    console.log("Error "+e)
   }
 }
 
@@ -494,6 +497,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
     }
   } catch(e){
     set_error_message("Error en el atributo calculado del campo ID:"+field_id);
+    console.log("Error "+e)
   }  
 }   
 
