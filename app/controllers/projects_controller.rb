@@ -91,8 +91,6 @@ class ProjectsController < ApplicationController
     properties['app_id'] = 0
     properties['app_usuario'] = current_user.id
     properties['app_estado'] = project_status_id.to_i
-    properties['gwm_created_at'] = datetime.to_date
-    properties['gwm_updated_at'] = datetime.to_date
 
     # Carga los valores
     @project['properties'] = properties
