@@ -763,18 +763,18 @@ function generate_alerts(){
   }
   var pattern_mail = /^\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i
   var wrong_mail_count = 0
-  $('#table_visible .custom-control-input:checked').each(function(){
+  $('#table_visible .custom-control-input:checked').not('#table_select_all').not('#table_select_all_hidden').each(function(){
     var id_checked = $(this).attr('id').substring(13);
     var alert_mail_value = $('.'+text_celd+'_id'+id_checked+'.'+text_celd+'_key'+alert_mail_key).html();
     //verifica si es formato mail
     if(!pattern_mail.test(alert_mail_value)) {
-      $('#text_toast').html("Hay destinatarios que no cumplen el formato correcto de e-mail");
-      $('.toast').toast('show');
       var alert_mail_value = $('.'+text_celd+'_id'+id_checked+'.'+text_celd+'_key'+alert_mail_key).addClass('custom_danger');
       wrong_mail_count++
     }
   });
   if(wrong_mail_count>0){
+    $('#text_toast').html("Hay destinatarios que no cumplen el formato correcto de e-mail");
+    $('.toast').toast('show');
     return;
   }
   show_pdf(true);
