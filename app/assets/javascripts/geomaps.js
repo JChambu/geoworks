@@ -1457,10 +1457,11 @@ Navarra.geomaps = function() {
                   checked = $('#select').hasClass('active');
 
                   if (draw_disabled) {
-                    L.popup()
+                    var popup_drawable = L.popup({autoPan:false})
                       .setLatLng(latlng)
                       .setContent(inn)
                       .openOn(mymap);
+                      makeDraggable(popup_drawable);
                   }
                   // si es polígono dibuja el polígono de otro color
                   if(type_geometry=="Polygon"){
@@ -1474,6 +1475,17 @@ Navarra.geomaps = function() {
       } // Cierra showFeatureInfo
     }); // Cierra L.WMS.Source.extend
   }
+
+function makeDraggable(popup){
+    //  var pos = mymap.latLngToLayerPoint(popup.getLatLng());
+      //L.DomUtil.setPosition(popup._wrapper.parentNode, pos);
+      var draggable = new L.Draggable(popup._container, popup._wrapper);
+      draggable.enable();
+      
+      draggable.on('dragend', function() {
+        $('.leaflet-popup-tip').css('display','none')
+      });
+    }
 
 function close_all_popups(){
   mymap.closePopup();
