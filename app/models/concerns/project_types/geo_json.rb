@@ -79,12 +79,12 @@ module ProjectTypes::GeoJson
       if a.geometry.geometry_type.to_s.downcase == self.type_geometry.downcase
         properties = a.properties
         properties.each do |idx, value|
-          field_type = ProjectField.where(name: idx, project_type_id: project_type_id, field_type_id: (FieldType.where(name: 'Texto').pluck(:id))).first_or_create!
+          field_type = ProjectField.where(name: idx, project_type_id: project_type_id, field_type_id: (FieldType.where(name: 'Texto').pluck(:id)), roles_edit: '[""]', roles_read: '[""]').first_or_create!
           fields[field_type.key] = value
         end
-        ProjectField.where(name: 'app_usuario', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Numerico').pluck(:id))).first_or_create!
-        ProjectField.where(name: 'app_estado', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Numerico').pluck(:id))).first_or_create!
-        ProjectField.where(name: 'app_id', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Numerico').pluck(:id))).first_or_create!
+        ProjectField.where(name: 'app_usuario', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Numerico').pluck(:id)),roles_edit: '[""]', roles_read: '[""]').first_or_create!
+        ProjectField.where(name: 'app_estado', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Numerico').pluck(:id)), roles_edit: '[""]', roles_read: '[""]').first_or_create!
+        ProjectField.where(name: 'app_id', project_type_id: project_type_id, hidden: true, read_only: true, field_type_id: (FieldType.where(name: 'Numerico').pluck(:id)), roles_edit: '[""]', roles_read: '[""]').first_or_create!
         fields['app_usuario'] = user_id
         fields['app_estado'] = project_status.id
 
