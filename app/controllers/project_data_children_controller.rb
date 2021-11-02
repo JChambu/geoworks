@@ -32,6 +32,7 @@ class ProjectDataChildrenController < ApplicationController
     @respuesta_array = []
     from_date_subforms = params[:from_date_subforms]
     to_date_subforms = params[:to_date_subforms]
+    filter_children = params[:filter_children]
 
     # Busca el rol del usuario
     customer_name = Apartment::Tenant.current
@@ -139,6 +140,13 @@ class ProjectDataChildrenController < ApplicationController
         data = data.where(row_enabled: true)
       end
 
+      # Aplica filtros de hijos
+      if !filter_children.blank?
+        filter_children.each do |filter_child|
+          filter_parts = filter_child.split('|')
+          data = data.where("properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+" '"+filter_parts[2]+"'")
+        end    
+      end
 
       # Agrupa los hijos por padre
       grouped_data = data.group_by { |c| c.project_id }

@@ -269,6 +269,7 @@ class ProjectTypesController < ApplicationController
     project_id = params[:app_id].to_i
     from_date_subforms = params[:from_date_subforms]
     to_date_subforms = params[:to_date_subforms]
+    filter_children = params[:filter_children]
 
     # Busca el rol del usuario
     customer_name = Apartment::Tenant.current
@@ -358,6 +359,14 @@ class ProjectTypesController < ApplicationController
         else
           children_data = children_data.where(row_enabled: true)
         end
+
+        # Aplica filtros por hijos
+        if !filter_children.blank?
+        filter_children.each do |filter_child|
+          filter_parts = filter_child.split('|')
+          children_data = children_data.where("properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+" '"+filter_parts[2]+"'")
+        end    
+      end
 
         children_data_array = []
 
