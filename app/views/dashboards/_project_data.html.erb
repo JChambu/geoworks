@@ -188,6 +188,12 @@ function show_subfield(field_ids){
   var app_ids_table = Navarra.dashboards.app_ids_table;
   var from_date_subforms = Navarra.project_types.config.from_date_subforms;
   var to_date_subforms = Navarra.project_types.config.to_date_subforms;
+  var filter_children = [];
+  $('.filter_container').each(function(){
+    if(!isNaN($(this).attr('id').split('|')[0])){
+      filter_children.push($(this).attr('id'));
+    }
+  });
   $.ajax({
     type: 'GET',
     url: '/project_data_children/show_children',
@@ -196,7 +202,8 @@ function show_subfield(field_ids){
       project_ids: app_ids_table,
       project_field_ids: field_ids,
       from_date_subforms: from_date_subforms,
-      to_date_subforms: to_date_subforms
+      to_date_subforms: to_date_subforms,
+      filter_children: filter_children,
     },
     success: function(data) {
       data.forEach(function(father_field){
@@ -740,7 +747,7 @@ function show_pdf(is_alert){
     return;
   }
   $("#pdf-modal").modal('show'); 
-  $("#view-data-hidden").click();
+  $('.table_data_container').addClass('d-none');
   Navarra.pdf.init(is_alert);
 }
 
@@ -761,7 +768,7 @@ function generate_alerts(){
     $('.toast').toast('show');
     return;
   }
-  var pattern_mail = /^\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i
+  var pattern_mail = /^\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i
   var wrong_mail_count = 0
   $('#table_visible .custom-control-input:checked').not('#table_select_all').not('#table_select_all_hidden').each(function(){
     var id_checked = $(this).attr('id').substring(13);

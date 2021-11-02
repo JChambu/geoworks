@@ -411,8 +411,8 @@ function min_photo(){
           </div>
             <i class="fas fa-envelope view-data d-none" id="send_alerts_button" title="Enviar Alertas" onclick="Navarra.pdf.send_alerts()" ></i>
             <i class="fas fa-save view-data d-none" id="save_pdf_button" title="Guardar Reporte" onclick="Navarra.pdf.save_pdf()" ></i>
-            <i class="fas fa-edit view-data d-none" id="edit_pdf_button" onclick="edit_pdf()"></i>
-            <i class="fas fa-times view-data" type="button" class="close" data-dismiss="modal" aria-label="Close"></i>
+            <i class="fas fa-edit view-data d-none" id="edit_pdf_button" title="Elimine imágnes y ajuste problemas de superposición" onclick="Navarra.pdf.edit_pdf()"></i>
+            <i class="fas fa-times view-data" type="button" class="close" onclick="Navarra.pdf.close_pdf()" aria-label="Close"></i>
           </div>
       </div>
       <div class="modal-body p-1 pl-4 pr-4 pt-2" style="position: relative;">

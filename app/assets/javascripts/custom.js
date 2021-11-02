@@ -9,6 +9,7 @@ var xhr_report = null;
 var data_charts;
 var filechange;
 var statuschange;
+var original_chart_container;
 
 var father_fields = [];
 var child_elements = [];
@@ -707,15 +708,20 @@ function draw_charts() {
         'id': 'chart_container' + graphic_id
       }).append(
         $('<div>', {
+          'class': 'w-100',
+        }).append(
+        $('<div>', {
           'class': 'py-1 px-2',
           'id': 'header' + graphic_id
         }).append(
-          // $('<span>', { // handle
-          //   'class': 'fas fa-arrows-alt handle border border-dark'
-          // }),
           $('<text>', {
             'text': title
           }),
+           $('<span>', { // handle
+             'class': 'fas fa-expand-arrows-alt',
+             'style': 'float: right; cursor: pointer',
+             'onclick': 'maximize_chart(event)'
+           }),
           /* Oculta minimizado hasta solucionar el tema de row
           $('<button>', { // boton minimizar
             'class': 'close',
@@ -747,6 +753,8 @@ function draw_charts() {
         )
       )
     )
+  )
+
 
     //Chequeamos el estado de view
     var status_view_chart = $('#sidebar_all').hasClass('charts-container');
@@ -1150,8 +1158,29 @@ function draw_charts() {
     $('.graphics').scrollTop(scroll);
   }
   dragAndDrop.init();
-
 }
+
+function maximize_chart(e){
+  var element_to_maximize = e.target.parentElement.parentElement;
+  if($(element_to_maximize).hasClass('chart_maxi')){
+    $(element_to_maximize).detach().appendTo(original_chart_container);
+    $(element_to_maximize).removeClass('chart_maxi');
+    $('#sidebar_all').removeClass('d-none');
+    $('#map').css('opacity','1');
+    $('.table_data_container').removeClass('d-none');
+  } else{
+    original_chart_container = element_to_maximize.parentNode;
+    console.log("Padre original")
+    console.log(original_chart_container)
+    $(element_to_maximize).detach().appendTo('body');
+    $(element_to_maximize).addClass('chart_maxi');
+    $('#sidebar_all').addClass('d-none');
+    $('#map').css('opacity','0.1');
+    $('.table_data_container').addClass('d-none');
+  }
+}
+
+
 
 //****** FUNCIONES PARA TABLA DE DATOS*****
 // Función para traer todos los datos de los registros contenidos y filtrados
@@ -1225,6 +1254,11 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
       var fields = document.querySelectorAll(".field_key");
       if(JSON.stringify(data_dashboard) == JSON.stringify(data.data) && !is_saved){
         $(".fakeLoader").css("display", "none");
+        // Verifica si tiene que crear tabla de subformularios
+        create_subforms_table(subfield_ids_saved);
+        // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
+        verify_scroll_table();
+        adjust_colum_width();
         return;
       }
       data_dashboard = data.data
@@ -2253,8 +2287,13 @@ function table_to_excel() {
     new_p.innerHTML = e.firstChild.innerHTML;
     e.parentNode.appendChild(new_p);
     e.parentNode.removeChild(e);
-  })
-   //elimina primeras columnas y columnas ocultas del cuerpo
+  });
+  
+  // elimina divs de seleccion en cabecera e inputs
+  document.querySelectorAll('#clone_table .custom_div_table').forEach(e => e.parentNode.removeChild(e));
+  document.querySelectorAll('#clone_table input').forEach(e => e.parentNode.removeChild(e));
+  
+  //elimina primeras columnas y columnas ocultas del cuerpo
   var td_clone = document.querySelectorAll('#clone_table td');
   td_clone.forEach(function(e) {
     if (e.classList.contains('d-none') || e.classList.contains('celd_key#_action') || e.classList.contains('celd_key#_select') ) {
@@ -2358,11 +2397,18 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
     var from_date_subforms = Navarra.project_types.config.from_date_subforms;
     var to_date_subforms = Navarra.project_types.config.to_date_subforms;
     var url_get = '/project_types/search_father_children_and_photos_data';
+    var filter_children = [];
+    $('.filter_container').each(function(){
+      if(!isNaN($(this).attr('id').split('|')[0])){
+        filter_children.push($(this).attr('id'));
+      }
+    });
     var data = {
       project_type_id: project_type_id,
       app_id: appid_info,
       from_date_subforms: from_date_subforms,
-      to_date_subforms: to_date_subforms
+      to_date_subforms: to_date_subforms,
+      filter_children: filter_children
     }
   }
 

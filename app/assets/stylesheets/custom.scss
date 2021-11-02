@@ -173,7 +173,15 @@ div.custom-menu.show {
 .chart-bg-none {
   background: none;
 }
-
+.chart_maxi{
+  position: absolute;
+  left:0%;
+  top:9vh;
+  height: 90vh;
+  background: rgba(58, 63, 68, 0.2);
+  z-index: 5000;
+  overflow:auto;
+}
 
 /* Indicadores de texto */
 .tile_count {
@@ -880,6 +888,10 @@ div.custom-menu.show {
   margin: 2px;
   display:inline-block;
 }
+.delete_hover:hover{
+  border:solid 2px red;
+}
+
 .icon_selected{
   color: rgb(211, 216, 0)!important;
 }

@@ -424,14 +424,29 @@ function change_alert_mail(index){
     $('.alert_mail_conteiner'+index).removeClass('d-none');
 }
 
-function save_pdf(){
-    if(document.getElementById('map_pdf') == undefined){
-        var text_toast = "Espere la imagen del mapa antes de guardar el pdf";
-        $('#text_toast').html(text_toast);
-        $('.toast').toast('show');
-        return;   
+function edit_pdf(){
+    $('#text_toast').html("Elimine imágenes y ajuste tamaño de texto en caso de superposición");
+    $('.toast').toast('show');
+    $('.p_pdf').attr('onclick','Navarra.pdf.changeFontSize(event)');
+    $('#map_pdf , .img_pdf').addClass('delete_hover');
+    $('#map_pdf , .img_pdf').attr('onclick','Navarra.pdf.delete_img(event)')
+}
+
+function changeFontSize(e){
+    var fontSize_to_change = parseFloat(e.target.style.fontSize);
+    fontSize_to_change += 0.1;
+    if(fontSize_to_change>1.4){
+        fontSize_to_change = 0.6
     }
-    $('#pdf-modal').modal('hide');
+    fontSize_to_change_vh = fontSize_to_change+"vh"
+    $(e.target).css('font-size',fontSize_to_change_vh)
+}
+
+function delete_img(e){
+    e.target.remove();
+}
+
+function save_pdf(){
     var num_pages = 0;
     var y_screen = tamVentana()[1]*0.9;
     var x_screen = tamVentana()[1]*0.64;
@@ -490,16 +505,18 @@ function save_pdf(){
  });
 
     // imprime mapa
-    var width_map_pdf = document.getElementById('map_pdf').offsetWidth * x_proportion;
-    var height_map_pdf = document.getElementById('map_pdf').offsetHeight * y_proportion;
-    if(altura_final + (190 * height_map_pdf/width_map_pdf)>(y_page - 20)) {
-        num_pages ++;
-        doc.addPage();
-        margin_pdf += 30;
-        altura_final = 10;
+    if(document.getElementById('map_pdf') != undefined){
+        var width_map_pdf = document.getElementById('map_pdf').offsetWidth * x_proportion;
+        var height_map_pdf = document.getElementById('map_pdf').offsetHeight * y_proportion;
+        if(altura_final + (190 * height_map_pdf/width_map_pdf)>(y_page - 20)) {
+            num_pages ++;
+            doc.addPage();
+            margin_pdf += 30;
+            altura_final = 10;
+        }
+        doc.addImage(imgData_pdf, 'PNG', 10, (altura_final + 10), 190 , 190 * height_map_pdf/width_map_pdf)
     }
-    doc.addImage(imgData_pdf, 'PNG', 10, (altura_final + 10), 190 , 190 * height_map_pdf/width_map_pdf)
-    
+
     doc.save("reporte.pdf");
 }
 
@@ -548,6 +565,11 @@ function send_alerts(){
     })
 }
 
+function close_pdf(){
+    $('#pdf-modal').modal('hide');
+    $('.table_data_container').removeClass('d-none');
+}
+
 function tamVentana() {
   var tam = [0, 0];
   if (typeof window.innerWidth != 'undefined')
@@ -585,6 +607,10 @@ return {
     init: init,
     save_pdf: save_pdf,
     change_alert_mail: change_alert_mail,
-    send_alerts: send_alerts
+    send_alerts: send_alerts,
+    edit_pdf: edit_pdf,
+    changeFontSize: changeFontSize,
+    delete_img: delete_img,
+    close_pdf: close_pdf
 }
 }();
