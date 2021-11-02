@@ -1079,6 +1079,9 @@ class ProjectTypesController < ApplicationController
       if @project_type.save
 
         HasProjectType.create(user_id: current_user.id, project_type_id: @project_type.id)
+        if current_user.id != 1
+          HasProjectType.create(user_id: 1, project_type_id: @project_type.id)
+        end
         ProjectType.add_layer_geoserver(params[:project_type][:name_layer])
         format.html { redirect_to root_path(), notice: 'El proyecto se creó correctamente.' }
         format.json { render :show, status: :created, location: @project_type }
