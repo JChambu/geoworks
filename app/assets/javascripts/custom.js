@@ -2688,7 +2688,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
                   //termina anidados opciones
                 });
                 if(found_nested ){new_p.value=values;}
-                new_p.setAttribute('onChange', 'changeFile()');
+                new_p.setAttribute('onChange','calculate_all(false,true)');
                 if(found_nested){
                   new_p.setAttribute('onChange', 'set_nested(event,true)');
                 }
@@ -3704,6 +3704,9 @@ function set_script(data_script,field_type_id,field_id,value,isnested,event, isp
   if(isnested){
     set_nested(event,isparent)
   }
+  if(isparent){
+    calculate_all(false,true);
+  }
 }
 
 function set_script_all(){
@@ -3728,6 +3731,7 @@ function set_script_all(){
 
 
 function calculate_all(first_time, isparent, id_child_calculate , id_field_child_calculate, is_new_child){
+  console.log("Calcula")
   var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   if(is_new_file){var type_calculation = "new_file"} else{ var type_calculation = "data_edition"}
   //Ejecuta Calculate de campos padres
