@@ -189,11 +189,16 @@ function show_subfield(field_ids){
   var from_date_subforms = Navarra.project_types.config.from_date_subforms;
   var to_date_subforms = Navarra.project_types.config.to_date_subforms;
   var filter_children = [];
-  $('.filter_container').each(function(){
+  var filter_user_children = [];
+  $('.subform_filter').each(function(){
     if(!isNaN($(this).attr('id').split('|')[0])){
       filter_children.push($(this).attr('id'));
+    } else {
+      filter_user_children.push($(this).attr('id').split('|')[2])
     }
   });
+  console.log("Filtro de usuario hijo")
+  console.log(filter_user_children)
   $.ajax({
     type: 'GET',
     url: '/project_data_children/show_children',
@@ -204,6 +209,7 @@ function show_subfield(field_ids){
       from_date_subforms: from_date_subforms,
       to_date_subforms: to_date_subforms,
       filter_children: filter_children,
+      filter_user_children: filter_user_children
     },
     success: function(data) {
       data.forEach(function(father_field){

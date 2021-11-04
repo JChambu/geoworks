@@ -212,6 +212,18 @@ class ProjectTypesController < ApplicationController
     end
   end
 
+  def create_quick_filters_users_subform
+    subform_value = params[:subform_value]
+    project_type_id = params[:project_type_id]
+    filtered_form_ids = Project
+      .joins(:project_data_child)
+      .where("project_data_children.user_id = '#{subform_value}'")
+      .where(projects: {project_type_id: project_type_id})
+      .pluck(:id)
+      .uniq
+    render json: filtered_form_ids
+  end
+
   def get_extent
     project_type_id = params[:project_type_id]
     attribute_filters = params[:attribute_filters]
@@ -270,6 +282,7 @@ class ProjectTypesController < ApplicationController
     from_date_subforms = params[:from_date_subforms]
     to_date_subforms = params[:to_date_subforms]
     filter_children = params[:filter_children]
+    filter_user_children = params[:filter_user_children]
 
     # Busca el rol del usuario
     customer_name = Apartment::Tenant.current
@@ -362,11 +375,18 @@ class ProjectTypesController < ApplicationController
 
         # Aplica filtros por hijos
         if !filter_children.blank?
-        filter_children.each do |filter_child|
-          filter_parts = filter_child.split('|')
-          children_data = children_data.where("properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+" '"+filter_parts[2]+"'")
-        end    
-      end
+          filter_children.each do |filter_child|
+            filter_parts = filter_child.split('|')
+            children_data = children_data.where("properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+" '"+filter_parts[2]+"'")
+          end    
+        end
+
+        # Aplica filtros de usuario de hijos
+        if !filter_user_children.blank?
+          filter_user_children.each do |filter_child|
+            children_data = children_data.where("user_id = "+filter_child)
+          end    
+        end
 
         children_data_array = []
 

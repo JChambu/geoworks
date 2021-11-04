@@ -71,6 +71,8 @@ function init_kpi(size_box = null) {
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
 
+  console.log("Filtros por ids")
+  console.log(filtered_form_ids)
 
   if (xhr_kpi && xhr_kpi.readyState != 4) {
     xhr_kpi.abort();
@@ -2398,9 +2400,12 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
     var to_date_subforms = Navarra.project_types.config.to_date_subforms;
     var url_get = '/project_types/search_father_children_and_photos_data';
     var filter_children = [];
-    $('.filter_container').each(function(){
+    var filter_user_children = [];
+    $('.subform_filter').each(function(){
       if(!isNaN($(this).attr('id').split('|')[0])){
         filter_children.push($(this).attr('id'));
+      }else {
+        filter_user_children.push($(this).attr('id').split('|')[2])
       }
     });
     var data = {
@@ -2408,7 +2413,8 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       app_id: appid_info,
       from_date_subforms: from_date_subforms,
       to_date_subforms: to_date_subforms,
-      filter_children: filter_children
+      filter_children: filter_children,
+      filter_user_children: filter_user_children
     }
   }
 

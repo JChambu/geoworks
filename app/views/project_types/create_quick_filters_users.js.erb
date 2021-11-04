@@ -10,6 +10,16 @@ values.forEach(function(element, index){
   }
 });
 
+values_child = document.querySelectorAll(".check_input_users_child");
+var value_child = " ";
+values_child.forEach(function(element, index){
+  if(element.checked){
+    status_value = $('.value_input_users').eq(index).html();
+    status_value_id = $('.value_input_users').eq(index).val();
+    value_child = status_value;
+  }
+});
+
 if(value!="Sin Filtro"){
   var operator = " = "
   var filter = field_key + '|' + operator + '|' + value;
@@ -17,7 +27,7 @@ if(value!="Sin Filtro"){
 
   Navarra.project_types.config.attribute_filters.push(filter);
 
-  // Elimina y vuelve a agregar el item al card Filtros Activos
+  // Vuelve a agregar el item al card Filtros Activos
   $('#filter-body').append(
     $('<div>', { // item
       'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow form_filter filter_container',
@@ -30,29 +40,77 @@ if(value!="Sin Filtro"){
       $('<button>', {
         'type': 'button',
         'class': 'close',
-        'id': 'close_point_color',
         'text': '×'
       })
     )
   )
   $(".fa-search-location").css("color", "#d3d800");
+}
+
+if(value_child!="Sin Filtro"){
+  var operator = " = "
+  var filter = 'gw_usario_subform' + '|' + operator + '|' + status_value_id;
+  var filter_view = "Usuario Subform" + operator + " " + value_child;
+
+  // busca los padres que cumplen con la condición de tener subformularios que cumplan la condición
+
+  $.ajax({
+    type: 'GET',
+    url: '/project_types/create_quick_filters_users_subform',
+    datatype: 'json',
+    data: {
+      subform_value: status_value_id,
+      project_type_id: Navarra.dashboards.config.project_type_id
+    },
+    success: function(data) {
+      if(data.length==0){data.push(-1)}
+      filtered_form_ids = data;
+      filtered_form_ids_s = JSON.stringify(data);
+      Navarra.project_types.config.filtered_form_ids.push(filtered_form_ids_s);
+      document.getElementById(filter).setAttribute("value", filtered_form_ids_s);
+      set_geomaps();
+      }
+    });
+      // Vuelve a agregar el item al card Filtros Activos
+      $('#filter-body').append(
+        $('<div>', { // item
+          'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow subform_filter filter_container',
+          'id': filter,
+          'name_child': value_child
+        }).append(
+          $('<b>', {
+            'text': filter_view
+         }),
+          $('<button>', {
+            'type': 'button',
+            'class': 'close',
+            'text': '×'
+          })
+        )
+      )
+      $(".fa-search-location").css("color", "#d3d800");
+   
 } else{
-  if($(".filter_container").length==0){
-    $(".fa-search-location").css("color", "#9b9b9b");
-  }
+  set_geomaps();
+}
+
+if($(".filter_container").length==0){
+  $(".fa-search-location").css("color", "#9b9b9b");
 }
 
 resize_filters();
 resize_graphics();
 set_layer_filter();
 
-var point_color = Navarra.project_types.config.field_point_colors;
-if(point_color == ''){
-  Navarra.geomaps.get_zoomextent();
-  Navarra.geomaps.wms_filter();
-}else{
-  Navarra.geomaps.get_zoomextent();
-  Navarra.geomaps.point_colors_data();
+function set_geomaps(){
+  var point_color = Navarra.project_types.config.field_point_colors;
+  if(point_color == ''){
+    Navarra.geomaps.get_zoomextent();
+    Navarra.geomaps.wms_filter();
+  }else{
+    Navarra.geomaps.get_zoomextent();
+    Navarra.geomaps.point_colors_data();
+  }
 }
 
 function remove_user_filters(){
@@ -66,5 +124,22 @@ function remove_user_filters(){
 
   })
   Navarra.project_types.config.attribute_filters = b;
+  var ar= Navarra.project_types.config.filtered_form_ids;
+  var br = ''
+  $('.subform_filter').each(function(){
+    if(isNaN($(this).attr('id').split('|')[0])){
+      br= $(this).attr('value')
+    }
+  });
+  b = jQuery.grep(ar, function(value){
+    if(value == br){
+      return null;
+    }else{
+      return value;
+    }
+
+  })
+  Navarra.project_types.config.filtered_form_ids = b;
    $(".message[id*="+'app_usuario '+"]").remove();
+   $(".message[id*="+'gw_usario_subform '+"]").remove();
 }
