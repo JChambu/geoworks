@@ -89,6 +89,9 @@ class Project < ApplicationRecord
           final_array = ids_array
         end
       end
+      if final_array.blank?
+        final_array.push(-1)
+      end
       final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
       @bounds = @bounds.where("main.id IN #{final_array}")
     end
