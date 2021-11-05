@@ -2430,10 +2430,25 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
     datatype: 'json',
     data: data,
     success: function(data) {
+      console.log("Data al modal de registro")
+      console.log(data)
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
       $("#info-modal").modal('show');
       $(".fa-eye-slash").css("color", "#9b9b9b");
+
+      if(is_multiple){
+        $('#archive_icon').css('color','#d3d800');
+        $('#enabled_text').html("Activar/Desactivar Registros?");
+      } else{
+        if(data.row_enabled){
+          $('#archive_icon').css('color','#9b9b9b');
+          $('#enabled_text').html("Desactivar Registro?");
+        } else{
+          $('#archive_icon').css('color','red');
+          $('#enabled_text').html("Activar Registro?");
+        }
+      }
 
       filechange = false;
       statuschange = false;
