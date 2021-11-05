@@ -1264,6 +1264,8 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
         return;
       }
       data_dashboard = data.data
+      console.log("Data para tabla")
+      console.log(data)
 
       // borramos los datos anteriores
       $("#tbody_visible").empty();
@@ -1296,7 +1298,7 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
 
         var new_celd="";
         fields.forEach(function(column, indexColumn) {
-          new_celd_create = create_celd_table(column,indexColumn, data_properties, per_page_value, active_page ,index,false, element.color);
+          new_celd_create = create_celd_table(column,indexColumn, data_properties, per_page_value, active_page ,index,false, element.color, element.name);
           new_celd+=new_celd_create;
         });
         document.getElementById("tbody_visible").appendChild(new_row);
@@ -1385,7 +1387,7 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
  
 }
 
-function create_celd_table(column, indexColumn, data_properties, per_page_value, active_page, index,is_new_file, status_color){
+function create_celd_table(column, indexColumn, data_properties, per_page_value, active_page, index,is_new_file, status_color, user_name){
   var column_name = column.value;
   appid_info = data_properties["app_id"];
   appid_selected = data_properties["app_id"];
@@ -1417,7 +1419,11 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   }
   if (column.value != "#" && column.value != "#_action" && column.value != "#_select") {
     if (data_properties[column_name] != undefined) {
-      array_datos.push(data_properties[column_name]);
+      if (column.value == "app_usuario" && user_name!= undefined) {
+        array_datos.push(user_name);
+      } else{
+        array_datos.push(data_properties[column_name]);
+      }
       if (column.value == "app_id") {
         if (Navarra.project_types.config.item_selected == data_properties[column_name]) {
           found_id = data_properties["app_id"];
