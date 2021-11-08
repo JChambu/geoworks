@@ -1051,6 +1051,26 @@ function generate_alerts(){
           <% end %>
         <% end %>
       </tr>
+      <tr id="tr_subfields">
+        <th class="border-0"></th>
+        <th class="border-0"></th>
+        <th class="border-0"></th>
+        <% if !@fields.nil? %>
+          <% @fields.each do |field|  %>
+            <%if field.heatmap_field %>
+              <input class="d-none field_label" value=<%=field.key%>>
+            <% end %>
+            <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+              <% if !field.popup %>
+                <th class="d-none header_column border-0">
+              <% else %>
+                <th class="header_column border-0">
+              <% end %>
+              <p class="custom_p_header"></p>
+            <% end %>
+          <% end %>
+        <% end %>
+      </tr>
     </thead>
     <tbody id="tbody_hidden" style="visibility: hidden;">
       <tr>

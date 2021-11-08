@@ -3408,6 +3408,8 @@ function edit_file(edit_parent, edit_child, edit_status){
   if(array_child_edited.length>0){
     // array_child_edited es un array que contiene los id de los hijos modificados. 0 para nuevos hijos
     array_child_edited = array_child_edited.unique();
+    console.log("Array child edited")
+    console.log(array_child_edited)
     for(z=0;z<array_child_edited.length;z++){
       var id_field_father_properties;
       // crea array único de ids de campos padres
