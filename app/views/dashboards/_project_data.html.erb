@@ -197,10 +197,8 @@ function show_subfield(field_ids){
       filter_user_children.push($(this).attr('id').split('|')[2])
     }
   });
-  console.log("Filtro de usuario hijo")
-  console.log(filter_user_children)
   $.ajax({
-    type: 'GET',
+    type: 'POST',
     url: '/project_data_children/show_children',
     datatype: 'json',
     data: {
@@ -422,21 +420,26 @@ function show_subfield(field_ids){
 // FUNCIONES PARA TRAER COLUMNAS DE CAPAS SUPERIORES
 function get_layer_data(){
   var app_ids_table = Navarra.dashboards.app_ids_table;
+  if(app_ids_table.length>80){
+    $('#text_toast').html("Buscando datos intercapas, por favor espere");
+    $('.toast').toast('show');
+  }
     data = {
       top_level_project_type_ids: top_level_project_type_ids,
       project_ids: app_ids_table,
     }
 
     $.ajax({
-      type: 'GET',
+      type: 'POST',
       url: '/projects/search_data_for_pdf',
       datatype: 'JSON',
       data: data,
       success: function(data) {
         data.forEach(function(data_project){
-        data_project.forEach(function(row_layer){
+        data_project.forEach(function(row_layer,index_row){
             properties_layer= row_layer['properties'];
-          Object.keys(properties_layer).forEach(function(prop){
+          $('.header_column_layer').not('.d-none').each(function(){
+            var prop = $(this).attr('key_layer').substring(3);
             $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).html(row_layer['properties'][prop]);
           })
         });//end forEach      
@@ -447,9 +450,9 @@ function get_layer_data(){
 
 function show_column_layer(key_layer,id_layer){
   if(top_level_project_type_ids.indexOf(id_layer)<0){
-    top_level_project_type_ids.push(id_layer);
-    get_layer_data();
+    top_level_project_type_ids.push(id_layer); 
   }
+  get_layer_data();
   $('#columnfake_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
   $('#subcolumnfake_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
   $('#columnfake_data_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
@@ -977,7 +980,7 @@ function generate_alerts(){
                 <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
                 <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
                   <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-                    <th class="header_column border-0 header_column_layer d-none " id=<%="columnfake_layer_"+field.key+"_"+field.project_type.id.to_s %>>
+                    <th class="header_column border-0 header_column_layer d-none " id=<%="columnfake_layer_"+field.key+"_"+field.project_type.id.to_s %> key_layer=<%="key"+field.key%>>
                       <div class="th-hover custom_header">
                         <p class="custom_p_header" ><%= field.name %></p>
                         <div class="custom_div_table">

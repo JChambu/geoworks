@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   get 'projects/search_data' => 'projects#search_data'
   get 'projects/search_statuses' => 'projects#search_statuses'
   get 'projects/search_users' => 'projects#search_users'
-  get 'projects/search_data_for_pdf' => 'projects#search_data_for_pdf'
+  post 'projects/search_data_for_pdf' => 'projects#search_data_for_pdf', as: :search_data_for_pdf
   get 'projects/popup' => 'projects#popup'
   get 'project_types/get_extent' => 'project_types#get_extent'
   post 'projects/create_form' => 'projects#create_form'
@@ -41,7 +41,7 @@ Rails.application.routes.draw do
   post 'graphics/update_sort' => 'graphics#update_sort', as: :update_sort
   get 'photos/show_photos' => 'photos#show_photos'
   get 'photos_children/show_photos_children' => 'photos_children#show_photos_children'
-  get 'project_data_children/show_children' => 'project_data_children#show_children'
+  post 'project_data_children/show_children' => 'project_data_children#show_children', as: :show_children
   get 'users/get_user_id_and_customer_id' => 'users#get_user_id_and_customer_id'
   post 'dashboards/send_alerts'
 
