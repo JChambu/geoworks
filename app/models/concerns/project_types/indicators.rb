@@ -75,8 +75,8 @@ module ProjectTypes::Indicators
       @data
     end
 
-    # Aplica filtro de time_slider
-    def apply_time_slider_filter data, from_date, to_date, sql_full
+    # Aplica filtro de time_slider para proyecto activo y capas y filtro de time_slider para subformularios
+    def apply_time_slider_filter data, from_date, to_date, from_date_subform, to_date_subform ,sql_full
 
       if !from_date.blank? || !to_date.blank?
 
@@ -84,6 +84,7 @@ module ProjectTypes::Indicators
           data = data.where("main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}'")
         else
           data = data.sub('where_clause', "where_clause (main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}') AND ")
+          data = data.sub('where_clause_layer', "where_clause_layer (sec.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}') AND ")
         end
 
       else
@@ -92,9 +93,19 @@ module ProjectTypes::Indicators
           data = data.where('main.row_enabled = ?', true)
         else
           data = data.sub('where_clause', "where_clause main.row_enabled = true AND ")
+          data = data.sub('where_clause_layer', "where_clause_layer sec.row_enabled = true AND ")
         end
 
       end
+      #Aplica time_slider de hijos
+      if !sql_full.blank?
+        if !from_date_subform.blank? || !to_date_subform.blank? 
+          data = data.sub('where_clause_subform', "where_clause_subform (sub.gwm_created_at BETWEEN '#{from_date_subform}' AND '#{to_date_subform}') AND ")
+        else
+          data = data.sub('where_clause_subform', "where_clause_subform sub.row_enabled = true AND ")
+        end
+      end
+
       @data = data
     end
 
@@ -155,7 +166,7 @@ module ProjectTypes::Indicators
           else
 
             # Cruza la capa del principal que contiene los hijos con la capa secunadaria
-            data = data.sub('from_clause', "CROSS JOIN projects sec")
+            data = data.gsub('from_clause', "CROSS JOIN projects sec")
             data = data.sub('where_clause', "where_clause (shared_extensions.ST_Intersects(main.the_geom, sec.the_geom))
               AND sec.project_type_id = #{cross_layer_filter.project_type_id}
               AND sec.row_active = true
@@ -249,7 +260,17 @@ module ProjectTypes::Indicators
       end
     end
 
-    def filters_on_the_fly data, data_conditions, filtered_form_ids, sql_full
+    def filters_on_the_fly data, data_conditions, filtered_form_ids, filter_children, filter_user_children, sql_full
+
+      # Aplica filtros row_active y current_season para sql_full
+      if !sql_full.blank?
+        data = data.sub('where_clause', "where_clause main.row_active = true AND ")
+        data = data.sub('where_clause', "where_clause main.current_season = true AND ")
+        data = data.sub('where_clause_layer', "where_clause_layer sec.row_active = true AND ")
+        data = data.sub('where_clause_layer', "where_clause_layer sec.current_season = true AND ")
+        data = data.sub('where_clause_subform', "where_clause_subform sub.row_active = true AND ")
+        data = data.sub('where_clause_subform', "where_clause_subform sub.current_season = true AND ")
+      end
 
       # Aplica filtros de padres
       if !data_conditions.blank?
@@ -309,13 +330,31 @@ module ProjectTypes::Indicators
           data = data.where("main.id IN #{final_array}")
         else
           data = data.sub('where_clause', "where_clause (main.id IN #{final_array}) AND ")
+          # Aplica filtros de hijos a los hijos
+          # Aplica filtros por hijos
+          if !filter_children.blank?
+            filter_children.each do |filter_child|
+              @s = filter_child.split('|')
+              @field = @s[0]
+              @filter = @s[1]
+              @value = @s[2]
+              data = data.sub('where_clause_subform', "where_clause_subform (sub.properties->>'#{@field}' #{@filter} '#{@value}') AND ")
+            end    
+          end
+          # Aplica filtros de usuario de hijos
+          if !filter_user_children.blank?
+            filter_user_children.each do |filter_child|
+              @value = filter_child
+              data = data.sub('where_clause_subform', "where_clause_subform (sub.user_id = '#{@value}') AND ")
+            end    
+          end
         end
       end
       @data = data
 
     end
 
-    def kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, user_id, from_date, to_date)
+    def kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform)
 
       querys=[]
       @op = option_graph
@@ -342,10 +381,10 @@ module ProjectTypes::Indicators
             conditions_project_filters = conditions_for_attributes_and_owner @data, user_id, project_type_id, chart.sql_full
 
             # Aplica filtro time_slider
-            @data = apply_time_slider_filter @data, from_date, to_date, chart.sql_full
+            @data = apply_time_slider_filter @data, from_date, to_date, from_date_subform, to_date_subform, chart.sql_full
 
-            # Aplica filtros generados por el usuario
-            conditions_on_the_fly =  filters_on_the_fly @data, data_conditions, filtered_form_ids, chart.sql_full
+            # Aplica filtros generados por el usuario y condición row_active y current_season (momentáneamente)
+            conditions_on_the_fly =  filters_on_the_fly @data, data_conditions, filtered_form_ids, filter_children, filter_user_children, chart.sql_full
 
             if chart.kpi_type == 'basic'
               filters_simple = filters_simple @data, chart, project_type_id
@@ -353,7 +392,9 @@ module ProjectTypes::Indicators
               filters_for_sql = filters_for_sql @data, chart
             else
               @data = @data.sub('where_clause', "")
-              @data = @data.sub('from_clause', "")
+              @data = @data.sub('where_clause_layer', "")
+              @data = @data.sub('where_clause_subform', "")
+              @data = @data.gsub('from_clause', "")
               @data = ActiveRecord::Base.connection.execute(@data)
             end
 
@@ -370,7 +411,7 @@ module ProjectTypes::Indicators
       querys
     end
 
-    def kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, user_id, from_date, to_date)
+    def kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform)
 
       querys = []
       @data_fixed = ''
@@ -392,10 +433,10 @@ module ProjectTypes::Indicators
       @data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id, sql_full
 
       # Aplica filtro time_slider
-      @data_fixed = apply_time_slider_filter @data_fixed, from_date, to_date, sql_full
+      @data_fixed = apply_time_slider_filter @data_fixed, from_date, to_date, from_date_subform, to_date_subform, sql_full
 
-      # Aplica filtros generados por el usuario
-      @data_fixed = filters_on_the_fly @data_fixed, data_conditions, filtered_form_ids, sql_full
+      # Aplica filtros generados por el usuario y condición row_active y current_season (momentáneamente)
+      @data_fixed = filters_on_the_fly @data_fixed, data_conditions, filtered_form_ids, filter_children, filter_user_children, sql_full
 
       @total_row = Project
         .select('DISTINCT main.*')
@@ -408,7 +449,7 @@ module ProjectTypes::Indicators
       @ctotal = conditions_for_attributes_and_owner @total_row, user_id, project_type_id, sql_full
 
       # Aplica filtro time_slider
-      @ctotal = apply_time_slider_filter @ctotal, from_date, to_date, sql_full
+      @ctotal = apply_time_slider_filter @ctotal, from_date, to_date, from_date_subform, to_date_subform, sql_full
 
       @total_row = @ctotal.count
       @row_selected = @data_fixed.count
@@ -435,10 +476,10 @@ module ProjectTypes::Indicators
         data = conditions_for_attributes_and_owner data, user_id, project_type_id, chart.sql_full
 
         # Aplica filtro time_slider
-        data = apply_time_slider_filter data, from_date, to_date, chart.sql_full
+        data = apply_time_slider_filter data, from_date, to_date, from_date_subform, to_date_subform, chart.sql_full
 
-        # Aplica filtros generados por el usuario
-        data = filters_on_the_fly data, data_conditions, filtered_form_ids, chart.sql_full
+        # Aplica filtros generados por el usuario y condición row_active y current_season (momentáneamente)
+        data = filters_on_the_fly data, data_conditions, filtered_form_ids, filter_children, filter_user_children, chart.sql_full
 
 
         if chart.kpi_type == 'basic'
@@ -450,7 +491,12 @@ module ProjectTypes::Indicators
           end
         else
           data = data.sub('where_clause', "")
-          data = data.sub('from_clause', "")
+          data = data.sub('where_clause_layer', "")
+          data = data.gsub('where_clause_subform', "")
+          @data = @data.sub('where_clause', "")
+          @data = @data.sub('where_clause_layer', "")
+          @data = @data.gsub('where_clause_subform', "")
+          data = data.gsub('from_clause', "")
           data = ActiveRecord::Base.connection.execute(data)
         end
 

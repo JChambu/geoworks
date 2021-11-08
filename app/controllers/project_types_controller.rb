@@ -245,6 +245,10 @@ class ProjectTypesController < ApplicationController
     filter_condition = []
     from_date = params[:from_date]
     to_date = params[:to_date]
+    from_date_subform = params[:from_date_subform]
+    to_date_subform = params[:to_date_subform]
+    @filter_children = params[:filter_children]
+    @filter_user_children = params[:filter_user_children]
     @querys = ''
 
     if @op_graph == 'true'
@@ -256,9 +260,13 @@ class ProjectTypesController < ApplicationController
         params[:dashboard_id],
         @data_conditions,
         @filtered_form_ids,
+        @filter_children,
+        @filter_user_children,
         current_user.id,
         from_date,
-        to_date
+        to_date,
+        from_date_subform,
+        to_date_subform
       )
     else
       @querys = ProjectType.kpi_without_graph(
@@ -269,8 +277,12 @@ class ProjectTypesController < ApplicationController
         params[:dashboard_id],
         @data_conditions,
         @filtered_form_ids,
+        @filter_children,
+        @filter_user_children,
         current_user.id,
-        from_date, to_date
+        from_date, to_date,
+        from_date_subform,
+        to_date_subform
       )
     end
   end
