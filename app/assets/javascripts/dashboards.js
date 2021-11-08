@@ -191,6 +191,7 @@ Navarra.dashboards.action_show = function(){
         })
         Navarra.project_types.config.attribute_filters = updated_filters;
       } else {
+        // revisar con backend. Que ocurriría si hay dos filtros que traen los mismos ids de padres. Se estarían borrando ambos filtros
         current_filters = Navarra.project_types.config.filtered_form_ids;
         filter_to_remove = $(this).attr('value');
         updated_filters = $.grep(current_filters, function(value) {

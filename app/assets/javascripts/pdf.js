@@ -547,6 +547,7 @@ function send_alerts(){
         });
         var plain_content = $('#alert_text').val();
         $('#pdf-modal').modal('hide');
+        $('.table_data_container').removeClass('d-none');
         $('#text_toast').html("Enviando alertas");
         $('.toast').toast('show');
         $.ajax({
