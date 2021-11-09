@@ -180,13 +180,16 @@ class ProjectTypesController < ApplicationController
       project_type_id = params[:project_type_id]
 
       # TODO: Esta consulta quizás la podría hacer solamente a ProjectDataChild, revisar si hace falta la clause del project_type_id
+      # Hay que revisar y definir como se va a comportar con el time-slider de hijos
       @filtered_form_ids = Project
         .joins(:project_data_child)
         .where("project_data_children.properties ->> '#{subform_key}' #{subform_operator} '#{subform_value}'")
+        .where(project_data_children: {row_active: true})
+        .where(project_data_children: {current_season: true})
         .where(projects: {project_type_id: project_type_id})
         .pluck(:id)
         .uniq
-
+      
       @table = 'subform_filter'
     else
       @field_name = helpers.get_name_from_key(params[:q][:project_field]).name
@@ -215,9 +218,13 @@ class ProjectTypesController < ApplicationController
   def create_quick_filters_users_subform
     subform_value = params[:subform_value]
     project_type_id = params[:project_type_id]
+    # Hay que revisar y definir como se va a comportar con el time-slider de hijos
+    # y unificar estos dos códigos
     filtered_form_ids = Project
       .joins(:project_data_child)
-      .where("project_data_children.user_id = '#{subform_value}'")
+      .where("project_data_children.properties ->> '#{subform_key}' #{subform_operator} '#{subform_value}'")
+      .where(project_data_children: {row_active: true})
+      .where(project_data_children: {current_season: true})
       .where(projects: {project_type_id: project_type_id})
       .pluck(:id)
       .uniq
