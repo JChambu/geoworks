@@ -107,7 +107,7 @@ body {
 div.custom-menu.show {
   min-width: unset;
   width: 50px;
-  z-index: 402;
+  z-index: 2000;
 }
 .custom-item {
   text-align: center !important;
@@ -914,4 +914,11 @@ div.custom-menu.show {
 
 .custom_cursor{
   cursor:pointer;
+}
+
+/* User Filters */
+.custom_filter_option{
+  max-width: 52%;
+  min-width: 52%;
+  white-space: nowrap;
 }
