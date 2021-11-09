@@ -40,8 +40,6 @@
     type: "GET",
     data: { project_type_id: <%= params[:project_type_id] %> },
     success: function(data){
-      console.log("Datos de usuarios")
-      console.log(data)
         let parent_div=$('.quick_filters_div').parent();
         $('.quick_filters_div').remove();
         let $quick_filters_div = document.createElement('DIV');
@@ -61,17 +59,12 @@
         // revisa qué opción está filtrada en hijos
         //var ar= Navarra.project_types.config.filtered_form_ids
         var status_filters_active = $(".message[id*="+'gw_usario_subform '+"]");
-        console.log("Status filter active")
-        console.log(status_filters_active)
         if(status_filters_active.length==0){
-          console.log("Hijos sin filtro")
           status_filters_active_text_child = "Sin Filtro";
           document.getElementById('radio_all_child').checked=true;
         } else {
-          console.log("hijos con filtro")
           status_filters_active_text_child = status_filters_active.first().attr('name_child');
         }
-        console.log(status_filters_active_text_child)
 
         $.each(data['data'], function(value, a){
           if(`${a.active}`=='true'){
