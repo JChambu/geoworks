@@ -562,11 +562,18 @@ class ProjectTypesController < ApplicationController
       father_status_hash['status_color'] = ''
     end
 
+    unless project_id == 0
+      row_enabled = Project.where(id: project_id).pluck(:row_enabled).first
+    else
+      row_enabled = ''
+    end
+
     data = {}
 
     data['father_status'] = father_status_hash
     data['father_fields'] = father_fields_array
     data['father_photos'] = father_photos_array
+    data['row_enabled'] = row_enabled
 
     render json: data
   end

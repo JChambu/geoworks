@@ -194,6 +194,12 @@ class Project < ApplicationRecord
     save!
   end
 
+  def enable_form
+    self.row_enabled = true
+    self.disabled_at = ''
+    save!
+  end
+
   def update_form properties, project_status_id
     update_status = ''
     if properties.present?

@@ -51,10 +51,15 @@ class ProjectsController < ApplicationController
     app_ids = params[:app_ids]
     if app_ids.present?
       app_ids.each do |app_id|
+        project_row_enabled = Project.where(id: app_id).pluck(:row_enabled).first
         @project = Project.find(app_id)
-        @project.disable_form
+        if(project_row_enabled)
+          @project.disable_form
+        else
+          @project.enable_form
+        end
       end
-      render json: {status: 'Deshabilitación completada.'}
+      render json: {status: 'Acción completada.'}
     else
       render json: {status: 'Error. Faltan parámetros para completar la acción.'}
     end
