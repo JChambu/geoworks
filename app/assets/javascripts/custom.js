@@ -198,6 +198,8 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
     var to_date = Navarra.project_types.config.to_date;
     var from_date_subforms = Navarra.project_types.config.from_date_subforms;
     var to_date_subforms = Navarra.project_types.config.to_date_subforms;
+    var filter_children = [];
+    var filter_user_children = [];
     $('.subform_filter').each(function(){
     if(!isNaN($(this).attr('id').split('|')[0])){
       filter_children.push($(this).attr('id'));
