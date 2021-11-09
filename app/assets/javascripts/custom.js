@@ -82,6 +82,9 @@ function init_kpi(size_box = null) {
     }
   });
 
+  console.log("Filtros por ids")
+  console.log(filtered_form_ids)
+
   if (xhr_kpi && xhr_kpi.readyState != 4) {
     xhr_kpi.abort();
   }
@@ -1289,6 +1292,8 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
         return;
       }
       data_dashboard = data.data
+      console.log("Data para tabla")
+      console.log(data)
 
       // borramos los datos anteriores
       $("#tbody_visible").empty();
