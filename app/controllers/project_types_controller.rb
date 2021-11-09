@@ -186,6 +186,7 @@ class ProjectTypesController < ApplicationController
         .where("project_data_children.properties ->> '#{subform_key}' #{subform_operator} '#{subform_value}'")
         .where(project_data_children: {row_active: true})
         .where(project_data_children: {current_season: true})
+        .where(project_data_children: {row_enabled: true})
         .where(projects: {project_type_id: project_type_id})
         .pluck(:id)
         .uniq
@@ -225,6 +226,7 @@ class ProjectTypesController < ApplicationController
       .where("project_data_children.user_id = '#{subform_value}'")
       .where(project_data_children: {row_active: true})
       .where(project_data_children: {current_season: true})
+      .where(project_data_children: {row_enabled: true})
       .where(projects: {project_type_id: project_type_id})
       .pluck(:id)
       .uniq
