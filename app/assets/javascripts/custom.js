@@ -70,6 +70,17 @@ function init_kpi(size_box = null) {
   var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
+  var from_date_subforms = Navarra.project_types.config.from_date_subforms;
+  var to_date_subforms = Navarra.project_types.config.to_date_subforms;
+  var filter_children = [];
+  var filter_user_children = [];
+  $('.subform_filter').each(function(){
+    if(!isNaN($(this).attr('id').split('|')[0])){
+      filter_children.push($(this).attr('id'));
+    }else {
+      filter_user_children.push($(this).attr('id').split('|')[2])
+    }
+  });
 
   console.log("Filtros por ids")
   console.log(filtered_form_ids)
@@ -90,6 +101,10 @@ function init_kpi(size_box = null) {
       filtered_form_ids: filtered_form_ids,
       from_date: from_date,
       to_date: to_date,
+      from_date_subform: from_date_subforms,
+      to_date_subform: to_date_subforms,
+      filter_children:filter_children,
+      filter_user_children:filter_user_children
     },
     dashboard_id: dashboard_id,
     success: function(data) {
@@ -184,6 +199,17 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
     var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
     var from_date = Navarra.project_types.config.from_date;
     var to_date = Navarra.project_types.config.to_date;
+    var from_date_subforms = Navarra.project_types.config.from_date_subforms;
+    var to_date_subforms = Navarra.project_types.config.to_date_subforms;
+    var filter_children = [];
+    var filter_user_children = [];
+    $('.subform_filter').each(function(){
+    if(!isNaN($(this).attr('id').split('|')[0])){
+      filter_children.push($(this).attr('id'));
+      }else {
+        filter_user_children.push($(this).attr('id').split('|')[2])
+      }
+    });
 
     if (xhr_chart && xhr_chart.readyState != 4) {
       xhr_chart.abort();
@@ -202,6 +228,10 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         filtered_form_ids: filtered_form_ids,
         from_date: from_date,
         to_date: to_date,
+        from_date_subform: from_date_subforms,
+        to_date_subform: to_date_subforms,
+        filter_children:filter_children,
+        filter_user_children:filter_user_children
       },
       success: function(data) {
         data_charts = data;
@@ -1172,8 +1202,6 @@ function maximize_chart(e){
     $('.table_data_container').removeClass('d-none');
   } else{
     original_chart_container = element_to_maximize.parentNode;
-    console.log("Padre original")
-    console.log(original_chart_container)
     $(element_to_maximize).detach().appendTo('body');
     $(element_to_maximize).addClass('chart_maxi');
     $('#sidebar_all').addClass('d-none');
@@ -2430,8 +2458,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
     datatype: 'json',
     data: data,
     success: function(data) {
-      console.log("Data al modal de registro")
-      console.log(data)
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
       $("#info-modal").modal('show');
@@ -3758,7 +3784,6 @@ function set_script_all(){
 
 
 function calculate_all(first_time, isparent, id_child_calculate , id_field_child_calculate, is_new_child){
-  console.log("Calcula")
   var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   if(is_new_file){var type_calculation = "new_file"} else{ var type_calculation = "data_edition"}
   //Ejecuta Calculate de campos padres
