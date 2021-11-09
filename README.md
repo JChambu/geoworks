@@ -40,14 +40,6 @@ USER_PASSWORD: <your-password>
 
 ### Deployamos
 
-``` sh
-sudo sh deploy.sh
-```
-
-Ahora deberíamos poder acceder a la aplicación desde `<host>:<app-port>`
-
-##### Alternativamente podemos ejecutar los comandos de `deploy.sh` por separado:
-
 Creamos las imágenes:
 
 ``` sh
@@ -55,6 +47,7 @@ sudo docker-compose build
 ```
 
 Creamos y levantamos los contenedores:
+
 ``` sh
 sudo docker-compose up -d
 ```
@@ -64,6 +57,8 @@ Creamos la base de datos:
 ``` sh
 sudo docker exec -it gw-app rake db:create db:schema:load db:seed
 ```
+
+Ahora deberíamos poder acceder a la aplicación desde `<host>:<app-port>`
 
 ### Comandos útiles de Docker:
 
