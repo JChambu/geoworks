@@ -45,6 +45,9 @@
       $('#'+container).css('height','0px');
       $('#'+container).css('width',"100%");
       $('#'+container).css('left',"0%");
+      if(container=="timeslider-container"){
+        $('#'+container).css('overflow',"hidden");
+      }
       $('#sidebar_all').removeClass(container);
       if(container!='charts-container' && ($('#sidebar_all').hasClass('charts-container') || $('#sidebar_all').hasClass('charts-container_expanded'))){
         setTimeout(function(){
@@ -61,6 +64,12 @@
         if(!$('#sidebar_all').hasClass('charts-container_expanded') && !$('#sidebar_all').hasClass('timeslider-container_expanded') && !$('#sidebar_all').hasClass('filter-container_expanded')){
           $(".leaflet-right").css("margin-right", "30%");
           $(".table_data_container").css("width", "70%");
+        }
+        if(!$('#sidebar_all').hasClass('charts-container_expanded') && !$('#status-view').hasClass('status-view-expanded') ){
+          $(".table_data_container").css("width", "70%");
+        }
+        if(!$('#sidebar_all').hasClass('charts-container_expanded') && !$('#sidebar_all').hasClass('charts-container') && !$('#status-view').hasClass('status-view-expanded') ){
+            $(".table_data_container").css("width", "100%");
         }
       }
     }
@@ -87,17 +96,27 @@
         }
       }
       $('#sidebar_all').removeClass(container+"_expanded");
-      if(!$('#sidebar_all').hasClass('charts-container_expanded') && !$('#sidebar_all').hasClass('timeslider-container_expanded') && !$('#sidebar_all').hasClass('filter-container_expanded')){
+      if(!$('#sidebar_all').hasClass('charts-container_expanded') && !$('#sidebar_all').hasClass('timeslider-container_expanded')  && !$('#sidebar_all').hasClass('filter-container_expanded')){
         $(".leaflet-right").css("margin-right", "30%");
         $(".table_data_container").css("width", "70%");
       }
+
       if(container=='timeslider-container'){var height = height_time_slider;}
       if(container=='filter-container'){var height = height_filters;}
       if(container=='charts-container'){var height = height_charts;}
       $('#'+container).css('height',height);
       $('#'+container).css('width',"100%");
       $('#'+container).css('left',"0%");
+      if(container=="timeslider-container"){
+        $('#'+container).css('overflow',"visible");
+      }
       $('#sidebar_all').addClass(container);
+      if(!$('#sidebar_all').hasClass('charts-container_expanded') && !$('#status-view').hasClass('status-view-expanded') ){
+        $(".table_data_container").css("width", "70%");
+      }
+      if(!$('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded') && !$('#status-view').hasClass('status-view-expanded')){
+        $(".table_data_container").css("width", "100%");
+      }
       if(need_recalculate){init_chart_doughnut();}
       if(need_draw_charts){draw_charts();}
       if($('#sidebar_all').hasClass('charts-container')){
@@ -112,8 +131,13 @@
       //Pantalla extendida
       $('#'+container).css('width',"200%");
       $('#'+container).css('left',"-100%");
-      $(".table_data_container").css("width", "40%");
+      if(container=="charts-container" || $('#status-view').hasClass('status-view-expanded')){
+        $(".table_data_container").css("width", "40%");
+      }
       $(".leaflet-right").css("margin-right", "60%");
+      if(container=="timeslider-container"){
+        $('#'+container).css('overflow',"visible");
+      }
       var need_draw_charts = false;
       if(container == "charts-container"){
         if($('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded')){
@@ -218,53 +242,14 @@ function min_photo(){
   </div>
 </div>
 
-<div id="time-slider-modal" class="modal fade">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title" id="chartModalLabel"> Time Slider </h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-row">
-          <div class="col-md-6">
-            <label class="string optional control-label" for="time_slider_step">Intervalo</label>
-            <select class="form-control form-control-sm" id="time_slider_step" onchange="change_step_time_slider()" style="cursor:pointer;">
-              <option value="day" label="Día"></option>
-              <option value="week" label="Semana"></option>
-              <option value="month" label="Mes"></option>
-              <option value="year" label="Año"></option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row mt-3">
-          <div class="col-md-6">
-            <label class="string optional control-label" for="time_slider_from">Desde</label>
-            <input class="string optional form-control form-control-sm" type="text" id="time_slider_from" style="cursor:pointer">
-          </div>
-          <div class="col-md-6">
-            <label class="string optional control-label" for="time_slider_to">Hasta</label>
-            <input class="string optional form-control form-control-sm" type="text" id="time_slider_to" style="cursor: pointer;">
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-        <input type="button"  value="Guardar" onclick="set_time_slider()" class="btn btn-primary">
-      </div>
-    </div>
-  </div>
-</div>
-
 <%= form_for :q, :html => {:class => 'd-flex justify-content-end', :method => :get} do |f| %>
 
   <div id="map" ondragover="Navarra.photos.allowDrop(event)" ondrop="Navarra.photos.drop(event)">
   </div>
 
-  <div style="position: absolute;width: 30%; left: 70%" id="sidebar_all" class="charts-container">
-  <div class="sidebar pt-1 px-1" id="timeslider-container">
+  <div style="position: absolute;width: 30%; left: 70%" id="sidebar_all">
+
+  <div class="sidebar pt-1 px-1 d-none" id="timeslider-container" style="position: relative; z-index: 500">
     <div class="card text-light chart-bg-transparent pb-0 pt-0" >
       <div class="card-header chart-header-bg-transparent py-1 px-2">
         <div class="view-data-container" >
@@ -274,15 +259,37 @@ function min_photo(){
       </div>
         Rango Temporal
       </div>
-      <div style="overflow-x: hidden;">
-        <div class="card-body" id="filter-time-body">
-          <input type="text" class="d-none" id="time-slider-from-value">
-          <input type="text" class="d-none" id="time-slider-to-value">
+      <div>
+        <div class="card-body p-1" id="filter-time-body">
+          <i id="time_slider_item-save" class="fas fa-calendar-check" style="font-size: 1.5em ; position: absolute; left: 80%; color: rgba(250,250,250,0.8); cursor:pointer; " onclick="set_time_slider_filter()"></i>
+          <i id="time_slider_item-clear" class="fas fa-calendar-times " style="font-size: 1.5em; color: rgba(250,250,250,0.8); position: absolute; left: 90%; cursor:pointer;" onclick="clear_time_slider_filter()"></i>
+        <div>
+          <p class="m-0 mt-2">Formularios</p>
+            <select class="form-control form-control-sm" id="time_slider_step_forms" onchange="     change_step_time_slider('forms')" style="cursor:pointer; display: inline-block; width: 31%; padding: 1px!important;">
+                <option value="day" label="Día"></option>
+                <option value="week" label="Semana"></option>
+                <option value="month" label="Mes"></option>
+                <option value="year" label="Año"></option>
+              </select>
+            <input class="string optional form-control form-control-sm" type="text" id="time_slider_from_forms" style="cursor:pointer; display: inline-block; width: 31%;">
+              <input class="string optional form-control form-control-sm" type="text" id="time_slider_to_forms" style="cursor: pointer;display: inline-block; width: 31%;">
+          </div>
+          <div>
+            <p class="m-0">Sub Formularios</p>
+            <select class="form-control form-control-sm" id="time_slider_step_subforms" onchange="     change_step_time_slider('subforms')" style="cursor:pointer; display: inline-block; width: 31%; padding: 1px!important;">
+                <option value="day" label="Día"></option>
+                <option value="week" label="Semana"></option>
+                <option value="month" label="Mes"></option>
+                <option value="year" label="Año"></option>
+              </select>
+            <input class="string optional form-control form-control-sm" type="text" id="time_slider_from_subforms" style="cursor:pointer; display: inline-block; width: 31%;">
+              <input class="string optional form-control form-control-sm" type="text" id="time_slider_to_subforms" style="cursor: pointer;display: inline-block; width: 31%;">
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="sidebar pt-1 px-1" id="filter-container">
+    </div>
+  <div class="sidebar pt-1 px-1 d-none" id="filter-container">
     <div class="card text-light chart-bg-transparent pb-0 pt-0">
       <div class="card-header chart-header-bg-transparent py-1 px-2">
         <div class="view-data-container status-view-middle" id="status-view-sidebar" >
@@ -294,14 +301,12 @@ function min_photo(){
       </div>
       <div  style="overflow-x: hidden;">
         <div class="card-body py-1 px-2" id="filter-body">
-          <input type="text" class="d-none" id="time-slider-from-value">
-          <input type="text" class="d-none" id="time-slider-to-value">
         </div>
       </div>
     </div>
   </div>
     <% if can? :graphics, :visualizer %>
-    <div class="sidebar pt-1 px-1" id="charts-container">
+    <div class="sidebar pt-1 px-1 d-none" id="charts-container">
     <div class="card text-light chart-bg-transparent pb-0 pt-0">
         <div class="card-header chart-header-bg-transparent py-1 px-2">
           <div class="view-data-container status-view-middle" id="status-view-sidebar" >
@@ -320,7 +325,7 @@ function min_photo(){
 
 
    <% if can? :data, :visualizer %>
-    <div class="pt-1 px-1 table_data_container position-absolute" style="top: 97vh; left: 0%; width: 70%; z-index: 401; transition: 1s; transition-delay: 0.3s">
+    <div class="pt-1 px-1 table_data_container position-absolute" style="top: 97vh; left: 0%; width: 100%; z-index: 401; transition: 1s; transition-delay: 0.3s">
       <div class="card text-light chart-bg-transparent mb-2" id="collapse_data" style="overflow-y: hidden; max-height: 0vh; transition:0.8s; border: none;">
         <%= render :partial => 'project_data' %>
       </div>
@@ -357,19 +362,19 @@ function min_photo(){
       </div>
 </div>
 <% if can? :data, :edit_geom %>
-  <input id="edit_geom_control" value="true">
+  <input class="d-none" id="edit_geom_control" value="true">
 <%else %>
-  <input id="edit_geom_control" value="false">
+  <input class="d-none" id="edit_geom_control" value="false">
 <% end %>
 <% if can? :data, :new %>
-  <input id="new_geom_control" value="true">
+  <input class="d-none" id="new_geom_control" value="true">
 <%else %>
-  <input id="new_geom_control" value="false">
+  <input class="d-none" id="new_geom_control" value="false">
 <% end %>
 <% if can? :data, :new_subform %>
-  <input id="new_subform_control" value="true">
+  <input class="d-none" id="new_subform_control" value="true">
 <%else %>
-  <input id="new_subform_control" value="false">
+  <input class="d-none" id="new_subform_control" value="false">
 <% end %>
 
 <div id="photos-modal" class="modal fade card text-light chart-bg-transparent pb-0 pt-0 custom_modal_photos" data-backdrop="false" draggable=true ondragstart="Navarra.photos.drag_photos(event)">
@@ -391,6 +396,68 @@ function min_photo(){
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<div id="pdf-modal" class="modal fade card text-light chart-bg-transparent pb-0 pt-0 custom_modal_pdf" data-backdrop="false">
+  <div class="modal-dialog m-0 mw-100">
+    <div class="modal-content white_transparent" style="min-height:89.5vh">
+      <div class="card-header chart-header-bg-transparent py-1 px-2 custom_pdf_header">
+        <div class="view-data-container" >
+          <a data-toggle="dropdown" id="mails_alert_button" href="#" aria-haspopup="true" aria-expanded="true" class="d-none">
+            <i class="fas fa-eye view-data"  title="Mostrar otro destinatario" ></i>
+          </a>
+          <div class="dropdown-menu scroll p-2" id="dropdown_alert_mails" aria-labelledby="mails_alert_button" style="max-height: 80vh; max-width: 80%;overflow-y: auto; position: absolute;">
+          </div>
+            <i class="fas fa-envelope view-data d-none" id="send_alerts_button" title="Enviar Alertas" onclick="Navarra.pdf.send_alerts()" ></i>
+            <i class="fas fa-save view-data d-none" id="save_pdf_button" title="Guardar Reporte" onclick="Navarra.pdf.save_pdf()" ></i>
+            <i class="fas fa-edit view-data d-none" id="edit_pdf_button" title="Elimine imágnes y ajuste problemas de superposición" onclick="Navarra.pdf.edit_pdf()"></i>
+            <i class="fas fa-times view-data" type="button" class="close" onclick="Navarra.pdf.close_pdf()" aria-label="Close"></i>
+          </div>
+      </div>
+      <div class="modal-body p-1 pl-4 pr-4 pt-2" style="position: relative;">
+        <div class="pdf_header">
+          <img class="logo_coorp_pdf logo_coorp_pdf_src element_pdf">
+          <div class="w-100 text-center" style = "line-height: 1;">
+            <p class="pdf_title element_pdf" id="report_alert_title" style="font-size:1.5vh">REPORTE</p>
+            <br/>
+            <p class="element_pdf pdf_title pdf_created" style="font-size:1.3vh"></p>
+          </div>
+          <div class="div_powered">
+            <p class="pdf_powered">powered by</p>
+            <%= image_tag "logo_gw_hor_2.png", class: 'logo_pdf' %>
+          </div>
+        </div>
+         <div class="alert_header text-center p-4">
+          <img class="logo_coorp_pdf_src" style="max-width:35%">
+          <div style = "margin-top: 30px;" id="header_alert_text">
+            <p class="pdf_title" style="display: inline-block; font-size: 28px;margin: 0px; color: red; font-weight: bold;">ALERTA</p>
+            <br/>
+            <p class="pdf_created" style="font-size:0.8em; display: inline-block; margin: 0px"></p>
+          </div>
+          <div style="width: 100%; margin-top: 10px; display: inline-block;">
+            <a href="http://www.gisworking.com/" target="_blank" style="text-decoration: none;">
+              <p style="font-size: 0.5em; margin: 8px 0px 0px 20px; line-height:0px; color: #666">powered by</p>
+              <img id="logo_gw2" style="width:20%; margin:0px" %>
+            </a>
+          </div>
+        </div>
+        <div id="pdf_body"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast-->
+<div class="toast custom_toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+  <div class="toast-header">
+    <%= image_tag "logo_gw_hor_2.png", class: 'mr-auto', height:"30" %>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+    <h7 id="text_toast"></h7>
   </div>
 </div>
 

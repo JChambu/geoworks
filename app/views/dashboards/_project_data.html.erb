@@ -1,5 +1,5 @@
 <script type="text/javascript">
-
+var top_level_project_type_ids = [];
 //scroll de ambas tablas simultáneamente
 $(document).ready(function () {
     $(".div_table").on("scroll", function() {
@@ -51,6 +51,20 @@ $('#table_select_all').click(function(){
   if($('.field_label').length==0){
     $('#checkbox_Etiquetas').prop("disabled",true);
   }
+
+// Habilita botón guardar si la tabla abierta es una tabla ya guardada 
+  $("#save_table_button").click(function(){
+    if($('#table_id').val()!=""){
+      $('#save_table_button_edit').removeClass('d-none');
+    } else {
+      $('#save_table_button_edit').addClass('d-none');
+    }
+  });
+
+  // evita cierre de modal selectores para reporte de alertas y para agrupar por subformularios en reportes pdf
+  $('#alert_mail , #alert_group , #set_subfield_grouped, #set_subfield_grouped_container' ).click(function(e){
+    e.stopPropagation();
+  })
 });
 
 //movimiento de header columnas
@@ -66,47 +80,48 @@ function set_hover(){
 
 
 //ordena descendente y ascendente
-function order_column(index){
-  var column_order=$('#field_key'+index).val();
+function order_column(key){
+  var column_order=$('#field_key'+key).val();
   $('.order_by_column').val(column_order);
   init_data_dashboard(false);
 }
 
 //abre buscar x  columna
-function search_column(index){
+function search_column(key){
   $('#choose').val('');
-  var texto_buscar=$('#field_key'+index).val();
+  var texto_buscar=$('#field_key'+key).val();
  $('#choose').attr("placeholder", "Buscar "+texto_buscar);
  $('.filter_by_column').val(texto_buscar);
  $('#choose').css("width","25%");
  $('#choose').removeClass("p-0");
  $('#choose').focus();
- $('.choose_column').val(index);
 }
 
 
 //oculta columnas
-function hide_column(index){
-  index+=3;
- $('#table_hidden tr td:nth-child('+index+')').addClass("d-none");
- $('#table_hidden tr th:nth-child('+index+')').addClass("d-none");
- $('#table_visible tr td:nth-child('+index+')').hide();
- $('#table_visible tr th:nth-child('+index+')').addClass("d-none");
- $('.addcolumns a:nth-child('+(index-3)+')').removeClass("d-none");
+function hide_column(key){
+ $('#columnfake_'+key).addClass("d-none");
+ $('#subcolumnfake_'+key).addClass("d-none");
+ $('#columnfake_data_'+key).addClass("d-none");
+ $('#column_'+key).addClass("d-none");
+ $('.celd_key'+key).addClass("d-none");
+ $('#addcolumn_'+key).removeClass("d-none");
  $('.fa-plus').removeClass("d-none");
+ adjust_colum_width();
 }
 
 //muestra columnas
-function show_column(index,){
-  index+=3;
- $('#table_hidden tr td:nth-child('+index+')').removeClass("d-none")
- $('#table_hidden tr th:nth-child('+index+')').removeClass("d-none")
- $('#table_visible tr td:nth-child('+index+')').show()
- $('#table_visible tr th:nth-child('+index+')').removeClass("d-none")
- $('.addcolumns a:nth-child('+(index-3)+')').addClass("d-none");
+function show_column(key){
+ $('#columnfake_'+key).removeClass("d-none");
+ $('#subcolumnfake_'+key).removeClass("d-none");
+ $('#columnfake_data_'+key).removeClass("d-none");
+ $('#column_'+key).removeClass("d-none");
+ $('.celd_key'+key).removeClass("d-none");
+ $('#addcolumn_'+key).addClass("d-none");
  if($(".addcolumns").children().length == $(".column_data.d-none").length){
    $('.fa-plus').addClass("d-none");
  }
+ adjust_colum_width();
 }
 
 //mostrar dato en el mapa
@@ -168,15 +183,27 @@ function get_string_filter(){
   return string_filter;
 }
 
+// FUNCIONES PARA TRAER DATOS DE SUBFORMULARIOS
 function show_subfield(field_ids){
   var app_ids_table = Navarra.dashboards.app_ids_table;
+  var from_date_subforms = Navarra.project_types.config.from_date_subforms;
+  var to_date_subforms = Navarra.project_types.config.to_date_subforms;
+  var filter_children = [];
+  $('.filter_container').each(function(){
+    if(!isNaN($(this).attr('id').split('|')[0])){
+      filter_children.push($(this).attr('id'));
+    }
+  });
   $.ajax({
     type: 'GET',
     url: '/project_data_children/show_children',
     datatype: 'json',
     data: {
       project_ids: app_ids_table,
-      project_field_ids: field_ids
+      project_field_ids: field_ids,
+      from_date_subforms: from_date_subforms,
+      to_date_subforms: to_date_subforms,
+      filter_children: filter_children,
     },
     success: function(data) {
       data.forEach(function(father_field){
@@ -195,6 +222,7 @@ function show_subfield(field_ids){
         var new_p = document.createElement('P');
         new_p.className = 'custom_p_header';
         new_p.innerHTML = father_field.project_field_name.toUpperCase();
+        new_p.id = 'header_columntext_'+id_field;
         new_div.appendChild(new_p);
         var new_div1 = document.createElement('DIV');
         new_div1.className = 'custom_div_table custom_onclick'
@@ -214,10 +242,11 @@ function show_subfield(field_ids){
   
         // Agrega subcabecera foto y fecha
         var new_column = document.createElement('TH');
-        new_column.style.minWidth = "154px";
+        new_column.style.minWidth = "204px";
+        new_column.style.width = "204px";
         new_column.className = 'header_column subfield_column_'+id_field;
         if(column_par==0){new_column.classList.add('zebra')}
-        new_column.innerHTML = "Fecha"
+        new_column.innerHTML = "Fecha / Usuario"
         $('#tr_subfields').append(new_column);
         
         father_field.head.forEach(function(child_field){
@@ -240,6 +269,14 @@ function show_subfield(field_ids){
             var new_p = document.createElement('P');
             new_p.className = 'custom_p_header';
             new_p.innerHTML = child_field.name;
+            new_p.id = id_field+"_subheader_"+child_field.field_id;
+            if(child_field.calculated_field == '{"ID":""}'){
+              var unique_id = true;
+            } else {
+              var unique_id = false
+            }
+            new_p.setAttribute('unique_id',unique_id);
+        
             new_tr.appendChild(new_p);
             var new_div1 = document.createElement('DIV');
             new_div1.className = 'custom_div_table'
@@ -265,6 +302,13 @@ function show_subfield(field_ids){
         $('#tr_visible').append(new_column_subform);
         set_hover();
 
+        // agrega body oculto
+        var new_column_width_only = document.createElement("TD");
+        new_column_width_only.setAttribute('colspan',1);
+        new_column_width_only.id = "body_only_width_subform_"+id_field;
+        new_column_width_only.className = "custom_row width_only"
+        $('#tbody_hidden tr').append(new_column_width_only);
+
         // Agrega cabecera oculta
         var new_column = document.createElement('TH');
         new_column.className='subfield_column_'+id_field
@@ -283,7 +327,7 @@ function show_subfield(field_ids){
         $('.row_data').each(function(row){
           var new_td = document.createElement('TD');
           new_td.className="custom_row custom_row_child subfield_column_"+id_field;
-          new_td.style.minWidth = '154px';
+          new_td.style.minWidth = '204px';
           if(column_par==0){new_td.classList.add('zebra')}
           var key_data = $(this).attr("id").substring(14);          
           if(data_child[key_data]!=undefined){
@@ -300,6 +344,8 @@ function show_subfield(field_ids){
                 new_cel_subform.style.border='none'; 
                 new_cel_subform.style.padding='5px';   
                 new_cel_subform.style.width='30px';
+                new_cel_subform.style.minWidth='30px';
+                new_cel_subform.className='child_celd';
                 var new_icon = document.createElement('I');
                 new_icon.className = "fas fa-image icons";
                 new_icon.setAttribute('onClick', 'Navarra.photos.open_photos('+column.id+',true)')
@@ -309,13 +355,18 @@ function show_subfield(field_ids){
               // agrega fecha de creación
               var new_cel_subform = document.createElement('TD');
                 new_cel_subform.style.border='none';   
-                new_cel_subform.style.padding='5px';  
+                new_cel_subform.style.padding='5px'; 
+                new_cel_subform.style.textAlign='left'; 
+                new_cel_subform.style.whiteSpace='nowrap';  
+                new_cel_subform.className='child_celd';
+                new_cel_subform.id = id_field+"_childdate_"+column.id;
                 if(column.gwm_created_at!=null){
                   var created_date = column.gwm_created_at.split('T')[0];
                   var created_time = column.gwm_created_at.split('T')[1].substring(0,5)
-                  new_cel_subform.innerHTML = created_date.split('-')[2]+'/'+created_date.split('-')[1]+'/'+created_date.split('-')[0].substring(2)+" "+created_time;
+                  new_cel_subform.innerHTML = created_date.split('-')[2]+'/'+created_date.split('-')[1]+'/'+created_date.split('-')[0].substring(2)+" "+created_time +" " +column.username;
                 }
-                new_cel_subform.style.width='120px';
+                new_cel_subform.style.width='200px';
+                new_cel_subform.style.minWidth='200px';
                 new_sub_column.appendChild(new_cel_subform);
 
               var sub_columns_visibles = $('.'+id_field+'subfield');
@@ -323,9 +374,11 @@ function show_subfield(field_ids){
                 var colname = $(this).attr('id').split('_')[2];
                 var new_cel_subform = document.createElement('TD');
                 new_cel_subform.style.padding='5px';  
-                new_cel_subform.className = id_field+"sub"+colname + " d-none";
+                new_cel_subform.className = id_field+"sub"+colname + " d-none child_celd";
+                new_cel_subform.id = id_field+"_subceld_"+colname + "_" + column.id ;
                 new_cel_subform.style.whiteSpace='nowrap';
                 new_cel_subform.style.border='none';
+                new_cel_subform
                 if(column.properties[colname]!=undefined){
                   new_cel_subform.innerHTML = column.properties[colname];
                 }
@@ -335,9 +388,11 @@ function show_subfield(field_ids){
             })           
           }
           $(this).append(new_td);
-        })
+        });
         if(Object.keys(data_child).length!=0){
           open_subheaders(id_field);
+        } else {
+          open_subheaders_no_data(id_field);
         }
         //ajusta ubicación del modal
         $('.custom_onclick , .custom_onclick_icon').on('click', function(event) {
@@ -353,10 +408,70 @@ function show_subfield(field_ids){
         
       });//end forEach
       verify_scroll_table();
+      adjust_colum_width();
     }//end success
   });//end ajax
-
 }
+
+// FUNCIONES PARA TRAER COLUMNAS DE CAPAS SUPERIORES
+function get_layer_data(){
+  var app_ids_table = Navarra.dashboards.app_ids_table;
+    data = {
+      top_level_project_type_ids: top_level_project_type_ids,
+      project_ids: app_ids_table,
+    }
+
+    $.ajax({
+      type: 'GET',
+      url: '/projects/search_data_for_pdf',
+      datatype: 'JSON',
+      data: data,
+      success: function(data) {
+        data.forEach(function(data_project){
+        data_project.forEach(function(row_layer){
+            properties_layer= row_layer['properties'];
+          Object.keys(properties_layer).forEach(function(prop){
+            $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).html(row_layer['properties'][prop]);
+          })
+        });//end forEach      
+      });
+      },
+    });
+}
+
+function show_column_layer(key_layer,id_layer){
+  if(top_level_project_type_ids.indexOf(id_layer)<0){
+    top_level_project_type_ids.push(id_layer);
+    get_layer_data();
+  }
+  $('#columnfake_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
+  $('#subcolumnfake_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
+  $('#columnfake_data_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
+  $('#column_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
+  $('.celdlayer_key'+id_layer+'\\|'+key_layer).removeClass("d-none");
+  $('#addcolumn_layer\\|'+key_layer+'\\|'+id_layer).addClass("d-none");
+  adjust_colum_width();
+  verify_scroll_table();
+}
+
+function hide_column_layer(key_layer,id_layer){
+  $('#columnfake_layer_'+key_layer+"_"+id_layer).addClass("d-none");
+  $('#subcolumnfake_layer_'+key_layer+"_"+id_layer).addClass("d-none");
+  $('#columnfake_data_layer_'+key_layer+"_"+id_layer).addClass("d-none");
+  $('#column_layer_'+key_layer+"_"+id_layer).addClass("d-none");
+  $('.celdlayer_key'+id_layer+'\\|'+key_layer).addClass("d-none");
+  $('#addcolumn_layer\\|'+key_layer+'\\|'+id_layer).removeClass("d-none");
+  adjust_colum_width();
+  verify_scroll_table();
+}
+
+function create_layers_table(){
+  top_level_project_type_ids = [];
+  $('.addcolumns_layers a.d-none').each(function(){
+    this.click();
+  })
+}
+// TERMINAN FUNCIONES DE CAPAS SUPERIORES
 
 
 function open_subcolumn(event){
@@ -366,11 +481,10 @@ function open_subcolumn(event){
   $(event.target).addClass('d-none');
   $('#table_visible_container').css('height','60px');
   var count_open_subforms = verify_open_columns();
-  if(count_open_subforms==1 && !$('#div_table_data').hasClass('min_height_on')){
-    $('#div_table_data').addClass("min_height_on");
-    var new_height = (parseInt($('#div_table_data').css('height')) - 30 ) + 'px';
-    $('#div_table_data').css('height',new_height);
+  if(count_open_subforms>0){
+     $('#table_visible_container').css('height','60px');
   }
+  adjust_table_height();
   var width_array = [];
   //Ajusta ancho columnas
     $('.'+id_field+'sub'+id_subfield).each(function(){
@@ -384,7 +498,9 @@ function open_subcolumn(event){
     // ajusta colspan
     var new_colsapan =  parseInt($('#header_column_'+id_field).attr('colspan'))+1;
     $('#header_column_'+id_field).attr('colspan',new_colsapan);
+    $('#body_only_width_subform_'+id_field).attr('colspan',new_colsapan);
     verify_scroll_table();
+    adjust_colum_width();
 }
 
 function remove_subcolumn(id_field,id_subfield){
@@ -393,14 +509,19 @@ function remove_subcolumn(id_field,id_subfield){
   // ajusta colspan
     var new_colsapan =  parseInt($('#header_column_'+id_field).attr('colspan'))-1;
     $('#header_column_'+id_field).attr('colspan',new_colsapan);
+    $('#body_only_width_subform_'+id_field).attr('colspan',new_colsapan);
   verify_close_subheader();
   verify_scroll_table();
+  adjust_colum_width();
 }
 
 function remove_column(id_field){
+  // elimina columna de campos subformularios
   $('.subfield_column_'+id_field).remove();
+  $('#body_only_width_subform_'+id_field).remove();
   $('#open_subform'+id_field).removeClass('d-none');
   verify_close_subheader();
+  adjust_colum_width();
 }
 
 function verify_close_subheader(){
@@ -408,10 +529,8 @@ function verify_close_subheader(){
   var count_open_subforms = verify_open_columns();
   if(count_open_subforms==0){
      $('#table_visible_container').css('height','30px');
-     var new_height = (parseInt($('#div_table_data').css('height')) + 30 ) + 'px';
-     $('#div_table_data').css('height',new_height);
-     $('#div_table_data').removeClass("min_height_on");
   }
+  adjust_table_height();
   verify_scroll_table();
 }
 
@@ -426,29 +545,322 @@ function verify_open_columns(){
   return count_open_subforms;
 }
 
+function adjust_table_height(){
+  var height_browser = window.innerHeight
+  var height_card=$(".card_data").innerHeight()
+  var height_table_head = $('#table_visible_container').innerHeight();
+  if($('#status-view').hasClass('status-view-expanded')){
+    var height_table = height_browser - $("#nav_bar").innerHeight() -height_card - height_table_head - 20;
+    $(".table_scroll").css("height", height_table);
+  } else {
+    if(!$('#status-view').hasClass('status-view-condensed')){
+    var height_table = height_browser*.5 - height_card - height_table_head - 20;
+    $(".table_scroll").css("height", height_table);
+  }
+  }
+}
+
+function save_table(is_new){
+  if(is_new){
+    var table_name = $('#table_new_name').val();
+    if(table_name==""){
+      $('#text_toast').html("Agregue un nombre para la tabla");
+      $('.toast').toast('show');
+      return;
+    }
+    var type_method = "POST";
+    var url = '/table_configurations/create_table';
+  } else {
+    var table_id = $('#table_id').val();
+    var table_name = $('#table_name').val(); 
+    var type_method = "PATCH";
+    var url = '/table_configurations/edit_table';
+  }
+  var p_field_keys = [];
+  $('.column_data.d-none').each(function(){
+    p_field_keys.push(this.id.substring(10));
+  });
+  var project_subfields = [];
+   $('.subfields_data.d-none').each(function(){
+    var id_subfield_father = this.id.substring(12);
+    var subfields_ids = [];
+       $('.'+id_subfield_father+'subfield.d-none').each(function(){
+        subfields_ids.push(this.id.split('_')[2]);
+       });
+    var subfield_table = {
+      p_field_id : id_subfield_father,
+      p_subfields_ids: subfields_ids
+    }
+    project_subfields.push(subfield_table);
+  });
+  var cross_layers = [];
+  var cross_layers_fields = [];
+  var cross_layer_id = 0;
+  $('.column_data_layer.d-none').each(function(index){
+    if((cross_layer_id != this.id.split('|')[2] && cross_layer_id!=0)){
+      cross_layer = {
+        project_type_id: cross_layer_id,
+        p_field_keys: cross_layers_fields
+      }
+      cross_layers.push(cross_layer);
+      cross_layers_fields = [];
+    }
+      cross_layers_fields.push(this.id.split('|')[1]);
+      cross_layer_id = this.id.split('|')[2];    
+
+      if((index+1)==$('.column_data_layer.d-none').length){
+        cross_layer = {
+          project_type_id: cross_layer_id,
+          p_field_keys: cross_layers_fields
+        }
+      cross_layers.push(cross_layer);
+      cross_layers_fields = [];
+    }
+  });
+
+  var per_page = $(".select_perpage").html();
+  var per_page_value = parseInt(per_page);
+  if (isNaN(per_page_value)) {
+    var per_page_value = "";
+  }
+  var filter_value = $("#choose").val();
+  var filter_by_column = $(".filter_by_column").val();
+  var order_by_column = $(".order_by_column").val();
+  var settings = {
+    current_layer: {
+      p_field_keys: p_field_keys,
+      project_subfields: project_subfields
+    },
+    cross_layers: cross_layers, 
+    per_page: per_page_value,
+    order_by: order_by_column,
+    filter_by: {
+      key: filter_by_column,
+      value: filter_value,
+    }
+  }
+  var table_to_save = {
+    config: settings,
+    name: table_name,
+    project_type_id: Navarra.dashboards.config.project_type_id,
+    table_id: table_id
+  }
+  $.ajax({
+    type: type_method,
+    url:  url,
+    datatype: 'JSON',
+    data: table_to_save,
+    success: function(data) {
+      $('#text_toast').html(data.status);
+      $('.toast').toast('show');
+      if(is_new){
+        var table_new_id = data.table_id;
+        $('#table_id').val(table_new_id);
+        $('#table_name').val($('#table_new_name').val()); 
+        $('#table_name_visible').html($('#table_new_name').val()); 
+        // agrega nueva tabla al modal de tablas
+        var new_a = '<a class="dropdown-item d-flex" onclick="open_panel(\'view-data-middle\','+table_new_id+')" href="#" id="dropdown_table'+table_new_id+'"><h7 class="mr-auto">'+table_name+'</h7><i class="fas fa-trash-alt ml-3 invisible icon_delete_table" title="Eliminar" onclick="remove_table(event ,'+table_new_id+')"></i></a>'
+        $('#tables_container').prepend(new_a);
+      }
+      $('#table_new_name').val(""); 
+    }
+  });
+}
+
+function show_trash_tables(event){
+  event.stopPropagation();
+  if($('#show_trash_tables').hasClass('show_trash_tables_on')){
+    $('#show_trash_tables').removeClass('show_trash_tables_on');
+    $('.icon_delete_table').addClass('invisible');
+  } else {
+    $('#show_trash_tables').addClass('show_trash_tables_on');
+    $('.icon_delete_table').removeClass('invisible');
+  }
+}
+
+function remove_table(event,table_id){
+  event.stopPropagation();
+  data = {
+    table_id: table_id
+  }
+
+  $.ajax({
+    type: 'DELETE',
+    url: '/table_configurations/destroy_table',
+    datatype: 'JSON',
+    data: data,
+    success: function(data) {
+        $('#text_toast').html(data.status);
+        $('.toast').toast('show');
+        $('#dropdown_table'+table_id).remove();
+    },
+    error: function( jqXHR, textStatus, errorThrown ) {
+      console.log(jqXHR);
+      console.log(textStatus);
+      console.log(errorThrown);
+     }
+  });
+}
+
+function open_share_table(){
+  // Agrega las opciones abiertas en la tabla
+    $('#alert_mail').empty();
+    $('#alert_group').empty();
+     var new_option = "<option></option>";
+      $('#alert_mail').append(new_option);
+      $('#alert_group').append(new_option);
+    $('.column_data_layer.d-none').each(function(){
+      var id_layer = $(this).attr('id').split('|')[2]+'\\|'+$(this).attr('id').split('|')[1];
+      var id_layer_group = $(this).attr('id_field_layer').split('id')[1];
+      var new_option = "<option id_field_layer="+$(this).attr('id_field_layer').split('id')[1]+" value="+id_layer+">"+$(this).html()+"</option>";
+      var new_option_group = "<option value="+id_layer_group+">"+$(this).html()+"</option>";
+      $('#alert_mail').append(new_option);
+      $('#alert_group').append(new_option_group);
+    });
+    $('.column_data.d-none').each(function(){
+      var new_option = "<option value="+$(this).attr('id').substring(10)+">"+$(this).html()+"</option>";
+      $('#alert_mail').append(new_option);
+      $('#alert_group').append(new_option);
+    });
+    if($('.subfields_data.d-none').length>0){
+      var new_option = "<option value='suform_grouped'>Subformularios</option>";
+      $('#alert_group').append(new_option);
+    }
+    // elimina color danger
+    $('.custom_row.custom_danger').removeClass('custom_danger')
+}
+
+function open_alert_modal(event){
+  event.stopPropagation();
+  if($('#alert_options').hasClass('d-none')){
+    $('#alert_options').removeClass('d-none');
+  } else {
+    $('#alert_options').addClass('d-none');
+  }
+}
+
+// Modal PDF
+function show_pdf(is_alert){
+  if($('#table_visible .custom-control-input:checked').not('#table_select_all').not('#table_select_all_hidden').length==0){
+    $('#text_toast').html("No hay registros seleccionados");
+    $('.toast').toast('show');
+    return;
+  }
+  $("#pdf-modal").modal('show'); 
+  $('.table_data_container').addClass('d-none');
+  Navarra.pdf.init(is_alert);
+}
+
+//Funciones para armar alertas
+function generate_alerts(){
+  if($('#alert_mail').val()!=null){
+    if($('#alert_mail').val().split('|').length==2){
+      // Es un campo de capa contenedora
+      var text_celd = "celdlayer";
+    } else {
+      // es campo del proyecto activo
+      var text_celd = "celd";
+    }
+  }
+  var alert_mail_key = $('#alert_mail').val();
+  if(alert_mail_key==""){
+    $('#text_toast').html("El campos \"Enviar Alertas a\" no puede estar vacío");
+    $('.toast').toast('show');
+    return;
+  }
+  var pattern_mail = /^\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i
+  var wrong_mail_count = 0
+  $('#table_visible .custom-control-input:checked').not('#table_select_all').not('#table_select_all_hidden').each(function(){
+    var id_checked = $(this).attr('id').substring(13);
+    var alert_mail_value = $('.'+text_celd+'_id'+id_checked+'.'+text_celd+'_key'+alert_mail_key).html();
+    //verifica si es formato mail
+    if(!pattern_mail.test(alert_mail_value)) {
+      var alert_mail_value = $('.'+text_celd+'_id'+id_checked+'.'+text_celd+'_key'+alert_mail_key).addClass('custom_danger');
+      wrong_mail_count++
+    }
+  });
+  if(wrong_mail_count>0){
+    $('#text_toast').html("Hay destinatarios que no cumplen el formato correcto de e-mail");
+    $('.toast').toast('show');
+    return;
+  }
+  show_pdf(true);
+}
+
 
 </script>
 
 <div class="card-header chart-header-bg-transparent py-1 px-2 card_data">
-  Datos
-  <% if can? :data, :export %>
-    <a data-toggle="modal" id="show_report"><i class="fas fa-clipboard-list ml-3" title="Reporte" style="cursor: pointer;" ></i></a>
-    <a onclick="download_geojson()"><i class="fas fa-code ml-2" title="Exportar GeoJSON" style="cursor: pointer;" ></i></a>
-  <% end %>
+  <h7 class="d-inline" id="table_name_visible">Datos</h7>
+  <input type="text" class="d-none" disabled="true" id="table_id">
+  <input type="text" class="d-none" disabled="true" id="table_name">
+  <div class="d-inline">
+    <a data-toggle="dropdown" id="save_table_button" href="#" aria-haspopup="true" aria-expanded="false" >
+      <i class="fas fa-save ml-3" title="Guardar Tabla" style="cursor: pointer;" ></i>
+    </a>
+    <div class="dropdown-menu scroll p-2" aria-labelledby="save_table_button">
+      <button class="btn btn-primary p-1 d-none" id="save_table_button_edit" type="button" onclick="save_table(false)" style="font-size: 0.8em">Guardar</button>
+      <button class="btn btn-primary p-1 ml-2" type="button" onclick="save_table(true)" style="font-size: 0.8em">Guardar Como</button>
+      <input type="text" class="string optional form-control form-control-sm d-inline border-0 w-auto" placeholder="Nombre de la tabla" id="table_new_name">
+      <button class="btn btn-secondary p-1 ml-2" data-dismiss="modal" type="button" style="font-size: 0.8em">Cancelar</button>
+    </div>
+  </div>
+  <div class="d-inline">  
+    <a data-toggle="dropdown" id="share_table" href="#" aria-haspopup="true" aria-expanded="false"><i class="fas fa-share-square ml-2" onclick="open_share_table()" title="Compartir Datos" style="cursor: pointer;" ></i>
+    </a>
+    <div class="dropdown-menu scroll p-2" aria-labelledby="share_table" style="max-height:44vh; overflow-y:auto;">
+      <a data-toggle="modal" id="show_pdf" onclick="show_pdf(false)" style="cursor: pointer;" class="dropdown-item text-left"><i class="fas fa-file-pdf mr-2"></i> Reporte pdf
+        <div class="custom-control custom-checkbox ml-5"  id="set_subfield_grouped_container" title="Agrupar por Subformularios">
+            <input class="custom-control-input" id="set_subfield_grouped" type="checkbox">
+            <label class="string optional control-label custom-control-label" for="set_subfield_grouped"> </label>
+            <h7 style="font-size:0.8em">Agrupar Subformularios</h7>
+          </div>
+      </a>
+      <% if can? :data, :alert %>
+        <a data-toggle="modal" id="show_alert"  onclick="open_alert_modal(event)" style="cursor: pointer;" class="dropdown-item text-left" ><i class="fas fa-bullhorn mr-2" ></i> Alertas
+        </a>
+        <div id="alert_options" class="pl-5 d-none border-bottom border-secondary pb-1" style="font-size: 0.8em">
+          <div class="d-flex">
+            <h7 class="mb-0 w-25">Enviar Alertas a:</h7>
+            <select id="alert_mail" class="form-control form-control-sm w-25 mr-3" style="font-size: 0.8em">
+            </select>
+            <label class="mt-1 mb-0 w-25">Agrupar Alertas por:</label>
+            <select id="alert_group" class="form-control form-control-sm w-25 mt-1" style="font-size: 0.8em">
+            </select>
+          </div>
+          <textarea class="form-control form-control-sm mt-2" id="alert_text" style="width:50vw; height:10vh;resize:none" placeholder="Ingrese el mensaje de Alerta"></textarea>
+          <div class="text-right">
+            <button class="btn btn-primary p-1 mt-2" style="font-size: 1em" type="button" onclick="generate_alerts()">Generar Alertas</button>
+          </div>
+        </div>
+      <% end %>
+      <% if can? :data, :export %>
+        <a onclick="table_to_excel()" style="cursor: pointer;" class="dropdown-item text-left">
+          <i class="fas fa-download mr-2"></i> Exportar a Excel
+        </a>
+        <a class="dropdown-item text-left" style="cursor: pointer;" data-toggle="modal" id="show_report"><i class="fas fa-clipboard-list mr-3" ></i> Reporte
+        </a>
+        <a onclick="download_geojson()" class="dropdown-item text-left" style="cursor: pointer;"><i class="fas fa-code mr-2" ></i> Exportar a GeoJSON
+        </a>
+      <% end %>
+    </div>
+   </div> 
   <div class="d-inline">
     <a data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="dropdown-columns">
       <i class="fas fa-plus ml-2" style="font-size: 0.8em; cursor: pointer;" title="Agregar Columna"></i>
     </a>
     <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; overflow-y: auto;">
       <% if !@fields.nil? %>
-      <% index = 0 %>
         <% @fields.each do |field|  %>
           <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-            <% index=index+1 %>
-            <% if !field.popup %>
-              <a class="dropdown-item column_data" onclick="show_column(<%=index%>)"><%= field.name %></a>
-            <% else %>
-              <a class="dropdown-item column_data d-none" onclick="show_column(<%=index%>)"><%= field.name %></a>
+            <!-- Verifica que tenga autorización para ver el campo -->
+            <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
+            <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
+              <% if !field.popup %>
+                <a class="dropdown-item column_data"  onclick="show_column(<%="'"+field.key+"'"%>)" id=<%="addcolumn_"+field.key %>><%= field.name %></a>
+              <% else %>
+                <a class="dropdown-item column_data d-none is_popup" onclick="show_column(<%="'"+field.key+"'"%>)" id=<%="addcolumn_"+field.key %>><%= field.name %></a>
+              <% end %>
             <% end %>
           <% end %>
         <% end %>
@@ -463,19 +875,49 @@ function verify_open_columns(){
       <% if !@fields.nil? %>
         <% @fields.each do |field|  %>
           <% if field.field_type_id == 7  %>
-            <% field_name = "\'"+field.name+"\'" %>
-              <a class="dropdown-item subfields_data" id="open_subform<%=field.id%>" onclick="show_subfield(<%='['+field.id.to_s+']'%>)"><%= field.name %></a>
+            <!-- Verifica que tenga autorización para ver el campo -->
+            <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
+            <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
+              <% field_name = "\'"+field.name+"\'" %>
+                <a class="dropdown-item subfields_data" id="open_subform<%=field.id%>" onclick="show_subfield(<%='['+field.id.to_s+']'%>)"><%= field.name %></a>
+            <% end %>
           <% end %>
         <% end %>
       <% end %>
     </div>
   </div>
+
+  <div class="d-inline">
+    <a data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="dropdown-columns-layers">
+      <i class="fas fa-layer-group ml-2" style="font-size: 0.8em; cursor: pointer;" title="Agregar Columna de Capas"></i>
+    </a>
+    <div class="dropdown-menu addcolumns_layers scroll" aria-labelledby="dropdown-columns-layers" style="max-height: 40vh; overflow-y: auto;">
+      <% name_layer = ""%>
+      <% if !@top_level_fields.nil? %>
+        <% @top_level_fields.each do |field|  %>
+          <!-- Verifica que tenga autorización para ver el campo -->
+          <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
+          <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
+            <% if field.project_type.name_layer !=name_layer %>
+              <ul class="nav nav-list">
+                <li class="nav-header ml-1"><%= field.project_type.name %></li>
+              </ul>
+              <% name_layer = field.project_type.name_layer %>  
+            <% end %>
+            <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+              <a class="dropdown-item column_data_layer" onclick="show_column_layer(<%="'"+field.key+"','"+field.project_type.id.to_s+"'"%>)" id_field_layer = <%="id"+field.id.to_s %> id=<%="addcolumn_layer|"+field.key+"|"+field.project_type.id.to_s %>><%= field.name %></a>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
   <a class="d-none" id="multiple_edit" onclick="show_item_info(0,false,true)">
     <i class="fas fa-edit ml-2" style="font-size: 0.8em; cursor: pointer;" title="Editar Registros"></i>
   </a>
   
   <input id="choose" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0 ml-2" placeholder="Buscar" style="width: 0%; transition:1.5s;"  >
-  <input type="text" class="choose_column d-none">
   <input type="text" class="filter_by_column d-none">
   <input type="text" class="order_by_column d-none">
   <input type="text" class="total_files d-none">
@@ -508,11 +950,11 @@ function verify_open_columns(){
   <table class="table table-hover m-0 card-body" id="table_hidden" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
     <thead  id="thead_table_visible" class="scroll_false">
       <tr id="tr_visible">
-        <th class="border-0" style="padding-top: 0px; vertical-align: top; cursor: pointer;">
+        <th class="border-0 head_key#_action" style="padding-top: 0px; vertical-align: top; cursor: pointer;">
           <p style="color:white; margin-bottom: 0px"></p>
           <input type="text" class="d-none field_key" value="#_action">
         </th>
-        <th class="border-0" style="padding-top: 0px; vertical-align: top; white-space: nowrap;">
+        <th class="border-0 head_key#_select" style="padding-top: 0px; vertical-align: top; white-space: nowrap;">
           <div class="custom-control custom-checkbox" title="Seleccionar Todo">
             <input class="custom-control-input field_key" id="table_select_all" type="checkbox" value="#_select">
             <label class="string optional control-label custom-control-label" for="table_select_all"> </label>
@@ -520,51 +962,91 @@ function verify_open_columns(){
           <i class="fas fa-image icons invisible"></i>
 
         </th>
-        <th class="border-0" style="padding-top: 0px; vertical-align: top; cursor: pointer;">
-          <p style="color:white; margin-bottom: 0px">#</p>
+        <th class="border-0" style="padding-top: 0px; vertical-align: top; cursor: pointer;">#
           <input type="text" class="d-none field_key" value="#">
+          <div id="layer_container_visible">
+            <% if !@top_level_fields.nil? %>
+              <% @top_level_fields.each do |field|  %>
+                <!-- Verifica que tenga autorización para ver el campo -->
+                <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
+                <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
+                  <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+                    <th class="header_column border-0 header_column_layer d-none " id=<%="columnfake_layer_"+field.key+"_"+field.project_type.id.to_s %>>
+                      <div class="th-hover custom_header">
+                        <p class="custom_p_header" ><%= field.name %></p>
+                        <div class="custom_div_table">
+                          <i class="fas fa-times icons" onclick="hide_column_layer(<%="'"+field.key+"','"+field.project_type.id.to_s+"'"%>)"></i>
+                          <input type="text" class="d-none field_key_layer" id=<%= "headlayer"+field.project_type.id.to_s+"|"+field.key %> value=<%= field.id %>>
+                        </div>
+                      </div>
+                    </th>
+                  <% end %>
+                <% end %>  
+              <% end %>
+            <% end %>
+          </div>
         </th>
         <% if !@fields.nil? %>
-        <% index = 0 %>
           <% @fields.each do |field|  %>
-            <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-            <% index=index+1 %>
-            <% if !field.popup %>
-              <th class="d-none header_column border-0" id=<%="columnfake_"+field.name %>>
-            <% else %>
-              <th class="header_column border-0" id=<%="columnfake_"+field.name %>>
-            <% end %>
-                <div class="th-hover custom_header">
-                  <p class="custom_p_header"><%= field.name %></p>
-                  <div class="custom_div_table">
-                    <i class="fas fa-sort-alpha-down icons" onclick="order_column(<%=index%>)"></i>
-                    <i class="fas fa-search icons" onclick="search_column(<%=index%>)"></i>
-                    <i class="fas fa-times icons" onclick="hide_column(<%=index%>)"></i>
-                    <input type="text" class="d-none field_key" id=<%= "field_key"+index.to_s %> value=<%= field.key %>>
+            <!-- Verifica que tenga autorización para ver el campo -->
+            <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
+            <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
+              <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+                <% if !field.popup %>
+                  <th class="d-none header_column border-0" id=<%="columnfake_"+field.key %>>
+                <% else %>
+                  <th class="header_column border-0" id=<%="columnfake_"+field.key %>>
+                <% end %>
+                  <div class="th-hover custom_header">
+                    <p class="custom_p_header"><%= field.name %></p>
+                    <div class="custom_div_table">
+                      <i class="fas fa-sort-alpha-down icons" onclick="order_column(<%="'"+field.key+"'"%>)"></i>
+                      <i class="fas fa-search icons" onclick="search_column(<%="'"+field.key+"'"%>)"></i>
+                      <i class="fas fa-times icons" onclick="hide_column(<%="'"+field.key+"'"%>)"></i>
+                      <input type="text" class="d-none field_key" id=<%= "field_key"+field.key %> value=<%= field.key %>>
+                    </div>
                   </div>
-                </div>
-              </th>
+                </th>
               <% else %>
+            <% end %>  
+          <% end %>
+        <% end %>
+      <% end %>
+      </tr>
+      <tr id="tr_subfields">
+        <th class="border-0 head_key#_action"></th>
+        <th class="border-0 head_key#_select"></th>
+        <th class="border-0"></th>
+        <% if !@top_level_fields.nil? %>
+          <% @top_level_fields.each do |field|  %>
+            <!-- Verifica que tenga autorización para ver el campo -->
+            <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
+            <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
+              <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+                <th class="header_column border-0 d-none" id=<%="subcolumnfake_layer_"+field.key+"_"+field.project_type.id.to_s %>>
+                  <p class="custom_p_header"></p>
+                </th>
+              <% end %>
             <% end %>
           <% end %>
         <% end %>
-      </tr>
-      <tr id="tr_subfields">
-        <th class="border-0"></th>
-        <th class="border-0"></th>
-        <th class="border-0"></th>
         <% if !@fields.nil? %>
           <% @fields.each do |field|  %>
-            <%if field.heatmap_field %>
-              <input class="d-none field_label" value=<%=field.key%>>
-            <% end %>
-            <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-              <% if !field.popup %>
-                <th class="d-none header_column border-0">
-              <% else %>
-                <th class="header_column border-0">
+            <!-- Verifica que tenga autorización para ver el campo -->
+            <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
+            <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
+              <%if field.heatmap_field %>
+                <input class="d-none field_label" value=<%=field.key%>>
               <% end %>
-              <p class="custom_p_header"></p>
+              <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+                <% if !field.popup %>
+                  <th class="d-none header_column border-0" id=<%="subcolumnfake_"+field.key %>>
+                <% else %>
+                  <th class="header_column border-0" id=<%="subcolumnfake_"+field.key %>>
+                <% end %>
+                <p class="custom_p_header"></p>
+              </th>
+              <% end %>
             <% end %>
           <% end %>
         <% end %>
@@ -575,19 +1057,36 @@ function verify_open_columns(){
         <td class="custom_row width_only"></td>
         <td class="custom_row width_only"></td>
         <td class="custom_row width_only" id="columnfake_datacount"></td>
+        <!-- body oculto en primera tabla para ancho de columna -->
+          <% if !@top_level_fields.nil? %>
+            <% @top_level_fields.each do |field|  %>
+              <!-- Verifica que tenga autorización para ver el campo -->
+              <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
+              <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
+                <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+                  <td class="custom_row width_only d-none" id=<%="columnfake_data_layer_"+field.key+"_"+field.project_type.id.to_s %>></td>
+                <% end %>
+              <% end %>
+            <% end %>  
+          <% end %>    
+        
         <% if !@fields.nil? %>
         <% index = 0 %>
           <% @fields.each do |field|  %>
-            <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-            <% index=index+1 %>
-            <% if !field.popup %>
-              <td class="d-none custom_row width_only" id=<%="columnfake_data_"+field.key %>></td>
-            <% else %>
-              <td class="custom_row width_only" id=<%="columnfake_data_"+field.key %>></td>
+            <!-- Verifica que tenga autorización para ver el campo -->
+            <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
+            <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
+              <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+                <% index=index+1 %>
+                <% if !field.popup %>
+                  <td class="d-none custom_row width_only" id=<%="columnfake_data_"+field.key %>></td>
+                <% else %>
+                  <td class="custom_row width_only" id=<%="columnfake_data_"+field.key %>></td>
+                <% end %>
               <% end %>
-            <% end %>
+            <% end %>  
           <% end %>  
-      <% end %>    
+        <% end %>    
       </tr> 
     </tbody>
   </table>
@@ -606,17 +1105,39 @@ function verify_open_columns(){
           <i class="fas fa-image icons"></i>
         </div>
         </th>
-        <th>#</th>
+        <th>#
+          <div id="layer_container_hidden">
+            <% if !@top_level_fields.nil? %>
+              <% @top_level_fields.each do |field|  %>
+                <!-- Verifica que tenga autorización para ver el campo -->
+                <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
+                <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
+                  <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+                    <th class="header_column border-0 d-none" id=<%="column_layer_"+field.key+"_"+field.project_type.id.to_s %>>
+                      <div class="th-hover custom_header">
+                        <p class="custom_p_header" ><%= field.name %></p>
+                      </div>
+                    </th>
+                  <% end %>
+                <% end %>  
+              <% end %>
+            <% end %>
+          </div>
+        </th>
         <% if !@fields.nil? %>
-        <% @fields.each do |field|  %>
-          <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-           <% if !field.popup %>
-            <th style="min-width: 100px; white-space: nowrap;" class="d-none" id=<%="column_"+field.name %>><%= field.name %></th>
-           <% else %>
-            <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.name %>><%= field.name %></th>
-           <% end %>
+          <% @fields.each do |field|  %>
+            <!-- Verifica que tenga autorización para ver el campo -->
+            <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
+            <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
+              <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+                <% if !field.popup %>
+                  <th style="min-width: 100px; white-space: nowrap;" class="d-none" id=<%="column_"+field.key %>><%= field.name %></th>
+                <% else %>
+                  <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.key %>><%= field.name %></th>
+                <% end %>
+              <% end %>
+            <% end %>
           <% end %>
-        <% end %>
         <% end %>
       </tr>
     </thead>

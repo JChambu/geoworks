@@ -9,6 +9,7 @@ var xhr_report = null;
 var data_charts;
 var filechange;
 var statuschange;
+var original_chart_container;
 
 var father_fields = [];
 var child_elements = [];
@@ -24,6 +25,8 @@ var verify_count_elements_childs = 0;
 var array_datos = [];
 var array_column_hidden = [];
 var subheader_open = [];
+var time_slider_data_subform;
+var time_slider_data;
 
 Number.prototype.format = function(n, x, s, c) {
   var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
@@ -67,6 +70,7 @@ function init_kpi(size_box = null) {
   var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
+
 
   if (xhr_kpi && xhr_kpi.readyState != 4) {
     xhr_kpi.abort();
@@ -195,7 +199,7 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         data_conditions: attribute_filters,
         filtered_form_ids: filtered_form_ids,
         from_date: from_date,
-        to_date: to_date
+        to_date: to_date,
       },
       success: function(data) {
         data_charts = data;
@@ -704,15 +708,20 @@ function draw_charts() {
         'id': 'chart_container' + graphic_id
       }).append(
         $('<div>', {
+          'class': 'w-100',
+        }).append(
+        $('<div>', {
           'class': 'py-1 px-2',
           'id': 'header' + graphic_id
         }).append(
-          // $('<span>', { // handle
-          //   'class': 'fas fa-arrows-alt handle border border-dark'
-          // }),
           $('<text>', {
             'text': title
           }),
+           $('<span>', { // handle
+             'class': 'fas fa-expand-arrows-alt',
+             'style': 'float: right; cursor: pointer',
+             'onclick': 'maximize_chart(event)'
+           }),
           /* Oculta minimizado hasta solucionar el tema de row
           $('<button>', { // boton minimizar
             'class': 'close',
@@ -744,6 +753,8 @@ function draw_charts() {
         )
       )
     )
+  )
+
 
     //Chequeamos el estado de view
     var status_view_chart = $('#sidebar_all').hasClass('charts-container');
@@ -1147,12 +1158,33 @@ function draw_charts() {
     $('.graphics').scrollTop(scroll);
   }
   dragAndDrop.init();
-
 }
+
+function maximize_chart(e){
+  var element_to_maximize = e.target.parentElement.parentElement;
+  if($(element_to_maximize).hasClass('chart_maxi')){
+    $(element_to_maximize).detach().appendTo(original_chart_container);
+    $(element_to_maximize).removeClass('chart_maxi');
+    $('#sidebar_all').removeClass('d-none');
+    $('#map').css('opacity','1');
+    $('.table_data_container').removeClass('d-none');
+  } else{
+    original_chart_container = element_to_maximize.parentNode;
+    console.log("Padre original")
+    console.log(original_chart_container)
+    $(element_to_maximize).detach().appendTo('body');
+    $(element_to_maximize).addClass('chart_maxi');
+    $('#sidebar_all').addClass('d-none');
+    $('#map').css('opacity','0.1');
+    $('.table_data_container').addClass('d-none');
+  }
+}
+
+
 
 //****** FUNCIONES PARA TABLA DE DATOS*****
 // Función para traer todos los datos de los registros contenidos y filtrados
-function init_data_dashboard(haschange,close_info) {
+function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
   //Evita calcular la tabla si está oculta o si no existe por autorización de roles
   if ($('#status-view').hasClass('status-view-condensed') || $('.table_data_container').length==0) {
     return;
@@ -1160,6 +1192,9 @@ function init_data_dashboard(haschange,close_info) {
   $('#multiple_edit').addClass('d-none');
   //cierra modal de información del registro
   if(close_info){$("#info-modal").modal("hide");}
+  // descliquea checkbox select_all
+  $('#table_select_all_hidden').prop('checked', false);
+  $('#table_select_all').prop('checked', false);
   $(".fakeLoader").css("display", "block");
   var type_box = 'polygon';
   var size_box = Navarra.dashboards.config.size_polygon;
@@ -1212,13 +1247,18 @@ function init_data_dashboard(haschange,close_info) {
       data_conditions: attribute_filters,
       filtered_form_ids: filtered_form_ids,
       from_date: from_date,
-      to_date: to_date
+      to_date: to_date,
     },
 
     success: function(data) {
       var fields = document.querySelectorAll(".field_key");
-      if(JSON.stringify(data_dashboard) == JSON.stringify(data.data)){
+      if(JSON.stringify(data_dashboard) == JSON.stringify(data.data) && !is_saved){
         $(".fakeLoader").css("display", "none");
+        // Verifica si tiene que crear tabla de subformularios
+        create_subforms_table(subfield_ids_saved);
+        // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
+        verify_scroll_table();
+        adjust_colum_width();
         return;
       }
       data_dashboard = data.data
@@ -1230,7 +1270,7 @@ function init_data_dashboard(haschange,close_info) {
 
       // verificamos columnas ocultas
       array_column_hidden = [];
-      $('#table_hidden th').each(function(){
+      $('#table_hidden th').not(".header_column_layer").each(function(){
         if($(this).is(':hidden')){
           array_column_hidden.push(false);
         } else{
@@ -1254,7 +1294,7 @@ function init_data_dashboard(haschange,close_info) {
 
         var new_celd="";
         fields.forEach(function(column, indexColumn) {
-          new_celd_create = create_celd_table(column,indexColumn, data_properties, per_page_value, active_page ,index);
+          new_celd_create = create_celd_table(column,indexColumn, data_properties, per_page_value, active_page ,index,false, element.color);
           new_celd+=new_celd_create;
         });
         document.getElementById("tbody_visible").appendChild(new_row);
@@ -1263,19 +1303,22 @@ function init_data_dashboard(haschange,close_info) {
 
         $('#row_table_data'+found_id).addClass('found');
       });
-
         // comienza llenado de la tabla
-          $("._columnname").each(function(index_data){
-            $(this).html(array_datos[index_data].toString());
+          var column_to_fill =  document.querySelectorAll('._columnname');
+          column_to_fill.forEach(function(col,index_data){
+            col.innerHTML = array_datos[index_data].toString();
           });
         // termina llenado de la tabla
 
       $(".fakeLoader").css("display", "none");
 
        // Verifica si tiene que crear tabla de subformularios
-      create_subforms_table();
+      create_subforms_table(subfield_ids_saved);
+      // Verifica si tiene que crear tabla de capas
+      create_layers_table();
       // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
       verify_scroll_table();
+      adjust_colum_width();
     }
   });
 
@@ -1340,12 +1383,12 @@ function init_data_dashboard(haschange,close_info) {
  
 }
 
-function create_celd_table(column, indexColumn, data_properties, per_page_value, active_page, index,is_new_file){
+function create_celd_table(column, indexColumn, data_properties, per_page_value, active_page, index,is_new_file, status_color){
   var column_name = column.value;
   appid_info = data_properties["app_id"];
   appid_selected = data_properties["app_id"];
   if (column.value == "#_action") {
-    var new_dom = "<i class='fas fa-info-circle' style='margin-right:10px' title='Más Información' onclick='show_item_info(" + appid_info + ",false)'></i>"
+    var new_dom = "<i id='info_icon_table"+appid_info+"' class='fas fa-info-circle' style='margin-right:10px; border-radius: 5px; padding:5px; color:white; background:"+status_color+"' title='Más Información' onclick='show_item_info(" + appid_info + ",false)'></i>"
     array_datos.push(new_dom);
   }
   if (column.value == "#_select") {
@@ -1366,16 +1409,13 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
         array_datos.push((index + 1) + (active_page - 1) * per_page_value);
       document.getElementById('columnfake_datacount').innerHTML=(index + 1) + (active_page - 1) * per_page_value;
     }
+    $('.field_key_layer').each(function(key_layer){
+      array_datos.push("");
+    });
   }
   if (column.value != "#" && column.value != "#_action" && column.value != "#_select") {
     if (data_properties[column_name] != undefined) {
       array_datos.push(data_properties[column_name]);
-      //agraga el máximo valor a la tabla cabecera para tener 2 tablas con el mismo ancho de columnas
-      var celd_width = document.getElementById('columnfake_data_'+column_name);
-      if(celd_width.innerHTML=="" || celd_width.innerHTML.length< data_properties[column_name].length){
-        celd_width.innerHTML = data_properties[column_name];
-      }
-      // termina ajuste de ancho
       if (column.value == "app_id") {
         if (Navarra.project_types.config.item_selected == data_properties[column_name]) {
           found_id = data_properties["app_id"];
@@ -1388,17 +1428,31 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   }
   var text_hidden = "";
   if(!array_column_hidden[indexColumn]){
-    text_hidden = "style = 'display:none'";
+    text_hidden = "d-none";
   }
   if(is_new_file && (data_properties[column_name]!=undefined || column_name=="#_action" || column_name == "#_select")){
-    if(data_properties[column_name]!=undefined){
-      new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'>"+data_properties[column_name]+"</td>"
-    }
-    if(column_name=="#_action" || column_name == "#_select"){
-      new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'>"+new_dom+"</td>"
+    if(column_name=="#"){
+      new_celd_create = new_celd_create = "<td class='_columnname custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
+      $('.field_key_layer').each(function(index,key_layer){
+        new_celd_create += "<td class='_columnname custom_row d-none celdlayer_id"+appid_selected+" celdlayer_key"+key_layer.id.substring(9)+"' onclick='show_item("+appid_selected+")'></td>"
+      });
+    } else{
+      if(data_properties[column_name]!=undefined){
+        new_celd_create = "<td class='_columnname custom_row celd_id"+appid_selected+" celd_key"+column_name+" "+text_hidden+"' onclick='show_item("+appid_selected+")'>"+data_properties[column_name]+"</td>"
+      }
+      if(column_name=="#_action" || column_name == "#_select"){
+        new_celd_create = "<td class='_columnname custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'>"+new_dom+"</td>"
+      }
     }
   } else{
-    new_celd_create = "<td class='_columnname custom_row' "+text_hidden+" onclick='show_item("+appid_selected+")'></td>"
+    if(column_name=="#"){
+      new_celd_create = new_celd_create = "<td class='_columnname custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
+      $('.field_key_layer').each(function(index,key_layer){
+        new_celd_create += "<td class='_columnname custom_row d-none celdlayer_id"+appid_selected+" celdlayer_key"+key_layer.id.substring(9)+"' onclick='show_item("+appid_selected+")'></td>"
+      });
+    } else{
+      new_celd_create = "<td class='_columnname custom_row celd_id"+appid_selected+" celd_key"+column_name+" "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
+    }
   }
   return new_celd_create;
 }
@@ -1468,7 +1522,7 @@ function data_pagination(selected, active_page) {
   });
 }
 
-function create_subforms_table(){
+function create_subforms_table(subfield_ids_saved){
   // verifica subcolumnas abiertas
   subheader_open = [];
   var field_subforms_open = $('.subfields_data.d-none');
@@ -1484,10 +1538,11 @@ function create_subforms_table(){
       subheader_open.push(subheader_object);
     });
     field_ids.push(id);
-    console.log("Campos a crear")
-    console.log(field_ids)
     $('.subfield_column_'+id).remove();
   });
+  if(subfield_ids_saved!=undefined){
+    subheader_open = subfield_ids_saved;
+  }
   if(field_subforms_open.length>0){
     show_subfield(field_ids)
   }
@@ -1498,7 +1553,15 @@ function open_subheaders(id_field){
     if(subheader.id_field ==  id_field){
       $('#'+id_field+'_subfield_'+subheader.id_subfield).click();
     }
-  })
+  });
+}
+
+function open_subheaders_no_data(id_field){
+  subheader_open.forEach(function(subheader){
+    if(subheader.id_field ==  id_field){
+      $('#'+id_field+'_subfield_'+subheader.id_subfield).addClass('d-none');
+    }
+  });
 }
 
 function verify_scroll_table(){
@@ -1509,111 +1572,41 @@ function verify_scroll_table(){
   }
 }
 
+function adjust_colum_width(){
+  $('.width_only').each(function(index){
+    var index_col = index+1;
+    var cel_width = $('#tbody_visible tr:nth-child(1) td:nth-child('+index_col+')');
+    max_width = cel_width.outerWidth() + 'px';
+    this.style.minWidth = max_width;
+  });
+}
+
 //****** TERMINAN FUNCIONES PARA TABLA DE DATOS*****
 
 
 //****** FUNCIONES PARA TIMESLIDER*****
 
-// Función para iniciar por primera vez el timeslider
+// Función para iniciar por primera vez el datetime-picker
 function init_time_slider() {
-  var milisec_day = 86400000;
-  var today = new Date();
-  var today_string = today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
-  var today_format = changeformatDate(today_string, "day");
-  var min_date = dateToTS(today_format) - 5 * milisec_day;
-  var max_date = dateToTS(today_format) + 5 * milisec_day;
-  var from_date = dateToTS(today_format) - 2 * milisec_day;
-  var to_date = dateToTS(today_format) + 2 * milisec_day;
-  var step_time_slider = milisec_day;
-  create_time_slider(min_date, max_date, from_date, to_date, step_time_slider);
   // arma datetimepicker con formato incial por día y le manda los datos del timeslider
-  $('#time_slider_from').datetimepicker({
-    format: "DD/MM/YYYY",
-    viewMode: "days",
-    locale: moment.locale('en', {
-      week: {
-        dow: 1,
-        doy: 4
-      }
-    }),
-  });
-  $('#time_slider_to').datetimepicker({
-    format: "DD/MM/YYYY",
-    viewMode: "days",
-    locale: moment.locale('en', {
-      week: {
-        dow: 1,
-        doy: 4
-      }
-    }),
-  });
-  $('#time_slider_from').val(tsToDate(min_date));
-  $('#time_slider_to').val(tsToDate(max_date));
-}
-
-//Función para crear el time-slider al inciar y al cambiar la configuración
-function create_time_slider(min_date, max_date, from_date, to_date, step_time_slider) {
-  $('#filter-time-body').prepend(
-    $('<div>', {
-      'id': 'time_slider_item',
-      'style': 'margin-top:10px',
-    }).append(
-      $("<input>", {
-        'id': 'time_slider'
+  $("#time_slider_from_forms , #time_slider_to_forms , #time_slider_from_subforms , #time_slider_to_subforms"  ).each(function() {
+    $(this).datetimepicker({
+      format: "DD/MM/YYYY",
+      viewMode: "days",
+      locale: moment.locale('en', {
+        week: {
+          dow: 1,
+          doy: 4
+        }
       }),
-      $("<div>", {
-        'class': 'dropdown-divider',
-      })
-    )
-  )
-  $('#filter-time-body').prepend(
-    $("<i>", {
-      'id': 'time_slider_item-save',
-      'class': 'fas fa-calendar-check float-right',
-      'style': 'font-size: 1.5em ; margin-top: -16px; margin-right:4px; color: rgba(250,250,250,0.8); cursor:pointer',
-      'onclick': 'set_time_slider_filter()',
-    })
-  )
-  $('#filter-time-body').prepend(
-    $("<i>", {
-      'id': 'time_slider_item-clear',
-      'class': 'fas fa-calendar-times float-right',
-      'style': 'font-size: 1.5em; margin-top: -16px; margin-right:-16px; color: rgba(250,250,250,0.8); cursor:pointer',
-      'onclick': 'clear_time_slider_filter(true)',
-    })
-  )
-  $("#time_slider").ionRangeSlider({
-    skin: "flat",
-    type: "double",
-    step: step_time_slider,
-    grid: true,
-    grid_snap: true,
-    min: min_date,
-    max: max_date,
-    from: from_date,
-    to: to_date,
-    prettify: tsToDate,
-    onChange: function(data) {
-      set_time_slider_color();
-    },
-    onFinish: function(data) {
-      set_time_slider_values(data);
-    },
-    onStart: function(data) {
-      set_time_slider_values(data);
-    },
+    });
   });
-
-  $('.irs-min , .irs-max  ').css("cursor", "pointer");
-  $('.irs-min , .irs-max  ').attr("data-toggle", "modal");
-  $('.irs-min , .irs-max  ').attr("data-target", "#time-slider-modal");
-  set_time_slider_color();
 }
 
 //Función que cambia el estilo del datetimepicker según la selección por día,seman,mes o año
-function change_step_time_slider() {
-  if ($('#time_slider_step').val() == 'day') {
-    $("#time_slider_from , #time_slider_to").each(function() {
+function change_step_time_slider(origin) {
+  if ($('#time_slider_step_'+origin).val() == 'day') {
+    $("#time_slider_from_"+origin+" , #time_slider_to_"+origin).each(function() {
       $(this).val('');
       $(this).off('dp.change');
       $(this).data('DateTimePicker').destroy();
@@ -1623,8 +1616,8 @@ function change_step_time_slider() {
       });
     })
   }
-  if ($('#time_slider_step').val() == 'week') {
-    $("#time_slider_from , #time_slider_to").each(function() {
+  if ($('#time_slider_step_'+origin).val() == 'week') {
+    $("#time_slider_from_"+origin+" , #time_slider_to_"+origin).each(function() {
       $(this).val('');
       $(this).data('DateTimePicker').destroy();
       $(this).datetimepicker({
@@ -1640,8 +1633,8 @@ function change_step_time_slider() {
       });
     })
   }
-  if ($('#time_slider_step').val() == 'month') {
-    $("#time_slider_from , #time_slider_to").each(function() {
+  if ($('#time_slider_step_'+origin).val() == 'month') {
+    $("#time_slider_from_"+origin+" , #time_slider_to_"+origin).each(function() {
       $(this).val('');
       $(this).data('DateTimePicker').destroy();
       $(this).datetimepicker({
@@ -1651,8 +1644,8 @@ function change_step_time_slider() {
       $(this).off('dp.change');
     })
   }
-  if ($('#time_slider_step').val() == 'year') {
-    $("#time_slider_from , #time_slider_to").each(function() {
+  if ($('#time_slider_step_'+origin).val() == 'year') {
+    $("#time_slider_from_"+origin+" , #time_slider_to_"+origin).each(function() {
       $(this).val('');
       $(this).off('dp.change');
       $(this).data('DateTimePicker').destroy();
@@ -1664,171 +1657,129 @@ function change_step_time_slider() {
   }
 }
 
-// Función que manda los valores del modal datetimepicker al timeslider
-function set_time_slider() {
-  if ($("#time_slider_from").val() == '' || $("#time_slider_to").val() == '') {
-    return
-  }
-  var step_date = $('#time_slider_step').val();
-  if (step_date == 'day' || step_date == 'month') {
-    var min_date = dateToTS(new Date(changeformatDate($('#time_slider_from').val(), step_date)));
-    var max_date = dateToTS(new Date(changeformatDate($('#time_slider_to').val(), step_date)));
-  }
-  if (step_date == 'week') {
-    min_date = dateToTS(getDateOfISOWeek(($('#time_slider_from').val().split('-')[1]).substring(4), $('#time_slider_from').val().split('-')[0]));
-    max_date = dateToTS(getDateOfISOWeek(($('#time_slider_to').val().split('-')[1]).substring(4), $('#time_slider_to').val().split('-')[0]));
-  }
-
-  if (step_date == 'day' || step_date == 'month' || step_date == 'week') {
-    var milisec_day = 86400000;
-    if (step_date == 'day') {
-      range = 1;
-      var step_time_slider = milisec_day;
-    }
-    if (step_date == 'week') {
-      range = 7;
-      var step_time_slider = milisec_day * 7;
-    }
-    if (step_date == 'month') {
-      range = 31;
-      var step_time_slider = milisec_day * 31;
-    }
-    var total_range = (dateToTS(max_date) - dateToTS(min_date)) / (milisec_day * range);
-    var from_date = dateToTS(min_date) + range * milisec_day;
-    var to_date = dateToTS(min_date) + Math.floor(total_range) * 31 * milisec_day;
-  }
-
-  if (step_date == 'year') {
-    min_date = $('#time_slider_from').val();
-    max_date = $('#time_slider_to').val();
-    from_date = parseInt(min_date) + 1;
-    to_date = parseInt(max_date) - 1;
-    var step_time_slider = 1;
-  }
-  if (max_date <= min_date) {
-    return
-  }
-  $('#time_slider_item').remove();
-  $('#time_slider_item-save').remove();
-  $('#time_slider_item-clear').remove();
-  $('#time-slider-modal').modal('toggle');
-  clear_time_slider_filter(false);
-  create_time_slider(min_date, max_date, dateToTS(from_date), dateToTS(to_date), step_time_slider);
-}
-
-// función que toma el dato y lo convierte en formato "prety" para colocarlo en las etiquetas del timeslider
-function tsToDate(ts) {
-  var step_date = $('#time_slider_step').val();
-  if (step_date == 'day' || step_date == 'month' || step_date == 'week') {
-    var lang = "es-AR";
-    var d = new Date(ts);
-    var d_year = d.getFullYear();
-    var d_month = d.getMonth() + 1;
-    var d_day = d.getDate();
-    if (step_date == 'day') {
-      var d_format = d_day + '/' + d_month + '/' + d_year;
-    }
-    if (step_date == 'month') {
-      var month_names = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'set', 'oct', 'nov', 'dic'];
-      var d_format = month_names[d_month - 1] + '/' + d_year;
-    }
-    if (step_date == 'week') {
-      number_of_week = getWeekNumber(d);
-      var d_format = number_of_week[0] + '-Sem ' + number_of_week[1];
-    }
-  } else {
-    d_format = ts
-  }
-  return d_format;
-}
-
-// Función para colocar el timeslider en gris (no aplicado)
-function set_time_slider_color() {
-  var colored_element = ['.irs-bar', '.irs-from', '.irs-to', '.irs-single', '.irs-handle>i:first-child'];
-  colored_element.forEach(function(element) {
-    $(element).addClass('time-slider-inactive');
-    $(element).removeClass('time-slider-active');
-  })
-}
-
-//Función para tomar los datos del from y del to y convertirlos en fechas
-function set_time_slider_values(data) {
-  var from_pretty = data.from_pretty;
-  var to_pretty = data.to_pretty;
-  var step_date = $('#time_slider_step').val();
-  if (step_date == 'day') {
-    from_pretty = from_pretty.split('/')[2] + '-' + from_pretty.split('/')[1] + '-' + from_pretty.split('/')[0];
-    to_pretty = to_pretty.split('/')[2] + '-' + to_pretty.split('/')[1] + '-' + to_pretty.split('/')[0];
-  }
-  if (step_date == 'week') {
-    var dateofweek = getDateOfISOWeek((from_pretty.split('-')[1]).substring(4), from_pretty.split('-')[0])
-    from_pretty = dateofweek.getFullYear() + '-' + (dateofweek.getMonth() + 1) + '-' + dateofweek.getDate();
-    var dateofweek = getDateOfISOWeek((to_pretty.split('-')[1]).substring(4), to_pretty.split('-')[0])
-    //+6días
-    var milisec_day = 86400000;
-    var lastdayofweek = new Date(dateToTS(dateofweek) + 6 * milisec_day);
-    to_pretty = lastdayofweek.getFullYear() + '-' + (lastdayofweek.getMonth() + 1) + '-' + lastdayofweek.getDate();
-  }
-  if (step_date == 'month') {
-    var month_names = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'set', 'oct', 'nov', 'dic'];
-    from_pretty = from_pretty.split('/')[1] + '-' + (jQuery.inArray(from_pretty.split('/')[0], month_names) + 1) + '-1';
-    last_day = new Date(to_pretty.split('/')[1], (jQuery.inArray(to_pretty.split('/')[0], month_names) + 1), 0);
-    last_day = last_day.getDate();
-    to_pretty = to_pretty.split('/')[1] + '-' + (jQuery.inArray(to_pretty.split('/')[0], month_names) + 1) + '-' + last_day;
-  }
-  if (step_date == 'year') {
-    from_pretty = from_pretty + '-1-1';
-    to_pretty = to_pretty + '-12-31';
-  }
-  from_pretty += ' 00:00';
-  to_pretty += ' 23:59:59.99';
-  $('#time-slider-from-value').val(from_pretty);
-  $('#time-slider-to-value').val(to_pretty);
-}
-
 //Función para aplicar el timeslider como filtro
 function set_time_slider_filter() {
-  var colored_element = ['.irs-bar', '.irs-from', '.irs-to', '.irs-single', '.irs-handle>i:first-child'];
-  colored_element.forEach(function(element) {
-    $(element).addClass('time-slider-active');
-    $(element).removeClass('time-slider-inactive');
-  });
-  if ($('#prev_bar') != undefined)($('#prev_bar').remove());
-  var width_clone = (100 * parseFloat($('.irs-bar').css('width')) / parseFloat($('.irs-bar').parent().css('width'))) + '%';
-  var left_clone = (100 * parseFloat($('.irs-bar').css('left')) / parseFloat($('.irs-bar').parent().css('width'))) + '%';
-  var prev_bar = $('.irs-bar').clone();
-  prev_bar.attr('id', 'prev_bar');
-  prev_bar.appendTo('.irs--flat');
-  var styletext = 'background:#d3d800!important;left:' + left_clone + ';width:' + width_clone;
-  $('#prev_bar').attr('style', styletext);
-
   //toma los valores from y to y los asigna a las variables globales
-  Navarra.project_types.config.from_date = $('#time-slider-from-value').val();
-  Navarra.project_types.config.to_date = $('#time-slider-to-value').val();
+  //Formularios
+  var step_date_forms = $('#time_slider_step_forms').val();
+  var from_forms = $('#time_slider_from_forms').val();
+  var to_forms = $('#time_slider_to_forms').val();
+
+  if(from_forms!=""){
+    if (step_date_forms == 'day') {
+      from_forms = from_forms.split('/')[2] + '-' + from_forms.split('/')[1] + '-' + from_forms.split('/')[0];
+    }
+    if (step_date_forms == 'week') {
+      var dateofweek = getDateOfISOWeek((from_forms.split('-')[1]).substring(4), from_forms.split('-')[0])
+      from_forms = dateofweek.getFullYear() + '-' + (dateofweek.getMonth() + 1) + '-' + dateofweek.getDate();
+    }
+    if (step_date_forms == 'month') {
+      from_forms = from_forms.split('/')[1] + '-' + from_forms.split('/')[0] + '-1';
+    }
+    if (step_date_forms == 'year') {
+      from_forms = from_forms + '-1-1';
+    }
+    from_forms += ' 00:00';
+  }
+  
+  if(to_forms!=""){
+    if (step_date_forms == 'day') {
+      to_forms = to_forms.split('/')[2] + '-' + to_forms.split('/')[1] + '-' + to_forms.split('/')[0];
+    }
+    if (step_date_forms == 'week') {
+      var dateofweek = getDateOfISOWeek((to_forms.split('-')[1]).substring(4), to_forms.split('-')[0]);
+      //+6días
+      var milisec_day = 86400000;
+      var lastdayofweek = new Date(dateToTS(dateofweek) + 6 * milisec_day);
+      to_forms = lastdayofweek.getFullYear() + '-' + (lastdayofweek.getMonth() + 1) + '-' + lastdayofweek.getDate();
+    }
+    if (step_date_forms == 'month') {
+      last_day = new Date(to_forms.split('/')[1], to_forms.split('/')[0] , 0);
+      last_day = last_day.getDate();
+      to_forms = to_forms.split('/')[1] + '-' + to_forms.split('/')[0] + '-' + last_day;
+    }
+    if (step_date_forms == 'year') {
+      to_forms = to_forms + '-12-31';
+    }
+    to_forms += ' 23:59:59.99';
+  }
+
+  //Subformularios
+  var step_date_subforms = $('#time_slider_step_subforms').val();
+  var from_subforms = $('#time_slider_from_subforms').val();
+  var to_subforms = $('#time_slider_to_subforms').val();
+  if(from_subforms!=""){
+    if (step_date_subforms == 'day') {
+      from_subforms = from_subforms.split('/')[2] + '-' + from_subforms.split('/')[1] + '-' + from_subforms.split('/')[0];
+    }
+    if (step_date_subforms == 'week') {
+      var dateofweek = getDateOfISOWeek((from_subforms.split('-')[1]).substring(4), from_subforms.split('-')[0]);
+      from_subforms = dateofweek.getFullYear() + '-' + (dateofweek.getMonth() + 1) + '-' + dateofweek.getDate();
+    }
+    if (step_date_subforms == 'month') {
+      from_subforms = from_subforms.split('/')[1] + '-' + from_subforms.split('/')[0] + '-1';
+    }
+    if (step_date_subforms == 'year') {
+      from_subforms = from_subforms + '-1-1';
+    }
+    from_subforms += ' 00:00';
+  }
+
+  if(to_subforms!=""){
+    if (step_date_subforms == 'day') {
+      to_subforms = to_subforms.split('/')[2] + '-' + to_subforms.split('/')[1] + '-' + to_subforms.split('/')[0];
+    }
+    if (step_date_subforms == 'week') {
+      var dateofweek = getDateOfISOWeek((to_subforms.split('-')[1]).substring(4), to_subforms.split('-')[0]);
+      //+6días
+      var milisec_day = 86400000;
+      var lastdayofweek = new Date(dateToTS(dateofweek) + 6 * milisec_day);
+      to_subforms = lastdayofweek.getFullYear() + '-' + (lastdayofweek.getMonth() + 1) + '-' + lastdayofweek.getDate();
+    }
+    if (step_date_subforms == 'month') {
+      last_day = new Date(to_subforms.split('/')[1], to_subforms.split('/')[0] , 0);
+      last_day = last_day.getDate();
+      to_subforms = to_subforms.split('/')[1] + '-' + to_subforms.split('/')[0] + '-' + last_day;
+    }
+    if (step_date_subforms == 'year') {
+      to_subforms = to_subforms + '-12-31';
+    }
+    to_subforms += ' 23:59:59.99';
+  }
+
+  Navarra.project_types.config.from_date_subforms = from_subforms;
+  Navarra.project_types.config.to_date_subforms = to_subforms;
+  Navarra.project_types.config.from_date = from_forms;
+  Navarra.project_types.config.to_date = to_forms;
 
   //zoom_extent a datos filtrados
   Navarra.geomaps.get_zoomextent();
   // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
- // init_data_dashboard(true);
   Navarra.geomaps.current_layer();
- // Navarra.geomaps.show_kpis();
- show_labels(false);
+  // Fuerza el rearmado de la tabla
+    data_dashboard = "";
+    init_data_dashboard(false,false);
+  Navarra.geomaps.show_labels(false);
 }
 
 //Función para eliminar el timeslider como filtro
 function clear_time_slider_filter(refresh_data) {
-  Navarra.project_types.config.from_date = "";
-  Navarra.project_types.config.to_date = "";
-  if ($('#prev_bar') != undefined)($('#prev_bar').remove());
-  set_time_slider_color();
-  if (refresh_data) {
+    Navarra.project_types.config.from_date_subforms = "";
+    Navarra.project_types.config.to_date_subforms = "";
+    Navarra.project_types.config.from_date = "";
+    Navarra.project_types.config.to_date = "";  
+    $('#time_slider_from_forms').val("");
+    $('#time_slider_to_forms').val("");
+    $('#time_slider_from_subforms').val("");
+    $('#time_slider_to_subforms').val("");
       //zoom_extent a datos filtrados
     Navarra.geomaps.get_zoomextent(true);
     // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
-  //  init_data_dashboard(true);
     Navarra.geomaps.current_layer();
-    //Navarra.geomaps.show_kpis();
-  }
+    // Fuerza el rearmado de la tabla
+    data_dashboard = "";
+    init_data_dashboard(false,false);
+    Navarra.geomaps.show_labels(false);
 }
 
 
@@ -2283,8 +2234,8 @@ function set_subtitles() {
   });
 }
 
-// exportar tabla a excel
-function table_to_excel() {
+// exportar reporte a excel
+function report_to_excel() {
   var origin_table = document.getElementById('table_visible_report');
   var clone_table = origin_table.cloneNode(true);
   clone_table.id = "clone_table";
@@ -2305,6 +2256,78 @@ function table_to_excel() {
     }
   });
   export_to_excel('clone_table', 'geoworks', 'reporte.xls')
+}
+
+// exportar tabla a excel
+function table_to_excel() {
+  var clone_table =  document.createElement("TABLE");
+  clone_table.id = "clone_table";
+  clone_table.style.display = "none";
+  var origin_head = document.getElementById('thead_table_visible');
+  var clone_head = origin_head.cloneNode(true);
+  clone_table.appendChild(clone_head);
+  var origin_body = document.getElementById('tbody_visible');
+  var clone_body = origin_body.cloneNode(true);
+  clone_table.appendChild(clone_body);
+  
+  $('body').append(clone_table);
+  //remueve divs de la cabecera
+  document.querySelectorAll('#clone_table .custom_onclick').forEach(e => e.parentNode.removeChild(e));
+  //elimina primeras columnas y columnas ocultas de la cabecera
+  var th_clone = document.querySelectorAll('#clone_table th');
+  th_clone.forEach(function(e) {
+    if (e.classList.contains('d-none') || e.classList.contains('head_key#_action') || e.classList.contains('head_key#_select') ) {
+      e.parentNode.removeChild(e);
+    } 
+  });
+  // limpia la fila de subcabeceras
+  var tr_th =  document.querySelectorAll('#clone_table th tr');
+  tr_th.forEach(function(e){
+    new_p = document.createElement('P');
+    new_p.innerHTML = e.firstChild.innerHTML;
+    e.parentNode.appendChild(new_p);
+    e.parentNode.removeChild(e);
+  });
+  
+  // elimina divs de seleccion en cabecera e inputs
+  document.querySelectorAll('#clone_table .custom_div_table').forEach(e => e.parentNode.removeChild(e));
+  document.querySelectorAll('#clone_table input').forEach(e => e.parentNode.removeChild(e));
+  
+  //elimina primeras columnas y columnas ocultas del cuerpo
+  var td_clone = document.querySelectorAll('#clone_table td');
+  td_clone.forEach(function(e) {
+    if (e.classList.contains('d-none') || e.classList.contains('celd_key#_action') || e.classList.contains('celd_key#_select') ) {
+      e.parentNode.removeChild(e);
+    } 
+  });
+
+  var column_count = $('.column_data.d-none').length + $('.column_data_layer.d-none').length 
+  subcolumn_count = 0;
+  // acomoda las columnas de hijos
+  var td_th = document.querySelectorAll('#clone_table td tr');
+  var id_subcolumn_before = 0;
+  var subcolumn_open_count_before = 0;
+  td_th.forEach(function(e,index){
+    //resta la celda del icono imagen
+    var subcolumn_open_count = $(e).find('td').length-1;
+    var id_subcolumn = $(e).find('td').eq(1).attr('id').split('_')[0];
+    if(index==0){first_subcolumn_id = id_subcolumn}
+    if(id_subcolumn_before!=0 && id_subcolumn_before!=id_subcolumn){
+      subcolumn_count+=subcolumn_open_count_before;
+    }
+    id_subcolumn_before = id_subcolumn;
+    subcolumn_open_count_before = subcolumn_open_count;
+    if(id_subcolumn==first_subcolumn_id){
+      subcolumn_count = 0;
+    }
+    column_count_total = column_count + subcolumn_count;
+    for(c=0;c<column_count_total;c++){
+      var new_celd =  document.createElement("TD");
+      e.prepend(new_celd);
+    }
+  });
+
+  export_to_excel('clone_table', 'geoworks', 'tabla.xls')
 }
 
 function export_to_excel(table, name, filename) {
@@ -2339,8 +2362,6 @@ function export_to_excel(table, name, filename) {
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
 function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
-  console.log("es nuevo? "+is_new_file)
-  console.log("id a abrir "+appid_info)
   children_fields_all = new Object;
   if(!is_new_file){
     $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
@@ -2373,19 +2394,30 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       project_type_id: project_type_id,
     }
   } else{
+    var from_date_subforms = Navarra.project_types.config.from_date_subforms;
+    var to_date_subforms = Navarra.project_types.config.to_date_subforms;
     var url_get = '/project_types/search_father_children_and_photos_data';
+    var filter_children = [];
+    $('.filter_container').each(function(){
+      if(!isNaN($(this).attr('id').split('|')[0])){
+        filter_children.push($(this).attr('id'));
+      }
+    });
     var data = {
       project_type_id: project_type_id,
-      app_id: appid_info
+      app_id: appid_info,
+      from_date_subforms: from_date_subforms,
+      to_date_subforms: to_date_subforms,
+      filter_children: filter_children
     }
   }
+
   xhr_info = $.ajax({
     type: 'GET',
     url: url_get,
     datatype: 'json',
     data: data,
     success: function(data) {
-
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
       $("#info-modal").modal('show');
@@ -2656,7 +2688,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
                   //termina anidados opciones
                 });
                 if(found_nested ){new_p.value=values;}
-                new_p.setAttribute('onChange', 'changeFile()');
+                new_p.setAttribute('onChange','calculate_all(false,true)');
                 if(found_nested){
                   new_p.setAttribute('onChange', 'set_nested(event,true)');
                 }
@@ -2775,8 +2807,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             }
             new_celd.id = "child_container_"+element.key;
             // si tiene autorización para nuevos hijos
-            console.log("Va a crear botón más")
-            console.log($('#new_subform_control').val()=="true")
             if($('#new_subform_control').val()=="true"){
               var new_p = document.createElement('I');
               new_p.className = "fas fa-plus icon_add d-none add_subforms";
@@ -3161,9 +3191,6 @@ function set_date_style(is_multiple){
         if(this.id.substring(0,12)=="fieldchildid"){
           if(!is_multiple){
             var id_field_father = this.getAttribute('id_field_father');
-            console.log(this)
-            console.log(this.getAttribute('id_field_father'))
-            console.log("Campo padre en campos fechas "+id_field_father)
             calculate_all(false,false,this.id.split('|')[2],id_field_father);
           } else{
             changeChild(this.id.split('|')[2]);
@@ -3215,7 +3242,6 @@ function open_new_child(element_field_id, element_name, element_key,is_multiple)
       element_field_id: element_field_id
     },
     success: function(data) {
-      console.log(data)
       child_elements_new = {
         children_fields: data,
         children_id: 0,
@@ -3301,7 +3327,7 @@ function edit_file(edit_parent, edit_child, edit_status){
 
   var required_field_number = 0;
   $('#info_messages').html("");
-  $('#alert_text_message').html("");
+  $('#text_toast').html("");
   $('#info_messages').addClass("d-none");
   $('#info_messages').removeClass("text-danger");
   if(!edit_child){array_child_edited=[]}
@@ -3382,11 +3408,7 @@ function edit_file(edit_parent, edit_child, edit_status){
   if(array_child_edited.length>0){
     // array_child_edited es un array que contiene los id de los hijos modificados. 0 para nuevos hijos
     array_child_edited = array_child_edited.unique();
-    console.log("Array child edited")
-    console.log(array_child_edited)
     for(z=0;z<array_child_edited.length;z++){
-      console.log("Iteración en hijos editados")
-      console.log(array_child_edited[z])
       var id_field_father_properties;
       // crea array único de ids de campos padres
       var array_field_id_father_grouped = [];
@@ -3429,8 +3451,6 @@ function edit_file(edit_parent, edit_child, edit_status){
                 }
               }
               properties_child_to_save[id_field_child_properties] = value_field_properties;
-              console.log("properties to save después")
-              console.log(properties_child_to_save)
               }
             }
           });
@@ -3439,11 +3459,7 @@ function edit_file(edit_parent, edit_child, edit_status){
           child_data.field_id = parseInt(array_field_id_father_grouped[zz]);
           child_data.child_id = array_child_edited[z];
           child_data.properties = properties_child_to_save;
-          console.log("Objeto nuevo")
-          console.log(child_data)
           child_edited_all.push(child_data);
-          console.log("Array a enviar")
-          console.log(child_edited_all)
       }
     }
   }
@@ -3464,9 +3480,6 @@ function edit_file(edit_parent, edit_child, edit_status){
       geom: Navarra.geomaps.get_geometries_to_save()
     }
 
-    console.log('PARAMS create_form');
-    console.log(data_to_save)
-
   } else {
     var type_ajax = 'PATCH';
     var url_post = '/projects/update_form';
@@ -3477,9 +3490,6 @@ function edit_file(edit_parent, edit_child, edit_status){
       project_status_id: status_id,
     }
 
-    console.log('PARAMS update_form');
-    console.log(data_to_save)
-
   }
   $.ajax({
     type: type_ajax,
@@ -3487,9 +3497,6 @@ function edit_file(edit_parent, edit_child, edit_status){
     datatype: 'JSON',
     data: data_to_save,
     success: function(data) {
-
-      console.log('RESPONSE create_form/update_form');
-      console.log(data)
 
       $(".fakeLoader").css("display", "none");
       filechange = false;
@@ -3499,12 +3506,13 @@ function edit_file(edit_parent, edit_child, edit_status){
       $('#alert_message').addClass('show');
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
-      $('#alert_text_message').html(data['status']);
+      $('#text_toast').html(data['status']);
+      $('.toast').toast('show');
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       
        //Ajustar valor en la tabla si está visible
-      if(!$('#status-view').hasClass('status-view-condensed')){
+      if(!$('#status-view').hasClass('status-view-condensed')){ 
         if(is_new_file){
           var id_new = data['id'];
           var new_row = document.createElement("TR");
@@ -3516,23 +3524,28 @@ function edit_file(edit_parent, edit_child, edit_status){
           properties_to_save["app_id"] = id_new;
           var fields = document.querySelectorAll(".field_key");
           fields.forEach(function(column, indexColumn) {
-            new_celd_create = create_celd_table(column,indexColumn, properties_to_save, null, null ,-1,true);
+            new_celd_create = create_celd_table(column,indexColumn, properties_to_save, null, null ,-1,true, $('.status_info_icon').css( "background-color" ));
             new_celd+=new_celd_create;
           });
           document.getElementById("tbody_visible").prepend(new_row);
           $('#row_table_data'+id_new).html(new_celd);
           Navarra.dashboards.app_ids_table.push(id_new);
         } else{
+          // modifica color del estado
+          app_ids.forEach(function(row_element){
+            $('#info_icon_table'+row_element).css("background",$('.status_info_icon').css( "background-color" ));
+          });
+          // fin color del estado
           if(properties_to_save!=null){// si se modificó el padre
             var fields = document.querySelectorAll(".field_key");
             fields.forEach(function(column, indexColumn) {
               if(properties_to_save[column.value]!=undefined){
                 var indexval=indexColumn+1;
                 app_ids.forEach(function(row_element){
-                  if($('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html()!=properties_to_save[column.value].toString() ){
-                    $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').html(properties_to_save[column.value].toString());
-                    $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-weight","bold");
-                    $('#row_table_data'+row_element+' td:nth-child(' + indexval + ')').css("font-size","1.5em");
+                  if($('.celd_id'+row_element+'.celd_key'+column.value).html()!=properties_to_save[column.value].toString() ){
+                    $('.celd_id'+row_element+'.celd_key'+column.value).html(properties_to_save[column.value].toString());
+                    $('.celd_id'+row_element+'.celd_key'+column.value).css("font-weight","bold");
+                    $('.celd_id'+row_element+'.celd_key'+column.value).css("font-size","1.5em");
                   }
                 });
               }
@@ -3541,8 +3554,11 @@ function edit_file(edit_parent, edit_child, edit_status){
         }
         // Verifica si tiene que crear tabla de subformularios
         create_subforms_table();
+        // Verifica si tiene que crear tabla de capas
+        create_layers_table();
         // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
         verify_scroll_table();
+        adjust_colum_width();
       }
 
 
@@ -3570,7 +3586,8 @@ function change_owner(){
       $('#alert_message').addClass('show');
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
-      $('#alert_text_message').html(data['status']);
+      $('#text_toast').html(data['status']);
+      $('.toast').toast('show');
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       //Ajustar valor en la tabla
@@ -3607,7 +3624,8 @@ function disable_file(){
       $('#alert_message').addClass('show');
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
-      $('#alert_text_message').html(data['status']);
+      $('#text_toast').html(data['status']);
+      $('.toast').toast('show');
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       //elimina las filas de la tabla
@@ -3637,7 +3655,8 @@ function delete_file(){
       $('#alert_message').addClass('show');
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
-      $('#alert_text_message').html(data['status']);
+      $('#text_toast').html(data['status']);
+      $('.toast').toast('show');
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       //elimina las filas de la tabla
@@ -3685,6 +3704,9 @@ function set_script(data_script,field_type_id,field_id,value,isnested,event, isp
   if(isnested){
     set_nested(event,isparent)
   }
+  if(isparent){
+    calculate_all(false,true);
+  }
 }
 
 function set_script_all(){
@@ -3709,6 +3731,7 @@ function set_script_all(){
 
 
 function calculate_all(first_time, isparent, id_child_calculate , id_field_child_calculate, is_new_child){
+  console.log("Calcula")
   var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   if(is_new_file){var type_calculation = "new_file"} else{ var type_calculation = "data_edition"}
   //Ejecuta Calculate de campos padres
@@ -3730,26 +3753,16 @@ function calculate_all(first_time, isparent, id_child_calculate , id_field_child
         }
       });
     } else{
-      console.log("es nuevo hijo? "+is_new_child)
       if(is_new_child!=undefined){
         is_new_file = is_new_child;
         if(is_new_file){var type_calculation = "new_file"} else{ var type_calculation = "data_edition"}
       }
-        console.log(is_new_file)
       //Ejecuta Calculate de campos hijos
-      console.log("Va a calcular hijos")
-      console.log("Es primera vez? "+first_time)
       if(!first_time){
         array_child_edited.push(parseInt(id_child_calculate));
         //ejecuta calculate para el hijo cambiado
-        console.log(children_fields_all)
-        console.log("Campo padre a calcular")
-        console.log(id_field_child_calculate)
           children_fields_all[id_field_child_calculate].forEach(function(element) {
-            console.log("elemento")
-            console.log(element)
             var id_child_toScript = element.field_id+"|"+id_child_calculate;
-            console.log("idchild calculated "+id_child_calculate)
             if(element.calculated_field!="" && element.field_type_id!=11){
               Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
             }

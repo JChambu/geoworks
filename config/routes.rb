@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
 
 
+  get 'customers/search_customer'
+  post 'table_configurations/create_table'
+  get 'table_configurations/search_table'
+  delete 'table_configurations/destroy_table'
+  patch 'table_configurations/edit_table'
   get 'project_types/maps' => 'project_types#maps'
   get 'project_types/search_name_layer' => 'project_types#search_name_layer'
   get 'project_types/kpi' => 'project_types#kpi'
@@ -19,6 +24,7 @@ Rails.application.routes.draw do
   get 'projects/search_data' => 'projects#search_data'
   get 'projects/search_statuses' => 'projects#search_statuses'
   get 'projects/search_users' => 'projects#search_users'
+  get 'projects/search_data_for_pdf' => 'projects#search_data_for_pdf'
   get 'projects/popup' => 'projects#popup'
   get 'project_types/get_extent' => 'project_types#get_extent'
   post 'projects/create_form' => 'projects#create_form'
@@ -36,6 +42,7 @@ Rails.application.routes.draw do
   get 'photos_children/show_photos_children' => 'photos_children#show_photos_children'
   get 'project_data_children/show_children' => 'project_data_children#show_children'
   get 'users/get_user_id_and_customer_id' => 'users#get_user_id_and_customer_id'
+  post 'dashboards/send_alerts'
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
 

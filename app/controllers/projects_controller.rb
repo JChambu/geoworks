@@ -7,6 +7,27 @@ class ProjectsController < ApplicationController
     render json: {data: @user}
   end
 
+  def search_data_for_pdf
+    top_level_project_type_ids = params[:top_level_project_type_ids]
+    project_ids = params[:project_ids]
+    projects = []
+    top_level_project_type_ids.each do |project_type_id|
+      data = Project
+        .select('main.id AS cross_layer_record, sec.id, sec.properties, sec.project_type_id, sec.gwm_created_at, project_statuses.name AS status_name, project_statuses.color AS status_color')
+        .from('projects main')
+        .joins('INNER JOIN projects sec ON ST_Intersects(main.the_geom, sec.the_geom)')
+        .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
+        .where('main.id IN (?)', project_ids)
+        .where('sec.project_type_id = ?', project_type_id)
+        .where('main.row_active = ?', true)
+        .where('main.current_season = ?', true)
+        .where('sec.row_active = ?', true)
+        .where('sec.current_season = ?', true)
+      projects << data
+    end
+    render json: projects
+  end
+
   # Elimina un registro (row_active = false)
   def destroy_form
     app_ids = params[:app_ids]
@@ -70,8 +91,6 @@ class ProjectsController < ApplicationController
     properties['app_id'] = 0
     properties['app_usuario'] = current_user.id
     properties['app_estado'] = project_status_id.to_i
-    properties['gwm_created_at'] = datetime.to_date
-    properties['gwm_updated_at'] = datetime.to_date
 
     # Carga los valores
     @project['properties'] = properties

@@ -9,6 +9,17 @@ class DashboardsController < ApplicationController
   def maps
   end
 
+  def send_alerts
+    @to = params[:to]
+    @name_corp = params[:name_corp]
+    @logo_corp = params[:logo_corp]
+    @header_content = params[:header_content]
+    @html_content = params[:html_content]
+    @img_attach_src = params[:img_attach_src]
+    @plain_content = params[:plain_content]
+    UserMailer.send_alert(@to,@name_corp,@logo_corp,@header_content,@html_content,@img_attach_src,@plain_content).deliver_now
+  end  
+
   def create_graph
 
     respond_to do |f|
@@ -30,7 +41,27 @@ class DashboardsController < ApplicationController
     if !@project_type.nil?
 
       @fields = ProjectField.where(project_type_id: @project_type.id).order(:sort)
-      @fields_all = ProjectField.joins(:project_type).where(project_types: {enabled_as_layer: true}).order('project_types.level DESC', :sort)
+      # Busca el rol del usuario
+      customer_name = Apartment::Tenant.current
+      Apartment::Tenant.switch 'public' do
+        customer_id = Customer.where(subdomain: customer_name).pluck(:id)
+        @user_rol = UserCustomer
+          .where(user_id: current_user.id)
+          .where(customer_id: customer_id)
+          .pluck(:role_id)
+          .first
+      end
+      # Campos de los proyectos que están por encima del proyecto actual
+      @top_level_fields = ProjectField
+        .joins(:project_type)
+        .where.not(project_type_id: @project_type.id)
+        .where('project_types.level > ?', @project_type.level)
+        .order('project_types.level DESC', :sort)
+
+      @table_configuration = TableConfiguration
+        .where(project_type_id: @project_type.id)
+        .where(user_id: current_user.id)
+
       @project_types_all = ProjectType.where(enabled_as_layer: true).order(level: :desc)
       @current_tenant = Apartment::Tenant.current
 

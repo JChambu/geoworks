@@ -173,7 +173,15 @@ div.custom-menu.show {
 .chart-bg-none {
   background: none;
 }
-
+.chart_maxi{
+  position: absolute;
+  left:0%;
+  top:9vh;
+  height: 90vh;
+  background: rgba(58, 63, 68, 0.2);
+  z-index: 5000;
+  overflow:auto;
+}
 
 /* Indicadores de texto */
 .tile_count {
@@ -398,7 +406,7 @@ div.custom-menu.show {
 
 /* Evita los elementos de leaflet de la derecha se superpongan con el sidebar */
 .leaflet-right {
-  margin-right: 30%;
+  margin-right: 0%;
   transition:1s;
 }
 
@@ -409,7 +417,6 @@ div.custom-menu.show {
 
 /* Modifica el scroll del navagador */
 ::-webkit-scrollbar {
-  width: 15px;
   background-color: rgba(232, 235, 239, 0.5);
 }
 ::-webkit-scrollbar-thumb {
@@ -437,39 +444,6 @@ div.custom-menu.show {
 .table-tbody-scroll thead, .table-tbody-scroll tbody tr {
   display: table;
   width: 100%;
-}
-
-/* Modifica el estilo del time_slider */
-.irs-from ,.irs-to ,.irs-single {
-  margin-top:5px;
-}
-.irs--flat .irs-grid-text { /* texto */
-  color: #e8ebef !important;
- // text-shadow: 1px 1px 1px #2c2e34;
-}
-.irs--flat .irs-grid-pol { /* regla */
-  background-color: #e8ebefCC !important;
-}
-.irs--flat .irs-line { /* barra fondo */
-  background-color: #e8ebefCC !important;
-}
-.irs--flat .irs-min, .irs--flat .irs-max { /* label fondo */
-  color: #798088 !important;
-  background-color: #e8ebefCC !important;
-  margin-top:5px;
-}
-.time-slider-inactive{
-  background-color: #272B3099 !important;
-}
-.time-slider-inactive:before{
-  border-top-color: #272B3099 !important;
-}
-.time-slider-active{
-  background-color: #d3d800 !important;
-  color: #484b4f !important;
-}
-.time-slider-active:before{
-  border-top-color: #d3d800 !important;
 }
 
 /*custom checkbox and radio*/
@@ -583,8 +557,8 @@ div.custom-menu.show {
   scrollbar-width: none;  /* Firefox */
 }
 .scroll::-webkit-scrollbar {
-  width: 15px;
-  height: 15px;
+  width: 2.5vh;
+  height: 2.5vh;
 }
 
 .scroll_false{
@@ -823,4 +797,121 @@ div.custom-menu.show {
   cursor: pointer;
   padding: 5px;
   padding:2px;
+}
+
+/* modal pdf */
+.custom_modal_pdf{
+  width:64vh;
+  height:90vh;
+  top:9vh;
+  left:0.5%;
+}
+.custom_pdf_header{
+  position: absolute;
+  z-index: 30;
+  width: inherit;
+  border: none;
+  padding: 0px!important;
+  background:transparent;
+}
+.white_transparent{
+  background:rgba(250,250,250,0.8);
+  color: rgb(84, 84, 84);
+}
+.pdf_header{
+  text-align: center;
+  padding: 10px;
+  border-bottom: solid 1px;
+  min-height: 7vh;
+}
+.pdf_title{
+  text-align:center;
+  border:none;
+  display:inline-block;
+  margin: 0px !important;
+  background:transparent;
+}
+.pdf_powered{
+  font-size: 0.5em;
+  margin: 8px 0px -8px 20px;
+}
+.logo_coorp_pdf{
+  height: 5vh;
+  position: absolute;
+  left: 7%;
+}
+
+.logo_pdf{
+  width: 100%;
+  margin: 0px;
+}
+.div_powered{
+  position: absolute;
+  top: 15px;
+  left: 46vh;
+  width:16%;
+}
+.title_pdf{
+  line-height: 1!important;
+  font-weight:bold
+}
+.p_pdf{
+  font-size: 0.6em;
+  display:inline-block;
+  margin:0px!important;
+  line-height: 1.2;
+}
+.div_pdf{
+  width: 50%;
+  display: inline-block;
+  vertical-align: top;
+}
+.div_pdf_expanded{
+  width: 100%;
+  line-height: 0.1!important;
+}
+.div_pdf_child{
+  padding-left: 10px;
+}
+.sub_div_pdf_expanded{
+  width:47%;
+  line-height:0!important
+}
+.div_pdf_photos{
+  width: 50%;
+  display: inline-block;
+  vertical-align: top;
+}
+.img_pdf{
+  width: auto;
+  min-height: 40px;
+  margin: 2px;
+  display:inline-block;
+}
+.delete_hover:hover{
+  border:solid 2px red;
+}
+
+.icon_selected{
+  color: rgb(211, 216, 0)!important;
+}
+
+/* Toast */
+.custom_toast {
+  position: absolute;
+  top: -30vh;
+  left: 35%;
+  background: rgba(81, 89, 96, 0.4);
+  z-index: 4000;
+  color: white;
+  width: 30%;
+}
+
+.custom_danger{
+  color:red;
+  font-weight:bold;
+}
+
+.custom_cursor{
+  cursor:pointer;
 }

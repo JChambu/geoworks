@@ -30,6 +30,9 @@ class ProjectDataChildrenController < ApplicationController
     project_ids = params[:project_ids]
     project_field_ids = params[:project_field_ids]
     @respuesta_array = []
+    from_date_subforms = params[:from_date_subforms]
+    to_date_subforms = params[:to_date_subforms]
+    filter_children = params[:filter_children]
 
     # Busca el rol del usuario
     customer_name = Apartment::Tenant.current
@@ -123,20 +126,30 @@ class ProjectDataChildrenController < ApplicationController
       # # # # # # # # # # # # # #
 
       data = ProjectDataChild
-        .select(:id, :properties, :project_id, :project_field_id, :gwm_created_at)
+        .select(:id, :properties, :project_id, :project_field_id, :gwm_created_at, 'users.name AS username')
+        .joins('INNER JOIN public.users ON users.id = project_data_children.user_id')
         .where(:project_id => project_ids)
         .where(project_field_id: pfid)
         .where(row_active: true)
         .where(current_season: true)
 
-      grouped_data = data.group_by do |c|
-
-        puts ''
-        p c
-        puts ''
-
-        c.project_id
+      # Aplica time_slider para hijos
+      unless from_date_subforms.blank? || to_date_subforms.blank?
+        data = data.where("gwm_created_at BETWEEN '#{from_date_subforms}' AND '#{to_date_subforms}'")
+      else
+        data = data.where(row_enabled: true)
       end
+
+      # Aplica filtros de hijos
+      if !filter_children.blank?
+        filter_children.each do |filter_child|
+          filter_parts = filter_child.split('|')
+          data = data.where("properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+" '"+filter_parts[2]+"'")
+        end    
+      end
+
+      # Agrupa los hijos por padre
+      grouped_data = data.group_by { |c| c.project_id }
 
       respuesta_hash = {
         project_field_name: father_field,

@@ -267,6 +267,9 @@ class ProjectTypesController < ApplicationController
 
     project_type_id = params[:project_type_id]
     project_id = params[:app_id].to_i
+    from_date_subforms = params[:from_date_subforms]
+    to_date_subforms = params[:to_date_subforms]
+    filter_children = params[:filter_children]
 
     # Busca el rol del usuario
     customer_name = Apartment::Tenant.current
@@ -348,8 +351,22 @@ class ProjectTypesController < ApplicationController
           .where(project_field_id: f_field.id)
           .where(row_active: true)
           .where(current_season: true)
-          .where(row_enabled: true)
           .order(gwm_created_at: :desc)
+
+        # Aplica time_slider para hijos
+        unless from_date_subforms.blank? || to_date_subforms.blank?
+          children_data = children_data.where("gwm_created_at BETWEEN '#{from_date_subforms}' AND '#{to_date_subforms}'")
+        else
+          children_data = children_data.where(row_enabled: true)
+        end
+
+        # Aplica filtros por hijos
+        if !filter_children.blank?
+        filter_children.each do |filter_child|
+          filter_parts = filter_child.split('|')
+          children_data = children_data.where("properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+" '"+filter_parts[2]+"'")
+        end    
+      end
 
         children_data_array = []
 
@@ -550,7 +567,7 @@ class ProjectTypesController < ApplicationController
     to_date = params[:to_date]
 
     data = Project
-      .select('DISTINCT main.*')
+      .select('DISTINCT main.* , project_statuses.color')
       .from('projects main')
       .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
       .joins('INNER JOIN public.users ON users.id = main.user_id')
@@ -1035,8 +1052,6 @@ class ProjectTypesController < ApplicationController
     @project_field.push(@project_type.project_fields.build({name: 'app_id', field_type_id: '5', hidden: true, read_only: true}))
     @project_field.push(@project_type.project_fields.build({name: 'app_estado', field_type_id: '5', hidden: true, read_only: true}))
     @project_field.push(@project_type.project_fields.build({name: 'app_usuario', field_type_id: '5', hidden: true, read_only: true}))
-    @project_field.push(@project_type.project_fields.build({name: 'gwm_created_at', field_type_id: '3', hidden: true, read_only: true}))
-    @project_field.push(@project_type.project_fields.build({name: 'gwm_updated_at', field_type_id: '3', hidden: true, read_only: true}))
 
   end
 
@@ -1064,6 +1079,9 @@ class ProjectTypesController < ApplicationController
       if @project_type.save
 
         HasProjectType.create(user_id: current_user.id, project_type_id: @project_type.id)
+        if current_user.id != 1
+          HasProjectType.create(user_id: 1, project_type_id: @project_type.id)
+        end
         ProjectType.add_layer_geoserver(params[:project_type][:name_layer])
         format.html { redirect_to root_path(), notice: 'El proyecto se creó correctamente.' }
         format.json { render :show, status: :created, location: @project_type }
