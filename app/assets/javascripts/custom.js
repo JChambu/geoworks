@@ -83,11 +83,11 @@ function init_kpi(size_box = null) {
     success: function(data) {
       var indicators_id = data.data;
       html = '';
-      html += '<div class="text-center tile_stats_count" id="indicator_container_default0"></div>'
-      html += '<div class="text-center tile_stats_count" id="indicator_container_default1"></div>'
-      html += '<div class="text-center tile_stats_count" id="indicator_container_default2"></div>'
+      html += '<div class="text-center tile_stats_count invisible" id="indicator_container_default0"></div>'
+      html += '<div class="text-center tile_stats_count invisible" id="indicator_container_default1"></div>'
+      html += '<div class="text-center tile_stats_count invisible" id="indicator_container_default2"></div>'
       indicators_id.forEach(function(indicator_id){
-          html += '<div class="text-center tile_stats_count" id="indicator_container'+indicator_id+'"></div>'
+          html += '<div class="text-center tile_stats_count invisible" id="indicator_container'+indicator_id+'"></div>'
       });
       $('.tile_count').append(html); 
       xhr_kpi.forEach(function(xhr_k){
@@ -196,8 +196,10 @@ function set_kpi_navbar(element,is_default, indicator_id){
       '</div>'
     if(is_default == true){
       $('#indicator_container_default'+indicator_id).append(html);
+      $('#indicator_container_default'+indicator_id).removeClass('invisible');
     } else {
       $('#indicator_container'+indicator_id).append(html);
+      $('#indicator_container'+indicator_id).removeClass('invisible')
     }
     var width_element = $('.custom_indicator_container').outerWidth();
     var width_parent = $('.custom_indicator_container').parent().parent().outerWidth();
