@@ -1,6 +1,9 @@
 //peticiones Ajax
-var xhr_kpi = null;
+var xhr_kpi = [];
 var xhr_chart = null;
+for(x=0;x<100;x++){
+  xhr_kpi.push(null);
+}
 var xhr_table = null;
 var xhr_geojson = null;
 var xhr_table_search = null;
@@ -11,6 +14,7 @@ var filechange;
 var statuschange;
 var original_chart_container;
 
+var scroll_chart = 0;
 var father_fields = [];
 var child_elements = [];
 var children_fields;
@@ -38,10 +42,6 @@ Number.prototype.format = function(n, x, s, c) {
 function init_kpi(size_box = null) {
   $('#div_pagination').css("visibility","hidden");
   $('.tile_count').empty();
-  html = ' <div class="spinner-border" style="margin:10px" role="status">'+
-        '<span class="sr-only">Loading...</span>'+
-        '</div>';
-  $('.tile_count').append(html);
   var type_box = 'polygon';
   var data_conditions = {}
 
@@ -54,16 +54,7 @@ function init_kpi(size_box = null) {
     size_box[2] = size_ext['_northEast']['lng'];
     size_box[3] = size_ext['_northEast']['lat'];
   }
-  //else{
-  // type_box = 'filter';
-  //   var project_field = Navarra.project_types.config.project_field;
-  //   var filter = Navarra.project_types.config.filter;
-  //   var input_value = Navarra.project_types.config.input_value;
-  //   data_conditions['project_field'] = project_field;
-  //   data_conditions['filter'] = filter;
-  //   data_conditions['input_value'] = input_value;
-
-  // }
+  
   var data_id = Navarra.dashboards.config.project_type_id;
   var dashboard_id = Navarra.dashboards.config.dashboard_id;
   var attribute_filters = Navarra.project_types.config.attribute_filters;
@@ -81,72 +72,140 @@ function init_kpi(size_box = null) {
       filter_user_children.push($(this).attr('id').split('|')[2])
     }
   });
-
-  console.log("Filtros por ids")
-  console.log(filtered_form_ids)
-
-  if (xhr_kpi && xhr_kpi.readyState != 4) {
-    xhr_kpi.abort();
-  }
-  xhr_kpi = $.ajax({
+  $.ajax({
     type: 'GET',
-    url: '/project_types/kpi.json',
+    url: '/project_types/get_kpi_without_graph_ids.json',
     datatype: 'json',
     data: {
-      data_id: data_id,
-      size_box: size_box,
-      graph: false,
-      type_box: type_box,
-      data_conditions: attribute_filters,
-      filtered_form_ids: filtered_form_ids,
-      from_date: from_date,
-      to_date: to_date,
-      from_date_subform: from_date_subforms,
-      to_date_subform: to_date_subforms,
-      filter_children:filter_children,
-      filter_user_children:filter_user_children
+      project_type_id: Navarra.dashboards.config.project_type_id,
+      is_graph: false
     },
-    dashboard_id: dashboard_id,
     success: function(data) {
-      $('.tile_count').empty();
-      data.forEach(function(element) {
-        var count_element = element['data'][0]['count'];
-
-        if (element['title'] == 'Seleccionado') {
-          if ($("#choose").val() == "") {
-            if ($(".active_page").length == 0) {
-              var active_page = 1
-            } else {
-              var active_page = parseInt($(".active_page").html());
-            }
-            data_pagination(element['data'][0]['count'], active_page);
-          }
-          $('.total_files').val(element['data'][0]['count']);
+      var indicators_id = data.data;
+      html = '';
+      html += '<div class="text-center tile_stats_count" id="indicator_container_default0"></div>'
+      html += '<div class="text-center tile_stats_count" id="indicator_container_default1"></div>'
+      html += '<div class="text-center tile_stats_count" id="indicator_container_default2"></div>'
+      indicators_id.forEach(function(indicator_id){
+          html += '<div class="text-center tile_stats_count" id="indicator_container'+indicator_id+'"></div>'
+      });
+      $('.tile_count').append(html); 
+      xhr_kpi.forEach(function(xhr_k){
+        if(xhr_k && xhr_k.readyState != 4) {
+          xhr_k.abort();
         }
-
-        if (element['title'] == '% del Total') {
-          data_cont = (Number(count_element)).format(2, 3, '.', ',');
-        } else {
-          data_cont = (Number(count_element)).format(0, 3, '.', ',');
-        }
-
-      // if ($('.kpi_' + element['id']).length) {
-        // $('.kpi_' + element['id']).replaceWith('<div class="count kpi_' + element['id'] + '">' + data_cont + '</div>');
-        //} else {
-          html = ' <div class="tile_stats_count">' +
-            '<span class="count_top align-top">' + element['title'] + '</span>' +
-            '<div class="count align-middle kpi_' + element['id'] + '"> ' + data_cont + '</div>' +
-            '</div>' +
-            '</div>'
-          $('.tile_count').append(html);
-
-       // }
-
-      }); // Cierra forEach
-      $('#div_pagination').css("visibility","visible");
-    } // Cierra success
-  }); // Cierra ajax
+      })   
+      // indicadores por default
+      xhr_kpi[0] = $.ajax({
+        type: 'GET',
+        url: '/project_types/kpi.json',
+        datatype: 'json',
+        data: {
+          is_default: true,
+          data_id: data_id,
+          size_box: size_box,
+          graph: false,
+          type_box: type_box,
+          data_conditions: attribute_filters,
+          filtered_form_ids: filtered_form_ids,
+          from_date: from_date,
+          to_date: to_date,
+          from_date_subform: from_date_subforms,
+          to_date_subform: to_date_subforms,
+          filter_children:filter_children,
+          filter_user_children:filter_user_children,
+          indicator_id: 0
+        },
+        dashboard_id: dashboard_id,
+          success: function(data) {
+            data.forEach(function(element, index) {
+              set_kpi_navbar(element, true , index)
+            }); // Cierra forEach
+            $('#div_pagination').css("visibility","visible");
+            // indicadores generados por el usuario
+            indicators_id.forEach(function(indicator_id,index_kpi){   
+              xhr_kpi[index_kpi+1] = $.ajax({
+                type: 'GET',
+                url: '/project_types/kpi.json',
+                datatype: 'json',
+                data: {
+                  is_default: false,
+                  data_id: data_id,
+                  size_box: size_box,
+                  graph: false,
+                  type_box: type_box,
+                  data_conditions: attribute_filters,
+                  filtered_form_ids: filtered_form_ids,
+                  from_date: from_date,
+                  to_date: to_date,
+                  from_date_subform: from_date_subforms,
+                  to_date_subform: to_date_subforms,
+                  filter_children:filter_children,
+                  filter_user_children:filter_user_children,
+                  indicator_id: indicator_id
+                },
+                dashboard_id: dashboard_id,
+                success: function(data) {
+                  data.forEach(function(element) {
+                    set_kpi_navbar(element, false , indicator_id)
+                  }); // Cierra forEach
+                } // Cierra success
+              }); // Cierra ajax
+            }); // Cierra forEach
+          } // Cierra success de indicadores por default
+        }); // Cierra ajax de indicadores por default
+    }// Cierra success ids de indicadores
+  }); // Cierra ajax para buscar ids de indicadores
 }; // Cierra init_kpi
+
+function set_kpi_navbar(element,is_default, indicator_id){
+  var count_element = element['data'][0]['count'];
+  if (element['title'] == 'Seleccionado') {
+    if ($("#choose").val() == "") {
+      if ($(".active_page").length == 0) {
+        var active_page = 1
+      } else {
+        var active_page = parseInt($(".active_page").html());
+      }
+      data_pagination(element['data'][0]['count'], active_page);
+    }
+    $('.total_files').val(element['data'][0]['count']);
+  }
+  if (Number(count_element) != parseInt(Number(count_element))) {
+    data_cont = (Number(count_element)).format(2, 3, '.', ',');
+  } else {
+    data_cont = (Number(count_element)).format(0, 3, '.', ',');
+  }
+    if(element['title'].split(' ').length>=2){
+      var split_element = Math.ceil(element['title'].split(' ').length/2);
+      var title_up = "";
+      var title_down = "";
+      element['title'].split(' ').forEach(function(element, index){
+        if(index<split_element){
+          title_up += element+" ";
+        } else{
+          title_down += element+" ";
+        }
+      })
+      var element_title_two_lines = "<p class='m-0 text-left'>"+title_up+"</p><p class='m-0 mb-1 text-left'>"+title_down+"</p>";
+    } else {
+      var element_title_two_lines = "<p class='m-0 position-relative text-left' style='top:5px'>"+element['title']+"</p><p class='m-0 mb-1 invisible'>"+element['title']+"</p>";
+    }
+    html = '<span class="count_top align-top">' + element_title_two_lines + '</span>' +
+      '<div class="count align-middle kpi_' + element['id'] + '"> ' + data_cont + '</div>' +
+      '</div>'
+    if(is_default == true){
+      $('#indicator_container_default'+indicator_id).append(html);
+    } else {
+      $('#indicator_container'+indicator_id).append(html);
+    }
+    var width_element = $('.custom_indicator_container').outerWidth();
+    var width_parent = $('.custom_indicator_container').parent().parent().outerWidth();
+    if(width_element>width_parent){
+      $('#move_indicators_left').removeClass('d-none');
+      $('#move_indicators_right').removeClass('d-none');
+    }
+}
 
 function capitalize(s) {
   return s.toLowerCase().replace(/\b./g, function(a) {
@@ -234,6 +293,8 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         filter_user_children:filter_user_children
       },
       success: function(data) {
+        console.log("Lega la data")
+        console.log(data)
         data_charts = data;
         draw_charts();
 
@@ -1292,8 +1353,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
         return;
       }
       data_dashboard = data.data
-      console.log("Data para tabla")
-      console.log(data)
 
       // borramos los datos anteriores
       $("#tbody_visible").empty();

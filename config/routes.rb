@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   post 'projects/search_data_for_pdf' => 'projects#search_data_for_pdf', as: :search_data_for_pdf
   get 'projects/popup' => 'projects#popup'
   get 'project_types/get_extent' => 'project_types#get_extent'
+  get 'project_types/get_kpi_without_graph_ids' => 'project_types#get_kpi_without_graph_ids'
   post 'projects/create_form' => 'projects#create_form'
   patch 'projects/update_form' => 'projects#update_form'
   patch 'projects/update_geom_and_calculated_fields' => 'projects#update_geom_and_calculated_fields'
