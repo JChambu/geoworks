@@ -288,7 +288,7 @@ class ProjectTypesController < ApplicationController
 
       )
     else
-      @querys = ProjectType.kpi_without_graph(
+      @querys = ProjectType.kpi_without_graph_one_by_one(
         params[:is_default],
         params[:data_id],
         @op_graph,
