@@ -282,7 +282,7 @@ module ProjectTypes::Indicators
           @value = s[2]
 
           # Aplica filtro por campo usuario
-          if field == 'app_usuario'
+          if @field == 'app_usuario'
             if sql_full.blank?
               data = data.where("users.name " + @filter + " '#{@value}'")
             else
@@ -291,7 +291,7 @@ module ProjectTypes::Indicators
           end
 
           # Aplica filtro por campo estado
-          if field == 'app_estado'
+          if @field == 'app_estado'
             if sql_full.blank?
               data =  data.where("project_statuses.name " + @filter + " '#{@value}' ")
             else
@@ -300,7 +300,7 @@ module ProjectTypes::Indicators
           end
 
           # Aplica filtro por otro campo
-          if field != 'app_usuario' && field != 'app_estado'
+          if @field != 'app_usuario' && field != 'app_estado'
             if sql_full.blank?
               data =  data.where("main.properties->>'" + @field +"'" +  @filter +" '#{@value}' ")
             else
