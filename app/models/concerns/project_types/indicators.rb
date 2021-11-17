@@ -300,7 +300,7 @@ module ProjectTypes::Indicators
           end
 
           # Aplica filtro por otro campo
-          if @field != 'app_usuario' && field != 'app_estado'
+          if @field != 'app_usuario' && @field != 'app_estado'
             if sql_full.blank?
               data =  data.where("main.properties->>'" + @field +"'" +  @filter +" '#{@value}' ")
             else
