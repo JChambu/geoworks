@@ -416,7 +416,7 @@ module ProjectTypes::Indicators
       if is_graph == "true"
         analytics_charts_ids = Graphic.where(dashboard_id: id).order(:sort).pluck(:id);
       else
-        analytics_charts_ids = AnalyticsDashboard.where(project_type_id: id, graph: false).pluck(:id)
+        analytics_charts_ids = AnalyticsDashboard.where(project_type_id: id, graph: false).order(:description).pluck(:id)
       end
 
       analytics_charts_ids
