@@ -366,7 +366,7 @@ function min_photo(){
 <%else %>
   <input class="d-none" id="edit_geom_control" value="false">
 <% end %>
-<% if can? :data, :new %>
+<% if (can? :data, :new and @project_type.geo_restriction == 0) %>
   <input class="d-none" id="new_geom_control" value="true">
 <%else %>
   <input class="d-none" id="new_geom_control" value="false">
