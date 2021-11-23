@@ -805,7 +805,7 @@ module ProjectTypes::Indicators
               field = s[0]
               filter = s[1]
               value = s[2]
-              query_full = query_full.gsub(' ', "where_subform_clause (sub.properties->>'#{field}' #{filter} '#{value}') AND ")
+              query_full = query_full.gsub('where_subform_clause', "where_subform_clause (sub.properties->>'#{field}' #{filter} '#{value}') AND ")
             end    
           end
           # Aplica filtros de usuario de hijos
