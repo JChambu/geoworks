@@ -1827,7 +1827,24 @@ function save_geometry(){
     set_onclick_map(true);
     return;
   }
-
+  var duplicate_map = false
+  polygon_edit_vertexs.forEach(function(vertex){
+    if(vertex._latlng.lng>180 || vertex._latlng.lng<-180 ){
+      duplicate_map = true;
+    }
+  });
+  geometries_to_edit.forEach(function(vertex){
+    if(vertex.latLng.lng>180 || vertex.latLng.lng<-180 ){
+      duplicate_map = true;
+    }
+  });
+  if(duplicate_map){
+    delete_markers();
+    $('#confirmation_success_geometry_text').html('Longitud fuera del rango');
+    $('.confirmation_success_geometry').removeClass('d-none');
+    set_onclick_map(true);
+    return;
+  }
   if($('#confirmation_geometry_button').hasClass('confirmation_geometry_button_edit')){
     search_geometric_calculation_fields();
   }
