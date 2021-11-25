@@ -6,7 +6,7 @@ class AnalyticsDashboardsController < ApplicationController
   # GET /analytics_dashboards.json
   def index
     authorize! :indicators, :visualizer
-    @analytics_dashboards = @dashboard.analytics_dashboards.all
+    @analytics_dashboards = @dashboard.analytics_dashboards.all.order(:graph, :description)
   end
 
   # GET /analytics_dashboards/1
