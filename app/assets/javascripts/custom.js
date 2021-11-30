@@ -2661,7 +2661,12 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             if(element.can_read==false){
                 new_row.classList.add('canot_read');
               }
-            if ((element.value == null && element.field_type_id != 11) || (element.value == "" && element.field_type_id != 11) || (element.value == " " && element.field_type_id != 11)) {
+            if(element.value != null){
+              var element_value_string = element.value.toString();
+            } else {
+              var element_value_string = element.value;
+            }
+            if ((element.value == null && element.field_type_id != 11) || (element_value_string == "" && element.field_type_id != 11) || (element_value_string == " " && element.field_type_id != 11)) {
               new_row.classList.add("d-none");
               new_row.classList.add("empty_field");
             }
@@ -3028,7 +3033,12 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
         new_row1.classList.add('canot_read');
     }
     if(!is_new){
-      if ((element_child_field.value == null && element_child_field.field_type_id != 11) || (element_child_field.value == "" && element_child_field.field_type_id != 11) || (element_child_field.value == " " && element_child_field.field_type_id != 11)) {
+      if(element_child_field.value!=null){
+        var element_child_field_string = element_child_field.value.toString();
+      } else{
+        var element_child_field_string = element_child_field.value;
+      }
+      if ((element_child_field.value == null && element_child_field.field_type_id != 11) || (element_child_field_string== "" && element_child_field.field_type_id != 11) || (element_child_field_string == " " && element_child_field.field_type_id != 11)) {
         new_row1.classList.add("d-none");
         new_row1.classList.add("empty_field");
       }
