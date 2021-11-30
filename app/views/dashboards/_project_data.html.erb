@@ -62,7 +62,7 @@ $('#table_select_all').click(function(){
   });
 
   // evita cierre de modal selectores para reporte de alertas y para agrupar por subformularios en reportes pdf
-  $('#alert_mail , #alert_group , #set_subfield_grouped, #set_subfield_grouped_container' ).click(function(e){
+  $('#alert_type, #alert_mail , #alert_group , #set_subfield_grouped, #set_subfield_grouped_container' ).click(function(e){
     e.stopPropagation();
   })
 });
@@ -773,7 +773,7 @@ function generate_alerts(){
   }
   var alert_mail_key = $('#alert_mail').val();
   if(alert_mail_key==""){
-    $('#text_toast').html("El campos \"Enviar Alertas a\" no puede estar vacío");
+    $('#text_toast').html("El campos \"Enviar a\" no puede estar vacío");
     $('.toast').toast('show');
     return;
   }
@@ -826,20 +826,30 @@ function generate_alerts(){
           </div>
       </a>
       <% if can? :data, :alert %>
-        <a data-toggle="modal" id="show_alert"  onclick="open_alert_modal(event)" style="cursor: pointer;" class="dropdown-item text-left" ><i class="fas fa-bullhorn mr-2" ></i> Alertas
+        <a data-toggle="modal" id="show_alert"  onclick="open_alert_modal(event)" style="cursor: pointer;" class="dropdown-item text-left" ><i class="fas fa-bullhorn mr-2" ></i> Recomendaciones/Alertas/Notificaciones
         </a>
         <div id="alert_options" class="pl-5 d-none border-bottom border-secondary pb-1" style="font-size: 0.8em">
           <div class="d-flex">
-            <h7 class="mb-0 w-25">Enviar Alertas a:</h7>
-            <select id="alert_mail" class="form-control form-control-sm w-25 mr-3" style="font-size: 0.8em">
-            </select>
-            <label class="mt-1 mb-0 w-25">Agrupar Alertas por:</label>
-            <select id="alert_group" class="form-control form-control-sm w-25 mt-1" style="font-size: 0.8em">
+            <label class="mt-1 mb-0 w-25">Mensaje:</label>
+            <select  id="alert_type" class="form-control form-control-sm w-50 mr-3" style="font-size: 0.8em">
+              <option value="Recomendación">Recomendación</option>
+              <option value="Alerta">Alerta</option>
+              <option value="Notificación">Notificación</option>
             </select>
           </div>
-          <textarea class="form-control form-control-sm mt-2" id="alert_text" style="width:50vw; height:10vh;resize:none" placeholder="Ingrese el mensaje de Alerta"></textarea>
+          <div class="d-flex">
+            <label class="mt-1 mb-0 w-25">Enviar a:</label>
+            <select id="alert_mail" class="form-control form-control-sm w-50 mt-1" style="font-size: 0.8em">
+            </select>
+          </div>  
+          <div class="d-flex">  
+            <label class="mt-1 mb-0 w-25">Agrupar por:</label>
+            <select id="alert_group" class="form-control form-control-sm w-50 mt-1" style="font-size: 0.8em">
+            </select>
+          </div>
+          <textarea class="form-control form-control-sm mt-2" id="alert_text" style="display: none;width:50vw; height:10vh;resize:none" placeholder="Ingrese el mensaje"></textarea>
           <div class="text-right">
-            <button class="btn btn-primary p-1 mt-2" style="font-size: 1em" type="button" onclick="generate_alerts()">Generar Alertas</button>
+            <button class="btn btn-primary p-1 mt-2" style="font-size: 1em" type="button" onclick="generate_alerts()">Generar</button>
           </div>
         </div>
       <% end %>
