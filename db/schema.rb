@@ -357,7 +357,7 @@ ActiveRecord::Schema.define(version: 20211124232408) do
     t.datetime "updated_at", null: false
     t.jsonb "properties_original"
     t.bigint "project_status_id"
-    t.datetime "status_update_at", default: "2021-11-23 18:42:04"
+    t.datetime "status_update_at", default: "2021-11-30 00:48:46"
     t.bigint "user_id"
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
