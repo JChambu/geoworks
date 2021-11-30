@@ -133,6 +133,7 @@ class ProjectDataChildrenController < ApplicationController
         .where(project_field_id: pfid)
         .where(row_active: true)
         .where(current_season: true)
+        .order(created_at: :desc)
 
       # Aplica time_slider para hijos
       unless from_date_subforms.blank? || to_date_subforms.blank?

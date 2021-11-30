@@ -23,13 +23,13 @@ module ProjectTypes::Indicators
           .where("shared_extensions.ST_Contains(shared_extensions.ST_MakeEnvelope(#{minx}, #{maxy}, #{maxx}, #{miny}, 4326), main.#{:the_geom})")
 
         if children == true
-          @data = @data.left_outer_joins(:project_data_child)
+          @data = data.left_outer_joins(:project_data_child)
         end
 
       else
         @data = ''
         # Aplica ST_Contains por extent al query de indicadores advanced
-        @data = sql_full.sub('where_clause', "where_clause shared_extensions.ST_Contains(shared_extensions.ST_MakeEnvelope(#{minx}, #{maxy}, #{maxx}, #{miny}, 4326), main.#{:the_geom}) AND ")
+        @data = sql_full.gsub('where_clause', "where_clause shared_extensions.ST_Contains(shared_extensions.ST_MakeEnvelope(#{minx}, #{maxy}, #{maxx}, #{miny}, 4326), main.#{:the_geom}) AND ")
       end
 
       @data
@@ -69,7 +69,7 @@ module ProjectTypes::Indicators
       else
         @data = ''
         # Aplica ST_Contains por polygon al query de indicadores advanced
-        @data = sql_full.sub('where_clause', "where_clause shared_extensions.ST_Contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'), 4326), main.#{:the_geom}) AND ")
+        @data = sql_full.gsub('where_clause', "where_clause shared_extensions.ST_Contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'), 4326), main.#{:the_geom}) AND ")
       end
 
       @data
@@ -83,8 +83,8 @@ module ProjectTypes::Indicators
         if sql_full.blank?
           data = data.where("main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}'")
         else
-          data = data.sub('where_clause', "where_clause (main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}') AND ")
-          data = data.sub('where_clause_layer', "where_clause_layer (sec.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}') AND ")
+          data = data.gsub('where_clause', "where_clause (main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}') AND ")
+          data = data.gsub('where_layer_clause', "where_layer_clause (sec.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}') AND ")
         end
 
       else
@@ -92,17 +92,17 @@ module ProjectTypes::Indicators
         if sql_full.blank?
           data = data.where('main.row_enabled = ?', true)
         else
-          data = data.sub('where_clause', "where_clause main.row_enabled = true AND ")
-          data = data.sub('where_clause_layer', "where_clause_layer sec.row_enabled = true AND ")
+          data = data.gsub('where_clause', "where_clause main.row_enabled = true AND ")
+          data = data.gsub('where_layer_clause', "where_layer_clause sec.row_enabled = true AND ")
         end
 
       end
       #Aplica time_slider de hijos
       if !sql_full.blank?
         if !from_date_subform.blank? || !to_date_subform.blank? 
-          data = data.sub('where_clause_subform', "where_clause_subform (sub.gwm_created_at BETWEEN '#{from_date_subform}' AND '#{to_date_subform}') AND ")
+          data = data.gsub('where_subform_clause', "where_subform_clause (sub.gwm_created_at BETWEEN '#{from_date_subform}' AND '#{to_date_subform}') AND ")
         else
-          data = data.sub('where_clause_subform', "where_clause_subform sub.row_enabled = true AND ")
+          data = data.gsub('where_subform_clause', "where_subform_clause sub.row_enabled = true AND ")
         end
       end
 
@@ -121,7 +121,7 @@ module ProjectTypes::Indicators
           if sql_full.blank?
             data = data.where('main.user_id = ?', user_id)
           else
-            data = data.sub('where_clause', "where_clause (main.user_id = #{user_id}) AND ")
+            data = data.gsub('where_clause', "where_clause (main.user_id = #{user_id}) AND ")
           end
         end
 
@@ -131,7 +131,7 @@ module ProjectTypes::Indicators
             if sql_full.blank?
               data = data.where("main.properties ->> '#{prop[0]}' = '#{prop[1]}'")
             else
-              data = data.sub('where_clause', "where_clause (main.properties ->> '#{prop[0]}' = '#{prop[1]}') AND ")
+              data = data.gsub('where_clause', "where_clause (main.properties ->> '#{prop[0]}' = '#{prop[1]}') AND ")
             end
           end
         end
@@ -167,7 +167,7 @@ module ProjectTypes::Indicators
 
             # Cruza la capa del principal que contiene los hijos con la capa secunadaria
             data = data.gsub('from_clause', "CROSS JOIN projects sec")
-            data = data.sub('where_clause', "where_clause (shared_extensions.ST_Intersects(main.the_geom, sec.the_geom))
+            data = data.gsub('where_clause', "where_clause (shared_extensions.ST_Intersects(main.the_geom, sec.the_geom))
               AND sec.project_type_id = #{cross_layer_filter.project_type_id}
               AND sec.row_active = true
               AND sec.current_season = true
@@ -175,13 +175,13 @@ module ProjectTypes::Indicators
 
             # Aplica filtro por owner a capa secundaria
             if cross_layer_filter.owner == true
-              data = data.sub('where_clause', "where_clause (sec.user_id = #{user_id}) AND ")
+              data = data.gsub('where_clause', "where_clause (sec.user_id = #{user_id}) AND ")
             end
 
             # Aplica filtro por atributo a capa secundaria
             if !cross_layer_filter.properties.nil?
               cross_layer_filter.properties.to_a.each do |prop|
-                data = data.sub('where_clause', "where_clause (sec.properties->>'#{prop[0]}' = '#{prop[1]}') AND ")
+                data = data.gsub('where_clause', "where_clause (sec.properties->>'#{prop[0]}' = '#{prop[1]}') AND ")
               end
             end
 
@@ -264,29 +264,29 @@ module ProjectTypes::Indicators
 
       # Aplica filtros row_active y current_season para sql_full
       if !sql_full.blank?
-        data = data.sub('where_clause', "where_clause main.row_active = true AND ")
-        data = data.sub('where_clause', "where_clause main.current_season = true AND ")
-        data = data.sub('where_clause_layer', "where_clause_layer sec.row_active = true AND ")
-        data = data.sub('where_clause_layer', "where_clause_layer sec.current_season = true AND ")
-        data = data.sub('where_clause_subform', "where_clause_subform sub.row_active = true AND ")
-        data = data.sub('where_clause_subform', "where_clause_subform sub.current_season = true AND ")
+        data = data.gsub('where_clause', "where_clause main.row_active = true AND ")
+        data = data.gsub('where_clause', "where_clause main.current_season = true AND ")
+        data = data.gsub('where_layer_clause', "where_layer_clause sec.row_active = true AND ")
+        data = data.gsub('where_layer_clause', "where_layer_clause sec.current_season = true AND ")
+        data = data.gsub('where_subform_clause', "where_subform_clause sub.row_active = true AND ")
+        data = data.gsub('where_subform_clause', "where_subform_clause sub.current_season = true AND ")
       end
 
       # Aplica filtros de padres
       if !data_conditions.blank?
         data_conditions.each do |key|
 
-          @s = key.split('|')
-          @field = @s[0]
-          @filter = @s[1]
-          @value = @s[2]
+          s = key.split('|')
+          @field = s[0]
+          @filter = s[1]
+          @value = s[2]
 
           # Aplica filtro por campo usuario
           if @field == 'app_usuario'
             if sql_full.blank?
               data = data.where("users.name " + @filter + " '#{@value}'")
             else
-              data = data.sub('where_clause', "where_clause users.name #{@filter} '#{@value}' AND ")
+              data = data.gsub('where_clause', "where_clause users.name #{@filter} '#{@value}' AND ")
             end
           end
 
@@ -295,7 +295,7 @@ module ProjectTypes::Indicators
             if sql_full.blank?
               data =  data.where("project_statuses.name " + @filter + " '#{@value}' ")
             else
-              data = data.sub('where_clause', "where_clause project_statuses.name #{@filter} '#{@value}' AND ")
+              data = data.gsub('where_clause', "where_clause project_statuses.name #{@filter} '#{@value}' AND ")
             end
           end
 
@@ -304,7 +304,7 @@ module ProjectTypes::Indicators
             if sql_full.blank?
               data =  data.where("main.properties->>'" + @field +"'" +  @filter +" '#{@value}' ")
             else
-              data = data.sub('where_clause', "where_clause (main.properties->>'#{@field}' #{@filter} '#{@value}') AND ")
+              data = data.gsub('where_clause', "where_clause (main.properties->>'#{@field}' #{@filter} '#{@value}') AND ")
             end
           end
 
@@ -329,23 +329,23 @@ module ProjectTypes::Indicators
         if sql_full.blank?
           data = data.where("main.id IN #{final_array}")
         else
-          data = data.sub('where_clause', "where_clause (main.id IN #{final_array}) AND ")
+          data = data.gsub('where_clause', "where_clause (main.id IN #{final_array}) AND ")
           # Aplica filtros de hijos a los hijos
           # Aplica filtros por hijos
           if !filter_children.blank?
             filter_children.each do |filter_child|
-              @s = filter_child.split('|')
-              @field = @s[0]
-              @filter = @s[1]
-              @value = @s[2]
-              data = data.sub('where_clause_subform', "where_clause_subform (sub.properties->>'#{@field}' #{@filter} '#{@value}') AND ")
+              s = filter_child.split('|')
+              @field = s[0]
+              @filter = s[1]
+              @value = s[2]
+              data = data.gsub('where_subform_clause', "where_subform_clause (sub.properties->>'#{@field}' #{@filter} '#{@value}') AND ")
             end    
           end
           # Aplica filtros de usuario de hijos
           if !filter_user_children.blank?
             filter_user_children.each do |filter_child|
               @value = filter_child
-              data = data.sub('where_clause_subform', "where_clause_subform (sub.user_id = '#{@value}') AND ")
+              data = data.gsub('where_subform_clause', "where_subform_clause (sub.user_id = '#{@value}') AND ")
             end    
           end
         end
@@ -355,7 +355,7 @@ module ProjectTypes::Indicators
     end
 
     def kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform)
-
+      
       querys=[]
       @op = option_graph
       @dashboard_id = dashboard_id
@@ -391,9 +391,9 @@ module ProjectTypes::Indicators
             elsif chart.kpi_type == 'complex'
               filters_for_sql = filters_for_sql @data, chart
             else
-              @data = @data.sub('where_clause', "")
-              @data = @data.sub('where_clause_layer', "")
-              @data = @data.sub('where_clause_subform', "")
+              @data = @data.gsub('where_clause', "")
+              @data = @data.gsub('where_layer_clause', "")
+              @data = @data.gsub('where_subform_clause', "")
               @data = @data.gsub('from_clause', "")
               @data = ActiveRecord::Base.connection.execute(@data)
             end
@@ -411,7 +411,18 @@ module ProjectTypes::Indicators
       querys
     end
 
-    def kpi_without_graph(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform)
+    
+    def get_kpi_without_graph_ids (id, is_graph)
+      if is_graph == "true"
+        analytics_charts_ids = Graphic.where(dashboard_id: id).order(:sort).pluck(:id);
+      else
+        analytics_charts_ids = AnalyticsDashboard.where(project_type_id: id, graph: false).order(:description).pluck(:id)
+      end
+
+      analytics_charts_ids
+    end
+    
+    def kpi_without_graph(kpi_default,project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform, indicator_id)
 
       querys = []
       @data_fixed = ''
@@ -451,19 +462,20 @@ module ProjectTypes::Indicators
       # Aplica filtro time_slider
       @ctotal = apply_time_slider_filter @ctotal, from_date, to_date, from_date_subform, to_date_subform, sql_full
 
-      @total_row = @ctotal.count
-      @row_selected = @data_fixed.count
-      @avg_selected = [{ "count": ((@row_selected.to_f / @total_row.to_f) * 100).round(2) }]
-      querys << { "title": 'Total', "description": 'Total', "data": [{ "count": @total_row }], "id": 1000 }
-      querys << { "title": 'Seleccionado', "description": 'select', "data": [{ "count": @row_selected }], "id": 1001 }
-      querys << { "title": '% del Total', "description": 'AVG', "data": @avg_selected, "id": 1002 }
+      if(kpi_default == "true")
+        @total_row = @ctotal.count
+        @row_selected = @data_fixed.count
+        @avg_selected = [{ "count": ((@row_selected.to_f / @total_row.to_f) * 100).round(2) }]
+        querys << { "title": 'Total', "description": 'Total', "data": [{ "count": @total_row }], "id": 1000 }
+        querys << { "title": 'Seleccionado', "description": 'select', "data": [{ "count": @row_selected }], "id": 1001 }
+        querys << { "title": '% del Total', "description": 'AVG', "data": @avg_selected, "id": 1002 }
 
-      # Indicadores generados por el usuario
-      # # # # # # # # # # # # # # # # # # # #
+        querys
+      else
+        # Indicadores generados por el usuario
+        # # # # # # # # # # # # # # # # # # # #
 
-      @analytics_charts = AnalyticsDashboard.where(project_type_id: project_type_id, graph: false)
-
-      @analytics_charts.each do |chart|
+        chart = AnalyticsDashboard.where(project_type_id: project_type_id, id: indicator_id, graph: false).first
 
         # Consulta los registros según filtro geográfico
         if type_box == 'extent'
@@ -481,7 +493,6 @@ module ProjectTypes::Indicators
         # Aplica filtros generados por el usuario y condición row_active y current_season (momentáneamente)
         data = filters_on_the_fly data, data_conditions, filtered_form_ids, filter_children, filter_user_children, chart.sql_full
 
-
         if chart.kpi_type == 'basic'
           field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
           conditions_field = chart.condition_field
@@ -490,12 +501,12 @@ module ProjectTypes::Indicators
             field_select = chart.sql_sentence
           end
         else
-          data = data.sub('where_clause', "")
-          data = data.sub('where_clause_layer', "")
-          data = data.gsub('where_clause_subform', "")
+          data = data.gsub('where_clause', "")
+          data = data.gsub('where_layer_clause', "")
+          data = data.gsub('where_subform_clause', "")
           @data = @data.sub('where_clause', "")
           @data = @data.sub('where_clause_layer', "")
-          @data = @data.gsub('where_clause_subform', "")
+          @data = @data.gsub('where_subform_clause', "")
           data = data.gsub('from_clause', "")
           data = ActiveRecord::Base.connection.execute(data)
         end
@@ -510,8 +521,342 @@ module ProjectTypes::Indicators
 
         querys << { "title": "#{chart.title}", "description": "kpi_sin grafico", "data": data, "id": chart.id }
 
+        querys
       end
-      querys
+    end
+
+    def kpi_without_graph_one_by_one(kpi_default,project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform, indicator_id)
+
+      querys = []
+      query_full = ''
+      #@op = option_graph
+      @ct = Apartment::Tenant.current
+      sql_full = ''
+
+      if kpi_default == "false"
+        chart = AnalyticsDashboard.where(project_type_id: project_type_id, id: indicator_id, graph: false).first
+        sql_full = chart.sql_full
+      end
+
+      # Consulta los registros según filtro geográfico
+      if type_box == 'extent'
+        #data_fixed = query_extent size_box, project_type_id, sql_full
+        minx = size_box[0].to_f if !size_box.nil?
+        miny = size_box[1].to_f if !size_box.nil?
+        maxx = size_box[2].to_f if !size_box.nil?
+        maxy = size_box[3].to_f if !size_box.nil?
+
+        if sql_full.blank?
+
+        # Arma el primer query para indicadores basic y complex y aplica ST_Contains por extent
+        query_full = Project
+          .select('DISTINCT main.*')
+          .from('projects main')
+          .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
+          .joins('INNER JOIN public.users ON users.id = main.user_id')
+          .where('main.row_active = ?', true)
+          .where('main.current_season = ?', true)
+          .where('main.project_type_id = ?', project_type_id)
+          .where("shared_extensions.ST_Contains(shared_extensions.ST_MakeEnvelope(#{minx}, #{maxy}, #{maxx}, #{miny}, 4326), main.#{:the_geom})")
+
+        else 
+          query_full = ''
+          # Aplica ST_Contains por extent al query de indicadores advanced
+          query_full = sql_full.gsub('where_clause', "where_clause shared_extensions.ST_Contains(shared_extensions.ST_MakeEnvelope(#{minx}, #{maxy}, #{maxx}, #{miny}, 4326), main.#{:the_geom}) AND ")
+        end
+
+      else
+        #@data_fixed = query_draw_polygon size_box, project_type_id, sql_full
+        arr1 = []
+        size_box.each do |a,x|
+          z = []
+          x.each do |b,y|
+            z.push(y)
+          end
+          arr1.push([z])
+        end
+
+        # Arma el primer query para indicadores basic y complex y aplica ST_Contains por polygon
+        if sql_full.blank?
+          query_full = Project
+            .select('DISTINCT main.*')
+            .from('projects main')
+            .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
+            .joins('INNER JOIN public.users ON users.id = main.user_id')
+            .where('main.row_active = true')
+            .where('main.current_season = true')
+            .where('main.project_type_id = ?', project_type_id)
+            .where("shared_extensions.ST_Contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'), 4326), main.#{:the_geom})")
+        
+        else
+          query_full = ''
+          # Aplica ST_Contains por polygon al query de indicadores advanced
+          query_full = sql_full.gsub('where_clause', "where_clause shared_extensions.ST_Contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'), 4326), main.#{:the_geom}) AND ")
+        end
+
+      end
+
+      if sql_full.blank?
+        total = Project
+          .select('DISTINCT main.*')
+          .from('projects main')
+          .where('main.project_type_id = ?', project_type_id)
+          .where('main.row_active = ?', true)
+          .where('main.current_season = ?', true)
+      end
+
+      # Aplica filtros owner, atributo e intercapa a "Seleccionado" y "% del Total" y TOTAL y generados por el usuario
+      #@data_fixed = conditions_for_attributes_and_owner @data_fixed, user_id, project_type_id, sql_full
+      project_filter = ProjectFilter.where(user_id: user_id).where(project_type_id: project_type_id).first
+
+      if !project_filter.nil?
+        # Aplica filtro owner
+        if project_filter.owner == true
+          if sql_full.blank?
+            query_full = query_full.where('main.user_id = ?', user_id)
+            total = total.where('main.user_id = ?', user_id)
+          else
+            query_full = query_full.gsub('where_clause', "where_clause (main.user_id = #{user_id}) AND ")
+          end
+        end
+
+        # Aplica filtro por atributo
+        if !project_filter.properties.nil?
+          project_filter.properties.to_a.each do |prop|
+            if sql_full.blank?
+              query_full = query_full.where("main.properties ->> '#{prop[0]}' = '#{prop[1]}'")
+              total = total.where("main.properties ->> '#{prop[0]}' = '#{prop[1]}'")
+            else
+              query_full = query_full.gsub('where_clause', "where_clause (main.properties ->> '#{prop[0]}' = '#{prop[1]}') AND ")
+            end
+          end
+        end
+
+        # Aplica filtro intercapa
+        if !project_filter.cross_layer_filter_id.nil?
+          cross_layer_filter = ProjectFilter.where(user_id: user_id).where(id: project_filter.cross_layer_filter_id).first
+
+          if sql_full.blank?
+
+            # Cruza la capa del principal que contiene los hijos con la capa secunadaria
+            query_full = query_full
+              .except(:from).from('projects main CROSS JOIN projects sec')
+              .where('shared_extensions.ST_Intersects(main.the_geom, sec.the_geom)')
+              .where('sec.project_type_id = ?', cross_layer_filter.project_type_id)
+              .where('sec.row_active = ?', true)
+              .where('sec.current_season = ?', true)
+
+            total = total
+              .except(:from).from('projects main CROSS JOIN projects sec')
+              .where('shared_extensions.ST_Intersects(main.the_geom, sec.the_geom)')
+              .where('sec.project_type_id = ?', cross_layer_filter.project_type_id)
+              .where('sec.row_active = ?', true)
+              .where('sec.current_season = ?', true)
+
+            # Aplica filtro por owner a capa secundaria
+            if cross_layer_filter.owner == true
+              query_full = query_full.where('sec.user_id = ?', user_id)
+              total = total.where('sec.user_id = ?', user_id)
+            end
+
+            # Aplica filtro por atributo a capa secundaria
+            if !cross_layer_filter.properties.nil?
+              cross_layer_filter.properties.to_a.each do |prop|
+                query_full = query_full.where("sec.properties->>'#{prop[0]}' = '#{prop[1]}'")
+                total = total.where("sec.properties->>'#{prop[0]}' = '#{prop[1]}'")
+              end
+            end
+
+          else
+
+            # Cruza la capa del principal que contiene los hijos con la capa secunadaria
+            query_full = query_full.gsub('from_clause', "CROSS JOIN projects sec")
+            query_full = query_full.gsub('where_clause', "where_clause (shared_extensions.ST_Intersects(main.the_geom, sec.the_geom))
+              AND sec.project_type_id = #{cross_layer_filter.project_type_id}
+              AND sec.row_active = true
+              AND sec.current_season = true
+              AND ")
+
+            # Aplica filtro por owner a capa secundaria
+            if cross_layer_filter.owner == true
+              query_full = query_full.gsub('where_clause', "where_clause (sec.user_id = #{user_id}) AND ")
+            end
+
+            # Aplica filtro por atributo a capa secundaria
+            if !cross_layer_filter.properties.nil?
+              cross_layer_filter.properties.to_a.each do |prop|
+                query_full = query_full.gsub('where_clause', "where_clause (sec.properties->>'#{prop[0]}' = '#{prop[1]}') AND ")
+              end
+            end
+
+          end
+        end
+       end 
+
+       # Aplica filtro time_slider
+      #@data_fixed = apply_time_slider_filter @data_fixed, from_date, to_date, from_date_subform, to_date_subform, sql_full
+      if !from_date.blank? || !to_date.blank?
+
+        if sql_full.blank?
+          query_full = query_full.where("main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}'")
+          total = total.where("main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}'")
+        else
+          query_full = query_full.gsub('where_clause', "where_clause (main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}') AND ")
+          query_full = query_full.gsub('where_layer_clause', "where_layer_clause (sec.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}') AND ")
+        end
+
+      else
+
+        if sql_full.blank?
+          query_full = query_full.where('main.row_enabled = ?', true)
+          total = total.where('main.row_enabled = ?', true)
+        else
+          query_full = query_full.gsub('where_clause', "where_clause main.row_enabled = true AND ")
+          query_full = query_full.gsub('where_layer_clause', "where_layer_clause sec.row_enabled = true AND ")
+        end
+
+      end
+
+      #Aplica time_slider de hijos
+      if !sql_full.blank?
+        if !from_date_subform.blank? || !to_date_subform.blank? 
+          query_full = query_full.gsub('where_subform_clause', "where_subform_clause (sub.gwm_created_at BETWEEN '#{from_date_subform}' AND '#{to_date_subform}') AND ")
+        else
+          query_full = query_full.gsub('where_subform_clause', "where_subform_clause sub.row_enabled = true AND ")
+        end
+      end
+
+      
+      # Aplica filtros generados por el usuario y condición row_active y current_season
+      #@data_fixed = filters_on_the_fly @data_fixed, data_conditions, filtered_form_ids, filter_children, filter_user_children, sql_full
+      # Aplica filtros row_active y current_season para sql_full
+      if !sql_full.blank?
+        query_full = query_full.gsub('where_clause', "where_clause main.row_active = true AND ")
+        query_full = query_full.gsub('where_clause', "where_clause main.current_season = true AND ")
+        query_full = query_full.gsub('where_layer_clause', "where_layer_clause sec.row_active = true AND ")
+        query_full = query_full.gsub('where_layer_clause', "where_layer_clause sec.current_season = true AND ")
+        query_full = query_full.gsub('where_subform_clause', "where_subform_clause sub.row_active = true AND ")
+        query_full = query_full.gsub('where_subform_clause', "where_subform_clause sub.current_season = true AND ")
+      end
+
+      # Aplica filtros de padres
+      if !data_conditions.blank?
+        data_conditions.each do |key|
+          s = key.split('|')
+          field = s[0]
+          filter = s[1]
+          value = s[2]
+
+          # Aplica filtro por campo usuario
+          if field == 'app_usuario'
+            if sql_full.blank?
+              query_full = query_full.where("users.name " + filter + " '#{value}'")
+            else
+              query_full = query_full.gsub('where_clause', "where_clause users.name #{filter} '#{value}' AND ")
+            end
+          end
+
+          # Aplica filtro por campo estado
+          if field == 'app_estado'
+            if sql_full.blank?
+              query_full =  query_full.where("project_statuses.name " + filter + " '#{value}' ")
+            else
+              query_full = query_full.gsub('where_clause', "where_clause project_statuses.name #{filter} '#{value}' AND ")
+            end
+          end
+
+          # Aplica filtro por otro campo
+          if field != 'app_usuario' && field != 'app_estado'
+            if sql_full.blank?
+              query_full =  query_full.where("main.properties->>'" + field +"'" +  filter +" '#{value}' ")
+            else
+              query_full = query_full.gsub('where_clause', "where_clause (main.properties->>'#{field}' #{filter} '#{value}') AND ")
+            end
+          end
+
+        end
+      end
+
+      # Aplica filtros de hijos
+      if !filtered_form_ids.blank?
+        final_array = []
+        filtered_form_ids.each do |ids_array|
+          ids_array = JSON.parse(ids_array)
+          if !final_array.blank?
+            final_array = final_array & ids_array
+          else
+            final_array = ids_array
+          end
+        end
+        if final_array.blank?
+          final_array.push(-1)
+        end
+        
+        final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
+        if sql_full.blank?
+          query_full = query_full.where("main.id IN #{final_array}")
+        else
+          query_full = query_full.gsub('where_clause', "where_clause (main.id IN #{final_array}) AND ")
+          # Aplica filtros de hijos a los hijos
+          # Aplica filtros por hijos
+          if !filter_children.blank?
+            filter_children.each do |filter_child|
+              s = filter_child.split('|')
+              field = s[0]
+              filter = s[1]
+              value = s[2]
+              query_full = query_full.gsub('where_subform_clause', "where_subform_clause (sub.properties->>'#{field}' #{filter} '#{value}') AND ")
+            end    
+          end
+          # Aplica filtros de usuario de hijos
+          if !filter_user_children.blank?
+            filter_user_children.each do |filter_child|
+              value = filter_child
+              query_full = query_full.gsub('where_subform_clause', "where_subform_clause (sub.user_id = '#{value}') AND ")
+            end    
+          end
+        end
+      end
+
+      if(kpi_default == "true")
+        total_row = total.count
+        row_selected = query_full.count
+        avg_selected = [{ "count": ((row_selected.to_f / total_row.to_f) * 100).round(2) }]
+        querys << { "title": 'Total', "description": 'Total', "data": [{ "count": total_row }], "id": 1000 }
+        querys << { "title": 'Seleccionado', "description": 'select', "data": [{ "count": row_selected }], "id": 1001 }
+        querys << { "title": '% del Total', "description": 'AVG', "data": avg_selected, "id": 1002 }
+
+        querys
+      else
+
+        if chart.kpi_type == 'basic'
+          field_select = analysis_type(chart.analysis_type.name, chart.project_field.key, project_type_id) + ' as count'
+          conditions_field = chart.condition_field
+        elsif chart.kpi_type == 'complex'
+          if !chart.sql_sentence.blank?
+            field_select = chart.sql_sentence
+          end
+        else
+          query_full = query_full.gsub('where_clause', "")
+          query_full = query_full.gsub('where_layer_clause', "")
+          query_full = query_full.gsub('where_subform_clause', "")
+          query_full = query_full.gsub('from_clause', "")
+          query_full = ActiveRecord::Base.connection.execute(query_full)
+        end
+
+        if !conditions_field.blank?
+          query_full = query_full.where("main.properties->>'" + conditions_field.key + "' " + chart.filter_input + "'#{chart.input_value}'")
+        end
+
+        if chart.kpi_type != 'advanced'
+          query_full = query_full.except(:select).select(field_select)
+        end
+
+        querys << { "title": "#{chart.title}", "description": "kpi_sin grafico", "data": query_full, "id": chart.id }
+
+        querys
+      end
+
     end
 
     def indicator_heatmap project_type_id, indicator_id, size_box, type_box, conditions, user_id

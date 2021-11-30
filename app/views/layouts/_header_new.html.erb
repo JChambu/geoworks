@@ -1,6 +1,22 @@
 <script type="text/javascript">
 $(document).ready(function(){
-
+  $('#move_indicators_right').click(function(){
+    var width_element = $('.custom_indicator_container').outerWidth();
+    var width_parent = $('.custom_indicator_container').parent().parent().outerWidth();
+    if(parseInt($('.custom_indicator_container').css('left'))> parseInt(width_parent - width_element)){
+      var new_left = (parseInt($('.custom_indicator_container').css('left')) -80) + 'px';
+      $('.custom_indicator_container').css('left',new_left);
+    } else {
+      var new_left = parseInt(width_parent - width_element) + 'px';
+     // $('.custom_indicator_container').css('left',new_left);
+    }
+  });
+  $('#move_indicators_left').click(function(){
+    if(parseInt($('.custom_indicator_container').css('left'))<0){
+      var new_left = (parseInt($('.custom_indicator_container').css('left')) +80) + 'px';
+      $('.custom_indicator_container').css('left',new_left);
+    }
+  });
 });
 function open_panel(id_panel,id_table){
   if(id_panel=='view-data-middle' && id_table!=0){
@@ -137,9 +153,9 @@ function open_panel(id_panel,id_table){
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="nav_bar">
   <%= link_to root_path() do %> <%= image_tag "logo_gw_hor_2.png", class: 'mr-4', height:"40", id:'img_logo_gw' %> <% end %>
-  <div class="collapse navbar-collapse" id="navbarColor02">
+  <div class="collapse navbar-collapse" id="navbarColor02" style="width: 0px">
 
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav mr-auto" style="width: 95%">
 
       <!-- Nuevo Proyecto -->
       <% if params[:controller] == 'project_types' && params[:action] == 'new' %>
@@ -262,8 +278,13 @@ function open_panel(id_panel,id_table){
 
 
           <!-- Indicadores de texto -->
-          <li class="tile_count row m-0"></li>
-
+          <i class="fas fa-chevron-left m-auto p-2 custom_cursor d-none" id="move_indicators_left"></i>
+          <div class="d-flex" style="overflow-x:hidden;">
+            <div class="d-flex" style="width: 2000px;">
+              <li class="tile_count row m-0 custom_indicator_container"></li>
+            </div>
+          </div>
+          <i class="fas fa-chevron-right m-auto p-2 custom_cursor d-none" id="move_indicators_right"></i>
         <% end %>
 
       <% end %>

@@ -922,3 +922,10 @@ div.custom-menu.show {
   min-width: 52%;
   white-space: nowrap;
 }
+
+.custom_indicator_container{
+  flex-wrap:nowrap;
+  position: relative;
+  left: 0px;
+  transition: 0.5s;
+}

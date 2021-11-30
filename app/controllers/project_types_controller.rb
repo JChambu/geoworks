@@ -246,6 +246,14 @@ class ProjectTypesController < ApplicationController
   def dashboard
   end
 
+  def get_kpi_without_graph_ids
+    analytics_charts_ids = ProjectType.get_kpi_without_graph_ids(
+      params[:project_type_id],
+      params[:is_graph]
+    )
+    render json: {"data": analytics_charts_ids}
+  end
+
   def kpi
 
     @op_graph = params[:graph]
@@ -261,6 +269,7 @@ class ProjectTypesController < ApplicationController
     @querys = ''
 
     if @op_graph == 'true'
+      puts "Llega hasta aca"
       @querys = ProjectType.kpi_new(
         params[:data_id],
         @op_graph,
@@ -275,10 +284,12 @@ class ProjectTypesController < ApplicationController
         from_date,
         to_date,
         from_date_subform,
-        to_date_subform
+        to_date_subform,
+
       )
     else
-      @querys = ProjectType.kpi_without_graph(
+      @querys = ProjectType.kpi_without_graph_one_by_one(
+        params[:is_default],
         params[:data_id],
         @op_graph,
         params[:size_box],
@@ -291,7 +302,8 @@ class ProjectTypesController < ApplicationController
         current_user.id,
         from_date, to_date,
         from_date_subform,
-        to_date_subform
+        to_date_subform,
+        params[:indicator_id]
       )
     end
   end
