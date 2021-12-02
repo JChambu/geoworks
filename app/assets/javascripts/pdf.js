@@ -23,7 +23,7 @@ function init(is_alert) {
         $('.alert_header').addClass('d-none');
     }
     pdf_values_all = [];
-    var table_check = $('#table_visible .custom-control-input')
+    var table_check = $('#table_visible .custom-control-input');
     table_check.each(function(index){
         if(this.id!='table_select_all_hidden'){
             if(this.checked){
@@ -31,7 +31,7 @@ function init(is_alert) {
                 pdf_values['id'] = this.id.split("check_select_")[1];
                 pdf_values['properties'] = new Object;
                 pdf_values['children'] = new Object;
-                var row_selected = $('#table_visible tr:nth-child('+index+') td').not('.custom_row_child').not('.child_celd');
+                var row_selected = $('#table_visible tr:nth-child('+index+') td').not('.custom_row_child').not('.child_celd').not('.footer_key');
                 row_selected.each(function(index_column){
                     if(index_column>2 && this.innerHTML!='' && !this.classList.contains('d-none')){
                         var column_name = $('#tr_visible th:nth-child('+(index_column+1)+')')[0].childNodes[1].childNodes[1];
@@ -234,6 +234,15 @@ function create_pdf_view(is_alert){
         }
         });
     }
+    // agrega totales, mínimo, máximos y promedios. En alertas, solo los agrega si hay un único destinatario
+    if(!is_alert || (is_alert && $('.alert_to').length==1 )){
+        $('.footer_key').not('.d-none').each(function(){
+            if($(this).html()!=''){
+             $('#pdf_body').append("<p style='font-size:1.5vh' class='title_pdf mt-3 mb-0 element_pdf' "+class_title+">"+$(this).attr('name_function')+" "+$(this).html()+"</p>");
+            }
+        });
+    }
+
     //agrega mapa
     if(!is_alert){
         var mapContainer = document.getElementById('map');

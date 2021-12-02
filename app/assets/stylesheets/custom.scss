@@ -518,7 +518,14 @@ div.custom-menu.show {
   position: absolute;
   top:0px;
   width:100%;
-  text-align:center
+  text-align:center;
+  white-space: nowrap;
+}
+.custom_function_icon {
+  background: rgba(250,250,250,0.4);
+  padding: 2px !important;
+  position: relative;
+  z-index: 4000;
 }
 .custom_row_child{
   min-width: 150px;
@@ -534,7 +541,6 @@ div.custom-menu.show {
   transform:none!important;
 }
 .icons{
-  color: inherit!important;
   display: inline-block;
   width: auto;
   padding: 0px 2px;
