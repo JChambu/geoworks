@@ -393,8 +393,9 @@ function show_subfield(field_ids){
         if(column_par==0){new_column.classList.add('zebra')}
         new_column.innerHTML = "Fecha / Usuario"
         $('#tr_subfields').append(new_column);
-        // agrega footer
-        var celd_footer = "<tr id='tr_footer_suborm"+id_field+"' style='display: flex; border-top: none;'>"
+        // elimina y agrega footer nuevo
+        $('.tr_footer_suborm').remove();
+        var celd_footer = "<tr id='tr_footer_suborm"+id_field+"' class='tr_footer_suborm' style='display: flex; border-top: none;'>"
         celd_footer += "<td style = 'min-width:204px; with:204px' class='footersubform_key_date"+id_field+"'></td>"
         father_field.head.forEach(function(child_field){
           if(child_field.hidden==false && child_field.field_type_id!=11 && child_field.can_read == true){
