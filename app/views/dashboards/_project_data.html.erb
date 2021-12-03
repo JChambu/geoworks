@@ -45,6 +45,7 @@ $('#table_select_all').click(function(){
     unselect_item_all();
     $('#multiple_edit').addClass('d-none');
   }
+  calculate_functions_table();
 })
 
 //Oculta labels si no está en el modelo de datos
@@ -428,7 +429,7 @@ function show_subfield(field_ids){
             new_div1.appendChild(new_icon);
             // agrega funciones suma, max, min y promedio si es campo numérico.
             if(child_field.field_type_id==5){
-              var icons_function = ["plus","greater-than","less-than","minus"];
+              var icons_function = ["plus","greater-than","less-than","divide"];
               var icons_title = ["Sumar","Máximo","Mínimo","Promedio"];
               var icons_class = ["sum","max","min","avg"];
               for(i=0;i<icons_class.length;i++){
@@ -1166,7 +1167,7 @@ function generate_alerts(){
                             <i class="<%="fa fa-plus icons custom_function_icon text-dark footer_sumlayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="sum_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"', 'layer'"%>)" title="Sumar"></i>
                             <i class="<%="fa fa-greater-than icons custom_function_icon text-dark footer_maxlayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="max_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer'"%>)" title="Máximo"></i>
                             <i class="<%="fa fa-less-than icons custom_function_icon text-dark footer_minlayer_key"+field.project_type.id.to_s+"|"+field.key%>"onclick="min_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer'"%>)" title="Mínimo"></i>
-                            <i class="<%="fa fa-minus icons custom_function_icon text-dark footer_avglayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="avg_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer'"%>)" title="Promedio"></i>
+                            <i class="<%="fa fa-divide icons custom_function_icon text-dark footer_avglayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="avg_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer'"%>)" title="Promedio"></i>
                       <% end %>
                         </div>
                       </div>
@@ -1199,7 +1200,7 @@ function generate_alerts(){
                         <i class="<%="fa fa-plus icons custom_function_icon text-dark footer_sum_key"+field.key%>" onclick="sum_column(<%="'"+field.key+"','',''"%>)" title="Sumar"></i>
                         <i class="<%="fa fa-greater-than icons custom_function_icon text-dark footer_max_key"+field.key%>" onclick="max_column(<%="'"+field.key+"','',''"%>)" title="Máximo"></i>
                         <i class="<%="fa fa-less-than icons custom_function_icon text-dark footer_min_key"+field.key%>"onclick="min_column(<%="'"+field.key+"','',''"%>)" title="Mínimo"></i>
-                        <i class="<%="fa fa-minus icons custom_function_icon text-dark footer_avg_key"+field.key%>" onclick="avg_column(<%="'"+field.key+"','',''"%>)" title="Promedio"></i>
+                        <i class="<%="fa fa-divide icons custom_function_icon text-dark footer_avg_key"+field.key%>" onclick="avg_column(<%="'"+field.key+"','',''"%>)" title="Promedio"></i>
                       <% end %>
                     </div>
                   </div>

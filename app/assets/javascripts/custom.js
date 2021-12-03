@@ -4005,6 +4005,10 @@ function changeSelected(){
   if($('#table_visible .custom-control-input:checked').not('.just_header').length==0){
     $('#table_select_all').prop('checked',false);
   }
+  calculate_functions_table();
+}
+
+function calculate_functions_table(){
   // Ajusta función total, promedio max y min si está activada esa función
   var fields = document.querySelectorAll(".field_key");
   fields.forEach(function(column) {
@@ -4023,7 +4027,6 @@ function changeSelected(){
     $('.footer_function_key'+columnid).click();
   });
 }
-
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
 
