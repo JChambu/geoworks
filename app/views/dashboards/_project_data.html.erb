@@ -182,13 +182,18 @@ function avg_column(key,id_proyect,layer){
   $('.footer_avg'+layer+'_key'+key_jquery).addClass('footer_function_key'+key);
   var total = 0;
   var count = 0;
+  var unique_ids = [];
   $(celd).each(function(index,column_val){
     if(ids_checked.length==0 || $(this).is(ids_checked)){
-      if(!isNaN(parseFloat($(column_val).html()))) {
-        total += parseFloat($(column_val).html());
-        count ++;
-      }
-    }
+      // no suma repetidos ids en capas
+      if($(column_val).attr('id_layer')==undefined || $.inArray($(column_val).attr('id_layer'),unique_ids) <0 ){
+          if(!isNaN(parseFloat($(column_val).html()))) {
+            total += parseFloat($(column_val).html());
+            count ++;
+            if(layer == 'layer'){unique_ids.push($(column_val).attr('id_layer'))}
+          }
+        }
+      }    
   });
   if(count !=0 ){
     $('.footer'+layer+'_key'+key_jquery).html("Prom: "+Math.round(total*100/count)/100);
