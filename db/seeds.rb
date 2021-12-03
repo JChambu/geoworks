@@ -1,18 +1,14 @@
 ActiveRecord::Base.transaction do
 
   if User.where(email: ENV['USER_EMAIL']).empty?
-    @user =  User.create!(
-      name: ENV['USER_NAME'],
-      email:  ENV['USER_EMAIL'],
-      password:  ENV['USER_PASSWORD'],
-      active: true,
-      confirmed_at: '2019-10-28 20:21:41.312046',
-    )
+    @user = User.create!(name: ENV['USER_NAME'], email:  ENV['USER_EMAIL'], active: true, confirmed_at: '2019-10-28 20:21:41.312046') do |user|
+      user.password = 'Pass1111$'
+    end
   end
 
   @role = Role.where(name: 'superadmin').first_or_create!
 
-  @customer = Customer.where(name: 'public').where(subdomain: 'public').where(url: 'http://public.api.geoworks.com.ar/api/v1').first_or_create!
+  @customer = Customer.where(name: 'public').where(subdomain: 'public').where(url: 'https://public.api.geoworks.com.ar/api/v1').first_or_create!
 
   if !@user.nil? and !@customer.nil? and !@role.nil?
     UserCustomer.where(user_id: @user.id).where(customer_id: @customer.id).where(role_id: @role.id).first_or_create!

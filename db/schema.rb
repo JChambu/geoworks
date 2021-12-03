@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210128024355) do
+ActiveRecord::Schema.define(version: 20211124232408) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,16 +84,6 @@ ActiveRecord::Schema.define(version: 20210128024355) do
     t.datetime "updated_at", null: false
     t.string "color"
     t.string "description"
-  end
-
-  create_table "crono_jobs", force: :cascade do |t|
-    t.string "job_id", null: false
-    t.text "log"
-    t.datetime "last_performed_at"
-    t.boolean "healthy"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["job_id"], name: "index_crono_jobs_on_job_id", unique: true
   end
 
   create_table "customers", id: :serial, force: :cascade do |t|
@@ -365,10 +355,9 @@ ActiveRecord::Schema.define(version: 20210128024355) do
     t.integer "project_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
     t.jsonb "properties_original"
     t.bigint "project_status_id"
-    t.datetime "status_update_at", default: "2020-06-18 16:04:25"
+    t.datetime "status_update_at", default: "2021-11-30 00:48:46"
     t.bigint "user_id"
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
@@ -377,6 +366,7 @@ ActiveRecord::Schema.define(version: 20210128024355) do
     t.datetime "gwm_updated_at"
     t.boolean "row_enabled", default: true
     t.datetime "disabled_at"
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["user_id"], name: "index_projects_on_user_id"
@@ -394,6 +384,17 @@ ActiveRecord::Schema.define(version: 20210128024355) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "table_configurations", force: :cascade do |t|
+    t.string "name"
+    t.jsonb "config"
+    t.integer "project_type_id"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_type_id"], name: "index_table_configurations_on_project_type_id"
+    t.index ["user_id"], name: "index_table_configurations_on_user_id"
   end
 
   create_table "user_customers", force: :cascade do |t|
