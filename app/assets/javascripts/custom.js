@@ -1378,9 +1378,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
       //creación de los DOM de la tabla
       array_datos = [];
       data_dashboard.forEach(function(element, index) {
-        console.log("Data dashboard")
-        console.log(element)
-        console.log(index)
         var data_properties = element.properties;
         var new_row = document.createElement("TR");
         new_row.id="row_table_data"+data_properties["app_id"];
@@ -1531,14 +1528,12 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   if(!array_column_hidden[indexColumn]){
     text_hidden = "d-none";
   }
-  console.log("Index "+index);
-  if(index==1){
+  if(index==0){
     if(column_name!='#'){
       var field_name = $('#columnfake_'+column_name +' p').html();
     } else {
       var field_name = '#';
     }
-      console.log("Crea td proyecto actual")
       $('#total_table').append("<td name_function='"+field_name+"' class='"+text_hidden+" footer_key footer_key"+column_name+"'></td>");
     }
   if(is_new_file && (data_properties[column_name]!=undefined || column_name=="#_action" || column_name == "#_select")){
@@ -1563,9 +1558,7 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
       new_celd_create = new_celd_create = "<td class='_columnname custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
       $('.field_key_layer').each(function(index_layer,key_layer){
         new_celd_create += "<td class='_columnname custom_row d-none celdlayer_id"+appid_selected+" celdlayer_key"+key_layer.id.substring(9)+"' onclick='show_item("+appid_selected+")'></td>"
-        console.log("Segundo index "+index)
-        if(index==1){
-          console.log("crea td de capas")
+        if(index==0){
           var field_name = $('#columnfake_layer_'+key_layer.id.substring(9).split('|')[1]+'_'+key_layer.id.substring(9).split('|')[0] +' p').html();
           $('#total_table').append("<td name_function='"+field_name+"' class='d-none footer_key footerlayer_key"+key_layer.id.substring(9)+"'></td>")
         }
