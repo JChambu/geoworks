@@ -367,7 +367,7 @@ function min_photo(){
   <input class="d-none" id="edit_geom_control" value="false">
 <% end %>
 <% geo_restriction_val = true %>
-<% if !@project_type.geo_restriction.nil? %>
+<% if !@project_type.nil? %>
   <% if @project_type.geo_restriction > 0 %>
     <% geo_restriction_val = false %>
   <% end %>
