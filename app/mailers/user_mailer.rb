@@ -25,7 +25,7 @@ class UserMailer < ApplicationMailer
         attachments.inline[img_name] = Base64.decode64(image)
       end
     end  
-    mail(to: to, subject: 'Alerta desde '+name_corp.to_s, from: 'asergiop21@gmail.com')
+    mail(to: to, subject: 'Mensaje desde '+name_corp.to_s, from: 'asergiop21@gmail.com')
   end
 
 end

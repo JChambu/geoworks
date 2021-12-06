@@ -13,6 +13,7 @@ function init(is_alert) {
         $('#edit_pdf_button').addClass('d-none');
         $('.pdf_header').addClass('d-none');
         $('.alert_header').removeClass('d-none');
+        $('#message_type').html($('#alert_type').val());
     } else {
         $('#mails_alert_button').addClass('d-none');
         $('#send_alerts_button').addClass('d-none');
@@ -548,7 +549,7 @@ function send_alerts(){
         var plain_content = $('#alert_text').val();
         $('#pdf-modal').modal('hide');
         $('.table_data_container').removeClass('d-none');
-        $('#text_toast').html("Enviando alertas");
+        $('#text_toast').html("Enviando ...");
         $('.toast').toast('show');
         $.ajax({
             url: '/dashboards/send_alerts',
