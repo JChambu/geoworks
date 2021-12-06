@@ -45,6 +45,7 @@ $('#table_select_all').click(function(){
     unselect_item_all();
     $('#multiple_edit').addClass('d-none');
   }
+  calculate_functions_table();
 })
 
 //Oculta labels si no está en el modelo de datos
@@ -78,6 +79,142 @@ function set_hover(){
   });
 }
 
+//Funciones suma, maximo, mínimo y promedio
+function sum_column(key,id_proyect,layer){
+  // verifica si hay registros chequeados
+  var ids_checked = get_ids_checked(layer);
+  var key_jquery = key;
+  var celd = '.celd'+layer+'_key'+key;
+  if(layer == 'layer'){
+    key_jquery = id_proyect+"\\|"+key;
+    celd = '.celd'+layer+'_key'+id_proyect+"\\|"+key;
+    key = id_proyect+"|"+key;
+  } 
+  if(layer == 'subform'){
+    celd = "."+id_proyect+'sub'+key;
+  } 
+  $('.footer_function'+layer+'_key'+key_jquery).removeClass('footer_function_key'+key);
+  $('.footer_sum'+layer+'_key'+key_jquery).addClass('footer_function_key'+key);
+  var total = 0;
+  var unique_ids = [];
+  $(celd).each(function(index,column_val){
+    if(ids_checked.length==0 || $(this).is(ids_checked)){
+      // no suma repetidos ids en capas
+      if($(column_val).attr('id_layer')==undefined || $.inArray($(column_val).attr('id_layer'),unique_ids) <0 ){
+          if(!isNaN(parseFloat($(column_val).html()))) {
+            total += parseFloat($(column_val).html());
+            if(layer == 'layer'){unique_ids.push($(column_val).attr('id_layer'))}
+          }
+        }
+      }      
+  });
+  $('.footer'+layer+'_key'+key_jquery).html("Total: "+Math.round(total*100)/100);
+}
+
+function max_column(key,id_proyect,layer){
+  // verifica si hay registros chequeados
+  var ids_checked = get_ids_checked(layer);
+  var key_jquery = key;
+  var celd = '.celd'+layer+'_key'+key
+  if(layer == 'layer'){
+    key_jquery = id_proyect+"\\|"+key;
+    celd = '.celd'+layer+'_key'+id_proyect+"\\|"+key;
+    key = id_proyect+"|"+key;
+  } 
+  if(layer == 'subform'){
+    celd = "."+id_proyect+'sub'+key;
+  } 
+  $('.footer_function'+layer+'_key'+key_jquery).removeClass('footer_function_key'+key);
+  $('.footer_max'+layer+'_key'+key_jquery).addClass('footer_function_key'+key);
+  var total = '';
+  $(celd).each(function(index,column_val){
+    if(!isNaN(parseFloat($(column_val).html()))) {
+      if(ids_checked.length==0 || $(this).is(ids_checked)){
+        if (total === ''){total = parseFloat($(column_val).html()) }
+        if(parseFloat($(column_val).html())>parseFloat(total)){total = parseFloat($(column_val).html())}
+      }
+    }
+  });
+  $('.footer'+layer+'_key'+key_jquery).html("Máx: "+total);
+}
+
+function min_column(key,id_proyect,layer){
+  // verifica si hay registros chequeados
+  var ids_checked = get_ids_checked(layer);
+  var key_jquery = key;
+  var celd = '.celd'+layer+'_key'+key
+  if(layer == 'layer'){
+    key_jquery = id_proyect+"\\|"+key;
+    celd = '.celd'+layer+'_key'+id_proyect+"\\|"+key;
+    key = id_proyect+"|"+key;
+  } 
+  if(layer == 'subform'){
+    celd = "."+id_proyect+'sub'+key;
+  } 
+  $('.footer_function'+layer+'_key'+key_jquery).removeClass('footer_function_key'+key);
+  $('.footer_min'+layer+'_key'+key_jquery).addClass('footer_function_key'+key);
+  var total = '';
+  $(celd).each(function(index,column_val){
+    if(ids_checked.length==0 || $(this).is(ids_checked)){
+      if(!isNaN(parseFloat($(column_val).html())) && $(column_val)!="" ) {
+        if (total === ''){total = parseFloat($(column_val).html()) }
+        if(parseFloat($(column_val).html())<parseFloat(total)){total = parseFloat($(column_val).html())}
+      }
+   }
+  });
+  $('.footer'+layer+'_key'+key_jquery).html("Min: "+total);
+}
+
+function avg_column(key,id_proyect,layer){
+  // verifica si hay registros chequeados
+  var ids_checked = get_ids_checked(layer);
+  var key_jquery = key;
+  var celd = '.celd'+layer+'_key'+key
+  if(layer == 'layer'){
+    key_jquery = id_proyect+"\\|"+key;
+    celd = '.celd'+layer+'_key'+id_proyect+"\\|"+key;
+    key = id_proyect+"|"+key;
+  } 
+  if(layer == 'subform'){
+    celd = "."+id_proyect+'sub'+key;
+  } 
+  $('.footer_function'+layer+'_key'+key_jquery).removeClass('footer_function_key'+key);
+  $('.footer_avg'+layer+'_key'+key_jquery).addClass('footer_function_key'+key);
+  var total = 0;
+  var count = 0;
+  var unique_ids = [];
+  $(celd).each(function(index,column_val){
+    if(ids_checked.length==0 || $(this).is(ids_checked)){
+      // no suma repetidos ids en capas
+      if($(column_val).attr('id_layer')==undefined || $.inArray($(column_val).attr('id_layer'),unique_ids) <0 ){
+          if(!isNaN(parseFloat($(column_val).html()))) {
+            total += parseFloat($(column_val).html());
+            count ++;
+            if(layer == 'layer'){unique_ids.push($(column_val).attr('id_layer'))}
+          }
+        }
+      }    
+  });
+  if(count !=0 ){
+    $('.footer'+layer+'_key'+key_jquery).html("Prom: "+Math.round(total*100/count)/100);
+  }
+}
+
+function get_ids_checked(layer){
+  var ids_checked = '';
+  var count_ids_checked = 0;
+  $('#table_visible .custom-control-input').each(function(){
+    if(this.id!='table_select_all_hidden'){
+      if(this.checked){
+        if(count_ids_checked>0){ids_checked +=", "}
+        ids_checked += ".celd"+layer+"_id"+$(this).attr('id').split('check_select_')[1]+" ";
+        count_ids_checked ++;
+      }
+    }
+  });
+  return ids_checked;
+}
+// terminan funciones suma, máximo, mínimo y promedio
 
 //ordena descendente y ascendente
 function order_column(key){
@@ -107,6 +244,9 @@ function hide_column(key){
  $('.celd_key'+key).addClass("d-none");
  $('#addcolumn_'+key).removeClass("d-none");
  $('.fa-plus').removeClass("d-none");
+ $('.footer_key'+key).addClass("d-none");
+ $('.footer_key'+key).html("");
+ $('.footer_function_key'+key).removeClass('footer_function_key'+key);
  adjust_colum_width();
 }
 
@@ -121,6 +261,7 @@ function show_column(key){
  if($(".addcolumns").children().length == $(".column_data.d-none").length){
    $('.fa-plus').addClass("d-none");
  }
+ $('.footer_key'+key).removeClass("d-none");
  adjust_colum_width();
 }
 
@@ -252,11 +393,14 @@ function show_subfield(field_ids){
         if(column_par==0){new_column.classList.add('zebra')}
         new_column.innerHTML = "Fecha / Usuario"
         $('#tr_subfields').append(new_column);
-        
+        // elimina y agrega footer nuevo
+        $('.tr_footer_suborm').remove();
+        var celd_footer = "<tr id='tr_footer_suborm"+id_field+"' class='tr_footer_suborm' style='display: flex; border-top: none;'>"
+        celd_footer += "<td style = 'min-width:204px; with:204px' class='footersubform_key_date"+id_field+"'></td>"
         father_field.head.forEach(function(child_field){
           if(child_field.hidden==false && child_field.field_type_id!=11 && child_field.can_read == true){
             var new_option = document.createElement("A");
-            new_option.className ="dropdown-item "+id_field+'subfield'
+            new_option.className ="dropdown-item "+id_field+'subfield dropsub'
             new_option.innerHTML = child_field.name;
             new_option.id = id_field+'_subfield_'+child_field.field_id;
             new_option.setAttribute('onClick','open_subcolumn(event)');
@@ -289,11 +433,32 @@ function show_subfield(field_ids){
             new_icon.title = "Cerrar";
             new_icon.setAttribute("onClick","remove_subcolumn("+id_field+","+child_field.field_id+")");
             new_div1.appendChild(new_icon);
+            // agrega funciones suma, max, min y promedio si es campo numérico.
+            if(child_field.field_type_id==5){
+              var icons_function = ["plus","greater-than","less-than","divide"];
+              var icons_title = ["Sumar","Máximo","Mínimo","Promedio"];
+              var icons_class = ["sum","max","min","avg"];
+              for(i=0;i<icons_class.length;i++){
+                var new_icon = document.createElement('I');
+                new_icon.className = "fas fa-"+icons_function[i]+" icons custom_function_icon text-dark footer_"+icons_class[i]+"subform_key"+child_field.field_id;
+                new_icon.title = icons_title[i];
+                new_icon.setAttribute("onClick",icons_class[i]+"_column("+child_field.field_id+","+id_field+",'subform')");
+                new_div1.appendChild(new_icon);
+              }
+            }
+            // terminan funciones
             new_tr.appendChild(new_div1);
             new_column.appendChild(new_tr);
             $('#tr_subfields').append(new_column);
+
+            // Agrega footer
+            celd_footer += "<td name_function='"+child_field.name+"' class='d-none footer_key footersubform_key"+child_field.field_id+"'></td>"
           }
-        })
+        });
+        // Agrega footer
+          celd_footer += "</tr>"
+          $('#total_table').append(celd_footer);
+
         new_div1.appendChild(new_drop)  
         var new_icon = document.createElement('I');
         new_icon.className = "fas fa-times icons ml-2";
@@ -321,6 +486,7 @@ function show_subfield(field_ids){
         new_column.innerHTML = father_field.project_field_name.toUpperCase();
         $('.data_fields').append(new_column);
 
+        
       // valores para la tabla
       var data_child = father_field.body
         //Agrega celdas a toda la tabla
@@ -378,7 +544,7 @@ function show_subfield(field_ids){
                 var colname = $(this).attr('id').split('_')[2];
                 var new_cel_subform = document.createElement('TD');
                 new_cel_subform.style.padding='5px';  
-                new_cel_subform.className = id_field+"sub"+colname + " d-none child_celd";
+                new_cel_subform.className = id_field+"sub"+colname + " d-none child_celd celdsubform_id"+key_data;
                 new_cel_subform.id = id_field+"_subceld_"+colname + "_" + column.id ;
                 new_cel_subform.style.whiteSpace='nowrap';
                 new_cel_subform.style.border='none';
@@ -441,6 +607,8 @@ function get_layer_data(){
           $('.header_column_layer').not('.d-none').each(function(){
             var prop = $(this).attr('key_layer').substring(3);
             $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).html(row_layer['properties'][prop]);
+            // agrega el atributo del id de la capa
+            $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).attr("id_layer", row_layer.id);
           })
         });//end forEach      
       });
@@ -459,6 +627,7 @@ function show_column_layer(key_layer,id_layer){
   $('#column_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
   $('.celdlayer_key'+id_layer+'\\|'+key_layer).removeClass("d-none");
   $('#addcolumn_layer\\|'+key_layer+'\\|'+id_layer).addClass("d-none");
+  $('.footerlayer_key'+id_layer+'\\|'+key_layer).removeClass("d-none");
   adjust_colum_width();
   verify_scroll_table();
 }
@@ -470,6 +639,8 @@ function hide_column_layer(key_layer,id_layer){
   $('#column_layer_'+key_layer+"_"+id_layer).addClass("d-none");
   $('.celdlayer_key'+id_layer+'\\|'+key_layer).addClass("d-none");
   $('#addcolumn_layer\\|'+key_layer+'\\|'+id_layer).removeClass("d-none");
+  $('.footerlayer_key'+id_layer+'\\|'+key_layer).addClass("d-none");
+  $('.footerlayer_key'+id_layer+'\\|'+key_layer).html("");
   adjust_colum_width();
   verify_scroll_table();
 }
@@ -487,6 +658,7 @@ function open_subcolumn(event){
   var id_field = event.target.id.split('_')[0];
   var id_subfield = event.target.id.split('_')[2];
   $('.'+id_field+'sub'+id_subfield).removeClass('d-none');
+  $('.footersubform_key'+id_subfield).removeClass('d-none');
   $(event.target).addClass('d-none');
   $('#table_visible_container').css('height','60px');
   var count_open_subforms = verify_open_columns();
@@ -504,6 +676,7 @@ function open_subcolumn(event){
     max = (parseInt(max)+30)+'px';
     $('.'+id_field+'sub'+id_subfield).css('whiteSpace',"normal");
     $('.'+id_field+'sub'+id_subfield).css('minWidth',max);
+    $('.footersubform_key'+id_subfield).css('minWidth',max);
     // ajusta colspan
     var new_colsapan =  parseInt($('#header_column_'+id_field).attr('colspan'))+1;
     $('#header_column_'+id_field).attr('colspan',new_colsapan);
@@ -515,6 +688,8 @@ function open_subcolumn(event){
 function remove_subcolumn(id_field,id_subfield){
   $('.'+id_field+'sub'+id_subfield).addClass('d-none');
   $('#'+id_field+'_subfield_'+id_subfield).removeClass('d-none');
+  $('.footersubform_key'+id_subfield).addClass('d-none');
+  $('.footersubform_key'+id_subfield).html('');
   // ajusta colspan
     var new_colsapan =  parseInt($('#header_column_'+id_field).attr('colspan'))-1;
     $('#header_column_'+id_field).attr('colspan',new_colsapan);
@@ -528,6 +703,7 @@ function remove_column(id_field){
   // elimina columna de campos subformularios
   $('.subfield_column_'+id_field).remove();
   $('#body_only_width_subform_'+id_field).remove();
+  $('#tr_footer_suborm'+id_field).remove();
   $('#open_subform'+id_field).removeClass('d-none');
   verify_close_subheader();
   adjust_colum_width();
@@ -704,9 +880,6 @@ function remove_table(event,table_id){
         $('#dropdown_table'+table_id).remove();
     },
     error: function( jqXHR, textStatus, errorThrown ) {
-      console.log(jqXHR);
-      console.log(textStatus);
-      console.log(errorThrown);
      }
   });
 }
@@ -996,6 +1169,12 @@ function generate_alerts(){
                         <div class="custom_div_table">
                           <i class="fas fa-times icons" onclick="hide_column_layer(<%="'"+field.key+"','"+field.project_type.id.to_s+"'"%>)"></i>
                           <input type="text" class="d-none field_key_layer" id=<%= "headlayer"+field.project_type.id.to_s+"|"+field.key %> value=<%= field.id %>>
+                          <% if field.field_type_id == 5 %>                
+                            <i class="<%="fa fa-plus icons custom_function_icon text-dark footer_sumlayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="sum_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"', 'layer'"%>)" title="Sumar"></i>
+                            <i class="<%="fa fa-greater-than icons custom_function_icon text-dark footer_maxlayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="max_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer'"%>)" title="Máximo"></i>
+                            <i class="<%="fa fa-less-than icons custom_function_icon text-dark footer_minlayer_key"+field.project_type.id.to_s+"|"+field.key%>"onclick="min_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer'"%>)" title="Mínimo"></i>
+                            <i class="<%="fa fa-divide icons custom_function_icon text-dark footer_avglayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="avg_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer'"%>)" title="Promedio"></i>
+                      <% end %>
                         </div>
                       </div>
                     </th>
@@ -1019,10 +1198,16 @@ function generate_alerts(){
                   <div class="th-hover custom_header">
                     <p class="custom_p_header"><%= field.name %></p>
                     <div class="custom_div_table">
-                      <i class="fas fa-sort-alpha-down icons" onclick="order_column(<%="'"+field.key+"'"%>)"></i>
-                      <i class="fas fa-search icons" onclick="search_column(<%="'"+field.key+"'"%>)"></i>
-                      <i class="fas fa-times icons" onclick="hide_column(<%="'"+field.key+"'"%>)"></i>
+                      <i class="fas fa-sort-alpha-down icons text-white" onclick="order_column(<%="'"+field.key+"'"%>)" title="Ordenar"></i>
+                      <i class="fas fa-search icons text-white" onclick="search_column(<%="'"+field.key+"'"%>)" title="Buscar"></i>
+                      <i class="fas fa-times icons text-white" onclick="hide_column(<%="'"+field.key+"'"%>)" title="Cerrar"></i>
                       <input type="text" class="d-none field_key" id=<%= "field_key"+field.key %> value=<%= field.key %>>
+                      <% if field.field_type_id == 5 %>                
+                        <i class="<%="fa fa-plus icons custom_function_icon text-dark footer_sum_key"+field.key%>" onclick="sum_column(<%="'"+field.key+"','',''"%>)" title="Sumar"></i>
+                        <i class="<%="fa fa-greater-than icons custom_function_icon text-dark footer_max_key"+field.key%>" onclick="max_column(<%="'"+field.key+"','',''"%>)" title="Máximo"></i>
+                        <i class="<%="fa fa-less-than icons custom_function_icon text-dark footer_min_key"+field.key%>"onclick="min_column(<%="'"+field.key+"','',''"%>)" title="Mínimo"></i>
+                        <i class="<%="fa fa-divide icons custom_function_icon text-dark footer_avg_key"+field.key%>" onclick="avg_column(<%="'"+field.key+"','',''"%>)" title="Promedio"></i>
+                      <% end %>
                     </div>
                   </div>
                 </th>
@@ -1162,5 +1347,8 @@ function generate_alerts(){
     </thead>
     <tbody id="tbody_visible" class="project_data_div">
     </tbody>
+    <tfoot id="tfoot_visible" class="font-weight-bold">
+      <tr id="total_table"></tr>
+    </tfoot>
   </table>
 </div>

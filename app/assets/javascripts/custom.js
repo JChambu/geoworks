@@ -1358,6 +1358,7 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
 
       // borramos los datos anteriores
       $("#tbody_visible").empty();
+      $("#total_table").empty();
       $(".width_only").html("");
       Navarra.dashboards.app_ids_table=[];
 
@@ -1527,12 +1528,23 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   if(!array_column_hidden[indexColumn]){
     text_hidden = "d-none";
   }
+  if(index==0){
+    if(column_name!='#'){
+      var field_name = $('#columnfake_'+column_name +' p').html();
+    } else {
+      var field_name = '#';
+    }
+      $('#total_table').append("<td name_function='"+field_name+"' class='"+text_hidden+" footer_key footer_key"+column_name+"'></td>");
+    }
   if(is_new_file && (data_properties[column_name]!=undefined || column_name=="#_action" || column_name == "#_select")){
     if(column_name=="#"){
       new_celd_create = new_celd_create = "<td class='_columnname custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
+      //Verificar si hace falta
+      /*
       $('.field_key_layer').each(function(index,key_layer){
-        new_celd_create += "<td class='_columnname custom_row d-none celdlayer_id"+appid_selected+" celdlayer_key"+key_layer.id.substring(9)+"' onclick='show_item("+appid_selected+")'></td>"
+        new_celd_create += "<td style='background:red' class='_columnname custom_row d-none celdlayer_id"+appid_selected+" celdlayer_key"+key_layer.id.substring(9)+"' onclick='show_item("+appid_selected+")'></td>"
       });
+      */
     } else{
       if(data_properties[column_name]!=undefined){
         new_celd_create = "<td class='_columnname custom_row celd_id"+appid_selected+" celd_key"+column_name+" "+text_hidden+"' onclick='show_item("+appid_selected+")'>"+data_properties[column_name]+"</td>"
@@ -1544,13 +1556,18 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   } else{
     if(column_name=="#"){
       new_celd_create = new_celd_create = "<td class='_columnname custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
-      $('.field_key_layer').each(function(index,key_layer){
+      $('.field_key_layer').each(function(index_layer,key_layer){
         new_celd_create += "<td class='_columnname custom_row d-none celdlayer_id"+appid_selected+" celdlayer_key"+key_layer.id.substring(9)+"' onclick='show_item("+appid_selected+")'></td>"
+        if(index==0){
+          var field_name = $('#columnfake_layer_'+key_layer.id.substring(9).split('|')[1]+'_'+key_layer.id.substring(9).split('|')[0] +' p').html();
+          $('#total_table').append("<td name_function='"+field_name+"' class='d-none footer_key footerlayer_key"+key_layer.id.substring(9)+"'></td>")
+        }
       });
     } else{
       new_celd_create = "<td class='_columnname custom_row celd_id"+appid_selected+" celd_key"+column_name+" "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
     }
   }
+  
   return new_celd_create;
 }
 
@@ -3654,6 +3671,12 @@ function edit_file(edit_parent, edit_child, edit_status){
           document.getElementById("tbody_visible").prepend(new_row);
           $('#row_table_data'+id_new).html(new_celd);
           Navarra.dashboards.app_ids_table.push(id_new);
+          // Ajusta función total, promedio max y min si está activada esa función
+          fields.forEach(function(column) {
+            if(column.value.substring(0,1) !='#'){
+              $('.footer_function_key'+column.value).click();
+            }
+          });
         } else{
           // modifica color del estado
           app_ids.forEach(function(row_element){
@@ -3670,6 +3693,8 @@ function edit_file(edit_parent, edit_child, edit_status){
                     $('.celd_id'+row_element+'.celd_key'+column.value).html(properties_to_save[column.value].toString());
                     $('.celd_id'+row_element+'.celd_key'+column.value).css("font-weight","bold");
                     $('.celd_id'+row_element+'.celd_key'+column.value).css("font-size","1.5em");
+                    // Ajusta función total, promedio max y min si está activada esa función
+                    $('.footer_function_key'+column.value).click();
                   }
                 });
               }
@@ -3756,6 +3781,8 @@ function disable_file(){
       app_ids.forEach(function(row_element){
         $('#row_table_data'+row_element).remove();
       })
+      // limpia las funciones totales, promedio, máximo y mínimo
+      $('#total_table td').html("");
       setTimeout(function(){update_all(); }, 3000);
     }
   });
@@ -3787,6 +3814,8 @@ function delete_file(){
       app_ids.forEach(function(row_element){
         $('#row_table_data'+row_element).remove();
       })
+      // limpia las funciones totales, promedio, máximo y mínimo
+      $('#total_table td').html("");
       update_all();
     }
   });
@@ -3976,8 +4005,28 @@ function changeSelected(){
   if($('#table_visible .custom-control-input:checked').not('.just_header').length==0){
     $('#table_select_all').prop('checked',false);
   }
+  calculate_functions_table();
 }
 
+function calculate_functions_table(){
+  // Ajusta función total, promedio max y min si está activada esa función
+  var fields = document.querySelectorAll(".field_key");
+  fields.forEach(function(column) {
+    if(column.value.substring(0,1) !='#'){
+      $('.footer_function_key'+column.value).click();
+    }
+  });
+  var fields = document.querySelectorAll(".field_key_layer");
+  fields.forEach(function(column) {
+    var columnid = column.id.substring(9).replace('|','\\|');
+    $('.footer_function_key'+columnid).click();
+  });
+  var fields = document.querySelectorAll(".dropsub");
+  fields.forEach(function(column) {
+    var columnid = column.id.split('_subfield_')[1];
+    $('.footer_function_key'+columnid).click();
+  });
+}
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
 

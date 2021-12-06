@@ -366,7 +366,13 @@ function min_photo(){
 <%else %>
   <input class="d-none" id="edit_geom_control" value="false">
 <% end %>
-<% if (can? :data, :new and @project_type.geo_restriction == 0) %>
+<% geo_restriction_val = true %>
+<% if !@project_type.nil? %>
+  <% if @project_type.geo_restriction > 0 %>
+    <% geo_restriction_val = false %>
+  <% end %>
+<% end %>
+<% if (can? :data, :new and geo_restriction_val) %>
   <input class="d-none" id="new_geom_control" value="true">
 <%else %>
   <input class="d-none" id="new_geom_control" value="false">
