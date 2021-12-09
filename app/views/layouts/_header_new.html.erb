@@ -176,6 +176,11 @@ function open_panel(id_panel,id_table){
       <% if params[:controller] == 'project_types' && params[:action] == 'edit' %>
         <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
       <% end %>
+      
+      <!-- Agregar subformularios -->
+      <% if params[:controller] == 'project_data_children' && params[:action] == 'new' %>
+        <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
+      <% end %>
 
       <!-- Listados -->
       <% if params[:controller] == 'choice_lists' && params[:action] == 'index' %>
