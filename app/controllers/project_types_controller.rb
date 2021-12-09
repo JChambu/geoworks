@@ -992,6 +992,9 @@ class ProjectTypesController < ApplicationController
   def heatmap
   end
 
+  def interpolation
+  end
+
   def point_colors
   end
 
@@ -1010,6 +1013,9 @@ class ProjectTypesController < ApplicationController
   end
 
   def create_heatmap
+  end
+
+  def create_interpolation
   end
 
   def filter_heatmap

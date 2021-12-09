@@ -11,11 +11,24 @@ module ProjectTypesHelper
   
   def heatmap_field_for_select
     @a = ProjectField.where(project_type_id: params[:project_type_id]).where(heatmap_field: true).select("key, name").ordered.map { |region|  [region.name, region.key] }
-    
+  end
+
+  def interpolation_field_for_select
+    @a = ProjectField.where(project_type_id: params[:project_type_id]).where(field_type_id: 5).where.not(key: ["app_id","app_estado","app_usuario"]).select("key, name").ordered.map { |region|  [region.name, region.key] }    
+  end
+
+  def interpolation_subfield_for_select
+    @a = ProjectSubfield
+      .select(:key, :name)
+      .joins(:project_field)
+      .where(project_fields: {project_type_id: params[:project_type_id]})
+      .where(field_type_id: 5)
+      .map { |sf| [sf.name, sf.key] }
+
   end
 
   def colored_points_field_for_select
-    @a = ProjectField.where(project_type_id: params[:project_type_id]).where(colored_points_field: true).select("key, name").ordered.map { |region|  [region.name, region.key] }
+    @a = ProjectField.where(project_type_id: params[:project_type_id]).where(colored_points_field: true).select("key, name").ordered.map { |f|  [f.name, f.key] }
   end
 
   # Devuelve los campos padres e hijos que se van a utilizar en el select

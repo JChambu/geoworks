@@ -1,0 +1,54 @@
+<div id="interpolation-modal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h4 class="modal-title"> Interpolación </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+
+      <%= form_tag project_type_create_interpolation_path, :remote => true, :method => :get   do |f| %>
+
+        <div class="modal-body">
+
+          <ul class="nav nav-pills nav-fill mb-3">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#interpolacion_formularios">Formularios</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#interpolacion_subformularios">Subformularios</a>
+            </li>
+          </ul>
+          
+          <div class="tab-content">
+            <div class="tab-pane fade active show" id="interpolacion_formularios">
+              <div class="d-flex">
+                <%=label '', "Campo a interpolar", class:'col-form-label-sm text-left mr-3 mb-0 w-75' %>
+                <%=label '', "Nº Rangos", class:'col-form-label-sm text-left mr-3 mb-0 w-25' %>
+                
+              </div>
+              <div class="d-flex">
+                <%=select_tag 'q[project_field]',  options_for_select(interpolation_field_for_select), include_blank: true, class:'form-control form-control-sm mr-3 w-75' , id:'interpolation_field' %>
+                <%=number_field 'q[range_numer]', 'Cantidad de rangos',class: 'form-control form-control-sm w-25 mr-3', value:3, id:'range_number' %>
+              </div>
+              <div id="interpolation_range"></div>
+            </div>
+            <div class="tab-pane fade" id="interpolacion_subformularios">
+              <%=select_tag 'q[project_kpi]',  options_for_select(interpolation_subfield_for_select), include_blank: true, class:'proj_field form-control' %>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary text-right", value: 'Guardar' %>
+        </div>
+
+      <% end %>
+
+    </div>
+  </div>
+</div>
+
+

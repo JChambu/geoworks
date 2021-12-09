@@ -116,7 +116,9 @@ Rails.application.routes.draw do
     get 'project_types/create_quick_filters' => 'project_types#create_quick_filters', as: :create_quick_filters
     get 'project_types/create_quick_filters_users' => 'project_types#create_quick_filters_users', as: :create_quick_filters_users
     get 'project_types/heatmap' => 'project_types#heatmap', as: :heatmap
+    get 'project_types/interpolation' => 'project_types#interpolation', as: :interpolation
     get 'project_types/create_heatmap' => 'project_types#create_heatmap', as: :create_heatmap
+    get 'project_types/create_interpolation' => 'project_types#create_interpolation', as: :create_interpolation
     get 'project_types/point_colors' => 'project_types#point_colors', as: :point_colors
     get 'project_types/create_point_colors' => 'project_types#create_point_colors', as: :create_point_colors
 

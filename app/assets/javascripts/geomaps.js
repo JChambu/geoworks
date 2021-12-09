@@ -494,6 +494,9 @@ Navarra.geomaps = function() {
       remove_polygon_draw();
     })
 
+    interpolate();
+    //get_isobands();
+
   } // end function init
 
   function remove_polygon_draw(){
@@ -2170,6 +2173,53 @@ function get_latlng(){
     var polygon = turf.polygon(coordinates_newpol2);
     var area = turf.area(polygon);
     return area;
+}
+
+function interpolate(){
+  var defaultParameters = {
+    service: 'WFS',
+    version: '1.0.0',
+    crs: L.CRS.EPSG4326,
+    request: 'GetFeature',
+    typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
+    outputFormat: 'application/json',
+    CQL_FILTER: cql_filter
+  };
+  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
+  var parameters = L.Util.extend(defaultParameters);
+  var URL = owsrootUrl + L.Util.getParamString(parameters);
+  var label_fields = $('.field_label');
+  $.ajax({
+    url: URL,
+    success: function (data) {
+    
+     //var points = turf.randomPoint(30, {bbox: [-68, -34, -70, -36]});
+     var points = data
+    // add a random property to each point
+    turf.featureEach(points, function(point) {
+        point.properties.solRad = Math.random() * 50;
+    });
+  var options = {gridType: 'points', property: 'app_id', units: 'miles'};
+  var grid = turf.interpolate(points, 10, options);
+  console.log(grid)
+ // var geojson = L.geoJSON(grid).addTo(mymap);
+  get_isobands(grid);
+  }
+});
+
+
+  
+}
+
+function get_isobands(grid){
+  pointGrid = grid
+      var breaks = [13100,13110,13120,13130,13140,13150,13160,13170,13180,13190];
+      
+      var lines = turf.isolines(pointGrid, breaks, {zProperty: 'app_id'});
+      console.log(lines)
+      var geojson = L.geoJSON(lines).addTo(mymap);
+
+
 }
 
   return {

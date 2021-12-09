@@ -1,0 +1,98 @@
+$('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal', function (e) {
+  // Cuando se termina de ocultar el modal lo elimina para evitar que se quede pegado el tab
+  $(this).remove();
+  $('.modal-backdrop').remove();
+}).on('shown.bs.modal', function (e) {
+	$('#interpolation_field').on('change', function() {
+		$.ajax({
+	      url: "/projects/search_data.json",
+    	  type: "GET",
+      		data: {
+        	table: 'Formularios',
+        	project_field_key: $(this).val(),
+        	project_type_id: Navarra.dashboards.config.project_type_id
+      		},
+      	success: function(data) {
+      		var intermin = Math.min.apply( null, data.data[0].values.map((v) => v.p_name));
+      		var intermax = Math.max.apply( null, data.data[0].values.map((v) => v.p_name));
+      		console.log(intermin)
+      		console.log(intermax)
+      		var num_ranges = $('#range_number').val();
+      		var interrange = (intermax - intermin)/$('#range_number').val();
+      		value_range = intermin;
+      		if(intermax>10){round=1}else{round=100}
+			for(var i=0;i<num_ranges;i++){
+				if(i==0){
+					val = Math.floor(value_range*round)/round;
+				} else {
+					val = Math.round(value_range*round)/round;
+				}
+				$('#intermin_'+i).val(val);
+				value_range += interrange;
+				if(i==num_ranges){
+					val = Math.ceil(value_range*round)/round;
+				} else {
+					val = Math.round(value_range*round)/round;
+				}
+				$('#intermax_'+i).val(val);
+			}
+      		
+      		console.log(interrange);
+
+      	}
+      });
+	});
+	$('#range_number').on('change', function() {
+		set_interpolation_ranges();
+	});
+	set_interpolation_ranges();
+}).modal();
+
+// Cierra dropdown
+$('#gis_dropdown').dropdown('toggle');
+
+function set_interpolation_ranges(){
+	$('#interpolation_range').empty();
+	var num_ranges = $('#range_number').val();
+	console.log("COLORES")
+	for(var i=0;i<num_ranges;i++){
+		if(i<Math.ceil(num_ranges/2)){
+			red = 1;
+			if(i==0){
+				green = 0;
+			} else{
+				green = (i+1)/Math.floor(num_ranges/2);
+			}
+		}
+		if(i>Math.floor(num_ranges/2)){
+			green = 1;
+			if(i==num_ranges-1){
+				red = 0;
+				console.log("Es el último")
+			} else {
+				red = (num_ranges-(i+1))/Math.floor(num_ranges/2);
+			}
+		}
+		if((i+1)==Math.ceil(num_ranges/2)){
+		//	green = 1;
+		//	red = 1;
+		}
+		var rgb_color = "rgb("+Math.round(red*250)+","+Math.round(green*250)+",0)";
+		console.log("Color "+rgb_color)
+		var hex_color = rgb2hex(rgb_color); 
+		var html_ranges = '<div class="d-flex">';
+	    html_ranges+= '<input type="number" name="" id="intermin_'+i+'"  class = "mt-3 form-control form-control-sm w-50 mr-3" >';
+	    html_ranges+= '<input type="number" name="" id="intermax_'+i+'"  class = "mt-3 form-control form-control-sm w-50 mr-3" >';
+    	html_ranges+= '<input value="'+hex_color+'"  type="color" name="" id="intercolor_'+i+'" class = "mt-3 form-control form-control-sm" style="width:30px; padding:1px" ';
+    	html_ranges+='</div>'
+    $('#interpolation_range').append(html_ranges);
+	}
+}
+
+function rgb2hex(rgb){
+ rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+ return (rgb && rgb.length === 4) ? "#" +
+  ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+  ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+  ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+}
