@@ -2176,6 +2176,7 @@ function get_latlng(){
 }
 
 function interpolate(){
+  var cql_filter =  getCQLFilter(true);
   var defaultParameters = {
     service: 'WFS',
     version: '1.0.0',
@@ -2195,10 +2196,8 @@ function interpolate(){
     
      //var points = turf.randomPoint(30, {bbox: [-68, -34, -70, -36]});
      var points = data
-    // add a random property to each point
-    turf.featureEach(points, function(point) {
-        point.properties.solRad = Math.random() * 50;
-    });
+     var geojson = L.geoJSON(points).addTo(mymap);
+    
   var options = {gridType: 'points', property: 'app_id', units: 'miles'};
   var grid = turf.interpolate(points, 10, options);
   console.log(grid)
