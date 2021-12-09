@@ -1,10 +1,8 @@
-
-
-<%= form_with url: import_project_type_data_children_path, method: :post do |f| %>
+<%= form_with url: import_project_type_data_children_path(@project_type), method: :post do |f| %>
   <div class="row justify-content-center my-4">
     <%= f.label :file, 'Cargar Archivos:', class:'col-md-2 text-right col-form-label' %>
     <div class="col-md-4">
-      <%= f.file_field(:file, multiple: true, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '')  %>
+      <%= f.file_field(:file, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '')  %>
       <p><i class="fas fa-exclamation-circle"></i> Sólo acepta archivos <b>JSON</b></p>
     </div>
   </div>
@@ -14,4 +12,3 @@
     <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Guardar" %>
   </div>
 <% end %>
-

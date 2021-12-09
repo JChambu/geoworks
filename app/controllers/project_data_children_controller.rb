@@ -18,6 +18,7 @@ class ProjectDataChildrenController < ApplicationController
 
   # GET /project_data_children/new
   def new
+    @project_type = current_user.project_types.find(params[:project_type_id])
     @project_data_child = ProjectDataChild.new
   end
 
@@ -216,10 +217,16 @@ class ProjectDataChildrenController < ApplicationController
   end
 
   def import
-    project_type = current_user.project_types.find_by(id: params[:id])
-    render json: {}, status: :not_found unless project_type
-
-    render json: {}, status: :ok
+    @project_type = current_user.project_types.find(params[:project_type_id])
+    render :new && flash[:alert] = "Archivo es requerido" && return unless params[:file]
+    begin
+      file = File.read(params[:file].path)
+      data_hash = JSON.parse(file)
+      ProjectDataImport.new(project_type, data_hash).process
+      redirect_to new_project_type_data_children_path && flash[:notice] = "Archivo procesado correctamente"
+    rescue => e
+      render :new && flash[:alert] = "Archivo seleccionado tiene el formato JSON" && return
+    end
   end
 
   private
@@ -235,9 +242,5 @@ class ProjectDataChildrenController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def project_data_child_params
       params.require(:project_data_child).permit(:properties, :project_id, :project_field_id)
-    end
-
-    def import_file_params
-      params.require(:data).permit(:file)
     end
 end
