@@ -1,0 +1,4 @@
+<%= form_with url: import_project_type_data_children_path, method: :post do |form| %>
+  <%= form.label :file, "Selecciona archivo:" %>
+  <%= form.file_field :file %>
+<% end %>
