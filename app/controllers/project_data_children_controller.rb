@@ -147,14 +147,14 @@ class ProjectDataChildrenController < ApplicationController
         filter_children.each do |filter_child|
           filter_parts = filter_child.split('|')
           data = data.where("properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+" '"+filter_parts[2]+"'")
-        end    
+        end
       end
 
       # Aplica filtros de usuario de hijos
       if !filter_user_children.blank?
         filter_user_children.each do |filter_child|
           data = data.where("user_id = "+filter_child)
-        end    
+        end
       end
 
       # Agrupa los hijos por padre
@@ -215,6 +215,13 @@ class ProjectDataChildrenController < ApplicationController
     end
   end
 
+  def import
+    project_type = current_user.project_types.find_by(id: params[:id])
+    render json: {}, status: :not_found unless project_type
+
+    render json: {}, status: :ok
+  end
+
   private
     def set_project
       @project = Project.find(params[:project_id])
@@ -228,5 +235,9 @@ class ProjectDataChildrenController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def project_data_child_params
       params.require(:project_data_child).permit(:properties, :project_id, :project_field_id)
+    end
+
+    def import_file_params
+      params.require(:data).permit(:file)
     end
 end

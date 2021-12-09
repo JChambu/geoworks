@@ -47,8 +47,6 @@ Rails.application.routes.draw do
   post 'dashboards/send_alerts'
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
-
-
     post 'project_fields/create'
     post 'analytics_dashboards/create'
     post 'charts/create'
@@ -108,6 +106,10 @@ Rails.application.routes.draw do
         end
       end
 
+      resource :data_children, only: [:new], controller: :project_data_children do
+        post :import
+      end
+
     get 'project_types/share' => 'project_types#share', as: :share
     get 'project_types/filters' => 'project_types#filters', as: :filters
     get 'project_types/quick_filters' => 'project_types#quick_filters', as: :quick_filters
@@ -119,7 +121,6 @@ Rails.application.routes.draw do
     get 'project_types/create_heatmap' => 'project_types#create_heatmap', as: :create_heatmap
     get 'project_types/point_colors' => 'project_types#point_colors', as: :point_colors
     get 'project_types/create_point_colors' => 'project_types#create_point_colors', as: :create_point_colors
-
   end
 
 

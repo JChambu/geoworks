@@ -1,5 +1,4 @@
 class ApplicationController < ActionController::Base
-
   before_action :authenticate_user!
   before_action :set_locale
   before_action :current_tenant
@@ -14,6 +13,7 @@ class ApplicationController < ActionController::Base
       "application"
     end
   end
+
   def flashman
     @flash_manager
   end
