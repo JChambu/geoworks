@@ -218,14 +218,18 @@ class ProjectDataChildrenController < ApplicationController
 
   def import
     @project_type = current_user.project_types.find(params[:project_type_id])
-
-    file = params[:file]&.path ? File.read(params[:file].path) : nil
-    data_hash = file.present? ? JSON.parse(file) : nil
-    @project_data_children = ProjectDataImport.new(project_type, data_hash)
-    if @project_data_children.save
-      redirect_to new_project_type_data_children_path && flash[:notice] = "Archivo procesado correctamente"
-    else
-      render :new
+    render :new && flash[:alert] = "Archivo es requerido" && return unless params[:file]
+    begin
+      file = File.read(params[:file].path)
+      data_hash = JSON.parse(file)
+      project_data_children = ProjectDataImport.new(project_type, data_hash)
+      if @project_data_children.save
+        redirect_to new_project_type_data_children_path && flash[:notice] = "Archivo procesado correctamente"
+      else
+        render :new
+      end
+    rescue => e
+      render :new && flash[:alert] = "Archivo seleccionado no tiene el formato JSON" && return
     end
   end
 
