@@ -218,18 +218,30 @@ class ProjectDataChildrenController < ApplicationController
 
   def import
     @project_type = current_user.project_types.find(params[:project_type_id])
-    render :new && flash[:alert] = "Archivo es requerido" && return unless params[:file]
+    unless params[:file]
+      flash.now[:alert] = "Archivo es requerido"
+      render action: :new
+      return
+    end
     begin
       file = File.read(params[:file].path)
       data_hash = JSON.parse(file)
-      project_data_children = ProjectDataImport.new(project_type, data_hash)
+      @project_data_children = ProjectDataChildrenImport.new
+      @project_data_children.project_type = @project_type
+      @project_data_children.entries = data_hash
       if @project_data_children.save
-        redirect_to new_project_type_data_children_path && flash[:notice] = "Archivo procesado correctamente"
+        redirect_to new_project_type_data_children_path && flash.now[:notice] = "Archivo procesado correctamente"
       else
-        render :new
+        flash.now[:alert] = "Se encontraron errores al procesar el archivo seleccionado"
+        render action: :new
+        return
       end
     rescue => e
-      render :new && flash[:alert] = "Archivo seleccionado no tiene el formato JSON" && return
+      p '*' * 100
+      p e
+      flash.now[:alert] = "Archivo seleccionado no tiene el formato JSON"
+      render action: :new
+      return
     end
   end
 
