@@ -230,15 +230,13 @@ class ProjectDataChildrenController < ApplicationController
       @project_data_children.project_type = @project_type
       @project_data_children.entries = data_hash
       if @project_data_children.save
-        redirect_to new_project_type_data_children_path && flash.now[:notice] = "Archivo procesado correctamente"
+        redirect_to new_project_type_data_children_path(@project_type)
       else
         flash.now[:alert] = "Se encontraron errores al procesar el archivo seleccionado"
         render action: :new
         return
       end
     rescue => e
-      p '*' * 100
-      p e
       flash.now[:alert] = "Archivo seleccionado no tiene el formato JSON"
       render action: :new
       return

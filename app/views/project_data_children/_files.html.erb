@@ -17,9 +17,15 @@
     <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Guardar" %>
   </div>
 <% end %>
-<% if @project_type.errors.any? %>
+<% if @project_data_children&.errors&.any? %>
   <div class="panel panel-warning errors">
     <div class="panel-heading"><h4><span><i class="fa fa-exclamation"><span></i>Validaciones</h4></div>
-    <ul class="panel-body"><% @project_type.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %></ul>
+    <ul class="panel-body">
+      <% @project_data_children&.errors&.messages&.each do |attribute, messages| %>
+        <% messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      <% end %>
+    </ul>
   </div>
 <% end %>
