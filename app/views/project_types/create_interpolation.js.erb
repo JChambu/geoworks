@@ -1,44 +1,19 @@
 // Levanta los datos
-var heatmap_indicator = '<%= params[:q][:project_kpi] %>';
-var heatmap_field = '<%= params[:q][:project_field] %>';
-var field;
-if (heatmap_field != ''){
-  field =  "<%=  get_name_from_key(params[:q][:project_field]).name if !params[:q][:project_field].empty?%>";
-}
-if (heatmap_indicator !=''){
-  field = "<%= get_name_kpi(params[:q][:project_kpi]).title  if !params[:q][:project_kpi].empty?%>"
-}
-// Carga las variables globales
-Navarra.project_types.config.heatmap_field = heatmap_field;
-Navarra.project_types.config.heatmap_indicator = heatmap_indicator;
+var interpolation_field = '<%= params[:q][:project_field] %>';
+var breaks = [];
+breaks.push($('#intermin_0').val());
+$('.intermax').each(function(){
+  breaks.push($(this).val())
+});
+var colors = [];
+$('.intercolor').each(function(){
+  colors.push($(this).val())
+});
 
 // Elimina el modal
-$("#heatmap-modal").remove();
+$("#interpolation-modal").remove();
 $('.modal-backdrop').remove();
 
-// Elimina y vuelve a agregar el item al card Filtros Activos
-$("#heatmap_filter").remove();
-$('#filter-body').append(
-  $('<div>', {
-    'class': 'text-light bg-secondary px-2 mb-1 py-1 rounded border border-dark shadow',
-    'id': 'heatmap_filter',
-  }).append(
-    $('<b>', {
-      'text': 'Mapa de Calor por: '+field
-    }),
-    $('<button>', {
-      'type': 'button',
-      'class': 'close',
-      'id': 'close_heatmap_filter',
-      'text': '×'
-    })
-  )
-)
-
-resize_graphics();
-
-// Activa el icono
-$(".fa-fire").css("color", "#d3d800");
 
 // Lanza la función
-Navarra.geomaps.heatmap_data();
+Navarra.geomaps.interpolate(interpolation_field,breaks,colors);

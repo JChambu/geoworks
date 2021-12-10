@@ -494,8 +494,6 @@ Navarra.geomaps = function() {
       remove_polygon_draw();
     })
 
-    interpolate();
-    //get_isobands();
 
   } // end function init
 
@@ -2175,7 +2173,7 @@ function get_latlng(){
     return area;
 }
 
-function interpolate(){
+function interpolate(interpolation_field, breaks,colors){
   var cql_filter =  getCQLFilter(true);
   var defaultParameters = {
     service: 'WFS',
@@ -2189,20 +2187,24 @@ function interpolate(){
   var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
   var parameters = L.Util.extend(defaultParameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
-  var label_fields = $('.field_label');
   $.ajax({
     url: URL,
     success: function (data) {
     
      //var points = turf.randomPoint(30, {bbox: [-68, -34, -70, -36]});
      var points = data
-     var geojson = L.geoJSON(points).addTo(mymap);
+     //var geojson = L.geoJSON(points).addTo(mymap);
     
-  var options = {gridType: 'points', property: 'app_id', units: 'miles'};
-  var grid = turf.interpolate(points, 10, options);
-  console.log(grid)
- // var geojson = L.geoJSON(grid).addTo(mymap);
-  get_isobands(grid);
+  var options = {gridType: 'points', property: interpolation_field, units: 'miles',  weight: 10};
+  var grid = turf.interpolate(points, 0.1, options);
+  grid.features.forEach(function(point){
+    var new_pos = new L.latLng (point.geometry.coordinates[1], point.geometry.coordinates[0]);
+    const popupContent = 
+    '<h7>' + point.properties.house_number + '</h7>'
+   // var new_grid = new L.marker(new_pos).addTo(mymap).bindPopup(popupContent);
+  })
+  //var geojson = L.geoJSON(grid).addTo(mymap);
+  get_isobands(grid, interpolation_field,breaks,colors);
   }
 });
 
@@ -2210,15 +2212,29 @@ function interpolate(){
   
 }
 
-function get_isobands(grid){
-  pointGrid = grid
-      var breaks = [13100,13110,13120,13130,13140,13150,13160,13170,13180,13190];
-      
-      var lines = turf.isolines(pointGrid, breaks, {zProperty: 'app_id'});
-      console.log(lines)
-      var geojson = L.geoJSON(lines).addTo(mymap);
-
-
+function get_isobands(grid, interpolation_field, breaks, colors){
+  pointGrid = grid  
+      var lines = turf.isobands(pointGrid, breaks, {zProperty: interpolation_field,breaksProperties: [{"color":"#ff7800"},{"fillColor":"#ff7800"},{"fillColor":"#ff7800"}]});
+      var colors = ['#ff0000','#ffff00','#000000','#0000ff','#aa7755'];
+      var count =0
+      lines.features.forEach(function(multipoly,index_poly){
+        if(multipoly.geometry.coordinates.length>0){
+          var polys = multipoly.geometry.coordinates[0];
+          polys.forEach(function(poly){
+            lat_lng_polys = [];
+            lat_lng_poly = [];
+            poly.forEach(function(geometry){
+              lat_lng_geom = [];
+              lat_lng_geom.push(geometry[1]);
+              lat_lng_geom.push(geometry[0]);
+              lat_lng_poly.push(lat_lng_geom);
+            });
+            lat_lng_polys.push(lat_lng_poly);
+            var new_poly = new L.polygon(lat_lng_polys, {color: colors[count], fillOpacity: 0.6}).addTo(mymap);
+            count ++
+          });
+        }
+      });
 }
 
   return {
@@ -2245,6 +2261,7 @@ function get_isobands(grid){
     get_latlng:get_latlng,
     new_geometry: new_geometry,
     get_geometries_to_save: get_geometries_to_save,
-    get_geom_to_calculate: get_geom_to_calculate
+    get_geom_to_calculate: get_geom_to_calculate,
+    interpolate: interpolate
   }
 }();
