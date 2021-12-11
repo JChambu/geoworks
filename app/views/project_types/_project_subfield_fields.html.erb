@@ -1,14 +1,14 @@
 <tr>
   <%# id cell%>
-  <td headers="th1" class="pt-3 pr-0" style="width: 6vw; font-size: 0.8em;padding-right:0px; padding-left: 1%"><%= f.object.id  %></td>
+  <td class="pt-3 pr-0" style="width: 6vw; font-size: 0.8em;padding-right:0px; padding-left: 1%"><%= f.object.id  %></td>
   <%# nombre %>
-  <td headers="th3" class="pl-0" style="width: 12vw">
+  <td class="pl-0" style="width: 12vw">
       <i class="fas fa-long-arrow-alt-right"; style="width: 10%"></i>
       <%= f.text_field :name, class: "form-control form-control-sm", style:"width: 86%; display: inline-block" %> 
   </td>
   <%# Tipo de campo %>
-  <td headers="th4" style="width: 14vw"><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control form-control-sm' } %></td>
-  <td headers="th4" style="width: 14vw">
+  <td style="width: 14vw"><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control form-control-sm' } %></td>
+  <td style="width: 14vw">
     <% if f.object.field_type_id == 2 || f.object.field_type_id == 10 %>
       <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control form-control-sm choice_list'} %>
     <% else %>
@@ -60,7 +60,7 @@
     <div style="width: 45%; display:inline-block;text-align:center"><%= f.collection_select :roles_edit, Role.order(:name), :id, :name, {selected: role_selected(f.object.roles_edit)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></div>
   </th>
   <%# eliminar %>
-  <td headers="th16" style="width: 4vw">
+  <td style="width: 4vw">
     <% if can? :attributes, :destroy %>
       <%= link_to '#', class: "remove_fields_2" do %> <i class="fas fa-trash-alt" title="Eliminar sub-atributo"></i> <% end %>
     <% end %>

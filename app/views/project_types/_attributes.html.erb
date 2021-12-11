@@ -33,7 +33,8 @@
     })
 
   });
-  // Dropdown hide/show logic and permissions
+  // Dropdown select project type fields to show
+  //TODO: Create one function to avoid redundancy
   $(document).ready( function(){
     $('.dropdown_logic').click(function(){
       if($(".logic_cell_group:first").hasClass("d-none")){
@@ -277,32 +278,32 @@
         <table class="table table-hover table-tbody-scroll table-striped m-0" id="user_assignments">
           <thead style="padding-right: 10px">
             <tr>
-              <th id="th1" class="text-center px-0" style="width: 3vw">ID</th>
-              <th id="th2" class="text-center px-0" style="width: 3vw">
+              <th class="text-center px-0" style="width: 3vw">ID</th>
+              <th class="text-center px-0" style="width: 3vw">
                 <% if can? :attributes, :new %>
                   <%= link_to_add_fields "<i class='fas fa-plus' title='Agregar atributo'></i>".html_safe, f, :project_fields, class: 'table_father' %>
                 <% end %>
               </th>
-              <th id="th3" style="width: 12vw">Nombre</th>
-              <th id="th4" class="text-left" style="width: 28vw">Tipo de Campo</th>
+              <th style="width: 12vw">Nombre</th>
+              <th class="text-left" style="width: 28vw">Tipo de Campo</th>
               <th style="width: 50vw" class="attributes_cell_group">
-                <div id="th5" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Requerido">Requerido</div>
-                <div id="th6" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Oculto">Oculto</div>
-                <div id="th7" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Sólo Lectura">Solo Lectura</div>
-                <div id="th8" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Pop-up">Popup</div>
-                <div id="th9" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Filtro/Indicadores">Filtro/Ind</div>
-                <div id="th10" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Mapa de Calor">Mapa de Calor</div>
-                <div id="th11" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Reporte">Reporte</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Requerido">Requerido</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Oculto">Oculto</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Sólo Lectura">Solo Lectura</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Pop-up">Popup</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Filtro/Indicadores">Filtro/Ind</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Mapa de Calor">Mapa de Calor</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Reporte">Reporte</div>
               </th>
               <th style="width: 50vw" class="d-none logic_cell_group">
-                <div id="th12" class="text-center px-0" style="width: 45%; display:inline-block">Cálculo</div>
-                <div id="th13" class="text-center px-0" style="width: 45%; display:inline-block">Script</div>
+                <div class="text-center px-0" style="width: 45%; display:inline-block">Cálculo</div>
+                <div class="text-center px-0" style="width: 45%; display:inline-block">Script</div>
               </th>
               <th style="width: 50vw" class="d-none permissions_cell_group">
-                <div id="th14" class="text-center px-0" style="width: 45%; display:inline-block">Visualizar</div>
-                <div id="th15" class="text-center px-0" style="width: 45%; display:inline-block">Editar</div>
+                <div class="text-center px-0" style="width: 45%; display:inline-block">Visualizar</div>
+                <div class="text-center px-0" style="width: 45%; display:inline-block">Editar</div>
               </th>
-              <th id="th16" class="text-center px-0" style="width: 4vw">
+              <th  class="text-center px-0" style="width: 4vw">
                 <div class="container">
                   <div class="dropdown">
                     <button type="button" class="btn btn-primary dropdown-toggle p-1" data-toggle="dropdown">  
