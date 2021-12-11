@@ -1,8 +1,8 @@
 <% if notice %>
-    <div class="notice"><%= notice %></div>
+    <div class="notice pl-3"><%= notice %></div>
   <% end %>
   <% if alert %>
-    <div class="notice"><%= alert %></div>
+    <div class="notice pl-3 text-danger"><%= alert %></div>
   <% end %>
 <%= form_with url: import_project_type_data_children_path(@project_type), local: true, method: :post do |f| %>
   <div class="row justify-content-center my-4">
@@ -19,7 +19,7 @@
 <% end %>
 <% if @project_data_children&.errors&.any? %>
   <div class="panel panel-warning errors">
-    <div class="panel-heading"><h4><span><i class="fa fa-exclamation"><span></i>Validaciones</h4></div>
+    <div class="panel-heading"><h4><span class="text-danger pl-3"><i class="fa fa-exclamation"><span></i> Validaciones</h4></div>
     <ul class="panel-body">
       <% @project_data_children&.errors&.messages&.each do |attribute, messages| %>
         <% messages.each do |message| %>

@@ -17,6 +17,19 @@ $(document).ready(function(){
       $('.custom_indicator_container').css('left',new_left);
     }
   });
+  $('#panelImport').on('click', function (e) {
+    e.stopPropagation();
+    $('.custom_dropdown_panels_import').show();
+    $('.custom_dropdown_panels_import').css('right','100.5%');
+    var top = ($(this).offset().top -50)+ 'px';
+    $('.custom_dropdown_panels_import').css('top',top)
+    $('.custom_dropdown_panels').hide();
+  });
+  $('#panelAdmin').on('click', function (e) {
+    e.stopPropagation();
+    $('.custom_dropdown_panels').show();
+    $('.custom_dropdown_panels_import').hide();
+  });
 });
 function open_panel(id_panel,id_table){
   if(id_panel=='view-data-middle' && id_table!=0){
@@ -177,7 +190,7 @@ function open_panel(id_panel,id_table){
         <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
       <% end %>
       
-      <!-- Agregar subformularios -->
+      <!-- Importar -->
       <% if params[:controller] == 'project_data_children' && params[:action] == 'new' %>
         <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
       <% end %>
@@ -340,9 +353,19 @@ function open_panel(id_panel,id_table){
           <% if can? :project_types, :edit%>
             <%= link_to 'Editar', edit_project_type_path(@project_type.id), class: "dropdown-item" %>
           <% end %>
-          <% if can? :data, :new_subform %>
-            <%= link_to 'Agregar Subformularios', new_project_type_data_children_path(@project_type.id), class: "dropdown-item" %>
+          <div>
+          <% if can? :data, :new_subform || :data, :new %>
+             <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelImport" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Importar</a>
+            <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels_import" aria-labelledby="panelImport">
+              <% if can? :data, :new %>
+                <%= link_to 'Formularios', new_project_type_data_children_path(@project_type.id), class: "dropdown-item" %>
+              <% end %>
+              <% if can? :data, :new_subform %>
+              <%= link_to 'Subformularios', new_project_type_data_children_path(@project_type.id), class: "dropdown-item" %>
+              <% end %>
+            </div>  
           <% end %>
+          </div>
           <% if can? :project_types, :destroy%>
             <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, id: 'project_del_button', class: "dropdown-item" %>
           <% end %>
