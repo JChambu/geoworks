@@ -25,11 +25,80 @@
       if($(".header_project_fields").hasClass("d-block")){
         $(".header_project_fields").removeClass("d-block").addClass("d-none");
         $("#toggler_header").removeClass("fa-minus").addClass("fa-plus");
+        //$("#th3").css('width', '22%');
       } else {
         $(".header_project_fields").removeClass("d-none").addClass("d-block");
         $("#toggler_header").removeClass("fa-plus").addClass("fa-minus");
       }
     })
+
+  });
+  // Dropdown hide/show logic and permissions
+  $(document).ready( function(){
+    $('.dropdown_logic').click(function(){
+      if($(".logic_cell_group:first").hasClass("d-none")){
+        
+        $('.logic_cell_group').each(function(index, value){
+          $(this).removeClass("d-none");
+        });
+        $(".dropdown_logic").addClass("d-none");
+        if(!$(".attributes_cell_group:first").hasClass("d-none")){
+          $('.attributes_cell_group').each(function(index, value){
+          $(this).addClass("d-none");
+        });
+          $(".dropdown_attributes").removeClass("d-none");
+        }
+        if(!$(".permissions_cell_group:first").hasClass("d-none")){
+          $('.permissions_cell_group').each(function(index, value){
+          $(this).addClass("d-none");
+        });
+          $(".dropdown_permissions").removeClass("d-none");
+        }
+      } 
+    });
+    $('.dropdown_permissions').click(function(){
+      if($(".permissions_cell_group:first").hasClass("d-none")){
+        
+        $('.permissions_cell_group').each(function(index, value){
+          $(this).removeClass("d-none");
+        });
+        $(".dropdown_permissions").addClass("d-none");
+        if(!$(".attributes_cell_group:first").hasClass("d-none")){
+          $('.attributes_cell_group').each(function(index, value){
+          $(this).addClass("d-none");
+
+        });
+          $(".dropdown_attributes").removeClass("d-none");
+        }
+        if(!$(".logic_cell_group:first").hasClass("d-none")){
+          $('.logic_cell_group').each(function(index, value){
+          $(this).addClass("d-none");
+        });
+          $(".dropdown_logic").removeClass("d-none");
+        }
+      } 
+    });
+    $('.dropdown_attributes').click(function(){
+      if($(".attributes_cell_group:first").hasClass("d-none")){
+        
+        $('.attributes_cell_group').each(function(index, value){
+          $(this).removeClass("d-none");
+        });
+        $(".dropdown_attributes").addClass("d-none");
+        if(!$(".permissions_cell_group:first").hasClass("d-none")){
+          $('.permissions_cell_group').each(function(index, value){
+          $(this).addClass("d-none");
+        });
+          $(".dropdown_permissions").removeClass("d-none");
+        }
+        if(!$(".logic_cell_group:first").hasClass("d-none")){
+          $('.logic_cell_group').each(function(index, value){
+          $(this).addClass("d-none");
+        });
+          $(".dropdown_logic").removeClass("d-none");
+        }
+      } 
+    });
 
   });
 
@@ -191,7 +260,6 @@
           <%= f.label :notification_email, 'Mail notif. :', class:'col-form-label-sm mb-0 p-0' %>
         </div>
         <div class="row">
-        <%# TODO: Change :name to :mail %>
           <%= f.text_field :notification_email, class: 'form-control form-control-sm' %> 
         </div>
       </div>
@@ -209,36 +277,57 @@
         <table class="table table-hover table-tbody-scroll table-striped m-0" id="user_assignments">
           <thead style="padding-right: 10px">
             <tr>
-              <th class="text-center px-0" style="width: 3%">ID</th>
-              <th class="text-center px-0" style="width: 3%">
+              <th id="th1" class="text-center px-0" style="width: 3vw">ID</th>
+              <th id="th2" class="text-center px-0" style="width: 3vw">
                 <% if can? :attributes, :new %>
                   <%= link_to_add_fields "<i class='fas fa-plus' title='Agregar atributo'></i>".html_safe, f, :project_fields, class: 'table_father' %>
                 <% end %>
               </th>
-              <th style="width: 12%">Nombre</th>
-              <th class="text-center px-0" style="width: 18%%">Tipo de Campo</th>
-              <th class="text-center px-0" style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Requerido">R</th>
-              <th class="text-center px-0" style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Oculto">O</th>
-              <th class="text-center px-0" style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Sólo Lectura">SL</th>
-              <th class="text-center px-0" style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Pop-up">P</th>
-              <th class="text-center px-0" style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Filtro/Indicadores">F/I</th>
-              <th class="text-center px-0" style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Mapa de Calor">MC</th>
-              <th class="text-center px-0" style="width: 3%" data-toggle="tooltip" data-placement="bottom" title="Reporte">RP</th>
-              <th class="text-center px-0" style="width: 10%">Cálculo</th>
-              <th class="text-center px-0" style="width: 10%">Script</th>
-              
-              <th class="text-right px-0" style="width: 18%">Visualizar</th>
-              <th class="text-center px-0" style="width: 12%">Editar</th>
-              <th class="text-center px-0" style="width: 1%"></th>
+              <th id="th3" style="width: 12vw">Nombre</th>
+              <th id="th4" class="text-left" style="width: 28vw">Tipo de Campo</th>
+              <th style="width: 50vw" class="attributes_cell_group">
+                <div id="th5" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Requerido">Requerido</div>
+                <div id="th6" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Oculto">Oculto</div>
+                <div id="th7" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Sólo Lectura">Solo Lectura</div>
+                <div id="th8" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Pop-up">Popup</div>
+                <div id="th9" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Filtro/Indicadores">Filtro/Ind</div>
+                <div id="th10" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Mapa de Calor">Mapa de Calor</div>
+                <div id="th11" class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Reporte">Reporte</div>
+              </th>
+              <th style="width: 50vw" class="d-none logic_cell_group">
+                <div id="th12" class="text-center px-0" style="width: 45%; display:inline-block">Cálculo</div>
+                <div id="th13" class="text-center px-0" style="width: 45%; display:inline-block">Script</div>
+              </th>
+              <th style="width: 50vw" class="d-none permissions_cell_group">
+                <div id="th14" class="text-center px-0" style="width: 45%; display:inline-block">Visualizar</div>
+                <div id="th15" class="text-center px-0" style="width: 45%; display:inline-block">Editar</div>
+              </th>
+              <th id="th16" class="text-center px-0" style="width: 4vw">
+                <div class="container">
+                  <div class="dropdown">
+                    <button type="button" class="btn btn-primary dropdown-toggle p-1" data-toggle="dropdown">  
+                          
+                    </button>  
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item dropdown_attributes d-none"> Atributos </a>  
+                      <a class="dropdown-item dropdown_logic"> Lógica </a>  
+                      <a class="dropdown-item dropdown_permissions"> Autorizaciones </a>  
+                    </div>
+                  </div>
+                </div>
+              </th>
               <th></th>
+              
             </tr>
            </thead>
+           
           <tbody class="sortable">
             <%= f.fields_for :project_fields, @project_fields do |a| %>
               <%= render 'project_field_fields', f: a %>
             <% end %>
           </tbody>
         </table>
+        
       </div>
     </div>
   <% end %>

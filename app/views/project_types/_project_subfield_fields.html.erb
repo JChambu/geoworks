@@ -1,14 +1,14 @@
 <tr>
   <%# id cell%>
-  <td class="pt-3 pr-0" style="width: 5%; font-size: 0.8em;padding-right:0px; padding-left: 1%"><%= f.object.id  %></td>
+  <td headers="th1" class="pt-3 pr-0" style="width: 6vw; font-size: 0.8em;padding-right:0px; padding-left: 1%"><%= f.object.id  %></td>
   <%# nombre %>
-  <td class="pl-0" style="width: 17%">
+  <td headers="th3" class="pl-0" style="width: 12vw">
       <i class="fas fa-long-arrow-alt-right"; style="width: 10%"></i>
       <%= f.text_field :name, class: "form-control form-control-sm", style:"width: 86%; display: inline-block" %> 
   </td>
   <%# Tipo de campo %>
-  <td style="width: 11%"><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control form-control-sm' } %></td>
-  <td style="width: 11%">
+  <td headers="th4" style="width: 14vw"><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control form-control-sm' } %></td>
+  <td headers="th4" style="width: 14vw">
     <% if f.object.field_type_id == 2 || f.object.field_type_id == 10 %>
       <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control form-control-sm choice_list'} %>
     <% else %>
@@ -16,46 +16,51 @@
     <% end %>
   </td>
   <%# atributos %>
-  <td style="width: 3%; padding-right: 0px">
-    <div class="custom-control custom-checkbox">
-      <%= f.check_box :required,class:'custom-control-input', id: 'customCheckSubField1'.concat(f.object.id.to_s) %>
-      <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField1'.concat(f.object.id.to_s)%>
+  <th style="width: 50vw" class="attributes_cell_group">
+    <div class="text-center" style="width: 13%; display:inline-block">
+      <div class="custom-control custom-checkbox">
+        <%= f.check_box :required,class:'custom-control-input', id: 'customCheckSubField1'.concat(f.object.id.to_s) %>
+        <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField1'.concat(f.object.id.to_s)%>
+      </div>
     </div>
-  </td>
-  <td style="width: 3%; padding-right: 0px">
-    <div class="custom-control custom-checkbox">
-      <%= f.check_box :hidden,class:'custom-control-input', id: 'customCheckSubField2'.concat(f.object.id.to_s) %>
-      <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField2'.concat(f.object.id.to_s)%>
+    <div class="text-center" style="width: 13%; display:inline-block">
+      <div class="custom-control custom-checkbox">
+        <%= f.check_box :hidden,class:'custom-control-input', id: 'customCheckSubField2'.concat(f.object.id.to_s) %>
+        <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField2'.concat(f.object.id.to_s)%>
+      </div>
     </div>
-  </td>
-  <td style="width: 3%; padding-right: 0px">
-    <div class="custom-control custom-checkbox">
-      <%= f.check_box :read_only, class:'custom-control-input', id: 'customCheckSubField3'.concat(f.object.id.to_s) %>
-      <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField3'.concat(f.object.id.to_s)%>
+    <div class="text-center" style="width: 13%; display:inline-block">
+      <div class="custom-control custom-checkbox">
+        <%= f.check_box :read_only, class:'custom-control-input', id: 'customCheckSubField3'.concat(f.object.id.to_s) %>
+        <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField3'.concat(f.object.id.to_s)%>
+      </div>
     </div>
-  </td>
-  <td style="width: 3%; padding-right: 0px"><div class="custom-control custom-checkbox"></div></td>
-  <td style="width: 3%; padding-right: 0px">
-    <div class="custom-control custom-checkbox">
-      <%= f.check_box :filter_field, class:'custom-control-input', id: 'customCheckSubField4'.concat(f.object.id.to_s) %>
-      <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField4'.concat(f.object.id.to_s)%>
+    <div class="text-center" style="width: 13%; display:inline-block"><div class="custom-control custom-checkbox"></div></div>
+    <div class="text-center" style="width: 13%; display:inline-block">
+      <div class="custom-control custom-checkbox">
+        <%= f.check_box :filter_field, class:'custom-control-input', id: 'customCheckSubField4'.concat(f.object.id.to_s) %>
+        <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField4'.concat(f.object.id.to_s)%>
+      </div>
     </div>
-  </td>
-  <td style="width: 3%; padding-right: 0px"><div class="custom-control custom-checkbox"></div></td>
-  <td style="width: 3%; padding-right: 0px"><div class="custom-control custom-checkbox"></div></td>
-  <%# cálculo %>
-  <td style="width: 12%"><%= f.text_field :calculated_field, class: "form-control form-control-sm" %></td>
-  <%# script %>
-  <td style="width: 12%; text-align: center"><%= f.text_field :data_script, class: "form-control form-control-sm" %></td>
-  
+    <div class="text-center" style="width: 13%; display:inline-block"><div class="custom-control custom-checkbox"></div></div>
+    <div class="text-center" style="width: 13%; display:inline-block"><div class="custom-control custom-checkbox"></div></div>
+  </th>
+  <th style="width: 50vw" class="d-none logic_cell_group">
+    <%# cálculo %>
+    <div style="width: 45%; display:inline-block"><%= f.text_field :calculated_field, class: "form-control form-control-sm" %></div>
+    <%# script %>
+    <div style="width: 45%; display:inline-block"><%= f.text_field :data_script, class: "form-control form-control-sm" %></div>
+  </th>
   <%= f.hidden_field :sort, class: 'project_fields_current_position form-control form-control-sm', readonly: true %>
   <%= f.hidden_field :_destroy%>
-  <%# visualizar %>
-  <td style="width: 5%"><%= f.collection_select :roles_read, Role.order(:name), :id, :name, {selected: role_selected(f.object.roles_read)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></td>
-  <%# cálculo %>
-  <td style="width: 5%"><%= f.collection_select :roles_edit, Role.order(:name), :id, :name, {selected: role_selected(f.object.roles_edit)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></td>
+  <th style="width: 50vw" class="d-none permissions_cell_group">
+    <%# visualizar %>
+    <div style="width: 45%; display:inline-block;text-align:center"><%= f.collection_select :roles_read, Role.order(:name), :id, :name, {selected: role_selected(f.object.roles_read)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></div>
+    <%# editar %>
+    <div style="width: 45%; display:inline-block;text-align:center"><%= f.collection_select :roles_edit, Role.order(:name), :id, :name, {selected: role_selected(f.object.roles_edit)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></div>
+  </th>
   <%# eliminar %>
-  <td style="width: 4%">
+  <td headers="th16" style="width: 4vw">
     <% if can? :attributes, :destroy %>
       <%= link_to '#', class: "remove_fields_2" do %> <i class="fas fa-trash-alt" title="Eliminar sub-atributo"></i> <% end %>
     <% end %>
