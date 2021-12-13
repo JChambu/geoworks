@@ -1316,6 +1316,7 @@ Navarra.geomaps = function() {
             sortLayers: true
           });
           layer_array.push(projectsa);
+          
         }) // Cierra each data
 
         first_time_internal_layers = false;
@@ -2173,7 +2174,7 @@ function get_latlng(){
     return area;
 }
 
-function interpolate(interpolation_field, breaks,colors){
+function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_celd_size){
   var cql_filter =  getCQLFilter(true);
   var defaultParameters = {
     service: 'WFS',
@@ -2184,42 +2185,44 @@ function interpolate(interpolation_field, breaks,colors){
     outputFormat: 'application/json',
     CQL_FILTER: cql_filter
   };
+  console.log("Type")
+  console.log(Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer)
   var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
   var parameters = L.Util.extend(defaultParameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
   $.ajax({
     url: URL,
     success: function (data) {
-    
-     //var points = turf.randomPoint(30, {bbox: [-68, -34, -70, -36]});
-     var points = data
-     //var geojson = L.geoJSON(points).addTo(mymap);
-    
-  var options = {gridType: 'points', property: interpolation_field, units: 'miles',  weight: 10};
-  var grid = turf.interpolate(points, 0.1, options);
-  grid.features.forEach(function(point){
-    var new_pos = new L.latLng (point.geometry.coordinates[1], point.geometry.coordinates[0]);
-    const popupContent = 
-    '<h7>' + point.properties.house_number + '</h7>'
-   // var new_grid = new L.marker(new_pos).addTo(mymap).bindPopup(popupContent);
-  })
-  //var geojson = L.geoJSON(grid).addTo(mymap);
-  get_isobands(grid, interpolation_field,breaks,colors);
-  }
-});
-
-
+      var points = data
+      if(get_celd_size){
+        var enveloped = turf.envelope(points);
+        var area_envelope = turf.area(enveloped)/1000000;
+        $('#celd_size').val(Math.round(area_envelope/200*100000)/100000);
+      } else {
+        var options = {gridType: 'points', property: interpolation_field, units: 'kilometers', weight: parseFloat(weight)};
+        var grid = turf.interpolate(points,parseFloat(celd_size), options);
   
+        //Para ver los puntos y sus propiedades
+        /*
+        grid.features.forEach(function(point){
+        var new_pos = new L.latLng (point.geometry.coordinates[1], point.geometry.coordinates[0]);
+        const popupContent = '<h7>' + point.properties.house_number + '</h7>'
+        // var new_grid = new L.marker(new_pos).addTo(mymap).bindPopup(popupContent);
+        })
+        */
+        //var geojson = L.geoJSON(grid).addTo(mymap);
+        get_isobands(grid, interpolation_field,breaks,colors);  
+      }
+    }
+  });
 }
 
 function get_isobands(grid, interpolation_field, breaks, colors){
   pointGrid = grid  
       var lines = turf.isobands(pointGrid, breaks, {zProperty: interpolation_field,breaksProperties: [{"color":"#ff7800"},{"fillColor":"#ff7800"},{"fillColor":"#ff7800"}]});
-      var colors = ['#ff0000','#ffff00','#000000','#0000ff','#aa7755'];
-      var count =0
+      var count =0;
       lines.features.forEach(function(multipoly,index_poly){
-        if(multipoly.geometry.coordinates.length>0){
-          var polys = multipoly.geometry.coordinates[0];
+        multipoly.geometry.coordinates.forEach(function(polys){
           polys.forEach(function(poly){
             lat_lng_polys = [];
             lat_lng_poly = [];
@@ -2231,9 +2234,9 @@ function get_isobands(grid, interpolation_field, breaks, colors){
             });
             lat_lng_polys.push(lat_lng_poly);
             var new_poly = new L.polygon(lat_lng_polys, {color: colors[count], fillOpacity: 0.6}).addTo(mymap);
-            count ++
           });
-        }
+        });
+        count ++;
       });
 }
 

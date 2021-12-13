@@ -3,6 +3,7 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
   $(this).remove();
   $('.modal-backdrop').remove();
 }).on('shown.bs.modal', function (e) {
+	create_palette();
 	$('#interpolation_field').on('change', function() {
 		var type_box = 'polygon';
   	var size_box = Navarra.dashboards.config.size_polygon;
@@ -37,79 +38,92 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
       		to_date: to_date,
     		},
       		success: function(data) {
-      			var intermin = Math.min.apply(null, data.data.map((v) => v.interpolate_field).filter(function(n) { return !isNaN(n); }));
-      			var intermax = Math.max.apply(null, data.data.map((v) => v.interpolate_field).filter(function(n) { return !isNaN(n); }));
-      			//var intermax = Math.max.apply( null, data.data[0].values.map((v) => v.p_name));
-      			var num_ranges = $('#range_number').val();
-      			var interrange = (intermax - intermin)/$('#range_number').val();
-      			value_range = intermin;
-      			if(intermax>10){round=1}else{round=100}
-				for(var i=0;i<num_ranges;i++){
-					if(i==0){
-						val = Math.floor(value_range*round)/round;
-					} else {
-						val = Math.round(value_range*round)/round;
-					}
-					$('#intermin_'+i).val(val);
-					value_range += interrange;
-					if(i==num_ranges){
-						val = Math.ceil(value_range*round)/round;
-					} else {
-						val = Math.round(value_range*round)/round;
-					}
-					$('#intermax_'+i).val(val);
-				}
-      	}
-      });
-	});
-	$('#range_number').on('change', function() {
+      			data_to_set_interval = data;
+      			set_interval_interpolation(data_to_set_interval);
+      		}
+      	});
+		});
+		$('#range_number').on('change', function() {
+			set_interpolation_ranges();
+			if(data_to_set_interval!=undefined){
+				set_interval_interpolation(data_to_set_interval);
+			}
+		});
 		set_interpolation_ranges();
-	});
-	set_interpolation_ranges();
-}).modal();
+		Navarra.geomaps.interpolate(null,null,null,null,null,true)
+	}).modal();
 
 // Cierra dropdown
 $('#gis_dropdown').dropdown('toggle');
 
+var palettes = [];
+	palettes.push(['#ff0000', '#ff4500', '#ff6400', '#ff7d00', '#ff9200', '#ffa600', '#ffb900', '#ffcb00', '#ffdd00', '#ffee00', '#a8f2a8', '#15eb15', '#00d400', '#00be00', '#00a700', '#009100', '#007c00', '#006700', '#005300', '#004000']);
+	palettes.push(['#ff0000', '#ff4500', '#ff6400', '#ff7d00', '#ff9200', '#ffa600', '#ffb900', '#ffcb00', '#ffdd00', '#ffee00', '#eedaf8', '#e7bffb', '#dfa3fe', '#ce8bff', '#b476ff', '#9961ff', '#7c4aff', '#5c35f8', '#3720eb', '#0000d8']);
+	palettes.push(['#ffa500', '#ffaf00', '#ffb800', '#ffc100', '#ffca00', '#ffd300', '#ffdc00', '#ffe500', '#ffee00', '#fff600', '#eedaf8', '#e7bffb', '#dfa3fe', '#ce8bff', '#b476ff', '#9961ff', '#7c4aff', '#5c35f8', '#3720eb', '#0000d8']);
+	palettes.push(['#141414', '#1d1d1d', '#272727', '#313131', '#3c3c3c', '#464646', '#515151', '#5d5d5d', '#686868', '#747474', '#808080', '#8c8c8c', '#999999', '#a5a5a5', '#b2b2b2', '#bfbfbf', '#cccccc', '#d9d9d9', '#e7e7e7', '#f4f4f4']);
+	palettes.push(['#ff0000', '#ff4729', '#ff6644', '#ff7e5d', '#ff9475', '#ffa78c', '#ffbaa3', '#ffccba', '#ffddd1', '#ffeee8', '#dfdfdf', '#c9c9c9', '#b4b4b4', '#9f9f9f', '#8b8b8b', '#777777', '#646464', '#515151', '#404040', '#2e2e2e']);
+
+var data_to_set_interval; 
 function set_interpolation_ranges(){
 	$('#interpolation_range').empty();
 	var num_ranges = $('#range_number').val();
 	for(var i=0;i<num_ranges;i++){
-		if(i<Math.ceil(num_ranges/2)){
-			red = 1;
-			if(i==0){
-				green = 0;
-			} else{
-				green = (i+1)/Math.floor(num_ranges/2);
-			}
-		}
-		if(i>Math.floor(num_ranges/2)){
-			green = 1;
-			if(i==num_ranges-1){
-				red = 0;
-			} else {
-				red = (num_ranges-(i+1))/Math.floor(num_ranges/2);
-			}
-		}
-		if((i+1)==Math.ceil(num_ranges/2)){
-		//	green = 1;
-		//	red = 1;
-		}
-		var rgb_color = "rgb("+Math.round(red*250)+","+Math.round(green*250)+",0)";
-		var hex_color = rgb2hex(rgb_color); 
+		var color_index = Math.round(20*i/(num_ranges-1));
+		if(i!=0){color_index = color_index -1}
+		var select_palette_option = $('.palette_selected').attr('id').split('palette_id')[1];
 		var html_ranges = '<div class="d-flex">';
-	    html_ranges+= '<input type="number" name="" id="intermin_'+i+'"  class = "intermin mt-3 form-control form-control-sm w-50 mr-3" >';
-	    html_ranges+= '<input type="number" name="" id="intermax_'+i+'"  class = "intermax mt-3 form-control form-control-sm w-50 mr-3" >';
-    	html_ranges+= '<input value="'+hex_color+'"  type="color" name="" id="intercolor_'+i+'" class = "intercolor mt-3 form-control form-control-sm" style="width:30px; padding:1px" ';
+	    html_ranges+= '<input type="number" name="" id="intermin_'+i+'" step="any" class = "intermin mt-3 form-control form-control-sm w-50 mr-3" >';
+	    html_ranges+= '<input type="number" name="" id="intermax_'+i+'" step="any" class = "intermax mt-3 form-control form-control-sm w-50 mr-3" >';
+    	html_ranges+= '<input value="'+palettes[select_palette_option][color_index]+'"  type="color" name="" id="intercolor_'+i+'" class = "intercolor mt-3 mr-2 form-control form-control-sm" style="width:30px; padding:1px" ';
     	html_ranges+='</div>'
     $('#interpolation_range').append(html_ranges);
 	}
 }
 
-function rgb2hex(rgb){
- rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
- return (rgb && rgb.length === 4) ? "#" +
-  ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
-  ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
-  ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+function create_palette(){
+	
+	palettes.forEach(function(pal,index){
+		if(index == 0){
+			var pallete_new = '<div id="palette_id'+index+'" class="palette_option custom_cursor; palette_selected" onclick="select_palette(event)">';
+		} else {
+			var pallete_new = '<div id="palette_id'+index+'" class="palette_option custom_cursor" onclick="select_palette(event)">';
+		}
+		pal.forEach(function(col,index){
+			pallete_new += '<div style="width:10px;height:20px;margin:0px;display:inline-block;background:'+col+'"></div>'
+			
+		});
+		pallete_new += '</div>';
+		$('#palette_selector_dropdown').append(pallete_new);
+	})
+}
+
+function select_palette(e){
+	$('.palette_option').removeClass('palette_selected');
+	var id_palette = e.target.parentNode.id;
+	$('#'+id_palette).addClass('palette_selected');
+	set_interpolation_ranges();
+}
+
+function set_interval_interpolation(data){
+	var intermin = Math.min.apply(null, data.data.map((v) => v.interpolate_field).filter(function(n) { return !isNaN(n); }));
+  var intermax = Math.max.apply(null, data.data.map((v) => v.interpolate_field).filter(function(n) { return !isNaN(n); }));
+  //var intermax = Math.max.apply( null, data.data[0].values.map((v) => v.p_name));
+  var num_ranges = $('#range_number').val();
+  var interrange = (intermax - intermin)/$('#range_number').val();
+  value_range = intermin;
+  if(intermax>10){round=1}else{round=100}
+  for(var i=0;i<num_ranges;i++){
+		if(i==0){
+			val = Math.floor(value_range*round)/round;
+		} else {
+			val = Math.round(value_range*round)/round;
+		}
+	$('#intermin_'+i).val(val);
+	value_range += interrange;
+	if(i==num_ranges){
+		val = Math.ceil(value_range*round)/round;
+	} else {
+		val = Math.round(value_range*round)/round;
+	}
+	$('#intermax_'+i).val(val);}
 }

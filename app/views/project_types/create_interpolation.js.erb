@@ -9,11 +9,12 @@ var colors = [];
 $('.intercolor').each(function(){
   colors.push($(this).val())
 });
-
+var weight = $('#p_coefficient').val();
+var celd_size = $('#celd_size').val();
 // Elimina el modal
 $("#interpolation-modal").remove();
 $('.modal-backdrop').remove();
 
 
 // Lanza la función
-Navarra.geomaps.interpolate(interpolation_field,breaks,colors);
+Navarra.geomaps.interpolate(interpolation_field,breaks,colors,celd_size,weight,false);

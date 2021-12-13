@@ -23,15 +23,33 @@
           <div class="tab-content">
             <div class="tab-pane fade active show" id="interpolacion_formularios">
               <div class="d-flex">
-                <%=label '', "Campo a interpolar", class:'col-form-label-sm text-left mr-3 mb-0 w-75' %>
-                <%=label '', "Nº Rangos", class:'col-form-label-sm text-left mr-3 mb-0 w-25' %>
-                
+                <label class="col-form-label-sm text-left mr-3 mb-0 w-75">Campo a Interpolar</label>
               </div>
               <div class="d-flex">
                 <%=select_tag 'q[project_field]',  options_for_select(interpolation_field_for_select), include_blank: true, class:'form-control form-control-sm mr-3 w-75' , id:'interpolation_field' %>
-                <%=number_field 'q[range_numer]', 'Cantidad de rangos',class: 'form-control form-control-sm w-25 mr-3', value:3, id:'range_number' %>
               </div>
-              <div id="interpolation_range"></div>
+              <div class="d-flex">
+                <label class="col-form-label-sm text-left mr-3 mb-0 w-25">Coeficiente P</label>
+                <label class="col-form-label-sm text-left mr-3 mb-0 w-25">Tamaño celda</label>
+                <label class="col-form-label-sm text-left mr-3 mb-0 w-25">Nº Rangos</label>
+                <label class="col-form-label-sm text-left mr-3 mb-0 w-10">Paleta</label>   
+              </div>
+              <div class="d-flex">
+                <input type="number" class="form-control form-control-sm w-25 mr-3" id="p_coefficient" step="any" value="2">
+                <input type="number" class="form-control form-control-sm w-25 mr-3" id="celd_size" step="any">
+                <input type="number" class="form-control form-control-sm w-25 mr-3" id="range_number" value=3>
+                <div class="nav-item dropdown w-10">
+                  <a class="dropdown-toggle nocaret" href="#" id="palette_selector" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <i class="fas fa-palette align-middle" title="Menú" style="font-size: 22px"></i>
+                  </a>
+                  <div class="dropdown-menu text-center p-2 pt-3" aria-labelledby="palette_selector" style="z-index: 2000;width: 230px; margin-top:-20px; margin-left:180%;max-height: 45vh; overflow-y:auto;" id="palette_selector_dropdown">
+                  </div>
+                </div>
+
+
+
+              </div>
+              <div id="interpolation_range" style="max-height: 40vh; overflow-y:auto"></div>
             </div>
             <div class="tab-pane fade" id="interpolacion_subformularios">
               <%=select_tag 'q[project_kpi]',  options_for_select(interpolation_subfield_for_select), include_blank: true, class:'proj_field form-control' %>
