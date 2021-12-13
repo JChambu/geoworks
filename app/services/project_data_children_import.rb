@@ -13,7 +13,7 @@ class ProjectDataChildrenImport
     entries.each do |entry|
       project = project_type.projects.find_by(id: entry['project_id'])
       unless project
-        errors.add(:project, "El projecto con id=#{entry["project_id"]} no pertenece a #{project_type.name}")
+        errors.add(:project, "El registro con id=#{entry["project_id"]} no pertenece a #{project_type.name}")
         next
       end
 
@@ -24,7 +24,7 @@ class ProjectDataChildrenImport
       end
 
       if project_field.field_type_id != VALID_FIELD_TYPE_ID
-        errors.add(:project_field, "El field #{project_field.name} no es del tipo subformulario")
+        errors.add(:project_field, "El campo #{project_field.name} no es del tipo subformulario")
         next
       end
 
@@ -49,9 +49,9 @@ class ProjectDataChildrenImport
           is_false = value.to_s.downcase == 'false'
           wrong_subfield = !is_true && !is_false
         when FieldType::SINGLE_LIST
-          wrong_subfield = value.length != 1
+          wrong_subfield = value.is_a?(Array) ? value.length != 1 : false
         when FieldType::MULT_LIST
-          wrong_subfield = value.length < 1
+          wrong_subfield = value.is_a?(Array) ? value.length < 1 : false
         end
 
         if wrong_subfield
