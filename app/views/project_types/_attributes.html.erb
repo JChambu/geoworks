@@ -15,8 +15,7 @@
         $("#layer_color").hide();
       }
     });
-
-     
+   
   });
 
   // Open and close header with project data
@@ -30,11 +29,11 @@
         $(".header_project_fields").removeClass("d-none").addClass("d-block");
         $("#toggler_header").removeClass("fa-plus").addClass("fa-minus");
       }
+      resize_table_project_types();
     })
 
   });
   // Dropdown select project type fields to show
-  //TODO: Create one function to avoid redundancy
   function toggle_tables_project_type (dropdown_click,clicked_group,second_group,dropdown_second_group,third_group,dropdown_third_group) {
     
       if(clicked_group.hasClass("d-none")){
@@ -115,9 +114,8 @@
   <% end %>
 
 
-  <div class="d-flex justify-content-end mb-1">
+  <div class="d-flex justify-content-end mb-1" style="float: right; margin-top: -12px">
         <i class="fas fa-minus"  id="toggler_header"></i>
-        
   </div>
   <div class="d-block container-fluid justify-content-around header_project_fields" >
     <div class="row mb-0 p-0 text-left">
@@ -158,17 +156,13 @@
           <%= f.label :enabled_as_layer, "Capa", class:'col-form-label-sm mb-0 p-0' %>
         </div>
         <div class="row">
-          
             <div class="custom-control custom-checkbox mb-2">
               <%= f.check_box :enabled_as_layer , class:'custom-control-input', id:'customCheck2'%>
               <label class="custom-control-label mr-1" for="customCheck2"></label>
             </div>
-            
               <%= f.color_field :layer_color, class: 'form-control form-control-sm mb-2', style:'width:30px; padding:1px' %>
-            
-          
-        </div>
-        
+            </div>
+      
       </div>
 
       <div class="col-md-2 ">
@@ -244,7 +238,7 @@
     <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
       <div class="table-responsive">
         <table class="table table-hover table-tbody-scroll table-striped m-0" id="user_assignments">
-          <thead style="padding-right: 10px">
+          <thead style="padding-right: 10px" id="thead_edit_table">
             <tr>
               <th class="text-center px-0" style="width: 3vw">ID</th>
               <th class="text-center px-0" style="width: 3vw">
@@ -268,14 +262,14 @@
                 <div class="text-center px-0" style="width: 45%; display:inline-block">Script</div>
               </th>
               <th style="width: 50vw" class="d-none permissions_cell_group">
-                <div class="text-center px-0" style="width: 45%; display:inline-block">Visualizar</div>
-                <div class="text-center px-0" style="width: 45%; display:inline-block">Editar</div>
+                <div class="text-left px-0" style="width: 45%; display:inline-block">Visualizar</div>
+                <div class="text-left px-0" style="width: 45%; display:inline-block">Editar</div>
               </th>
               <th  class="text-center px-0" style="width: 4vw">
                 <div class="container">
                   <div class="dropdown">
                     <button type="button" class="btn btn-primary dropdown-toggle p-1" data-toggle="dropdown">  
-                          
+                        Más
                     </button>  
                     <div class="dropdown-menu">
                       <a class="dropdown-item dropdown_attributes d-none"> Atributos </a>  
@@ -305,7 +299,7 @@
     <div class="col-md-4">
       <div id="notice"><%= notice %></div>
     </div>
-    <div class="col-md-4 row justify-content-center">
+    <div class="col-md-4 row justify-content-center " id="button_container_project_type">
       <%= link_to t('.cancel', :default => t("helpers.links.cancel")), root_path, :class => 'btn btn-sm btn-secondary mr-1' %>
       <%= f.submit id: :envi, class: 'enviar btn btn-sm btn-primary', value: "Guardar" %>
     </div>

@@ -47,17 +47,17 @@
   </th>
   <th style="width: 50vw" class="d-none logic_cell_group">
     <%# cálculo %>
-    <div style="width: 45%; display:inline-block"><%= f.text_field :calculated_field, class: "form-control form-control-sm" %></div>
+    <div style="width: 45%; display:inline-block; margin-right: 5px"><%= f.text_field :calculated_field, class: "form-control form-control-sm" %></div>
     <%# script %>
-    <div style="width: 45%; display:inline-block"><%= f.text_field :data_script, class: "form-control form-control-sm" %></div>
+    <div style="width: 45%; display:inline-block; margin-left: 5px"><%= f.text_field :data_script, class: "form-control form-control-sm" %></div>
   </th>
   <%= f.hidden_field :sort, class: 'project_fields_current_position form-control form-control-sm', readonly: true %>
   <%= f.hidden_field :_destroy%>
   <th style="width: 50vw" class="d-none permissions_cell_group">
     <%# visualizar %>
-    <div style="width: 45%; display:inline-block;text-align:center"><%= f.collection_select :roles_read, Role.order(:name), :id, :name, {selected: role_selected(f.object.roles_read)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></div>
+    <div style="width: 45%; display:inline-block;text-align:left"><%= f.collection_select :roles_read, Role.order(:name), :id, :name, {selected: role_selected(f.object.roles_read)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></div>
     <%# editar %>
-    <div style="width: 45%; display:inline-block;text-align:center"><%= f.collection_select :roles_edit, Role.order(:name), :id, :name, {selected: role_selected(f.object.roles_edit)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></div>
+    <div style="width: 45%; display:inline-block;text-align:left"><%= f.collection_select :roles_edit, Role.order(:name), :id, :name, {selected: role_selected(f.object.roles_edit)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></div>
   </th>
   <%# eliminar %>
   <td style="width: 4vw">
