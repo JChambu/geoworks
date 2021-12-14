@@ -25,7 +25,7 @@
       if($(".header_project_fields").hasClass("d-block")){
         $(".header_project_fields").removeClass("d-block").addClass("d-none");
         $("#toggler_header").removeClass("fa-minus").addClass("fa-plus");
-        //$("#th3").css('width', '22%');
+        
       } else {
         $(".header_project_fields").removeClass("d-none").addClass("d-block");
         $("#toggler_header").removeClass("fa-plus").addClass("fa-minus");
@@ -35,70 +35,38 @@
   });
   // Dropdown select project type fields to show
   //TODO: Create one function to avoid redundancy
+  function toggle_tables_project_type (dropdown_click,clicked_group,second_group,dropdown_second_group,third_group,dropdown_third_group) {
+    
+      if(clicked_group.hasClass("d-none")){
+        
+        clicked_group.each(function(index, value){
+          $(this).removeClass("d-none");
+        });
+        dropdown_click.addClass("d-none");
+        if(!second_group.hasClass("d-none")){
+          second_group.each(function(index, value){
+          $(this).addClass("d-none");
+        });
+          dropdown_second_group.removeClass("d-none");
+        }
+        if(!third_group.hasClass("d-none")){
+          third_group.each(function(index, value){
+          $(this).addClass("d-none");
+        });
+          dropdown_third_group.removeClass("d-none");
+        }
+      } 
+    
+  }
   $(document).ready( function(){
     $('.dropdown_logic').click(function(){
-      if($(".logic_cell_group:first").hasClass("d-none")){
-        
-        $('.logic_cell_group').each(function(index, value){
-          $(this).removeClass("d-none");
-        });
-        $(".dropdown_logic").addClass("d-none");
-        if(!$(".attributes_cell_group:first").hasClass("d-none")){
-          $('.attributes_cell_group').each(function(index, value){
-          $(this).addClass("d-none");
-        });
-          $(".dropdown_attributes").removeClass("d-none");
-        }
-        if(!$(".permissions_cell_group:first").hasClass("d-none")){
-          $('.permissions_cell_group').each(function(index, value){
-          $(this).addClass("d-none");
-        });
-          $(".dropdown_permissions").removeClass("d-none");
-        }
-      } 
+      toggle_tables_project_type($(".dropdown_logic"),$(".logic_cell_group"),$(".attributes_cell_group"),$(".dropdown_attributes"),$(".permissions_cell_group"),$(".dropdown_permissions"));
     });
     $('.dropdown_permissions').click(function(){
-      if($(".permissions_cell_group:first").hasClass("d-none")){
-        
-        $('.permissions_cell_group').each(function(index, value){
-          $(this).removeClass("d-none");
-        });
-        $(".dropdown_permissions").addClass("d-none");
-        if(!$(".attributes_cell_group:first").hasClass("d-none")){
-          $('.attributes_cell_group').each(function(index, value){
-          $(this).addClass("d-none");
-
-        });
-          $(".dropdown_attributes").removeClass("d-none");
-        }
-        if(!$(".logic_cell_group:first").hasClass("d-none")){
-          $('.logic_cell_group').each(function(index, value){
-          $(this).addClass("d-none");
-        });
-          $(".dropdown_logic").removeClass("d-none");
-        }
-      } 
+      toggle_tables_project_type($(".dropdown_permissions"),$(".permissions_cell_group"),$(".attributes_cell_group"),$(".dropdown_attributes"),$(".logic_cell_group"),$(".dropdown_logic"));
     });
     $('.dropdown_attributes').click(function(){
-      if($(".attributes_cell_group:first").hasClass("d-none")){
-        
-        $('.attributes_cell_group').each(function(index, value){
-          $(this).removeClass("d-none");
-        });
-        $(".dropdown_attributes").addClass("d-none");
-        if(!$(".permissions_cell_group:first").hasClass("d-none")){
-          $('.permissions_cell_group').each(function(index, value){
-          $(this).addClass("d-none");
-        });
-          $(".dropdown_permissions").removeClass("d-none");
-        }
-        if(!$(".logic_cell_group:first").hasClass("d-none")){
-          $('.logic_cell_group').each(function(index, value){
-          $(this).addClass("d-none");
-        });
-          $(".dropdown_logic").removeClass("d-none");
-        }
-      } 
+      toggle_tables_project_type($(".dropdown_attributes"),$(".attributes_cell_group"),$(".logic_cell_group"),$(".dropdown_logic"),$(".permissions_cell_group"),$(".dropdown_permissions")); 
     });
 
   });
@@ -108,7 +76,7 @@
   var loadFile = function(event) {
     var fileInput = document.getElementById('file-input');
     var filePath = fileInput.value;
-    var allowedExtensions = /(.jpg|.jpeg|.png|.gif)$/i;
+    var allowedExtensions = /(.jpg|.jpeg|.png|.gif) $/i;
     if(!allowedExtensions.exec(filePath)){
         document.getElementById('error_text').innerHTML='Extensión no permitida';
         document.getElementById('error_text').classList.remove('text-secondary');
