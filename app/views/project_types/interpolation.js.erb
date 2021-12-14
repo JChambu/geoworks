@@ -102,6 +102,9 @@ function select_palette(e){
 	var id_palette = e.target.parentNode.id;
 	$('#'+id_palette).addClass('palette_selected');
 	set_interpolation_ranges();
+	if(data_to_set_interval!=undefined){
+		set_interval_interpolation(data_to_set_interval);
+	}
 }
 
 function set_interval_interpolation(data){
