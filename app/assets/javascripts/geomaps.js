@@ -2200,23 +2200,14 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
   $.ajax({
     url: URL,
     success: function (data) {
-      var points = data
+      var points = data;
       if(get_celd_size){
         var enveloped = turf.envelope(points);
         var area_envelope = turf.area(enveloped)/1000000;
         $('#celd_size').val(Math.round(area_envelope/200*100000)/100000);
       } else {
-        
-        //Para ver los puntos y sus propiedades
-        /*
-        grid.features.forEach(function(point){
-        var new_pos = new L.latLng (point.geometry.coordinates[1], point.geometry.coordinates[0]);
-        const popupContent = '<h7>' + point.properties.house_number + '</h7>'
-         var new_grid = new L.marker(new_pos).addTo(mymap).bindPopup(popupContent);
-        });        
-        */
-
-        //var geojson = L.geoJSON(grid).addTo(mymap);
+        // elimina features que no tienen datos válidos
+        points.features = points.features.filter(v => !isNaN(v.properties[interpolation_field]));
         get_layers_clip(points, interpolation_field,breaks,colors,field_name);  
       }
     }
@@ -2296,8 +2287,6 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
                   return;
                   }
                  });
-                 console.log("Points después")
-                console.log(points)
                 var options = {gridType: 'points', property: interpolation_field, units: 'kilometers', weight: parseFloat(weight)};
                 var grid = turf.interpolate(points,parseFloat(celd_size), options);
                   get_isobands(grid, interpolation_field,breaks,colors,combined,field_name);  
@@ -2312,12 +2301,23 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
     var options = {gridType: 'points', property: interpolation_field, units: 'kilometers', weight: parseFloat(weight)};
     var grid = turf.interpolate(points,parseFloat(celd_size), options);
     get_isobands(grid, interpolation_field,breaks,colors,null,field_name);
+    //Para ver los puntos y sus propiedades
+        /*
+        grid.features.forEach(function(point){
+        var new_pos = new L.latLng (point.geometry.coordinates[1], point.geometry.coordinates[0]);
+        const popupContent = '<h7>' + point.properties.house_number + '</h7>'
+         var new_grid = new L.marker(new_pos).addTo(mymap).bindPopup(popupContent);
+        });
+        var geojson = L.geoJSON(grid).addTo(mymap);        
+        */
   }
 }
 
 function get_isobands(grid, interpolation_field, breaks, colors, combined){
   pointGrid = grid  
       var lines = turf.isobands(pointGrid, breaks, {zProperty: interpolation_field,breaksProperties: [{"color":"#ff7800"},{"fillColor":"#ff7800"},{"fillColor":"#ff7800"}]});
+      console.log("Lineas")
+      console.log(lines)
       var count =0;
       lines.features.forEach(function(multipoly,index_poly){
         multipoly.geometry.coordinates.forEach(function(polys){
@@ -2335,6 +2335,8 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined){
             var popupContent = '<br/><h7>'+field_name+'</h7>'
             popupContent += '<br/><h7>'+breaks[index_poly]+'</h7>'
             popupContent += '<h7> - '+breaks[index_poly+1]+'</h7>'
+            console.log("new_poly")
+            console.log(new_poly)
             if(combined==null){
               var geojson = L.geoJSON(new_poly,{color:colors[count], fillOpacity: 0.6}).addTo(mymap).on('click',function(e){
                 var popup = new L.popup({autoPan:false})
