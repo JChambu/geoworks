@@ -2204,7 +2204,7 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
       if(get_celd_size){
         var enveloped = turf.envelope(points);
         var area_envelope = turf.area(enveloped)/1000000;
-        $('#celd_size').val(Math.round(area_envelope/200*100000)/100000);
+        $('#celd_size').val(Math.round(Math.sqrt(area_envelope)/250*100000)/100000);
       } else {
         // elimina features que no tienen datos válidos
         points.features = points.features.filter(v => !isNaN(v.properties[interpolation_field]));
@@ -2308,8 +2308,9 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
         const popupContent = '<h7>' + point.properties.house_number + '</h7>'
          var new_grid = new L.marker(new_pos).addTo(mymap).bindPopup(popupContent);
         });
-        var geojson = L.geoJSON(grid).addTo(mymap);        
         */
+        //var geojson = L.geoJSON(grid).addTo(mymap);        
+        
   }
 }
 
