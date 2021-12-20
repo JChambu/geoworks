@@ -12,12 +12,18 @@ $('.intercolor').each(function(){
 var weight = $('#p_coefficient').val();
 var celd_size = $('#celd_size').val();
 var field_name = $('#interpolation_field').find('option:selected').text();
-console.log("Field Name!!!!")
-console.log(field_name)
+if($('#sub_interpolation_operator').hasClass('d-none')){
+  var is_subform = false;
+  var sub_values = [];
+} else {
+  var is_subform = true;
+  var sub_values = $('#sub_interpolation_operator').attr('sub_values');
+}
+
 // Elimina el modal
 $("#interpolation-modal").remove();
 $('.modal-backdrop').remove();
 
 
 // Lanza la función
-Navarra.geomaps.interpolate(interpolation_field,breaks,colors,celd_size,weight,false,field_name);
+Navarra.geomaps.interpolate(interpolation_field,breaks,colors,celd_size,weight,false,field_name,is_subform,sub_values);

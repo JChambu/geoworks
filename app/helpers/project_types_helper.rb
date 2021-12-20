@@ -14,17 +14,14 @@ module ProjectTypesHelper
   end
 
   def interpolation_field_for_select
-    @a = ProjectField.where(project_type_id: params[:project_type_id]).where(field_type_id: 5).where.not(key: ["app_id","app_estado","app_usuario"]).select("key, name").ordered.map { |region|  [region.name, region.key] }    
-  end
-
-  def interpolation_subfield_for_select
-    @a = ProjectSubfield
-      .select(:key, :name)
+    @b = ProjectField.where(project_type_id: params[:project_type_id]).where(field_type_id: 5).where.not(key: ["app_id","app_estado","app_usuario"]).select("key, name").ordered.map { |v|  [v.name, v.key] }
+    @c = ProjectSubfield
+      .select(:id, :name)
       .joins(:project_field)
       .where(project_fields: {project_type_id: params[:project_type_id]})
       .where(field_type_id: 5)
-      .map { |sf| [sf.name, sf.key] }
-
+      .map { |sf| [sf.name, sf.id] }
+    @a = @b + @c
   end
 
   def colored_points_field_for_select

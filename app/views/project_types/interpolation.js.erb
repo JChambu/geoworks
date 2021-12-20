@@ -22,6 +22,12 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
   	var from_date = Navarra.project_types.config.from_date;
   	var to_date = Navarra.project_types.config.to_date;
   	var interpolate_field = $(this).val();
+  	if(!isNaN(interpolate_field)){
+  		// es un campo hijo
+  		$('#sub_interpolation_operator').removeClass('d-none');
+  	} else {
+  		$('#sub_interpolation_operator').addClass('d-none');
+  	}
   		$.ajax({
     		type: 'GET',
     		url: '/project_types/search_data_dashboard',
@@ -38,19 +44,70 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
       		to_date: to_date,
     		},
       		success: function(data) {
-      			data_to_set_interval = data;
-      			set_interval_interpolation(data_to_set_interval);
+      			data_to_set_interval = data.data;
+      			console.log("Data")
+      			console.log(data_to_set_interval)
+      			if(isNaN(interpolate_field)){
+      				set_interval_interpolation(data_to_set_interval);
+      			} else{
+      				// es campo hijo
+      				var app_ids_in_map = [];
+      				data.data.map( function(v) {
+ 								app_ids_in_map.push(v.id);
+							});
+							console.log("Datos ids de padres")
+							console.log(app_ids_in_map)
+  						var from_date_subforms = Navarra.project_types.config.from_date_subforms;
+  						var to_date_subforms = Navarra.project_types.config.to_date_subforms;
+  						var filter_children = [];
+  						var filter_user_children = [];
+  						$('.subform_filter').each(function(){
+    						if(!isNaN($(this).attr('id').split('|')[0])){
+      						filter_children.push($(this).attr('id'));
+    						} else {
+      						filter_user_children.push($(this).attr('id').split('|')[2])
+    						}
+  						});
+      				$.ajax({
+    						type: 'POST',
+    						url: '/project_data_children/show_children',
+    						datatype: 'json',
+    						data: {
+    							is_interpolate:true,
+    							interpolate_field: interpolate_field,
+      						project_ids: app_ids_in_map,
+      						project_field_ids: [1],
+      						from_date_subforms: from_date_subforms,
+      						to_date_subforms: to_date_subforms,
+      						filter_children: filter_children,
+      						filter_user_children: filter_user_children
+    						},
+    						success: function(data_sub) {
+    							data_subform = data_sub;
+    							set_subform_values(data_subform);
+    						}
+      			});
+      			
+      		}
       		}
       	});
 		});
+
 		$('#range_number').on('change', function() {
 			set_interpolation_ranges();
 			if(data_to_set_interval!=undefined){
 				set_interval_interpolation(data_to_set_interval);
 			}
 		});
+
+		$('#sub_interpolation_operator').on('change', function() {
+			if(data_subform!=undefined){
+				set_subform_values(data_subform)
+			}
+		});
+
 		set_interpolation_ranges();
-		Navarra.geomaps.interpolate(null,null,null,null,null,true)
+		Navarra.geomaps.interpolate(null,null,null,null,null,true,null)
 	}).modal();
 
 // Cierra dropdown
@@ -58,12 +115,15 @@ $('#gis_dropdown').dropdown('toggle');
 
 var palettes = [];
 	palettes.push(['#ff0000', '#ff4500', '#ff6400', '#ff7d00', '#ff9200', '#ffa600', '#ffb900', '#ffcb00', '#ffdd00', '#ffee00', '#a8f2a8', '#15eb15', '#00d400', '#00be00', '#00a700', '#009100', '#007c00', '#006700', '#005300', '#004000']);
+	palettes.push(['#ff6e85', '#ff807f', '#ff9179', '#ffa072', '#ffaf6b', '#ffbd62', '#ffcb59', '#ffd84e', '#ffe540', '#fff22c', '#ade8a1', '#abd2ae', '#a7bcba', '#a1a6c5', '#988fd0', '#8d79da', '#7e62e4', '#6a4aed', '#4d2ff6', '#0000ff']);
+	palettes.push(['#8f4300', '#9c5512', '#a86622', '#b47831', '#bf8a40', '#ca9c4f', '#d6ae5f', '#e0c16e', '#ebd47e', '#f5e78f', '#a8f0a0', '#a3e0ad', '#9dd1b8', '#96c2c3', '#8cb3ce', '#81a5d8', '#7396e2', '#6088ec', '#467af6', '#006cff']);
 	palettes.push(['#ff0000', '#ff4500', '#ff6400', '#ff7d00', '#ff9200', '#ffa600', '#ffb900', '#ffcb00', '#ffdd00', '#ffee00', '#eedaf8', '#e7bffb', '#dfa3fe', '#ce8bff', '#b476ff', '#9961ff', '#7c4aff', '#5c35f8', '#3720eb', '#0000d8']);
 	palettes.push(['#ffa500', '#ffaf00', '#ffb800', '#ffc100', '#ffca00', '#ffd300', '#ffdc00', '#ffe500', '#ffee00', '#fff600', '#eedaf8', '#e7bffb', '#dfa3fe', '#ce8bff', '#b476ff', '#9961ff', '#7c4aff', '#5c35f8', '#3720eb', '#0000d8']);
 	palettes.push(['#141414', '#1d1d1d', '#272727', '#313131', '#3c3c3c', '#464646', '#515151', '#5d5d5d', '#686868', '#747474', '#808080', '#8c8c8c', '#999999', '#a5a5a5', '#b2b2b2', '#bfbfbf', '#cccccc', '#d9d9d9', '#e7e7e7', '#f4f4f4']);
 	palettes.push(['#ff0000', '#ff4729', '#ff6644', '#ff7e5d', '#ff9475', '#ffa78c', '#ffbaa3', '#ffccba', '#ffddd1', '#ffeee8', '#dfdfdf', '#c9c9c9', '#b4b4b4', '#9f9f9f', '#8b8b8b', '#777777', '#646464', '#515151', '#404040', '#2e2e2e']);
 
 var data_to_set_interval; 
+var data_subform;
 function set_interpolation_ranges(){
 	$('#interpolation_range').empty();
 	var num_ranges = $('#range_number').val();
@@ -108,25 +168,91 @@ function select_palette(e){
 }
 
 function set_interval_interpolation(data){
-	var intermin = Math.min.apply(null, data.data.map((v) => v.interpolate_field).filter(function(n) { return !isNaN(n); }));
-  var intermax = Math.max.apply(null, data.data.map((v) => v.interpolate_field).filter(function(n) { return !isNaN(n); }));
-  //var intermax = Math.max.apply( null, data.data[0].values.map((v) => v.p_name));
-  var num_ranges = $('#range_number').val();
-  var interrange = (intermax - intermin)/$('#range_number').val();
+	var data_ordered = data.map((v) => v.interpolate_field).filter(function(n) { return !isNaN(n); }).sort(function(a, b){return a-b});
+	console.log("Data ordenada")
+	console.log(data_ordered)
+	console.log(data_ordered.length)
+	var lenght_data = data_ordered.length;
+ 	var num_ranges = $('#range_number').val();
+	var range_length = Math.round(lenght_data/num_ranges);
+	var intermin = data_ordered[0];
+	var intermax = data_ordered[lenght_data-1];
+//  var interrange = (intermax - intermin)/$('#range_number').val();
   value_range = intermin;
+  var extra_position = 0;
   if(intermax>10){round=1}else{round=100}
   for(var i=0;i<num_ranges;i++){
+  	console.log("Nueva iteración con rango: "+range_length)
+  	console.log("Nueva iteración con extra position: "+extra_position)
+  	console.log("Dato a agregar: "+ data_ordered[i*range_length+extra_position])
+  	
 		if(i==0){
+			value_range = data_ordered[0];
 			val = Math.floor(value_range*round)/round;
 		} else {
+			value_range = $('#intermax_'+(i-1)).val();
 			val = Math.round(value_range*round)/round;
 		}
 	$('#intermin_'+i).val(val);
-	value_range += interrange;
-	if(i==num_ranges){
+	if(i==num_ranges-1){
+		value_range = data_ordered[lenght_data-1];
 		val = Math.ceil(value_range*round)/round;
 	} else {
+		value_range = data_ordered[(i+1)*range_length+extra_position];
 		val = Math.round(value_range*round)/round;
+		//si es igual al valor inicial del rango, sigue buscando
+		var count_equal_values = 0;
+		console.log("Value Range original")
+		console.log(range_length)
+		while (val <= $('#intermin_'+i).val()) {
+			count_equal_values ++;
+			value_range = data_ordered[(i+1)*range_length+count_equal_values+extra_position];
+			val = Math.round(value_range*round)/round;
+			//cambia el rango y lo ajusta a los valores restantes
+			range_length = Math.round((lenght_data - ((i+1)*range_length+count_equal_values+extra_position))/(num_ranges-(i+1)));
+			console.log("Rango nuevo")
+			console.log("lenght_data "+lenght_data)
+			console.log("Posición actual "+(((i+1)*range_length+count_equal_values+extra_position)));
+			console.log("Rangos faltantes "+ (num_ranges-(i+1)) )
+			console.log(range_length)
+		}
+		extra_position +=count_equal_values;
 	}
-	$('#intermax_'+i).val(val);}
+	console.log("Valor a insertar "+val)
+	if(isNaN(val)){
+		val = data_ordered[lenght_data-1];
+		$('#intermax_'+i).css("background","red");
+	}
+	$('#intermax_'+i).val(val);
+}
+}
+
+function set_subform_values(data_subform){
+	data_to_set_interval = [];
+  Object.keys(data_subform).forEach(function(key){
+   if($('#sub_interpolation_operator').val() == "sum"){
+    var interpolate_field_result = data_subform[key].reduce((sum, value) => (!isNaN(parseFloat(value.interpolate_field)) ? sum + parseFloat(value.interpolate_field) : sum), 0);
+   }
+   if($('#sub_interpolation_operator').val() == "pro"){
+    var interpolate_field_sum = data_subform[key].reduce((sum, value) => (!isNaN(parseFloat(value.interpolate_field)) ? sum + parseFloat(value.interpolate_field) : sum), 0);
+    var interpolate_field_count = data_subform[key].reduce((count, value) => (!isNaN(parseFloat(value.interpolate_field)) ? count +1 : count), 0);
+    interpolate_field_count == 0 ? interpolate_field_result= 0 : interpolate_field_result = interpolate_field_sum/interpolate_field_count;
+   }
+   if($('#sub_interpolation_operator').val() == "max"){
+    var interpolate_field_filtered = data_subform[key].filter(f => !isNaN(f.interpolate_field))
+	   var interpolate_field_result = Math.max.apply(null, interpolate_field_filtered.map((v) => v.interpolate_field));
+   }
+   if($('#sub_interpolation_operator').val() == "min"){
+    var interpolate_field_filtered = data_subform[key].filter(f => !isNaN(f.interpolate_field))
+	   var interpolate_field_result = Math.min.apply(null, interpolate_field_filtered.map((v) => v.interpolate_field));
+   }   								
+   new_obj = {
+    id: key,
+    interpolate_field: interpolate_field_result
+   }
+    data_to_set_interval.push(new_obj);
+  });
+  console.log(data_to_set_interval)
+  $('#sub_interpolation_operator').attr('sub_values',JSON.stringify(data_to_set_interval));
+  set_interval_interpolation(data_to_set_interval);
 }

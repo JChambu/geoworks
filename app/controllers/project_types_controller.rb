@@ -630,7 +630,7 @@ class ProjectTypesController < ApplicationController
     to_date = params[:to_date]
 
     if is_interpolate
-      select_text = "DISTINCT main.properties->>'"+interpolate_field+"' as interpolate_field ";
+      select_text = "main.properties->>'"+interpolate_field+"' as interpolate_field, main.id";
     else
       select_text = 'DISTINCT main.* , project_statuses.color , public.users.name';
     end
