@@ -113,6 +113,7 @@ $(document).ready( function(){
 });
 
 var index_of_current_position = 0;
+var index_of_current_position_subfield = 0;
 
 $(document).ready( function(){
   $('.add_attributes_project_types').click(function(){
@@ -121,7 +122,7 @@ $(document).ready( function(){
     $(".button_add_attributes_project_types").click();
   })
   $('.add_attributes_project_types_subfield').click(function(){
-    index_of_current_position =  $(this).parent().find('.project_fields_current_position').val();
+    index_of_current_position_subfield =  $(this).parent().find('.project_fields_current_position').val();
     var previous_tr = $(this).parent().prevAll(".tr_project_type_group");
     var current_add_subform = previous_tr.find(".sub_form_added");
     $(current_add_subform).last().click()
@@ -136,6 +137,7 @@ function update_sort_table() {
     
   });
 }
+
 
 function update_project_type_table() {
   if(table_toggler_status=="atributos") {
@@ -159,15 +161,13 @@ $(document).on('click', 'form .add_fields', function(event){
     update_project_type_table();
     
   } else if ($(this).hasClass('table_children')) { // Atributo hijo
-    if(index_of_current_position==0) {
-      index_of_current_position =  $(event.target).closest($(".tr_project_field")).find('.project_fields_current_position').val()
-      
-      
-      $(".tr_project_field").eq(index_of_current_position-1).after($(this).data('fields').replace(regexp, time))
-      index_of_current_position = 0;
+    if(index_of_current_position_subfield==0) {
+      index_of_current_position_subfield =  $(event.target).closest($(".tr_project_field")).find('.project_fields_current_position').val()
+      $(".tr_project_field").eq(index_of_current_position_subfield-1).after($(this).data('fields').replace(regexp, time))
+      index_of_current_position_subfield = 0;
     } else{
-    $(".tr_project_field").eq(index_of_current_position-1).after($(this).data('fields').replace(regexp, time))
-    index_of_current_position = 0;
+      $(".tr_project_field").eq(index_of_current_position_subfield-1).after($(this).data('fields').replace(regexp, time))
+      index_of_current_position_subfield = 0;
     }
     update_project_type_table();
   } else if ($(this).hasClass('chart_serie')) { // Series de gráficos

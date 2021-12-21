@@ -72,17 +72,10 @@
      document.getElementById('error_text').classList.remove('text-danger');
   };
 
-  
-
-      
-        
-    
 </script>
 
 <%= simple_form_for @project_type, html: {multipart: true}  do |f| %>
 
- 
-  
   <div class="toast custom_toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="8000">
     <div class="toast-header">
       <%= image_tag "logo_gw_hor_2.png", class: 'mr-auto', height:"30" %>
@@ -95,9 +88,6 @@
     </div>
   </div>
     
-  
-
-
   <div class="d-flex justify-content-end mb-1" style="float: right; margin-top: -12px">
         <i class="fas fa-minus"  id="toggler_header"></i>
   </div>
@@ -233,13 +223,13 @@
               <th style="width: 12vw">Nombre</th>
               <th class="text-left" style="width: 26vw">Tipo de Campo</th>
               <th style="width: 50vw" class="d-none attributes_cell_group">
-                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Requerido">Requerido</div>
-                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Oculto">Oculto</div>
-                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Sólo Lectura">Solo Lectura</div>
-                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Pop-up">Popup</div>
-                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Filtro/Indicadores">Filtro/Ind</div>
-                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Mapa de Calor">Mapa de Calor</div>
-                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Reporte">Reporte</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.7rem" data-toggle="tooltip" data-placement="bottom" title="Requerido">Requerido</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.7rem" data-toggle="tooltip" data-placement="bottom" title="Oculto">Oculto</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.7rem" data-toggle="tooltip" data-placement="bottom" title="Sólo Lectura">Solo Lectura</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.7rem" data-toggle="tooltip" data-placement="bottom" title="Pop-up">Popup</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.7rem" data-toggle="tooltip" data-placement="bottom" title="Filtro/Indicadores">Filtro/Ind</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.7rem" data-toggle="tooltip" data-placement="bottom" title="Mapa de Calor">Mapa de Calor</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.7rem" data-toggle="tooltip" data-placement="bottom" title="Reporte">Reporte</div>
               </th>
               <th style="width: 50vw" class="d-none logic_cell_group">
                 <div class="text-center px-0" style="width: 45%; display:inline-block">Cálculo</div>
