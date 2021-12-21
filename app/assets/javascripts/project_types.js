@@ -166,7 +166,7 @@ $(document).on('click', 'form .add_fields', function(event){
       $(".tr_project_field").eq(index_of_current_position-1).after($(this).data('fields').replace(regexp, time))
       index_of_current_position = 0;
     } else{
-    $(".tr_project_field").eq(index_of_current_position).after($(this).data('fields').replace(regexp, time))
+    $(".tr_project_field").eq(index_of_current_position-1).after($(this).data('fields').replace(regexp, time))
     index_of_current_position = 0;
     }
     update_project_type_table();
