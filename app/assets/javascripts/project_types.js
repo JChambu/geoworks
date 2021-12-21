@@ -36,6 +36,10 @@ Navarra.project_types.config = {
 
 // Select para roles
 $(document).ready(function() {
+  multiselect_permissions_group();    
+});
+
+function multiselect_permissions_group () {
   $('.rol_select').multiselect({
     maxHeight: 500,
     buttonClass: 'form-control form-control-sm',
@@ -50,12 +54,13 @@ $(document).ready(function() {
     includeSelectAllOption: true,
     selectAllText: 'Todos',
   });
-});
+};
 
 $(document).on('click', 'form .remove_fields_2', function(event){
   $(this).closest('tr').find('input[type=hidden]').val('1');
   $(this).closest('tr').hide();
   event.preventDefault()
+  
 });
 $(document).on('click', 'form .remove', function(event){
   $(this).closest('fieldset').find('input[type=hidden]').val('1');
@@ -63,22 +68,116 @@ $(document).on('click', 'form .remove', function(event){
   event.preventDefault()
 });
 
+$(document).ready(function() {
+  update_sort_table();    
+});
+
+// Dropdown select project type fields to show
+function toggle_tables_project_type (dropdown_click,clicked_group,second_group,dropdown_second_group,third_group,dropdown_third_group) {
+    
+  if(clicked_group.hasClass("d-none")){
+    clicked_group.each(function(index, value){
+      $(this).removeClass("d-none");
+    });
+    dropdown_click.addClass("d-none");
+  }
+  if(!second_group.hasClass("d-none")){
+    second_group.each(function(index, value){
+      $(this).addClass("d-none");
+    });
+    dropdown_second_group.removeClass("d-none");
+  }
+  if(!third_group.hasClass("d-none")){
+    third_group.each(function(index, value){
+      $(this).addClass("d-none");
+    });
+    dropdown_third_group.removeClass("d-none");
+  }
+}
+
+var table_toggler_status = "atributos";
+$(document).ready( function(){
+  $('.dropdown_logic').click(function(){
+    toggle_tables_project_type($(".dropdown_logic"),$(".logic_cell_group"),$(".attributes_cell_group"),$(".dropdown_attributes"),$(".permissions_cell_group"),$(".dropdown_permissions"));
+    table_toggler_status = "logica";
+  });
+  $('.dropdown_permissions').click(function(){
+    toggle_tables_project_type($(".dropdown_permissions"),$(".permissions_cell_group"),$(".attributes_cell_group"),$(".dropdown_attributes"),$(".logic_cell_group"),$(".dropdown_logic"));
+    table_toggler_status = "autorizaciones";
+  });
+  $('.dropdown_attributes').click(function(){
+    toggle_tables_project_type($(".dropdown_attributes"),$(".attributes_cell_group"),$(".logic_cell_group"),$(".dropdown_logic"),$(".permissions_cell_group"),$(".dropdown_permissions")); 
+    table_toggler_status = "atributos";
+  });
+
+});
+
+var index_of_current_position = 0;
+
+$(document).ready( function(){
+  $('.add_attributes_project_types').click(function(){
+    
+    index_of_current_position =  $(this).parent().find('.project_fields_current_position').val();
+    $(".button_add_attributes_project_types").click();
+  })
+  $('.add_attributes_project_types_subfield').click(function(){
+    index_of_current_position =  $(this).parent().find('.project_fields_current_position').val();
+    var previous_tr = $(this).parent().prevAll(".tr_project_type_group");
+    var current_add_subform = previous_tr.find(".sub_form_added");
+    $(current_add_subform).last().click()
+    
+  })
+});
+
+function update_sort_table() {
+  
+  $("tbody").find('tr').each(function(index) {
+    $(this).find('.project_fields_current_position').val(index + 1);
+    
+  });
+}
+
+function update_project_type_table() {
+  if(table_toggler_status=="atributos") {
+    toggle_tables_project_type($(".dropdown_attributes"),$(".attributes_cell_group"),$(".logic_cell_group"),$(".dropdown_logic"),$(".permissions_cell_group"),$(".dropdown_permissions"))
+  }
+  if(table_toggler_status=="logica") {
+    toggle_tables_project_type($(".dropdown_logic"),$(".logic_cell_group"),$(".attributes_cell_group"),$(".dropdown_attributes"),$(".permissions_cell_group"),$(".dropdown_permissions"))
+  }
+  if(table_toggler_status == "autorizaciones") {
+    toggle_tables_project_type($(".dropdown_permissions"),$(".permissions_cell_group"),$(".attributes_cell_group"),$(".dropdown_attributes"),$(".logic_cell_group"),$(".dropdown_logic"))
+  }
+}
+
 $(document).on('click', 'form .add_fields', function(event){
   time = new Date().getTime()
   regexp = new RegExp($(this).data('id'), 'g')
 
   // Agrega el nuevo item
   if ($(this).hasClass('table_father')) { // Atributo padre
-    $(this).parents('table').children('tbody').prepend($(this).data('fields').replace(regexp, time))
+    $(".tr_project_field").eq(index_of_current_position-1).after($(this).data('fields').replace(regexp, time))
+    update_project_type_table();
+    
   } else if ($(this).hasClass('table_children')) { // Atributo hijo
-    $(this).closest('tr').after($(this).data('fields').replace(regexp, time))
+    if(index_of_current_position==0) {
+      index_of_current_position =  $(event.target).closest($(".tr_project_field")).find('.project_fields_current_position').val()
+      
+      
+      $(".tr_project_field").eq(index_of_current_position-1).after($(this).data('fields').replace(regexp, time))
+      index_of_current_position = 0;
+    } else{
+    $(".tr_project_field").eq(index_of_current_position).after($(this).data('fields').replace(regexp, time))
+    index_of_current_position = 0;
+    }
+    update_project_type_table();
   } else if ($(this).hasClass('chart_serie')) { // Series de gráficos
     $(this).before($(this).data('fields').replace(regexp, time))
   } else { // Resto
     $(this).before($(this).data('fields').replace(regexp, time))
   }
-
-  event.preventDefault();
+  event.preventDefault()
+  multiselect_permissions_group()
+  update_sort_table()
 });
 
 Navarra.project_types.action_create = function(){

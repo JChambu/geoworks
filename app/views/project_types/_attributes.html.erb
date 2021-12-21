@@ -33,44 +33,19 @@
     })
 
   });
-  // Dropdown select project type fields to show
-  function toggle_tables_project_type (dropdown_click,clicked_group,second_group,dropdown_second_group,third_group,dropdown_third_group) {
-    
-      if(clicked_group.hasClass("d-none")){
-        
-        clicked_group.each(function(index, value){
-          $(this).removeClass("d-none");
-        });
-        dropdown_click.addClass("d-none");
-        if(!second_group.hasClass("d-none")){
-          second_group.each(function(index, value){
-          $(this).addClass("d-none");
-        });
-          dropdown_second_group.removeClass("d-none");
-        }
-        if(!third_group.hasClass("d-none")){
-          third_group.each(function(index, value){
-          $(this).addClass("d-none");
-        });
-          dropdown_third_group.removeClass("d-none");
-        }
-      } 
-    
-  }
+
   $(document).ready( function(){
-    $('.dropdown_logic').click(function(){
-      toggle_tables_project_type($(".dropdown_logic"),$(".logic_cell_group"),$(".attributes_cell_group"),$(".dropdown_attributes"),$(".permissions_cell_group"),$(".dropdown_permissions"));
-    });
-    $('.dropdown_permissions').click(function(){
-      toggle_tables_project_type($(".dropdown_permissions"),$(".permissions_cell_group"),$(".attributes_cell_group"),$(".dropdown_attributes"),$(".logic_cell_group"),$(".dropdown_logic"));
-    });
-    $('.dropdown_attributes').click(function(){
-      toggle_tables_project_type($(".dropdown_attributes"),$(".attributes_cell_group"),$(".logic_cell_group"),$(".dropdown_logic"),$(".permissions_cell_group"),$(".dropdown_permissions")); 
-    });
-
+    $(".attributes_cell_group").removeClass("d-none");
+    $(".plus_icon_project_fields").removeClass("d-none");
+    $(".plus_icon_project_subfields").removeClass("d-none");
+     
   });
-
   
+  $(document).ready( function(){
+    <% if @project_type.errors.any? %>
+      $('.custom_toast').toast('show');
+    <% end %>
+  });
 
   var loadFile = function(event) {
     var fileInput = document.getElementById('file-input');
@@ -106,12 +81,21 @@
 
 <%= simple_form_for @project_type, html: {multipart: true}  do |f| %>
 
-  <% if @project_type.errors.any? %>
-    <div class="panel panel-warning errors">
-      <div class="panel-heading"><h4><span><i class="fa fa-exclamation"><span></i>Validaciones</h4></div>
+ 
+  
+  <div class="toast custom_toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="8000">
+    <div class="toast-header">
+      <%= image_tag "logo_gw_hor_2.png", class: 'mr-auto', height:"30" %>
+      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body">
       <ul class="panel-body"><% @project_type.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %></ul>
     </div>
-  <% end %>
+  </div>
+    
+  
 
 
   <div class="d-flex justify-content-end mb-1" style="float: right; margin-top: -12px">
@@ -240,22 +224,22 @@
         <table class="table table-hover table-tbody-scroll table-striped m-0" id="user_assignments">
           <thead style="padding-right: 10px" id="thead_edit_table">
             <tr>
-              <th class="text-center px-0" style="width: 3vw">ID</th>
-              <th class="text-center px-0" style="width: 3vw">
+              <th class="text-left px-0" style="width: 6vw">ID</th>
+              <th class="text-center px-0 d-none" style="width: 3vw">
                 <% if can? :attributes, :new %>
-                  <%= link_to_add_fields "<i class='fas fa-plus' title='Agregar atributo'></i>".html_safe, f, :project_fields, class: 'table_father' %>
+                  <%= link_to_add_fields "<i class='fas fa-plus button_add_attributes_project_types' title='Agregar atributo'></i>".html_safe, f, :project_fields, class: 'table_father' %>
                 <% end %>
               </th>
               <th style="width: 12vw">Nombre</th>
-              <th class="text-left" style="width: 28vw">Tipo de Campo</th>
-              <th style="width: 50vw" class="attributes_cell_group">
-                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Requerido">Requerido</div>
-                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Oculto">Oculto</div>
-                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Sólo Lectura">Solo Lectura</div>
-                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Pop-up">Popup</div>
-                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Filtro/Indicadores">Filtro/Ind</div>
-                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Mapa de Calor">Mapa de Calor</div>
-                <div class="text-center px-0" style="width: 13%; display:inline-block" data-toggle="tooltip" data-placement="bottom" title="Reporte">Reporte</div>
+              <th class="text-left" style="width: 26vw">Tipo de Campo</th>
+              <th style="width: 50vw" class="d-none attributes_cell_group">
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Requerido">Requerido</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Oculto">Oculto</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Sólo Lectura">Solo Lectura</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Pop-up">Popup</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Filtro/Indicadores">Filtro/Ind</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Mapa de Calor">Mapa de Calor</div>
+                <div class="text-center px-0" style="width: 13%; display:inline-block; font-size:0.8rem" data-toggle="tooltip" data-placement="bottom" title="Reporte">Reporte</div>
               </th>
               <th style="width: 50vw" class="d-none logic_cell_group">
                 <div class="text-center px-0" style="width: 45%; display:inline-block">Cálculo</div>

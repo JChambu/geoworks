@@ -1,16 +1,20 @@
-<tr>
+<tr class="tr_project_field tr_project_type_group">
   <%# id cell%>
-  <td class="pt-3 pr-0" style="width: 6vw; font-size: 0.8em"><%= f.object.id %></td>
+  <td class="pt-3 pr-0" style="width: 3vw; font-size: 0.8em"><%= f.object.id %></td>
+  <%# + cell%>
+  <td class="pt-3 pr-0 add_attributes_project_types" style="width: 3vw; font-size: 0.8em">
+    <i class='fas fa-plus d-none plus_icon_project_fields' title='Agregar atributo'></i>
+  </td>
   <%# nombre %>
   <td class="pl-0" style="width: 12vw"><%= f.text_field :name, class: "form-control form-control-sm" %></td>
   <%# Tipo de campo %>
-  <td style="width: 14vw"><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {include_blank: ''}, {class: 'typef form-control form-control-sm' } %></td>
+  <td style="width: 13vw"><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {include_blank: ''}, {class: 'typef form-control form-control-sm' } %></td>
   
-  <td style="width: 14vw">
+  <td style="width: 13vw" id="add_sub_attribute_cell">
     <% if f.object.field_type_id == 2 || f.object.field_type_id == 10 %>
       <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control form-control-sm choice_list'} %>
     <% elsif f.object.field_type_id == 7 %>
-      <%= link_to_add_fields "<i class='fas fa-plus sub_form' title='Agregar sub-atributo'></i>".html_safe, f, :project_subfields, class: 'table_children' %>
+      <%= link_to_add_fields "<i class='fas fa-plus sub_form_added sub_form style='display: none'' title='Agregar sub-atributo'></i>".html_safe, f, :project_subfields, class: 'table_children' %>
     <% else %>
       <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control form-control-sm choice_list', :style => 'display: none'} %>
       <% if can? :attributes, :new %>
@@ -19,7 +23,7 @@
     <% end %>
   </td>
   <%# atributos %>
-  <th style="width: 50vw" class="attributes_cell_group">
+  <th style="width: 50vw" class="d-none attributes_cell_group">
     <div class='text-center'  style="width:13%; display:inline-block">
       <div class="custom-control custom-checkbox">
         <%= f.check_box :required,class:'custom-control-input', id: 'customCheckField1'.concat(f.object.id.to_s) %>
@@ -69,7 +73,7 @@
     <%# script %>
     <div style="width: 45%; display:inline-block; margin-left: 5px"><%= f.text_field :data_script, class: "form-control form-control-sm" %></div>
   </th>  
-  <%= f.hidden_field :sort, class: 'project_fields_current_position form-control form-control-sm', readonly: true %>
+  <%= f.hidden_field :sort, class: 'form-control form-control-sm w-10 project_fields_current_position form-control form-control-sm', readonly: true %>
   <%= f.hidden_field :_destroy%>
   <th style="width: 50vw" class="d-none permissions_cell_group">
     <%# visualizar %>
