@@ -26,7 +26,7 @@
           <div class="row justify-content-center">
             <%= form.label :status_type,'Tipo', class:'col-md-2 text-right col-form-label' %>
             <div class="col-md-5">
-              <%= form.select :status_type, options_for_select(['Asignable', 'Heredable', 'Predeterminado'] , selected: @project_status.status_type) ,  {:include_blank => false}, {class: 'form-control form-control-sm'} %>
+              <%= form.select :status_type, options_for_select(['Asignable','Asignable y Editable' ,'Heredable', 'Predeterminado'] , selected: @project_status.status_type) ,  {:include_blank => false}, {class: 'form-control form-control-sm'} %>
             </div>
           </div>
           <div id="heredable_block">

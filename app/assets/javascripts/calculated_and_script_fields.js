@@ -451,8 +451,10 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                 var today=new Date();
                 var dd = String(today. getDate()). padStart(2, '0');
                 var mm = String(today. getMonth() + 1). padStart(2, '0');
-                var yyyy = today. getFullYear();      
-                today_time = dd + '/' + mm + '/' + yyyy;
+                var yyyy = today. getFullYear();  
+                var hh = today.getHours();
+                var min = today.getMinutes();      
+                today_time = dd + '/' + mm + '/' + yyyy+' '+hh+':'+min;
                 $(texto_campo_id).val(today_time);
             }
             if(CalculateObj_keys[k]=="ID"){

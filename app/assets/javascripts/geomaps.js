@@ -70,6 +70,12 @@ Navarra.geomaps = function() {
       maxNativeZoom: 19
     });
 
+    var googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    maxNativeZoom: 19,
+    subdomains:['mt0','mt1','mt2','mt3']
+    });
+
     cfg = {
       "radius": 30,
       "maxOpacity": .8,
@@ -121,7 +127,8 @@ Navarra.geomaps = function() {
       "Calles": streets,
       "Satelital": satellite,
       "Claro": grayscale,
-      "Oscuro": CartoDB_DarkMatter
+      "Oscuro": CartoDB_DarkMatter,
+      "Satelital 2": googleSat
     };
 
     //genera Modal de mapas base y proyecto activo
