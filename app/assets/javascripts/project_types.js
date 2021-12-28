@@ -72,7 +72,7 @@ $(document).ready(function() {
   update_sort_table();    
 });
 
-// Dropdown select project type fields to show
+// Dropdown select project type field groups to show
 function toggle_tables_project_type (dropdown_click,clicked_group,second_group,dropdown_second_group,third_group,dropdown_third_group) {
     
   if(clicked_group.hasClass("d-none")){
@@ -112,9 +112,9 @@ $(document).ready( function(){
 
 });
 
+//Calculates index of current position of the clicked button to add new field to the correct place, also clicks the hidden button to call the main insert function
 var index_of_current_position = 0;
 var index_of_current_position_subfield = 0;
-
 $(document).ready( function(){
   $('.add_attributes_project_types').click(function(){
     
@@ -123,6 +123,7 @@ $(document).ready( function(){
   })
   $('.add_attributes_project_types_subfield').click(function(){
     index_of_current_position_subfield =  $(this).parent().find('.project_fields_current_position').val();
+    //Finds to wich parent the clicked new child belongs to
     var previous_tr = $(this).parent().prevAll(".tr_project_type_group");
     var current_add_subform = previous_tr.find(".sub_form_added");
     $(current_add_subform).last().click()
@@ -130,6 +131,7 @@ $(document).ready( function(){
   })
 });
 
+//Updates the index of rows in the main table
 function update_sort_table() {
   
   $("tbody").find('tr').each(function(index) {
@@ -138,7 +140,7 @@ function update_sort_table() {
   });
 }
 
-
+//Updates the status of wich field group should show
 function update_project_type_table() {
   if(table_toggler_status=="atributos") {
     toggle_tables_project_type($(".dropdown_attributes"),$(".attributes_cell_group"),$(".logic_cell_group"),$(".dropdown_logic"),$(".permissions_cell_group"),$(".dropdown_permissions"))
@@ -159,7 +161,6 @@ $(document).on('click', 'form .add_fields', function(event){
   if ($(this).hasClass('table_father')) { // Atributo padre
     $(".tr_project_field").eq(index_of_current_position-1).after($(this).data('fields').replace(regexp, time))
     update_project_type_table();
-    
   } else if ($(this).hasClass('table_children')) { // Atributo hijo
     if(index_of_current_position_subfield==0) {
       index_of_current_position_subfield =  $(event.target).closest($(".tr_project_field")).find('.project_fields_current_position').val()

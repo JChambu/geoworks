@@ -14,8 +14,7 @@
       } else {
         $("#layer_color").hide();
       }
-    });
-   
+    });   
   });
 
   // Open and close header with project data
@@ -24,21 +23,19 @@
       if($(".header_project_fields").hasClass("d-block")){
         $(".header_project_fields").removeClass("d-block").addClass("d-none");
         $("#toggler_header").removeClass("fa-minus").addClass("fa-plus");
-        
       } else {
         $(".header_project_fields").removeClass("d-none").addClass("d-block");
         $("#toggler_header").removeClass("fa-plus").addClass("fa-minus");
       }
       resize_table_project_types();
     })
-
   });
 
+  //Sets initial view of groups to "Atributos"
   $(document).ready( function(){
     $(".attributes_cell_group").removeClass("d-none");
     $(".plus_icon_project_fields").removeClass("d-none");
     $(".plus_icon_project_subfields").removeClass("d-none");
-     
   });
   
   $(document).ready( function(){
@@ -75,7 +72,6 @@
 </script>
 
 <%= simple_form_for @project_type, html: {multipart: true}  do |f| %>
-
   <div class="toast custom_toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="8000">
     <div class="toast-header">
       <%= image_tag "logo_gw_hor_2.png", class: 'mr-auto', height:"30" %>
@@ -87,13 +83,11 @@
       <ul class="panel-body"><% @project_type.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %></ul>
     </div>
   </div>
-    
   <div class="d-flex justify-content-end mb-1" style="float: right; margin-top: -12px">
-        <i class="fas fa-minus"  id="toggler_header"></i>
+    <i class="fas fa-minus"  id="toggler_header"></i>
   </div>
   <div class="d-block container-fluid justify-content-around header_project_fields" >
     <div class="row mb-0 p-0 text-left">
-
       <div class="col mx-2">
         <div class="row">
           <%= f.label :name, 'Nombre:', class:'col-form-label-sm mb-0 p-0' %>
@@ -102,7 +96,6 @@
           <%= f.text_field :name, class: 'form-control form-control-sm' %>
         </div>
       </div>
-
       <div class="col mx-2">
         <div class="row">
           <%= f.label :type_geometry, 'Tipo:', class:'col-form-label-sm mb-0 p-0' %>
@@ -111,7 +104,6 @@
           <%= f.select :type_geometry, options_for_select(['Point', 'Polygon'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
         </div>
       </div>
-      
       <div class="col mx-2">
         <div class="row">
           <%= f.label :tracking, "Recorido", class:'col-form-label-sm mb-0 p-0' %>
@@ -122,9 +114,7 @@
             <label class="custom-control-label" for="customCheck1"></label>
           </div>
         </div>
-        
       </div>
-
       <div class="col mx-2">
         <div class="row">
           <%= f.label :enabled_as_layer, "Capa", class:'col-form-label-sm mb-0 p-0' %>
@@ -136,9 +126,7 @@
             </div>
               <%= f.color_field :layer_color, class: 'form-control form-control-sm mb-2', style:'width:30px; padding:1px' %>
             </div>
-      
       </div>
-
       <div class="col-md-2 ">
         <div class="row">
           <%= f.label :cover, "Imagen", class:'col-form-label-sm mb-0 p-0' %>
@@ -152,7 +140,6 @@
           </div>
         </div>
       </div>
-
       <div class="col me-2">
         <div class="row">
           <%= f.label :geo_restriction, 'Restricción (m):', class:'col-form-label-sm mb-0 p-0' %>
@@ -161,7 +148,6 @@
           <%= f.text_field :geo_restriction, class: 'form-control form-control-sm d-flex', style:'width: 50px' %>
         </div>
       </div>
-
       <div class="col mx-2">
         <div class="row">
           <%= f.label :level, 'Nivel:', class:'col-form-label-sm mb-0 p-0' %>
@@ -170,7 +156,6 @@
           <%= f.text_field :level, class: 'form-control form-control-sm d-flex', style:'width: 50px' %>
         </div>
       </div>
-
       <div class="col mx-2">
         <div class="row">
           <%= f.label :multiple_edition, "Edición Multiple", class:'col-form-label-sm mb-0 p-0' %>
@@ -182,7 +167,6 @@
           </div>
         </div>
       </div>
-
       <div class="col mx-2">
         <div class="row">
           <%= f.label :enable_period, 'Deshabilitar:', class:'col-form-label-sm mb-0 p-0' %>
@@ -191,7 +175,6 @@
           <%= f.select :enable_period, options_for_select(['Nunca', 'Semana', 'Mes' , 'Año'], selected: @project_type.enable_period), {:include_blank => false}, {class: 'form-control form-control-sm'} %>
         </div>
       </div>
-
       <div class="col mx-2">
         <div class="row">
           <%= f.label :notification_email, 'Mail notif. :', class:'col-form-label-sm mb-0 p-0' %>
@@ -200,14 +183,9 @@
           <%= f.text_field :notification_email, class: 'form-control form-control-sm' %> 
         </div>
       </div>
-      
-    
     </div>
   </div> 
   
-   
-
-
   <% if can? :attributes, :edit %>
     <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
       <div class="table-responsive">
@@ -253,18 +231,16 @@
                   </div>
                 </div>
               </th>
-              <th></th>
-              
+              <th></th>  
             </tr>
-           </thead>
+          </thead>
            
           <tbody class="sortable">
             <%= f.fields_for :project_fields, @project_fields do |a| %>
               <%= render 'project_field_fields', f: a %>
             <% end %>
           </tbody>
-        </table>
-        
+        </table>        
       </div>
     </div>
   <% end %>
