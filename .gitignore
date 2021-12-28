@@ -34,6 +34,7 @@ yarn-debug.log*
 # Variables de entorno
 config/application.yml
 .env
+/db/schema
 
 # Volúmen de geoserver
 /geoserver/data_dir

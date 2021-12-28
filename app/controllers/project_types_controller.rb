@@ -190,7 +190,7 @@ class ProjectTypesController < ApplicationController
         .where(projects: {project_type_id: project_type_id})
         .pluck(:id)
         .uniq
-      
+
       @table = 'subform_filter'
     else
       @field_name = helpers.get_name_from_key(params[:q][:project_field]).name
@@ -411,14 +411,14 @@ class ProjectTypesController < ApplicationController
           filter_children.each do |filter_child|
             filter_parts = filter_child.split('|')
             children_data = children_data.where("properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+" '"+filter_parts[2]+"'")
-          end    
+          end
         end
 
         # Aplica filtros de usuario de hijos
         if !filter_user_children.blank?
           filter_user_children.each do |filter_child|
             children_data = children_data.where("user_id = "+filter_child)
-          end    
+          end
         end
 
         children_data_array = []
@@ -1229,7 +1229,7 @@ class ProjectTypesController < ApplicationController
 
   def project_type_params
     params.require(:project_type).permit(
-      :name, :type_file, :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color,
+      :name, :type_file, :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color, :notification_email,
       :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition, :enable_period, :level,
       project_fields_attributes: [
         :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
