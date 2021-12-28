@@ -23,6 +23,8 @@ Navarra.geomaps = function() {
   var inn = ""
   var first_time_internal_layers = true;
 
+  var isobands_layer;
+
   var init = function() {
 
     //crea nodo para popup
@@ -2191,6 +2193,10 @@ function get_latlng(){
 }
 
 function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_celd_size,field_name, is_subform, sub_values){
+  if(!get_celd_size){
+    $('#text_toast').html("Buscando datos ...");
+    $('#toast').toast('show');
+  }
   var cql_filter =  getCQLFilter(true);
   var defaultParameters = {
     service: 'WFS',
@@ -2209,13 +2215,15 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
     success: function (data) {
       var points = data;
       if(get_celd_size){
+        // entra para calcular tamaño de la celda
         var enveloped = turf.envelope(points);
         var area_envelope = turf.area(enveloped)/1000000;
         $('#celd_size').val(Math.round(Math.sqrt(area_envelope)/250*100000)/100000);
       } else {
         //si es subformulario, agrega el resultado en el properties del feature
         if(is_subform){
-          console.log("Agrega campo")
+          $('#text_toast').html("Calculando "+field_name+". Por favor espere");
+          $('#toast').toast('show');
           var subform_values = JSON.parse(sub_values);
           points.features.forEach(function(feature){
             var id_feature = feature.properties["app_id"];
@@ -2227,10 +2235,10 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
             feature.properties[interpolation_field] = new_propertie;
           });
         }
-        console.log("Termina agregado de campo")
+        $('#text_toast').html("Descartando datos inválidos");
+        $('#toast').toast('show');
         // elimina features que no tienen datos válidos
         points.features = points.features.filter(v => !isNaN(v.properties[interpolation_field]));
-        console.log("Limpia el properties")
         get_layers_clip(points, interpolation_field,breaks,colors,field_name);  
       }
     }
@@ -2239,9 +2247,10 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
 
 function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
   // trae capas 
-  console.log("Trae capas")
   var active_internal_layers = get_layers_checked();
   if(active_internal_layers.length>0){
+    $('#text_toast').html("Extrapolando hacia los límites de la capa. Por favor espere");
+    $('#toast').toast('show');
     $.ajax({
       type: 'GET',
       url: '/project_types/project_type_layers.json',
@@ -2250,11 +2259,9 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
         current_layer: current_layer
       },
       success: function(data) {
-        console.log("Success")
         var concat_features = null;
         var layers_count = 0;
         $.each(data, function(lay, dat) {
-          console.log("iteración")
           if(active_internal_layers.indexOf(dat.layer)>=0 && dat.type_geometry != 'Point'){
             var cql_filter_layer =  getCQLFilter_layer(dat);
             var defaultParameters = {
@@ -2279,7 +2286,7 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
                  }
                  layers_count ++;
                  if(layers_count==active_internal_layers.length){
-                  console.log("Es última capa!!!!!!!!!!1")
+                  // última capa
                   var combined = turf.combine(concat_features);
                  // var geojson = L.geoJSON(combined).addTo(mymap);
                  var bbox = turf.bbox(combined);
@@ -2314,9 +2321,17 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
                   return;
                   }
                  });
-                var options = {gridType: 'points', property: interpolation_field, units: 'kilometers', weight: parseFloat(weight)};
-                var grid = turf.interpolate(points,parseFloat(celd_size), options);
-                  get_isobands(grid, interpolation_field,breaks,colors,combined,field_name);  
+                  if(points.features.length>4000){
+                    if(points.features.length>10000){
+                      $('#text_alert_decision').html("Usted está por interpolar "+ points.features.length +" puntos. Este proceso tomar demasiado tiempo. Se aconseja reducir el área a interpolar. Desea Continuar de todos modos ?");
+                    } else {
+                      $('#text_alert_decision').html("Usted está por interpolar "+ points.features.length +" puntos. Este proceso puede tardar varios minutos. Desea Continuar ?");
+                    }
+                    $('#decision_yes').attr('onclick','Navarra.geomaps.continue_iterpolation('+JSON.stringify(points)+', "'+interpolation_field +'" ,'+JSON.stringify(breaks)+','+JSON.stringify(colors)+', "'+field_name +'", '+JSON.stringify(combined)+')');
+                    $('#toast_decision').toast('show');
+                  } else{
+                    continue_iterpolation(points, interpolation_field,breaks,colors,field_name, combined );
+                  }
                  }
               }
             });
@@ -2325,66 +2340,106 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
       }
     });
   } else {
-    var options = {gridType: 'points', property: interpolation_field, units: 'kilometers', weight: parseFloat(weight)};
-    var grid = turf.interpolate(points,parseFloat(celd_size), options);
-    get_isobands(grid, interpolation_field,breaks,colors,null,field_name);
-    //Para ver los puntos y sus propiedades
-       /* 
-        grid.features.forEach(function(point){
-        var new_pos = new L.latLng (point.geometry.coordinates[1], point.geometry.coordinates[0]);
-        const popupContent = '<h7>' + point.properties[interpolation_field] + '</h7>'
-         var new_grid = new L.marker(new_pos).addTo(mymap).bindPopup(popupContent);
-        });
-        */
-       // var geojson = L.geoJSON(grid).addTo(mymap);        
-        
+    if(points.features.length>4000){
+      if(points.features.length>10000){
+        $('#text_alert_decision').html("Usted está por interpolar "+ points.features.length +" puntos. Este proceso puede tomar demasiado tiempo. Se aconseja reducir el área a interpolar. Desea Continuar de todos modos ?");
+      } else {
+        $('#text_alert_decision').html("Usted está por interpolar "+ points.features.length +" puntos. Este proceso puede tardar varios minutos. Desea Continuar ?");
+      }
+      $('#decision_yes').attr('onclick','Navarra.geomaps.continue_iterpolation('+JSON.stringify(points)+', "'+interpolation_field +'" ,'+JSON.stringify(breaks)+','+JSON.stringify(colors)+', "'+field_name +'", null)');
+      $('#toast_decision').toast('show');
+    } else{
+      continue_iterpolation(points, interpolation_field,breaks,colors,field_name, null);
+    }        
   }
+}
+
+function continue_iterpolation(points, interpolation_field,breaks,colors,field_name,combined){
+  $('#toast_decision').toast("hide");
+  $('#text_toast').html("Iterpolando ...");
+  $('#toast').toast('show');
+  var options = {gridType: 'points', property: interpolation_field, units: 'kilometers', weight: parseFloat(weight)};
+  setTimeout(function(){ // delay para que cierre el toast_decision.
+     var grid = turf.interpolate(points,parseFloat(celd_size), options);
+     if(grid.features.length>400000){
+      if(points.features.length>1000000){
+        $('#text_alert_decision').html("La interpolación ha generado una grilla de "+ grid.features.length +" puntos. Este proceso puede tomar demasiado tiempo. Se aconseja aumentar el tamaño de la celda y/o reducir el área a interpolar. Desea Continuar de todos modos ?");
+      } else {
+        $('#text_alert_decision').html("La interpolación ha generado una grilla de "+ grid.features.length +" puntos. Este proceso puede tardar varios minutos. Desea Continuar ?");
+      }
+      $('#decision_yes').attr('onclick','Navarra.geomaps.continue_isobands('+JSON.stringify(grid)+', "'+interpolation_field +'" ,'+JSON.stringify(breaks)+','+JSON.stringify(colors)+', '+JSON.stringify(combined)+', "'+field_name +'")');
+      $('#toast_decision').toast('show');
+    } else{
+      continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name);
+    }   
+  },200); 
+}
+
+function continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name){
+  $('#toast_decision').toast("hide");
+  $('#text_toast').html("Creando isopolígonos ...");
+  $('#toast').toast('show');
+  setTimeout(function(){ // delay para que cierre el toast_decision.
+    get_isobands(grid, interpolation_field,breaks,colors,combined,field_name);
+    //Para ver los puntos y sus propiedades
+     /* 
+    grid.features.forEach(function(point){
+    var new_pos = new L.latLng (point.geometry.coordinates[1], point.geometry.coordinates[0]);
+    const popupContent = '<h7>' + point.properties[interpolation_field] + '</h7>'
+    var new_grid = new L.marker(new_pos).addTo(mymap).bindPopup(popupContent);
+    });
+    */
+    // var geojson = L.geoJSON(grid).addTo(mymap);
+  },200);  
 }
 
 function get_isobands(grid, interpolation_field, breaks, colors, combined){
   pointGrid = grid  
-      var lines = turf.isobands(pointGrid, breaks, {zProperty: interpolation_field,breaksProperties: [{"color":"#ff7800"},{"fillColor":"#ff7800"},{"fillColor":"#ff7800"}]});
-      console.log("Lineas")
-      console.log(lines)
-      var count =0;
-      lines.features.forEach(function(multipoly,index_poly){
-        multipoly.geometry.coordinates.forEach(function(polys){
-          polys.forEach(function(poly){
-            lat_lng_polys = [];
-            lat_lng_poly = [];
-            poly.forEach(function(geometry){
-              lat_lng_geom = [];
-              lat_lng_geom.push(geometry[0]);
-              lat_lng_geom.push(geometry[1]);
-              lat_lng_poly.push(lat_lng_geom);
-            });
-            lat_lng_polys.push(lat_lng_poly);
-            var new_poly = turf.polygon(lat_lng_polys);
-            var popupContent = '<br/><h7>'+field_name+'</h7>'
-            popupContent += '<br/><h7>'+breaks[index_poly]+'</h7>'
-            popupContent += '<h7> - '+breaks[index_poly+1]+'</h7>'
-            console.log("new_poly")
-            console.log(new_poly)
-            if(combined==null){
-              var geojson = L.geoJSON(new_poly,{color:colors[count], fillOpacity: 0.6}).addTo(mymap).on('click',function(e){
-                var popup = new L.popup({autoPan:false})
-                .setLatLng(new L.latLng([e.latlng.lat,e.latlng.lng]))
-                .setContent(popupContent)
-                .openOn(mymap);
-              });
-            } else {
-              var intersection = turf.intersect(new_poly, combined.features[0]);
-              var geojson = L.geoJSON(intersection,{color:colors[count], fillOpacity: 0.6}).addTo(mymap).on('click',function(e){
-                var popup = new L.popup({autoPan:false})
-                .setLatLng(new L.latLng([e.latlng.lat,e.latlng.lng]))
-                .setContent(popupContent)
-                .openOn(mymap);
-              });
-            }
-          });
+  if(isobands_layer!=undefined){
+    mymap.removeLayer(isobands_layer);
+  }
+  isobands_layer = new L.LayerGroup
+  var lines = turf.isobands(pointGrid, breaks, {zProperty: interpolation_field});
+  var count =0;
+  lines.features.forEach(function(multipoly,index_poly){
+    multipoly.geometry.coordinates.forEach(function(polys){
+      polys.forEach(function(poly){
+        lat_lng_polys = [];
+        lat_lng_poly = [];
+        poly.forEach(function(geometry){
+          lat_lng_geom = [];
+          lat_lng_geom.push(geometry[0]);
+          lat_lng_geom.push(geometry[1]);
+          lat_lng_poly.push(lat_lng_geom);
         });
-        count ++;
+        lat_lng_polys.push(lat_lng_poly);
+        var new_poly = turf.polygon(lat_lng_polys);
+        var popupContent = '<br/><h7>'+field_name+'</h7>'
+        popupContent += '<br/><h7>'+breaks[index_poly]+'</h7>'
+        popupContent += '<h7> - '+breaks[index_poly+1]+'</h7>'
+        if(combined==null){
+          var geojson = L.geoJSON(new_poly,{color:colors[count], fillOpacity: 0.6}).on('click',function(e){
+            var popup = new L.popup({autoPan:false})
+            .setLatLng(new L.latLng([e.latlng.lat,e.latlng.lng]))
+            .setContent(popupContent)
+            .openOn(mymap);
+          });
+          isobands_layer.addLayer(geojson);
+        } else {
+          var intersection = turf.intersect(new_poly, combined.features[0]);
+          var geojson = L.geoJSON(intersection,{color:colors[count], fillOpacity: 0.6}).on('click',function(e){
+            var popup = new L.popup({autoPan:false})
+            .setLatLng(new L.latLng([e.latlng.lat,e.latlng.lng]))
+            .setContent(popupContent)
+            .openOn(mymap);
+          });
+          isobands_layer.addLayer(geojson);
+        }
       });
+    });
+    count ++;
+  });
+  isobands_layer.addTo(mymap);
 }
 
   return {
@@ -2412,6 +2467,8 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined){
     new_geometry: new_geometry,
     get_geometries_to_save: get_geometries_to_save,
     get_geom_to_calculate: get_geom_to_calculate,
-    interpolate: interpolate
+    interpolate: interpolate,
+    continue_iterpolation:continue_iterpolation,
+    continue_isobands: continue_isobands
   }
 }();

@@ -4,6 +4,13 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
   $('.modal-backdrop').remove();
 }).on('shown.bs.modal', function (e) {
 	create_palette();
+	$("#invert_palettes").click(function (e) {
+ 			e.stopPropagation();
+ 			palettes.forEach(function(palette){
+ 				palette.reverse();
+ 			});
+ 			create_palette();
+  });
 	$('#interpolation_field').on('change', function() {
 		var type_box = 'polygon';
   	var size_box = Navarra.dashboards.config.size_polygon;
@@ -45,8 +52,6 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
     		},
       		success: function(data) {
       			data_to_set_interval = data.data;
-      			console.log("Data")
-      			console.log(data_to_set_interval)
       			if(isNaN(interpolate_field)){
       				set_interval_interpolation(data_to_set_interval);
       			} else{
@@ -55,8 +60,6 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
       				data.data.map( function(v) {
  								app_ids_in_map.push(v.id);
 							});
-							console.log("Datos ids de padres")
-							console.log(app_ids_in_map)
   						var from_date_subforms = Navarra.project_types.config.from_date_subforms;
   						var to_date_subforms = Navarra.project_types.config.to_date_subforms;
   						var filter_children = [];
@@ -94,6 +97,8 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
 		});
 
 		$('#range_number').on('change', function() {
+			if($(this).val()<2){$(this).val(2)}
+				if($(this).val()>20){$(this).val(20)}
 			set_interpolation_ranges();
 			if(data_to_set_interval!=undefined){
 				set_interval_interpolation(data_to_set_interval);
@@ -129,19 +134,31 @@ function set_interpolation_ranges(){
 	var num_ranges = $('#range_number').val();
 	for(var i=0;i<num_ranges;i++){
 		var color_index = Math.round(20*i/(num_ranges-1));
-		if(i!=0){color_index = color_index -1}
+		var range_disabled = "";
+		if(i!=0){
+			color_index = color_index -1;
+			range_disabled = "disabled = true";
+		}
+		var onchange_range = "";
+		if(i!=num_ranges-1){
+			onchange_range='onchange = "change_max_range('+i+')"';
+		}
 		var select_palette_option = $('.palette_selected').attr('id').split('palette_id')[1];
 		var html_ranges = '<div class="d-flex">';
-	    html_ranges+= '<input type="number" name="" id="intermin_'+i+'" step="any" class = "intermin mt-3 form-control form-control-sm w-50 mr-3" >';
-	    html_ranges+= '<input type="number" name="" id="intermax_'+i+'" step="any" class = "intermax mt-3 form-control form-control-sm w-50 mr-3" >';
+	    html_ranges+= '<input type="number" '+range_disabled+' name="" id="intermin_'+i+'" step="any" class = "intermin mt-3 form-control form-control-sm w-50 mr-3" style="background:white" >';
+	    html_ranges+= '<input type="number" '+ onchange_range +' name="" id="intermax_'+i+'" step="any" class = "intermax mt-3 form-control form-control-sm w-50 mr-3" >';
     	html_ranges+= '<input value="'+palettes[select_palette_option][color_index]+'"  type="color" name="" id="intercolor_'+i+'" class = "intercolor mt-3 mr-2 form-control form-control-sm" style="width:30px; padding:1px" ';
     	html_ranges+='</div>'
     $('#interpolation_range').append(html_ranges);
 	}
 }
 
+function change_max_range(i){
+	$("#intermin_"+(i+1)).val($("#intermax_"+i).val());
+}
+
 function create_palette(){
-	
+	$('#palette_selector_dropdown').empty();
 	palettes.forEach(function(pal,index){
 		if(index == 0){
 			var pallete_new = '<div id="palette_id'+index+'" class="palette_option custom_cursor; palette_selected" onclick="select_palette(event)">';
@@ -169,9 +186,6 @@ function select_palette(e){
 
 function set_interval_interpolation(data){
 	var data_ordered = data.map((v) => v.interpolate_field).filter(function(n) { return !isNaN(n); }).sort(function(a, b){return a-b});
-	console.log("Data ordenada")
-	console.log(data_ordered)
-	console.log(data_ordered.length)
 	var lenght_data = data_ordered.length;
  	var num_ranges = $('#range_number').val();
 	var range_length = Math.round(lenght_data/num_ranges);
@@ -181,11 +195,7 @@ function set_interval_interpolation(data){
   value_range = intermin;
   var extra_position = 0;
   if(intermax>10){round=1}else{round=100}
-  for(var i=0;i<num_ranges;i++){
-  	console.log("Nueva iteración con rango: "+range_length)
-  	console.log("Nueva iteración con extra position: "+extra_position)
-  	console.log("Dato a agregar: "+ data_ordered[i*range_length+extra_position])
-  	
+  for(var i=0;i<num_ranges;i++){  	
 		if(i==0){
 			value_range = data_ordered[0];
 			val = Math.floor(value_range*round)/round;
@@ -202,23 +212,15 @@ function set_interval_interpolation(data){
 		val = Math.round(value_range*round)/round;
 		//si es igual al valor inicial del rango, sigue buscando
 		var count_equal_values = 0;
-		console.log("Value Range original")
-		console.log(range_length)
 		while (val <= $('#intermin_'+i).val()) {
 			count_equal_values ++;
 			value_range = data_ordered[(i+1)*range_length+count_equal_values+extra_position];
 			val = Math.round(value_range*round)/round;
 			//cambia el rango y lo ajusta a los valores restantes
 			range_length = Math.round((lenght_data - ((i+1)*range_length+count_equal_values+extra_position))/(num_ranges-(i+1)));
-			console.log("Rango nuevo")
-			console.log("lenght_data "+lenght_data)
-			console.log("Posición actual "+(((i+1)*range_length+count_equal_values+extra_position)));
-			console.log("Rangos faltantes "+ (num_ranges-(i+1)) )
-			console.log(range_length)
 		}
 		extra_position +=count_equal_values;
 	}
-	console.log("Valor a insertar "+val)
 	if(isNaN(val)){
 		val = data_ordered[lenght_data-1];
 		$('#intermax_'+i).css("background","red");
@@ -252,7 +254,6 @@ function set_subform_values(data_subform){
    }
     data_to_set_interval.push(new_obj);
   });
-  console.log(data_to_set_interval)
   $('#sub_interpolation_operator').attr('sub_values',JSON.stringify(data_to_set_interval));
   set_interval_interpolation(data_to_set_interval);
 }

@@ -436,7 +436,7 @@ function change_alert_mail(index){
 
 function edit_pdf(){
     $('#text_toast').html("Elimine imágenes y ajuste tamaño de texto en caso de superposición");
-    $('.toast').toast('show');
+    $('#toast').toast('show');
     $('.p_pdf').attr('onclick','Navarra.pdf.changeFontSize(event)');
     $('#map_pdf , .img_pdf').addClass('delete_hover');
     $('#map_pdf , .img_pdf').attr('onclick','Navarra.pdf.delete_img(event)')
@@ -559,7 +559,7 @@ function send_alerts(){
         $('#pdf-modal').modal('hide');
         $('.table_data_container').removeClass('d-none');
         $('#text_toast').html("Enviando ...");
-        $('.toast').toast('show');
+        $('#toast').toast('show');
         $.ajax({
             url: '/dashboards/send_alerts',
             type: 'POST',

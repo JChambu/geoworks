@@ -19,11 +19,21 @@ if($('#sub_interpolation_operator').hasClass('d-none')){
   var is_subform = true;
   var sub_values = $('#sub_interpolation_operator').attr('sub_values');
 }
+var rangos_valid = true;
+breaks.forEach(function(break_limit){
+  console.log("break_limit "+break_limit)
+  console.log()
+  if(break_limit == "" || isNaN(break_limit)){
+    rangos_valid = false;
+  }
+})
 
-// Elimina el modal
-$("#interpolation-modal").remove();
-$('.modal-backdrop').remove();
-
-
-// Lanza la función
-Navarra.geomaps.interpolate(interpolation_field,breaks,colors,celd_size,weight,false,field_name,is_subform,sub_values);
+if(interpolation_field != "" && weight!="" && celd_size!="" && breaks.length>=2 && rangos_valid ){
+  // Elimina el modal
+  $("#interpolation-modal").remove();
+  $('.modal-backdrop').remove();
+  
+  
+  // Lanza la función
+  Navarra.geomaps.interpolate(interpolation_field,breaks,colors,celd_size,weight,false,field_name,is_subform,sub_values);
+}

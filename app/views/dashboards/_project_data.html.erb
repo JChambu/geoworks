@@ -588,7 +588,7 @@ function get_layer_data(){
   var app_ids_table = Navarra.dashboards.app_ids_table;
   if(app_ids_table.length>80){
     $('#text_toast').html("Buscando datos intercapas, por favor espere");
-    $('.toast').toast('show');
+    $('#toast').toast('show');
   }
     data = {
       top_level_project_type_ids: top_level_project_type_ids,
@@ -750,7 +750,7 @@ function save_table(is_new){
     var table_name = $('#table_new_name').val();
     if(table_name==""){
       $('#text_toast').html("Agregue un nombre para la tabla");
-      $('.toast').toast('show');
+      $('#toast').toast('show');
       return;
     }
     var type_method = "POST";
@@ -837,7 +837,7 @@ function save_table(is_new){
     data: table_to_save,
     success: function(data) {
       $('#text_toast').html(data.status);
-      $('.toast').toast('show');
+      $('#toast').toast('show');
       if(is_new){
         var table_new_id = data.table_id;
         $('#table_id').val(table_new_id);
@@ -876,7 +876,7 @@ function remove_table(event,table_id){
     data: data,
     success: function(data) {
         $('#text_toast').html(data.status);
-        $('.toast').toast('show');
+        $('#toast').toast('show');
         $('#dropdown_table'+table_id).remove();
     },
     error: function( jqXHR, textStatus, errorThrown ) {
@@ -925,7 +925,7 @@ function open_alert_modal(event){
 function show_pdf(is_alert){
   if($('#table_visible .custom-control-input:checked').not('#table_select_all').not('#table_select_all_hidden').length==0){
     $('#text_toast').html("No hay registros seleccionados");
-    $('.toast').toast('show');
+    $('#toast').toast('show');
     return;
   }
   $("#pdf-modal").modal('show'); 
@@ -947,7 +947,7 @@ function generate_alerts(){
   var alert_mail_key = $('#alert_mail').val();
   if(alert_mail_key==""){
     $('#text_toast').html("El campos \"Enviar a\" no puede estar vacío");
-    $('.toast').toast('show');
+    $('#toast').toast('show');
     return;
   }
   var pattern_mail = /^\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i
@@ -963,7 +963,7 @@ function generate_alerts(){
   });
   if(wrong_mail_count>0){
     $('#text_toast').html("Hay destinatarios que no cumplen el formato correcto de e-mail");
-    $('.toast').toast('show');
+    $('#toast').toast('show');
     return;
   }
   show_pdf(true);

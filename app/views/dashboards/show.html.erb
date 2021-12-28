@@ -455,7 +455,7 @@ function min_photo(){
 </div>
 
 <!-- Toast-->
-<div class="toast custom_toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+<div class="toast custom_toast" id="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
   <div class="toast-header">
     <%= image_tag "logo_gw_hor_2.png", class: 'mr-auto', height:"30" %>
     <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
@@ -464,6 +464,19 @@ function min_photo(){
   </div>
   <div class="toast-body">
     <h7 id="text_toast"></h7>
+  </div>
+</div>
+
+<!-- Alert Decision-->
+<div class="toast custom_toast" id="toast_decision" role="alert" data-autohide="false" aria-live="assertive" aria-atomic="true">
+  <div class="toast-header">
+    <%= image_tag "logo_gw_hor_2.png", class: 'mr-auto', height:"30" %>
+  </div>
+  <div class="toast-body">
+    <h7 id="text_alert_decision"></h7>
+    <br>
+    <button class="btn btn-secondary p-0 m-1" id="decision_yes" type="button" style="width: 35px; outline: none;">SI</button>
+    <button class="btn btn-secondary p-0" data-dismiss="toast" id="decision_no" type="button" style="width: 35px; outline: none;">NO</button>
   </div>
 </div>
 
