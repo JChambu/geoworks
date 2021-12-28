@@ -20,6 +20,7 @@ class ProjectDataChildrenController < ApplicationController
   def new
     @project_type = current_user.project_types.find(params[:project_type_id])
     @project_data_child = ProjectDataChild.new
+    @project_data_children_no_valid = []
   end
 
   # GET /project_data_children/1/edit
@@ -218,21 +219,39 @@ class ProjectDataChildrenController < ApplicationController
 
   def import
     @project_type = current_user.project_types.find(params[:project_type_id])
-    unless params[:file]
+
+    @project_data_children_no_valid = []
+
+    is_from_file = params[:file].present?
+    is_from_form = params[:data_children].present?
+
+    if !is_from_file && !is_from_form
       flash.now[:alert] = "Archivo es requerido"
       render action: :new
       return
     end
+
     begin
-      file = File.read(params[:file].path)
-      data_hash = JSON.parse(file)
+      if is_from_file
+        file = File.read(params[:file].path)
+        data_hash = JSON.parse(file)
+      elsif is_from_form
+        data_hash = params[:data_children]
+      end
+
       @project_data_children = ProjectDataChildrenImport.new
       @project_data_children.project_type = @project_type
       @project_data_children.entries = data_hash
-      if @project_data_children.save
-        redirect_to new_project_type_data_children_path(@project_type)
+      @project_data_children_no_valid = @project_data_children.save
+
+      if @project_data_children_no_valid.length == 0
+        message = is_from_file ? "Se procesaron #{@project_data_children.entries.length} registros correctamente" : "Se han cargado los registros exitosamente"
+        redirect_to new_project_type_data_children_path(@project_type), flash: { notice: message }
       else
-        flash.now[:alert] = "Se encontraron errores al procesar el archivo seleccionado"
+        flash.now[:alert] = "Se encontraron #{@project_data_children_no_valid.length} registros sin procesar"
+        @project_data_children_no_valid.each do |project_data_child_no_valid|
+          p project_data_child_no_valid.errors.messages
+        end
         render action: :new
         return
       end

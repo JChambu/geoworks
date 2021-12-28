@@ -1,31 +1,81 @@
 <% if notice %>
-    <div class="notice pl-3"><%= notice %></div>
+    <div class="notice pl-3">
+      <p><%= notice %></p>
+    </div>
   <% end %>
   <% if alert %>
-    <div class="notice pl-3 text-danger"><%= alert %></div>
-  <% end %>
-<%= form_with url: import_project_type_data_children_path(@project_type), local: true, method: :post do |f| %>
-  <div class="row justify-content-center my-4">
-    <%= f.label :file, 'Cargar Archivos:', class:'col-md-2 text-right col-form-label' %>
-    <div class="col-md-4">
-      <%= f.file_field(:file, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '')  %>
-      <p><i class="fas fa-exclamation-circle"></i> Sólo acepta archivos <b>JSON</b></p>
+    <div class="d-flex justify-content-center">
+      <p class="notice text-danger"><%= alert %></p>
     </div>
-  </div>
-  <div class="row justify-content-center">
-    <%= link_to t('.cancel', :default => t("helpers.links.cancel")), root_path, :class => 'btn btn-secondary mr-1' %>
-    <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Guardar" %>
-  </div>
-<% end %>
-<% if @project_data_children&.errors&.any? %>
-  <div class="panel panel-warning errors">
-    <div class="panel-heading"><h4><span class="text-danger pl-3"><i class="fa fa-exclamation"><span></i> Validaciones</h4></div>
-    <ul class="panel-body">
-      <% @project_data_children&.errors&.messages&.each do |attribute, messages| %>
-        <% messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      <% end %>
-    </ul>
-  </div>
+  <% end %>
+<% unless @project_data_children_no_valid.any? %>
+  <%= form_with url: import_project_type_data_children_path(@project_type), local: true, method: :post do |f| %>
+    <div class="row justify-content-center my-4">
+      <%= f.label :file, 'Cargar Archivos:', class:'col-md-2 text-right col-form-label' %>
+      <div class="col-md-4">
+        <%= f.file_field(:file, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '')  %>
+        <p><i class="fas fa-exclamation-circle"></i> Sólo acepta archivos <b>JSON</b></p>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <%= link_to t('.cancel', :default => t("helpers.links.cancel")), root_path, :class => 'btn btn-secondary mr-1' %>
+      <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Guardar" %>
+    </div>
+  <% end %>
+<%- end %>
+<% if @project_data_children_no_valid.any? %>
+  <%= form_with url: import_project_type_data_children_path(@project_type), local: true, method: :post do |f| %>
+    <div class="row justify-content-center my-4">
+      <table>
+        <theader>
+          <tr>
+            <th>Project id</th>
+            <th>Project field id</th>
+            <th>User id</th>
+            <th>Properties</th>
+          </tr>
+        </theader>
+        <tbody>
+          <%- @project_data_children_no_valid.each do |project_data_child_no_valid| %>
+            <tr>
+              <td valign='top'>
+                <input type="text" name="data_children[]project_id" value="<%= project_data_child_no_valid.project_id %>">
+                <span class="error_column"><%= project_data_child_no_valid.errors[:project].first %></span>
+              </td>
+              <td valign='top'>
+                <input type="text" name="data_children[]project_field_id" value="<%= project_data_child_no_valid.project_field_id %>">
+                <span class="error_column"><%= project_data_child_no_valid.errors[:project_field].first %></span>
+              </td>
+              <td valign='top'>
+                <input type="text" name="data_children[]user_id" value="<%= project_data_child_no_valid.user_id %>">
+                <span class="error_column"><%= project_data_child_no_valid.errors[:user].first %></span>
+              </td>
+              <td>
+                <table>
+                  <tbody>
+                    <%- project_data_child_no_valid.properties.each do |key, value| %>
+                      <tr>
+                        <td valign='top'>
+                          <input type="text" value="<%= key %>">
+                          <span class="error_column"></span>
+                        </td>
+                        <td valign='top'>
+                          <input type="text" name="data_children[]properties[<%= key %>]" value="<%= value %>">
+                          <span class="error_column"><%= project_data_child_no_valid.errors[key].first %></span>
+                        </td>
+                      </tr>
+                    <%- end %>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          <%- end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="row justify-content-center">
+      <%= link_to t('.cancel', :default => t("helpers.links.cancel")), new_project_type_data_children_path, :class => 'btn btn-secondary mr-1' %>
+      <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Corregir" %>
+    </div>
+  <% end %>
 <% end %>
