@@ -248,10 +248,8 @@ class ProjectDataChildrenController < ApplicationController
         message = is_from_file ? "Se procesaron #{@project_data_children.entries.length} registros correctamente" : "Se han cargado los registros exitosamente"
         redirect_to new_project_type_data_children_path(@project_type), flash: { notice: message }
       else
+        create_errors_file(@project_data_children_no_valid, @project_type)
         flash.now[:alert] = "Se encontraron #{@project_data_children_no_valid.length} registros sin procesar"
-        @project_data_children_no_valid.each do |project_data_child_no_valid|
-          p project_data_child_no_valid.errors.messages
-        end
         render action: :new
         return
       end
@@ -260,6 +258,11 @@ class ProjectDataChildrenController < ApplicationController
       render action: :new
       return
     end
+  end
+
+  def download_errors
+    @project_type = current_user.project_types.find(params[:project_type_id])
+    send_file "public/import_data_children_for_#{@project_type.id}_errors.json", type: 'application/json', status: 202
   end
 
   private
@@ -275,5 +278,18 @@ class ProjectDataChildrenController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def project_data_child_params
       params.require(:project_data_child).permit(:properties, :project_id, :project_field_id)
+    end
+
+    def create_errors_file(data_children_with_errors, project_type)
+      errors = []
+      data_children_with_errors.each do |data_child_with_errors|
+        jsonObject = data_child_with_errors.serializable_hash.as_json
+        jsonObject[:errors] = data_child_with_errors.errors.messages
+        errors << jsonObject
+      end
+
+      File.open("public/import_data_children_for_#{project_type.id}_errors.json","w") do |f|
+        f.write(JSON.pretty_generate(errors))
+      end
     end
 end

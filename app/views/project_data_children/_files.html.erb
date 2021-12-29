@@ -24,6 +24,12 @@
   <% end %>
 <%- end %>
 <% if @project_data_children_no_valid.any? %>
+  <p
+    class="text-muted"
+    style="background-color: #222; width: 70vw; margin: 0 auto; padding: 10px 8px; text-align: center; border-radius: 8px;"
+  >
+    Se puede editar los errores en linea o descargar el archivo con los errores para corregirlos y subirlo a futuro
+  </p>
   <%= form_with url: import_project_type_data_children_path(@project_type), local: true, method: :post do |f| %>
     <div class="row justify-content-center my-4">
       <table>
@@ -40,15 +46,15 @@
             <tr>
               <td valign='top'>
                 <input type="text" name="data_children[]project_id" value="<%= project_data_child_no_valid.project_id %>">
-                <span class="error_column"><%= project_data_child_no_valid.errors[:project].first %></span>
+                <span class="error_column"><%= project_data_child_no_valid.errors[:project_id].first %></span>
               </td>
               <td valign='top'>
                 <input type="text" name="data_children[]project_field_id" value="<%= project_data_child_no_valid.project_field_id %>">
-                <span class="error_column"><%= project_data_child_no_valid.errors[:project_field].first %></span>
+                <span class="error_column"><%= project_data_child_no_valid.errors[:project_field_id].first %></span>
               </td>
               <td valign='top'>
                 <input type="text" name="data_children[]user_id" value="<%= project_data_child_no_valid.user_id %>">
-                <span class="error_column"><%= project_data_child_no_valid.errors[:user].first %></span>
+                <span class="error_column"><%= project_data_child_no_valid.errors[:user_id].first %></span>
               </td>
               <td>
                 <table>
@@ -75,7 +81,8 @@
     </div>
     <div class="row justify-content-center">
       <%= link_to t('.cancel', :default => t("helpers.links.cancel")), new_project_type_data_children_path, :class => 'btn btn-secondary mr-1' %>
-      <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Corregir" %>
+      <%= link_to t('.download', :default => t("helpers.links.download")), import_download_errors_project_type_data_children_path(@project_type), :class => 'btn btn-secondary mr-1' %>
+      <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Corregir", disable_with: 'Guardando...' %>
     </div>
   <% end %>
 <% end %>

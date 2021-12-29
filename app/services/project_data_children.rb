@@ -1,5 +1,6 @@
 class ProjectDataChildren
   include ActiveModel::Validations
+  include ActiveModel::Serialization
 
   VALID_FIELD_TYPE_ID = FieldType::SUBFORM
 
@@ -11,22 +12,31 @@ class ProjectDataChildren
   validate :verify_project_field
   validate :verify_properties
 
+  def attributes
+    {
+      project_id: nil,
+      project_field_id: nil,
+      properties: nil,
+      user_id: nil
+    }
+  end
+
   def verify_project
     project = project_type&.projects&.find_by(id: project_id)
     unless project
-      errors.add(:project, "No pertenece a #{project_type.name}")
+      errors.add(:project_id, "No pertenece a #{project_type&.name}")
     end
   end
 
   def verify_project_field
     project_field = project_type&.project_fields&.find_by(id: project_field_id)
     unless project_field
-      errors.add(:project_field, "No pertenece a #{project_type.name}")
+      errors.add(:project_field_id, "No pertenece a #{project_type&.name}")
       return
     end
 
     unless project_field.field_type_id == VALID_FIELD_TYPE_ID
-      errors.add(:project_field, "No es del tipo subformulario")
+      errors.add(:project_field_id, "No es del tipo subformulario")
     end
   end
 
@@ -37,7 +47,7 @@ class ProjectDataChildren
       properties.each do |project_subfield_id, value|
         project_subfield = project_field.project_subfields.find_by(id: project_subfield_id)
         unless project_subfield
-          errors.add(:project_subfield, "No pertenece al field")
+          errors.add("#{project_subfield_id}", "No pertenece al field")
           next
         end
 

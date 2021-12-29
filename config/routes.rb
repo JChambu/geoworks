@@ -109,6 +109,7 @@ Rails.application.routes.draw do
       resource :data_children, only: [:new], controller: :project_data_children do
         post :import
         get :import, to: redirect{ |path_params, req| "/#{path_params[:locale]}/project_types/#{path_params[:project_type_id]}/data_children/new"}
+        get 'import/download_errors', controller: :project_data_children, action: :download_errors
       end
 
     get 'project_types/share' => 'project_types#share', as: :share
