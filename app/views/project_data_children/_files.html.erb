@@ -38,6 +38,7 @@
             <th>Project id</th>
             <th>Project field id</th>
             <th>User id</th>
+            <th>GWM created at</th>
             <th>Properties</th>
           </tr>
         </theader>
@@ -55,6 +56,10 @@
               <td valign='top'>
                 <input type="text" name="data_children[]user_id" value="<%= project_data_child_no_valid.user_id %>">
                 <span class="error_column"><%= project_data_child_no_valid.errors[:user_id].first %></span>
+              </td>
+              <td valign='top'>
+                <input type="text" name="data_children[]gwm_created_at" value="<%= project_data_child_no_valid.gwm_created_at %>">
+                <span class="error_column"><%= project_data_child_no_valid.errors[:gwm_created_at].first %></span>
               </td>
               <td>
                 <table>

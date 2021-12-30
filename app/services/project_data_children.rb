@@ -4,22 +4,39 @@ class ProjectDataChildren
 
   VALID_FIELD_TYPE_ID = FieldType::SUBFORM
 
-  attr_accessor :project_type, :project_id, :project_field_id, :properties, :user_id
+  attr_accessor :project_type, :project_id, :project_field_id, :properties, :user_id, :gwm_created_at
 
   validates :project_type, :project_field_id, :properties, presence: true
 
   validate :verify_project
   validate :verify_project_field
   validate :verify_properties
+  validate :verify_gwm_created_at
 
   def attributes
     {
       project_id: nil,
       project_field_id: nil,
       properties: nil,
-      user_id: nil
+      user_id: nil,
+      gwm_created_at: nil
     }
   end
+
+  def save
+    return false unless self.valid?
+
+    ProjectDataChild.create(
+      properties: properties,
+      project_id: project_id,
+      project_field_id: project_field_id,
+      user_id: user_id,
+      gwm_created_at: gwm_created_at || Time.zone.now,
+      gwm_updated_at: gwm_created_at || Time.zone.now,
+    )
+  end
+
+  private
 
   def verify_project
     project = project_type&.projects&.find_by(id: project_id)
@@ -75,16 +92,9 @@ class ProjectDataChildren
     end
   end
 
-  def save
-    return false unless self.valid?
-
-    ProjectDataChild.create(
-      properties: properties,
-      project_id: project_id,
-      project_field_id: project_field_id,
-      user_id: user_id,
-      gwm_created_at: Time.zone.now,
-      gwm_updated_at: Time.zone.now,
-    )
+  def verify_gwm_created_at
+    return true unless gwm_created_at.present?
+    date = Time.parse(gwm_created_at) rescue false
+    errors.add(:gwm_created_at, "Fecha invalida") unless date
   end
 end
