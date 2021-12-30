@@ -21,7 +21,7 @@ class ProjectType < ApplicationRecord
   has_many :projects, dependent: :destroy
   has_many :dashboards, dependent: :destroy
   has_many :has_project_types, dependent: :destroy
-  has_many :users
+  has_many :users, through: :has_project_types
   has_many :project_statuses, dependent: :destroy
   has_many :project_filters
   has_many :analytics_dashboard, dependent: :destroy

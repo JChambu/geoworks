@@ -12,6 +12,7 @@ class ProjectDataChildren
   validate :verify_project_field
   validate :verify_properties
   validate :verify_gwm_created_at
+  validate :verify_user
 
   def attributes
     {
@@ -96,5 +97,11 @@ class ProjectDataChildren
     return true unless gwm_created_at.present?
     date = Time.parse(gwm_created_at) rescue false
     errors.add(:gwm_created_at, "Fecha invalida") unless date
+  end
+
+  def verify_user
+    return true unless user_id.present?
+    user = project_type.users.find_by(id: user_id)
+    errors.add(:user_id, "No pertenece a #{project_type&.name}") unless user
   end
 end
