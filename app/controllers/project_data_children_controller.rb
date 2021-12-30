@@ -240,6 +240,7 @@ class ProjectDataChildrenController < ApplicationController
       end
 
       @project_data_children = ProjectDataChildrenImport.new
+      @project_data_children.current_user = current_user
       @project_data_children.project_type = @project_type
       @project_data_children.entries = data_hash
       @project_data_children_no_valid = @project_data_children.save
@@ -254,6 +255,7 @@ class ProjectDataChildrenController < ApplicationController
         return
       end
     rescue => e
+
       flash.now[:alert] = "Archivo seleccionado no tiene el formato JSON"
       render action: :new
       return
