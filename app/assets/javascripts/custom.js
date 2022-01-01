@@ -296,8 +296,6 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         filter_user_children:filter_user_children
       },
       success: function(data) {
-        console.log("Lega la data")
-        console.log(data)
         data_charts = data;
         draw_charts();
 
@@ -1311,7 +1309,7 @@ function show_data_chart(id_chart){
   data_gx_all.forEach(function(chart){
     if(chart.id_graph == id_chart && !find_chart){
       find_chart = true;
-      var table_html = "<i class='fas fa-download mr-2' style='float:right' onclick='export_to_excel(\"graph_table"+id_chart+"\",\"geoworks\",\"indicador.xls\")'></i>"
+      var table_html = "<i class='fas fa-download mr-2 custom_cursor' style='float:right' onclick='export_to_excel(\"graph_table"+id_chart+"\",\"geoworks\",\"indicador.xls\")'></i>"
       table_html += "<table class='table-striped m-auto table-hover' id='graph_table"+id_chart+"'>";
       table_html += '<thead><tr>';
       table_html += "<th></td>";
