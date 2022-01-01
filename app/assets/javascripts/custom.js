@@ -31,6 +31,7 @@ var array_column_hidden = [];
 var subheader_open = [];
 var time_slider_data_subform;
 var time_slider_data;
+var data_gx_all;
 
 Number.prototype.format = function(n, x, s, c) {
   var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
@@ -389,7 +390,7 @@ var dragAndDrop = {
 function draw_charts() {
   $(".chart_container").remove();
   var data = data_charts;
-
+  data_gx_all = [];
 
   // Ordenamos las series por chart
   for (var i = 0; i < data.length; i++) {
@@ -791,6 +792,10 @@ function draw_charts() {
             labels: lab_acumulado,
             datasets: datasets
           }
+          data_gx_all.push({
+            id_graph: graphic_id,
+            data_gx: data_gx
+          });
 
         } //cierra if data
       }) //cierra each b
@@ -812,10 +817,17 @@ function draw_charts() {
           $('<text>', {
             'text': title
           }),
-           $('<span>', { // handle
+          $('<span>', { // handle
              'class': 'fas fa-expand-arrows-alt',
              'style': 'float: right; cursor: pointer',
              'onclick': 'maximize_chart(event)'
+           }),
+           $('<span>', { // handle
+             'class': 'fas fa-table mr-2',
+             'id': 'show_data_chart'+graphic_id,
+             'style': 'float: right; cursor: pointer',
+             'title': 'Mostrar Datos',
+             'onclick': 'show_data_chart('+graphic_id+')'
            }),
           /* Oculta minimizado hasta solucionar el tema de row
           $('<button>', { // boton minimizar
@@ -836,6 +848,11 @@ function draw_charts() {
           'class': 'collapse show',
           'id': 'collapse_' + graphic_id
         }).append(
+          $('<div>', {
+            'class': 'd-none card-body px-1 pb-0 chart_body_custom',
+            'style': 'overflow-x: auto',
+            'id': 'body_graph_table' + graphic_id
+          }),
           $('<div>', {
             'class': 'card-body px-1 pb-0 chart_body_custom',
             'id': 'body' + graphic_id
@@ -1271,6 +1288,54 @@ function maximize_chart(e){
     $('#map').css('opacity','0.1');
     $('.table_data_container').addClass('d-none');
   }
+}
+
+function hide_data_chart(id_chart){
+  $('#show_data_chart'+id_chart).addClass('fa-table');
+  $('#show_data_chart'+id_chart).removeClass('fa-chart-bar');
+  $('#show_data_chart'+id_chart).attr("title","Mostrar Datos");
+  $('#show_data_chart'+id_chart).attr("onclick","show_data_chart("+id_chart+")");
+  $('#body_graph_table'+id_chart).empty();
+  $('#body'+id_chart).removeClass('d-none');
+  $('#body_graph_table'+id_chart).addClass('d-none');
+}
+function show_data_chart(id_chart){
+  $('#show_data_chart'+id_chart).removeClass('fa-table');
+  $('#show_data_chart'+id_chart).addClass('fa-chart-bar');
+  $('#show_data_chart'+id_chart).attr("title","Mostrar Gráfico");
+  $('#show_data_chart'+id_chart).attr("onclick","hide_data_chart("+id_chart+")");
+  $('#body'+id_chart).addClass('d-none');
+  $('#body_graph_table'+id_chart).removeClass('d-none');
+  $('#body_graph_table'+id_chart).empty();
+  var find_chart = false
+  data_gx_all.forEach(function(chart){
+    if(chart.id_graph == id_chart && !find_chart){
+      find_chart = true;
+      var table_html = "<i class='fas fa-download mr-2' style='float:right' onclick='export_to_excel(\"graph_table"+id_chart+"\",\"geoworks\",\"indicador.xls\")'></i>"
+      table_html += "<table class='table-striped m-auto table-hover' id='graph_table"+id_chart+"'>";
+      table_html += '<thead><tr>';
+      table_html += "<th></td>";
+      chart.data_gx.datasets.forEach(function(set){
+            table_html += "<th class='p-2 text-center'>"+set.label+"</td>";         
+        });
+      table_html += '</tr></thead>';
+
+      chart.data_gx.labels.forEach(function(lab,index){
+        table_html += "<tr class='p-2 border-bottom border-bottom-primary'>";
+        table_html += "<td pr-2>"+lab+"</td>";
+        chart.data_gx.datasets.forEach(function(set){
+          if(set.data[index]!=null){
+            table_html += "<td class='text-center pr-2 pl-2'>"+set.data[index]+"</td>";
+          } else {
+            table_html += "<td class='text-center'></td>";
+          }
+        });
+        table_html += "</tr>"
+      });
+      table_html += "</table>";
+      $('#body_graph_table'+id_chart).append(table_html);
+    }
+  })
 }
 
 
