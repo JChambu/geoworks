@@ -47,8 +47,6 @@ Rails.application.routes.draw do
   post 'dashboards/send_alerts'
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
-
-
     post 'project_fields/create'
     post 'analytics_dashboards/create'
     post 'charts/create'
@@ -108,6 +106,12 @@ Rails.application.routes.draw do
         end
       end
 
+      resource :data_children, only: [:new], controller: :project_data_children do
+        post :import
+        get :import, to: redirect{ |path_params, req| "/#{path_params[:locale]}/project_types/#{path_params[:project_type_id]}/data_children/new"}
+        get 'import/download_errors', controller: :project_data_children, action: :download_errors
+      end
+
     get 'project_types/share' => 'project_types#share', as: :share
     get 'project_types/filters' => 'project_types#filters', as: :filters
     get 'project_types/quick_filters' => 'project_types#quick_filters', as: :quick_filters
@@ -121,7 +125,6 @@ Rails.application.routes.draw do
     get 'project_types/create_interpolation' => 'project_types#create_interpolation', as: :create_interpolation
     get 'project_types/point_colors' => 'project_types#point_colors', as: :point_colors
     get 'project_types/create_point_colors' => 'project_types#create_point_colors', as: :create_point_colors
-
   end
 
 

@@ -18,7 +18,9 @@ class ProjectDataChildrenController < ApplicationController
 
   # GET /project_data_children/new
   def new
+    @project_type = current_user.project_types.find(params[:project_type_id])
     @project_data_child = ProjectDataChild.new
+    @project_data_children_no_valid = []
   end
 
   # GET /project_data_children/1/edit
@@ -167,14 +169,14 @@ class ProjectDataChildrenController < ApplicationController
         filter_children.each do |filter_child|
           filter_parts = filter_child.split('|')
           data = data.where("properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+" '"+filter_parts[2]+"'")
-        end    
+        end
       end
 
       # Aplica filtros de usuario de hijos
       if !filter_user_children.blank?
         filter_user_children.each do |filter_child|
           data = data.where("user_id = "+filter_child)
-        end    
+        end
       end
 
       # Agrupa los hijos por padre
@@ -239,6 +241,56 @@ class ProjectDataChildrenController < ApplicationController
     end
   end
 
+  def import
+    @project_type = current_user.project_types.find(params[:project_type_id])
+
+    @project_data_children_no_valid = []
+
+    is_from_file = params[:file].present?
+    is_from_form = params[:data_children].present?
+
+    if !is_from_file && !is_from_form
+      flash.now[:alert] = "Archivo es requerido"
+      render action: :new
+      return
+    end
+
+    begin
+      if is_from_file
+        file = File.read(params[:file].path)
+        data_hash = JSON.parse(file)
+      elsif is_from_form
+        data_hash = params[:data_children]
+      end
+
+      @project_data_children = ProjectDataChildrenImport.new
+      @project_data_children.current_user = current_user
+      @project_data_children.project_type = @project_type
+      @project_data_children.entries = data_hash
+      @project_data_children_no_valid = @project_data_children.save
+
+      if @project_data_children_no_valid.length == 0
+        message = is_from_file ? "Se procesaron #{@project_data_children.entries.length} registros correctamente" : "Se han cargado los registros exitosamente"
+        redirect_to new_project_type_data_children_path(@project_type), flash: { notice: message }
+      else
+        create_errors_file(@project_data_children_no_valid, @project_type)
+        flash.now[:alert] = "Se encontraron #{@project_data_children_no_valid.length} registros sin procesar"
+        render action: :new
+        return
+      end
+    rescue => e
+
+      flash.now[:alert] = "Archivo seleccionado no tiene el formato JSON"
+      render action: :new
+      return
+    end
+  end
+
+  def download_errors
+    @project_type = current_user.project_types.find(params[:project_type_id])
+    send_file "public/import_data_children_for_#{@project_type.id}_errors.json", type: 'application/json', status: 202
+  end
+
   private
     def set_project
       @project = Project.find(params[:project_id])
@@ -252,5 +304,18 @@ class ProjectDataChildrenController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def project_data_child_params
       params.require(:project_data_child).permit(:properties, :project_id, :project_field_id)
+    end
+
+    def create_errors_file(data_children_with_errors, project_type)
+      errors = []
+      data_children_with_errors.each do |data_child_with_errors|
+        jsonObject = data_child_with_errors.serializable_hash.as_json
+        jsonObject[:errors] = data_child_with_errors.errors.messages
+        errors << jsonObject
+      end
+
+      File.open("public/import_data_children_for_#{project_type.id}_errors.json","w") do |f|
+        f.write(JSON.pretty_generate(errors))
+      end
     end
 end
