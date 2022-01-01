@@ -3648,7 +3648,7 @@ function edit_file(edit_parent, edit_child, edit_status){
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
       $('#text_toast').html(data['status']);
-      $('.toast').toast('show');
+      $('#toast').toast('show');
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       
@@ -3736,7 +3736,7 @@ function change_owner(){
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
       $('#text_toast').html(data['status']);
-      $('.toast').toast('show');
+      $('#toast').toast('show');
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       //Ajustar valor en la tabla
@@ -3774,7 +3774,7 @@ function disable_file(){
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
       $('#text_toast').html(data['status']);
-      $('.toast').toast('show');
+      $('#toast').toast('show');
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       //elimina las filas de la tabla
@@ -3807,7 +3807,7 @@ function delete_file(){
       $('#alert_message').removeClass('d-none');
       $("#info-modal").modal("hide");
       $('#text_toast').html(data['status']);
-      $('.toast').toast('show');
+      $('#toast').toast('show');
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
       //elimina las filas de la tabla

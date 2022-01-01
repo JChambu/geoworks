@@ -253,6 +253,7 @@ function open_panel(id_panel,id_table){
               <%= link_to project_type_filters_path(@project_type.id), class: 'dropdown-item custom-item', id: "filter",:remote => true do %> <i class="fas fa-filter align-middle" title="Filtrar" style="font-size: 20px"></i> <% end %>
               <div class="dropdown-divider"></div>
               <%= link_to project_type_heatmap_path(@project_type.id), class: 'dropdown-item custom-item', id: "heatmap", :remote=> true do %> <i class="fas fa-fire align-middle" title="Mapa de Calor" style="font-size: 20px"></i> <% end %>
+              <%= link_to project_type_interpolation_path(@project_type.id), class: 'dropdown-item custom-item', id: "interpolation", :remote=> true do %> <i class="fas fa-grip-horizontal align-middle" title="Interpolar" style="font-size: 20px"></i> <% end %>
               <!--<%= link_to project_type_point_colors_path(@project_type.id), class: 'dropdown-item custom-item', id: "point_colors", :remote=> true do %> <i class="fas fa-spinner align-middle" title="Colorear Puntos" style="font-size: 20px"></i> <% end %>-->
             </div>
           </li>

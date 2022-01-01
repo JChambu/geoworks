@@ -7,12 +7,12 @@ $(document).on('click', '.typef', function(event) {
 
     tr.find('.choice_list').css("display", "block");
     tr.find('.sub_form').css("display", "none");
-
+    
   } else if (option == 7) { // Sub-formulario
 
     tr.find('.sub_form').css("display", "block");
     tr.find('.choice_list').css("display", "none");
-
+    
   } else {
 
     tr.find('.sub_form').css("display", "none");

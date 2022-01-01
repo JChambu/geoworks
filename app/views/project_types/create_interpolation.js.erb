@@ -1,0 +1,39 @@
+// Levanta los datos
+var interpolation_field = '<%= params[:q][:project_field] %>';
+var breaks = [];
+breaks.push($('#intermin_0').val());
+$('.intermax').each(function(){
+  breaks.push($(this).val())
+});
+var colors = [];
+$('.intercolor').each(function(){
+  colors.push($(this).val())
+});
+var weight = $('#p_coefficient').val();
+var celd_size = $('#celd_size').val();
+var field_name = $('#interpolation_field').find('option:selected').text();
+if($('#sub_interpolation_operator').hasClass('d-none')){
+  var is_subform = false;
+  var sub_values = [];
+} else {
+  var is_subform = true;
+  var sub_values = $('#sub_interpolation_operator').attr('sub_values');
+}
+var rangos_valid = true;
+breaks.forEach(function(break_limit){
+  console.log("break_limit "+break_limit)
+  console.log()
+  if(break_limit == "" || isNaN(break_limit)){
+    rangos_valid = false;
+  }
+})
+
+if(interpolation_field != "" && weight!="" && celd_size!="" && breaks.length>=2 && rangos_valid ){
+  // Elimina el modal
+  $("#interpolation-modal").remove();
+  $('.modal-backdrop').remove();
+  
+  
+  // Lanza la función
+  Navarra.geomaps.interpolate(interpolation_field,breaks,colors,celd_size,weight,false,field_name,is_subform,sub_values);
+}

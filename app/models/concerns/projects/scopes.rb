@@ -10,6 +10,11 @@ module Projects::Scopes
       project_type_id = params[:project_type_id]
       data = []
 
+      puts "Datos que llegan a scope"
+      puts table
+      puts field_key
+      puts project_type_id
+
       if table == 'Formularios'
 
         field = ProjectField

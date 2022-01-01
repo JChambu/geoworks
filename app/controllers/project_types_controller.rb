@@ -190,7 +190,7 @@ class ProjectTypesController < ApplicationController
         .where(projects: {project_type_id: project_type_id})
         .pluck(:id)
         .uniq
-      
+
       @table = 'subform_filter'
     else
       @field_name = helpers.get_name_from_key(params[:q][:project_field]).name
@@ -411,14 +411,14 @@ class ProjectTypesController < ApplicationController
           filter_children.each do |filter_child|
             filter_parts = filter_child.split('|')
             children_data = children_data.where("properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+" '"+filter_parts[2]+"'")
-          end    
+          end
         end
 
         # Aplica filtros de usuario de hijos
         if !filter_user_children.blank?
           filter_user_children.each do |filter_child|
             children_data = children_data.where("user_id = "+filter_child)
-          end    
+          end
         end
 
         children_data_array = []
@@ -611,8 +611,11 @@ class ProjectTypesController < ApplicationController
     render json: data
   end
 
-  def search_data_dashboard
-
+  def search_data_dashboard 
+    # parámetros para utilizar este método en la búsqueda de interpolación
+    is_interpolate = params[:is_interpolate]
+    interpolate_field = params[:interpolate_field]
+    # terminan parámetros de interpolación
     project_type_id = params[:project_type_id]
     offset_rows = params[:offset_rows]
     per_page_value = params[:per_page_value]
@@ -626,8 +629,13 @@ class ProjectTypesController < ApplicationController
     from_date = params[:from_date]
     to_date = params[:to_date]
 
+    if is_interpolate
+      select_text = "main.properties->>'"+interpolate_field+"' as interpolate_field, main.id";
+    else
+      select_text = 'DISTINCT main.* , project_statuses.color , public.users.name';
+    end
     data = Project
-      .select('DISTINCT main.* , project_statuses.color , public.users.name')
+      .select(select_text)
       .from('projects main')
       .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
       .joins('INNER JOIN public.users ON users.id = main.user_id')
@@ -760,41 +768,48 @@ class ProjectTypesController < ApplicationController
       data = data.where("main.id IN #{final_array}")
     end
 
-    # Aplica búsqueda del usuario
-    if !filter_by_column.blank? && !filter_value.blank?
-      data = data.where("TRANSLATE(main.properties ->> '#{filter_by_column}','ÁÉÍÓÚáéíóú','AEIOUaeiou') ilike translate('%#{filter_value}%','ÁÉÍÓÚáéíóú','AEIOUaeiou')")
-    end
+    if is_interpolate
+    
+      render json: {"data": data}
 
-    # Aplica órden de los registros
-    if !order_by_column.blank?
-      field = ProjectField.where(key: order_by_column, project_type_id: project_type_id).first
-
-      # TODO: se deben corregir los errores ortográficos almacenados en la db
-      if field.field_type.name == 'Numérico' || field.field_type.name == 'Numerico'
-        data = data
-          .except(:select).select("DISTINCT main.*, (main.properties ->> '#{order_by_column}')::numeric AS order")
-          .order("(main.properties ->> '#{order_by_column}')::numeric")
-      elsif field.field_type.name == 'Fecha'
-        data = data
-          .except(:select).select("DISTINCT main.*, (main.properties ->> '#{order_by_column}')::date AS order")
-          .order("(main.properties ->> '#{order_by_column}')::date")
-      else
-        data = data
-          .except(:select).select("DISTINCT main.*, main.properties ->> '#{order_by_column}' AS order")
-          .order("main.properties ->> '#{order_by_column}'")
-      end
     else
-      data = data.order("main.id")
-    end
+    
+      # Aplica búsqueda del usuario
+      if !filter_by_column.blank? && !filter_value.blank?
+        data = data.where("TRANSLATE(main.properties ->> '#{filter_by_column}','ÁÉÍÓÚáéíóú','AEIOUaeiou') ilike translate('%#{filter_value}%','ÁÉÍÓÚáéíóú','AEIOUaeiou')")
+      end
 
-    # Aplica limit y offset para paginar
-    if !offset_rows.blank? && !per_page_value.blank?
-      data = data
-        .offset(offset_rows.to_i)
-        .limit(per_page_value.to_i)
-    end
+      # Aplica órden de los registros
+      if !order_by_column.blank?
+        field = ProjectField.where(key: order_by_column, project_type_id: project_type_id).first
 
-    render json: {"data": data}
+        # TODO: se deben corregir los errores ortográficos almacenados en la db
+        if field.field_type.name == 'Numérico' || field.field_type.name == 'Numerico'
+          data = data
+            .except(:select).select("DISTINCT main.*, (main.properties ->> '#{order_by_column}')::numeric AS order")
+            .order("(main.properties ->> '#{order_by_column}')::numeric")
+        elsif field.field_type.name == 'Fecha'
+          data = data
+            .except(:select).select("DISTINCT main.*, (main.properties ->> '#{order_by_column}')::date AS order")
+            .order("(main.properties ->> '#{order_by_column}')::date")
+        else
+          data = data
+            .except(:select).select("DISTINCT main.*, main.properties ->> '#{order_by_column}' AS order")
+            .order("main.properties ->> '#{order_by_column}'")
+        end
+      else
+        data = data.order("main.id")
+      end
+
+      # Aplica limit y offset para paginar
+      if !offset_rows.blank? && !per_page_value.blank?
+        data = data
+          .offset(offset_rows.to_i)
+          .limit(per_page_value.to_i)
+      end
+
+      render json: {"data": data}
+    end
   end
 
   def search_report_data
@@ -992,6 +1007,9 @@ class ProjectTypesController < ApplicationController
   def heatmap
   end
 
+  def interpolation
+  end
+
   def point_colors
   end
 
@@ -1010,6 +1028,9 @@ class ProjectTypesController < ApplicationController
   end
 
   def create_heatmap
+  end
+
+  def create_interpolation
   end
 
   def filter_heatmap
@@ -1208,7 +1229,7 @@ class ProjectTypesController < ApplicationController
 
   def project_type_params
     params.require(:project_type).permit(
-      :name, :type_file, :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color,
+      :name, :type_file, :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color, :notification_email,
       :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition, :enable_period, :level,
       project_fields_attributes: [
         :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,

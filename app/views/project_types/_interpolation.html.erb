@@ -1,0 +1,65 @@
+<div id="interpolation-modal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h4 class="modal-title"> Interpolación </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+
+      <%= form_tag project_type_create_interpolation_path, :remote => true, :method => :get   do |f| %>
+
+        <div class="modal-body">          
+            <div id="interpolacion_formularios">
+              <div class="d-flex">
+                <label class="col-form-label-sm text-left mr-3 mb-0 w-75">Campo a Interpolar</label>
+              </div>
+              <div class="d-flex">
+                <%=select_tag 'q[project_field]',  options_for_select(interpolation_field_for_select), include_blank: true, class:'form-control form-control-sm mr-3 w-75' , id:'interpolation_field'%>
+                <select class="form-control form-control-sm mr-3 w-25 d-none" id="sub_interpolation_operator">
+                  <option value="sum">Suma</option>
+                  <option value="pro">Promedio</option>
+                  <option value="max">Máximo</option>
+                  <option value="min">Mínimo</option>
+                </select>
+              </div>
+              <div class="d-flex">
+                <label class="col-form-label-sm text-left mr-3 mb-0 w-25">Coeficiente P</label>
+                <label class="col-form-label-sm text-left mr-3 mb-0 w-25">Tamaño celda</label>
+                <label class="col-form-label-sm text-left mr-3 mb-0 w-25">Nº Rangos</label>
+                <label class="col-form-label-sm text-left mr-3 mb-0 w-10">Paleta</label>   
+              </div>
+              <div class="d-flex">
+                <input type="number" class="form-control form-control-sm w-25 mr-3" id="p_coefficient" step="any" value="10">
+                <input type="number" class="form-control form-control-sm w-25 mr-3" id="celd_size" step="any">
+                <input type="number" min="2" max="20" class="form-control form-control-sm w-25 mr-3" id="range_number" value=3 step="1" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                <div class="nav-item dropdown w-10">
+                  <a class="dropdown-toggle nocaret" href="#" id="palette_selector" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <i class="fas fa-palette align-middle" title="Menú" style="font-size: 22px"></i>
+                  </a>
+                  <div class="dropdown-menu text-center p-2 pt-3" aria-labelledby="palette_selector" style="z-index: 2000;width: 230px; margin-top:-20px; margin-left:180%;max-height: 45vh; overflow-y:auto;">
+                    <div class="text-right mr-3 mb-2">
+                      <i class="fas fa-sync-alt align-middle custom_cursor" id="invert_palettes" title="Invertir paletas"></i>
+                    </div>
+                    <div id="palette_selector_dropdown"></div>
+                  </div>
+                </div>
+
+              </div>
+              <div id="interpolation_range" style="max-height: 40vh; overflow-y:auto"></div>
+            </div>
+          </div>
+
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary text-right", value: 'Guardar' %>
+        </div>
+
+      <% end %>
+
+    </div>
+  </div>
+</div>
+
+
