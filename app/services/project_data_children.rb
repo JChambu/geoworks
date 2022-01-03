@@ -4,7 +4,7 @@ class ProjectDataChildren
 
   VALID_FIELD_TYPE_ID = FieldType::SUBFORM
 
-  attr_accessor :project_type, :project_id, :project_field_id, :properties, :user_id, :gwm_created_at
+  attr_accessor :project_type, :project_id, :project_field_id, :properties, :user_id, :gwm_created_at, :ignore_duplicated
 
   validates :project_type, :project_field_id, :properties, presence: true
 
@@ -13,6 +13,7 @@ class ProjectDataChildren
   validate :verify_properties
   validate :verify_gwm_created_at
   validate :verify_user
+  validate :verify_duplication
 
   def attributes
     {
@@ -103,5 +104,20 @@ class ProjectDataChildren
     return true unless user_id.present?
     user = project_type.users.find_by(id: user_id)
     errors.add(:user_id, "No pertenece a #{project_type&.name}") unless user
+  end
+
+  def verify_duplication
+    return true if ignore_duplicated.present?
+    
+    already_exist = ProjectDataChild.find_by(
+      properties: properties,
+      project_id: project_id,
+      project_field_id: project_field_id,
+      user_id: user_id
+    )
+
+    if already_exist
+      errors.add(:project_data_child, "Data child ya existe, ¿Desea volver a incluirlo?")
+    end
   end
 end
