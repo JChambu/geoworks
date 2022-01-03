@@ -57,18 +57,18 @@ class ProjectDataChildrenController < ApplicationController
       if is_interpolate
 
       else
-  
+
         father_field = ProjectField.where(id: pfid).pluck(:name).first
-  
-  
+
+
         # head
         # # # # # # # # # # # # # #
-  
+
         child_fields = ProjectSubfield.where(project_field_id: pfid).order(:sort)
         child_fields_array = []
-  
+
         child_fields.each do |c_field|
-  
+
           # Si el rol del usuario está dentro de los roles que pueden ver el campo (o no hay ningún rol configurado), el campo se agrega al json
           roles_read = (JSON.parse(c_field.roles_read)).reject(&:blank?)
           if roles_read.include?(@user_rol.to_s) || roles_read.blank?
@@ -76,7 +76,7 @@ class ProjectDataChildrenController < ApplicationController
           else
             c_can_read = false
           end
-  
+
           # Si el rol del usuario está seleccionado o sino hay ningún rol seteado, se puede editar
           roles_edit = (JSON.parse(c_field.roles_edit)).reject(&:blank?)
           if roles_edit.include?(@user_rol.to_s) || roles_edit.blank?
@@ -84,22 +84,22 @@ class ProjectDataChildrenController < ApplicationController
           else
             c_can_edit = false
           end
-  
+
           if c_field.field_type_id == 10 || c_field.field_type_id == 2
-  
+
             id = c_field.choice_list_id
-  
+
             other_possible_values = []
             choice_list = ChoiceList.find(id)
             choice_list_item  = ChoiceListItem.where(choice_list_id: choice_list.id)
             sorted_choice_list_items = choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items
-  
+
             # Arma el objeto
             sorted_choice_list_items.each do |row|
-  
+
               # Si tiene listados anidados, los agrega
               if !row.nested_list_id.nil?
-  
+
                 @nested_items = []
                 nested_choice_list = ChoiceList.find(row.nested_list_id)
                 nested_choice_list_item  = ChoiceListItem.where(choice_list_id: nested_choice_list.id)
@@ -111,11 +111,11 @@ class ProjectDataChildrenController < ApplicationController
               else
                 other_possible_values << { "id": row.id, "name": row.name }
               end
-  
+
             end
-  
+
           end
-  
+
           c_data_hash = {}
           c_data_hash['field_id'] = c_field.id
           c_data_hash['name'] = c_field.name
@@ -128,9 +128,9 @@ class ProjectDataChildrenController < ApplicationController
           c_data_hash['hidden'] = c_field.hidden
           c_data_hash['data_script'] = c_field.data_script
           c_data_hash['calculated_field'] = c_field.calculated_field
-  
+
           child_fields_array.push(c_data_hash)
-  
+
         end
 
       end
@@ -262,7 +262,7 @@ class ProjectDataChildrenController < ApplicationController
       elsif is_from_form
         data_hash = params[:data_children]
       end
-
+      
       @project_data_children = ProjectDataChildrenImport.new
       @project_data_children.current_user = current_user
       @project_data_children.project_type = @project_type
