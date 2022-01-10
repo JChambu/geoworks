@@ -1526,7 +1526,7 @@ function get_zoomextent(){
     var from_date = Navarra.project_types.config.from_date;
     var to_date = Navarra.project_types.config.to_date;
     $.ajax({
-      type: 'GET',
+      type: 'POST',
       url: '/project_types/get_extent',
       datatype: 'json',
       data: {
