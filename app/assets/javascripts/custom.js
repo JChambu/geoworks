@@ -1388,7 +1388,7 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
     xhr_table.abort();
   }
   xhr_table = $.ajax({
-    type: 'GET',
+    type: 'POST',
     url: '/project_types/search_data_dashboard',
     datatype: 'json',
     data: {
@@ -1494,7 +1494,7 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
         xhr_table_search.abort();
       }
       xhr_table_search = $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: '/project_types/search_data_dashboard',
         datatype: 'json',
         data: {
