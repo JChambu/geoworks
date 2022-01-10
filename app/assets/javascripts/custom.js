@@ -98,7 +98,7 @@ function init_kpi(size_box = null) {
       })   
       // indicadores por default
       xhr_kpi[0] = $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: '/project_types/kpi.json',
         datatype: 'json',
         data: {
@@ -126,7 +126,7 @@ function init_kpi(size_box = null) {
             // indicadores generados por el usuario
             indicators_id.forEach(function(indicator_id,index_kpi){   
               xhr_kpi[index_kpi+1] = $.ajax({
-                type: 'GET',
+                type: 'POST',
                 url: '/project_types/kpi.json',
                 datatype: 'json',
                 data: {
@@ -277,7 +277,7 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
       xhr_chart.abort();
     }
     xhr_chart = $.ajax({
-      type: 'GET',
+      type: 'POST',
       url: '/project_types/kpi.json',
       datatype: 'json',
       data: {

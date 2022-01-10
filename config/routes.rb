@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   patch 'table_configurations/edit_table'
   get 'project_types/maps' => 'project_types#maps'
   get 'project_types/search_name_layer' => 'project_types#search_name_layer'
-  get 'project_types/kpi' => 'project_types#kpi'
+  post 'project_types/kpi' => 'project_types#kpi'
   get 'project_types/search_data_dashboard' => 'project_types#search_data_dashboard'
   get 'project_types/create_quick_filters_users_subform' => 'project_types#create_quick_filters_users_subform'
   get 'project_types/search_father_children_and_photos_data' => 'project_types#search_father_children_and_photos_data'
