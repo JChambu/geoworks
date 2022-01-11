@@ -325,11 +325,12 @@ module ProjectTypes::Indicators
         if final_array.blank?
           final_array.push(-1)
         end
-        final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
+        final_array_in = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
+        final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')').gsub(',', '),(')
         if sql_full.blank?
-          data = data.where("main.id IN #{final_array}")
+          data = data.where("main.id IN #{final_array_in}")
         else
-          data = data.gsub('where_clause', "where_clause (main.id IN #{final_array}) AND ")
+          data = data.gsub('from_clause', "from_clause INNER JOIN (VALUES #{final_array} ) vals(v) ON (main.id = v) ")
           # Aplica filtros de hijos a los hijos
           # Aplica filtros por hijos
           if !filter_children.blank?
@@ -792,11 +793,12 @@ module ProjectTypes::Indicators
           final_array.push(-1)
         end
         
-        final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
+        final_array_in = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
+        final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')').gsub(',', '),(')
         if sql_full.blank?
-          query_full = query_full.where("main.id IN #{final_array}")
+          query_full = query_full.where("main.id IN #{final_array_in}")
         else
-          query_full = query_full.gsub('where_clause', "where_clause (main.id IN #{final_array}) AND ")
+          query_full = query_full.gsub('from_clause', "from_clause INNER JOIN (VALUES #{final_array} ) vals(v) ON (main.id = v) ")
           # Aplica filtros de hijos a los hijos
           # Aplica filtros por hijos
           if !filter_children.blank?
