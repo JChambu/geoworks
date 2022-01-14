@@ -108,12 +108,13 @@ class ProjectDataChildren
 
   def verify_duplication
     return true if ignore_duplicated.present?
-    
+
     already_exist = ProjectDataChild.find_by(
       properties: properties,
       project_id: project_id,
       project_field_id: project_field_id,
-      user_id: user_id
+      user_id: user_id,
+      row_active: true
     )
 
     if already_exist
