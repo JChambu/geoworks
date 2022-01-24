@@ -292,7 +292,7 @@ $(document).ready(function() {
 
 function resize_table_project_types(){
   // Establece el alto de la tabla de atributos según la resolución de pantalla
-  if($('thead_edit_table').offset() != undefined){
+  if($('#thead_edit_table').offset() != undefined){
     var height_browser = window.innerHeight
     var head_height = $("#thead_edit_table").outerHeight();
     var button_group_height = $("#button_container_project_type").outerHeight();
