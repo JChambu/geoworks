@@ -292,11 +292,13 @@ $(document).ready(function() {
 
 function resize_table_project_types(){
   // Establece el alto de la tabla de atributos según la resolución de pantalla
-  var height_browser = window.innerHeight
-  var head_height = $("#thead_edit_table").outerHeight();
-  var button_group_height = $("#button_container_project_type").outerHeight();
-  var thead_position = $("#thead_edit_table").offset().top;
-  var height_navbar = $("#nav_bar").outerHeight();
-  var height_table = parseInt(height_browser - thead_position - head_height -button_group_height - height_navbar + 10)+"px";
-  $(".table-tbody-scroll, tbody").css("height", height_table);
+  if($('thead_edit_table').offset() != undefined){
+    var height_browser = window.innerHeight
+    var head_height = $("#thead_edit_table").outerHeight();
+    var button_group_height = $("#button_container_project_type").outerHeight();
+    var thead_position = $("#thead_edit_table").offset().top;
+    var height_navbar = $("#nav_bar").outerHeight();
+    var height_table = parseInt(height_browser - thead_position - head_height -button_group_height - height_navbar + 10)+"px";
+    $(".table-tbody-scroll, tbody").css("height", height_table);
+  }
 }

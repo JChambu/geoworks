@@ -1933,6 +1933,7 @@ function set_time_slider_filter() {
   Navarra.geomaps.get_zoomextent();
   // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
   Navarra.geomaps.current_layer();
+  Navarra.geomaps.wms_filter();
   // Fuerza el rearmado de la tabla
     data_dashboard = "";
     init_data_dashboard(false,false);

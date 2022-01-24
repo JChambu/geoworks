@@ -506,7 +506,7 @@ module ProjectTypes::Indicators
           data = data.gsub('where_layer_clause', "")
           data = data.gsub('where_subform_clause', "")
           @data = @data.sub('where_clause', "")
-          @data = @data.sub('where_clause_layer', "")
+          @data = @data.sub('where_layer_clause', "")
           @data = @data.gsub('where_subform_clause', "")
           data = data.gsub('from_clause', "")
           data = ActiveRecord::Base.connection.execute(data)
