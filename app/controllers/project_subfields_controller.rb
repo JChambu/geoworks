@@ -1,5 +1,17 @@
 class ProjectSubfieldsController < ApplicationController
 
+  def index
+    project_type = ProjectType.find(params[:project_type_id])
+    project_field = project_type.project_fields.find(params[:project_field_id])
+    if request.xhr?
+      respond_to do |format|
+        format.json {
+          render json: { project_subfields: project_field.project_subfields }
+        }
+      end
+    end
+  end
+
   def  edit_multiple
       @project_type_id = params[:project_type_id]
       @project_field_id = params[:project_field_id]

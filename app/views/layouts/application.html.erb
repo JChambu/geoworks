@@ -10,6 +10,7 @@
   <% else %>
     <body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action] %>" class="nav-sm  dashboard">
       <%= render partial: 'layouts/header_new' %>
+      <%= yield :javascript %>
     </body>
   <% end %>
 </html>
