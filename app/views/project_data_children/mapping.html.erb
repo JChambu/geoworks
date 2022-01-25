@@ -1,0 +1,76 @@
+<div class="card m-2 shadow">
+  <div class="card-body">
+    <div class="row justify-content-center">
+      <h2 class="m-0">Definir campos a importar</h2>
+    </div>
+    <div class="row">
+      <%= form_with url: import_project_type_data_children_path(@project_type), local: true, method: :post do |f| %>
+        <div class="my-4">
+          <%= f.label :'mapping[project_id]', 'Define cual es el padre:', class:'text-right col-form-label' %>
+          <%= f.select :'mapping[project_id]', @file_headers, { include_blank: true } %>
+        </div>
+        <div class="my-4">
+          <%= f.label :'mapping[gwm_created_at]', 'Define cual es la fecha y el formato:', class:'text-right col-form-label' %>
+          <%= f.select :'mapping[gwm_created_at]', @file_headers, { include_blank: true } %>
+          <%= f.select :'mapping[gwm_created_at_format]', ["YYYY-MM-DD", "DD-MM-YYYY", "MM-DD-YYYY"], { include_blank: true }  %>
+        </div>
+        <div class="my-4">
+          <%= f.label :'mapping[project_field_id]', 'Define cual es el project field:', class:'text-right col-form-label' %>
+          <%= f.select :'mapping[project_field_id]', @project_fields.map{|field| [field.name, field.id]}, { include_blank: true }, { id: "project_field_id" } %>
+        </div>
+        <div class="my-4">
+          <%= f.label :'mapping[user_id]', 'Define cual es el usuario:', class:'text-right col-form-label' %>
+          <%= f.select :'mapping[user_id]', @file_headers, { include_blank: true } %>
+        </div>
+        <div class="">
+          <h2 class="m-0">Define el mapping de los campos a importar</h2>
+          <% @file_headers.each do |header| %>
+            <div class="">
+              <%= f.label "mapping[data_child][#{header}]", header, class:'text-right col-form-label' %>
+              <%= f.select "mapping[data_child][#{header}]", [], { include_blank: true }, { class: "project_subfield_id" } %>
+            </div>
+          <% end %>
+        </div>
+        <div class="row justify-content-center">
+          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), new_project_type_data_children_path, :class => 'btn btn-secondary mr-1' %>
+          <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Corregir", disable_with: 'Guardando...' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+<% content_for :javascript do %>
+  <script type='text/javascript'>
+    $("#project_field_id").change(function(){
+      	var project_field_id = $(this).val();
+      	if (project_field_id == ''){
+      		// $("#project_field_id").prop("disabled", true);
+      	} else {
+      		// $("#project_field_id").prop("disabled", false);
+      	}
+
+        var url = "<%= project_type_project_field_project_subfields_path(@project_type.id, 0) %>".replace("0", project_field_id);
+
+      	$.ajax({
+    	    url: url,
+    	    method: "GET",
+    	    dataType: "json",
+    	    error: function (xhr, status, error) {
+    	      	console.error('AJAX Error: ' + status + error);
+    	    },
+    	    success: function (response) {
+    	      var project_subfields = response["project_subfields"];
+            $(".project_subfield_id").each(function(i, el) {
+              var $el = $(el);
+              $el.empty();
+              $el.append('<option></option>');
+              var options = project_subfields.map(function(subfield) {
+                  return '<option value="' + subfield["id"] + '">' + subfield["name"] + '</option>'
+                }).join(',');
+              $el.append(options);
+            });
+    	    }
+      	});
+    });
+  </script>
+<% end %>

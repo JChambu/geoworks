@@ -19,6 +19,9 @@ class ProjectDataChildrenController < ApplicationController
   # GET /project_data_children/new
   def new
     @project_type = current_user.project_types.find(params[:project_type_id])
+    path_to_file = temp_import_file_path(@project_type.id, current_user.id)
+    File.delete(path_to_file) if File.exist?(path_to_file)
+
     @project_data_child = ProjectDataChild.new
     @project_data_children_no_valid = []
   end
@@ -57,18 +60,18 @@ class ProjectDataChildrenController < ApplicationController
       if is_interpolate
 
       else
-  
+
         father_field = ProjectField.where(id: pfid).pluck(:name).first
-  
-  
+
+
         # head
         # # # # # # # # # # # # # #
-  
+
         child_fields = ProjectSubfield.where(project_field_id: pfid).order(:sort)
         child_fields_array = []
-  
+
         child_fields.each do |c_field|
-  
+
           # Si el rol del usuario está dentro de los roles que pueden ver el campo (o no hay ningún rol configurado), el campo se agrega al json
           roles_read = (JSON.parse(c_field.roles_read)).reject(&:blank?)
           if roles_read.include?(@user_rol.to_s) || roles_read.blank?
@@ -76,7 +79,7 @@ class ProjectDataChildrenController < ApplicationController
           else
             c_can_read = false
           end
-  
+
           # Si el rol del usuario está seleccionado o sino hay ningún rol seteado, se puede editar
           roles_edit = (JSON.parse(c_field.roles_edit)).reject(&:blank?)
           if roles_edit.include?(@user_rol.to_s) || roles_edit.blank?
@@ -84,22 +87,22 @@ class ProjectDataChildrenController < ApplicationController
           else
             c_can_edit = false
           end
-  
+
           if c_field.field_type_id == 10 || c_field.field_type_id == 2
-  
+
             id = c_field.choice_list_id
-  
+
             other_possible_values = []
             choice_list = ChoiceList.find(id)
             choice_list_item  = ChoiceListItem.where(choice_list_id: choice_list.id)
             sorted_choice_list_items = choice_list_item.sort { |x, y| x[:name] <=> y[:name] } # Ordena los items
-  
+
             # Arma el objeto
             sorted_choice_list_items.each do |row|
-  
+
               # Si tiene listados anidados, los agrega
               if !row.nested_list_id.nil?
-  
+
                 @nested_items = []
                 nested_choice_list = ChoiceList.find(row.nested_list_id)
                 nested_choice_list_item  = ChoiceListItem.where(choice_list_id: nested_choice_list.id)
@@ -111,11 +114,11 @@ class ProjectDataChildrenController < ApplicationController
               else
                 other_possible_values << { "id": row.id, "name": row.name }
               end
-  
+
             end
-  
+
           end
-  
+
           c_data_hash = {}
           c_data_hash['field_id'] = c_field.id
           c_data_hash['name'] = c_field.name
@@ -128,9 +131,9 @@ class ProjectDataChildrenController < ApplicationController
           c_data_hash['hidden'] = c_field.hidden
           c_data_hash['data_script'] = c_field.data_script
           c_data_hash['calculated_field'] = c_field.calculated_field
-  
+
           child_fields_array.push(c_data_hash)
-  
+
         end
 
       end
@@ -241,24 +244,64 @@ class ProjectDataChildrenController < ApplicationController
     end
   end
 
+  def read_file
+    @project_type = current_user.project_types.find(params[:project_type_id])
+    if params[:file].blank?
+      flash.now[:alert] = "Archivo es requerido"
+      render action: :new
+      return
+    end
+    begin
+      content = File.read(params[:file].path)
+      File.open(temp_import_file_path(@project_type.id, current_user.id),"w") do |f|
+        f.write(content)
+      end
+      redirect_to mapping_project_type_data_children_path(@project_type)
+    rescue => e
+      flash.now[:alert] = "Archivo seleccionado no tiene el formato csv"
+      render action: :new
+      return
+    end
+  end
+
+  def mapping
+    @project_type = current_user.project_types.find(params[:project_type_id])
+    path_to_file = temp_import_file_path(@project_type.id, current_user.id)
+    redirect_to action: :new and return unless File.exist?(path_to_file)
+    content = File.read(temp_import_file_path(@project_type.id, current_user.id))
+    csv = CSV.new(content)
+    @file_headers = csv.to_a[0]
+    @project_fields = @project_type.project_fields
+  end
+
   def import
     @project_type = current_user.project_types.find(params[:project_type_id])
 
     @project_data_children_no_valid = []
 
-    is_from_file = params[:file].present?
     is_from_form = params[:data_children].present?
 
-    if !is_from_file && !is_from_form
+    path_to_temp_file = temp_import_file_path(@project_type.id, current_user.id)
+    is_from_file = File.exist?(path_to_temp_file)
+
+    if !is_from_form && !is_from_file
       flash.now[:alert] = "Archivo es requerido"
       render action: :new
       return
     end
 
+    mapping = nil
     begin
       if is_from_file
-        file = File.read(params[:file].path)
-        data_hash = JSON.parse(file)
+        lines = CSV.open(temp_import_file_path(@project_type.id, current_user.id)).readlines
+        keys = lines.delete lines.first
+
+        mapping = params[:mapping]
+
+        data_hash = lines.map do |values|
+          Hash[keys.zip(values)]
+        end
+        File.delete(path_to_temp_file)
       elsif is_from_form
         data_hash = params[:data_children]
       end
@@ -267,6 +310,7 @@ class ProjectDataChildrenController < ApplicationController
       @project_data_children.current_user = current_user
       @project_data_children.project_type = @project_type
       @project_data_children.entries = data_hash
+      @project_data_children.mapping = mapping
       @project_data_children_no_valid = @project_data_children.save
 
       if @project_data_children_no_valid.length == 0
@@ -275,11 +319,9 @@ class ProjectDataChildrenController < ApplicationController
       else
         create_errors_file(@project_data_children_no_valid, @project_type)
         flash.now[:alert] = "Se encontraron #{@project_data_children_no_valid.length} registros sin procesar"
-        render action: :new
         return
       end
     rescue => e
-
       flash.now[:alert] = "Archivo seleccionado no tiene el formato JSON"
       render action: :new
       return
@@ -317,5 +359,9 @@ class ProjectDataChildrenController < ApplicationController
       File.open("public/import_data_children_for_#{project_type.id}_errors.json","w") do |f|
         f.write(JSON.pretty_generate(errors))
       end
+    end
+
+    def temp_import_file_path(project_type_id, user_id)
+      "public/importing_data_children_for_#{project_type_id}_from_user_#{user_id}.csv"
     end
 end

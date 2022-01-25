@@ -94,6 +94,7 @@ Rails.application.routes.draw do
         resources :project_data_children
       end
       resources :project_fields do
+        resources :project_subfields, only: [:index]
         resource :project_subfields do
           collection do
             get :edit_multiple
@@ -107,6 +108,8 @@ Rails.application.routes.draw do
       end
 
       resource :data_children, only: [:new], controller: :project_data_children do
+        post :read_file
+        get :mapping
         post :import
         get :import, to: redirect{ |path_params, req| "/#{path_params[:locale]}/project_types/#{path_params[:project_type_id]}/data_children/new"}
         get 'import/download_errors', controller: :project_data_children, action: :download_errors
