@@ -272,6 +272,7 @@ class ProjectDataChildrenController < ApplicationController
     csv = CSV.new(content)
     @file_headers = csv.to_a[0]
     @project_fields = @project_type.project_fields
+    @locale = params[:locale]
   end
 
   def import
