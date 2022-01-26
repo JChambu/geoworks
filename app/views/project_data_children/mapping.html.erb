@@ -1,76 +1,188 @@
-<div class="card m-2 shadow">
-  <div class="card-body">
-    <div class="row justify-content-center">
-      <h2 class="m-0">Definir campos a importar</h2>
-    </div>
-    <div class="row">
-      <%= form_with url: import_project_type_data_children_path(@project_type), local: true, method: :post do |f| %>
-        <div class="my-4">
-          <%= f.label :'mapping[project_id]', 'Define cual es el padre:', class:'text-right col-form-label' %>
-          <%= f.select :'mapping[project_id]', @file_headers, { include_blank: true } %>
-        </div>
-        <div class="my-4">
-          <%= f.label :'mapping[gwm_created_at]', 'Define cual es la fecha y el formato:', class:'text-right col-form-label' %>
-          <%= f.select :'mapping[gwm_created_at]', @file_headers, { include_blank: true } %>
-          <%= f.select :'mapping[gwm_created_at_format]', ["YYYY-MM-DD", "DD-MM-YYYY", "MM-DD-YYYY"], { include_blank: true }  %>
-        </div>
-        <div class="my-4">
-          <%= f.label :'mapping[project_field_id]', 'Define cual es el project field:', class:'text-right col-form-label' %>
-          <%= f.select :'mapping[project_field_id]', @project_fields.map{|field| [field.name, field.id]}, { include_blank: true }, { id: "project_field_id" } %>
-        </div>
-        <div class="my-4">
-          <%= f.label :'mapping[user_id]', 'Define cual es el usuario:', class:'text-right col-form-label' %>
-          <%= f.select :'mapping[user_id]', @file_headers, { include_blank: true } %>
-        </div>
-        <div class="">
-          <h2 class="m-0">Define el mapping de los campos a importar</h2>
-          <% @file_headers.each do |header| %>
-            <div class="">
-              <%= f.label "mapping[data_child][#{header}]", header, class:'text-right col-form-label' %>
-              <%= f.select "mapping[data_child][#{header}]", [], { include_blank: true }, { class: "project_subfield_id" } %>
-            </div>
-          <% end %>
-        </div>
-        <div class="row justify-content-center">
-          <%= link_to t('.cancel', :default => t("helpers.links.cancel")), new_project_type_data_children_path, :class => 'btn btn-secondary mr-1' %>
-          <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Corregir", disable_with: 'Guardando...' %>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</div>
+<div id="react-mapping-content" class='react-mapping-content'></div>
+
 <% content_for :javascript do %>
-  <script type='text/javascript'>
-    $("#project_field_id").change(function(){
-      	var project_field_id = $(this).val();
-      	if (project_field_id == ''){
-      		// $("#project_field_id").prop("disabled", true);
-      	} else {
-      		// $("#project_field_id").prop("disabled", false);
-      	}
+  <script type='text/babel'>
+    const { useMemo, useState, useCallback } = React;
+    const App = ({ columnNames, projectFields, locale, projectType }) => {
+      const [selectedColumnNames, setSelectedColumnNames] = useState({});
+      const [selectedSubfields, setSelectedSubfields] = useState({});
+      const [projectSubfields, setProjectSubfields] = useState([]);
 
-        var url = "<%= project_type_project_field_project_subfields_path(@project_type.id, 0) %>".replace("0", project_field_id);
+      const selectedColumnNamesList = useMemo(() => Object.values(selectedColumnNames), [selectedColumnNames]);
 
-      	$.ajax({
-    	    url: url,
-    	    method: "GET",
-    	    dataType: "json",
-    	    error: function (xhr, status, error) {
-    	      	console.error('AJAX Error: ' + status + error);
-    	    },
-    	    success: function (response) {
-    	      var project_subfields = response["project_subfields"];
-            $(".project_subfield_id").each(function(i, el) {
-              var $el = $(el);
-              $el.empty();
-              $el.append('<option></option>');
-              var options = project_subfields.map(function(subfield) {
-                  return '<option value="' + subfield["id"] + '">' + subfield["name"] + '</option>'
-                }).join(',');
-              $el.append(options);
-            });
-    	    }
-      	});
-    });
+      const availableColumnNames = useMemo(() => {
+        return columnNames.filter(column => !selectedColumnNamesList.includes(column));
+      }, [selectedColumnNamesList, columnNames]);
+
+      const handleChange = useCallback(
+        ({ target: { value, name } }) => {
+          setSelectedColumnNames({ ...selectedColumnNames, [name]: value });
+        },
+        [selectedColumnNames]
+      );
+
+      const handleChangeProjectField = useCallback(
+        ({ target: { value } }) => {
+          $.ajax({
+            url: `/${locale}/project_types/${projectType.id}/project_fields/${value}/project_subfields`,
+            method: "GET",
+            dataType: "json",
+            error: function (xhr, status, error) {
+                console.error('AJAX Error: ' + status + error);
+            },
+            success: function (response) {
+              setProjectSubfields(response.project_subfields)
+            }
+          });
+        },
+        [locale, projectType.id]
+      )
+
+      const availableOptions = useCallback(component => {
+        return (
+          [
+            <option value=""></option>,
+            ...columnNames.map(columnName => {
+                const shouldBeHidden = selectedColumnNamesList.includes(columnName);
+                return <option value={columnName} className={shouldBeHidden && 'select__option--hidden'}>{columnName}</option>
+              })
+          ]
+
+        )
+      }, [columnNames, selectedColumnNamesList]);
+
+      const handleChangeSubfield = useCallback(
+        ({ target: { name, value } }) => {
+          setSelectedSubfields({ ...selectedSubfields, [name]: value });
+        },
+        [selectedSubfields]
+      );
+
+      const availableSubfieldOptions = useCallback(component => {
+        return (
+          [
+            <option value=""></option>,
+            ...projectSubfields.map(projectSubfield => {
+                const shouldBeHidden = Object.values(selectedSubfields).includes(`${projectSubfield.id}`) && selectedSubfields[component] !== `${projectSubfield.id}`
+                return <option value={projectSubfield.id} className={shouldBeHidden && 'select__option--hidden'}>{projectSubfield.name}</option>
+              })
+          ]
+
+        )
+      }, [projectSubfields, selectedSubfields]);
+
+      const availableProjectFields = useMemo(() => {
+        return (
+          [
+            <option value=""></option>,
+            ...projectFields.map(projectField => {
+                return <option value={projectField.id}>{projectField.name}</option>
+              })
+          ]
+        )
+      }, [projectFields]);
+
+      const removeColumnName = useCallback(
+        columnName => () => {
+          setSelectedColumnNames({ ...selectedColumnNames, [columnName]: columnName });
+        },
+        [selectedColumnNames]
+      )
+
+      return (
+        <div className="card shadow">
+          <div className="card-body">
+            <h2 className="react-mapping-content__title">Definir campos a importar</h2>
+            <div className="">
+              <h3 className="react-mapping-content__subtitle">Datos generales</h3>
+              <form className="" action="<%= import_project_type_data_children_path(@project_type) %>" method="post">
+                <div className="react-mapping-content__general-data">
+                  <div className="">
+                    <label for="mapping[project_id]">Define cual es la columna que define el id del projecto</label>
+                    <select className="select" name="mapping[project_id]" onChange={handleChange}>
+                      {availableOptions('project_id')}
+                    </select>
+                  </div>
+                  <div className="">
+                    <label for="mapping[gwm_created_at]">Define cual es la columna que define la fecha y establece el formato</label>
+                    <select className="select" name="mapping[gwm_created_at]" onChange={handleChange}>
+                      {availableOptions('gwm_created_at')}
+                    </select>
+                    <select className="select" name="mapping[gwm_created_at_format]">
+                      <option value=""></option>
+                      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                      <option value="DD-MM-YYYY">DD-MM-YYYY</option>
+                      <option value="MM-DD-YYYY">MM-DD-YYYY</option>
+                    </select>
+                  </div>
+                  <div className="">
+                    <label for="mapping[project_field_id]">¿A que campo corresponde la información a importar?</label>
+                    <select className="select" name="mapping[project_field_id]" onChange={handleChangeProjectField}>
+                      {availableProjectFields}
+                    </select>
+                  </div>
+                  <div className="">
+                    <label for="mapping[project_field_id]">Define cual es la columna que define el id del usuario:</label>
+                    <select className="select" name="mapping[user_id]" onChange={handleChange}>
+                      {availableOptions('user_id')}
+                    </select>
+                  </div>
+                </div>
+                <div className="react-mapping-content__data-children">
+                  <h3 className="react-mapping-content__subtitle">
+                    Mapeo de campos a importar
+                    <span>Las columnas que no son requeridas se pueden dejar en blanco o eliminarlas</span>
+                  </h3>
+                  <div className="react-mapping-content__data-children__wrapper">
+                    {availableColumnNames.map(columnName => {
+                      return (
+                        <div className="react-mapping-content__data-children__attribute" key={columnName}>
+                          <label
+                            for={`mapping[data_child][${columnName}]`}
+                            className="react-mapping-content__data-children__attribute__name"
+                          >
+                            {columnName}
+                          </label>
+                          <i className="fa fa-arrow-right"></i>
+                          <select className="select" name={`mapping[data_child][${columnName}]`} onChange={handleChangeSubfield}>
+                            {availableSubfieldOptions(`mapping[data_child][${columnName}]`)}
+                          </select>
+                          <button
+                            type="button"
+                            name="button"
+                            className="react-mapping-content__data-children__attribute__remove-button"
+                            onClick={removeColumnName(columnName)}
+                          >
+                            <i class="fa fa-close"></i>
+                          </button>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+                <div className="react-mapping-content__actions">
+                  <a
+                    href={`/${locale}/project_types/${projectType.id}/data_children/new`}
+                    className="btn btn-secondary mr-1"
+                  >
+                    Cancelar
+                  </a>
+                  <button type="sumbmit" className="enviar btn btn-primary">Guardar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    const columnNames = <%= raw @file_headers.to_json %>;
+    const projectFields = <%= raw @project_fields.to_json %>;
+    const locale = "<%= @locale %>";
+    const projectType = <%= raw @project_type.to_json %>;
+    ReactDOM.render(
+      <App columnNames={columnNames} projectFields={projectFields} locale={locale} projectType={projectType} />,
+      document.querySelector('#react-mapping-content')
+    );
   </script>
 <% end %>

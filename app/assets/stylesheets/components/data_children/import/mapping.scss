@@ -1,0 +1,85 @@
+.react-mapping-content {
+  .card-body {
+    width: 1024px;
+    margin: 0 auto;
+  }
+
+  &__title {
+    margin-bottom: 32px;
+  }
+
+  &__subtitle {
+    margin-bottom: 16px;
+    span {
+      display: block;
+      font-size: 14px;
+      margin-top: 4px;
+      font-weight: 300;
+    }
+  }
+
+  .fa-arrow-right {
+    margin: 0 8px;
+  }
+
+  .select {
+    height: 33px;
+    border-radius: 4px;
+    width: 180px;
+    margin-right: 8px;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+
+    &__option {
+      &--hidden {
+        display: none;
+      }
+    }
+  }
+
+  &__general-data {
+    margin-bottom: 48px;
+
+    label {
+      width: 500px;
+    }
+  }
+
+  &__data-children {
+    margin-bottom: 48px;
+    &__attribute {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+
+      &__name {
+        border: 1px solid;
+        width: 180px;
+        border-radius: 4px;
+        margin: 0;
+        padding: 4px 8px;
+      }
+
+      &__remove-button {
+        border: 0;
+        padding: 0;
+        background-color: transparent;
+        color: #aaa;
+        margin-left: 8px;
+      }
+    }
+
+    &__wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+  }
+}
