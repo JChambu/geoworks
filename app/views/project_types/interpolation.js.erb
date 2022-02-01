@@ -36,7 +36,7 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
   		$('#sub_interpolation_operator').addClass('d-none');
   	}
   		$.ajax({
-    		type: 'GET',
+    		type: 'POST',
     		url: '/project_types/search_data_dashboard',
     		datatype: 'json',
     		data: {
