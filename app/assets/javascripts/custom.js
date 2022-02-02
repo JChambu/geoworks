@@ -418,6 +418,7 @@ function draw_charts() {
     var bubble_dataset_x = [];
     var bubble_dataset_y = [];
     var scale;
+    var data_decimals=1;
 
     // Agrupamos los labels y los datos para luego poder ajustar las series con los mismos valores en el eje x
     var lab_all = []; //variable que agrupa los labels de cada serie
@@ -542,7 +543,6 @@ function draw_charts() {
             lab_all.push(lab);
             da_all.push(da);
           }); //cierra each data_general
-
         } //cierra if data
       }) //cierra each b
     }) //cierra each reg
@@ -950,22 +950,17 @@ function draw_charts() {
             display: 'true',
             type: 'linear',
             ticks: {
-              min: tick_min_left,
-              stepSize: parseInt(tick_step_left),
-              callback: function(label, index, labels) {
-                label = label.toLocaleString('es-ES')
-                return label;
-              },
+              min: parseFloat(tick_min_left),
+             stepSize: parseFloat(tick_step_left),
+                callback: function(label, index, labels) {
+                  label = label.toLocaleString('es-ES')
+                  return label;
+                },
               fontColor: '#FDFEFE'
             },
             /*
             beforeBuildTicks: function(scale) {
-              console.log("Escala")
-              console.log(sc)
               // Aplica ticks custom si se ingresan valores
-              console.log("Valor máximo dentro de función ")
-              console.log(tick_max_left)
-              console.log("Iteración"+i)
               if (tick_min_left == null) {
                 scale.min = 0
               } else {
@@ -993,7 +988,8 @@ function draw_charts() {
             display: display_right_y_axis,
             type: 'linear',
             ticks: {
-              stepSize: parseInt(tick_step_left),
+              min: parseFloat(tick_min_right),
+              stepSize: parseFloat(tick_step_left),
               callback: function(label, index, labels) {
                 label = label.toLocaleString('es-ES')
                 return label;
@@ -1041,15 +1037,23 @@ function draw_charts() {
             anchor: 'end',
             align: 'end',
             offset: -5,
-            formatter: Math.round
+            formatter: function(value, context) {
+              var datasets_context = context.dataset.data;
+              var max = Math.max.apply(null, datasets_context);
+              var min = Math.min.apply(null, datasets_context);
+              if(max-min<=50){data_decimals=10}
+              if(max-min<=10){data_decimals=100}
+              if(max-min<=5){data_decimals=1000}
+              return Math.round(value*data_decimals)/data_decimals;
+            }
           }
         },
       }
       if (tick_max_left != null) {
-        option_legend.scales.yAxes[0].ticks.max = tick_max_left;
+        option_legend.scales.yAxes[0].ticks.max = parseFloat(tick_max_left);
       }
       if (tick_max_right != null) {
-        option_legend.scales.yAxes[1].ticks.max = tick_max_right;
+        option_legend.scales.yAxes[1].ticks.max = parseFloat(tick_max_right);
       }
       var chart_settings = {
         type: 'bar',
@@ -1077,7 +1081,8 @@ function draw_charts() {
           xAxes: [{
             display: true,
             ticks: {
-              stepSize: parseInt(tick_step_left),
+              min: parseFloat(tick_min_left),
+              stepSize: parseFloat(tick_step_left),
               callback: function(label, index, labels) {
                 label = label.toLocaleString('es-ES')
                 return label;
@@ -1140,12 +1145,20 @@ function draw_charts() {
             textShadowBlur: 5,
             anchor: 'end',
             align: 'end',
-            formatter: Math.round
+            formatter: function(value, context) {
+              var datasets_context = context.dataset.data;
+              var max = Math.max.apply(null, datasets_context);
+              var min = Math.min.apply(null, datasets_context);
+              if(max-min<=50){data_decimals=10}
+              if(max-min<=10){data_decimals=100}
+              if(max-min<=5){data_decimals=1000}
+              return Math.round(value*data_decimals)/data_decimals;
+            }
           }
         },
       }
       if (tick_max_left != null) {
-        option_legend.scales.yAxes[0].ticks.max = tick_max_left;
+        option_legend.scales.yAxes[0].ticks.max = parseFloat(tick_max_left);
       }
       var chart_settings = {
         type: 'horizontalBar',
@@ -1273,7 +1286,15 @@ function draw_charts() {
             textShadowBlur: 5,
             anchor: 'end',
             align: 'end',
-            formatter: Math.round
+            formatter: function(value, context) {
+              var datasets_context = context.dataset.data;
+              var max = Math.max.apply(null, datasets_context);
+              var min = Math.min.apply(null, datasets_context);
+              if(max-min<=50){data_decimals=10}
+              if(max-min<=10){data_decimals=100}
+              if(max-min<=5){data_decimals=1000}
+              return Math.round(value*data_decimals)/data_decimals;
+            }
           }
         },
       }
