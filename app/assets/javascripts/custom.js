@@ -520,11 +520,11 @@ function draw_charts() {
                     var abierto = row_array[i].split("|")
                     labb.push(abierto[0]);
                     daa.push(abierto[1]);
+                    lab_acumulado.push(abierto[0]);
                   }
 
                   da = daa;
                   lab = labb;
-                  lab_acumulado = lab;
 
                 } else {
 
@@ -541,7 +541,6 @@ function draw_charts() {
             }
             lab_all.push(lab);
             da_all.push(da);
-
           }); //cierra each data_general
 
         } //cierra if data
@@ -608,10 +607,11 @@ function draw_charts() {
         for (var a = 0; a < lab_acumulado.length; a++) {
           if (lab_all[l][a] != lab_acumulado[a]) {
             lab_all[l].splice(a, 0, lab_acumulado[a]); // si no encuentra el label lo agrega en el eje x
-            da_all[l].splice(a, 0, 0); //y agrega valor 0 para el eje y
+            da_all[l].splice(a, 0, null); //y agrega valor null para el eje y
           }
         }
       }
+
     // fin de unificación de labels en el eje x para varias series y orden numérico
 
     // Arranca armando series
@@ -655,8 +655,14 @@ function draw_charts() {
           data_labelling = value['data_labelling'];
           scale = value['scale'];
           tick_min_left = value['tick_x_min'];
+          if (tick_min_left == null) {
+            tick_min_left = 0;
+          }
           tick_max_left = value['tick_x_max'];
           tick_min_right = value['tick_y_min'];
+          if (tick_min_right == null) {
+            tick_min_right = 0;
+          }
           tick_max_right = value['tick_y_max'];
           tick_step_left = value['step_x'];
           if (tick_step_left == null) {
@@ -897,7 +903,6 @@ function draw_charts() {
       $('#chart_container' + graphic_id).addClass('col-md-' + width);
       //legend_display = false;
     }
-
     // BAR options
     if (type_chart == 'bar' || type_chart == 'line' || type_chart == 'area' || type_chart == 'point') {
       var option_legend = {
@@ -945,6 +950,7 @@ function draw_charts() {
             display: 'true',
             type: 'linear',
             ticks: {
+              min: tick_min_left,
               stepSize: parseInt(tick_step_left),
               callback: function(label, index, labels) {
                 label = label.toLocaleString('es-ES')
@@ -952,8 +958,14 @@ function draw_charts() {
               },
               fontColor: '#FDFEFE'
             },
+            /*
             beforeBuildTicks: function(scale) {
+              console.log("Escala")
+              console.log(sc)
               // Aplica ticks custom si se ingresan valores
+              console.log("Valor máximo dentro de función ")
+              console.log(tick_max_left)
+              console.log("Iteración"+i)
               if (tick_min_left == null) {
                 scale.min = 0
               } else {
@@ -964,6 +976,7 @@ function draw_charts() {
               }
               return;
             },
+            */
             stacked: stacked,
             scaleLabel: {
               display: true,
@@ -987,6 +1000,7 @@ function draw_charts() {
               },
               fontColor: '#FDFEFE',
             },
+            /*
             beforeBuildTicks: function(scale) {
               // Aplica ticks custom si se ingresan valores
               if (tick_min_right == null) {
@@ -999,6 +1013,7 @@ function draw_charts() {
               }
               return;
             },
+            */
             stacked: stacked,
             scaleLabel: {
               display: true,
@@ -1029,6 +1044,12 @@ function draw_charts() {
             formatter: Math.round
           }
         },
+      }
+      if (tick_max_left != null) {
+        option_legend.scales.yAxes[0].ticks.max = tick_max_left;
+      }
+      if (tick_max_right != null) {
+        option_legend.scales.yAxes[1].ticks.max = tick_max_right;
       }
       var chart_settings = {
         type: 'bar',
@@ -1063,6 +1084,7 @@ function draw_charts() {
               },
               fontColor: '#FDFEFE'
             },
+            /*
             beforeBuildTicks: function(scale) {
               // Aplica ticks custom si se ingresan valores
               if (tick_min_left == null) {
@@ -1075,6 +1097,7 @@ function draw_charts() {
               }
               return;
             },
+            */
             stacked: stacked,
             scaleLabel: {
               display: true,
@@ -1120,6 +1143,9 @@ function draw_charts() {
             formatter: Math.round
           }
         },
+      }
+      if (tick_max_left != null) {
+        option_legend.scales.yAxes[0].ticks.max = tick_max_left;
       }
       var chart_settings = {
         type: 'horizontalBar',

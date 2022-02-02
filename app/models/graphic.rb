@@ -1,5 +1,5 @@
 class Graphic < ApplicationRecord
-  has_many :graphics_properties, dependent: :destroy
+  has_many :graphics_properties, -> { order(:label_datasets) }, dependent: :destroy
   belongs_to :dashboard
   belongs_to :chart
 
