@@ -418,6 +418,7 @@ function draw_charts() {
     var bubble_dataset_x = [];
     var bubble_dataset_y = [];
     var scale;
+    var data_decimals=1;
 
     // Agrupamos los labels y los datos para luego poder ajustar las series con los mismos valores en el eje x
     var lab_all = []; //variable que agrupa los labels de cada serie
@@ -520,11 +521,11 @@ function draw_charts() {
                     var abierto = row_array[i].split("|")
                     labb.push(abierto[0]);
                     daa.push(abierto[1]);
+                    lab_acumulado.push(abierto[0]);
                   }
 
                   da = daa;
                   lab = labb;
-                  lab_acumulado = lab;
 
                 } else {
 
@@ -541,9 +542,7 @@ function draw_charts() {
             }
             lab_all.push(lab);
             da_all.push(da);
-
           }); //cierra each data_general
-
         } //cierra if data
       }) //cierra each b
     }) //cierra each reg
@@ -608,10 +607,11 @@ function draw_charts() {
         for (var a = 0; a < lab_acumulado.length; a++) {
           if (lab_all[l][a] != lab_acumulado[a]) {
             lab_all[l].splice(a, 0, lab_acumulado[a]); // si no encuentra el label lo agrega en el eje x
-            da_all[l].splice(a, 0, 0); //y agrega valor 0 para el eje y
+            da_all[l].splice(a, 0, null); //y agrega valor null para el eje y
           }
         }
       }
+
     // fin de unificación de labels en el eje x para varias series y orden numérico
 
     // Arranca armando series
@@ -655,8 +655,14 @@ function draw_charts() {
           data_labelling = value['data_labelling'];
           scale = value['scale'];
           tick_min_left = value['tick_x_min'];
+          if (tick_min_left == null) {
+            tick_min_left = 0;
+          }
           tick_max_left = value['tick_x_max'];
           tick_min_right = value['tick_y_min'];
+          if (tick_min_right == null) {
+            tick_min_right = 0;
+          }
           tick_max_right = value['tick_y_max'];
           tick_step_left = value['step_x'];
           if (tick_step_left == null) {
@@ -897,7 +903,6 @@ function draw_charts() {
       $('#chart_container' + graphic_id).addClass('col-md-' + width);
       //legend_display = false;
     }
-
     // BAR options
     if (type_chart == 'bar' || type_chart == 'line' || type_chart == 'area' || type_chart == 'point') {
       var option_legend = {
@@ -945,13 +950,15 @@ function draw_charts() {
             display: 'true',
             type: 'linear',
             ticks: {
-              stepSize: parseInt(tick_step_left),
-              callback: function(label, index, labels) {
-                label = label.toLocaleString('es-ES')
-                return label;
-              },
+              min: parseFloat(tick_min_left),
+             stepSize: parseFloat(tick_step_left),
+                callback: function(label, index, labels) {
+                  label = label.toLocaleString('es-ES')
+                  return label;
+                },
               fontColor: '#FDFEFE'
             },
+            /*
             beforeBuildTicks: function(scale) {
               // Aplica ticks custom si se ingresan valores
               if (tick_min_left == null) {
@@ -964,6 +971,7 @@ function draw_charts() {
               }
               return;
             },
+            */
             stacked: stacked,
             scaleLabel: {
               display: true,
@@ -980,13 +988,15 @@ function draw_charts() {
             display: display_right_y_axis,
             type: 'linear',
             ticks: {
-              stepSize: parseInt(tick_step_left),
+              min: parseFloat(tick_min_right),
+              stepSize: parseFloat(tick_step_left),
               callback: function(label, index, labels) {
                 label = label.toLocaleString('es-ES')
                 return label;
               },
               fontColor: '#FDFEFE',
             },
+            /*
             beforeBuildTicks: function(scale) {
               // Aplica ticks custom si se ingresan valores
               if (tick_min_right == null) {
@@ -999,6 +1009,7 @@ function draw_charts() {
               }
               return;
             },
+            */
             stacked: stacked,
             scaleLabel: {
               display: true,
@@ -1026,9 +1037,23 @@ function draw_charts() {
             anchor: 'end',
             align: 'end',
             offset: -5,
-            formatter: Math.round
+            formatter: function(value, context) {
+              var datasets_context = context.dataset.data;
+              var max = Math.max.apply(null, datasets_context);
+              var min = Math.min.apply(null, datasets_context);
+              if(max-min<=50){data_decimals=10}
+              if(max-min<=10){data_decimals=100}
+              if(max-min<=5){data_decimals=1000}
+              return Math.round(value*data_decimals)/data_decimals;
+            }
           }
         },
+      }
+      if (tick_max_left != null) {
+        option_legend.scales.yAxes[0].ticks.max = parseFloat(tick_max_left);
+      }
+      if (tick_max_right != null) {
+        option_legend.scales.yAxes[1].ticks.max = parseFloat(tick_max_right);
       }
       var chart_settings = {
         type: 'bar',
@@ -1056,13 +1081,15 @@ function draw_charts() {
           xAxes: [{
             display: true,
             ticks: {
-              stepSize: parseInt(tick_step_left),
+              min: parseFloat(tick_min_left),
+              stepSize: parseFloat(tick_step_left),
               callback: function(label, index, labels) {
                 label = label.toLocaleString('es-ES')
                 return label;
               },
               fontColor: '#FDFEFE'
             },
+            /*
             beforeBuildTicks: function(scale) {
               // Aplica ticks custom si se ingresan valores
               if (tick_min_left == null) {
@@ -1075,6 +1102,7 @@ function draw_charts() {
               }
               return;
             },
+            */
             stacked: stacked,
             scaleLabel: {
               display: true,
@@ -1117,9 +1145,20 @@ function draw_charts() {
             textShadowBlur: 5,
             anchor: 'end',
             align: 'end',
-            formatter: Math.round
+            formatter: function(value, context) {
+              var datasets_context = context.dataset.data;
+              var max = Math.max.apply(null, datasets_context);
+              var min = Math.min.apply(null, datasets_context);
+              if(max-min<=50){data_decimals=10}
+              if(max-min<=10){data_decimals=100}
+              if(max-min<=5){data_decimals=1000}
+              return Math.round(value*data_decimals)/data_decimals;
+            }
           }
         },
+      }
+      if (tick_max_left != null) {
+        option_legend.scales.yAxes[0].ticks.max = parseFloat(tick_max_left);
       }
       var chart_settings = {
         type: 'horizontalBar',
@@ -1247,7 +1286,15 @@ function draw_charts() {
             textShadowBlur: 5,
             anchor: 'end',
             align: 'end',
-            formatter: Math.round
+            formatter: function(value, context) {
+              var datasets_context = context.dataset.data;
+              var max = Math.max.apply(null, datasets_context);
+              var min = Math.min.apply(null, datasets_context);
+              if(max-min<=50){data_decimals=10}
+              if(max-min<=10){data_decimals=100}
+              if(max-min<=5){data_decimals=1000}
+              return Math.round(value*data_decimals)/data_decimals;
+            }
           }
         },
       }

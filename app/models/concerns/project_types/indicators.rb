@@ -364,7 +364,7 @@ module ProjectTypes::Indicators
       @ct = Apartment::Tenant.current
       @graph = Graphic.where(dashboard_id: @dashboard_id).order(:sort)
       @graph.each do |g|
-        @gr = GraphicsProperty.where(graphic_id: g)
+        @gr = GraphicsProperty.where(graphic_id: g).order(:label_datasets)
         ch = {}
         @gr.each_with_index do |graph, i|
           @analytics_charts = AnalyticsDashboard.where(id: graph.analytics_dashboard_id)
