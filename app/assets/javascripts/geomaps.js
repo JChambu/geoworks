@@ -1251,7 +1251,7 @@ Navarra.geomaps = function() {
           var current_layer_filters = Navarra.project_types.config.current_layer_filters.replace(/'/g,"''");
           cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + name_layer + "', 'the_geom', '" + current_layer_filters + "')))";
 
-       // genera capa con todos los datos, sin tener en cuenta la intersección con la capa activa
+       // genera capa con todos los datos de la intersección con la capa activa
           layer_current_intersect = workspace + ":" + layer;
 
           layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
@@ -2262,8 +2262,13 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
         var concat_features = null;
         var layers_count = 0;
         $.each(data, function(lay, dat) {
-          if(active_internal_layers.indexOf(dat.layer)>=0 && dat.type_geometry != 'Point'){
+          if((active_internal_layers.indexOf(dat.layer)>=0 || active_internal_layers.indexOf(dat.layer+'-filtrados')>=0 )&& dat.type_geometry != 'Point'){
             var cql_filter_layer =  getCQLFilter_layer(dat);
+            if(active_internal_layers.indexOf(dat.layer+'-filtrados')>=0){
+              //aplica filtro intercapas para mostrar solo aquellos registros que se intersectan con la capa activa
+              var current_layer_filters = Navarra.project_types.config.current_layer_filters.replace(/'/g,"''");
+              cql_filter_layer += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + name_layer + "', 'the_geom', '" + current_layer_filters + "')))";
+            }
             var defaultParameters = {
               service: 'WFS',
               version: '1.0.0',
