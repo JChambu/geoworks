@@ -172,11 +172,24 @@ function set_kpi_navbar(element,is_default, indicator_id){
     }
     $('.total_files').val(element['data'][0]['count']);
   }
-  if (Number(count_element) != parseInt(Number(count_element))) {
-    data_cont = (Number(count_element)).format(2, 3, '.', ',');
+  var count_element_number = parseFloat(count_element);
+  console.log("Count element")
+  console.log(count_element)
+  console.log(element)
+  if(count_element!=null){
+    var count_element_text = count_element.toString().split(count_element_number)[1];
+    if (count_element_text == undefined ){count_element_text = ''}
+    if (Number(count_element_number) != parseInt(Number(count_element_number))) {
+      data_cont = (Number(count_element_number)).format(2, 3, '.', ',')+count_element_text;
+    } else {
+      data_cont = (Number(count_element_number)).format(0, 3, '.', ',')+count_element_text;
+    }
   } else {
-    data_cont = (Number(count_element)).format(0, 3, '.', ',');
+    data_cont = ''; 
   }
+  
+  
+  
     if(element['title'].split(' ').length>=2){
       var split_element = Math.ceil(element['title'].split(' ').length/2);
       var title_up = "";
