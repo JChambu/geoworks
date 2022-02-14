@@ -48,6 +48,7 @@
                       <span class="error_column"><%= project_data_child_no_valid.errors[:user_id].first %></span>
                     </td>
                     <td valign='top'>
+                      <input type="hidden" name="data_children[]gwm_created_at_format" value="<%= project_data_child_no_valid.gwm_created_at_format %>">
                       <input type="text" name="data_children[]gwm_created_at" value="<%= project_data_child_no_valid.gwm_created_at %>">
                       <span class="error_column"><%= project_data_child_no_valid.errors[:gwm_created_at].first %></span>
                     </td>

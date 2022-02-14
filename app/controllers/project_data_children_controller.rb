@@ -271,7 +271,8 @@ class ProjectDataChildrenController < ApplicationController
     content = File.read(temp_import_file_path(@project_type.id, current_user.id))
     csv = CSV.new(content)
     @file_headers = csv.to_a[0]
-    @project_fields = @project_type.project_fields
+    @project_fields = @project_type.project_fields.where(field_type_id: FieldType::SUBFORM)
+    @project_mapping = @project_type.project_fields.where(field_type_id: [FieldType::TEXT, FieldType::NUMERIC]).pluck(:name, :key)
     @locale = params[:locale]
   end
 
@@ -293,7 +294,7 @@ class ProjectDataChildrenController < ApplicationController
 
     mapping = nil
     begin
-      if is_from_file
+      if is_from_file && !is_from_form
         lines = CSV.open(temp_import_file_path(@project_type.id, current_user.id)).readlines
         keys = lines.delete lines.first
 
@@ -302,6 +303,7 @@ class ProjectDataChildrenController < ApplicationController
         data_hash = lines.map do |values|
           Hash[keys.zip(values)]
         end
+
         File.delete(path_to_temp_file)
       elsif is_from_form
         data_hash = params[:data_children]

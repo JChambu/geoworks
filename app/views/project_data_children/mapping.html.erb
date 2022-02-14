@@ -3,7 +3,7 @@
 <% content_for :javascript do %>
   <script type='text/babel'>
     const { useMemo, useState, useCallback } = React;
-    const App = ({ columnNames, projectFields, locale, projectType }) => {
+    const App = ({ columnNames, projectFields, locale, projectType, projectMapping }) => {
       const [selectedColumnNames, setSelectedColumnNames] = useState({});
       const [selectedSubfields, setSelectedSubfields] = useState({});
       const [projectSubfields, setProjectSubfields] = useState([]);
@@ -98,9 +98,16 @@
               <form className="" action="<%= import_project_type_data_children_path(@project_type) %>" method="post">
                 <div className="react-mapping-content__general-data">
                   <div className="">
-                    <label for="mapping[project_id]">Define cual es la columna que define el id del projecto</label>
-                    <select className="select" name="mapping[project_id]" onChange={handleChange}>
+                    <label for="mapping[project_id]">Define cual es la columna que se relaciona con el projecto</label>
+                    <select className="select" name="mapping[project_relationship]" onChange={handleChange}>
                       {availableOptions('project_id')}
+                    </select>
+                  </div>
+                  <div className="">
+                    <label for="mapping[project_id]">¿Qué valor define esa columna?</label>
+                    <select className="select" name="mapping[project_field_key]" onChange={handleChange}>
+                      <option value=""></option>
+                      {projectMapping.map(mapping => <option value={mapping[1]}>{mapping[0]}</option>)}
                     </select>
                   </div>
                   <div className="">
@@ -110,9 +117,9 @@
                     </select>
                     <select className="select" name="mapping[gwm_created_at_format]">
                       <option value=""></option>
-                      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-                      <option value="DD-MM-YYYY">DD-MM-YYYY</option>
-                      <option value="MM-DD-YYYY">MM-DD-YYYY</option>
+                      <option value="%Y-%m-%d">YYYY-MM-DD</option>
+                      <option value="%d-%m-%Y">DD-MM-YYYY</option>
+                      <option value="%m-%d-%Y">MM-DD-YYYY</option>
                     </select>
                   </div>
                   <div className="">
@@ -180,8 +187,15 @@
     const projectFields = <%= raw @project_fields.to_json %>;
     const locale = "<%= @locale %>";
     const projectType = <%= raw @project_type.to_json %>;
+    const projectMapping = <%= raw @project_mapping.to_json %>;
     ReactDOM.render(
-      <App columnNames={columnNames} projectFields={projectFields} locale={locale} projectType={projectType} />,
+      <App
+        columnNames={columnNames}
+        projectFields={projectFields}
+        locale={locale}
+        projectType={projectType}
+        projectMapping={projectMapping}
+      />,
       document.querySelector('#react-mapping-content')
     );
   </script>
