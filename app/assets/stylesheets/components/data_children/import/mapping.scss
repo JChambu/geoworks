@@ -1,6 +1,6 @@
 .react-mapping-content {
   .card-body {
-    width: 1024px;
+    width: 100%;
     margin: 0 auto;
   }
 
@@ -10,10 +10,11 @@
 
   &__subtitle {
     margin-bottom: 16px;
+    text-align: center;
     span {
       display: block;
       font-size: 14px;
-      margin-top: 4px;
+      margin-top: 14px;
       font-weight: 300;
     }
   }
@@ -41,25 +42,32 @@
 
   &__general-data {
     margin-bottom: 48px;
+    width: 64rem;
 
     label {
       width: 500px;
+      text-align: right;
     }
   }
 
   &__data-children {
+    width: 64rem;
     margin-bottom: 48px;
     &__attribute {
       display: flex;
       align-items: center;
       margin-bottom: 16px;
 
+      label {
+        text-align: right;
+      }
+
       &__name {
-        border: 1px solid;
         width: 180px;
         border-radius: 4px;
         margin: 0;
         padding: 4px 8px;
+        
       }
 
       &__remove-button {
@@ -81,5 +89,6 @@
   &__actions {
     display: flex;
     justify-content: center;
+    
   }
 }
