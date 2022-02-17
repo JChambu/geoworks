@@ -1,28 +1,39 @@
-<div class="simple_form form-signin card p-5">
-<center>
-  <%=image_tag 'logo_gw_ver_2.png', class:'mb-2', width:"252"%>
-</center>
+<div class="row w-100 align-items-center m-0" >
+  <div class="col-md-6 align-middle form-sinin-img vh-100" style="overflow:hidden;" >
 
-<br />
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-
- <%= f.hidden_field :reset_password_token %>
-
-<div class="field">
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em><br />
-    <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "off" , class: "form-control", placeholder: "Ingrese nueva contraseña" %>
   </div>
+  <div class="col-md-6 align-middle text-center p-0">
+    <div class="simple_form form-signin pl-5 pr-5">
+      <center>
+        <%=image_tag 'logo_gw_ver_2.png', class:'mb-2', width:"252"%>
+      </center>
 
-  <div class="field">
-    <%= f.password_field :password_confirmation, autocomplete: "off" , class: "form-control", placeholder: "Confirme nueva contraseña" %>
-  </div>
+      <br />
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
 
-  <div class="actions">
-    <%= f.submit "Cambiar contraseña" ,class: 'btn btn-lg btn-primary btn-block mb-2' %>
+        <%= f.hidden_field :reset_password_token %>
+
+        <div class="field">
+          <% if @minimum_password_length %>
+            <em>(<%= @minimum_password_length %> characters minimum)</em><br />
+          <% end %>
+          <%= f.password_field :password, autofocus: true, autocomplete: "off" , class: "form-control", placeholder: "Ingrese nueva contraseña" %>
+        </div>
+
+        <div class="field">
+          <%= f.password_field :password_confirmation, autocomplete: "off" , class: "form-control", placeholder: "Confirme nueva contraseña" %>
+        </div>
+
+        <div class="actions">
+          <%= f.submit "Cambiar contraseña" ,class: 'btn btn-lg btn-primary btn-block mb-2' %>
+        </div>
+        <div class="text-left">
+          <%= render "devise/shared/error_messages", resource: resource %>
+        </div>
+      <% end %>
+      <div class="text-right">
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
   </div>
-   <%= render "devise/shared/error_messages", resource: resource %>
-<% end %>
-<%= render "devise/shared/links" %>
 </div>
