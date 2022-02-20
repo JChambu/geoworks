@@ -45,7 +45,8 @@ body {
   background-color:white;
 }
 .form-sinin-img{
-  background-image: url(login.jpg);
+  /*background-image: url(login.jpg);*/
+  background-image: url(asset_path("login.jpg"));
   background-position: 50% 50%;
   background-repeat: no-repeat;
 }
