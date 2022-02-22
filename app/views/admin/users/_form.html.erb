@@ -1,10 +1,8 @@
 <div class="offset-md-3 col-md-6">
   <div class="card m-2 shadow">
     <div class="card-body">
-
       <%= simple_form_for([:admin,@user]) do |f| %>
         <%= render 'shared/errors', obj: @user %>
-
         <div class="form-group">
           <div class="row justify-content-center">
             <%= f.label :name, class:'col-md-4 text-right col-form-label' %>
@@ -19,37 +17,14 @@
             </div>
           </div>
 
-          <%if params[:action]== 'new'|| params[:action] == 'create' %>
-            <div class="row justify-content-center">
-              <%= f.label 'Corporación', class:'col-md-4 text-right col-form-label' %>
-              <div class="col-md-6">
-                <%= f.input :customer_id, required: true, collection: customers_for_select, prompt: t('simple_form.select_item_prompt'), label: false, input_html: {class: 'form-control form-control-sm'}, selected: @user_customer.nil? ? '' : @user_customer.customer_id%>
-              </div>
-            </div>
-            <div class="row justify-content-center">
-              <label class="col-md-4 text-right col-form-label">Rol</label>
-              <div class="col-md-6">
-                <div id='search_roles'></div>
-              </div>
-            </div>
-          <% else %>
-            <div class="row justify-content-center">
-              <%= f.label 'Corporación', class:'col-md-4 text-right col-form-label' %>
-              <div class="col-md-6">
-                <%= f.input :customer_name, readonly: true, label: false, input_html: {class: 'form-control form-control-sm', value: @user_customer.customer.name} %>
-                <%= f.input :customer_id, as: :hidden,  input_html: {value: @user_customer.customer_id } %>
-              </div>
-            </div>
-
-            <div class="row justify-content-center">
-              <label class="col-md-4 text-right col-form-label">Rol</label>
-              <div class="col-md-6">
-                <%=f.input :role_id, collection: @roles,  prompt: ('Seleccione un rol'), label: false, input_html: {class: 'form-control form-control-sm'}, selected: @user_customer.nil? ? '' : @user_customer.role_id%>
-              </div>
-            </div>
-
-          <% end %>
-
+          <div class="field_items text-center">
+            <%= f.fields_for :customers do |f| %>
+              <%= render "customer_fields", f: f %>
+            <% end %>
+          </div>
+          <div class="text-center mb-4">
+            <%= link_to_add_fields "<i class='fas fa-plus' title='Agregar usuario'></i>".html_safe, f, :customers %>
+          </div>
 
           <div class="row justify-content-center">
             <%= f.label 'Activo', class:'col-md-4 text-right form-check-label' %>
@@ -63,21 +38,7 @@
           <%= link_to t('.cancel', :default => t("helpers.links.cancel")), admin_users_path, :class => 'btn btn-secondary mr-1' %>
           <%= f.submit  :class => 'btn btn-primary', value: 'Guardar' %>
         </div>
-
       <% end %>
-
     </div>
   </div>
 </div>
-
-<script type="text/javascript">
-  $(document).ready(function() {
-    $('#user_customer_id').on('change', function() {
-      $.ajax({
-        url:  "<%= admin_users_search_roles_path %>",
-        type: "GET",
-        data: { customer_id: $(this).val() },
-      });
-    });
-  });
-</script>

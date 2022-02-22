@@ -15,11 +15,11 @@ ActiveRecord::Schema.define(version: 20211209135607) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
-  enable_extension "hstore"
-  enable_extension "uuid-ossp"
   enable_extension "btree_gist"
   enable_extension "dblink"
+  enable_extension "hstore"
   enable_extension "postgis_topology"
+  enable_extension "uuid-ossp"
 
   create_table "actions", id: :serial, force: :cascade do |t|
     t.string "name"
@@ -170,7 +170,6 @@ ActiveRecord::Schema.define(version: 20211209135607) do
     t.datetime "updated_at", null: false
     t.string "supplier_map", default: "osm"
     t.string "url"
-    t.integer "role_id"
     t.text "logo"
   end
 
@@ -702,7 +701,7 @@ ActiveRecord::Schema.define(version: 20211209135607) do
     t.integer "field_type_id"
     t.boolean "hidden", default: false
     t.integer "sort"
-    t.boolean "read_only", default: false
+    t.boolean "readonly", default: false
     t.boolean "popup", default: false
     t.string "calculated_field"
     t.string "roles_read"
@@ -730,8 +729,7 @@ ActiveRecord::Schema.define(version: 20211209135607) do
 
   create_table "project_statuses", force: :cascade do |t|
     t.string "name"
-    t.bigint "project_type_id"
-    t.string "color"
+    t.bigint "project_status_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status_type"
@@ -739,7 +737,7 @@ ActiveRecord::Schema.define(version: 20211209135607) do
     t.string "timer"
     t.integer "inherit_project_type_id"
     t.integer "inherit_status_id"
-    t.index ["project_type_id"], name: "index_project_statuses_on_project_type_id"
+    t.index ["project_status_id"], name: "index_project_statuses_on_project_status_id"
   end
 
   create_table "project_subfields", force: :cascade do |t|
@@ -794,10 +792,10 @@ ActiveRecord::Schema.define(version: 20211209135607) do
     t.integer "project_type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
     t.jsonb "properties_original"
+    t.geometry "the_geom", limit: {:srid=>4326, :type=>"geometry"}
     t.bigint "project_status_id"
-    t.datetime "status_update_at", default: "2020-06-18 16:04:25"
+    t.datetime "status_update_at", default: "2019-08-26 13:37:57"
     t.bigint "user_id"
     t.serial "update_sequence", null: false
     t.boolean "row_active", default: true
@@ -807,7 +805,6 @@ ActiveRecord::Schema.define(version: 20211209135607) do
     t.boolean "row_enabled", default: true
     t.datetime "disabled_at"
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
-    t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["project_type_id"], name: "project_type_idx"
     t.index ["user_id"], name: "index_projects_on_user_id"
   end
@@ -940,9 +937,9 @@ ActiveRecord::Schema.define(version: 20211209135607) do
   create_table "user_customers", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "customer_id"
-    t.integer "role_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "role_id"
     t.index ["customer_id"], name: "index_user_customers_on_customer_id"
     t.index ["user_id"], name: "index_user_customers_on_user_id"
   end
@@ -958,13 +955,13 @@ ActiveRecord::Schema.define(version: 20211209135607) do
     t.datetime "last_sign_in_at"
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
-    t.string "authentication_token"
-    t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
+    t.string "token"
+    t.string "authentication_token", limit: 30
     t.string "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
@@ -974,11 +971,9 @@ ActiveRecord::Schema.define(version: 20211209135607) do
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.index ["authentication_token"], name: "index_users_on_authentication_token_2", unique: true
-    t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["email"], name: "index_users_on_email_2", unique: true
     t.index ["role_id"], name: "index_users_on_role_id"
     t.index ["token"], name: "index_users_on_token_2", unique: true
-    t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token_2", unique: true
   end
 
@@ -1013,8 +1008,7 @@ ActiveRecord::Schema.define(version: 20211209135607) do
   add_foreign_key "photo_children", "project_data_children"
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_filters", "project_types"
-  add_foreign_key "project_statuses", "project_types"
+  add_foreign_key "project_statuses", "project_statuses"
   add_foreign_key "projects", "project_statuses"
   add_foreign_key "projects", "project_types"
-  add_foreign_key "users", "roles"
 end
