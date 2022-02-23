@@ -2,33 +2,32 @@
   <script type="text/javascript">
     console.log('dentro del partial');
   </script>
-  <div class="row justify-content-center">
-    <%= f.label 'Corporación', class:'col-md-4 text-right col-form-label' %>
-    <div class="col-md-6">
-      <%= f.input :customer_id, required: true, collection: customers_for_select, prompt: t('simple_form.select_item_prompt'), label: false, input_html: {class: 'form-control form-control-sm'}, selected: @user_customer.nil? ? '' : @user_customer.customer_id%>
+  <div class="row justify-content-center customer_container">
+    <%= f.label 'Corporación', class:'col-md-2 text-right col-form-label' %>
+    <div class="col-md-4">
+      <%= f.input :customer_id, required: true, collection: customers_for_select, prompt: t('simple_form.select_item_prompt'), label: false, input_html: {class: 'form-control form-control-sm'}, selected: @user_customer.nil? ? '' : @user_customer.customer_id, wrapper_html:{onchange:"change_customer(event)"} %>
     </div>
-  </div>
-  <div class="row justify-content-center">
-    <label class="col-md-4 text-right col-form-label">Rol</label>
-  <div class="col-md-6">
-    <div id='search_roles'></div>
-  </div>
-  </div
-  <div class="col-md-1">
-    <%= link_to '#', class: "remove" do %><i class="fas fa-trash-alt" title="Eliminar corporación"></i><% end %>
+    <label class="col-md-1 text-right col-form-label">Rol</label>
+    <div class="col-md-4 roles_container">
+    </div>
+    <div class="col-md-1">
+      <%= link_to '#', class: "remove" do %><i class="fas fa-trash-alt" title="Eliminar corporación"></i><% end %>
+    </div>
   </div>
 </fieldset>
 
 <script type="text/javascript">
-  $(document).ready(function() {
-    // console.log('Dentro del script en el render');
-    // console.log($('#user_customers_customer_id'));
-    $('#user_customers_customer_id').on('change', function() {
+  function change_customer(e){
+    var customer_id_selected = $(e.target).val();
+    $(e.target).attr('id','user_customers_customer_id_'+customer_id_selected)
       $.ajax({
         url:  "<%= admin_users_search_roles_path %>",
         type: "GET",
-        data: { customer_id: $(this).val() },
+        data: { customer_id: customer_id_selected },
+        success: function(data) {
+          $(e.target).closest('.customer_container').find('.roles_container').html(roles); 
+          $(e.target).closest('.customer_container').find('.roles_container_select').attr('id','role_id_id_'+customer_id_selected); 
+        }
       });
-    });
-  });
+    }
 </script>
