@@ -1,0 +1,23 @@
+<% if notice %>
+  <div class="notice pl-3">
+    <p><%= notice %></p>
+  </div>
+<% end %>
+<% if alert %>
+  <div class="d-flex justify-content-center">
+    <p class="notice text-danger"><%= alert %></p>
+  </div>
+<% end %>
+<%= form_with url: read_file_project_type_projects_import_path(@project_type), local: true, method: :post do |f| %>
+  <div class="row justify-content-center my-4">
+    <%= f.label :file, 'Cargar Archivos:', class:'col-md-2 text-right col-form-label' %>
+    <div class="col-md-4">
+      <%= f.file_field(:file, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '')  %>
+      <p><i class="fas fa-exclamation-circle"></i> Sólo acepta archivos <b>GEOJSON</b></p>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")), root_path, :class => 'btn btn-secondary mr-1' %>
+    <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Subir" %>
+  </div>
+<% end %>

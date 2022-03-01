@@ -84,10 +84,10 @@ class ProjectDataChildren
           is_false = value.to_s.downcase == 'false'
           errors.add("#{project_subfield.id}", "No es booleano") if !is_true && !is_false
         when FieldType::SINGLE_LIST
-          wrong_subfield = value.is_a?(Array) ? value.length != 1 : false
+          wrong_subfield = value.is_a?(Array) ? value.length != 1 : true
           errors.add("#{project_subfield.id}", "No es un arreglo de un item") if wrong_subfield
         when FieldType::MULT_LIST
-          wrong_subfield = value.is_a?(Array) ? value.length < 1 : false
+          wrong_subfield = value.is_a?(Array) ? value.length < 1 : true
           errors.add("#{project_subfield.id}", "No es un arreglo con mas de un item") if wrong_subfield
         end
       end
