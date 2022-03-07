@@ -3,7 +3,7 @@
   			<% if msg.is_a?(String) and msg!=''%>
     			<div class="alert alert-<%= name %>">
       				<a class="close" data-dismiss="alert">&#215;</a>
-      					<%= content_tag :div, msg, :id => "flash_#{name}" %>
+      					<%= content_tag :div, msg, :class =>"text-dark" ,:id => "flash_#{name}" %>
     			</div>
   			<% end %>
 		<% end %>

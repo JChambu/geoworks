@@ -1,24 +1,31 @@
-<div class="simple_form form-signin card p-5">
-<center>
-	<h2 style="line-height: 30px">Confirmar Usuario</h2>
-	<%=image_tag 'logo_gw_ver_2.png', class:'mb-2', width:"252"%>
-</center>
+<div class="row w-100 align-items-center m-0" >
+  <div class="col-md-6 align-middle form-sinin-img vh-100" style="overflow:hidden;" >
 
-<br />
-<%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
-<div style="color: red">
-	  <%= devise_error_messages! %>
-</div>
+  </div>
+  <div class="col-md-6 align-middle text-center p-0">
+  	<div class="simple_form form-signin pl-5 pr-5">
+			<center>
+				<h2 style="line-height: 30px">Confirmar Usuario</h2>
+				<%=image_tag 'logo_gw_ver_2.png', class:'mb-2', width:"252"%>
+			</center>
 
-<div class="field">
-  <%= f.email_field :email, autofocus: true, value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email), class: "form-control", placeholder: "Ingrese su correo registrado" %>
-</div>
-<br />
-<div>
-  <%= f.submit "Enviar instrucciones" , class: 'btn btn-lg btn-primary btn-block mb-2'%>
-</div>
-<% end %>
-<br/>
-<%= render "devise/shared/links" %>
+			<br />
+			<%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
+				<div style="color: red">
+	  			<%= devise_error_messages! %>
+				</div>
+
+				<div class="field">
+  				<%= f.email_field :email, autofocus: true, value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email), class: "form-control", placeholder: "Ingrese su correo registrado" %>
+				</div>
+				<br />
+				<div>
+  				<%= f.submit "Enviar instrucciones" , class: 'btn btn-lg btn-primary btn-block mb-2'%>
+				</div>
+			<% end %>
+			<br/>
+			<div class="text-right">
+				<%= render "devise/shared/links" %>
+			</div>
 </div>
 
