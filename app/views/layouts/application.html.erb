@@ -2,6 +2,9 @@
 <html lang="en">
   <head>
     <%= render :partial => 'common/head' %>
+    <script src='https://unpkg.com/react@16.7.0-alpha.0/umd/react.production.min.js'></script>
+    <script src='https://unpkg.com/react-dom@16.7.0-alpha.0/umd/react-dom.production.min.js'></script>
+    <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
   </head>
   <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
   	<body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action] %>" class="nav-sm  dashboard" style="overflow-y: hidden;">
@@ -10,6 +13,7 @@
   <% else %>
     <body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action] %>" class="nav-sm  dashboard">
       <%= render partial: 'layouts/header_new' %>
+      <%= yield :javascript %>
     </body>
   <% end %>
 </html>
