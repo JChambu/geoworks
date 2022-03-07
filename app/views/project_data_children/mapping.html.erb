@@ -99,104 +99,112 @@
             </div>
           </div>
           <div className="card m-2 shadow">
-            <div className="card-body" style={{height: "70vh"}} >
-              <div className="" style={{display: "block", height: "53vh", overflow: "auto", overflowX: "hidden"}}>
+            <div className="card-body py-1">
+              <div className="">
                 <form className="" action="<%= import_project_type_data_children_path(@project_type) %>" method="post" id="form_data_children_import">
-                  <div className="react-mapping-content__general-data py-3 my-3 mx-auto ">
+                  <div className="">
                     <div className="row my-2">
-                      <div className="col-6">
-                        <label for="mapping[project_id]">Columna y campo que asocian geometría</label>
+                      <div className="col-md-6 text-right">
+                        <h4 className="">Archivo CSV</h4>
                       </div>
-                      <div className="col-3">
-                        <select className="select form-control form-control-sm" name="mapping[project_relationship]" onChange={handleChange} style={{display:'inline'}}>
+                      <div className="col-md-6 text-left">
+                        <h4 className=""><%= "Datos de " + @project_type.name %></h4>
+                      </div>
+                    </div>
+                    <div className="row my-1">
+                      <div className="col-md-6 text-right">
+                        <label for="mapping[project_id]" class="col-md-8 text-right col-form-label py-0" >Columna asociada a la geometría</label>
+                        <select className="select col-md-4 form-control form-control-sm" name="mapping[project_relationship]" onChange={handleChange} style={{display:'inline'}}>
                           {availableOptions('project_id')}
                         </select>
                       </div>
-                       <div className="col-3">
-                        <select className="select form-control form-control-sm" name="mapping[project_field_key]" onChange={handleChange} style={{display:'inline'}}>
-                          <option value=""></option>
-                          {projectMapping.map(mapping => <option value={mapping[1]}>{mapping[0]}</option>)}
-                        </select>
+                      <div className="col-md-6 text-left">
+                          <select className="select col-md-4 form-control form-control-sm" name="mapping[project_field_key]" onChange={handleChange} style={{display:'inline'}}>
+                            <option value=""></option>
+                            {projectMapping.map(mapping => <option value={mapping[1]}>{mapping[0]}</option>)}
+                          </select>
+                        <label class="col-md-8 text-left col-form-label py-0">Campo asociado al subformulario</label>
                       </div>
                     </div>
-                    <div className="row my-2">
-                      <div className="col-6">
-                        <label for="mapping[project_field_id]">Campo a importar</label>
-                      </div>
-                      <div className="col-6">  
-                        <select className="select form-control form-control-sm" name="mapping[project_field_id]" onChange={handleChangeProjectField} style={{display:'inline'}}>
-                          {availableProjectFields}
+                    <div className="row my-1">
+                      <div className="col-md-6 text-right">
+                        <label class="col-md-8 text-right col-form-label py-0">Columna fecha</label>
+                        <select className="select col-md-4 form-control form-control-sm" name="mapping[gwm_created_at]" onChange={handleChange} style={{display:'inline'}}>
+                            {availableOptions('gwm_created_at')}
                         </select>
                       </div>
+                        <label class="col-md-6 col-form-label font-italic py-0"><i class="fas fa-exclamation-circle"></i> En blanco para tomar fecha actual</label>
                     </div>
-                    <div className="row my-2">
-                      <div className="col-6">
-                        <label for="mapping[gwm_created_at]"> Columna fecha y formato</label>
-                      </div>
-                      <div className="col-3">
-                        <select className="select form-control form-control-sm" name="mapping[gwm_created_at]" onChange={handleChange} style={{display:'inline'}}>
-                          {availableOptions('gwm_created_at')}
-                        </select>
-                      </div>
-                      <div className="col-3">
-                        <select className="select form-control form-control-sm" name="mapping[gwm_created_at_format]" style={{display:'inline'}}>
-                          <option value=""></option>
+                    <div className="row my-1">
+                      <div className="col-md-6 text-right">
+                        <label class="col-md-8 text-right col-form-label py-0">Formato Fecha</label>
+                        <select className=" select col-md-4 form-control form-control-sm" name="mapping[gwm_created_at_format]" style={{display:'inline'}}>
                           <option value="%Y-%m-%d">YYYY-MM-DD</option>
                           <option value="%d-%m-%Y">DD-MM-YYYY</option>
                           <option value="%m-%d-%Y">MM-DD-YYYY</option>
                         </select>
                       </div>
-                    </div>
-                    <div className="row my-2">
-                      <div className="col-6">
-                        <label for="mapping[project_field_id]">Columna Id usuario</label>
                       </div>
-                      <div className="col-6">
-                        <select className="select form-control form-control-sm" name="mapping[user_id]" onChange={handleChange} style={{display:'inline'}}>
-                          {availableOptions('user_id')}
+                    <div className="row my-1">
+                      <div className="col-md-6 text-right">
+                        <label class="col-md-8 text-right col-form-label py-0">Columna Id Usuario</label>
+                        <select className="select col-md-4 form-control form-control-sm" name="mapping[user_id]" onChange={handleChange} style={{display:'inline'}}>
+                            {availableOptions('user_id')}
                         </select>
                       </div>
+                        <label class="col-md-6 col-form-label font-italic py-0"><i class="fas fa-exclamation-circle"></i> En blanco para tomar usuario logueado</label>
                     </div>
-                  
+                    <div className="row my-1">
+                      <div className="col-md-6 text-right">                        
+                      </div>
+                      <div className="col-md-6 text-left">
+                          <select className="select col-md-4 form-control form-control-sm" name="mapping[project_field_id]" onChange={handleChangeProjectField} style={{display:'inline'}}>
+                              {availableProjectFields}
+                            </select>
+                        <label for="mapping[project_field_id]" class="col-md-8 text-left col-form-label py-0">Subformulario a importar</label>
+                      </div>
+                    </div>
+                    <div className="row my-1">
+                      <div className="col-md-6 text-right">                        
+                      </div>
+                        <label class="col-md-6 col-form-label font-italic py-0"><i class="fas fa-exclamation-circle"></i> Las campos que queden vacíos no se importarán</label>
+                    </div>
                   </div>
-                  <div className="react-mapping-content__data-children  py-3 my-3 mx-auto">
-                    <h3 className="react-mapping-content__subtitle">
-                      Relación columna campo
-                      <span><i class="fas fa-exclamation-circle"></i> Las columnas vacías no serán importadas</span>
-                    </h3>
-                    <div className="react-mapping-content__data-children__wrapper">
+                    <div className="">
                       {availableColumnNames.map(columnName => {
                         return (
-                          <div className="react-mapping-content__data-children__attribute" key={columnName}>
-                            <label
-                              for={`mapping[data_child][${columnName}]`}
-                              className="react-mapping-content__data-children__attribute__name"
-                            >
-                              {columnName}
-                            </label>
-                            <i className="fa fa-arrow-right"></i>
-                            <select className="select form-control form-control-sm" name={`mapping[data_child][${columnName}]`} onChange={handleChangeSubfield} style={{display:'inline'}}>
-                              {availableSubfieldOptions(`mapping[data_child][${columnName}]`)}
-                            </select>
-                            <button
-                              type="button"
-                              name="button"
-                              className="react-mapping-content__data-children__attribute__remove-button"
-                              onClick={removeColumnName(columnName)}
-                            >
-                              <i class="fas fa-trash-alt"></i>
-                            </button>
+                          <div className="" key={columnName}>
+                            <div className="row my-1">
+                              <div className="col-md-6 text-right">
+                                <label
+                                for={`mapping[data_child][${columnName}]`}
+                                className="react-mapping-content__data-children__attribute__name"
+                                >
+                                {columnName}
+                                </label>
+                              </div>
+                              <div className="col-md-6 text-left">
+                                <div className="row">
+                                  <select className="select col-md-4 form-control form-control-sm" name={`mapping[data_child][${columnName}]`} onChange={handleChangeSubfield} style={{display:'inline'}}>
+                                    {availableSubfieldOptions(`mapping[data_child][${columnName}]`)}
+                                  </select>
+                                  <div class="col-md-1">
+                                    <a class="" href="#" name="button" onClick={removeColumnName(columnName)}>
+                                      <i class="fas fa-trash-alt" title="Eliminar columna"></i>
+                                      </a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>  
+                            
                           </div>
                         )
                       })}
                     </div>
-                  </div>
-                                    
-                  
                 </form>
                 
               </div>
-              <div className="row justify-content-center pt-1 my-1">
+              <div className="row justify-content-center pt-1 my-4">
                 <div className="react-mapping-content__actions">
                         <a
                           href={`/${locale}/project_types/${projectType.id}/data_children/new`}

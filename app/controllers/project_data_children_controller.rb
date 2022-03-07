@@ -321,6 +321,8 @@ class ProjectDataChildrenController < ApplicationController
         redirect_to new_project_type_data_children_path(@project_type), flash: { notice: message }
       else
         create_errors_file(@project_data_children_no_valid, @project_type)
+        message = "Se procesaron #{@project_data_children.entries.length-@project_data_children_no_valid.length} registros correctamente"
+        flash.now[:notice] = message
         flash.now[:alert] = "Se encontraron #{@project_data_children_no_valid.length} registros sin procesar"
         return
       end
