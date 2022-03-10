@@ -1,0 +1,9 @@
+.react-mapping-content {
+  .select {
+    &__option {
+      &--hidden {
+        display: none;
+      }
+    }
+  }
+}

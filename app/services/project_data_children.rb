@@ -4,7 +4,7 @@ class ProjectDataChildren
 
   VALID_FIELD_TYPE_ID = FieldType::SUBFORM
 
-  attr_accessor :project_type, :project_id, :project_field_id, :properties, :user_id, :gwm_created_at
+  attr_accessor :project_type, :project_id, :project_field_id, :properties, :user_id, :gwm_created_at, :gwm_created_at_format
 
   validates :project_type, :project_field_id, :properties, presence: true
 
@@ -20,7 +20,8 @@ class ProjectDataChildren
       project_field_id: nil,
       properties: nil,
       user_id: nil,
-      gwm_created_at: nil
+      gwm_created_at: nil,
+      gwm_created_at_format: nil
     }
   end
 
@@ -95,8 +96,8 @@ class ProjectDataChildren
 
   def verify_gwm_created_at
     return true unless gwm_created_at.present?
-    date = Time.parse(gwm_created_at) rescue false
-    errors.add(:gwm_created_at, "Fecha invalida") unless date
+    date = Date.strptime(gwm_created_at, gwm_created_at_format) rescue false
+    errors.add(:gwm_created_at, "Fecha invalida, formato seleccionado es #{gwm_created_at_format}") unless date
   end
 
   def verify_user

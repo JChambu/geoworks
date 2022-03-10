@@ -1,0 +1,109 @@
+<script>
+  function open_import_errors(){
+    if($('#errors_block').hasClass('d-none')){
+      $('#errors_block').removeClass('d-none');
+      $('#errors_details').html('Ocultar Detalle');
+    } else{
+      $('#errors_block').addClass('d-none');
+      $('#errors_details').html('Ver Detalle');
+    }
+  }
+</script>
+
+<% if notice %>
+  <div class="notice pl-3 my-3 text-center">
+    <h4><%= notice %></h4>
+  </div>
+<% end %>
+<% if alert %>
+  <div class="d-flex justify-content-center">
+    <p class="notice text-danger my-1"><%= alert %></p>
+     <button id="errors_details" class="enviar btn-sm btn btn-primary text-danger ml-3 mb-2" onclick="open_import_errors()">Ver Detalle</button>
+  </div>
+
+<% end %>
+
+<div class="card mx-2 d-none" id="errors_block">
+  <div class="card-body p-0">
+    <% if @project_data_children_no_valid.any? %>
+
+      <%= form_with url: import_project_type_data_children_path(@project_type), local: true, method: :post do |f| %>
+        <div class="table-responsive">
+          <table class="table table-hover m-0" style="width:100%">
+            <thead style="display: table; width: calc(100% - 17px);">
+              <tr>
+                <th class="p-1" style="text-align: center;width:15%">
+                  <h6>Id del Formulario</h6>
+                </th>
+                <th class="p-1" style="text-align: center;width:15%">
+                  <h6>Id del Campo</h6>
+                </th>
+                <th class="p-1" style="text-align: center;width:15%">
+                  <h6>Id del Usuario</h6>
+                </th>
+                <th class="p-1" style="text-align: center;width:15%">
+                  <h6>Fecha del subformulario</h6>
+                </th>
+                <th class="p-1" style="text-align: center;width:40%">
+                  <h6>Propiedades</h6>
+                </th>
+              </tr>
+            </thead>
+            <tbody >
+              <%- @project_data_children_no_valid.each do |project_data_child_no_valid| %>
+                <tr style="display: table; width: 100%;">
+                  <td valign='top' style="width:15%" class="">
+                    <input class="form-control form-control-sm" type="text" name="data_children[]project_id" value="<%= project_data_child_no_valid.project_id %>">
+                    <span class="error_column"><%= project_data_child_no_valid.errors[:project_id].first %></span>
+                  </td>
+                  <td valign='top' style="width:15%" class="">
+                    <input class="form-control form-control-sm" type="text" name="data_children[]project_field_id" value="<%= project_data_child_no_valid.project_field_id %>">
+                    <span class="error_column"><%= project_data_child_no_valid.errors[:project_field_id].first %></span>
+                  </td>  
+                  <td valign='top' style="width:15%" class="">
+                    <input class="form-control form-control-sm" type="text" name="data_children[]user_id" value="<%= project_data_child_no_valid.user_id %>">
+                    <span class="error_column"><%= project_data_child_no_valid.errors[:user_id].first %></span>
+                  </td>
+                  <td valign='top' style="width:15%" class="">
+                    <input class="form-control form-control-sm" type="text" name="data_children[]gwm_created_at" value="<%= project_data_child_no_valid.gwm_created_at %>">
+                    <span class="error_column"><%= project_data_child_no_valid.errors[:gwm_created_at].first %></span>
+                  </td>  
+                  <td style="width:40%" class="">
+                    <table>
+                      <tbody>
+                        <%- project_data_child_no_valid.properties.each do |key, value| %>
+                          <tr>
+                            <td style="width:30%;border:none;" class="pt-0 pb-1 text-right">
+                              <h6 class="m-0"><%= key %></h6>
+                            </td>
+                            <td style="width:40%;border:none;" class="pt-0 pb-1">
+                              <input class="form-control form-control-sm pt-0 pb-0 h-auto" type="text" name="data_children[]properties[<%= key %>]" value="<%= value %>">
+                            </td>
+                            <td style="width:30%;border:none;" class="pt-0 pb-1 text-left">
+                              <h6 class="m-0 text-danger"><%= project_data_child_no_valid.errors[key].first %></h6>
+                            </td>
+                          </tr>
+                        <%- end %>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              <%- end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="row justify-content-center pt-3">
+          <p><i class="fas fa-exclamation-circle"></i> Se pueden editar los errores en linea o descargar el archivo con errores para corregir y subir a futuro</p>
+        </div>
+        <div class="row justify-content-center pt-1 my-1">
+          <div class="col-md-4 text-center">
+            <%= link_to 'Descartar', new_project_type_data_children_path, :class => 'btn btn-sm btn-secondary mr-1' %>
+            <%= link_to t('.download', :default => t("helpers.links.download")), import_download_errors_project_type_data_children_path(@project_type), :class => 'btn btn-sm btn-secondary mr-1' %>
+            <%= f.submit id: :envi, class: 'enviar btn-sm btn btn-primary', value: "Corregir", disable_with: 'Guardando...' %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  
+  </div>
+</div>
