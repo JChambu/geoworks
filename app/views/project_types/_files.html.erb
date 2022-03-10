@@ -26,15 +26,6 @@
 </script>
 <%= simple_form_for @project_type, html: {multipart: true}  do |f| %>
 
-  <% if @project_type.errors.any? %>
-    <div class="panel panel-warning errors">
-      <div class="panel-heading"><h4><span><i class="fa fa-exclamation"><span></i>Validaciones</h4></div>
-      <ul class="panel-body"><% @project_type.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %></ul>
-    </div>
-  <% end %>
-
-  <p id="notice"><%= notice %></p>
-
    <div class="d-flex justify-content-around align-items-center mb-2">
      <%= f.input :kind_file, as: :hidden, input_html: {value: 'true' } , wrapper_html: { class: 'd-none' }%>
     <div class="d-flex mr-2">
@@ -100,7 +91,8 @@
     <%= f.label :file, 'Cargar Archivos:', class:'col-md-2 text-right col-form-label' %>
     <div class="col-md-4">
       <%= f.file_field(:file, multiple: true, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '')  %>
-      <p><i class="fas fa-exclamation-circle"></i> Sólo acepta archivos <b>geojson</b> de tipo <b>Polygon</b> y <b>Point</b></p>
+      <p class="mb-0"><i class="fas fa-exclamation-circle"></i> Sólo acepta archivos <b>geojson</b> de tipo <b>Polygon</b> y <b>Point</b></p>
+      <p class="mt-0 ml-3"><b>Lat long WGS84 - EPSG o SRID 4326</b></p>
     </div>
   </div>
 
