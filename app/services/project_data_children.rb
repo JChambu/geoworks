@@ -33,8 +33,8 @@ class ProjectDataChildren
       project_id: project_id,
       project_field_id: project_field_id,
       user_id: user_id,
-      gwm_created_at: gwm_created_at || Time.zone.now,
-      gwm_updated_at: gwm_created_at || Time.zone.now,
+      gwm_created_at: Date.strptime(gwm_created_at, gwm_created_at_format) || Time.zone.now,
+      gwm_updated_at: Date.strptime(gwm_created_at, gwm_created_at_format) || Time.zone.now,
     )
   end
 

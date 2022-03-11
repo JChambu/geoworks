@@ -95,7 +95,7 @@ class Projects::ImportsController < ApplicationController
     redirect_to action: :new and return unless File.exist?(path_to_file)
     content = File.read(temp_import_file_path(@project_type.id, current_user.id))
     @file_headers = JSON.parse(content)["features"].first["properties"].keys
-    @project_mapping = @project_type.project_fields.where.not(field_type_id: FieldType::SUBFORM).pluck(:name, :key)
+    @project_mapping = @project_type.project_fields.where.not(field_type_id: [FieldType::SUBFORM, FieldType::SUBTITLE]).pluck(:key, :name)
     @locale = params[:locale]
   end
 

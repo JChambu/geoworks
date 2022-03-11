@@ -12,8 +12,10 @@ class ProjectImport
       project = ProjectData.new
       project.project_type = project_type
       project.properties = entry[:properties]
-      project.user_id = entry[:user_id].present? ? entry[:user_id] : current_user.id
+      project.user_id = entry[:user_id] || current_user.id
       project.gwm_created_at = entry[:gwm_created_at]
+      project.gwm_created_at_format = entry[:gwm_created_at_format]
+      project.state_id = entry[:state_id]
       project.geometry = entry[:geometry]
 
       unless project.save
@@ -32,13 +34,16 @@ class ProjectImport
   private
   def generate_entries(entries, mapping)
     return entries unless mapping
-    mapping_entries = mapping.select{ |_k, v| v.present? }
+    mapping_entries = mapping[:properties].select{ |_k, v| v.present? }
 
     entries.map do |entry|
       data = {
-        user_id: current_user.id,
         gwm_created_at: Time.now,
         geometry: entry['geometry'],
+        user_id: entry['properties'][mapping['user_id']],
+        state_id: entry['properties'][mapping["state_id"]],
+        gwm_created_at: entry['properties'][mapping["gwm_created_at"]],
+        gwm_created_at_format: mapping['gwm_created_at_format'],
         properties: {},
         properties_original: entry['properties']
       }

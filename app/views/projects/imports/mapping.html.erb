@@ -113,14 +113,14 @@
                   <div className="row my-1">
                     <div className="col-md-6 text-right">
                       <label class="col-md-8 text-right col-form-label py-0">Atributo Id Estado</label>
-                      <select className="select col-md-4 form-control form-control-sm" name="mapping[user_id]" onChange={handleChange} style={{display:'inline'}}>
-                          {availableOptionsKey('user_id')}
+                      <select className="select col-md-4 form-control form-control-sm" name="mapping[state_id]" onChange={handleChange} style={{display:'inline'}}>
+                          {availableOptionsKey('state_id')}
                       </select>
                     </div>
                       <label class="col-md-6 col-form-label font-italic py-0"><i class="fas fa-exclamation-circle"></i> En blanco para estado por default</label>
                   </div>
                   <div className="row my-1">
-                    <div className="col-md-6 text-right">                        
+                    <div className="col-md-6 text-right">
                     </div>
                       <label class="col-md-6 col-form-label font-italic py-0"><i class="fas fa-exclamation-circle"></i> Las campos que queden vacíos no se importarán</label>
                   </div>
@@ -133,7 +133,7 @@
                           <div className="row my-1">
                             <div className="col-md-6 text-right">
                               <label
-                                for={`mapping[${columnName}]`}
+                                for={`mapping[properties][${columnName}]`}
                                 className="react-mapping-content__data-children__attribute__name"
                               >
                               {columnName}
@@ -141,8 +141,8 @@
                             </div>
                             <div className="col-md-6 text-left">
                               <div className="row">
-                                <select className="select col-md-4 form-control form-control-sm" name={`mapping[${columnName}]`} onChange={handleChangeField} style={{display:'inline'}}>
-                                  {availableOptions(`mapping[${columnName}]`)}
+                                <select className="select col-md-4 form-control form-control-sm" name={`mapping[properties][${columnName}]`} onChange={handleChangeField} style={{display:'inline'}}>
+                                  {availableOptions(`mapping[properties][${columnName}]`)}
                                 </select>
                                 <div class="col-md-1">
                                   <a class="" href="#" name="button" onClick={removeColumnName(columnName)}>
