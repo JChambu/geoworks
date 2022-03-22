@@ -34,9 +34,9 @@ class ProjectData
       properties_original: properties,
       project_type_id: project_type.id,
       user_id: user_id,
-      gwm_created_at: Date.strptime(gwm_created_at, gwm_created_at_format) || Time.now,
-      gwm_updated_at: Date.strptime(gwm_created_at, gwm_created_at_format) || Time.now,
-      project_status_id: state_id || project_type.project_statuses.default.id,
+      gwm_created_at: gwm_created_at.present? ? Date.strptime(gwm_created_at, gwm_created_at_format) : Time.now,
+      gwm_updated_at: gwm_created_at.present? ? Date.strptime(gwm_created_at, gwm_created_at_format) : Time.now,
+      project_status_id: state_id || project_type.project_statuses.default&.id,
       the_geom: coordinates
     )
   end

@@ -8,6 +8,7 @@ class ProjectImport
   def save
     return false unless self.valid?
     project_no_valid = []
+
     generate_entries(entries, mapping).each do |entry|
       project = ProjectData.new
       project.project_type = project_type

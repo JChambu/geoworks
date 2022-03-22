@@ -83,6 +83,8 @@ class Projects::ImportsController < ApplicationController
       end
       redirect_to mapping_project_type_projects_import_path(@project_type)
     rescue => e
+      p '*' * 100
+      p e
       flash.now[:alert] = "Archivo seleccionado no tiene el formato geojson"
       render action: :new
       return
