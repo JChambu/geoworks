@@ -96,7 +96,7 @@ class ProjectData
   def polygon_coordinates
     raw_coordinates = geometry['coordinates'][0]
     coordinates = raw_coordinates.map { |latitude, longitude| "#{latitude} #{longitude}" }
-    "POLYGON(#{coordinates.join(', ')})"
+    "POLYGON((#{coordinates.join(', ')}))"
   end
 
   def verify_gwm_created_at
