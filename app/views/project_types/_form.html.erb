@@ -1,5 +1,17 @@
+<div class="toast custom_toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="8000">
+    <div class="toast-header">
+      <%= image_tag "logo_gw_hor_2.png", class: 'mr-auto', height:"30" %>
+      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body">
+      <ul class="panel-body"><% @project_type.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %></ul>
+    </div>
+  </div>
 <div class="card m-2 shadow">
   <div class="card-body p-3">
+  <p id="notice"><%= notice %></p>
 
     <ul class="nav nav-pills nav-fill mb-2" id="myTab" role="tablist">
       <% if params[:controller] == 'project_types' && (params[:action] == 'new' || params[:action] == 'create') %>

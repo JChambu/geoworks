@@ -2,7 +2,9 @@ module ProjectTypes::GeoJson
   extend ActiveSupport::Concern
 
   included do
+    #valida geometrías, tipo de archivo y si el archivo existe
     validate :is_file_type_valid?, if: :file_exist?
+    validate :is_geom_valid?, if: :is_file_type_valid?
   end
 
   def save_file
@@ -11,7 +13,7 @@ module ProjectTypes::GeoJson
   end
 
   def self.build_geom(address, department, province, country)
-
+    #Revisión de código necesario. Chequear si esta función se está utilizando
     @street = address
     @city = department
     @province = province
@@ -23,7 +25,7 @@ module ProjectTypes::GeoJson
   end
 
   def file_exist?
-
+    #Verifica si exite el archivo
     if self.kind_file == 'true'
       if self.file.nil?
         self.errors.add(:file, "no puede ser vacío")
@@ -34,8 +36,8 @@ module ProjectTypes::GeoJson
   end
 
   def is_file_type_valid?
-
-    if self.kind_file == 'true'
+    #Verifica si es un archivo válido
+    if self.kind_file == 'true' && file_exist?
         self.file.each do |f| @f = f.content_type
         begin
           if @f == "application/geo+json" || @f =="application/octet-stream"
@@ -48,6 +50,24 @@ module ProjectTypes::GeoJson
         valid
         end
       end
+  end
+
+  def is_geom_valid?
+    #Verifica si contiene geometrías válidas y el geojson está bien armado
+    if self.kind_file == 'true'
+      count_verify = 0
+      self.file.each do |f|
+          if @f == "application/geo+json" || @f =="application/octet-stream"
+            verify_geojson_result = verify_geojson(self.type_geometry)
+            count_verify += verify_geojson_result
+          end
+      end
+      if count_verify == 0 
+        return true
+      else
+        return false
+      end
+    end
   end
 
   def load_file
@@ -64,7 +84,6 @@ module ProjectTypes::GeoJson
 
     require 'rgeo/geo_json'
 
-    @directory = save_file
     file_name = @directory[1].split('.').first
     items = []
     fields = {}
@@ -72,7 +91,10 @@ module ProjectTypes::GeoJson
     count_errors = 0
     ct = Apartment::Tenant.current
     items = {}
-    st1 = JSON.parse(File.read("#{@directory[0]}/#{file_name}.geojson"))
+    file_uploaded = File.open ("#{@directory[0]}/#{file_name}.geojson")
+    #coloca el puntero del archivo en la primera posición
+    file_uploaded.seek(0)
+    st1 = JSON.parse(file_uploaded.read)
     data = RGeo::GeoJSON.decode(st1, :json_parser => :json)
     project_status = ProjectStatus.where(project_type_id: self.id, name: 'Default').first
     data.each do |a|
@@ -109,7 +131,46 @@ module ProjectTypes::GeoJson
         count_errors += count_errors
       end
     end
-    return count_errors, count_insert
+    return
   end
+
+  def verify_geojson type_geometry
+    require 'rgeo/geo_json'
+
+    @directory = save_file 
+    Rails.logger.debug "Debugg directorio "+@directory.to_s
+    file_name = @directory[1].split('.').first
+    count_errors_geom_type = 0
+    total_errors = 0
+    begin
+      file_uploaded = File.open ("#{@directory[0]}/#{file_name}.geojson")
+      file_uploaded.seek(0)
+      st1 = JSON.parse(file_uploaded.read)
+
+      begin
+        data = RGeo::GeoJSON.decode(st1, :json_parser => :json)
+        data.each do |a|
+          if a.geometry.geometry_type.to_s.downcase == self.type_geometry.downcase     
+          else
+            count_errors_geom_type += 1
+          end
+        end
+
+        if count_errors_geom_type > 0 
+          total_errors +=count_errors_geom_type
+          self.errors.add(:base, "Hay "+count_errors_geom_type.to_s+ " geometrías que no son tipo "+self.type_geometry.to_s)
+        end
+      rescue
+        total_errors += 1
+        self.errors.add(:base, "El archivo no contiene Geometrías Válidas")
+      end
+    rescue JSON::ParserError
+      total_errors += 1
+      self.errors.add(:base, "El archivo no contiene un Json Válido")
+    end
+
+    total_errors
+  end
+
 
 end

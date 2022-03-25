@@ -1114,7 +1114,7 @@ class ProjectTypesController < ApplicationController
     @has_project_types = HasProjectType.where(user_id: current_user.id).select(:project_type_id)
     @p =[]
     @has_project_types.each do |s| @p.push(s.project_type_id) end
-    @project_types = ProjectType.order(:level).where(id: @p)
+    @project_types = ProjectType.order(id: :desc).where(id: @p)
     if !params[:search_project].nil? || !params[:search_project].blank?
       @project_types = @project_types.where("name ILIKE :name", name: "%#{params[:search_project]}%")
     end
@@ -1167,11 +1167,16 @@ class ProjectTypesController < ApplicationController
           HasProjectType.create(user_id: 1, project_type_id: @project_type.id)
         end
         ProjectType.add_layer_geoserver(params[:project_type][:name_layer])
-        format.html { redirect_to root_path(), notice: 'El proyecto se creó correctamente.' }
-        format.json { render :show, status: :created, location: @project_type }
+        format.html { redirect_to project_types_path, notice: 'El proyecto se creó correctamente.' }
+        format.json { render :new, status: :created, location: @project_type }
       else
-        format.html { render :new, status: :no_created}
-        format.json { render json: @project_type.errors, status: :unprocessable_entity }
+        if @project_type.kind_file == true
+          format.html { redirect_to project_types_path, notice: 'NO pudo crearse el proyecto.'}
+          format.json { render json: @project_type.errors, status: :unprocessable_entity }
+        else
+          format.html { render :new, status: :no_created}
+          format.json { render json: @project_type.errors, status: :unprocessable_entity }
+        end
       end
     end
 
