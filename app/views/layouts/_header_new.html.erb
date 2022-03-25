@@ -64,7 +64,7 @@ function open_panel(id_panel,id_table){
           if(current_layer_fields.indexOf(field_key)<0){
             hide_column(field_key);
           }
-        });      
+        });
         // abre los que pertenecen a la configuración de la tabla
         current_layer_fields.forEach(function(key){
           if(!$('#addcolumn_'+key).hasClass('d-none')){
@@ -118,10 +118,10 @@ function open_panel(id_panel,id_table){
             });
           });
         }
-        
+
       open_table_middle(true);
       init_data_dashboard(true,true,subheader_open_saved,true);
-      
+
       }
     });
   } else{
@@ -189,7 +189,7 @@ function open_panel(id_panel,id_table){
       <% if params[:controller] == 'project_types' && params[:action] == 'edit' %>
         <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
       <% end %>
-      
+
       <!-- Importar -->
       <% if params[:controller] == 'project_data_children' && params[:action] == 'new' %>
         <li class="nav-item"><%= link_to root_path(), class: 'nav-link nav-link-width' do %><i class="fas fa-arrow-left align-middle" title="Volver" style="font-size: 24px"></i><% end %></li>
@@ -359,12 +359,12 @@ function open_panel(id_panel,id_table){
              <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelImport" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Importar</a>
             <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels_import" aria-labelledby="panelImport">
               <% if can? :data, :new %>
-                <%= link_to 'Formularios', new_project_type_data_children_path(@project_type.id), class: "dropdown-item" %>
+                <%= link_to 'Formularios', new_project_type_projects_import_path(@project_type.id), class: "dropdown-item" %>
               <% end %>
               <% if can? :data, :new_subform %>
               <%= link_to 'Subformularios', new_project_type_data_children_path(@project_type.id), class: "dropdown-item" %>
               <% end %>
-            </div>  
+            </div>
           <% end %>
           </div>
           <% if can? :project_types, :destroy%>

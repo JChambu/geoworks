@@ -93,6 +93,17 @@ Rails.application.routes.draw do
       resources :projects do
         resources :project_data_children
       end
+
+      namespace :projects do
+        resource :import, only: [:new, :create] do
+          # get :new, controller: :import, action: :new
+          post :read_file
+          get :mapping
+          # post :save, controller: :import, action: :save
+          # get :save, to: redirect{ |path_params, req| "/#{path_params[:locale]}/project_types/#{path_params[:project_type_id]}/projects/import"}
+          get :download_errors
+        end
+      end
       resources :project_fields do
         resources :project_subfields, only: [:index]
         resource :project_subfields do

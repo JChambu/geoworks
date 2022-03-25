@@ -356,6 +356,18 @@ class ProjectsController < ApplicationController
     end
   end
 
+  def read_file
+  end
+
+  def mapping
+  end
+
+  def import
+  end
+
+  def download_errors
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
 
