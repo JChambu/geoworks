@@ -56,15 +56,15 @@ class Admin::UsersController < ApplicationController
   def create
     respond_to do |format|
       if @user.save
-        @user_customers = UserCustomer.new
-        @user_customers[:user_id] = @user.id
-        @current_tenant = params[:user][:customer_id]
-        @customer = Customer.where(subdomain: @current_tenant).first
-        @user_customers[:customer_id] = @current_tenant.to_i
-        @user_customers[:role_id] = params[:role_id]['id'].to_i
-        @user_customers.save!
-        params[:id] = @user.id
-        user_filters = User.save_filters params
+        # @user_customers = UserCustomer.new
+        # @user_customers.user_id = @user.id
+        # @current_tenant = params[:user][:customer_id]
+        # @customer = Customer.where(subdomain: @current_tenant).first
+        # @user_customers[:customer_id] = @current_tenant.to_i
+        # @user_customers[:role_id] = params[:role_id]['id'].to_i
+        # @user_customers.save!
+        # params[:id] = @user.id
+        # user_filters = User.save_filters params
         format.html { redirect_to admin_users_path() }
         format.json { render action: 'show', status: :created, location: @user }
       else
@@ -119,6 +119,9 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :name, :password_confirmation, :active, :role_id, has_project_types_attributes: [:id, :project_type_id, :user_id, :_destroy, :owner, :properties])
+    params.require(:user).permit(:name, :email, :password, :password_confirmation, :active,
+      has_project_types_attributes: [:id, :project_type_id, :user_id, :owner, :properties, :_destroy],
+      user_customers_attributes: [:id, :user_id, :customer_id, :role_id, :_destroy]
+    )
   end
 end

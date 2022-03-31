@@ -17,13 +17,13 @@
             </div>
           </div>
           <br>
-          <div class="customer_items text-center">
-            <%= f.fields_for :customers do |i| %>
-              <%= render "customer_fields", f: i %>
+          <div class="text-center">
+            <%= f.fields_for :user_customers do |i| %>
+              <%= render "user_customer_fields", f: i %>
             <% end %>
           </div>
           <div class="text-center mb-4">
-            <%= link_to_add_fields "<i class='fas fa-plus' title='Agregar usuario'></i>".html_safe, f, :customers %>
+            <%= link_to_add_fields "<i class='fas fa-plus' title='Agregar usuario'></i>".html_safe, f, :user_customers %>
           </div>
 
           <div class="row justify-content-center">
@@ -42,3 +42,18 @@
     </div>
   </div>
 </div>
+<script type="text/javascript">
+  function change_customer(e){
+    var customer_id_selected = $(e.target).val();
+    // $(e.target).attr('id','user_customers_customer_id_'+customer_id_selected)
+    $.ajax({
+      url:  "<%= admin_users_search_roles_path %>",
+      type: "GET",
+      data: { customer_id: customer_id_selected },
+      success: function(data) {
+        $(e.target).closest('.customer_container').find('.roles_container').html(roles);
+        // $(e.target).closest('.customer_container').find('.roles_container_select').attr('id','role_id_id_'+customer_id_selected);
+      }
+    });
+  }
+</script>

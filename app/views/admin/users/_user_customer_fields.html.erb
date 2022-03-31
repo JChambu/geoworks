@@ -1,0 +1,30 @@
+<fieldset>
+  <div class="row justify-content-center customer_container">
+    <%= f.label 'Corporación', class:'col-md-2 text-right col-form-label' %>
+    <div class="col-md-4">
+      <%= f.input :customer_id,
+        required: true,
+        collection: customers_for_select,
+        prompt: t('simple_form.select_item_prompt'),
+        label: false,
+        input_html: {
+          class: 'form-control form-control-sm',
+          onchange: "change_customer(event)"
+        }
+      %>
+    </div>
+    <label class="col-md-1 text-right col-form-label">Rol</label>
+    <%= f.input :role_id,
+      required: true,
+      collection: [],
+      prompt: t('simple_form.select_item_prompt'),
+      label: false,
+      input_html: {
+        class: 'form-control form-control-sm roles_container'
+      }
+    %>
+    <div class="col-md-1">
+      <%= link_to '#', class: "remove" do %><i class="fas fa-trash-alt" title="Eliminar corporación"></i><% end %>
+    </div>
+  </div>
+</fieldset>
