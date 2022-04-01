@@ -29,16 +29,24 @@ class ProjectData
   def save
     return false unless self.valid?
 
-    Project.create(
-      properties: properties,
-      properties_original: properties,
+    project_status_id = state_id || project_type.project_statuses.default.id || project_type.project_statuses.first.id
+
+    project = Project.create(
       project_type_id: project_type.id,
       user_id: user_id,
       gwm_created_at: gwm_created_at.present? ? Date.strptime(gwm_created_at, gwm_created_at_format) : Time.now,
       gwm_updated_at: gwm_created_at.present? ? Date.strptime(gwm_created_at, gwm_created_at_format) : Time.now,
-      project_status_id: state_id || project_type.project_statuses.default&.id,
+      project_status_id: project_status_id,
       the_geom: coordinates
     )
+
+    project.update(
+      properties: properties.merge({
+        app_id: project.id,
+        app_usuario: user_id,
+        app_estado: project_status_id
+        })
+      )
   end
 
   private
