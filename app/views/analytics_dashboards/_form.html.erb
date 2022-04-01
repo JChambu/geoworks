@@ -6,14 +6,17 @@
         <% if @analytics_dashboard.kpi_type==nil%>
           <h5 class="modal-title">Nuevo Indicador</h5>
         <% end %>
-         <% if @analytics_dashboard.kpi_type=='basic'%>
+        <% if @analytics_dashboard.kpi_type=='basic'%>
           <h5 class="modal-title">Indicador Básico</h5>
         <% end %>
-         <% if @analytics_dashboard.kpi_type=='complex'%>
+        <% if @analytics_dashboard.kpi_type=='complex'%>
           <h5 class="modal-title">Indicador Complejo</h5>
         <% end %>
-         <% if @analytics_dashboard.kpi_type=='advanced'%>
+        <% if @analytics_dashboard.kpi_type=='advanced'%>
           <h5 class="modal-title">Indicador Avanzado</h5>
+        <% end %>
+        <% if @analytics_dashboard.kpi_type=='trigger'%>
+          <h5 class="modal-title">Trigger</h5>
         <% end %>
 
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -34,6 +37,9 @@
             <li class="nav-item">
               <a class="nav-link py-1" id="advanced-tab" data-toggle="tab" href="#advanced" role="tab" aria-controls="advanced" aria-selected="false">Avanzado</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link py-1" id="trigger-tab" data-toggle="tab" href="#trigger" role="tab" aria-controls="trigger" aria-selected="false">Trigger</a>
+            </li>
           </ul>
         <% end %>
 
@@ -52,6 +58,9 @@
             <div class="tab-pane fade" id="advanced" role="tabpanel" aria-labelledby="advanced-tab">
               <%= render 'advanced' %>
             </div>
+            <div class="tab-pane fade" id="trigger" role="tabpanel" aria-labelledby="trigger-tab">
+              <%= render 'trigger' %>
+            </div>
            <% end %>
            <% if @analytics_dashboard.kpi_type=='basic'%>
             <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
@@ -66,6 +75,11 @@
            <% if @analytics_dashboard.kpi_type=='advanced'%>
             <div class="tab-pane fade show active" id="advanced" role="tabpanel" aria-labelledby="advanced-tab">
               <%= render 'advanced' %>
+            </div>
+           <% end %>
+           <% if @analytics_dashboard.kpi_type=='trigger'%>
+            <div class="tab-pane fade show active" id="trigger" role="tabpanel" aria-labelledby="trigger-tab">
+              <%= render 'trigger' %>
             </div>
            <% end %>
         </div>

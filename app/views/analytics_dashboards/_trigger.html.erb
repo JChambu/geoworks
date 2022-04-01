@@ -1,0 +1,38 @@
+<%= simple_form_for([@project_type, @dashboard, @analytics_dashboard], html: {role: :form, remote: true, class:'form'}) do |f| %>
+
+  <div id="alert-success"></div>
+
+  <% if @analytics_dashboard.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@analytics_dashboard.errors.count, "error") %> prohibited this analytics_dashboard from being saved:</h2>
+      <ul><% @analytics_dashboard.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
+    </div>
+  <% end %>
+
+  <br>
+  <p>
+    <i class="fas fa-exclamation-circle"></i> Agregar la palabra <kbd>variable</kbd> para introducir la variable proveniente del app_trigger.
+    <br>
+    <i class="fas fa-exclamation-circle"></i> Debe devolver el alias <kbd>result</kbd>
+  </p>
+  <div class="form-group">
+    <%= f.input :kpi_type, as: :hidden, input_html: {value: 'trigger'} %>
+    <%= f.input :title, input_html: {class:"form-control form-control-sm"} %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :sql_full %>
+    <%= f.text_area :sql_full, rows: 5, class:"form-control form-control-sm" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description %>
+    <%= f.text_area :description, rows: 1, class:"form-control form-control-sm" %>
+  </div>
+
+  <div class="row justify-content-center">
+    <button type="button" class="btn btn-sm btn-secondary mr-1" data-dismiss="modal">Cancelar</button>
+    <%= f.submit class: 'btn btn-sm btn-primary', value: "Guardar" %>
+  </div>
+
+<% end %>
