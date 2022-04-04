@@ -47,7 +47,7 @@
   var loadFile = function(event) {
     var fileInput = document.getElementById('file-input');
     var filePath = fileInput.value;
-    var allowedExtensions = /(.jpg|.jpeg|.png|.gif) $/i;
+    var allowedExtensions = /(.jpg|.jpeg|.png|.gif)$/i;
     if(!allowedExtensions.exec(filePath)){
         document.getElementById('error_text').innerHTML='Extensión no permitida';
         document.getElementById('error_text').classList.remove('text-secondary');
