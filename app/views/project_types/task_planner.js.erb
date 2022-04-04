@@ -1,0 +1,24 @@
+$('<%= j render "task_planner" %>').on('hidden.bs.modal', function (e) {
+  // Cuando se termina de ocultar el modal lo elimina para evitar que se quede pegado el tab
+  $(this).remove();
+  $('.modal-backdrop').remove();
+  
+}).on('shown.bs.modal', function (e) {
+  $('.task_planner_date').datetimepicker({
+        format: "DD/MM/YYYY",
+        viewMode: "days",
+        locale: moment.locale('en', {
+          week: {
+            dow: 1,
+            doy: 4
+          }
+        }),
+      });
+  }).modal();
+
+// Cierra dropdown
+$('#project_dropdown').dropdown('toggle')
+
+// Da estilo al datetimepicker
+
+
