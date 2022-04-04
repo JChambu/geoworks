@@ -345,6 +345,9 @@ function open_panel(id_panel,id_table){
             </div>
           <% end %>
 
+          <% if can? :data, :new %>
+            <%= link_to 'Planificar', project_type_task_planner_path(@project_type.id), remote:true, remote: true, class: "dropdown-item" %>
+           <% end %>
           <% if can? :statuses, :visualizer %>
             <%= link_to 'Estados', project_type_project_statuses_path(@project_type.id), class: "dropdown-item" %>
            <% end %>

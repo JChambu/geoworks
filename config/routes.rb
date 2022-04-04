@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   get 'project_fields/show_fields' => 'project_fields#show_fields'
   get 'project_subfields/show_subfields' => 'project_subfields#show_subfields'
   get 'project_types/create_share' => 'project_types#create_share', as: :create_share
+  get 'project_types/create_task_planner' => 'project_types#create_task_planner', as: :create_task_planner
   get 'projects/search_data' => 'projects#search_data'
   get 'projects/search_statuses' => 'projects#search_statuses'
   get 'projects/search_users' => 'projects#search_users'
@@ -127,6 +128,7 @@ Rails.application.routes.draw do
       end
 
     get 'project_types/share' => 'project_types#share', as: :share
+    get 'project_types/task_planner' => 'project_types#task_planner', as: :task_planner
     get 'project_types/filters' => 'project_types#filters', as: :filters
     get 'project_types/quick_filters' => 'project_types#quick_filters', as: :quick_filters
     get 'project_types/quick_filters_users' => 'project_types#quick_filters_users', as: :quick_filters_users
