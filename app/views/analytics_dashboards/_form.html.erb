@@ -12,13 +12,16 @@
         <% if @analytics_dashboard.kpi_type=='complex'%>
           <h5 class="modal-title">Indicador Complejo</h5>
         <% end %>
-        <% if @analytics_dashboard.kpi_type=='advanced'%>
-          <h5 class="modal-title">Indicador Avanzado</h5>
+        <% if can? :indicators, :new_advanced%>
+          <% if @analytics_dashboard.kpi_type=='advanced'%>
+            <h5 class="modal-title">Indicador Avanzado</h5>
+          <% end %>
         <% end %>
-        <% if @analytics_dashboard.kpi_type=='trigger'%>
-          <h5 class="modal-title">Trigger</h5>
+        <% if can? :indicators, :new_trigger%>
+          <% if @analytics_dashboard.kpi_type=='trigger'%>
+            <h5 class="modal-title">Trigger</h5>
+          <% end %>
         <% end %>
-
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -31,15 +34,21 @@
             <li class="nav-item">
              <a class="nav-link py-1 active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">Básico</a>
             </li>
-            <li class="nav-item">
+            <!-- Oculto por ahora 
+            <li class="nav-item d-none">
               <a class="nav-link py-1" id="complex-tab" data-toggle="tab" href="#complex" role="tab" aria-controls="complex" aria-selected="false">Complejo</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link py-1" id="advanced-tab" data-toggle="tab" href="#advanced" role="tab" aria-controls="advanced" aria-selected="false">Avanzado</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link py-1" id="trigger-tab" data-toggle="tab" href="#trigger" role="tab" aria-controls="trigger" aria-selected="false">Trigger</a>
-            </li>
+            -->
+            <% if can? :indicators, :new_advanced%>
+              <li class="nav-item">
+                <a class="nav-link py-1" id="advanced-tab" data-toggle="tab" href="#advanced" role="tab" aria-controls="advanced" aria-selected="false">Avanzado</a>
+              </li>
+            <% end %>
+            <% if can? :indicators, :new_trigger%>
+              <li class="nav-item">
+                <a class="nav-link py-1" id="trigger-tab" data-toggle="tab" href="#trigger" role="tab" aria-controls="trigger" aria-selected="false">Trigger</a>
+              </li>
+            <% end %>
           </ul>
         <% end %>
 

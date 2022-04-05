@@ -67,12 +67,14 @@
       </div>
     </div>
   </th>
-  <th style="width: 50vw" class="d-none logic_cell_group">
-    <%# cálculo %>
-    <div style="width: 45%; display:inline-block; margin-right: 5px"><%= f.text_field :calculated_field, class: "form-control form-control-sm" %></div>
-    <%# script %>
-    <div style="width: 45%; display:inline-block; margin-left: 5px"><%= f.text_field :data_script, class: "form-control form-control-sm" %></div>
-  </th> 
+  <% if can? :attributes, :add_logic %>
+    <th style="width: 50vw" class="d-none logic_cell_group">
+      <%# cálculo %>
+      <div style="width: 45%; display:inline-block; margin-right: 5px"><%= f.text_field :calculated_field, class: "form-control form-control-sm" %></div>
+      <%# script %>
+      <div style="width: 45%; display:inline-block; margin-left: 5px"><%= f.text_field :data_script, class: "form-control form-control-sm" %></div>
+    </th>
+  <% end %> 
   <%= f.hidden_field :sort, class: 'form-control form-control-sm w-10 project_fields_current_position form-control form-control-sm', readonly: true %>
   <%= f.hidden_field :_destroy%>
   <th style="width: 50vw" class="d-none permissions_cell_group">
