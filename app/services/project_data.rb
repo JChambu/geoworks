@@ -29,7 +29,7 @@ class ProjectData
   def save
     return false unless self.valid?
 
-    project_status_id = state_id || project_type.project_statuses.default.id || project_type.project_statuses.first.id
+    project_status_id = state_id || project_type.project_statuses.default&.id || project_type.project_statuses.first&.id
 
     project = Project.create(
       project_type_id: project_type.id,
