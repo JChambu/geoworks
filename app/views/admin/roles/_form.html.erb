@@ -77,6 +77,26 @@
                 </div>
               <% end %>
 
+              <!-- Módulo Indicadores -->
+              <% if (mt.name == 'indicators' && (e.name == 'new_advanced' || e.name == 'new_trigger' || e.name == 'edit_advanced' || e.name == 'edit_trigger' )) %>
+                <div class="form-group">
+                  <div class="custom-control custom-switch">
+                    <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
+                    <label class="custom-control-label custom-role-colour" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
+                  </div>
+                </div>
+              <% end %>
+
+              <!-- Módulo Atributos -->
+              <% if (mt.name == 'attributes' && (e.name == 'add_logic' )) %>
+                <div class="form-group">
+                  <div class="custom-control custom-switch">
+                    <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
+                    <label class="custom-control-label custom-role-colour" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
+                  </div>
+                </div>
+              <% end %>
+
             <% end %>
           </div>
           <% end %>

@@ -214,7 +214,9 @@
                     </button>  
                     <div class="dropdown-menu">
                       <a class="dropdown-item dropdown_attributes d-none"> Atributos </a>  
-                      <a class="dropdown-item dropdown_logic"> Lógica </a>  
+                      <% if can? :attributes, :add_logic %>
+                        <a class="dropdown-item dropdown_logic"> Lógica </a>  
+                      <% end %>
                       <a class="dropdown-item dropdown_permissions"> Autorizaciones </a>  
                     </div>
                   </div>
