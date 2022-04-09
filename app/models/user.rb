@@ -21,14 +21,26 @@ class User < ApplicationRecord
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
   validates :email, :email_format => {:message => I18n.t("activerecord.errors.messages.invalid_email")}
-  # validates :role, presence: true
   validates :password, length: { minimum: 6 }, unless: -> { !:password.blank? }
   validates :password, confirmation: {case_sensitive: true}
+  validates_presence_of :user_customers, :message => "/ No se puede almacenar un usuario sin una corporación"
+
   # validate :is_role_valid?
   # before_destroy :has_related_pois?
   before_create :generate_token, on: :create
 
   attr_accessor :customer_id, :project
+  # after_save :validate_if_customer_is_equal
+  #
+  # def validate_if_customer_is_equal
+  #
+  #   puts ''
+  #   puts ' *************************** uc model *************************** '
+  #   p customers_ids = UserCustomer.where(user_id: self.id)
+  #   # p customers_ids
+  #   puts ' *********************************************************** '
+  #   puts ''
+  # end
 
   ROLES = %w[User Admin Moderator]
 
@@ -39,9 +51,11 @@ class User < ApplicationRecord
   end
 
   def generate_token
-      self.token = SecureRandom.base64(15)
-      self.authentication_token =  SecureRandom.base64(15)
+    self.token = SecureRandom.base64(15)
+    self.authentication_token =  SecureRandom.base64(15)
   end
+
+
 
   def is_active?
    return User.find(self.id).active
@@ -65,8 +79,6 @@ class User < ApplicationRecord
   end
 
   def is_validated?
-
-
     current_tenant = Apartment::Tenant.current
     @customer_id = Customer.where(subdomain: current_tenant)
     @user = UserCustomer.where(user_id: self.id, customer_id: @customer_id )

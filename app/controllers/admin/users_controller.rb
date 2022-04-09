@@ -41,14 +41,10 @@ class Admin::UsersController < ApplicationController
 
   # GET /users/new
   def new
-
   end
 
   # GET /users/1/edit
   def edit
-    @user_customer =  UserCustomer.where(user_id: params[:id]).first
-    params['customer_id']  = @user_customer.customer_id
-    @roles = search_roles
   end
 
   # POST /users
@@ -56,15 +52,6 @@ class Admin::UsersController < ApplicationController
   def create
     respond_to do |format|
       if @user.save
-        # @user_customers = UserCustomer.new
-        # @user_customers.user_id = @user.id
-        # @current_tenant = params[:user][:customer_id]
-        # @customer = Customer.where(subdomain: @current_tenant).first
-        # @user_customers[:customer_id] = @current_tenant.to_i
-        # @user_customers[:role_id] = params[:role_id]['id'].to_i
-        # @user_customers.save!
-        # params[:id] = @user.id
-        # user_filters = User.save_filters params
         format.html { redirect_to admin_users_path() }
         format.json { render action: 'show', status: :created, location: @user }
       else
@@ -79,8 +66,6 @@ class Admin::UsersController < ApplicationController
   def update
     respond_to do |format|
       if @user.update(user_params)
-        @user_customer = UserCustomer.where(user_id: params[:id], customer_id: params[:user][:customer_id])
-        @user_customer.update(role_id: params[:user][:role_id])
         format.html { redirect_to admin_users_path() }
         format.json { head :no_content }
       else

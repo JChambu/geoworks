@@ -18,8 +18,11 @@
           </div>
           <br>
           <div class="text-center">
+            <% @customer_count = 0 %>
             <%= f.fields_for :user_customers do |i| %>
+              <% @customer_id_num = @user.user_customers[@customer_count].customer_id%>
               <%= render "user_customer_fields", f: i %>
+              <% @customer_count += 1 %>
             <% end %>
           </div>
           <div class="text-center mb-4">
@@ -42,6 +45,7 @@
     </div>
   </div>
 </div>
+
 <script type="text/javascript">
   function change_customer(e){
     var customer_id_selected = $(e.target).val();
@@ -53,6 +57,7 @@
       success: function(data) {
         $(e.target).closest('.customer_container').find('.roles_container').html(roles);
         // $(e.target).closest('.customer_container').find('.roles_container_select').attr('id','role_id_id_'+customer_id_selected);
+        console.log($(e.target).closest('.customer_container').find('.roles_container').html(roles));
       }
     });
   }
