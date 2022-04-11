@@ -30,17 +30,6 @@ class User < ApplicationRecord
   before_create :generate_token, on: :create
 
   attr_accessor :customer_id, :project
-  # after_save :validate_if_customer_is_equal
-  #
-  # def validate_if_customer_is_equal
-  #
-  #   puts ''
-  #   puts ' *************************** uc model *************************** '
-  #   p customers_ids = UserCustomer.where(user_id: self.id)
-  #   # p customers_ids
-  #   puts ' *********************************************************** '
-  #   puts ''
-  # end
 
   ROLES = %w[User Admin Moderator]
 
@@ -54,8 +43,6 @@ class User < ApplicationRecord
     self.token = SecureRandom.base64(15)
     self.authentication_token =  SecureRandom.base64(15)
   end
-
-
 
   def is_active?
    return User.find(self.id).active

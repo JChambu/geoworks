@@ -50,14 +50,15 @@ class Admin::UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    respond_to do |format|
-      if @user.save
+    begin
+      @user.save!
+      respond_to do |format|
         format.html { redirect_to admin_users_path() }
         format.json { render action: 'show', status: :created, location: @user }
-      else
-        format.html { render action: 'new' }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
       end
+    rescue ActiveRecord::RecordNotUnique => e
+      flash.now[:notice] = "No se puede almacenar usuarios con corporaciones iguales"
+      render 'new'
     end
   end
 

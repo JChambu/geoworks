@@ -2,7 +2,13 @@
   <div class="card m-2 shadow">
     <div class="card-body">
       <%= simple_form_for([:admin,@user]) do |f| %>
-        <%= render 'shared/errors', obj: @user %>
+      <% if @user.errors.any? %>
+        <div id="error_explanation">
+          <ul><% @user.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
+        </div>
+      <% end %>
+      <p class="m-0 pt-2" id="notice"><%= notice %></p>
+      <br>
         <div class="form-group">
           <div class="row justify-content-center">
             <%= f.label :name, class:'col-md-2 text-right col-form-label' %>
