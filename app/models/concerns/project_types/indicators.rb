@@ -145,43 +145,41 @@ module ProjectTypes::Indicators
 
             # Cruza la capa del principal que contiene los hijos con la capa secunadaria
             data = data
-              .except(:from).from('projects main CROSS JOIN projects sec')
-              .where('shared_extensions.ST_Intersects(main.the_geom, sec.the_geom)')
-              .where('sec.project_type_id = ?', cross_layer_filter.project_type_id)
-              .where('sec.row_active = ?', true)
-              .where('sec.current_season = ?', true)
+              .except(:from).from('projects main INNER JOIN projects sec_filter ON ST_Intersects(main.the_geom, sec_filter.the_geom)')
+              .where('sec_filter.project_type_id = ?', cross_layer_filter.project_type_id)
+              .where('sec_filter.row_active = ?', true)
+              .where('sec_filter.current_season = ?', true)
 
             # Aplica filtro por owner a capa secundaria
             if cross_layer_filter.owner == true
-              data = data.where('sec.user_id = ?', user_id)
+              data = data.where('sec_filter.user_id = ?', user_id)
             end
 
             # Aplica filtro por atributo a capa secundaria
             if !cross_layer_filter.properties.nil?
               cross_layer_filter.properties.to_a.each do |prop|
-                data = data.where("sec.properties->>'#{prop[0]}' = '#{prop[1]}'")
+                data = data.where("sec_filter.properties->>'#{prop[0]}' = '#{prop[1]}'")
               end
             end
 
           else
 
             # Cruza la capa del principal que contiene los hijos con la capa secunadaria
-            data = data.gsub('from_clause', "CROSS JOIN projects sec")
-            data = data.gsub('where_clause', "where_clause (shared_extensions.ST_Intersects(main.the_geom, sec.the_geom))
-              AND sec.project_type_id = #{cross_layer_filter.project_type_id}
-              AND sec.row_active = true
-              AND sec.current_season = true
+            data = data.gsub('from_clause', "INNER JOIN projects sec_filter ON ST_Intersects(main.the_geom, sec_filter.the_geom)")
+            data = data.gsub('where_clause', "where_clause sec_filter.project_type_id = #{cross_layer_filter.project_type_id}
+              AND sec_filter.row_active = true
+              AND sec_filter.current_season = true
               AND ")
 
             # Aplica filtro por owner a capa secundaria
             if cross_layer_filter.owner == true
-              data = data.gsub('where_clause', "where_clause (sec.user_id = #{user_id}) AND ")
+              data = data.gsub('where_clause', "where_clause (sec_filter.user_id = #{user_id}) AND ")
             end
 
             # Aplica filtro por atributo a capa secundaria
             if !cross_layer_filter.properties.nil?
               cross_layer_filter.properties.to_a.each do |prop|
-                data = data.gsub('where_clause', "where_clause (sec.properties->>'#{prop[0]}' = '#{prop[1]}') AND ")
+                data = data.gsub('where_clause', "where_clause (sec_filter.properties->>'#{prop[0]}' = '#{prop[1]}') AND ")
               end
             end
 
@@ -641,52 +639,49 @@ module ProjectTypes::Indicators
 
             # Cruza la capa del principal que contiene los hijos con la capa secunadaria
             query_full = query_full
-              .except(:from).from('projects main CROSS JOIN projects sec')
-              .where('shared_extensions.ST_Intersects(main.the_geom, sec.the_geom)')
-              .where('sec.project_type_id = ?', cross_layer_filter.project_type_id)
-              .where('sec.row_active = ?', true)
-              .where('sec.current_season = ?', true)
+              .except(:from).from('projects main INNER JOIN projects sec_filter ON ST_Intersects(main.the_geom, sec_filter.the_geom)')
+              .where('sec_filter.project_type_id = ?', cross_layer_filter.project_type_id)
+              .where('sec_filter.row_active = ?', true)
+              .where('sec_filter.current_season = ?', true)
 
             total = total
-              .except(:from).from('projects main CROSS JOIN projects sec')
-              .where('shared_extensions.ST_Intersects(main.the_geom, sec.the_geom)')
-              .where('sec.project_type_id = ?', cross_layer_filter.project_type_id)
-              .where('sec.row_active = ?', true)
-              .where('sec.current_season = ?', true)
+              .except(:from).from('projects main INNER JOIN projects sec_filter ON ST_Intersects(main.the_geom, sec_filter.the_geom)')
+              .where('sec_filter.project_type_id = ?', cross_layer_filter.project_type_id)
+              .where('sec_filter.row_active = ?', true)
+              .where('sec_filter.current_season = ?', true)
 
             # Aplica filtro por owner a capa secundaria
             if cross_layer_filter.owner == true
-              query_full = query_full.where('sec.user_id = ?', user_id)
-              total = total.where('sec.user_id = ?', user_id)
+              query_full = query_full.where('sec_filter.user_id = ?', user_id)
+              total = total.where('sec_filter.user_id = ?', user_id)
             end
 
             # Aplica filtro por atributo a capa secundaria
             if !cross_layer_filter.properties.nil?
               cross_layer_filter.properties.to_a.each do |prop|
-                query_full = query_full.where("sec.properties->>'#{prop[0]}' = '#{prop[1]}'")
-                total = total.where("sec.properties->>'#{prop[0]}' = '#{prop[1]}'")
+                query_full = query_full.where("sec_filter.properties->>'#{prop[0]}' = '#{prop[1]}'")
+                total = total.where("sec_filter.properties->>'#{prop[0]}' = '#{prop[1]}'")
               end
             end
 
           else
 
             # Cruza la capa del principal que contiene los hijos con la capa secunadaria
-            query_full = query_full.gsub('from_clause', "CROSS JOIN projects sec")
-            query_full = query_full.gsub('where_clause', "where_clause (shared_extensions.ST_Intersects(main.the_geom, sec.the_geom))
-              AND sec.project_type_id = #{cross_layer_filter.project_type_id}
-              AND sec.row_active = true
-              AND sec.current_season = true
+            query_full = query_full.gsub('from_clause', "INNER JOIN projects sec_filter ON ST_Intersects(main.the_geom, sec_filter.the_geom)")
+            query_full = query_full.gsub('where_clause', "where_clause sec_filter.project_type_id = #{cross_layer_filter.project_type_id}
+              AND sec_filter.row_active = true
+              AND sec_filter.current_season = true
               AND ")
 
             # Aplica filtro por owner a capa secundaria
             if cross_layer_filter.owner == true
-              query_full = query_full.gsub('where_clause', "where_clause (sec.user_id = #{user_id}) AND ")
+              query_full = query_full.gsub('where_clause', "where_clause (sec_filter.user_id = #{user_id}) AND ")
             end
 
             # Aplica filtro por atributo a capa secundaria
             if !cross_layer_filter.properties.nil?
               cross_layer_filter.properties.to_a.each do |prop|
-                query_full = query_full.gsub('where_clause', "where_clause (sec.properties->>'#{prop[0]}' = '#{prop[1]}') AND ")
+                query_full = query_full.gsub('where_clause', "where_clause (sec_filter.properties->>'#{prop[0]}' = '#{prop[1]}') AND ")
               end
             end
 
