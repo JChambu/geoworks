@@ -27,9 +27,10 @@ class Admin::UsersController < ApplicationController
     Apartment::Tenant.switch! 'public'
 
     @users = User.all
-    if params[:email].present? || params[:name].present?
+    if params[:email].present? || params[:name].present? || params[:phone]
       @users = @users.where(" email ilike ?", "%#{params[:email]}%") unless params[:email].blank?
       @users = @users.where("name ilike ?",  "%#{params[:name]}%") unless params[:name].blank?
+      @users = @users.where("phone ilike ?",  "%#{params[:phone]}%") unless params[:phone].blank?
     end
     @users = @users.paginate(:page => params[:page])
   end
@@ -105,7 +106,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :email, :password, :password_confirmation, :active,
+    params.require(:user).permit(:name, :email, :country_code, :area_code, :phone, :password, :password_confirmation, :active,
       has_project_types_attributes: [:id, :project_type_id, :user_id, :owner, :properties, :_destroy],
       user_customers_attributes: [:id, :user_id, :customer_id, :role_id, :_destroy]
     )
