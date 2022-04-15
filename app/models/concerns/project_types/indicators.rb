@@ -12,7 +12,7 @@ module ProjectTypes::Indicators
       end
     end
 
-    def data_for_initial_query chart, project_type_id
+    def data_for_initial_query chart, project_type_id , is_heatmap
       #Trae los datos de los indicadores básicos y los ajusta según sean numéricos, tipo Listado, etc.
       #Busca seleccionado en básico
       if chart.project_field.key == 'app_estado'
@@ -47,12 +47,12 @@ module ProjectTypes::Indicators
       end
 
       #Genera query básico
-      query_full = initial_query chart.analysis_type.name, field_select,condition_where,field_group,project_type_id
+      query_full = initial_query chart.analysis_type.name, field_select,condition_where,field_group,project_type_id , is_heatmap
     
       query_full
     end
 
-    def initial_query (type, field, condition_where, group_by , project_type_id)
+    def initial_query (type, field, condition_where, group_by , project_type_id , is_heatmap)
       #Genera un query completo con el formato de los avanzados. Esto es así para poder tomar un DISTINC ON 
       #DISTINCT es necesario por los INNERJOIN que pueden generar duplicados
       #DISTINCT ON (main.id) es para tomar como distinto sólo los ids
@@ -64,15 +64,22 @@ module ProjectTypes::Indicators
         add_group_by_table = ", name_row as name"
         order_group_by = "GROUP BY name_row ORDER BY name_row"
       end
+      select_heat_map = ""
+      if is_heatmap 
+        type = ""
+        order_group_by = ""
+        select_heat_map = " , st_x(main.the_geom) as lng, st_y(main.the_geom) as lat ,  main.the_geom"
+        select_heat_map_table = " , lat as lat , lng as lng ,  the_geom as the_geom "
+      end
 
       current_tenant = Apartment::Tenant.current
       # Arma el primer query para indicadores basic y seleccionado
-      data_query = " WITH tabla AS (SELECT DISTINCT ON (main.id) (#{field} ) as row_table #{add_group_by} "
+      data_query = " WITH tabla AS (SELECT DISTINCT ON (main.id) (#{field} ) as row_table #{add_group_by} #{select_heat_map} "
       data_query += " FROM #{current_tenant}.projects main from_clause"
       data_query += " INNER JOIN #{current_tenant}.project_statuses ON project_statuses.id = main.project_status_id"
       data_query += " INNER JOIN public.users ON users.id = main.user_id"
-      data_query += " AND where_clause main.project_type_id = #{project_type_id} #{condition_where}"
-      data_query += " ) SELECT #{type}(row_table) as count #{add_group_by_table}"
+      data_query += " AND where_clause main.project_type_id = #{project_type_id} #{condition_where} "
+      data_query += " ) SELECT #{type}(row_table) as count #{add_group_by_table} #{select_heat_map_table}"
       data_query += " FROM tabla #{order_group_by}"
 
       data_query
@@ -261,7 +268,8 @@ module ProjectTypes::Indicators
 
     def get_kpi_without_graph_ids (id, is_graph)
       if is_graph == "true"
-        analytics_charts_ids = Graphic.where(dashboard_id: id).order(:sort).pluck(:id);
+        id_dashboard = Dashboard.where(project_type_id: id).pluck(:id).first
+        analytics_charts_ids = Graphic.where(dashboard_id: id_dashboard).order(:sort).pluck(:id)
       else
         analytics_charts_ids = AnalyticsDashboard.where(project_type_id: id, graph: false).order(:description).pluck(:id)
       end
@@ -269,21 +277,19 @@ module ProjectTypes::Indicators
       analytics_charts_ids
     end
 
-    def kpi_new(project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform)
+    def kpi_new(graph_id,project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform)
       
       querys=[]
-      @op = option_graph
-      @dashboard_id = dashboard_id
 
       @ct = Apartment::Tenant.current
-      @graph = Graphic.where(dashboard_id: @dashboard_id).order(:sort)
-      @graph.each do |g|
-        @gr = GraphicsProperty.where(graphic_id: g).order(:label_datasets)
+      graph = Graphic.where(id: graph_id)
+      graph.each do |g|
+        gr = GraphicsProperty.where(graphic_id: g).order(:label_datasets)
         ch = {}
-        @gr.each_with_index do |graph, i|
-          @analytics_charts = AnalyticsDashboard.where(id: graph.analytics_dashboard_id)
-          @analytics_charts.each do |chart|
-            @items = {}
+        gr.each_with_index do |graph, i|
+          analytics_charts = AnalyticsDashboard.where(id: graph.analytics_dashboard_id)
+          analytics_charts.each do |chart|
+            items = {}
 
             if chart.sql_full.blank?
               data_query = data_for_initial_query chart, project_type_id        
@@ -313,15 +319,14 @@ module ProjectTypes::Indicators
             data_query = data_query.gsub('from_clause', "")
             data_query = ActiveRecord::Base.connection.execute(data_query)
 
-            @items["serie#{i}"] = data_query
-            @option_graph = graph
+            items["serie#{i}"] = data_query
+            option_graph = graph
             chart_type = graph.chart.name
-            ch["it#{i}"] = { "description": data_query, "chart_type": chart_type, "group_field": @field_group, "chart_properties": @option_graph, "data": @items, "graphics_options": g }
+            ch["it#{i}"] = { "description": data_query, "chart_type": chart_type, "group_field": @field_group, "chart_properties": option_graph, "data": items, "graphics_options": g }
           end
-          ch
+
         end
         querys << ch
-        @qu =querys
       end
       querys
     end
@@ -345,7 +350,7 @@ module ProjectTypes::Indicators
         end
       else  
         #Genera query para Seleccionados           
-        query_full = initial_query "count", "main.id","","",project_type_id
+        query_full = initial_query "count", "main.id","","",project_type_id , false
       end
       
 
@@ -408,12 +413,41 @@ module ProjectTypes::Indicators
 
     end
 
-    def indicator_heatmap project_type_id, indicator_id, size_box, type_box, conditions, user_id
+    def indicator_heatmap project_type_id, indicator_id, size_box, type_box, data_conditions, user_id, from_date, to_date, from_date_subform, to_date_subform, filtered_form_ids , filter_children , filter_user_children
+      #Revisar cuando el indicador es avanzado.
+      chart = AnalyticsDashboard.find(indicator_id)
 
-      dashboard = AnalyticsDashboard.find(indicator_id)
-      @q =  kpi_new(project_type_id, true, size_box, type_box, dashboard.dashboard_id, conditions, user_id)
-      @querys = @q[0]['it0'][:description].select("st_x(main.the_geom) as lng, st_y(main.the_geom) as lat").group('main.the_geom')
-      @querys
+      items = {}
+      if chart.sql_full.blank?
+        data_query = data_for_initial_query chart, project_type_id , true     
+      else
+        data_query = chart.sql_full
+      end
+
+      # Consulta los registros según filtro geográfico
+      if type_box == 'extent'
+        data_query = query_extent size_box, project_type_id, chart.children, data_query
+      else
+        data_query = query_draw_polygon size_box, project_type_id, chart.children, data_query
+      end
+
+      # Aplica filtros owner, atributo e intercapa
+      data_query = conditions_for_attributes_and_owner data_query, user_id, project_type_id
+
+      # Aplica filtro time_slider
+      data_query = apply_time_slider_filter data_query, from_date, to_date, from_date_subform, to_date_subform
+
+      # Aplica filtros generados por el usuario y condición row_active y current_season (momentáneamente)
+      data_query =  filters_on_the_fly data_query, data_conditions, filtered_form_ids, filter_children, filter_user_children
+
+      data_query = data_query.gsub('where_clause', "")
+      data_query = data_query.gsub('where_layer_clause', "")
+      data_query = data_query.gsub('where_subform_clause', "")
+      data_query = data_query.gsub('from_clause', "")
+      data_query = ActiveRecord::Base.connection.execute(data_query)
+      
+      #querys = data_query.select("st_x(main.the_geom) as lng, st_y(main.the_geom) as lat").group('main.the_geom')
+      data_query
     end
 
 

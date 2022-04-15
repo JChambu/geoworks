@@ -269,8 +269,8 @@ class ProjectTypesController < ApplicationController
     @querys = ''
 
     if @op_graph == 'true'
-      puts "Llega hasta aca"
       @querys = ProjectType.kpi_new(
+        params[:graph_id],
         params[:data_id],
         @op_graph,
         params[:size_box],
@@ -285,7 +285,6 @@ class ProjectTypesController < ApplicationController
         to_date,
         from_date_subform,
         to_date_subform,
-
       )
     else
       @querys = ProjectType.kpi_without_graph_one_by_one(
@@ -1037,8 +1036,7 @@ class ProjectTypesController < ApplicationController
 
     @data_conditions = params[:conditions]
     if !params[:heatmap_indicator].empty?
-
-      @query_h = ProjectType.indicator_heatmap(params[:project_type_id], params[:heatmap_indicator], params[:size_box], params[:type_box], @data_conditions, current_user.id)
+      @query_h = ProjectType.indicator_heatmap(params[:project_type_id], params[:heatmap_indicator], params[:size_box], params[:type_box], @data_conditions, current_user.id ,params[:from_date], params[:to_date], params[:from_date_subform],params[:to_date_subform] , params[:filtered_form_ids] , params[:filter_children] , params[:filter_user_children] )
     else
       project_type_id = params[:project_type_id]
       type_box = params[:type_box]

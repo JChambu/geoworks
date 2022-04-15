@@ -1,8 +1,9 @@
 //peticiones Ajax
 var xhr_kpi = [];
-var xhr_chart = null;
-for(x=0;x<100;x++){
+var xhr_chart = [];
+for(x=0;x<1000;x++){
   xhr_kpi.push(null);
+  xhr_chart.push(null)
 }
 var xhr_table = null;
 var xhr_geojson = null;
@@ -173,9 +174,6 @@ function set_kpi_navbar(element,is_default, indicator_id){
     $('.total_files').val(element['data'][0]['count']);
   }
   var count_element_number = parseFloat(count_element);
-  console.log("Count element")
-  console.log(count_element)
-  console.log(element)
   if(count_element!=null){
     var count_element_text = count_element.toString().split(count_element_number)[1];
     if (count_element_text == undefined ){count_element_text = ''}
@@ -285,35 +283,65 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         filter_user_children.push($(this).attr('id').split('|')[2])
       }
     });
-
-    if (xhr_chart && xhr_chart.readyState != 4) {
-      xhr_chart.abort();
-    }
-    xhr_chart = $.ajax({
-      type: 'POST',
-      url: '/project_types/kpi.json',
-      datatype: 'json',
-      data: {
-        data_id: data_id,
-        size_box: size_box,
-        graph: true,
-        type_box: type_box,
-        dashboard_id: dashboard_id,
-        data_conditions: attribute_filters,
-        filtered_form_ids: filtered_form_ids,
-        from_date: from_date,
-        to_date: to_date,
-        from_date_subform: from_date_subforms,
-        to_date_subform: to_date_subforms,
-        filter_children:filter_children,
-        filter_user_children:filter_user_children
-      },
-      success: function(data) {
-        data_charts = data;
-        draw_charts();
-
-      } //cierra function data
-    }) //cierra ajax
+    xhr_chart.forEach(function(xhr_c){
+        if(xhr_c && xhr_c.readyState != 4) {
+          xhr_c.abort();
+        }
+      })  
+    
+    // Busca id de gráficos
+      xhr_chart[0] = $.ajax({
+        type: 'GET',
+        url: '/project_types/get_kpi_without_graph_ids.json',
+        datatype: 'json',
+        data: {
+          project_type_id: Navarra.dashboards.config.project_type_id,
+          is_graph: true
+        },
+        success: function(data) {
+          data_gx_all = [];
+          var graph_ids = data.data;
+          //creamos los divs ordenados
+          $(".chart_container").remove();
+          graph_ids.forEach(function(id_graph){
+            $('.graphics').append(
+              $('<div>', {
+                'class': 'card text-light p-0 mt-1 chart-bg-none chart_container',
+                'id': 'chart_container' + id_graph
+              })
+            )
+          });
+          // cicla los gráficos uno por uno
+          graph_ids.forEach(function(id_graph, index_graph){
+            xhr_chart[index_graph] = $.ajax({
+              type: 'POST',
+              url: '/project_types/kpi.json',
+              datatype: 'json',
+              data: {
+                graph_id: id_graph,
+                data_id: data_id,
+                size_box: size_box,
+                graph: true,
+                type_box: type_box,
+                dashboard_id: dashboard_id,
+                data_conditions: attribute_filters,
+                filtered_form_ids: filtered_form_ids,
+                from_date: from_date,
+                to_date: to_date,
+                from_date_subform: from_date_subforms,
+                to_date_subform: to_date_subforms,
+                filter_children:filter_children,
+                filter_user_children:filter_user_children
+              },
+              success: function(data) {
+                data_charts = data;
+                draw_charts(data);
+        
+              } //cierra function data
+            }) //cierra ajax
+          })
+        }
+      });
   } //cierra if graphics
   $('.modal-backdrop').remove();
 
@@ -397,11 +425,12 @@ var dragAndDrop = {
   }
 }
 
+
 // función para graficar los charts
-function draw_charts() {
-  $(".chart_container").remove();
-  var data = data_charts;
-  data_gx_all = [];
+function draw_charts(data) {
+  console.log("Data para dibujar gráfico")
+  console.log(data)
+  //var data = data_charts;
 
   // Ordenamos las series por chart
   for (var i = 0; i < data.length; i++) {
@@ -818,72 +847,24 @@ function draw_charts() {
       }) //cierra each b
     }) //cierra each reg
 
+    console.log("Va a llenar el div "+graphic_id)
+    var html_new_graph = "<div class='w-100'>"
+    html_new_graph += "<div class='py-1 px-2' id='header"+graphic_id+"'>"
+    html_new_graph += "<text>"+title+"</text>"
+    html_new_graph += "<span class='fas fa-expand-arrows-alt' style='float: right; cursor: pointer' onclick='maximize_chart(event)'></span>"
+    html_new_graph += "<span class='fas fa-table mr-2' id='show_data_chart"+graphic_id+"' style='float: right; cursor: pointer' title='Mostrar Datos' onclick='show_data_chart("+graphic_id+")'></span>"
+    html_new_graph += "</div>"
+    html_new_graph += "<div class='collapse show' id='collapse_"+graphic_id+"'>"
+    html_new_graph += "<div class='d-none card-body px-1 pb-0 chart_body_custom' style='overflow-x: auto' id='body_graph_table"+graphic_id+"'>"
+    html_new_graph += "</div>"
+    html_new_graph += "<div class='card-body px-1 pb-0 chart_body_custom' id='body"+graphic_id+"'>"
+    html_new_graph += "<canvas class='canvas"+graphic_id+"' id='canvas"+graphic_id+"'></canvas>"
+    html_new_graph += "</div>"
+    html_new_graph += "</div>"
+    html_new_graph += "</div>"
 
-    $('.graphics').append(
-      $('<div>', {
-        'class': 'card text-light p-0 mt-1 chart-bg-none chart_container',
-        'id': 'chart_container' + graphic_id
-      }).append(
-        $('<div>', {
-          'class': 'w-100',
-        }).append(
-        $('<div>', {
-          'class': 'py-1 px-2',
-          'id': 'header' + graphic_id
-        }).append(
-          $('<text>', {
-            'text': title
-          }),
-          $('<span>', { // handle
-             'class': 'fas fa-expand-arrows-alt',
-             'style': 'float: right; cursor: pointer',
-             'onclick': 'maximize_chart(event)'
-           }),
-           $('<span>', { // handle
-             'class': 'fas fa-table mr-2',
-             'id': 'show_data_chart'+graphic_id,
-             'style': 'float: right; cursor: pointer',
-             'title': 'Mostrar Datos',
-             'onclick': 'show_data_chart('+graphic_id+')'
-           }),
-          /* Oculta minimizado hasta solucionar el tema de row
-          $('<button>', { // boton minimizar
-            'class': 'close',
-            'type': 'button',
-            'data-toggle': 'collapse',
-            'data-target': '#collapse_' + graphic_id,
-            'aria-expanded': "true",
-            'aria-controls': 'collapse_' + graphic_id,
-          }).append(
-            $('<i>', { // icono minimizar
-              'class': 'fas fa-window-minimize'
-            })
-          )
-          */
-        ),
-        $('<div>', { // collapse
-          'class': 'collapse show',
-          'id': 'collapse_' + graphic_id
-        }).append(
-          $('<div>', {
-            'class': 'd-none card-body px-1 pb-0 chart_body_custom',
-            'style': 'overflow-x: auto',
-            'id': 'body_graph_table' + graphic_id
-          }),
-          $('<div>', {
-            'class': 'card-body px-1 pb-0 chart_body_custom',
-            'id': 'body' + graphic_id
-          }).append(
-            $('<canvas>', {
-              'class': 'canvas' + graphic_id,
-              'id': 'canvas' + graphic_id
-            })
-          )
-        )
-      )
-    )
-  )
-
+    $('#chart_container'+graphic_id).append(html_new_graph);
+         
 
     //Chequeamos el estado de view
     var status_view_chart = $('#sidebar_all').hasClass('charts-container');
