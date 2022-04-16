@@ -292,7 +292,7 @@ module ProjectTypes::Indicators
             items = {}
 
             if chart.sql_full.blank?
-              data_query = data_for_initial_query chart, project_type_id        
+              data_query = data_for_initial_query chart, project_type_id , false       
             else
               data_query = chart.sql_full
             end
@@ -343,7 +343,7 @@ module ProjectTypes::Indicators
         chart = AnalyticsDashboard.where(project_type_id: project_type_id, id: indicator_id, graph: false).first
         sql_full = chart.sql_full
         if sql_full.blank?
-          query_full = data_for_initial_query chart, project_type_id
+          query_full = data_for_initial_query chart, project_type_id, false
         else 
           #Trae query avanzado
           query_full = chart.sql_full
