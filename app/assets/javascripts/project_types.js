@@ -31,7 +31,9 @@ Navarra.project_types.config = {
   to_date_subforms: '',
   item_selected:"",
   id_item_displayed:'',
-  current_layer_filters: ""
+  current_layer_filters: "",
+  timeslider_layers: {},
+  filters_layers: {}
 }
 
 // Select para roles

@@ -950,3 +950,7 @@ div.custom-menu.show {
   word-break: break-word;
   max-width: 174px;
 }
+
+.static_datetimepicker .bootstrap-datetimepicker-widget{
+  position: static!important;
+}

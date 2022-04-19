@@ -8,12 +8,11 @@ module Projects::Scopes
       table = params['table']
       field_key = params['project_field_key']
       project_type_id = params[:project_type_id]
+      if project_type_id.nil?
+        name_layer = params[:name_layer]
+        project_type_id = ProjectType.where(name_layer: name_layer).pluck(:id).first
+      end
       data = []
-
-      puts "Datos que llegan a scope"
-      puts table
-      puts field_key
-      puts project_type_id
 
       if table == 'Formularios'
 

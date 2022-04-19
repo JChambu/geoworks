@@ -582,6 +582,8 @@ Navarra.geomaps = function() {
 
   function wms_filter() {
     var cql_filter = getCQLFilter(false);
+    console.log("WMS FILTER")
+    console.log(cql_filter)
     var heatmap_actived = Navarra.project_types.config.heatmap_field;
     if (heatmap_actived != '') {
       Navarra.geomaps.heatmap_data();
@@ -982,6 +984,7 @@ Navarra.geomaps = function() {
 
 
   function current_layer() {
+    console.log("CURRENT LAYER")
     name_layer = Navarra.dashboards.config.name_layer;
     var labelLayer = Navarra.dashboards.config.name_layer;
     workspace = Navarra.dashboards.config.current_tenement;
@@ -1051,7 +1054,8 @@ Navarra.geomaps = function() {
     } else {
       cql_filter += ' AND row_enabled = true'
     }
-
+    console.log("cql_filter de current_layer")
+    console.log(cql_filter)
     // Asigna todos los filtros a una variable global
     Navarra.project_types.config.current_layer_filters = cql_filter;
 
@@ -1241,23 +1245,10 @@ Navarra.geomaps = function() {
           });
           //genera Modal de capas internas
           if(first_time_internal_layers){
-            var new_item =
-                    '<div>'+
-                    '<a class="dropdown-item d-flex" href="#" style="justify-content:space-between">'+
-                    '<div class="d-inline mr-3">'+
-                    '<div class="custom-control custom-checkbox" >'+
-                    '<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+layer+'" type="checkbox" name="radio_mapabase">'+
-                    '<label id="checkboxlabel_'+layer+'" class="string optional control-label custom-control-label" for="checkbox_'+layer+'"> </label>'+
-                    '</div>'+
-                    '<label for=mapa_base1>'+label_layer+'</label>'+
-                    '</div>'+
-                    '<div class="custom-control custom-switch d-inline">'+
-                    '<input type="checkbox" id="switch_'+layer+'" class="custom-control-input layer_filter_switch" onchange="switch_filtered_layer()">'+
-                    '<label id="switchlabel_'+layer+'" class="custom-control-label custom-role-colour" for="switch_'+layer+'">Filtrados</label>'+
-                    '</div></a>'+
-                    '</div>'
+            var new_item = Navarra.layer_filters.init(layer, label_layer);
 
             $('#projects_container').append(new_item);
+            Navarra.layer_filters.setdate_time_picker();
           }
           layer_array.push(projectsa);
 
@@ -1325,7 +1316,8 @@ function get_layers_checked(){
 
 function getCQLFilter_layer(dat){
   cql_filter = "1 = 1";
-
+  console.log("Llega a getCQLFilter Layer")
+  console.log(dat)
   // Aplica filtro por atributo de la capa
   if (dat.layer_filters.attribute_filter) {
     data_filter = dat.layer_filters.attribute_filter.split('|');
@@ -1358,15 +1350,31 @@ function getCQLFilter_layer(dat){
     cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + cl_name + "', 'the_geom', '" + cl_clasue + "')))"
   }
 
-    // Aplica filtro de time_slider
-    var from_date = Navarra.project_types.config.from_date;
-    var to_date = Navarra.project_types.config.to_date;
-    if (from_date != '' || to_date != '') {
-      cql_filter += " AND (gwm_created_at BETWEEN '" + from_date + "' AND '" + to_date + "')"
-    } else {
-      cql_filter += ' AND row_enabled = true'
+    // Aplica filtro de time_slider de la capa
+    var timeslider_layer = Navarra.project_types.config.timeslider_layers[dat.layer];
+    if(timeslider_layer !=undefined){
+      var from_date_layer = timeslider_layer.from_date;
+      var to_date_layer = timeslider_layer.to_date;
+      if (from_date_layer != '' || to_date_layer != '') {
+        cql_filter += " AND (gwm_created_at BETWEEN '" + from_date_layer + "' AND '" + to_date_layer + "')"
+      } else {
+        cql_filter += ' AND row_enabled = true';
+      }
+    } else{
+      cql_filter += ' AND row_enabled = true';
     }
 
+    // Aplica filtro on the fly creado por el usuario
+    var filters_layers = Navarra.project_types.config.filters_layers[dat.layer];
+    if(filters_layers !=undefined){
+      filters_layers.forEach(function(filter){
+        var filter_field = filter.filter_field;
+        var filter_operator = filter.filter_operator;
+        var filter_value = filter.filter_value;
+        cql_filter += " AND "+ filter_field + " "+ filter_operator + " '" + filter_value + "'";
+      });
+    } 
+  console.log(cql_filter)
   return cql_filter;
 }
 

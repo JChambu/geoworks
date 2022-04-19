@@ -266,6 +266,8 @@ class ProjectTypesController < ApplicationController
     to_date_subform = params[:to_date_subform]
     @filter_children = params[:filter_children]
     @filter_user_children = params[:filter_user_children]
+    timeslider_layers = params[:timeslider_layers]
+    filters_layers = params[:filters_layers]
     @querys = ''
 
     if @op_graph == 'true'
@@ -285,6 +287,8 @@ class ProjectTypesController < ApplicationController
         to_date,
         from_date_subform,
         to_date_subform,
+        timeslider_layers,
+        filters_layers
       )
     else
       @querys = ProjectType.kpi_without_graph_one_by_one(
@@ -302,7 +306,9 @@ class ProjectTypesController < ApplicationController
         from_date, to_date,
         from_date_subform,
         to_date_subform,
-        params[:indicator_id]
+        params[:indicator_id],
+        timeslider_layers,
+        filters_layers
       )
     end
   end

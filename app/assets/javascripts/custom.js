@@ -116,7 +116,9 @@ function init_kpi(size_box = null) {
           to_date_subform: to_date_subforms,
           filter_children:filter_children,
           filter_user_children:filter_user_children,
-          indicator_id: 0
+          indicator_id: 0,
+          timeslider_layers: Navarra.project_types.config.timeslider_layers,
+          filters_layers: Navarra.project_types.config.filters_layers
         },
         dashboard_id: dashboard_id,
           success: function(data) {
@@ -144,7 +146,9 @@ function init_kpi(size_box = null) {
                   to_date_subform: to_date_subforms,
                   filter_children:filter_children,
                   filter_user_children:filter_user_children,
-                  indicator_id: indicator_id
+                  indicator_id: indicator_id,
+                  timeslider_layers: Navarra.project_types.config.timeslider_layers,
+                  filters_layers: Navarra.project_types.config.filters_layers
                 },
                 dashboard_id: dashboard_id,
                 success: function(data) {
@@ -331,7 +335,9 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
                 from_date_subform: from_date_subforms,
                 to_date_subform: to_date_subforms,
                 filter_children:filter_children,
-                filter_user_children:filter_user_children
+                filter_user_children:filter_user_children,
+                timeslider_layers: Navarra.project_types.config.timeslider_layers,
+                filters_layers: Navarra.project_types.config.filters_layers
               },
               success: function(data) {
                 data_charts = data;
@@ -1995,6 +2001,7 @@ function clear_time_slider_filter(refresh_data) {
     Navarra.geomaps.get_zoomextent(true);
     // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
     Navarra.geomaps.current_layer();
+    Navarra.geomaps.wms_filter();
     // Fuerza el rearmado de la tabla
     data_dashboard = "";
     init_data_dashboard(false,false);

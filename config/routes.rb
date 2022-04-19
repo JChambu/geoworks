@@ -19,6 +19,9 @@ Rails.application.routes.draw do
   get 'project_types/project_type_layers' => 'project_types#project_type_layers'
   get 'layers/find' => 'layers#find'
   get 'project_fields/field_popup' => 'project_fields#field_popup'
+  get 'project_fields/get_project_field_layer' => 'project_fields#get_project_field_layer'
+  get 'project_fields/get_filter_operator' => 'project_fields#get_filter_operator'
+  get 'project_fields/get_filter_values' => 'project_fields#get_filter_values'
   get 'project_fields/show_fields' => 'project_fields#show_fields'
   get 'project_subfields/show_subfields' => 'project_subfields#show_subfields'
   get 'project_types/create_share' => 'project_types#create_share', as: :create_share
