@@ -27,9 +27,10 @@ class Admin::UsersController < ApplicationController
     Apartment::Tenant.switch! 'public'
 
     @users = User.all
-    if params[:email].present? || params[:name].present?
+    if params[:email].present? || params[:name].present? || params[:phone]
       @users = @users.where(" email ilike ?", "%#{params[:email]}%") unless params[:email].blank?
       @users = @users.where("name ilike ?",  "%#{params[:name]}%") unless params[:name].blank?
+      @users = @users.where("phone ilike ?",  "%#{params[:phone]}%") unless params[:phone].blank?
     end
     @users = @users.paginate(:page => params[:page])
   end
@@ -41,36 +42,24 @@ class Admin::UsersController < ApplicationController
 
   # GET /users/new
   def new
-
   end
 
   # GET /users/1/edit
   def edit
-    @user_customer =  UserCustomer.where(user_id: params[:id]).first
-    params['customer_id']  = @user_customer.customer_id
-    @roles = search_roles
   end
 
   # POST /users
   # POST /users.json
   def create
-    respond_to do |format|
-      if @user.save
-        @user_customers = UserCustomer.new
-        @user_customers[:user_id] = @user.id
-        @current_tenant = params[:user][:customer_id]
-        @customer = Customer.where(subdomain: @current_tenant).first
-        @user_customers[:customer_id] = @current_tenant.to_i
-        @user_customers[:role_id] = params[:role_id]['id'].to_i
-        @user_customers.save!
-        params[:id] = @user.id
-        user_filters = User.save_filters params
+    begin
+      @user.save!
+      respond_to do |format|
         format.html { redirect_to admin_users_path() }
         format.json { render action: 'show', status: :created, location: @user }
-      else
-        format.html { render action: 'new' }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
       end
+    rescue ActiveRecord::RecordNotUnique => e
+      flash.now[:notice] = "No se puede almacenar usuarios con corporaciones iguales"
+      render 'new'
     end
   end
 
@@ -79,8 +68,6 @@ class Admin::UsersController < ApplicationController
   def update
     respond_to do |format|
       if @user.update(user_params)
-        @user_customer = UserCustomer.where(user_id: params[:id], customer_id: params[:user][:customer_id])
-        @user_customer.update(role_id: params[:user][:role_id])
         format.html { redirect_to admin_users_path() }
         format.json { head :no_content }
       else
@@ -119,6 +106,9 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email, :password, :name, :password_confirmation, :active, :role_id, has_project_types_attributes: [:id, :project_type_id, :user_id, :_destroy, :owner, :properties])
+    params.require(:user).permit(:name, :email, :country_code, :area_code, :phone, :password, :password_confirmation, :active,
+      has_project_types_attributes: [:id, :project_type_id, :user_id, :owner, :properties, :_destroy],
+      user_customers_attributes: [:id, :user_id, :customer_id, :role_id, :_destroy]
+    )
   end
 end
