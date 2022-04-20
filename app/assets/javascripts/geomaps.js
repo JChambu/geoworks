@@ -880,6 +880,18 @@ Navarra.geomaps = function() {
     var heatmap_indicator = Navarra.project_types.config.heatmap_indicator;
     var from_date = Navarra.project_types.config.from_date;
     var to_date = Navarra.project_types.config.to_date;
+    var from_date_subforms = Navarra.project_types.config.from_date_subforms;
+    var to_date_subforms = Navarra.project_types.config.to_date_subforms;
+    var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+    var filter_children = [];
+    var filter_user_children = [];
+    $('.subform_filter').each(function(){
+      if(!isNaN($(this).attr('id').split('|')[0])){
+        filter_children.push($(this).attr('id'));
+      }else {
+        filter_user_children.push($(this).attr('id').split('|')[2])
+      }
+    });
 
     if(xhr_heatmap && xhr_heatmap.readyState != 4) {
       xhr_heatmap.abort();
@@ -896,7 +908,11 @@ Navarra.geomaps = function() {
         type_box: type_box,
         heatmap_indicator: heatmap_indicator,
         from_date: from_date,
-        to_date: to_date
+        to_date: to_date,
+        from_subform: from_date_subforms,
+        to_date_subform: to_date_subforms,
+        filter_children: filter_children,
+        filter_user_children: filter_user_children
       },
       success: function(data) {
         count_row = []
