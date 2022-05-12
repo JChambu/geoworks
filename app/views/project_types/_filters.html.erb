@@ -7,14 +7,19 @@
 
   <div class="modal-body">
     <div class="form-row">
-      <div class="col-md-5">
+      <div class="col-md-4">
       <%=select_tag 'q[project_field]', grouped_options_for_select(filter_field_for_select), include_blank: true, class:'proj_field form-control' %>
       </div>
+      <%=text_field_tag'q[field_type]','',class:'d-none' %>
       <div class="col-md-2">
         <%=select_tag 'q[filters]', options_for_select(ProjectType::FILTERS), class: 'form-control' %>
       </div>
-      <div class="col-md-5 field_value">
-        <%=select_tag 'q[input_value]', options_for_select(Project.none), class: 'form-control' %>
+      <div class="col-md-5">
+        <%=text_field_tag'q[input_value]','',class:'form-control' %>
+        <select id="filter_value_options" class="form-control d-none"></select>
+      </div>
+      <div class="col-md-1 d-flex m-auto">
+        <i class="fas fa-list custom_cursor" title="Mostrar/Ocultar Opciones" id="change_value_options_filter"></i>
       </div>
     </div>
   </div>
@@ -28,7 +33,24 @@
 <script>
   var $select_field = $('#q_project_field');
   $select_field.on('change', function() {
-
+    // Busca tipo de campo
+    if($(this.options[this.selectedIndex]).closest('optgroup').prop('label')=="Formularios"){
+      url = "/project_fields/get_field_type.json"
+    } else {
+      url = "/project_subfields/get_field_type.json"
+    }
+    $.ajax({
+      url: url,
+      type: "GET",
+      data: {
+        key: $(this).val(),
+        project_type_id: <%= params[:project_type_id] %>
+      },
+      success: function(data) {
+          $('#q_field_type').val(data);
+      }
+    });
+    $('#q_input_value').val('');
     $.ajax({
       url: "/projects/search_data.json",
       type: "GET",
@@ -38,37 +60,29 @@
         project_type_id: <%= params[:project_type_id] %>
       },
       success: function(data) {
-
-        if (data['data'][0]['field_type_name'] == 'Listado (opción multiple)') {
-          const field_input = document.createElement('input');
-          field_input.name = 'q[input_value]';
-          field_input.id = 'q_input_value';
-          field_input.className = 'form-control';
-          let field_value = document.querySelector('.field_value');
-          let select_value = field_value.querySelector('select').remove();
-          field_value.append(field_input);
-
-        } else {
-
-          let field_value = document.querySelector('.field_value');
-          field_value.querySelector('#q_input_value').remove();
-
-          let $select_value = document.createElement('select');
-          $select_value.id = 'q_input_value';
-          $select_value.name = 'q[input_value]';
-          $select_value.className = 'form-control';
-
-          field_value.append($select_value);
-          $select_value.append('<option>Select</option>');
-
+          $('#filter_value_options').empty();
+          $('#filter_value_options').append('<option></option>');
           $.each(data['data'][0]['values'], function(value, a) {
             let opt = document.createElement("option");
-            opt.value = `${a.p_name}`;
+            opt.value = `${a.p_name}`.replace(/[\[\]\"]/g, "");
             opt.text = `${a.p_name}`.replace(/[\[\]\"]/g, "");
-            $select_value.add(opt);
-          })
-        }
+            $('#filter_value_options').append(opt);
+          });
       }
     });
-  })
+  });
+
+  $('#change_value_options_filter').on('click', function() {
+    if($('#filter_value_options').hasClass('d-none')){
+      $('#filter_value_options').removeClass('d-none');
+      $('#q_input_value').addClass('d-none');
+    } else {
+      $('#filter_value_options').addClass('d-none');
+      $('#q_input_value').removeClass('d-none');
+    }
+  });
+
+  $('#filter_value_options').on('change', function() {
+    $('#q_input_value').val($(this).val());
+  });
 </script>

@@ -15,7 +15,7 @@ Navarra.layer_filters = function() {
             '<div class="pl-4 d-none" style="width:33vw" id="div_filter_'+layer+'">'+
             	'<div class="custom-control custom-switch">'+
             		'<input type="checkbox" id="switch_'+layer+'" class="custom-control-input layer_filter_switch" onchange="switch_filtered_layer()">'+
-            		'<label id="switchlabel_'+layer+'" class="custom-control-label custom-role-colour" for="switch_'+layer+'">Interceptar Capa Activa</label>'+
+            		'<label id="switchlabel_'+layer+'" class="custom-control-label custom-role-colour" for="switch_'+layer+'">Intersect al Proyecto Activo</label>'+
             	'</div>'+
             	'<div class="pt-2">'+
             		'<p class="m-0">Filtros</p>'+
@@ -74,8 +74,9 @@ Navarra.layer_filters = function() {
       					name_layer:namelayer
     			},
     				success: function(data) {
+    					$('#filter_field_layer_'+namelayer).append('<option></option>');
     					data.forEach(function(field){
-    						$('#filter_field_layer_'+namelayer).append('<option value="'+field.key+'">'+field.name+'</option>')
+    						$('#filter_field_layer_'+namelayer).append('<option field_type = "'+field.field_type_id+'" value="'+field.key+'">'+field.name+'</option>')
     					})
     				}
     			});
@@ -147,6 +148,7 @@ Navarra.layer_filters = function() {
 		var namelayer = $(event.target).attr("namelayer");
 		var filter_field_layer = $('#filter_field_layer_'+namelayer).val();
 		var filter_field_layer_name = $('#filter_field_layer_'+namelayer +' :selected').text();
+		var field_type_layer = $('#filter_field_layer_'+namelayer).attr('field_type');
 		var filter_operator_layer = $('#filter_operator_layer_'+namelayer).val();
 		var filter_value_layer = $('#filter_value_layer_'+namelayer).val();
 		// crea el view con el filtro
@@ -162,8 +164,16 @@ Navarra.layer_filters = function() {
 		if(Navarra.project_types.config.filters_layers[namelayer]==undefined){
 			Navarra.project_types.config.filters_layers[namelayer] = [];
 		}
+		if((field_type_layer == "2" || field_type_layer == 10) && filter_operator_layer!='ilike'){
+  		filter_value_layer = filter_value_layer.replace(/, /g, "\", \"");
+  		filter_value_layer = "[\""+filter_value_layer+"\"]";
+		}
+		if(filter_operator_layer=="ilike"){
+			filter_value_layer = "%"+filter_value_layer+"%";
+		}
 		Navarra.project_types.config.filters_layers[namelayer].push({
 			filter_field: filter_field_layer,
+			field_type: field_type_layer,
 			filter_operator: filter_operator_layer,
 			filter_value: filter_value_layer
 		})
@@ -206,11 +216,10 @@ Navarra.layer_filters = function() {
       			},
     			success: function(data) {
     				$.each(data['data'][0]['values'], function(value, a) {
-    					value_text = a.p_name;
-    					if(value_text!=null){
-    						value_text = value_text.replace(/[\[\]\"]/g, "");
+    					if(a.p_name!=null){
+    						a.p_name = a.p_name.replace(/[\[\]\"]/g, "");
     					}
-    					$('#filter_value_layer_select_'+namelayer).append('<option value="'+a.p_name+'">'+value_text+'</option>')
+    					$('#filter_value_layer_select_'+namelayer).append('<option value="'+a.p_name+'">'+a.p_name+'</option>')
     				});
     			}
     			});
@@ -225,11 +234,15 @@ Navarra.layer_filters = function() {
 		if(!$('#filter_value_layer_select_'+namelayer).hasClass('d-none')){
 			set_values_layer(null,namelayer);
 		};
+		field_type = $('#filter_field_layer_'+namelayer+' option:selected').attr('field_type');
+		$('#filter_field_layer_'+namelayer).attr('field_type',field_type);
 	}
 
 	function change_filter_value(e){
 		var namelayer = $(event.target).attr("namelayer");
 		var value_selected = $(event.target).val(); 
+		console.log("Valor a setear!!!!!!")
+		console.log(value_selected)
 		$('#filter_value_layer_'+namelayer).val(value_selected);
 	}
 
@@ -243,6 +256,6 @@ Navarra.layer_filters = function() {
     delete_filter_layer: delete_filter_layer,
     set_values_layer: set_values_layer,
     change_filter_field: change_filter_field,
-    change_filter_value: change_filter_value
+    change_filter_value: change_filter_value,
   }
 }();

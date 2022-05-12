@@ -3,18 +3,34 @@ field_name = '<%= @field_name %>';
 field_key = '<%= params[:q][:project_field]%>';
 operator = '<%= raw params[:q][:filters] %>';
 value = '<%= raw params[:q][:input_value] %>';
-filtered_form_ids = '<%= @filtered_form_ids %>';
+field_type = '<%= raw params[:q][:field_type] %>';
+project_field_id = '<%= @project_field_id %>';
 
-// Quita los corchetes de los listados
-value_view = value.replace(/[\[\]\"]/g, "")
+value_view = value;
 
-var filter = field_key + '|' + operator + '|' + value;
+//Agrega corchetes y comillas a listados
+if((field_type == "2" || field_type == 10) && operator!='ilike'){
+  value = value.replace(/, /g, "\", \"");
+  value = "[\""+value+"\"]";
+}
+
+// agrega % para ilike
+if(operator == "ilike"){
+  value = "%"+value+"%"
+}
+var filter = field_key + '|' + operator + '|' + value + '|' + field_type;
+
+filtered_form_ids_text = {}
+filtered_form_ids_text[project_field_id] = filter;
 
 // Guarda el filtro dependiendo si es para la tabla padres o hijos
 if (table == 'form_filter') {
   Navarra.project_types.config.attribute_filters.push(filter);
+  init_filters();
 } else {
-  Navarra.project_types.config.filtered_form_ids.push(filtered_form_ids);
+  //busca filtered_forms_ids
+  Navarra.project_types.config.attribute_filters_subforms.push(filtered_form_ids_text);
+  search_filtered_form_ids();
 }
 
 var filter_view = field_name + " " + operator + " " + value_view;
@@ -24,7 +40,7 @@ $('#filter-body').append(
   $('<div>', { // item
     'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow filter_container ' + table,
     'id': filter,
-    'value': filtered_form_ids
+    'value': filter
   }).append(
     $('<b>', {
       'text':filter_view
@@ -45,13 +61,3 @@ set_layer_filter();
 $("#filters-modal").modal('hide');
 //$("#filters-modal").remove();
 $(".fa-search-location").css("color", "#d3d800");
-var point_color = Navarra.project_types.config.field_point_colors;
-if (point_color == '') {
-  Navarra.geomaps.get_zoomextent();
-  Navarra.geomaps.wms_filter();
-} else {
-  Navarra.geomaps.get_zoomextent();
-  Navarra.geomaps.point_colors_data();
-}
-
-//coloca las capas de proyectos como filtradas

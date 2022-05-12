@@ -1,8 +1,9 @@
 var xhr_heatmap = null;
 var xhr_namelayer = null;
-var xhr_current_layer = null;
 var xhr_layer_external = null;
 var xhr_popup = null;
+var xhr_field_type = null;
+var project_type_layers = [];
 
 Navarra.namespace("geomaps");
 var first_layer=false;
@@ -26,6 +27,20 @@ Navarra.geomaps = function() {
   var isobands_layer;
 
   var init = function() {
+
+    // trae datos de capas
+    $.ajax({
+      type: 'GET',
+      url: '/project_types/project_type_layers.json',
+      datatype: 'json',
+      data: {
+        current_layer: Navarra.dashboards.config.name_layer
+      },
+      success: function(data) {
+        project_type_layers = data;
+        layers_internal();
+    } // Cierra success
+  }) // Cierra ajax
 
     //crea nodo para popup
     var z = document.createElement('DIV'); // is a node
@@ -141,9 +156,14 @@ Navarra.geomaps = function() {
                     '<label class="string optional control-label custom-control-label" for="mapabase_'+key+'"> </label>'+
                     '</div>'+
                     '<label for=mapa_base1>'+key+'</label></a>';
-      $('#basemaps_container').append(new_item);
-    });
-    var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" >'+
+        $('#basemaps_container').append(new_item);
+      });
+      var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-switch">'+
+                '<input type="checkbox" id="switch_intersect_layers" class="custom-control-input " onchange="Navarra.geomaps.intersect_layers()">'+
+                '<label id="switch_intersect_layers" class="custom-control-label custom-role-colour" for="switch_intersect_layers">Intersect con Capas Activas</label>'+
+                '</div></a>';
+      $('#activeproject_container').append(new_item);
+      var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" >'+
                     '<input class="custom-control-input" checked=true onchange="select_layer()" id="checkbox_'+Navarra.dashboards.config.name_layer+'" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_'+Navarra.dashboards.config.name_layer+'"> </label>'+
                     '</div>'+
@@ -440,7 +460,6 @@ Navarra.geomaps = function() {
     popup();
     current_tenant = Navarra.dashboards.config.current_tenant;
     current_layer();
-    layers_internal();
     layers_external();
     show_kpis();
     init_time_slider();
@@ -580,9 +599,10 @@ Navarra.geomaps = function() {
   }
 
 
-  function wms_filter() {
+  function wms_filter(is_from_internal_layers) {
+    console.log("ingresa a wms_filter")
     var cql_filter = getCQLFilter(false);
-    console.log("WMS FILTER")
+    console.log("CQL_FILTER")
     console.log(cql_filter)
     var heatmap_actived = Navarra.project_types.config.heatmap_field;
     if (heatmap_actived != '') {
@@ -605,7 +625,7 @@ Navarra.geomaps = function() {
     if (typeof(projectss) !== 'undefined') {
       mymap.removeLayer(projectss);
     }
-
+    console.log("Renueva capa")
     current_tenement = Navarra.dashboards.config.current_tenement;
     layer_current = current_tenement + ":" + name_layer;
     projectFilterLayer = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
@@ -628,7 +648,9 @@ Navarra.geomaps = function() {
     //show_data_dashboard();
     //recalcula las capas internas
     Navarra.project_types.config.current_layer_filters = cql_filter;
-    layers_internal();
+    if(!is_from_internal_layers){
+      layers_internal();
+    }
     // espera unos segundos para que el mapa se acomode
     show_labels(false);
   }
@@ -638,10 +660,14 @@ Navarra.geomaps = function() {
 
     // Aplica filtros por hijos generados por el usuario
     var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
-    if (filtered_form_ids.length) {
+    console.log("estamos en getCQLFilter")
+    console.log(filtered_form_ids)
+    console.log(filtered_form_ids.length)
+    if (filtered_form_ids.length > 0) {
       let final_array = [];
       for (var i = 0; i < filtered_form_ids.length; i++) {
-        let ids_array = JSON.parse(filtered_form_ids[i])
+        console.log("iteración")
+        let ids_array = filtered_form_ids[i]
         if (final_array.length) {
           final_array = final_array.filter(value => ids_array.includes(value));
         } else {
@@ -650,15 +676,6 @@ Navarra.geomaps = function() {
       }
       final_array = final_array.toString()
       cql_filter += ' and app_id IN (' + final_array + ')';
-    }
-
-    // Aplica filtro por atributo y filros padres generados por el usuario
-    var attribute_filters = Navarra.project_types.config.attribute_filters;
-    if (attribute_filters.length) {
-      $.each(attribute_filters, function(a, b) {
-        data_filter = b.split('|');
-        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " '" + data_filter[2] + "'";
-      });
     }
 
     // Aplica filtro owner
@@ -671,7 +688,7 @@ Navarra.geomaps = function() {
     // Aplica filtro intercapa
     var cross_layer_filter = Navarra.project_types.config.cross_layer_filter;
     var cross_layer_owner = Navarra.project_types.config.cross_layer_owner;
-    if (cross_layer_filter.length || cross_layer_owner == true) {
+    if (cross_layer_filter.length > 0 || cross_layer_owner == true) {
       let cl_name = Navarra.project_types.config.cross_layer
       let cl_clasue = '1 = 1'
 
@@ -699,6 +716,45 @@ Navarra.geomaps = function() {
     } else {
       cql_filter += ' AND row_enabled = true'
     }
+
+    // Aplica filtro por atributo y filros padres generados por el usuario
+    var attribute_filters = Navarra.project_types.config.attribute_filters;
+    if (attribute_filters.length > 0) {
+      $.each(attribute_filters, function(a, b) {
+        data_filter = b.split('|');
+        if(data_filter[3]==5 && data_filter[2]!='null'){
+          //!=null porque a los valores null los considera menores a
+          cql_filter += " and parseDouble(" + data_filter[0] + ") " + data_filter[1] + " '" + data_filter[2] + "' and " + data_filter[0] + " IS NOT NULL";
+        }
+        else if(data_filter[3]==3 && data_filter[2]!='null'){
+          //!=null porque a los valores null los considera menores a
+          cql_filter += " and dateFormat('yyyy/MM/dd',dateParse('dd/MM/yyyy'," + data_filter[0] + ")) " + data_filter[1] + " dateFormat('yyyy/MM/dd',dateParse('dd/MM/yyyy','" + data_filter[2] + "')) and " + data_filter[0] + " IS NOT NULL";
+        }
+        else{
+          cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " '" + data_filter[2] + "'";
+        }
+      });
+      cql_filter = cql_filter.replace(/!= 'null'/g, " IS NOT NULL ");
+      cql_filter = cql_filter.replace(/= 'null'/g, " IS NULL ");
+    }
+    
+    //Aplica filtro Intersect (definido por el usuario) con las capas activas
+    console.log("Va a aplicar filtro intercapa")
+    if($('#switch_intersect_layers').is(":checked")){
+      active_internal_layers = get_layers_checked();
+      data_layer = project_type_layers;
+      $.each(data_layer, function(lay, dat) {
+        let layer_intersect = dat.layer
+        let workspace = Navarra.dashboards.config.current_tenement;
+        if(active_internal_layers.indexOf(dat.layer)>=0){
+          var cql_filter_l = getCQLFilter_layer(dat);
+          cql_filter_l = cql_filter_l.replace(/'/g,"''");
+          cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + layer_intersect + "', 'the_geom', '" + cql_filter_l + "')))";
+        }
+      });
+    }
+    console.log("CQL FILTER FINAL")
+    console.log(cql_filter)
     if(set_bbox){
       var geometry_draw_array = Navarra.dashboards.config.size_polygon;
       if (geometry_draw_array.length == 0) {
@@ -887,6 +943,10 @@ Navarra.geomaps = function() {
     var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
     var filter_children = [];
     var filter_user_children = [];
+    var active_layers = Navarra.custom.get_active_layers();
+    var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+    var filters_layers = Navarra.project_types.config.filters_layers;
+    var timeslider_layers = Navarra.project_types.config.timeslider_layers;
     $('.subform_filter').each(function(){
       if(!isNaN($(this).attr('id').split('|')[0])){
         filter_children.push($(this).attr('id'));
@@ -914,7 +974,11 @@ Navarra.geomaps = function() {
         from_subform: from_date_subforms,
         to_date_subform: to_date_subforms,
         filter_children: filter_children,
-        filter_user_children: filter_user_children
+        filter_user_children: filter_user_children,
+        active_layers: active_layers,
+        filters_layers: filters_layers,
+        intersect_width_layers: intersect_width_layers,
+        timeslider_layers: timeslider_layers
       },
       success: function(data) {
         count_row = []
@@ -984,78 +1048,11 @@ Navarra.geomaps = function() {
 
 
   function current_layer() {
-    console.log("CURRENT LAYER")
     name_layer = Navarra.dashboards.config.name_layer;
     var labelLayer = Navarra.dashboards.config.name_layer;
     workspace = Navarra.dashboards.config.current_tenement;
-    cql_filter = "1 = 1";
+    var cql_filter = getCQLFilter(false);
 
-    // Aplica filtros por hijos generados por el usuario
-    var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
-    if (filtered_form_ids.length) {
-      let final_array = [];
-      for (var i = 0; i < filtered_form_ids.length; i++) {
-        let ids_array = JSON.parse(filtered_form_ids[i])
-        if (final_array.length) {
-          final_array = final_array.filter(value => ids_array.includes(value));
-        } else {
-          final_array = ids_array
-        }
-      }
-      final_array = final_array.toString()
-      cql_filter += ' and app_id IN (' + final_array + ')';
-    }
-
-    // Aplica filtro por atributo y filros generados por el usuario
-    var attribute_filters = Navarra.project_types.config.attribute_filters;
-    if (attribute_filters.length > 0) {
-      $.each(attribute_filters, function(a, b) {
-        data_filter = b.split('|');
-        cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " '" + data_filter[2] + "'";
-      });
-    }
-
-    // Aplica filtro owner
-    var owner = Navarra.project_types.config.owner;
-    var user_name = Navarra.dashboards.config.user_name;
-    if (owner == true) {
-      cql_filter += " and app_usuario='" + user_name + "'";
-    }
-
-    // Aplica filtro intercapa
-    var cross_layer_filter = Navarra.project_types.config.cross_layer_filter;
-    var cross_layer_owner = Navarra.project_types.config.cross_layer_owner;
-    if (cross_layer_filter.length > 0 || cross_layer_owner == true) {
-
-      let cl_name = Navarra.project_types.config.cross_layer
-      let cl_clasue = '1 = 1'
-
-      // Aplica filtro intercapa por atributo
-      if (cross_layer_filter.length > 0) {
-        c_filter = cross_layer_filter[0].split('|');
-        cl_clasue += " and " + c_filter[0] +" = ''" + c_filter[2] + "''"
-      }
-
-      // Aplica filtro intercapa por owner
-      if (cross_layer_owner == true) {
-        var user_name = Navarra.dashboards.config.user_name;
-        cl_clasue += " and app_usuario = ''" + user_name + "''"
-      }
-
-      cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + cl_name + "', 'the_geom', '" + cl_clasue + "')))"
-
-    }
-
-    // Aplica filtro de time_slider
-    var from_date = Navarra.project_types.config.from_date;
-    var to_date = Navarra.project_types.config.to_date;
-    if (from_date != '' || to_date != '') {
-      cql_filter += " AND (gwm_created_at BETWEEN '" + from_date + "' AND '" + to_date + "')"
-    } else {
-      cql_filter += ' AND row_enabled = true'
-    }
-    console.log("cql_filter de current_layer")
-    console.log(cql_filter)
     // Asigna todos los filtros a una variable global
     Navarra.project_types.config.current_layer_filters = cql_filter;
 
@@ -1090,7 +1087,6 @@ Navarra.geomaps = function() {
       }
 
     }
-
 
     cql_filter_not_selected = cql_filter + cql_filter_data_not_selected;
     cql_filter_selected = cql_filter + cql_filter_data_selected;
@@ -1187,117 +1183,92 @@ Navarra.geomaps = function() {
     }
     layer_array=[];layers_internal
 
-    if(xhr_current_layer && xhr_current_layer.readyState != 4) {
-      xhr_current_layer.abort();
-    }
-    xhr_current_layer = $.ajax({
-      type: 'GET',
-      url: '/project_types/project_type_layers.json',
-      datatype: 'json',
-      data: {
-        current_layer: current_layer
-      },
-      success: function(data) {
-
-        $.each(data, function(lay, dat) {
-
-          let layer = dat.layer
-          let label_layer = dat.name;
-          let color_layer = dat.color;
-          let type_geometry = dat.type_geometry
-          let workspace = Navarra.dashboards.config.current_tenement;
-
-          // Aplica estilo según tipo de geometría
-          let style
-          if (dat.type_geometry == 'Point') {
-            style = 'poi_new';
-          } else {
-            style = 'polygon_new';
-          }
-
-          if (color_layer == '') {
-            color_layer = "#00ff55";
-          }
-
-          var cql_filter = getCQLFilter_layer(dat);
-
-          // genera capa con todos los datos, sin tener en cuenta la intersección con la capa activa
-          layer_current = workspace + ":" + layer;
-
-          layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
-            layers: layer_current, //nombre de la capa (ver get capabilities)
-            format: 'image/png',
-            transparent: 'true',
-            opacity: 1,
-            version: '1.0.0', //wms version (ver get capabilities)
-            tiled: true,
-            maxZoom: 20,
-            styles: style,
-            env: 'color:' + color_layer,
-            INFO_FORMAT: 'application/json',
-            format_options: 'callback:getJson',
-            CQL_FILTER: cql_filter
-          })
-
-          projectsa = layerSubProjects.getLayer(layer_current);
-          layerControl.addOverlay(projectsa, layer, null, {
-            sortLayers: true
-          });
-          //genera Modal de capas internas
-          if(first_time_internal_layers){
-            var new_item = Navarra.layer_filters.init(layer, label_layer);
-
-            $('#projects_container').append(new_item);
-            Navarra.layer_filters.setdate_time_picker();
-          }
-          layer_array.push(projectsa);
-
-          // genera capa con los datos que se intersectan con la capa activa
-
-          //aplica filtro intercapas para mostrar solo aquellos registros que se intersectan con la capa activa
-          var current_layer_filters = Navarra.project_types.config.current_layer_filters.replace(/'/g,"''");
-          cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + name_layer + "', 'the_geom', '" + current_layer_filters + "')))";
-
-       // genera capa con todos los datos de la intersección con la capa activa
-          layer_current_intersect = workspace + ":" + layer;
-
-          layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
-            layers: layer_current_intersect, //nombre de la capa (ver get capabilities)
-            format: 'image/png',
-            transparent: 'true',
-            opacity: 1,
-            version: '1.0.0', //wms version (ver get capabilities)
-            tiled: true,
-            maxZoom: 20,
-            styles: style,
-            env: 'color:' + color_layer,
-            INFO_FORMAT: 'application/json',
-            format_options: 'callback:getJson',
-            CQL_FILTER: cql_filter
-          })
-
-          projectsa = layerSubProjects.getLayer(layer_current_intersect);
-          layerControl.addOverlay(projectsa, layer+ "-filtrados", null, {
-            sortLayers: true
-          });
-          layer_array.push(projectsa);
-          
-        }) // Cierra each data
-
-        first_time_internal_layers = false;
-
-        //vuelve a checkear las capas anteriormente checkeadas
-        var check_layers = document.querySelectorAll('.leaflet-control-layers-selector');
-        for(l=0; l<check_layers.length; l++){
-          if(check_layers[l].type=='checkbox'){
-            var name_layer_project = $(check_layers[l]).next().html().substring(1);
-            if(active_internal_layers.indexOf(name_layer_project)>=0){
-              check_layers[l].click();
-            }
-          }
+    data = project_type_layers;
+    $.each(data, function(lay, dat) {
+      let layer = dat.layer
+      let label_layer = dat.name;
+      let color_layer = dat.color;
+      let type_geometry = dat.type_geometry
+      let workspace = Navarra.dashboards.config.current_tenement;
+      // Aplica estilo según tipo de geometría
+      let style
+      if (dat.type_geometry == 'Point') {
+        style = 'poi_new';
+      } else {
+        style = 'polygon_new';
+      }
+      if (color_layer == '') {
+        color_layer = "#00ff55";
+      }
+      var cql_filter = getCQLFilter_layer(dat);
+      // genera capa con todos los datos, sin tener en cuenta la intersección con la capa activa
+      layer_current = workspace + ":" + layer;
+      layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
+        layers: layer_current, //nombre de la capa (ver get capabilities)
+        format: 'image/png',
+        transparent: 'true',
+        opacity: 1,
+        version: '1.0.0', //wms version (ver get capabilities)
+        tiled: true,
+        maxZoom: 20,
+        styles: style,
+        env: 'color:' + color_layer,
+        INFO_FORMAT: 'application/json',
+        format_options: 'callback:getJson',
+        CQL_FILTER: cql_filter
+      })
+      projectsa = layerSubProjects.getLayer(layer_current);
+      layerControl.addOverlay(projectsa, layer, null, {
+        sortLayers: true
+      });
+      //genera Modal de capas internas
+      if(first_time_internal_layers){
+        var new_item = Navarra.layer_filters.init(layer, label_layer);
+        $('#projects_container').append(new_item);
+        Navarra.layer_filters.setdate_time_picker();
+      }
+      layer_array.push(projectsa);
+      // genera capa con los datos que se intersectan con la capa activa
+      //aplica filtro intercapas para mostrar solo aquellos registros que se intersectan con la capa activa
+      var current_layer_filters = Navarra.project_types.config.current_layer_filters.replace(/'/g,"''");
+      cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + name_layer + "', 'the_geom', '" + current_layer_filters + "')))";
+    // genera capa con todos los datos de la intersección con la capa activa
+      layer_current_intersect = workspace + ":" + layer;
+      layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
+        layers: layer_current_intersect, //nombre de la capa (ver get capabilities)
+        format: 'image/png',
+        transparent: 'true',
+        opacity: 1,
+        version: '1.0.0', //wms version (ver get capabilities)
+        tiled: true,
+        maxZoom: 20,
+        styles: style,
+        env: 'color:' + color_layer,
+        INFO_FORMAT: 'application/json',
+        format_options: 'callback:getJson',
+        CQL_FILTER: cql_filter
+      })
+      projectsa = layerSubProjects.getLayer(layer_current_intersect);
+      layerControl.addOverlay(projectsa, layer+ "-filtrados", null, {
+        sortLayers: true
+      });
+      layer_array.push(projectsa);          
+    }) // Cierra each data
+    first_time_internal_layers = false;
+    //vuelve a checkear las capas anteriormente checkeadas
+    var check_layers = document.querySelectorAll('.leaflet-control-layers-selector');
+    for(l=0; l<check_layers.length; l++){
+      if(check_layers[l].type=='checkbox'){
+        var name_layer_project = $(check_layers[l]).next().html().substring(1);
+        if(active_internal_layers.indexOf(name_layer_project)>=0){
+          check_layers[l].click();
         }
-    } // Cierra success
-  }) // Cierra ajax
+      }
+    }
+    // Verifica si hay filtro intercapa generado por el usuario
+    if($('#switch_intersect_layers').is(":checked")){
+      intersect_layers();
+    }
 } // Cierra layers_internal
 
 function get_layers_checked(){
@@ -1315,33 +1286,32 @@ function get_layers_checked(){
 }
 
 function getCQLFilter_layer(dat){
+  console.log("ingresa a getcqlfilter_layer")
   cql_filter = "1 = 1";
-  console.log("Llega a getCQLFilter Layer")
-  console.log(dat)
-  // Aplica filtro por atributo de la capa
+  // Aplica filtro por atributo de la capa (Filtros de usuarios)
   if (dat.layer_filters.attribute_filter) {
     data_filter = dat.layer_filters.attribute_filter.split('|');
     cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
   }
-
-  // Aplica filtro por owner de la capa
+  
+  // Aplica filtro por owner de la capa (Filtros de usuarios)
   if (dat.layer_filters.owner_filter) {
     var user_name = Navarra.dashboards.config.user_name;
     cql_filter += " and app_usuario='" + user_name + "'";
   }
 
-  // Aplica filtro intercapa
+  // Aplica filtro intercapa (Filtros de usuarios)
   if (dat.layer_filters.cl_filter) {
     let cl_name = dat.layer_filters.cl_filter.cl_name
     let cl_clasue = '1 = 1'
 
-    // Aplica filtro intercapa por atributo
+    // Aplica filtro intercapa por atributo (Filtros de usuarios)
     if (dat.layer_filters.cl_filter.cl_attribute_filter) {
       c_filter = dat.layer_filters.cl_filter.cl_attribute_filter.split('|');
       cl_clasue += " and " + c_filter[0] +" = '" + c_filter[2] + "'"
     }
 
-    // Aplica filtro intercapa por owner
+    // Aplica filtro intercapa por owner (Filtros de usuarios)
     if (dat.layer_filters.cl_filter.cl_owner_filter) {
       var user_name = Navarra.dashboards.config.user_name;
       cl_clasue += " and app_usuario = ''" + user_name + "''"
@@ -1371,10 +1341,23 @@ function getCQLFilter_layer(dat){
         var filter_field = filter.filter_field;
         var filter_operator = filter.filter_operator;
         var filter_value = filter.filter_value;
-        cql_filter += " AND "+ filter_field + " "+ filter_operator + " '" + filter_value + "'";
+        var field_type = filter.field_type;
+        if(field_type==5 && filter_value!='null'){
+          //!=null porque a los valores null los considera menores a
+          cql_filter += " AND parseDouble("+ filter_field + ") "+ filter_operator + " '" + filter_value + "' and "+filter_field+" is not null";
+        } 
+        else if(field_type==3 && filter_value!='null'){
+           cql_filter += " AND dateFormat('yyyy/MM/dd',dateParse('dd/MM/yyyy'," + filter_field + ")) " + filter_operator + " dateFormat('yyyy/MM/dd',dateParse('dd/MM/yyyy','" + filter_value + "')) and " + filter_field + " IS NOT NULL";
+        }
+        else {
+          cql_filter += " AND "+ filter_field + " "+ filter_operator + " '" + filter_value + "'";
+        }
       });
+      cql_filter = cql_filter.replace(/!= 'null'/g, " IS NOT NULL ");
+      cql_filter = cql_filter.replace(/= 'null'/g, " IS NULL ");
     } 
-  console.log(cql_filter)
+    console.log("cql_filter de la capa")
+    console.log(cql_filter)
   return cql_filter;
 }
 
@@ -1549,6 +1532,10 @@ function get_zoomextent(){
     var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
     var from_date = Navarra.project_types.config.from_date;
     var to_date = Navarra.project_types.config.to_date;
+    var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+    var active_layers = get_active_layers();
+    var timeslider_layers = Navarra.project_types.config.timeslider_layers;
+    var filters_layers = Navarra.project_types.config.filters_layers;
     $.ajax({
       type: 'POST',
       url: '/project_types/get_extent',
@@ -1558,7 +1545,11 @@ function get_zoomextent(){
         attribute_filters: attribute_filters,
         filtered_form_ids: filtered_form_ids,
         from_date: from_date,
-        to_date: to_date
+        to_date: to_date,
+        timeslider_layers: timeslider_layers,
+        filters_layers: filters_layers,
+        intersect_width_layers: intersect_width_layers,
+        active_layers: active_layers
       },
       success: function(data) {
         if(data.data[0].miny==null || data.data[0].minx==null || data.data[0].maxy==null || data.data[0].maxx==null){
@@ -2275,95 +2266,87 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
   if(active_internal_layers.length>0){
     $('#text_toast').html("Extrapolando hacia los límites de la capa. Por favor espere");
     $('#toast').toast('show');
-    $.ajax({
-      type: 'GET',
-      url: '/project_types/project_type_layers.json',
-      datatype: 'json',
-      data: {
-        current_layer: current_layer
-      },
-      success: function(data) {
-        var concat_features = null;
-        var layers_count = 0;
-        $.each(data, function(lay, dat) {
-          if((active_internal_layers.indexOf(dat.layer)>=0 || active_internal_layers.indexOf(dat.layer+'-filtrados')>=0 )&& dat.type_geometry != 'Point'){
-            var cql_filter_layer =  getCQLFilter_layer(dat);
-            if(active_internal_layers.indexOf(dat.layer+'-filtrados')>=0){
-              //aplica filtro intercapas para mostrar solo aquellos registros que se intersectan con la capa activa
-              var current_layer_filters = Navarra.project_types.config.current_layer_filters.replace(/'/g,"''");
-              cql_filter_layer += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + name_layer + "', 'the_geom', '" + current_layer_filters + "')))";
-            }
-            var defaultParameters = {
-              service: 'WFS',
-              version: '1.0.0',
-              crs: L.CRS.EPSG4326,
-              request: 'GetFeature',
-              typeName: Navarra.dashboards.config.current_tenement+':'+dat.layer,
-              outputFormat: 'application/json',
-              CQL_FILTER: cql_filter_layer
-            };
-            var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
-            var parameters = L.Util.extend(defaultParameters);
-            var URL = owsrootUrl + L.Util.getParamString(parameters);
-            $.ajax({
-              url: URL,
-              success: function (data) {
-                if(concat_features == null) { 
-                  concat_features = data;
-                } else {
-                  concat_features = turf.featureCollection(concat_features.features.concat(data.features));
-                 }
-                 layers_count ++;
-                 if(layers_count==active_internal_layers.length){
-                  // última capa
-                  var combined = turf.combine(concat_features);
-                 // var geojson = L.geoJSON(combined).addTo(mymap);
-                 var bbox = turf.bbox(combined);
-                 //obtiene los valores de muestras más extremos y los clona hacia el borde del bbox para obtener una interpolación completa en la capa
-                 var max_lat = Math.max.apply(null, points.features.map((v) => v.geometry.coordinates[1]));
-                 var min_lat = Math.min.apply(null, points.features.map((v) => v.geometry.coordinates[1]));
-                 var max_lng = Math.max.apply(null, points.features.map((v) => v.geometry.coordinates[0]));
-                 var min_lng = Math.min.apply(null, points.features.map((v) => v.geometry.coordinates[0]));
-                 $.each(points.features, function(i, v) {
-                  if (v.geometry.coordinates[1] == max_lat) {
-                    v1 = turf.clone(v);
-                    v1.geometry.coordinates[1] = bbox[3];  
-                    points = turf.featureCollection(points.features.concat(v1));
-                  return;
-                  }
-                  if (v.geometry.coordinates[1] == min_lat) {
-                    v1 = turf.clone(v);
-                    v1.geometry.coordinates[1] = bbox[1];  
-                    points = turf.featureCollection(points.features.concat(v1));
-                  return;
-                  }
-                  if (v.geometry.coordinates[0] == max_lng) {
-                    v1 = turf.clone(v);
-                    v1.geometry.coordinates[0] = bbox[2];  
-                    points = turf.featureCollection(points.features.concat(v1));
-                  return;
-                  }
-                  if (v.geometry.coordinates[0] == min_lng) {
-                    v1 = turf.clone(v);
-                    v1.geometry.coordinates[0] = bbox[0]; 
-                    points = turf.featureCollection(points.features.concat(v1)); 
-                  return;
-                  }
-                 });
-                  if(points.features.length>4000){
-                    if(points.features.length>10000){
-                      $('#text_alert_decision').html("Usted está por interpolar "+ points.features.length +" puntos. Este proceso tomar demasiado tiempo. Se aconseja reducir el área a interpolar. Desea Continuar de todos modos ?");
-                    } else {
-                      $('#text_alert_decision').html("Usted está por interpolar "+ points.features.length +" puntos. Este proceso puede tardar varios minutos. Desea Continuar ?");
-                    }
-                    $('#decision_yes').attr('onclick','Navarra.geomaps.continue_iterpolation('+JSON.stringify(points)+', "'+interpolation_field +'" ,'+JSON.stringify(breaks)+','+JSON.stringify(colors)+', "'+field_name +'", '+JSON.stringify(combined)+')');
-                    $('#toast_decision').toast('show');
-                  } else{
-                    continue_iterpolation(points, interpolation_field,breaks,colors,field_name, combined );
-                  }
-                 }
+    
+    data = project_type_layers;
+    var concat_features = null;
+    var layers_count = 0;
+    $.each(data, function(lay, dat) {
+      if((active_internal_layers.indexOf(dat.layer)>=0 || active_internal_layers.indexOf(dat.layer+'-filtrados')>=0 )&& dat.type_geometry != 'Point'){
+        var cql_filter_layer =  getCQLFilter_layer(dat);
+        if(active_internal_layers.indexOf(dat.layer+'-filtrados')>=0){
+          //aplica filtro intercapas para mostrar solo aquellos registros que se intersectan con la capa activa
+          var current_layer_filters = Navarra.project_types.config.current_layer_filters.replace(/'/g,"''");
+          cql_filter_layer += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + name_layer + "', 'the_geom', '" + current_layer_filters + "')))";
+        }
+        var defaultParameters = {
+          service: 'WFS',
+          version: '1.0.0',
+          crs: L.CRS.EPSG4326,
+          request: 'GetFeature',
+          typeName: Navarra.dashboards.config.current_tenement+':'+dat.layer,
+          outputFormat: 'application/json',
+          CQL_FILTER: cql_filter_layer
+        };
+        var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
+        var parameters = L.Util.extend(defaultParameters);
+        var URL = owsrootUrl + L.Util.getParamString(parameters);
+        $.ajax({
+          url: URL,
+          success: function (data) {
+            if(concat_features == null) { 
+              concat_features = data;
+            } else {
+              concat_features = turf.featureCollection(concat_features.features.concat(data.features));
               }
-            });
+              layers_count ++;
+              if(layers_count==active_internal_layers.length){
+              // última capa
+              var combined = turf.combine(concat_features);
+              // var geojson = L.geoJSON(combined).addTo(mymap);
+              var bbox = turf.bbox(combined);
+              //obtiene los valores de muestras más extremos y los clona hacia el borde del bbox para obtener una interpolación completa en la capa
+              var max_lat = Math.max.apply(null, points.features.map((v) => v.geometry.coordinates[1]));
+              var min_lat = Math.min.apply(null, points.features.map((v) => v.geometry.coordinates[1]));
+              var max_lng = Math.max.apply(null, points.features.map((v) => v.geometry.coordinates[0]));
+              var min_lng = Math.min.apply(null, points.features.map((v) => v.geometry.coordinates[0]));
+              $.each(points.features, function(i, v) {
+              if (v.geometry.coordinates[1] == max_lat) {
+                v1 = turf.clone(v);
+                v1.geometry.coordinates[1] = bbox[3];  
+                points = turf.featureCollection(points.features.concat(v1));
+              return;
+              }
+              if (v.geometry.coordinates[1] == min_lat) {
+                v1 = turf.clone(v);
+                v1.geometry.coordinates[1] = bbox[1];  
+                points = turf.featureCollection(points.features.concat(v1));
+              return;
+              }
+              if (v.geometry.coordinates[0] == max_lng) {
+                v1 = turf.clone(v);
+                v1.geometry.coordinates[0] = bbox[2];  
+                points = turf.featureCollection(points.features.concat(v1));
+              return;
+              }
+              if (v.geometry.coordinates[0] == min_lng) {
+                v1 = turf.clone(v);
+                v1.geometry.coordinates[0] = bbox[0]; 
+                points = turf.featureCollection(points.features.concat(v1)); 
+              return;
+              }
+              });
+              if(points.features.length>4000){
+                if(points.features.length>10000){
+                  $('#text_alert_decision').html("Usted está por interpolar "+ points.features.length +" puntos. Este proceso tomar demasiado tiempo. Se aconseja reducir el área a interpolar. Desea Continuar de todos modos ?");
+                } else {
+                  $('#text_alert_decision').html("Usted está por interpolar "+ points.features.length +" puntos. Este proceso puede tardar varios minutos. Desea Continuar ?");
+                }
+                $('#decision_yes').attr('onclick','Navarra.geomaps.continue_iterpolation('+JSON.stringify(points)+', "'+interpolation_field +'" ,'+JSON.stringify(breaks)+','+JSON.stringify(colors)+', "'+field_name +'", '+JSON.stringify(combined)+')');
+                $('#toast_decision').toast('show');
+              } else{
+                continue_iterpolation(points, interpolation_field,breaks,colors,field_name, combined );
+              }
+              }
           }
         });
       }
@@ -2471,6 +2454,11 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined){
   isobands_layer.addTo(mymap);
 }
 
+function intersect_layers(){
+  get_zoomextent();
+  wms_filter(true);
+}
+
   return {
     init: init,
     wms_filter: wms_filter,
@@ -2498,6 +2486,7 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined){
     get_geom_to_calculate: get_geom_to_calculate,
     interpolate: interpolate,
     continue_iterpolation:continue_iterpolation,
-    continue_isobands: continue_isobands
+    continue_isobands: continue_isobands,
+    intersect_layers: intersect_layers
   }
 }();

@@ -25,6 +25,16 @@ class ProjectSubfieldsController < ApplicationController
     redirect_to edit_multiple_project_type_project_fields_path(@project_type_id)
   end
 
+  def get_field_type
+    key = params[:key]
+    project_type_id = params[:project_type_id]
+    data = ProjectSubfield.joins(:project_field)
+      .where(project_fields: {project_type_id: project_type_id})
+      .where(id: key).pluck(:field_type_id).first
+
+    render json: data
+  end
+
   def show_subfields
 
     project_field_id = params[:element_field_id]
@@ -111,5 +121,4 @@ class ProjectSubfieldsController < ApplicationController
     render json: child_fields_array
 
   end
-
 end

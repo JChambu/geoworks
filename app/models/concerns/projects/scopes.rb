@@ -21,9 +21,9 @@ module Projects::Scopes
           .where(project_type_id: project_type_id)
           .first
 
-        if field.field_type.name == 'Listado (opción multiple)'
-          data.push({field_type_name: field.field_type.name, values: ChoiceListItem.where(choice_list_id: field.choice_list_id).select('name as p_name')})
-        else
+        #if field.field_type.name == 'Listado (opción multiple)'
+         # data.push({field_type_name: field.field_type.name, values: ChoiceListItem.where(choice_list_id: field.choice_list_id).select('name as p_name')})
+        #else
 
           select = "projects.properties->>'#{field.key}' as p_name" if field_key != 'app_usuario' && field_key !='app_estado'
           select = "users.name as p_name"  if field_key == 'app_usuario'
@@ -39,7 +39,7 @@ module Projects::Scopes
             .order('p_name')
 
           data.push({field_type_name: field.field_type.name, values: query})
-        end
+        #end
 
       else
 

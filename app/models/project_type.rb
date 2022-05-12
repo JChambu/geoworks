@@ -111,30 +111,7 @@ class ProjectType < ApplicationRecord
     ActiveRecord::Base.connection.execute(query)
   end
 
-  def self.save_rows_project_data_childs row, i, project_type_id
-    result_hash = {}
-
-    if !row.nil?
-      child_data = ProjectDataChild.new()
-      project_field_id = 1710
-      project = Project.where("properties->>'numero_trampa' = '#{row['trampa']}' and project_type_id = #{project_type_id}").select(:id).first
-      if !project.nil?
-        child_data[:project_id] = project.id
-        value_name = {}
-        row.each do |data |
-          field = ProjectSubfield.where(key: data[0], project_field_id: project_field_id).first
-          if !field.nil?
-            value_name.merge!("#{field.id}": data[1] )
-          end
-        end
-        child_data[:properties] = [value_name]
-        child_data[:project_field_id] = project_field_id
-        child_data.save
-      end
-    end
-  end
-
-  def self.export_geojsonn filter_value, filter_by_column, order_by_column, project_type_id, type_box, size_box, attribute_filters, filtered_form_ids, from_date, to_date, fields, user_id
+  def self.export_geojsonn filter_value, filter_by_column, order_by_column, project_type_id, type_box, size_box, attribute_filters, filtered_form_ids, from_date, to_date, fields, user_id, intersect_width_layers, active_layers, filters_layers, timeslider_layers
 
     require 'rgeo/geo_json'
 
@@ -152,128 +129,16 @@ class ProjectType < ApplicationRecord
       data = data.select("main.properties -> '#{f}' AS #{f}")
     end
 
-    # Aplica filtro geográfico
-    if !type_box.blank? && !size_box.blank?
+    puts "size box que llega a gejsonn"
+    puts size_box
 
-      if type_box == 'extent'
-
-        minx = size_box[0].to_f if !size_box.nil?
-        miny = size_box[1].to_f if !size_box.nil?
-        maxx = size_box[2].to_f if !size_box.nil?
-        maxy = size_box[3].to_f if !size_box.nil?
-        data = data.where("shared_extensions.ST_Contains(shared_extensions.ST_MakeEnvelope(#{minx}, #{maxy}, #{maxx}, #{miny}, 4326), main.#{:the_geom})")
-
-      else
-
-        # NOTE: Acá el size_box llega diferente al de las demás funciones. Tener en cuenta al unificar.
-        arr1 = []
-        size_box.each do |x|
-          z = []
-          x.each do |y|
-            @y = y
-            z.push(y)
-          end
-          arr1.push([z])
-        end
-        data = data.where("shared_extensions.ST_Contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'), 4326), main.#{:the_geom})")
-      end
-    end
-
+    data = ProjectTypesController.set_map_filter data, type_box, size_box
     @project_filter = ProjectFilter.where(project_type_id: project_type_id.to_i).where(user_id: user_id).first
-
-    if !@project_filter.nil?
-
-      # Aplica filtro owner
-      if @project_filter.owner == true
-        data = data.where('main.user_id = ?', user_id)
-      end
-
-      # Aplica filtro por atributo a la capa principal
-      if !@project_filter.properties.nil?
-        @project_filter.properties.to_a.each do |prop|
-          data = data.where("main.properties ->> '#{prop[0]}' = '#{prop[1]}'")
-        end
-      end
-
-      # Aplica filtro intercapa
-      if !@project_filter.cross_layer_filter_id.nil?
-
-        @cross_layer_filter = ProjectFilter.where(id: @project_filter.cross_layer_filter_id).where(user_id: user_id).first
-
-        # Cruza la capa principal con la capa secunadaria
-        data = data
-          .except(:from).from('projects main CROSS JOIN projects sec')
-          .where('shared_extensions.ST_Intersects(main.the_geom, sec.the_geom)')
-          .where('sec.project_type_id = ?', @cross_layer_filter.project_type_id)
-          .where('sec.row_active = ?', true)
-          .where('sec.current_season = ?', true)
-
-        # Aplica filtro por owner a la capa secundaria
-        if @cross_layer_filter.owner == true
-          data = data.where('sec.user_id = ?', user_id)
-        end
-
-        # Aplica filtro por atributo a la capa secundaria
-        if !@cross_layer_filter.properties.nil?
-          @cross_layer_filter.properties.to_a.each do |prop|
-            data = data.where("sec.properties->>'#{prop[0]}' = '#{prop[1]}'")
-          end
-        end
-      end
-    end
-
-    # Aplica filtro de time_slider
-    if !from_date.blank? || !to_date.blank?
-      data = data.where("main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}'")
-    else
-      data = data.where('main.row_enabled = ?', true)
-    end
-
-    # Aplica filtros generados por el usuario
-    if !attribute_filters.blank?
-
-      attribute_filters.each do |key|
-
-        @s = key.split('|')
-        @field = @s[0]
-        @filter = @s[1]
-        @value = @s[2]
-
-        # Aplica filtro por campo usuario
-        if @field == 'app_usuario'
-          data =  data.where("users.name " + @filter + " '#{@value}'")
-        end
-
-        # Aplica filtro por campo estado
-        if @field == 'app_estado'
-          data =  data.where("project_statuses.name " + @filter + " '#{@value}' ")
-        end
-
-        # Aplica filtro por otro campo
-        if @field != 'app_usuario' && @field != 'app_estado'
-          data = data.where("main.properties->>'" + @field + "'" + @filter + "'#{@value}'")
-        end
-      end
-
-    end
-
-    # Aplica filtros de hijos
-    if !filtered_form_ids.blank?
-      final_array = []
-      filtered_form_ids.each do |ids_array|
-        ids_array = JSON.parse(ids_array)
-        if !final_array.blank?
-          final_array = final_array & ids_array
-        else
-          final_array = ids_array
-        end
-      end
-      if final_array.blank?
-        final_array.push(-1)
-      end
-      final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
-      data = data.where("main.id IN #{final_array}")
-    end
+    data = ProjectTypesController.set_project_filter data, @project_filter
+    data = ProjectTypesController.set_time_slider data, from_date, to_date
+    data = ProjectTypesController.set_filters_on_the_fly data, attribute_filters
+    data = ProjectTypesController.set_filtered_form_ids data, filtered_form_ids
+    data = ProjectTypesController.set_intersect_width_layers data, intersect_width_layers, active_layers, filters_layers, timeslider_layers
 
     # Aplica búsqueda del usuario
     if !filter_by_column.blank? && !filter_value.blank?
@@ -287,15 +152,15 @@ class ProjectType < ApplicationRecord
       # TODO: se deben corregir los errores ortográficos almacenados en la db
       if field.field_type.name == 'Numérico' || field.field_type.name == 'Numerico'
         data = data
-          .except(:select).select("DISTINCT main.*, (main.properties ->> '#{order_by_column}')::numeric AS order")
+          .select("(main.properties ->> '#{order_by_column}')::numeric AS order")
           .order("(main.properties ->> '#{order_by_column}')::numeric")
       elsif field.field_type.name == 'Fecha'
         data = data
-          .except(:select).select("DISTINCT main.*, (main.properties ->> '#{order_by_column}')::date AS order")
-          .order("(main.properties ->> '#{order_by_column}')::date")
+          .select(" to_date(main.properties ->> '#{order_by_column}','DD/MM/YYYY') AS order")
+          .order("to_date(main.properties ->> '#{order_by_column}','DD/MM/YYYY')")
       else
         data = data
-          .except(:select).select("DISTINCT main.*, main.properties ->> '#{order_by_column}' AS order")
+          .select("main.properties ->> '#{order_by_column}' AS order")
           .order("main.properties ->> '#{order_by_column}'")
       end
     else
@@ -309,6 +174,9 @@ class ProjectType < ApplicationRecord
 
     # Guardamos el resultado de la consulta en un array
     data_array = data.map(&:attributes)
+
+    puts "Data Array"
+    puts data_array
 
     data_array.each do |row|
 

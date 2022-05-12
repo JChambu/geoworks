@@ -67,6 +67,8 @@ function init_kpi(size_box = null) {
   var to_date_subforms = Navarra.project_types.config.to_date_subforms;
   var filter_children = [];
   var filter_user_children = [];
+  var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+  var active_layers = get_active_layers();
   $('.subform_filter').each(function(){
     if(!isNaN($(this).attr('id').split('|')[0])){
       filter_children.push($(this).attr('id'));
@@ -118,7 +120,9 @@ function init_kpi(size_box = null) {
           filter_user_children:filter_user_children,
           indicator_id: 0,
           timeslider_layers: Navarra.project_types.config.timeslider_layers,
-          filters_layers: Navarra.project_types.config.filters_layers
+          filters_layers: Navarra.project_types.config.filters_layers,
+          intersect_width_layers: intersect_width_layers,
+          active_layers: active_layers
         },
         dashboard_id: dashboard_id,
           success: function(data) {
@@ -148,7 +152,9 @@ function init_kpi(size_box = null) {
                   filter_user_children:filter_user_children,
                   indicator_id: indicator_id,
                   timeslider_layers: Navarra.project_types.config.timeslider_layers,
-                  filters_layers: Navarra.project_types.config.filters_layers
+                  filters_layers: Navarra.project_types.config.filters_layers,
+                  intersect_width_layers: intersect_width_layers,
+                  active_layers: active_layers
                 },
                 dashboard_id: dashboard_id,
                 success: function(data) {
@@ -280,6 +286,8 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
     var to_date_subforms = Navarra.project_types.config.to_date_subforms;
     var filter_children = [];
     var filter_user_children = [];
+    var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+    var active_layers = get_active_layers();
     $('.subform_filter').each(function(){
     if(!isNaN($(this).attr('id').split('|')[0])){
       filter_children.push($(this).attr('id'));
@@ -337,7 +345,9 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
                 filter_children:filter_children,
                 filter_user_children:filter_user_children,
                 timeslider_layers: Navarra.project_types.config.timeslider_layers,
-                filters_layers: Navarra.project_types.config.filters_layers
+                filters_layers: Navarra.project_types.config.filters_layers,
+                intersect_width_layers: intersect_width_layers,
+                active_layers: active_layers
               },
               success: function(data) {
                 data_charts = data;
@@ -1410,6 +1420,8 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
     size_box[2] = size_ext['_northEast']['lng'];
     size_box[3] = size_ext['_northEast']['lat'];
   }
+  console.log("size box a mandar")
+  console.log(size_box)
 
   var attribute_filters = Navarra.project_types.config.attribute_filters;
   var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
@@ -1430,6 +1442,10 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
   var order_by_column = $(".order_by_column").val();
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
+  var active_layers = get_active_layers();
+  var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+  var filters_layers = Navarra.project_types.config.filters_layers;
+  var timeslider_layers = Navarra.project_types.config.timeslider_layers;
 
   if (xhr_table && xhr_table.readyState != 4) {
     xhr_table.abort();
@@ -1451,9 +1467,14 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
       filtered_form_ids: filtered_form_ids,
       from_date: from_date,
       to_date: to_date,
+      active_layers: active_layers,
+      intersect_width_layers: intersect_width_layers,
+      filters_layers: filters_layers,
+      timeslider_layers: timeslider_layers
     },
 
     success: function(data) {
+      console.log("DATA PARA LA TABLA")
       var fields = document.querySelectorAll(".field_key");
       if(JSON.stringify(data_dashboard) == JSON.stringify(data.data) && !is_saved){
         $(".fakeLoader").css("display", "none");
@@ -1556,7 +1577,11 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
           data_conditions: attribute_filters,
           filtered_form_ids: filtered_form_ids,
           from_date: from_date,
-          to_date: to_date
+          to_date: to_date,
+          active_layers: active_layers,
+          intersect_width_layers: intersect_width_layers,
+          filters_layers: filters_layers,
+          timeslider_layers: timeslider_layers
         },
 
         success: function(data) {
@@ -2099,22 +2124,14 @@ function init_report() {
   var order_by_column = $(".order_by_column").val();
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
+  var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+  var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+  var filters_layers = Navarra.project_types.config.filters_layers;
+  var timeslider_layers = Navarra.project_types.config.timeslider_layers;
 
   //capas activas
-  active_layers = [];
-  check_layers = document.querySelectorAll('input:checked.leaflet-control-layers-selector');
-  for (l = 0; l < check_layers.length; l++) {
-    if (check_layers[l].type == 'checkbox') {
-      var name_layer_project = $(check_layers[l]).next().html().substring(1).split("-filtrados")[0];
-      active_layers.push(name_layer_project);
-    }
-  }
-  // quita elementos repetidos de las capas
-  for (var i = active_layers.length - 1; i >= 0; i--) {
-    if (active_layers.indexOf(active_layers[i]) !== i) {
-      active_layers.splice(i, 1)
-    }
-  }
+  active_layers = get_active_layers();
+  
   if (xhr_report && xhr_report.readyState != 4) {
     xhr_report.abort();
   }
@@ -2132,7 +2149,12 @@ function init_report() {
       data_conditions: attribute_filters,
       from_date: from_date,
       to_date: to_date,
-      active_layers: active_layers
+      active_layers: active_layers,
+      filtered_form_ids: filtered_form_ids,
+      active_layers: active_layers,
+      intersect_width_layers: intersect_width_layers,
+      filters_layers: filters_layers,
+      timeslider_layers: timeslider_layers
     },
     success: function(data) {
 
@@ -4142,6 +4164,35 @@ function calculate_functions_table(){
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
 
+function get_active_layers(){
+  active_layers = [];
+  check_layers = document.querySelectorAll('input:checked.leaflet-control-layers-selector');
+  console.log("ingresa a get layers")
+  console.log(Navarra.dashboards.config.name_layer)
+  console.log(Navarra.dashboards.config.current_tenement)
+  console.log(check_layers)
+  for (l = 0; l < check_layers.length; l++) {
+    console.log("iteración")
+    console.log(check_layers[l])
+    if (check_layers[l].type == 'checkbox') {
+      console.log("es un checkbox")
+      var name_layer_project = $(check_layers[l]).next().html().substring(1).split("-filtrados")[0];
+      console.log("Agrega "+name_layer_project)
+      if (name_layer_project != Navarra.dashboards.config.name_layer){
+        active_layers.push(name_layer_project);
+      }
+    }
+  }
+  // quita elementos repetidos de las capas
+  for (var i = active_layers.length - 1; i >= 0; i--) {
+    if (active_layers.indexOf(active_layers[i]) !== i) {
+      active_layers.splice(i, 1)
+    }
+  }
+  console.log("CAPAS ACTIVAS A ENVIAR!!!!")
+  console.log(active_layers)
+  return active_layers;
+}
 
 //****** FUNCIONES PARA EXPORTAR GEOJSON*****
 
@@ -4172,6 +4223,10 @@ function download_geojson() {
   var order_by_column = $(".order_by_column").val();
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
+  var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+  var active_layers = get_active_layers();
+  var timeslider_layers = Navarra.project_types.config.timeslider_layers;
+  var filters_layers = Navarra.project_types.config.filters_layers;
 
   url = "/project_types/export_geojson.json?filter_value=" + filter_value
   + "&filter_by_column=" + filter_by_column
@@ -4185,6 +4240,11 @@ function download_geojson() {
   + "&from_date=" + from_date
   + "&to_date=" + to_date
   + "&fields=" + JSON.stringify(column_visibles)
+  + "&intersect_width_layers=" + intersect_width_layers
+  + "&active_layers=" + JSON.stringify(active_layers)
+  + "&timeslider_layers=" + JSON.stringify(timeslider_layers)
+  + "&filters_layers=" + JSON.stringify(filters_layers)
+
 
   window.open(url, '_blank');
 

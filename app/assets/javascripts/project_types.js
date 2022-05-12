@@ -18,6 +18,7 @@ Navarra.project_types.config = {
   kpi_filter: '',
   kpi_value: '',
   attribute_filters: [],
+  attribute_filters_subforms: [],
   filtered_form_ids: [],
   owner: false,
   field_point_colors:'',

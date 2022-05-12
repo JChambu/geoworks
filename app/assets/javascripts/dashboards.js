@@ -2,6 +2,7 @@ var height_time_slider;
 var height_filters;
 var height_charts;
 var open_table_middle;
+var xhr_filter = null;
 
 $(document).ready(function () {
     $.fakeLoader({
@@ -137,6 +138,41 @@ remove_layer_filter = function(){
   })
 }
 
+var search_filtered_form_ids = function() {
+  if (xhr_filter && xhr_filter.readyState != 4) {
+    xhr_filter.abort();
+  }
+  xhr_filter = $.ajax({
+    type: 'GET',
+    url: '/project_types/get_filtered_form_ids',
+    datatype: 'json',
+    data: {
+      project_type_id: Navarra.dashboards.config.project_type_id,
+      filtered_form_ids_text: Navarra.project_types.config.attribute_filters_subforms
+    },
+    success: function(data) {
+      Navarra.project_types.config.filtered_form_ids = data.data;
+      init_filters();
+    }
+  });
+}
+
+var init_filters = function(){
+  var point_color = Navarra.project_types.config.field_point_colors;
+  if (point_color == '') {
+    Navarra.geomaps.get_zoomextent();
+    Navarra.geomaps.wms_filter();
+  } else {
+    Navarra.geomaps.get_zoomextent();
+    Navarra.geomaps.point_colors_data();
+  }
+  var heatmap_actived = Navarra.project_types.config.heatmap_field;
+    if (heatmap_actived != '') {
+      Navarra.geomaps.heatmap_data();
+  }
+}
+
+
 Navarra.dashboards.action_show = function(){
 
   var init = function(){
@@ -192,14 +228,21 @@ Navarra.dashboards.action_show = function(){
           return value != filter_to_remove;
         })
         Navarra.project_types.config.attribute_filters = updated_filters;
+        init_filters();
       } else {
-        // revisar con backend. Que ocurriría si hay dos filtros que traen los mismos ids de padres. Se estarían borrando ambos filtros
-        current_filters = Navarra.project_types.config.filtered_form_ids;
+        current_filters = Navarra.project_types.config.attribute_filters_subforms;
         filter_to_remove = $(this).attr('value');
-        updated_filters = $.grep(current_filters, function(value) {
-          return value != filter_to_remove;
+        current_filters.forEach(function(f,index){
+          var key = Object.keys(f)[0];
+          var value = f[key];
+          if(value == filter_to_remove){
+            current_filters.splice(index,1);
+            return;
+          }
         })
-        Navarra.project_types.config.filtered_form_ids = updated_filters;
+        
+        Navarra.project_types.config.attribute_filters_subforms = current_filters;
+        search_filtered_form_ids();
       }
       $(this).remove();
       if($(".filter_container").length==0){
@@ -208,18 +251,7 @@ Navarra.dashboards.action_show = function(){
         remove_layer_filter();
       } else{
         $(".fa-search-location").css("color", "#d3d800");
-      }
-      Navarra.geomaps.get_zoomextent();
-      Navarra.geomaps.wms_filter();
-
-      // TODO: Esto se debería revisar cuando se actualice la herramienta de colorear puntos
-      // Navarra.project_types.config.field_point_colors = '';
-      // Navarra.geomaps.point_colors_data();
-
-      var heatmap_actived = Navarra.project_types.config.heatmap_field;
-      if (heatmap_actived != '') {
-        Navarra.geomaps.heatmap_data();
-      }
+      }      
       resize_filters();
       resize_graphics();
     });
@@ -340,6 +372,8 @@ open_table_middle = function(only_open){
     height_charts: height_charts,
     set_layer_filter: set_layer_filter,
     remove_layer_filter: remove_layer_filter,
-    open_table_middle: open_table_middle
+    open_table_middle: open_table_middle,
+    init_filters: init_filters,
+    search_filtered_form_ids: search_filtered_form_ids
   }
 }();
