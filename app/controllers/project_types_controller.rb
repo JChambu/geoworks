@@ -151,11 +151,11 @@ class ProjectTypesController < ApplicationController
 
     # Parsea los parametros stringify
     puts "va a parsear size_box"
-    size_box = JSON.parse(size_box)
+    #size_box = JSON.parse(size_box)
     puts size_box
-    attribute_filters = JSON.parse(attribute_filters) unless attribute_filters.nil?
-    filtered_form_ids = JSON.parse(filtered_form_ids) unless filtered_form_ids.nil?
-    fields = JSON.parse(fields)
+    #attribute_filters = JSON.parse(attribute_filters) unless attribute_filters.nil?
+    #filtered_form_ids = JSON.parse(filtered_form_ids) unless filtered_form_ids.nil?
+    #fields = JSON.parse(fields)
 
     file = ProjectType.export_geojsonn filter_value, filter_by_column, order_by_column, project_type_id, type_box, size_box, attribute_filters, filtered_form_ids, from_date, to_date, fields, current_user.id, intersect_width_layers, active_layers, filters_layers, timeslider_layers
 

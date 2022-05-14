@@ -129,6 +129,7 @@ Navarra.layer_filters = function() {
 			}
 			Navarra.geomaps.layers_internal();
 			Navarra.geomaps.show_kpis();
+			create_layers_table();
 		}
 	}
 	
@@ -142,6 +143,7 @@ Navarra.layer_filters = function() {
 		}
 		Navarra.geomaps.layers_internal();
 		Navarra.geomaps.show_kpis();
+		create_layers_table()
 	}
 
 	function set_filter_layer(e){
@@ -165,7 +167,7 @@ Navarra.layer_filters = function() {
 			Navarra.project_types.config.filters_layers[namelayer] = [];
 		}
 		if((field_type_layer == "2" || field_type_layer == 10) && filter_operator_layer!='ilike'){
-  		filter_value_layer = filter_value_layer.replace(/, /g, "\", \"");
+  		filter_value_layer = filter_value_layer.replace(/ \| /g, "\", \"");
   		filter_value_layer = "[\""+filter_value_layer+"\"]";
 		}
 		if(filter_operator_layer=="ilike"){
@@ -179,6 +181,7 @@ Navarra.layer_filters = function() {
 		})
 		Navarra.geomaps.layers_internal();
 		Navarra.geomaps.show_kpis();
+		create_layers_table();
 	}
 
 	function delete_filter_layer(e){
@@ -191,6 +194,7 @@ Navarra.layer_filters = function() {
 		}
 		Navarra.geomaps.layers_internal();
 		Navarra.geomaps.show_kpis();
+		create_layers_table();
 	}
 
 	function set_values_layer(e,layer){
@@ -217,7 +221,7 @@ Navarra.layer_filters = function() {
     			success: function(data) {
     				$.each(data['data'][0]['values'], function(value, a) {
     					if(a.p_name!=null){
-    						a.p_name = a.p_name.replace(/[\[\]\"]/g, "");
+    						a.p_name = a.p_name.replace(/[\[\]]/g, "").replace(/\", \"/g, " | ").replace(/\"/g, "")
     					}
     					$('#filter_value_layer_select_'+namelayer).append('<option value="'+a.p_name+'">'+a.p_name+'</option>')
     				});

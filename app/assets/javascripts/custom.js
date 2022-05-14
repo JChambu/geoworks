@@ -1692,7 +1692,7 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
     if(column_name=="#"){
       new_celd_create = new_celd_create = "<td class='_columnname custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
       $('.field_key_layer').each(function(index_layer,key_layer){
-        new_celd_create += "<td class='_columnname custom_row d-none celdlayer_id"+appid_selected+" celdlayer_key"+key_layer.id.substring(9)+"' onclick='show_item("+appid_selected+")'></td>"
+        new_celd_create += "<td class='_columnname custom_row d-none celdlayer celdlayer_id"+appid_selected+" celdlayer_key"+key_layer.id.substring(9)+"' onclick='show_item("+appid_selected+")'></td>"
         if(index==0){
           var field_name = $('#columnfake_layer_'+key_layer.id.substring(9).split('|')[1]+'_'+key_layer.id.substring(9).split('|')[0] +' p').html();
           $('#total_table').append("<td name_function='"+field_name+"' class='d-none footer_key footerlayer_key"+key_layer.id.substring(9)+"'></td>")
@@ -4211,7 +4211,9 @@ function download_geojson() {
   }
   var column_visibles = [];
   $('.header_column').not('.d-none').find(':input').each(function(){
-    column_visibles.push($(this).val());
+    if (isNaN($(this).val())){
+      column_visibles.push($(this).val());
+    } 
   })
 
   var attribute_filters = Navarra.project_types.config.attribute_filters;
@@ -4228,24 +4230,38 @@ function download_geojson() {
   var timeslider_layers = Navarra.project_types.config.timeslider_layers;
   var filters_layers = Navarra.project_types.config.filters_layers;
 
-  url = "/project_types/export_geojson.json?filter_value=" + filter_value
-  + "&filter_by_column=" + filter_by_column
-  + "&order_by_column=" + order_by_column
-  + "&project_type_id=" + project_type_id
-  + "&name_project=" + name_project
-  + "&type_box=" + type_box
-  + "&size_box=" + JSON.stringify(size_box)
-  + "&attribute_filters=" + JSON.stringify(attribute_filters)
-  + "&filtered_form_ids=" + JSON.stringify(filtered_form_ids)
-  + "&from_date=" + from_date
-  + "&to_date=" + to_date
-  + "&fields=" + JSON.stringify(column_visibles)
-  + "&intersect_width_layers=" + intersect_width_layers
-  + "&active_layers=" + JSON.stringify(active_layers)
-  + "&timeslider_layers=" + JSON.stringify(timeslider_layers)
-  + "&filters_layers=" + JSON.stringify(filters_layers)
-
-
-  window.open(url, '_blank');
+  $.ajax({
+    type: 'GET',
+    url: '/project_types/export_geojson.json',
+    datatype: 'JSON',
+    data: {
+      filter_value: filter_value,
+      filter_by_column: filter_by_column,
+      order_by_column: order_by_column,
+      project_type_id: project_type_id,
+      name_project: name_project,
+      type_box: type_box,
+      size_box: size_box,
+      attribute_filters: attribute_filters,
+      filtered_form_ids: filtered_form_ids,
+      from_date: from_date,
+      to_date: to_date,
+      fields: column_visibles,
+      intersect_width_layers: intersect_width_layers,
+      active_layers: active_layers,
+      timeslider_layers: timeslider_layers,
+      filters_layers: filters_layers,
+    },
+    success: function(data) {
+      var jsonObj = JSON.parse(data);
+      var data_pretty = encodeURIComponent(JSON.stringify(jsonObj,null,2));
+      $("<a />", {
+        "download": Navarra.dashboards.config.name_project+".json",
+        "href" : "data:application/json," + data_pretty
+      }).appendTo("body").click(function() {
+        $(this).remove()
+      })[0].click()
+    }
+  });
 
 }

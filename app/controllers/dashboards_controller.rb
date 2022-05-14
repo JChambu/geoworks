@@ -55,7 +55,6 @@ class DashboardsController < ApplicationController
       @top_level_fields = ProjectField
         .joins(:project_type)
         .where.not(project_type_id: @project_type.id)
-        .where('project_types.level > ?', @project_type.level)
         .order('project_types.level DESC', :sort)
 
       @table_configuration = TableConfiguration

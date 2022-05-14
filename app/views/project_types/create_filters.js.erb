@@ -10,7 +10,7 @@ value_view = value;
 
 //Agrega corchetes y comillas a listados
 if((field_type == "2" || field_type == 10) && operator!='ilike'){
-  value = value.replace(/, /g, "\", \"");
+  value = value.replace(/ \| /g, "\", \"");
   value = "[\""+value+"\"]";
 }
 
