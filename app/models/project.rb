@@ -12,8 +12,6 @@ class Project < ApplicationRecord
   #validate :validate_properties
 
   def self.geometry_bounds project_type_id, user_id, attribute_filters, filtered_form_ids, from_date, to_date,intersect_width_layers,active_layers,filters_layers,timeslider_layers
-    puts "Llega a geometry_bounds"
-    puts timeslider_layers
     @bounds = Project
       .select("
         shared_extensions.st_Xmin(shared_extensions.st_collect(main.the_geom)) as minx,
@@ -34,8 +32,6 @@ class Project < ApplicationRecord
     @bounds = ProjectTypesController.set_time_slider @bounds, from_date, to_date
     @bounds = ProjectTypesController.set_filtered_form_ids @bounds, filtered_form_ids
     @bounds = ProjectTypesController.set_filters_on_the_fly @bounds, attribute_filters
-    puts "Manda desde bounds"
-    puts timeslider_layers
     @bounds = ProjectTypesController.set_intersect_width_layers @bounds, intersect_width_layers, active_layers, filters_layers, timeslider_layers
 
     @bounds

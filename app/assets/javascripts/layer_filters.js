@@ -88,7 +88,7 @@ Navarra.layer_filters = function() {
     				data: {
       					name_layer:namelayer
     			},
-    				success: function(data) {console.log(data)
+    				success: function(data) {
     					data.forEach(function(operator){
     						$('#filter_operator_layer_'+namelayer).append('<option value="'+operator+'">'+operator+'</option>')
     					})
@@ -245,8 +245,6 @@ Navarra.layer_filters = function() {
 	function change_filter_value(e){
 		var namelayer = $(event.target).attr("namelayer");
 		var value_selected = $(event.target).val(); 
-		console.log("Valor a setear!!!!!!")
-		console.log(value_selected)
 		$('#filter_value_layer_'+namelayer).val(value_selected);
 	}
 

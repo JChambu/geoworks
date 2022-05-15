@@ -444,9 +444,6 @@ var dragAndDrop = {
 
 // función para graficar los charts
 function draw_charts(data) {
-  console.log("Data para dibujar gráfico")
-  console.log(data)
-  //var data = data_charts;
 
   // Ordenamos las series por chart
   for (var i = 0; i < data.length; i++) {
@@ -863,7 +860,6 @@ function draw_charts(data) {
       }) //cierra each b
     }) //cierra each reg
 
-    console.log("Va a llenar el div "+graphic_id)
     var html_new_graph = "<div class='w-100'>"
     html_new_graph += "<div class='py-1 px-2' id='header"+graphic_id+"'>"
     html_new_graph += "<text>"+title+"</text>"
@@ -1420,8 +1416,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
     size_box[2] = size_ext['_northEast']['lng'];
     size_box[3] = size_ext['_northEast']['lat'];
   }
-  console.log("size box a mandar")
-  console.log(size_box)
 
   var attribute_filters = Navarra.project_types.config.attribute_filters;
   var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
@@ -1474,7 +1468,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
     },
 
     success: function(data) {
-      console.log("DATA PARA LA TABLA")
       var fields = document.querySelectorAll(".field_key");
       if(JSON.stringify(data_dashboard) == JSON.stringify(data.data) && !is_saved){
         $(".fakeLoader").css("display", "none");
@@ -4167,17 +4160,9 @@ function calculate_functions_table(){
 function get_active_layers(){
   active_layers = [];
   check_layers = document.querySelectorAll('input:checked.leaflet-control-layers-selector');
-  console.log("ingresa a get layers")
-  console.log(Navarra.dashboards.config.name_layer)
-  console.log(Navarra.dashboards.config.current_tenement)
-  console.log(check_layers)
   for (l = 0; l < check_layers.length; l++) {
-    console.log("iteración")
-    console.log(check_layers[l])
     if (check_layers[l].type == 'checkbox') {
-      console.log("es un checkbox")
       var name_layer_project = $(check_layers[l]).next().html().substring(1).split("-filtrados")[0];
-      console.log("Agrega "+name_layer_project)
       if (name_layer_project != Navarra.dashboards.config.name_layer){
         active_layers.push(name_layer_project);
       }
@@ -4189,8 +4174,6 @@ function get_active_layers(){
       active_layers.splice(i, 1)
     }
   }
-  console.log("CAPAS ACTIVAS A ENVIAR!!!!")
-  console.log(active_layers)
   return active_layers;
 }
 

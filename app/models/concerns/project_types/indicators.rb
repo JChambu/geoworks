@@ -257,11 +257,7 @@ module ProjectTypes::Indicators
       # Aplica filtros de hijos
       if !filtered_form_ids.blank?
         final_array = []
-        puts "filterd form ids que llega a indicadores"
-        puts filtered_form_ids
         filtered_form_ids.each do |i,ids_array|
-          puts "Iteración"
-          puts ids_array
           #ids_array = JSON.parse(ids_array)
           if !final_array.blank?
             final_array = final_array & ids_array
@@ -280,15 +276,15 @@ module ProjectTypes::Indicators
           filter_children.each do |filter_child|
             s = filter_child.split('|')
             field = s[0]
-            filter = s[1]
+            operator = s[1]
             value = s[2]
             type = s[3]
             if(type == '5' and value!='null')
-              text = "(sec.properties->>'#{field}')::numeric #{operator}'#{value}' AND sec.properties->>'#{field}' IS NOT NULL"
+              text = "(sub.properties->>'#{field}')::numeric #{operator}'#{value}' AND sub.properties->>'#{field}' IS NOT NULL"
             elsif (type == '3' and value!='null')
-              text = "to_date(sec.properties ->> '#{field}', 'DD/MM/YYYY') #{operator} to_date('#{value}','DD/MM/YYYY') AND sec.properties->>'#{field}' IS NOT NULL"
+              text = "to_date(sub.properties ->> '#{field}', 'DD/MM/YYYY') #{operator} to_date('#{value}','DD/MM/YYYY') AND sub.properties->>'#{field}' IS NOT NULL"
             else  
-              text = "sec.properties ->> '#{field}' #{operator}'#{value}'"
+              text = "sub.properties ->> '#{field}' #{operator}'#{value}'"
             end
             text = text.gsub("!='null'"," IS NOT NULL ")
             text = text.gsub("='null'"," IS NULL ")
@@ -306,18 +302,12 @@ module ProjectTypes::Indicators
       end
 
       # Aplica filtros on the fly de capas secundarias para indicadores que traen datos de esa capa secundaria
-      # !!!!!!! Cuidado agregar intersect de la capa secundaria
-      # REVISAR
-      if data.include?("name_layer_for_filters:")
+      if data.include?("name_layer_for_filters:") #El indicador debe traer ese dato
         name_layer = data.split("name_layer_for_filters:")[1]
         if !filters_layers.nil?
           filters_layer = filters_layers[name_layer]
           if !filters_layer.nil?
-            puts "Filtros"
-            puts filters_layer
             filters_layer.each do |i,filter|
-              puts "Filtro"
-              puts filter
               field = filter["filter_field"]
               operator = filter["filter_operator"]
               value = filter["filter_value"]
@@ -335,6 +325,23 @@ module ProjectTypes::Indicators
               data = data.gsub('where_layer_clause', "where_layer_clause ("+text+") AND ")
             end
           end
+        end
+        # Aplica filtros de time-slider de la capa
+        if !timeslider_layers.nil?
+          timeslider_layer = timeslider_layers[name_layer]
+          if timeslider_layer.nil?
+            data = data.gsub('where_clause', "sec.row_enabled = true AND ")
+          else
+            from_date_layer = timeslider_layer["from_date"]
+            to_date_layer = timeslider_layer["to_date"]
+            if !from_date_layer.blank? && !to_date_layer.blank?
+              data = data.gsub('where_clause', "where_clause (sec.gwm_created_at BETWEEN '#{from_date_layer}' AND '#{to_date_layer}') AND ")
+            else
+              data = data.gsub('where_clause', "where_clause sec.row_enabled = true AND ")
+            end
+          end
+        else
+          data = data.gsub('where_clause', "where_clause sec.row_enabled = true AND ")
         end
       end
 
@@ -452,8 +459,6 @@ module ProjectTypes::Indicators
             option_graph = graph
             chart_type = graph.chart.name
             ch["it#{i}"] = { "description": data_query, "chart_type": chart_type, "group_field": @field_group, "chart_properties": option_graph, "data": items, "graphics_options": g }
-            puts "Query"
-            puts data_query
           end
 
         end
@@ -518,18 +523,13 @@ module ProjectTypes::Indicators
 
       # Aplica filtros generados por el usuario y condición row_active y current_season (momentáneamente)
       query_full =  filters_on_the_fly query_full, data_conditions, filtered_form_ids, filter_children, filter_user_children, filters_layers, intersect_width_layers, active_layers, timeslider_layers
-      
-      puts " query full antes de limpiar"
-      puts query_full
+
       #Limpia el query
       query_full = query_full.gsub('where_clause', "")
       query_full = query_full.gsub('where_layer_clause', "")
       query_full = query_full.gsub('name_layer_for_filters:', "-- name_layer_for_filters:")
       query_full = query_full.gsub('where_subform_clause', "")
       query_full = query_full.gsub('from_clause', "")
-
-      puts " query full DESPUÉS de limpiar"
-      puts query_full
 
       #ejecuta el query
       query_full = ActiveRecord::Base.connection.execute(query_full)

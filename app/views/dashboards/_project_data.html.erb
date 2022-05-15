@@ -542,8 +542,6 @@ function get_layer_data(){
       timeslider_layers: Navarra.project_types.config.timeslider_layers
     }
 
-    console.log("filters_layers")
-    console.log(data)
     $.ajax({
       type: 'POST',
       url: '/projects/search_data_for_pdf',
@@ -558,8 +556,6 @@ function get_layer_data(){
             var prop = $(this).attr('key_layer').substring(3);
             html_div = "<div id_layer_row="+row_layer.id+">"+row_layer['properties'][prop]+"</div>"
             $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).append(html_div);
-            // agrega el atributo del id de la capa
-            //$('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).attr("id_layer_row", row_layer.id);
           })
         });//end forEach      
       });

@@ -40,8 +40,6 @@
     type: "GET",
     data: { project_type_id: <%= params[:project_type_id] %> },
     success: function(data){
-      console.log("Datos de usuarios")
-      console.log(data)
         let parent_div=$('.quick_filters_div').parent();
         $('.quick_filters_div').remove();
         let $quick_filters_div = document.createElement('DIV');

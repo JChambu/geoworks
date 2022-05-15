@@ -137,8 +137,6 @@ class ProjectTypesController < ApplicationController
     name_project = params[:name_project]
     type_box = params[:type_box]
     size_box = params[:size_box]
-    puts "size box en export"
-    puts size_box
     attribute_filters = params[:attribute_filters]
     filtered_form_ids = params[:filtered_form_ids]
     from_date = params[:from_date]
@@ -149,20 +147,87 @@ class ProjectTypesController < ApplicationController
     filters_layers = params[:filters_layers]
     timeslider_layers = params[:timeslider_layers]
 
-    # Parsea los parametros stringify
-    puts "va a parsear size_box"
-    #size_box = JSON.parse(size_box)
-    puts size_box
-    #attribute_filters = JSON.parse(attribute_filters) unless attribute_filters.nil?
-    #filtered_form_ids = JSON.parse(filtered_form_ids) unless filtered_form_ids.nil?
-    #fields = JSON.parse(fields)
+    require 'rgeo/geo_json'
 
-    file = ProjectType.export_geojsonn filter_value, filter_by_column, order_by_column, project_type_id, type_box, size_box, attribute_filters, filtered_form_ids, from_date, to_date, fields, current_user.id, intersect_width_layers, active_layers, filters_layers, timeslider_layers
+    data = Project
+      .select('DISTINCT main.id, ST_AsGeoJSON(the_geom) as geom')
+      .from('projects main')
+      .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
+      .joins('INNER JOIN public.users ON users.id = main.user_id')
+      .where('main.project_type_id = ?', project_type_id.to_i)
+      .where('main.row_active = ?', true)
+      .where('main.current_season = ?', true)
+
+    # Agrega al select los campos visibles en la tabla
+    fields.each do |f|
+      data = data.select("main.properties -> '#{f}' AS #{f}")
+    end
+
+    data = ProjectTypesController.set_map_filter data, type_box, size_box
+    @project_filter = ProjectFilter.where(project_type_id: project_type_id.to_i).where(user_id: current_user.id).first
+    data = ProjectTypesController.set_project_filter data, @project_filter
+    data = ProjectTypesController.set_time_slider data, from_date, to_date
+    data = ProjectTypesController.set_filters_on_the_fly data, attribute_filters
+    data = ProjectTypesController.set_filtered_form_ids data, filtered_form_ids
+    data = ProjectTypesController.set_intersect_width_layers data, intersect_width_layers, active_layers, filters_layers, timeslider_layers
+
+    # Aplica búsqueda del usuario
+    if !filter_by_column.blank? && !filter_value.blank?
+      data = data.where("TRANSLATE(main.properties ->> '#{filter_by_column}','ÁÉÍÓÚáéíóú','AEIOUaeiou') ilike translate('%#{filter_value}%','ÁÉÍÓÚáéíóú','AEIOUaeiou')")
+    end
+
+    # Aplica órden de los registros
+    if !order_by_column.blank?
+      field = ProjectField.where(key: order_by_column, project_type_id: project_type_id).first
+
+      # TODO: se deben corregir los errores ortográficos almacenados en la db
+      if field.field_type.name == 'Numérico' || field.field_type.name == 'Numerico'
+        data = data
+          .select("(main.properties ->> '#{order_by_column}')::numeric AS order")
+          .order("(main.properties ->> '#{order_by_column}')::numeric")
+      elsif field.field_type.name == 'Fecha'
+        data = data
+          .select(" to_date(main.properties ->> '#{order_by_column}','DD/MM/YYYY') AS order")
+          .order("to_date(main.properties ->> '#{order_by_column}','DD/MM/YYYY')")
+      else
+        data = data
+          .select("main.properties ->> '#{order_by_column}' AS order")
+          .order("main.properties ->> '#{order_by_column}'")
+      end
+    else
+      data = data.order("main.id")
+    end
+
+    file = {
+      'type': 'FeatureCollection',
+      'features': []
+    }
+
+    # Guardamos el resultado de la consulta en un array
+    data_array = data.map(&:attributes)
+
+    data_array.each do |row|
+
+      # Extraemos id y geom y las eliminamos del hash
+      id = row['id']
+      geom = JSON.parse(row['geom'])
+      row.delete('id')
+      row.delete('geom')
+
+      # Armamos el feature y lo agregamos al archivo
+      feature = {
+        'type': 'Feature',
+        'id': id,
+        'geometry': geom,
+        'properties': row.compact
+      }
+      file[:features] << feature
+
+    end
 
     respond_to do |format|
       format.json { send_data file.to_json, filename: "#{name_project}-#{Date.today}.geojson", type: "text/plain" }
     end
-
   end
 
   def filters
@@ -222,29 +287,21 @@ class ProjectTypesController < ApplicationController
     to_date_subform = params[:to_date_subform]
     # Aplica filtros de hijos
     ids_array = []
-    puts "filterd form ids que llega a SET FILTERED FORM IDS"
-    puts filtered_form_ids_text
     if !filtered_form_ids_text.blank?
       filtered_form_ids_unique = {}
       final_array = []
       filtered_form_ids_text.each do |i, obj|
-        puts "ITER"
-        puts obj
 
         key = obj.keys[0]
-        puts key
         if filtered_form_ids_unique[key].nil?
           new_array = []
           new_array.push(obj[key])
           filtered_form_ids_unique[key] = new_array
         else
-          puts "AGREGA!!!!"
           new_array = filtered_form_ids_unique[key]
           new_array.push(obj[key])
           filtered_form_ids_unique[key]= new_array
         end
-        puts "Hash unificado"
-        puts filtered_form_ids_unique
       end
 
       #Comienza búsqueda de ids padres
@@ -256,9 +313,6 @@ class ProjectTypesController < ApplicationController
           if index > 0
             text += " AND "
           end
-          puts "SEGUNDO BUCLE"
-          puts index
-          puts filter
           parts = filter.split('|')
           subform_key = parts[0]
           subform_operator = parts[1]
@@ -275,12 +329,8 @@ class ProjectTypesController < ApplicationController
             else
               text += "project_data_children.properties ->> '#{subform_key}' #{subform_operator}'#{subform_value}'";
             end
-            puts "ANTES sub!!!!!"
-            puts text
             text = text.gsub("!='null'"," IS NOT NULL ")
             text = text.gsub("='null'"," IS NULL ")
-            puts "DESPUES SUB!!!!!"
-            puts text
             text_field = " project_data_children.project_field_id = "+i
           end
 
@@ -322,8 +372,6 @@ class ProjectTypesController < ApplicationController
     active_layers = params[:active_layers]
     filters_layers = params[:filters_layers]
     timeslider_layers = params[:timeslider_layers]
-    puts "Va a mandar timeslider_layers"
-    puts timeslider_layers
     data = Project.geometry_bounds(project_type_id, current_user.id, attribute_filters, filtered_form_ids, from_date, to_date, intersect_width_layers,active_layers,filters_layers,timeslider_layers)
     render json: {"data": data}
   end
@@ -504,16 +552,20 @@ class ProjectTypesController < ApplicationController
         if !filter_children.blank?
           filter_children.each do |filter_child|
             filter_parts = filter_child.split('|')
-            if(filter_parts[3] == '5' and filter_parts[2]!='null')
-              text = "(properties ->> '"+filter_parts[0]+"')::numeric "+filter_parts[1]+"'"+filter_parts[2]+"' AND properties ->> '"+filter_parts[0]+"' IS NOT NULL";
-            elsif (filter_parts[3] == '3' and filter_parts[2]!='null')
-              text = "to_date(project_data_children.properties ->> '"+filter_parts[0]+"', 'DD/MM/YYYY') "+filter_parts[1]+" to_date('"+filter_parts[2]+"','DD/MM/YYYY') AND properties ->> '"+filter_parts[0]+"' IS NOT NULL";
-            else  
-              text = "properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+"'"+filter_parts[2]+"'";
+            # verifica que el filtro corresponda al subformulario que se está iterando
+            belongs_to_subfield = ProjectSubfield.where(id: filter_parts[0]).where(project_field_id: f_field.id).first
+            if !belongs_to_subfield.nil?
+              if(filter_parts[3] == '5' and filter_parts[2]!='null')
+                text = "(properties ->> '"+filter_parts[0]+"')::numeric "+filter_parts[1]+"'"+filter_parts[2]+"' AND properties ->> '"+filter_parts[0]+"' IS NOT NULL";
+              elsif (filter_parts[3] == '3' and filter_parts[2]!='null')
+                text = "to_date(project_data_children.properties ->> '"+filter_parts[0]+"', 'DD/MM/YYYY') "+filter_parts[1]+" to_date('"+filter_parts[2]+"','DD/MM/YYYY') AND properties ->> '"+filter_parts[0]+"' IS NOT NULL";
+              else  
+                text = "properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+"'"+filter_parts[2]+"'";
+              end
+              text = text.gsub("!='null'"," IS NOT NULL ")
+              text = text.gsub("='null'"," IS NULL ")
+              children_data = children_data.where(text)
             end
-            text = text.gsub("!='null'"," IS NOT NULL ")
-            text = text.gsub("='null'"," IS NULL ")
-            children_data = children_data.where(text)
           end
         end
 
@@ -727,8 +779,6 @@ class ProjectTypesController < ApplicationController
     order_by_column = params[:order_by_column]
     type_box = params[:type_box]
     size_box = params[:size_box]
-    puts "size_box para armar tabla"
-    puts size_box
     data_conditions = params[:data_conditions]
     filtered_form_ids = params[:filtered_form_ids]
     from_date = params[:from_date]
@@ -760,8 +810,6 @@ class ProjectTypesController < ApplicationController
     data = ProjectTypesController.set_filtered_form_ids data, filtered_form_ids
     data = ProjectTypesController.set_intersect_width_layers data, intersect_width_layers, active_layers, filters_layers, timeslider_layers
 
-    puts "DATA FINAL EN TABLA!!!!!!!!!!!!"
-    puts data.length
     if is_interpolate
     
       render json: {"data": data}
@@ -909,8 +957,6 @@ class ProjectTypesController < ApplicationController
 
 #COMIENZAN FUNCIONES PARA FILTROS
   def self.set_map_filter data, type_box, size_box
-    puts "size_box que llega a set map filter"
-    puts size_box
     # Aplica filtro geográfico
     if !type_box.blank? && !size_box.blank?
       if type_box == 'extent'
@@ -920,12 +966,8 @@ class ProjectTypesController < ApplicationController
         maxy = size_box[3].to_f if !size_box.nil?
         data = data.where("shared_extensions.ST_Contains(shared_extensions.ST_MakeEnvelope(#{minx}, #{maxy}, #{maxx}, #{miny}, 4326), main.#{:the_geom})")
       else
-        puts "es poligono de selección"
         arr1 = []
         size_box.each do |a,x|
-          puts "iteración"
-          puts a
-          puts x
           z = []
           x.each do |b,y|
             z.push(y)
@@ -1022,13 +1064,9 @@ class ProjectTypesController < ApplicationController
           else
             text = "main.properties->>'" + field + "'" + filter + "'#{value}'"
           end
-          puts "ANTES!!!!!"
-          puts text
           text = text.gsub("!='null'"," IS NOT NULL ")
           text = text.gsub("='null'"," IS NULL ")
           data = data.where(text)
-          puts "DESPUES!!!!!"
-          puts text
         end
       end
     end
@@ -1038,14 +1076,9 @@ class ProjectTypesController < ApplicationController
 
   def self.set_filtered_form_ids data, filtered_form_ids
     # Aplica filtros de hijos
-    puts "Aplica filtros de hijos"
     if !filtered_form_ids.blank?
       final_array = []
       filtered_form_ids.each do |i, ids_array|
-        puts "Iteración!!!!"
-        puts i
-        puts ids_array.length
-        #ids_array = JSON.parse(ids_array)
         if !final_array.blank?
           final_array = final_array & ids_array
         else
@@ -1056,8 +1089,6 @@ class ProjectTypesController < ApplicationController
         final_array.push(-1)
       end
       final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')').gsub(/\"/, '')
-      puts "FINAL ARRAY"
-      puts final_array
       data = data.where("main.id IN #{final_array}")
     end
 
@@ -1065,10 +1096,6 @@ class ProjectTypesController < ApplicationController
   end
 
   def self.set_intersect_width_layers data, intersect_width_layers, active_layers, filters_layers, timeslider_layers
-    puts "ingresa a set_intersect_width_layers"
-    puts filters_layers
-    puts intersect_width_layers
-    puts timeslider_layers
     # Aplica filtro de capas secundarias on the fly para el proyecto activo (INTERSECT DEL PROYECTO ACTIVO)
     if(intersect_width_layers=='true')
       current_tenant = Apartment::Tenant.current
@@ -1101,11 +1128,7 @@ class ProjectTypesController < ApplicationController
             end
           end
           # Aplica filtros de time-slider de la capa
-          puts "Va a aplicar timeslider de la capa"
-          puts timeslider_layers
-          puts timeslider_layers.nil?
           if !timeslider_layers.nil?
-            puts "No es nulo"
             timeslider_layer = timeslider_layers[active_layer]
             if timeslider_layer.nil?
               data = data.where("intersect_"+active_layer+".row_enabled = true")
@@ -1125,7 +1148,6 @@ class ProjectTypesController < ApplicationController
         end
       end
     end
-    puts "termina intersect_width_layers"
   data
   end
 
