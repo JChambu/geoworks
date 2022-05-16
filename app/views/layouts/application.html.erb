@@ -7,7 +7,7 @@
     <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
   </head>
   <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
-  	<body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action] %>" class="nav-sm  dashboard" style="overflow-y: hidden;">
+  	<body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action] %>" class="nav-sm  dashboard over-map" style="overflow: hidden;">
       <%= render partial: 'layouts/header_new' %>
     </body>
   <% else %>

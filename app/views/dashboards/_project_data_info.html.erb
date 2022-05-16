@@ -12,13 +12,27 @@
       $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
       $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_edit');
       Navarra.geomaps.delete_markers();
+      //muestra otros modales
+      if(!$('#navbarDropdown_container').hasClass("is_open")){
+        $('.leaflet-top.leaflet-right').removeClass('side_hidden');
+        $('.sidebar').removeClass('side_hidden');
+        $(".table_data_container").removeClass("width_table");
+      }
     });
     //ajusta tamaño y posición del modal de info del registro
-    var postop = ($('#nav_bar').outerHeight() -1)+'px';
+    var postop = ($('#nav_bar').innerHeight() -1)+'px';
+    console.log("posición top")
+    console.log(postop)
     $('#info-modal').css('top',postop);
     $('#info-modal').on('shown.bs.modal', function (e)  {
-      var height_modal = ( window.innerHeight - $('#nav_bar').outerHeight() - $('#info-modal-header').outerHeight() - $('#info-modal-footer').outerHeight() -2) +'px';
+      var height_modal = ( window.innerHeight - $('#nav_bar').innerHeight() - $('#info-modal-header').innerHeight() - $('#info-modal-footer').innerHeight() -2) +'px';
+      console.log("height_modal")
+      console.log(height_modal)
       $('#modal_info').css('height',height_modal);
+      //esconde otros modales
+      $('.leaflet-top.leaflet-right').addClass('side_hidden');
+      $('.sidebar').addClass('side_hidden');
+      $(".table_data_container").addClass("width_table");
     });
   });
 var can_edit_yes;
@@ -178,7 +192,7 @@ var can_edit_status_yes;
 
 <% if can? :data, :visualizer %>
   <div id="info-modal" class="modal fade show" aria-modal="true" data-backdrop=false style="width: 30%; margin-left: 70.2% !important;">
-    <div class="modal-dialog mt-0" style="max-width: none; margin-bottom: 0px;">
+    <div class="modal-dialog mt-0" id="modal-info_left" style="max-width: none; margin-bottom: 0px;">
       <div class="modal-content">
         <div class="modal-header pt-2 pb-2" id="info-modal-header">
           <h6 class="modal-title" id="info_title"></h6>
@@ -194,28 +208,28 @@ var can_edit_status_yes;
           </div>
           <div class="d-none text-left div_confirmation" id="edit_confirmation" style="width: 65%;">
             <p class="m-0 d-inline">Guardar Cambios?</p>
-            <button type="button" class="btn btn-primaty p-0" onclick="save_info('edit_confirmation')" style="width: 35px">SI</button>
+            <button type="button" class="btn btn-primary p-0" onclick="save_info('edit_confirmation')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
           <div class="d-none text-left div_confirmation" id="edit_confirmation_child" style="width: 65%;">
             <p class="m-0 d-inline">Guardar Cambios?</p>
-            <button type="button" class="btn btn-secondary p-0" onclick="save_info('edit_confirmation_child')" style="width: 35px">SI</button>
+            <button type="button" class="btn btn-primary p-0" onclick="save_info('edit_confirmation_child')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
           <div class="d-none text-left div_confirmation" id="owner_confirmation" style="width: 65%;">
             <select class="form-control form-control-sm d-inline p-0" id="owner_change_select" style="width: 68%">
             </select>
-            <button type="button" class="btn btn-secondary p-0" onclick="save_info('owner_confirmation')" style="width: 35px">SI</button>
+            <button type="button" class="btn btn-primary p-0" onclick="save_info('owner_confirmation')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
           <div class="d-none text-left div_confirmation" id="disable_confirmation" style="width: 65%;">
             <p class="m-0 d-inline" id="enabled_text">Desactivar Registro?</p>
-            <button type="button" class="btn btn-secondary p-0" onclick="save_info('disable_confirmation')" style="width: 35px">SI</button>
+            <button type="button" class="btn btn-primary p-0" onclick="save_info('disable_confirmation')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
           <div class="d-none text-left div_confirmation" id="delete_confirmation" style="width: 65%;">
             <p class="m-0 d-inline">Eliminar Registro?</p>
-            <button type="button" class="btn btn-secondary p-0" onclick="save_info('delete_confirmation')" style="width: 35px">SI</button>
+            <button type="button" class="btn btn-primary p-0" onclick="save_info('delete_confirmation')" style="width: 35px">SI</button>
             <button type="button" class="btn btn-secondary p-0" data-dismiss="modal" style="width: 35px">NO</button>
           </div>
           <div class="d-none text-left div_confirmation" id="history" style="width: 65%;">

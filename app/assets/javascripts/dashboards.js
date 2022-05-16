@@ -267,7 +267,7 @@ Navarra.dashboards.action_show = function(){
     //Expandir toda la pantalla
     $("#view-data-expanded").on("click", function() {
       $('#status-view').addClass('status-view-expanded');
-      $(".table_data_container").css("background", "rgba(0, 0, 0, 0.2)");
+      $(".table_data_container").css("background", "rgba(39, 43, 48, 0.8)");
       var status_view_condensed = $('#status-view').hasClass('status-view-condensed');
         $('#status-view').removeClass('status-view-condensed');
         $(".table_data_container").css("transition-delay", "0s");
@@ -335,7 +335,7 @@ function verify_height_table(){
 }
 
 open_table_middle = function(only_open){
-  $(".table_data_container").css("background", "rgba(0, 0, 0, 0.2)");
+  $(".table_data_container").css("background", "rgba(39, 43, 48, 0.8)");
     var status_view_condensed = $('#status-view').hasClass('status-view-condensed');
     $('#status-view').removeClass('status-view-condensed');
     $('#status-view').removeClass('status-view-expanded');

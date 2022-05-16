@@ -2826,7 +2826,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             }
             var new_p = document.createElement('H7');
             if (element.field_type_id == 11) {
-              new_p.className = "bg-primary pl-1";
+              new_p.className = "btn btn-primary p-0 pl-1 pr-1 text-left custom_button";
               new_p.setAttribute("onClick", "open_subtitle(" + element.calculated_field + ",'')");
               if (element.calculated_field != "") {
                 try{
@@ -2848,7 +2848,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
 
             if (element.field_type_id != 11) {
               var new_celd = document.createElement('DIV');
-              new_celd.className = "col-md-7 field_div";
+              new_celd.className = "col-md-7 field_div static_datetimepicker";
               if(element.field_type_id == 10){new_celd.classList.add("ok_button")}
 
               // Adapta el código a los diferentes tipos de campos
@@ -3072,7 +3072,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             // si tiene autorización para nuevos hijos
             if($('#new_subform_control').val()=="true"){
               var new_p = document.createElement('I');
-              new_p.className = "fas fa-plus icon_add d-none add_subforms";
+              new_p.className = "fas fa-plus icon_add d-none add_subforms btn btn-primary custom_button p-1";
               new_p.setAttribute('onclick','open_new_child('+element.field_id+',"'+element.name+'","'+element.key+'",'+is_multiple+')');
               new_celd.appendChild(new_p);
             }
@@ -3169,9 +3169,9 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
     }
     var new_row1 = document.createElement('DIV');
     if (element_child_field.hidden) {
-      new_row1.className = "form-row d-none hidden_field row_field";
+      new_row1.className = "form-row d-none hidden_field row_field static_datetimepicker" ;
     } else {
-      new_row1.className = "form-row row_field";
+      new_row1.className = "form-row row_field static_datetimepicker";
     }
     if(element_child_field.can_read==false){
         new_row1.classList.add('canot_read');
@@ -3200,7 +3200,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
     
     var new_p = document.createElement('H7');
     if (element_child_field.field_type_id == 11) {
-      new_p.className = "bg-primary pl-1";
+      new_p.className = "btn btn-primary p-0 pl-1 pr-1 text-left custom_button";
       new_p.style.cursor = "pointer";
       new_p.setAttribute("onClick", "open_subtitle(" + element_child_field.calculated_field + ",'_child')");
       if (element_child_field.calculated_field != "") {

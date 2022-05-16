@@ -205,7 +205,7 @@ Navarra.geomaps = function() {
         new_a.title = "Mostrar Todo"
         var img = L.DomUtil.create('I');
         img.className = 'fas fa-expand-arrows-alt';
-        img.style.color = "white";
+        img.style.color = "#EBEBEC";
         img.style.cursor = "pointer"
         img.style.textShadow = "1px 1px 2px rgba(0,0,0,0.5)"
         new_a.appendChild(img)
@@ -232,7 +232,7 @@ Navarra.geomaps = function() {
       draw: {
         polygon: {
           shapeOptions: {
-            color: '#d3d800'
+            color: '#d3d800',
           }
         },
         rectangle: {
@@ -344,6 +344,24 @@ Navarra.geomaps = function() {
     };
 
     mymap.addControl(drawControl);
+    // Cambia los íconos de Leafleat que se ven corridos
+    var img_polygon = L.DomUtil.create('I');
+    img_polygon.className = 'fas fa-draw-polygon';
+    img_polygon.style.color = "#EBEBEC";
+    img_polygon.style.cursor = "pointer"
+    img_polygon.style.textShadow = "1px 1px 2px rgba(0,0,0,0.5)"
+    $('.leaflet-draw').children().first().children().first().removeClass('leaflet-draw-toolbar leaflet-bar leaflet-draw-toolbar-top');
+    $('.leaflet-draw').children().first().children().first().addClass('leaflet-control-zoom leaflet-bar leaflet-control mt-0');
+    $('.leaflet-draw').children().first().children().first().children().first().append(img_polygon)
+
+    var img_polygon = L.DomUtil.create('I');
+    img_polygon.className = 'fas fa-vector-square';
+    img_polygon.style.color = "#EBEBEC";
+    img_polygon.style.cursor = "pointer"
+    img_polygon.style.textShadow = "1px 1px 2px rgba(0,0,0,0.5)"
+    $('.leaflet-draw').children().first().children().first().removeClass('leaflet-draw-toolbar leaflet-bar leaflet-draw-toolbar-top');
+    $('.leaflet-draw').children().first().children().first().addClass('leaflet-control-zoom leaflet-bar leaflet-control mt-0');
+    $('.leaflet-draw').children().first().children().first().children().first().next().append(img_polygon)
 
     // Elimina la opción "Eliminar último punto" del toolbar
     $('.leaflet-draw-draw-polygon').on('click', function() {
@@ -368,7 +386,7 @@ Navarra.geomaps = function() {
             new_a.title = "Editar Geometrías"
             var img = L.DomUtil.create('I');
             img.className = 'fas fa-edit';
-            img.style.color = "white";
+            img.style.color = "#EBEBEC";
             img.style.cursor = "pointer"
             img.style.textShadow = "1px 1px 2px rgba(0,0,0,0.5)"
             new_a.appendChild(img);
@@ -387,7 +405,7 @@ Navarra.geomaps = function() {
             } else{
               img.className = 'fas fa-draw-polygon';
             }  
-            img.style.color = "white";
+            img.style.color = "#EBEBEC";
             img.style.cursor = "pointer"
             img.style.textShadow = "1px 1px 2px rgba(0,0,0,0.5)"
             new_a.appendChild(img);
@@ -600,10 +618,7 @@ Navarra.geomaps = function() {
 
 
   function wms_filter(is_from_internal_layers) {
-    console.log("ingresa a wms_filter")
     var cql_filter = getCQLFilter(false);
-    console.log("CQL_FILTER")
-    console.log(cql_filter)
     var heatmap_actived = Navarra.project_types.config.heatmap_field;
     if (heatmap_actived != '') {
       Navarra.geomaps.heatmap_data();
@@ -625,7 +640,6 @@ Navarra.geomaps = function() {
     if (typeof(projectss) !== 'undefined') {
       mymap.removeLayer(projectss);
     }
-    console.log("Renueva capa")
     current_tenement = Navarra.dashboards.config.current_tenement;
     layer_current = current_tenement + ":" + name_layer;
     projectFilterLayer = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
@@ -660,13 +674,9 @@ Navarra.geomaps = function() {
 
     // Aplica filtros por hijos generados por el usuario
     var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
-    console.log("estamos en getCQLFilter")
-    console.log(filtered_form_ids)
-    console.log(filtered_form_ids.length)
     if (filtered_form_ids.length > 0) {
       let final_array = [];
       for (var i = 0; i < filtered_form_ids.length; i++) {
-        console.log("iteración")
         let ids_array = filtered_form_ids[i]
         if (final_array.length) {
           final_array = final_array.filter(value => ids_array.includes(value));
@@ -739,7 +749,6 @@ Navarra.geomaps = function() {
     }
     
     //Aplica filtro Intersect (definido por el usuario) con las capas activas
-    console.log("Va a aplicar filtro intercapa")
     if($('#switch_intersect_layers').is(":checked")){
       active_internal_layers = get_layers_checked();
       data_layer = project_type_layers;
@@ -753,8 +762,6 @@ Navarra.geomaps = function() {
         }
       });
     }
-    console.log("CQL FILTER FINAL")
-    console.log(cql_filter)
     if(set_bbox){
       var geometry_draw_array = Navarra.dashboards.config.size_polygon;
       if (geometry_draw_array.length == 0) {
@@ -1286,7 +1293,6 @@ function get_layers_checked(){
 }
 
 function getCQLFilter_layer(dat){
-  console.log("ingresa a getcqlfilter_layer")
   cql_filter = "1 = 1";
   // Aplica filtro por atributo de la capa (Filtros de usuarios)
   if (dat.layer_filters.attribute_filter) {
@@ -1356,8 +1362,7 @@ function getCQLFilter_layer(dat){
       cql_filter = cql_filter.replace(/!= 'null'/g, " IS NOT NULL ");
       cql_filter = cql_filter.replace(/= 'null'/g, " IS NULL ");
     } 
-    console.log("cql_filter de la capa")
-    console.log(cql_filter)
+
   return cql_filter;
 }
 

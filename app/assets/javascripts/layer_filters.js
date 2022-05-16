@@ -2,16 +2,17 @@ Navarra.namespace("layer_filters");
 Navarra.layer_filters = function() {
 	function init(layer, label_layer){
 		var new_item =
+
         '<div>'+
           '<a class="dropdown-item" href="#">'+
-            '<div class="d-inline mr-3">'+
+            '<div class="d-inline mr-3 pr-4">'+
             	'<div class="custom-control custom-checkbox" >'+
             		'<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+layer+'" type="checkbox" name="radio_mapabase">'+
             		'<label id="checkboxlabel_'+layer+'" class="string optional control-label custom-control-label" for="checkbox_'+layer+'"> </label>'+
             	'</div>'+
             	'<label for=mapa_base1>'+label_layer+'</label>'+
             '</div>'+
-            '<i class="fas fa-chevron-down float-right" onclick="Navarra.layer_filters.openlayer(event)" namelayer="'+layer+'"></i>'+
+            '<i class="fas fa-chevron-down float-right" style="margin-left:-20px" onclick="Navarra.layer_filters.openlayer(event)" namelayer="'+layer+'"></i>'+
             '<div class="pl-4 d-none" style="width:33vw" id="div_filter_'+layer+'">'+
             	'<div class="custom-control custom-switch">'+
             		'<input type="checkbox" id="switch_'+layer+'" class="custom-control-input layer_filter_switch" onchange="switch_filtered_layer()">'+
@@ -112,6 +113,9 @@ Navarra.layer_filters = function() {
           }
         }),
       });
+		$('.layer_time_slider').on('dp.show', function() {
+			
+		});
 	}
 
 	function set_timeslider_layer(e){
