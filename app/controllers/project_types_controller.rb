@@ -1329,6 +1329,46 @@ class ProjectTypesController < ApplicationController
 
   end
 
+  def save_interpolation
+    interpolation_name = params[:interpolation_name]
+    interpolation_params = {"type_geometry"=>"Polygon", "tracking"=>"0", "enabled_as_layer"=>"1", "layer_color"=>"#000000", "geo_restriction"=>"0", "level"=>"100", "multiple_edition"=>"0", "enable_period"=>"Nunca", "notification_email"=>"","project_fields_attributes"=>{"0"=>{"field_type_id"=>"5", "name"=>"app_id", "required"=>"0", "roles_read"=>[""], "roles_edit"=>[""], "sort"=>"1", "_destroy"=>"false", "choice_list_id"=>"", "hidden"=>"1", "read_only"=>"1", "popup"=>"0", "data_table"=>"0", "calculated_field"=>"", "data_script"=>"", "filter_field"=>"1", "heatmap_field"=>"0"},"1"=>{"field_type_id"=>"5", "name"=>"app_estado", "required"=>"0", "roles_read"=>[""], "roles_edit"=>[""], "sort"=>"1", "_destroy"=>"false", "choice_list_id"=>"", "hidden"=>"1", "read_only"=>"1", "popup"=>"0", "data_table"=>"0", "calculated_field"=>"", "data_script"=>"", "filter_field"=>"1", "heatmap_field"=>"0"},"2"=>{"field_type_id"=>"5", "name"=>"app_usuario", "required"=>"0", "roles_read"=>[""], "roles_edit"=>[""], "sort"=>"1", "_destroy"=>"false", "choice_list_id"=>"", "hidden"=>"1", "read_only"=>"1", "popup"=>"0", "data_table"=>"0", "calculated_field"=>"", "data_script"=>"", "filter_field"=>"1", "heatmap_field"=>"0"},"3"=>{"field_type_id"=>"1", "name"=>"#{interpolation_name}", "required"=>"0", "roles_read"=>[""], "roles_edit"=>[""], "sort"=>"1", "_destroy"=>"false", "choice_list_id"=>"", "hidden"=>"1", "read_only"=>"1", "popup"=>"0", "data_table"=>"0", "calculated_field"=>"", "data_script"=>"", "filter_field"=>"1", "heatmap_field"=>"0"}}, "user_id"=>1}
+    interpolation_params[:name] = params[:name]
+    interpolation_params[:name_layer] = params[:name].gsub(/\s+/, '_').downcase
+    interpolation_params[:user_id] = current_user.id
+   
+    @project_type = ProjectType.new(interpolation_params)
+    @project_id_created = nil
+
+    if @project_type.save
+
+      HasProjectType.create(user_id: current_user.id, project_type_id: @project_type.id)
+      if current_user.id != 1
+        HasProjectType.create(user_id: 1, project_type_id: @project_type.id)
+      end
+      ProjectType.add_layer_geoserver(params[:name_layer])
+      @project_id_created = @project_type.id
+
+    end
+  render json: {"data": @project_id_created}
+  end
+
+  def create_status_interpolation
+    colors = params[:colors]
+    names = params[:names]
+    puts "Datos que llegan"
+    puts colors
+    puts names
+    project_type_id = params[:project_type_id]
+    colors.each_with_index do |color, index|
+      puts color
+      puts index
+      status = {"name"=>"#{names[index]} - #{names[index+1]} ", "color"=>"#{color}", "status_type"=>"Asignable", "timer"=>"No", "project_type_id"=>"#{project_type_id}"}
+      @project_status = ProjectStatus.new(status)
+      if @project_status.save  
+      end
+    end
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.

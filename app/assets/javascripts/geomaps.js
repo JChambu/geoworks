@@ -2212,7 +2212,9 @@ function get_latlng(){
     return area;
 }
 
-function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_celd_size,field_name, is_subform, sub_values){
+function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_celd_size,field_name, is_subform, sub_values, save_interpolation){
+  console.log("Llega guardar")
+  console.log(save_interpolation)
   if(!get_celd_size){
     $('#text_toast').html("Buscando datos ...");
     $('#toast').toast('show');
@@ -2259,13 +2261,13 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
         $('#toast').toast('show');
         // elimina features que no tienen datos válidos
         points.features = points.features.filter(v => !isNaN(v.properties[interpolation_field]));
-        get_layers_clip(points, interpolation_field,breaks,colors,field_name);  
+        get_layers_clip(points, interpolation_field,breaks,colors,field_name, save_interpolation);  
       }
     }
   });
 }
 
-function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
+function get_layers_clip(points, interpolation_field,breaks,colors,field_name, save_interpolation) {
   // trae capas 
   var active_internal_layers = get_layers_checked();
   if(active_internal_layers.length>0){
@@ -2349,7 +2351,7 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
                 $('#decision_yes').attr('onclick','Navarra.geomaps.continue_iterpolation('+JSON.stringify(points)+', "'+interpolation_field +'" ,'+JSON.stringify(breaks)+','+JSON.stringify(colors)+', "'+field_name +'", '+JSON.stringify(combined)+')');
                 $('#toast_decision').toast('show');
               } else{
-                continue_iterpolation(points, interpolation_field,breaks,colors,field_name, combined );
+                continue_iterpolation(points, interpolation_field,breaks,colors,field_name, combined , save_interpolation );
               }
               }
           }
@@ -2366,12 +2368,12 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
       $('#decision_yes').attr('onclick','Navarra.geomaps.continue_iterpolation('+JSON.stringify(points)+', "'+interpolation_field +'" ,'+JSON.stringify(breaks)+','+JSON.stringify(colors)+', "'+field_name +'", null)');
       $('#toast_decision').toast('show');
     } else{
-      continue_iterpolation(points, interpolation_field,breaks,colors,field_name, null);
+      continue_iterpolation(points, interpolation_field,breaks,colors,field_name, null, save_interpolation);
     }        
   }
 }
 
-function continue_iterpolation(points, interpolation_field,breaks,colors,field_name,combined){
+function continue_iterpolation(points, interpolation_field,breaks,colors,field_name,combined, save_interpolation){
   $('#toast_decision').toast("hide");
   $('#text_toast').html("Iterpolando ...");
   $('#toast').toast('show');
@@ -2387,17 +2389,17 @@ function continue_iterpolation(points, interpolation_field,breaks,colors,field_n
       $('#decision_yes').attr('onclick','Navarra.geomaps.continue_isobands('+JSON.stringify(grid)+', "'+interpolation_field +'" ,'+JSON.stringify(breaks)+','+JSON.stringify(colors)+', '+JSON.stringify(combined)+', "'+field_name +'")');
       $('#toast_decision').toast('show');
     } else{
-      continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name);
+      continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name, save_interpolation);
     }   
   },200); 
 }
 
-function continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name){
+function continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name, save_interpolation){
   $('#toast_decision').toast("hide");
   $('#text_toast').html("Creando isopolígonos ...");
   $('#toast').toast('show');
   setTimeout(function(){ // delay para que cierre el toast_decision.
-    get_isobands(grid, interpolation_field,breaks,colors,combined,field_name);
+    get_isobands(grid, interpolation_field,breaks,colors,combined,field_name, save_interpolation);
     //Para ver los puntos y sus propiedades
      /* 
     grid.features.forEach(function(point){
@@ -2410,7 +2412,9 @@ function continue_isobands(grid, interpolation_field,breaks,colors,combined,fiel
   },200);  
 }
 
-function get_isobands(grid, interpolation_field, breaks, colors, combined){
+function get_isobands(grid, interpolation_field, breaks, colors, combined, field_name,save_interpolation){
+  console.log("FIELD NAME")
+  console.log(field_name)
   pointGrid = grid  
   if(isobands_layer!=undefined){
     mymap.removeLayer(isobands_layer);
@@ -2456,7 +2460,77 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined){
     });
     count ++;
   });
-  isobands_layer.addTo(mymap);
+  console.log("LATLONGS")
+  console.log(lat_lng_polys)
+  console.log("Guarda?")
+  console.log(save_interpolation)
+  if(save_interpolation){
+    $('#text_toast').html("Guardando Proyecto Interpolación");
+    $('#toast').toast('show');
+    $.ajax({
+      type: 'POST',
+      url: '/project_types/save_interpolation',
+      datatype: 'json',
+      data: {
+          name: "Int capturas 24",
+          interpolation_name: field_name
+      },
+      success: function(data) {
+        console.log("Primer success")
+        console.log(data)
+        project_id_created = data.data;
+        if (project_id_created ==null){
+          $('#text_toast').html("Error al guardar Interpolación");
+          $('#toast').toast('show');
+        } else {
+          // Crea los estados
+          $('#text_toast').html("Guardando Estados");
+          $('#toast').toast('show');
+          $.ajax({
+            type: 'POST',
+            url: '/project_types/create_status_interpolation',
+            datatype: 'json',
+            data: {
+              names: breaks,
+              colors: colors,
+              project_type_id: project_id_created
+            },
+            success: function(data) {
+              console.log("Segundo success")
+              console.log(data)
+              $('#text_toast').html("Guardando Geometrías");
+              $('#toast').toast('show');
+              properties_to_save = {}
+              properties_to_save[field_name] = "0 - 1"
+              var geom = [];
+              var latLng = {
+                latLng: lat_lng_polys[0]
+              }
+              geom.push(latLng)
+              $.ajax({
+                type: 'POST',
+                url: '/projects/create_form',
+                datatype: 'json',
+                data: {
+                  project_type_id: project_id_created,
+                  properties: JSON.stringify(properties_to_save),
+                  subforms: [],
+                  project_status_id: 167,
+                  geom: geom
+                },
+                success: function(data) {
+                  console.log("Guarda geometría success")
+                  console.log(data)
+                  
+                }
+              });
+            }
+          });
+        }
+
+      } // Cierra primer success  
+   });
+  }
 }
 
 function intersect_layers(){

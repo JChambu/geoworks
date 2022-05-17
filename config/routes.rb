@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   get 'project_types/search_name_layer' => 'project_types#search_name_layer'
   post 'project_types/kpi' => 'project_types#kpi'
   post 'project_types/search_data_dashboard' => 'project_types#search_data_dashboard'
+  post 'project_types/save_interpolation' => 'project_types#save_interpolation'
+  post 'project_types/create_status_interpolation' => 'project_types#create_status_interpolation'
   get 'project_types/create_quick_filters_users_subform' => 'project_types#create_quick_filters_users_subform'
   get 'project_types/search_father_children_and_photos_data' => 'project_types#search_father_children_and_photos_data'
   get 'project_types/search_report_data' => 'project_types#search_report_data'

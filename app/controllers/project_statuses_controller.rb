@@ -29,6 +29,8 @@ class ProjectStatusesController < ApplicationController
   # POST /project_statuses
   # POST /project_statuses.json
   def create
+    puts "parámetros en estados"
+    puts project_status_params
     @project_status = @project_type.project_statuses.new(project_status_params)
 
     respond_to do |format|
@@ -85,7 +87,6 @@ class ProjectStatusesController < ApplicationController
   def options
     @project_statuses = ProjectStatus.where(project_type_id: params[:project_type_id])
   end
-
 
   private
   # Use callbacks to share common setup or constraints between actions.

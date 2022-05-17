@@ -116,6 +116,12 @@ class ProjectsController < ApplicationController
     project_status_id = params[:project_status_id]
     properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
     geom = params[:geom]['0'][:latLng]
+    puts "Geometría a guardar"
+    puts params[:geom]
+    puts "primera geometría"
+    puts params[:geom]['0']
+    puts "LATLONG"
+    puts params[:geom]['0'][:latLng]
     subforms = params[:subforms] # FIXME: los paremetros llegan como string
 
     @project_type = ProjectType.find(project_type_id)

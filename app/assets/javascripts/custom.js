@@ -3747,6 +3747,8 @@ function edit_file(edit_parent, edit_child, edit_status){
       project_status_id: status_id,
       geom: Navarra.geomaps.get_geometries_to_save()
     }
+    console.log("NUEVA GEOMETRÍA")
+    console.log(data_to_save)
 
   } else {
     var type_ajax = 'PATCH';
