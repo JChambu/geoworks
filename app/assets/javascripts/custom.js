@@ -4163,7 +4163,7 @@ function get_active_layers(){
   for (l = 0; l < check_layers.length; l++) {
     if (check_layers[l].type == 'checkbox') {
       var name_layer_project = $(check_layers[l]).next().html().substring(1).split("-filtrados")[0];
-      if (name_layer_project != Navarra.dashboards.config.name_layer){
+      if (name_layer_project != Navarra.dashboards.config.name_layer && name_layer_project.toLowerCase()!="seleccionados" ){
         active_layers.push(name_layer_project);
       }
     }
@@ -4239,7 +4239,7 @@ function download_geojson() {
       var jsonObj = JSON.parse(data);
       var data_pretty = encodeURIComponent(JSON.stringify(jsonObj,null,2));
       $("<a />", {
-        "download": Navarra.dashboards.config.name_project+".json",
+        "download": Navarra.dashboards.config.name_project+".geojson",
         "href" : "data:application/json," + data_pretty
       }).appendTo("body").click(function() {
         $(this).remove()

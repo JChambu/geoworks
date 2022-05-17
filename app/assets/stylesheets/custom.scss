@@ -958,10 +958,13 @@ div.custom-menu.show {
   background: rgba(39,43,48,1)!important;
 }
 
-.static_datetimepicker .dropdown-menu{
+.static_datetimepicker .dropdown-menu , .table_data_container .dropdown-menu{
   background: rgba(39,43,48,1)!important;
 }
 
+.custom_overflow{
+  overflow:visible!important;
+}
 .side_hidden{
   margin-left: 40%!important;
   left:100%!important;
@@ -996,6 +999,6 @@ div.custom-menu.show {
 .over-map .dropdown-item.active, .over-map .dropdown-item:active, .over-map .dropdown-item.focus, .over-map .dropdown-item:focus, .over-map .dropdown-item.hover, .over-map .dropdown-item:hover {
   background-color: rgba(58,63,68,0.6) !important;
 }
-.over-map .modal:not(#info-modal) {
+.over-map .modal:not(#info-modal):not(#modal-report) {
   top: 8vh!important;
 }

@@ -150,7 +150,7 @@ class ProjectTypesController < ApplicationController
     require 'rgeo/geo_json'
 
     data = Project
-      .select('DISTINCT main.id, ST_AsGeoJSON(the_geom) as geom')
+      .select('DISTINCT ON (main.id) main.id, ST_AsGeoJSON(main.the_geom) as geom')
       .from('projects main')
       .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
       .joins('INNER JOIN public.users ON users.id = main.user_id')
@@ -370,6 +370,8 @@ class ProjectTypesController < ApplicationController
     to_date = params[:to_date]
     intersect_width_layers = params[:intersect_width_layers]
     active_layers = params[:active_layers]
+    puts "Active Layers que llegan"
+    puts active_layers
     filters_layers = params[:filters_layers]
     timeslider_layers = params[:timeslider_layers]
     data = Project.geometry_bounds(project_type_id, current_user.id, attribute_filters, filtered_form_ids, from_date, to_date, intersect_width_layers,active_layers,filters_layers,timeslider_layers)
@@ -872,7 +874,7 @@ class ProjectTypesController < ApplicationController
     timeslider_layers = params[:timeslider_layers]
 
     data = Project
-      .select('DISTINCT main.id, project_statuses.color as status_color')
+      .select('DISTINCT ON (main.id) main.id, project_statuses.color as status_color')
       .from('projects main')
       .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
       .joins('INNER JOIN public.users ON users.id = main.user_id')
@@ -889,6 +891,8 @@ class ProjectTypesController < ApplicationController
     data = ProjectTypesController.set_time_slider data,from_date,to_date
     data = ProjectTypesController.set_filters_on_the_fly data, data_conditions
     data = ProjectTypesController.set_filtered_form_ids data, filtered_form_ids
+    puts "DEBUG "
+    puts filters_layers
     data = ProjectTypesController.set_intersect_width_layers data, intersect_width_layers, active_layers, filters_layers, timeslider_layers
 
     report_data = {}

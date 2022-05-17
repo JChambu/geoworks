@@ -4,7 +4,7 @@ Navarra.layer_filters = function() {
 		var new_item =
 
         '<div>'+
-          '<a class="dropdown-item" href="#">'+
+          '<a class="dropdown-item layer_div layer_div_'+layer+'" href="#">'+
             '<div class="d-inline mr-3 pr-4">'+
             	'<div class="custom-control custom-checkbox" >'+
             		'<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+layer+'" type="checkbox" name="radio_mapabase">'+
@@ -44,10 +44,10 @@ Navarra.layer_filters = function() {
             	'<div class="pt-2">'+
             		'<p class="m-0">Rango Temporal</p>'+
             		'<div class="form-row mb-2">'+
-            			'<div class="col-md-4 static_datetimepicker">'+
+            			'<div class="col-md-4 static_datetimepicker" >'+
 		            		'<input class="form-control form-control-sm layer_time_slider" type="text" id="fromdate_layer_'+layer+'" style="cursor:pointer">'+
 		            	'</div>'+
-		            	'<div class="col-md-4 static_datetimepicker">'+
+		            	'<div class="col-md-4 static_datetimepicker" >'+
 		            		'<input class="form-control form-control-sm layer_time_slider" type="text" id="todate_layer_'+layer+'" style="cursor:pointer">'+
 		            	'</div>'+
 		            	'<div class="col-md-3">'+
@@ -61,9 +61,11 @@ Navarra.layer_filters = function() {
             '</div>';
         return new_item;
 	}
+
 	function openlayer(event){
 		var namelayer = $(event.target).attr("namelayer");
 		if($('#div_filter_'+namelayer).hasClass('d-none')){
+			$('.layer_div').not('.layer_div_'+namelayer).addClass('d-none');
 			$('#div_filter_'+namelayer).removeClass('d-none');
 			if(!$('#div_filter_'+namelayer).hasClass('already_open')){
 				//Busca campos de la capa
@@ -99,6 +101,7 @@ Navarra.layer_filters = function() {
 			$('#div_filter_'+namelayer).addClass('already_open');
 		} else {
 			$('#div_filter_'+namelayer).addClass('d-none');
+			$('.layer_div').removeClass('d-none');
 		}
 	}
 
@@ -114,7 +117,10 @@ Navarra.layer_filters = function() {
         }),
       });
 		$('.layer_time_slider').on('dp.show', function() {
-			
+			$('#projects_container').addClass("custom_overflow");
+		});
+		$('.layer_time_slider').on('dp.hide', function() {
+			$('#projects_container').removeClass("custom_overflow");
 		});
 	}
 
@@ -262,6 +268,6 @@ Navarra.layer_filters = function() {
     delete_filter_layer: delete_filter_layer,
     set_values_layer: set_values_layer,
     change_filter_field: change_filter_field,
-    change_filter_value: change_filter_value,
+    change_filter_value: change_filter_value
   }
 }();
