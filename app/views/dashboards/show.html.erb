@@ -165,6 +165,10 @@ $(document).ready(function () {
     var left_position = (leaflet_layer_position.left-10)+"px";
     $('#custom_layer_control').css("top",top_position);
     $('#custom_layer_control').css("left",left_position);
+
+    $('#custom_layer_control').on('shown.bs.dropdown', function () {
+      $('.custom_dropdown_map').addClass('d-none');
+    });
   });
 
 function select_layer(layer){
@@ -185,6 +189,8 @@ function select_layer(layer){
 }
 
 function open_layer_container(){
+  $('.layer_div').removeClass('d-none');
+  $('.div_filter').addClass('d-none');
   var id_title = event.target.id.split('-')[0];
   $('.custom_dropdown_map').not('#'+id_title).addClass('d-none')
   if($('#'+id_title).hasClass('d-none')){

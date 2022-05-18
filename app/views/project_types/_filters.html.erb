@@ -15,7 +15,7 @@
         <%=select_tag 'q[filters]', options_for_select(ProjectType::FILTERS), class: 'form-control' %>
       </div>
       <div class="col-md-5">
-        <%=text_field_tag'q[input_value]','',class:'form-control' %>
+        <%=text_field_tag'q[input_value]','',class:'form-control' , autocomplete: 'off' %>
         <select id="filter_value_options" class="form-control d-none"></select>
       </div>
       <div class="col-md-1 d-flex m-auto">
@@ -48,6 +48,12 @@
       },
       success: function(data) {
           $('#q_field_type').val(data);
+          if((data == 2 || data == 10) && $('#filter_value_options').hasClass('d-none')){
+            $('#change_value_options_filter').click();
+          }
+          if(data != 2 && data != 10 && !$('#filter_value_options').hasClass('d-none')){
+            $('#change_value_options_filter').click();
+          }
       }
     });
     $('#q_input_value').val('');
@@ -75,9 +81,13 @@
 
   $('#change_value_options_filter').on('click', function() {
     if($('#filter_value_options').hasClass('d-none')){
+      $('#change_value_options_filter').removeClass('fa-list');
+      $('#change_value_options_filter').addClass('fa-pencil-alt');
       $('#filter_value_options').removeClass('d-none');
       $('#q_input_value').addClass('d-none');
     } else {
+      $('#change_value_options_filter').addClass('fa-list');
+      $('#change_value_options_filter').removeClass('fa-pencil-alt');
       $('#filter_value_options').addClass('d-none');
       $('#q_input_value').removeClass('d-none');
     }

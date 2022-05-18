@@ -13,7 +13,7 @@ Navarra.layer_filters = function() {
             	'<label for=mapa_base1>'+label_layer+'</label>'+
             '</div>'+
             '<i class="fas fa-chevron-down float-right" style="margin-left:-20px" onclick="Navarra.layer_filters.openlayer(event)" namelayer="'+layer+'"></i>'+
-            '<div class="pl-4 d-none" style="width:33vw" id="div_filter_'+layer+'">'+
+            '<div class="pl-4 d-none div_filter" style="width:33vw" id="div_filter_'+layer+'">'+
             	'<div class="custom-control custom-switch">'+
             		'<input type="checkbox" id="switch_'+layer+'" class="custom-control-input layer_filter_switch" onchange="switch_filtered_layer()">'+
             		'<label id="switchlabel_'+layer+'" class="custom-control-label custom-role-colour" for="switch_'+layer+'">Intersect al Proyecto Activo</label>'+
@@ -31,7 +31,7 @@ Navarra.layer_filters = function() {
 							'</select>'+
       					'</div>'+
       					'<div class="col-md-4">'+
-      						'<input type="text" class="form-control form-control-sm" id="filter_value_layer_'+layer+'">'+
+      						'<input type="text" autocomplete="off" class="form-control form-control-sm" id="filter_value_layer_'+layer+'">'+
         					'<select namelayer="'+layer+'" class="d-none form-control form-control-sm" id="filter_value_layer_select_'+layer+'" onchange="Navarra.layer_filters.change_filter_value(event)">'+
         					'</select>'+
       					'</div>'+
@@ -213,6 +213,13 @@ Navarra.layer_filters = function() {
 		} else {
 			var namelayer = $(event.target).attr("namelayer");
 		}
+		if(!$('#filter_value_layer_'+namelayer).hasClass('d-none')){
+			$('#set_values_layer_icon'+namelayer).addClass('fa-pencil-alt');
+			$('#set_values_layer_icon'+namelayer).removeClass('fa-list');
+		} else {
+			$('#set_values_layer_icon'+namelayer).removeClass('fa-pencil-alt');
+			$('#set_values_layer_icon'+namelayer).addClass('fa-list');
+		}
 		if($('#filter_value_layer_select_'+namelayer).hasClass('d-none') || e==null){
 			$('#filter_value_layer_select_'+namelayer).empty();
 			$('#filter_value_layer_select_'+namelayer).append('<option></option>')
@@ -245,11 +252,17 @@ Navarra.layer_filters = function() {
 
 	function change_filter_field(e){
 		var namelayer = $(event.target).attr("namelayer");
-		if(!$('#filter_value_layer_select_'+namelayer).hasClass('d-none')){
-			set_values_layer(null,namelayer);
-		};
 		field_type = $('#filter_field_layer_'+namelayer+' option:selected').attr('field_type');
 		$('#filter_field_layer_'+namelayer).attr('field_type',field_type);
+    if(!$('#filter_value_layer_select_'+namelayer).hasClass('d-none')){
+			set_values_layer(null,namelayer);
+		}
+		if((field_type == 2 || field_type == 10) && $('#filter_value_layer_select_'+namelayer).hasClass('d-none')){
+			$('#set_values_layer_icon'+namelayer).click();
+    }
+    if(field_type != 2 && field_type != 10 && !$('#filter_value_layer_select_'+namelayer).hasClass('d-none')){
+      $('#set_values_layer_icon'+namelayer).click();
+    }
 	}
 
 	function change_filter_value(e){

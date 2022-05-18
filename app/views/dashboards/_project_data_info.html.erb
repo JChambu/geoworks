@@ -21,13 +21,9 @@
     });
     //ajusta tamaño y posición del modal de info del registro
     var postop = ($('#nav_bar').innerHeight() -1)+'px';
-    console.log("posición top")
-    console.log(postop)
     $('#info-modal').css('top',postop);
     $('#info-modal').on('shown.bs.modal', function (e)  {
       var height_modal = ( window.innerHeight - $('#nav_bar').innerHeight() - $('#info-modal-header').innerHeight() - $('#info-modal-footer').innerHeight() -2) +'px';
-      console.log("height_modal")
-      console.log(height_modal)
       $('#modal_info').css('height',height_modal);
       //esconde otros modales
       $('.leaflet-top.leaflet-right').addClass('side_hidden');

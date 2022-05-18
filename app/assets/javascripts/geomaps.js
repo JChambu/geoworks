@@ -400,11 +400,7 @@ Navarra.geomaps = function() {
             new_a.className = "leaflet-draw-draw-polygon";
             new_a.title = "Nueva Geometría";
             var img = L.DomUtil.create('I');
-            if(Navarra.dashboards.config.type_geometry == 'Point'){
-              img.className = 'fas fa-map-marker-alt';
-            } else{
-              img.className = 'fas fa-draw-polygon';
-            }  
+            img.className = 'fas fa-map-marker-alt'; 
             img.style.color = "#EBEBEC";
             img.style.cursor = "pointer"
             img.style.textShadow = "1px 1px 2px rgba(0,0,0,0.5)"
@@ -1240,6 +1236,7 @@ Navarra.geomaps = function() {
       var current_layer_filters = Navarra.project_types.config.current_layer_filters.replace(/'/g,"''");
       cql_filter += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + name_layer + "', 'the_geom', '" + current_layer_filters + "')))";
     // genera capa con todos los datos de la intersección con la capa activa
+
       layer_current_intersect = workspace + ":" + layer;
       layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
         layers: layer_current_intersect, //nombre de la capa (ver get capabilities)

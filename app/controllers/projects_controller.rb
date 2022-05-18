@@ -51,6 +51,7 @@ class ProjectsController < ApplicationController
           end
           # Aplica filtros de time-slider de la capa
           if !timeslider_layers.nil?
+            active_layer = ProjectType.where(id: project_type_id).pluck(:name_layer).first
             timeslider_layer = timeslider_layers[active_layer]
             if timeslider_layer.nil?
               data = data.where("sec.row_enabled = true")
