@@ -28,7 +28,7 @@ class Project < ApplicationRecord
 
 
     @project_filter = ProjectFilter.where(project_type_id: project_type_id.to_i).where(user_id: user_id).first
-    @bounds = ProjectTypesController.set_project_filter @bounds, @project_filter
+    @bounds = ProjectTypesController.set_project_filter @bounds, @project_filter, user_id
     @bounds = ProjectTypesController.set_time_slider @bounds, from_date, to_date
     @bounds = ProjectTypesController.set_filtered_form_ids @bounds, filtered_form_ids
     @bounds = ProjectTypesController.set_filters_on_the_fly @bounds, attribute_filters

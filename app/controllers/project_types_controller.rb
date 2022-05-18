@@ -165,7 +165,7 @@ class ProjectTypesController < ApplicationController
 
     data = ProjectTypesController.set_map_filter data, type_box, size_box
     @project_filter = ProjectFilter.where(project_type_id: project_type_id.to_i).where(user_id: current_user.id).first
-    data = ProjectTypesController.set_project_filter data, @project_filter
+    data = ProjectTypesController.set_project_filter data, @project_filter, current_user.id
     data = ProjectTypesController.set_time_slider data, from_date, to_date
     data = ProjectTypesController.set_filters_on_the_fly data, attribute_filters
     data = ProjectTypesController.set_filtered_form_ids data, filtered_form_ids
@@ -804,7 +804,7 @@ class ProjectTypesController < ApplicationController
 
     data = ProjectTypesController.set_map_filter data,type_box, size_box
     project_filter = ProjectFilter.where(project_type_id: project_type_id.to_i).where(user_id: current_user.id).first
-    data = ProjectTypesController.set_project_filter data,project_filter      
+    data = ProjectTypesController.set_project_filter data,project_filter, current_user.id    
     data = ProjectTypesController.set_time_slider data, from_date, to_date
     data = ProjectTypesController.set_filters_on_the_fly data, data_conditions
     data = ProjectTypesController.set_filtered_form_ids data, filtered_form_ids
@@ -885,7 +885,7 @@ class ProjectTypesController < ApplicationController
     data = ProjectTypesController.set_map_filter data,type_box, size_box
 
     project_filter = ProjectFilter.where(project_type_id: project_type_id).where(user_id: current_user.id).first
-    data = ProjectTypesController.set_project_filter data,project_filter
+    data = ProjectTypesController.set_project_filter data,project_filter, current_user.id
     data = ProjectTypesController.set_time_slider data,from_date,to_date
     data = ProjectTypesController.set_filters_on_the_fly data, data_conditions
     data = ProjectTypesController.set_filtered_form_ids data, filtered_form_ids
@@ -981,11 +981,11 @@ class ProjectTypesController < ApplicationController
   data
   end
 
-  def self.set_project_filter data, project_filter
+  def self.set_project_filter data, project_filter, user_id
     if !project_filter.nil?
       # Aplica filtro owner
       if project_filter.owner == true
-        data = data.where('main.user_id = ?', current_user.id)
+        data = data.where('main.user_id = ?', user_id)
       end
 
       # Aplica filtro por atributo a la capa principal
@@ -997,7 +997,7 @@ class ProjectTypesController < ApplicationController
 
       # Aplica filtro intercapa
       if !project_filter.cross_layer_filter_id.nil?
-        cross_layer_filter = ProjectFilter.where(id: project_filter.cross_layer_filter_id).where(user_id: current_user.id).first
+        cross_layer_filter = ProjectFilter.where(id: project_filter.cross_layer_filter_id).where(user_id: user_id).first
 
         # Cruza la capa principal con la capa secunadaria
         data = data
@@ -1009,7 +1009,7 @@ class ProjectTypesController < ApplicationController
 
         # Aplica filtro por owner a la capa secundaria
         if cross_layer_filter.owner == true
-          data = data.where('sec.user_id = ?', current_user.id)
+          data = data.where('sec.user_id = ?', user_id)
         end
 
         # Aplica filtro por atributo a la capa secundaria
