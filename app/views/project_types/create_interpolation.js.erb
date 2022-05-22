@@ -27,6 +27,7 @@ breaks.forEach(function(break_limit){
 })
 
 var save_interpolation = $('#save_interpolation').prop('checked');
+var interpolation_name = $('#interpolation_name').val();
 
 if(interpolation_field != "" && weight!="" && celd_size!="" && breaks.length>=2 && rangos_valid ){
   // Elimina el modal
@@ -34,5 +35,5 @@ if(interpolation_field != "" && weight!="" && celd_size!="" && breaks.length>=2 
   $('.modal-backdrop').remove();
   
   // Lanza la función
-  Navarra.geomaps.interpolate(interpolation_field,breaks,colors,celd_size,weight,false,field_name,is_subform,sub_values, save_interpolation);
+  Navarra.geomaps.interpolate(interpolation_field,breaks,colors,celd_size,weight,false,field_name,is_subform,sub_values, save_interpolation, interpolation_name);
 }

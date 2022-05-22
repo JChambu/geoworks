@@ -70,7 +70,6 @@ class ProjectType < ApplicationRecord
   end
 
   def create_view
-
     fields = self.project_fields
     current_tenant = Apartment::Tenant.current
     project_type_id = self.id
@@ -108,6 +107,44 @@ class ProjectType < ApplicationRecord
 
   def destroy_view
     query = "DROP VIEW IF EXISTS #{self.name_layer}"
+    ActiveRecord::Base.connection.execute(query)
+  end
+
+  def create_view_interpolation project_type_id
+    name_layer = ProjectType.where(id: project_type_id).pluck(:name_layer).first
+    fields = ProjectField.where(project_type_id:project_type_id)
+    current_tenant = Apartment::Tenant.current
+
+    vv = "CREATE OR REPLACE VIEW #{current_tenant}.#{name_layer} AS "
+    vv += " select "
+    fields.each do |field|
+      if field.key != ''
+        if field.key != 'app_estado' && field.key != 'app_usuario' && field.key != 'app_id'
+          vv += " properties->>'#{field.key}' as #{field.key}, "
+        end
+      end
+    end
+    vv += " users.name as app_usuario, "
+    vv += " project_statuses.name as app_estado, "
+    vv += " projects.id as app_id, "
+    vv += " projects.gwm_created_at, "
+    vv += " projects.gwm_updated_at, "
+    vv += " projects.row_enabled, "
+    vv += " projects.disabled_at, "
+    vv += " projects.project_type_id, "
+    vv += " project_statuses.color, "
+    vv += " the_geom "
+    vv += " FROM #{current_tenant}.projects "
+    vv += " LEFT OUTER JOIN #{current_tenant}.project_statuses ON projects.project_status_id = project_statuses.id "
+    vv += " JOIN public.users ON users.id = projects.user_id "
+    vv += " where projects.project_type_id =#{project_type_id} and row_active = true and current_season = true; "
+    view = ActiveRecord::Base.connection.execute(vv)
+    return
+  end
+
+  def destroy_view_interpolation project_type_id
+    name_layer = ProjectType.where(id: project_type_id).pluck(:name_layer).first
+    query = "DROP VIEW IF EXISTS #{name_layer}"
     ActiveRecord::Base.connection.execute(query)
   end
 

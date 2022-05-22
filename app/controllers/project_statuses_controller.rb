@@ -29,8 +29,6 @@ class ProjectStatusesController < ApplicationController
   # POST /project_statuses
   # POST /project_statuses.json
   def create
-    puts "parámetros en estados"
-    puts project_status_params
     @project_status = @project_type.project_statuses.new(project_status_params)
 
     respond_to do |format|
@@ -80,6 +78,24 @@ class ProjectStatusesController < ApplicationController
       format.html { redirect_to project_type_project_statuses_url(@project_type.id), notice: 'Project status was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def create_status_interpolation
+    colors = params[:colors]
+    names = params[:names]
+    project_type_id = params[:project_type_id]
+    project_statuses_created = []
+    colors.each_with_index do |color, index|
+      status = {"name"=>"#{names[index]} - #{names[index+1]}", "color"=>"#{color}", "status_type"=>"Asignable", "timer"=>"No", "project_type_id"=>"#{project_type_id}"}
+      @project_status = ProjectStatus.new(status)
+      if @project_status.save 
+        new_status={}
+        new_status["id"]=@project_status.id
+        new_status["name"]=@project_status.name 
+        project_statuses_created.push(new_status)
+      end
+    end
+  render json: {"data": project_statuses_created}
   end
 
 

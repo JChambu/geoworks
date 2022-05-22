@@ -3740,15 +3740,18 @@ function edit_file(edit_parent, edit_child, edit_status){
   if(is_new_file){
     var type_ajax = 'POST';
     var url_post = '/projects/create_form';
-    var data_to_save = {
+    var data_array = [];
+    var data_to_save_file = {
       project_type_id: Navarra.dashboards.config.project_type_id,
       properties: JSON.stringify(properties_to_save),
       subforms: child_edited_all,
       project_status_id: status_id,
       geom: Navarra.geomaps.get_geometries_to_save()
     }
-    console.log("NUEVA GEOMETRÍA")
-    console.log(data_to_save)
+    data_array.push(data_to_save_file);
+    data_to_save = {
+      data: data_array
+    }
 
   } else {
     var type_ajax = 'PATCH';
@@ -3784,7 +3787,7 @@ function edit_file(edit_parent, edit_child, edit_status){
        //Ajustar valor en la tabla si está visible
       if(!$('#status-view').hasClass('status-view-condensed')){ 
         if(is_new_file){
-          var id_new = data['id'];
+          var id_new = data['id'][0];
           var new_row = document.createElement("TR");
           new_row.id="row_table_data"+id_new;
           new_row.style.cursor = "pointer";
