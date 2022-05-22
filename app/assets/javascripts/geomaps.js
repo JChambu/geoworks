@@ -2209,7 +2209,7 @@ function get_latlng(){
     return area;
 }
 
-function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_celd_size,field_name, is_subform, sub_values){
+function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_celd_size,field_name, is_subform, sub_values, save_interpolation, interpolation_name){
   if(!get_celd_size){
     $('#text_toast').html("Buscando datos ...");
     $('#toast').toast('show');
@@ -2256,13 +2256,13 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
         $('#toast').toast('show');
         // elimina features que no tienen datos válidos
         points.features = points.features.filter(v => !isNaN(v.properties[interpolation_field]));
-        get_layers_clip(points, interpolation_field,breaks,colors,field_name);  
+        get_layers_clip(points, interpolation_field,breaks,colors,field_name, save_interpolation, interpolation_name);  
       }
     }
   });
 }
 
-function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
+function get_layers_clip(points, interpolation_field,breaks,colors,field_name, save_interpolation, interpolation_name) {
   // trae capas 
   var active_internal_layers = get_layers_checked();
   if(active_internal_layers.length>0){
@@ -2346,7 +2346,7 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
                 $('#decision_yes').attr('onclick','Navarra.geomaps.continue_iterpolation('+JSON.stringify(points)+', "'+interpolation_field +'" ,'+JSON.stringify(breaks)+','+JSON.stringify(colors)+', "'+field_name +'", '+JSON.stringify(combined)+')');
                 $('#toast_decision').toast('show');
               } else{
-                continue_iterpolation(points, interpolation_field,breaks,colors,field_name, combined );
+                continue_iterpolation(points, interpolation_field,breaks,colors,field_name, combined , save_interpolation,interpolation_name );
               }
               }
           }
@@ -2363,12 +2363,12 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name) {
       $('#decision_yes').attr('onclick','Navarra.geomaps.continue_iterpolation('+JSON.stringify(points)+', "'+interpolation_field +'" ,'+JSON.stringify(breaks)+','+JSON.stringify(colors)+', "'+field_name +'", null)');
       $('#toast_decision').toast('show');
     } else{
-      continue_iterpolation(points, interpolation_field,breaks,colors,field_name, null);
+      continue_iterpolation(points, interpolation_field,breaks,colors,field_name, null, save_interpolation, interpolation_name);
     }        
   }
 }
 
-function continue_iterpolation(points, interpolation_field,breaks,colors,field_name,combined){
+function continue_iterpolation(points, interpolation_field,breaks,colors,field_name,combined, save_interpolation, interpolation_name){
   $('#toast_decision').toast("hide");
   $('#text_toast').html("Iterpolando ...");
   $('#toast').toast('show');
@@ -2384,17 +2384,17 @@ function continue_iterpolation(points, interpolation_field,breaks,colors,field_n
       $('#decision_yes').attr('onclick','Navarra.geomaps.continue_isobands('+JSON.stringify(grid)+', "'+interpolation_field +'" ,'+JSON.stringify(breaks)+','+JSON.stringify(colors)+', '+JSON.stringify(combined)+', "'+field_name +'")');
       $('#toast_decision').toast('show');
     } else{
-      continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name);
+      continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name, save_interpolation, interpolation_name);
     }   
   },200); 
 }
 
-function continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name){
+function continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name, save_interpolation, interpolation_name){
   $('#toast_decision').toast("hide");
   $('#text_toast').html("Creando isopolígonos ...");
   $('#toast').toast('show');
   setTimeout(function(){ // delay para que cierre el toast_decision.
-    get_isobands(grid, interpolation_field,breaks,colors,combined,field_name);
+    get_isobands(grid, interpolation_field,breaks,colors,combined,field_name, save_interpolation, interpolation_name);
     //Para ver los puntos y sus propiedades
      /* 
     grid.features.forEach(function(point){
@@ -2407,7 +2407,7 @@ function continue_isobands(grid, interpolation_field,breaks,colors,combined,fiel
   },200);  
 }
 
-function get_isobands(grid, interpolation_field, breaks, colors, combined){
+function get_isobands(grid, interpolation_field, breaks, colors, combined, field_name,save_interpolation, interpolation_name){
   pointGrid = grid  
   if(isobands_layer!=undefined){
     mymap.removeLayer(isobands_layer);
@@ -2415,6 +2415,8 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined){
   isobands_layer = new L.LayerGroup
   var lines = turf.isobands(pointGrid, breaks, {zProperty: interpolation_field});
   var count =0;
+  var all_polys = [];
+  var properties_poly = [];
   lines.features.forEach(function(multipoly,index_poly){
     multipoly.geometry.coordinates.forEach(function(polys){
       polys.forEach(function(poly){
@@ -2428,10 +2430,12 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined){
         });
         lat_lng_polys.push(lat_lng_poly);
         var new_poly = turf.polygon(lat_lng_polys);
+        properties_poly.push(breaks[index_poly]+" - "+breaks[index_poly+1]);
         var popupContent = '<br/><h7>'+field_name+'</h7>'
         popupContent += '<br/><h7>'+breaks[index_poly]+'</h7>'
         popupContent += '<h7> - '+breaks[index_poly+1]+'</h7>'
         if(combined==null){
+          all_polys.push(lat_lng_polys);
           var geojson = L.geoJSON(new_poly,{color:colors[count], fillOpacity: 0.6}).on('click',function(e){
             var popup = new L.popup({autoPan:false})
             .setLatLng(new L.latLng([e.latlng.lat,e.latlng.lng]))
@@ -2441,6 +2445,9 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined){
           isobands_layer.addLayer(geojson);
         } else {
           var intersection = turf.intersect(new_poly, combined.features[0]);
+          if(intersection!=null){
+            all_polys.push(intersection["geometry"]["coordinates"]);
+          }
           var geojson = L.geoJSON(intersection,{color:colors[count], fillOpacity: 0.6}).on('click',function(e){
             var popup = new L.popup({autoPan:false})
             .setLatLng(new L.latLng([e.latlng.lat,e.latlng.lng]))
@@ -2453,6 +2460,84 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined){
     });
     count ++;
   });
+  // Guarda Proyecto
+  if(save_interpolation){
+    $('#text_toast').html("Guardando Proyecto Interpolación");
+    $('#toast').toast('show');
+    $.ajax({
+      type: 'POST',
+      url: '/project_types/save_interpolation',
+      datatype: 'json',
+      data: {
+          name: interpolation_name,
+          interpolation_name: field_name
+      },
+      success: function(data) {
+        project_id_created = data.data;
+        if (project_id_created ==null){
+          $('#text_toast').html("Error al guardar Interpolación");
+          $('#toast').toast('show');
+        } else {
+          // Crea los estados
+          $('#text_toast').html("Guardando Estados");
+          $('#toast').toast('show');
+          $.ajax({
+            type: 'POST',
+            url: '/project_statuses/create_status_interpolation',
+            datatype: 'json',
+            data: {
+              names: breaks,
+              colors: colors,
+              project_type_id: project_id_created
+            },
+            success: function(data_status) {
+              $('#text_toast').html("Guardando Geometrías");
+              $('#toast').toast('show');
+              key_field_name = field_name.replace(/[^a-z0-9\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
+              var params = [];
+              all_polys.forEach(function(po, index_poly){
+                properties_to_save = {}
+                properties_to_save[key_field_name] = properties_poly[index_poly]
+                var geom = [];
+                var latLng = {
+                  latLng: po[0]
+                }
+                geom.push(latLng)
+                var new_status = 0;
+                data_status.data.forEach(function(st,i){
+                  if(st.name == properties_poly[index_poly]){
+                    new_status = st.id;
+                  }
+                });
+                var param = {
+                  project_type_id: project_id_created,
+                  properties: JSON.stringify(properties_to_save),
+                  subforms: [],
+                  project_status_id: new_status,
+                  geom: geom
+                }
+                params.push(param)
+              });
+              $.ajax({
+                type: 'POST',
+                url: '/projects/create_form',
+                datatype: 'json',
+                data: {
+                  data: params, 
+                  is_interpolate: 'true' 
+                },
+                success: function(data) {
+                  $('#text_toast').html(data['status']);
+                  $('#toast').toast('show');
+                }
+              });
+            }
+          });
+        }
+
+      } // Cierra primer success  
+   });
+  }
   isobands_layer.addTo(mymap);
 }
 

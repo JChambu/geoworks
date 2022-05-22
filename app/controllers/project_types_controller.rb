@@ -1329,6 +1329,66 @@ class ProjectTypesController < ApplicationController
 
   end
 
+  def save_interpolation
+    interpolation_name = params[:interpolation_name]
+    interpolation_params = {}
+    interpolation_params[:type_geometry] = "Polygon"
+    interpolation_params[:tracking] = "0"
+    interpolation_params[:enabled_as_layer] = "1"
+    interpolation_params[:layer_color] = "#000000"
+    interpolation_params[:geo_restriction] = "0"
+    interpolation_params[:level] = "100"
+    interpolation_params[:multiple_edition] = "0"
+    interpolation_params[:enable_period] = "Nunca"
+    interpolation_params[:notification_email] = ""
+    interpolation_params[:name] = params[:name]
+    interpolation_params[:name_layer] = params[:name].gsub(/\s+/, '_').downcase
+    interpolation_params[:user_id] = current_user.id
+    fields_interpolation = ["app_id","app_estado","app_usuario",interpolation_name]
+    field_type_id = ["5","5","5","1"]
+    hidden_field = ["1","1","1","0"]
+    popup_field = ["0","0","0","1"]
+    project_fields_attributes = []
+    
+    fields_interpolation.each_with_index do |f,i|
+      new_field = {}
+      new_field[:field_type_id] = field_type_id[i]
+      new_field[:name] = f
+      new_field[:required] = "0"
+      new_field[:roles_read] = [""]
+      new_field[:roles_edit] = [""]
+      new_field[:sort] = "1"
+      new_field[:choice_list_id] = ""
+      new_field[:hidden] = hidden_field[i]
+      new_field[:read_only] = "1"
+      new_field[:popup] = popup_field[i]
+      new_field[:data_table] = popup_field[i]
+      new_field[:calculated_field] = ""
+      new_field[:data_script] = ""
+      new_field[:filter_field] = "1"
+      new_field[:heatmap_field] = "0"
+      project_fields_attributes.push(new_field)
+    end
+
+    interpolation_params[:project_fields_attributes] = project_fields_attributes
+   
+    @project_type = ProjectType.new(interpolation_params)
+    @project_id_created = nil
+
+    if @project_type.save
+
+      HasProjectType.create(user_id: current_user.id, project_type_id: @project_type.id)
+      if current_user.id != 1
+        HasProjectType.create(user_id: 1, project_type_id: @project_type.id)
+      end
+      ProjectType.add_layer_geoserver(interpolation_params[:name_layer])
+      @project_id_created = @project_type.id
+
+    end
+  render json: {"data": @project_id_created}
+  end
+
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
