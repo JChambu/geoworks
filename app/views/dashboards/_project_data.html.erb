@@ -80,7 +80,7 @@ function set_hover(){
 }
 
 //Funciones suma, maximo, mínimo y promedio
-function sum_column(key,id_proyect,layer){
+function cal_column(key,id_proyect,layer,operator){
   // verifica si hay registros chequeados
   var ids_checked = get_ids_checked(layer);
   var key_jquery = key;
@@ -96,107 +96,52 @@ function sum_column(key,id_proyect,layer){
   $('.footer_function'+layer+'_key'+key_jquery).removeClass('footer_function_key'+key);
   $('.footer_sum'+layer+'_key'+key_jquery).addClass('footer_function_key'+key);
   var total = 0;
-  var unique_ids = [];
-  $(celd).each(function(index,column_val){
-    if(ids_checked.length==0 || $(this).is(ids_checked)){
-      // no suma repetidos ids en capas
-      if($(column_val).attr('id_layer')==undefined || $.inArray($(column_val).attr('id_layer'),unique_ids) <0 ){
-          if(!isNaN(parseFloat($(column_val).html()))) {
-            total += parseFloat($(column_val).html());
-            if(layer == 'layer'){unique_ids.push($(column_val).attr('id_layer'))}
-          }
-        }
-      }      
-  });
-  $('.footer'+layer+'_key'+key_jquery).html("Total: "+Math.round(total*100)/100);
-}
-
-function max_column(key,id_proyect,layer){
-  // verifica si hay registros chequeados
-  var ids_checked = get_ids_checked(layer);
-  var key_jquery = key;
-  var celd = '.celd'+layer+'_key'+key
-  if(layer == 'layer'){
-    key_jquery = id_proyect+"\\|"+key;
-    celd = '.celd'+layer+'_key'+id_proyect+"\\|"+key;
-    key = id_proyect+"|"+key;
-  } 
-  if(layer == 'subform'){
-    celd = "."+id_proyect+'sub'+key;
-  } 
-  $('.footer_function'+layer+'_key'+key_jquery).removeClass('footer_function_key'+key);
-  $('.footer_max'+layer+'_key'+key_jquery).addClass('footer_function_key'+key);
-  var total = '';
-  $(celd).each(function(index,column_val){
-    if(!isNaN(parseFloat($(column_val).html()))) {
-      if(ids_checked.length==0 || $(this).is(ids_checked)){
-        if (total === ''){total = parseFloat($(column_val).html()) }
-        if(parseFloat($(column_val).html())>parseFloat(total)){total = parseFloat($(column_val).html())}
-      }
-    }
-  });
-  $('.footer'+layer+'_key'+key_jquery).html("Máx: "+total);
-}
-
-function min_column(key,id_proyect,layer){
-  // verifica si hay registros chequeados
-  var ids_checked = get_ids_checked(layer);
-  var key_jquery = key;
-  var celd = '.celd'+layer+'_key'+key
-  if(layer == 'layer'){
-    key_jquery = id_proyect+"\\|"+key;
-    celd = '.celd'+layer+'_key'+id_proyect+"\\|"+key;
-    key = id_proyect+"|"+key;
-  } 
-  if(layer == 'subform'){
-    celd = "."+id_proyect+'sub'+key;
-  } 
-  $('.footer_function'+layer+'_key'+key_jquery).removeClass('footer_function_key'+key);
-  $('.footer_min'+layer+'_key'+key_jquery).addClass('footer_function_key'+key);
-  var total = '';
-  $(celd).each(function(index,column_val){
-    if(ids_checked.length==0 || $(this).is(ids_checked)){
-      if(!isNaN(parseFloat($(column_val).html())) && $(column_val)!="" ) {
-        if (total === ''){total = parseFloat($(column_val).html()) }
-        if(parseFloat($(column_val).html())<parseFloat(total)){total = parseFloat($(column_val).html())}
-      }
-   }
-  });
-  $('.footer'+layer+'_key'+key_jquery).html("Min: "+total);
-}
-
-function avg_column(key,id_proyect,layer){
-  // verifica si hay registros chequeados
-  var ids_checked = get_ids_checked(layer);
-  var key_jquery = key;
-  var celd = '.celd'+layer+'_key'+key
-  if(layer == 'layer'){
-    key_jquery = id_proyect+"\\|"+key;
-    celd = '.celd'+layer+'_key'+id_proyect+"\\|"+key;
-    key = id_proyect+"|"+key;
-  } 
-  if(layer == 'subform'){
-    celd = "."+id_proyect+'sub'+key;
-  } 
-  $('.footer_function'+layer+'_key'+key_jquery).removeClass('footer_function_key'+key);
-  $('.footer_avg'+layer+'_key'+key_jquery).addClass('footer_function_key'+key);
-  var total = 0;
   var count = 0;
+  var max = ''
+  var min = ''
   var unique_ids = [];
   $(celd).each(function(index,column_val){
     if(ids_checked.length==0 || $(this).is(ids_checked)){
-      // no suma repetidos ids en capas
-      if($(column_val).attr('id_layer')==undefined || $.inArray($(column_val).attr('id_layer'),unique_ids) <0 ){
-          if(!isNaN(parseFloat($(column_val).html()))) {
-            total += parseFloat($(column_val).html());
-            count ++;
-            if(layer == 'layer'){unique_ids.push($(column_val).attr('id_layer'))}
+      if(layer == 'layer'){
+        $(column_val).children().each(function(i,child){
+        // no suma repetidos ids en capas
+          if(!isNaN(parseFloat($(child).html()))) {
+            if($.inArray($(child).attr('id_layer_row'),unique_ids) <0 ){
+              total += parseFloat($(child).html());
+              count ++;
+              unique_ids.push($(child).attr('id_layer_row'));
+            }
+            if (max === ''){max = parseFloat($(child).html()) }
+            if(parseFloat($(child).html())>parseFloat(max)){max = parseFloat($(child).html())}
+            if (min === ''){min = parseFloat($(child).html()) }
+            if(parseFloat($(child).html())<parseFloat(min)){min = parseFloat($(child).html())}
           }
+        });
+      } else {
+        if(!isNaN(parseFloat($(column_val).html()))) {
+          total += parseFloat($(column_val).html());
+          count++;
+          if (max === ''){max = parseFloat($(column_val).html()) }
+          if(parseFloat($(column_val).html())>parseFloat(max)){max = parseFloat($(column_val).html())}
+          if (min === ''){min = parseFloat($(column_val).html()) }
+          if(parseFloat($(column_val).html())<parseFloat(min)){min = parseFloat($(column_val).html())}
         }
-      }    
+      }
+    }      
   });
-  if(count !=0 ){
-    $('.footer'+layer+'_key'+key_jquery).html("Prom: "+Math.round(total*100/count)/100);
+  switch(operator) {
+    case 'sum':
+      $('.footer'+layer+'_key'+key_jquery).html("Total: "+Math.round(total*100)/100);
+    break;
+    case 'max':
+      $('.footer'+layer+'_key'+key_jquery).html("Máx: "+max);
+    break;
+    case 'min':
+      $('.footer'+layer+'_key'+key_jquery).html("Min: "+min);
+    break;
+    case 'avg':
+      $('.footer'+layer+'_key'+key_jquery).html("Prom: "+Math.round(total*100/count)/100);
+    break;  
   }
 }
 
@@ -593,6 +538,8 @@ function get_layer_data(){
     data = {
       top_level_project_type_ids: top_level_project_type_ids,
       project_ids: app_ids_table,
+      filters_layers: Navarra.project_types.config.filters_layers,
+      timeslider_layers: Navarra.project_types.config.timeslider_layers
     }
 
     $.ajax({
@@ -601,14 +548,14 @@ function get_layer_data(){
       datatype: 'JSON',
       data: data,
       success: function(data) {
+        $('.celdlayer').empty();
         data.forEach(function(data_project){
         data_project.forEach(function(row_layer,index_row){
             properties_layer= row_layer['properties'];
           $('.header_column_layer').not('.d-none').each(function(){
             var prop = $(this).attr('key_layer').substring(3);
-            $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).html(row_layer['properties'][prop]);
-            // agrega el atributo del id de la capa
-            $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).attr("id_layer", row_layer.id);
+            html_div = "<div id_layer_row="+row_layer.id+">"+row_layer['properties'][prop]+"</div>"
+            $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).append(html_div);
           })
         });//end forEach      
       });
@@ -1138,7 +1085,7 @@ function generate_alerts(){
     </nav>
   </div>
 </div>
-<div class="table-responsive div_table no_scroll" id="table_visible_container" style="height: 30px; overflow-y: hidden; border-bottom: solid 2px rgba(0,0,0,0.6); background: rgba(81, 89, 96, 0.4);">
+<div class="table-responsive div_table no_scroll" id="table_visible_container" style="height: 30px; overflow-y: hidden; border-bottom: solid 2px rgba(0,0,0,0.6);">
   <table class="table table-hover m-0 card-body" id="table_hidden" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
     <thead  id="thead_table_visible" class="scroll_false">
       <tr id="tr_visible">
@@ -1170,10 +1117,10 @@ function generate_alerts(){
                           <i class="fas fa-times icons" onclick="hide_column_layer(<%="'"+field.key+"','"+field.project_type.id.to_s+"'"%>)"></i>
                           <input type="text" class="d-none field_key_layer" id=<%= "headlayer"+field.project_type.id.to_s+"|"+field.key %> value=<%= field.id %>>
                           <% if field.field_type_id == 5 %>                
-                            <i class="<%="fa fa-plus icons custom_function_icon text-dark footer_sumlayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="sum_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"', 'layer'"%>)" title="Sumar"></i>
-                            <i class="<%="fa fa-greater-than icons custom_function_icon text-dark footer_maxlayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="max_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer'"%>)" title="Máximo"></i>
-                            <i class="<%="fa fa-less-than icons custom_function_icon text-dark footer_minlayer_key"+field.project_type.id.to_s+"|"+field.key%>"onclick="min_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer'"%>)" title="Mínimo"></i>
-                            <i class="<%="fa fa-divide icons custom_function_icon text-dark footer_avglayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="avg_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer'"%>)" title="Promedio"></i>
+                            <i class="<%="fa fa-plus icons custom_function_icon text-dark footer_sumlayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="cal_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"', 'layer' , 'sum'"%>)" title="Sumar"></i>
+                            <i class="<%="fa fa-greater-than icons custom_function_icon text-dark footer_maxlayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="cal_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer' , 'max'"%>)" title="Máximo"></i>
+                            <i class="<%="fa fa-less-than icons custom_function_icon text-dark footer_minlayer_key"+field.project_type.id.to_s+"|"+field.key%>"onclick="cal_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer' , 'min'"%>)" title="Mínimo"></i>
+                            <i class="<%="fa fa-divide icons custom_function_icon text-dark footer_avglayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="cal_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer' , 'avg'"%>)" title="Promedio"></i>
                       <% end %>
                         </div>
                       </div>
@@ -1203,10 +1150,10 @@ function generate_alerts(){
                       <i class="fas fa-times icons text-white" onclick="hide_column(<%="'"+field.key+"'"%>)" title="Cerrar"></i>
                       <input type="text" class="d-none field_key" id=<%= "field_key"+field.key %> value=<%= field.key %>>
                       <% if field.field_type_id == 5 %>                
-                        <i class="<%="fa fa-plus icons custom_function_icon text-dark footer_sum_key"+field.key%>" onclick="sum_column(<%="'"+field.key+"','',''"%>)" title="Sumar"></i>
-                        <i class="<%="fa fa-greater-than icons custom_function_icon text-dark footer_max_key"+field.key%>" onclick="max_column(<%="'"+field.key+"','',''"%>)" title="Máximo"></i>
-                        <i class="<%="fa fa-less-than icons custom_function_icon text-dark footer_min_key"+field.key%>"onclick="min_column(<%="'"+field.key+"','',''"%>)" title="Mínimo"></i>
-                        <i class="<%="fa fa-divide icons custom_function_icon text-dark footer_avg_key"+field.key%>" onclick="avg_column(<%="'"+field.key+"','',''"%>)" title="Promedio"></i>
+                        <i class="<%="fa fa-plus icons custom_function_icon text-dark footer_sum_key"+field.key%>" onclick="cal_column(<%="'"+field.key+"','','', 'sum'"%>)" title="Sumar"></i>
+                        <i class="<%="fa fa-greater-than icons custom_function_icon text-dark footer_max_key"+field.key%>" onclick="cal_column(<%="'"+field.key+"','','' , 'max'"%>)" title="Máximo"></i>
+                        <i class="<%="fa fa-less-than icons custom_function_icon text-dark footer_min_key"+field.key%>"onclick="cal_column(<%="'"+field.key+"','','' , 'min'"%>)" title="Mínimo"></i>
+                        <i class="<%="fa fa-divide icons custom_function_icon text-dark footer_avg_key"+field.key%>" onclick="cal_column(<%="'"+field.key+"','','' , 'avg'"%>)" title="Promedio"></i>
                       <% end %>
                     </div>
                   </div>
@@ -1295,7 +1242,7 @@ function generate_alerts(){
     </tbody>
   </table>
 </div>
-<div class="table-responsive div_table scroll table_scroll"  style="position: relative; z-index: 10; transition: 1s; background: rgba(81, 89, 96, 0.4);" id="div_table_data">
+<div class="table-responsive div_table scroll table_scroll"  style="position: relative; z-index: 10; transition: 1s;" id="div_table_data">
   <table class="table table-hover m-0 card-body" id="table_visible" style="font-size: 0.8em; position: relative;top: -50px; text-align: center;">
     <thead style="visibility: hidden; border-bottom: solid transparent">
       <tr class="data_fields">

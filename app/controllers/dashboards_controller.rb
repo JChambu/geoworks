@@ -55,7 +55,6 @@ class DashboardsController < ApplicationController
       @top_level_fields = ProjectField
         .joins(:project_type)
         .where.not(project_type_id: @project_type.id)
-        .where('project_types.level > ?', @project_type.level)
         .order('project_types.level DESC', :sort)
 
       @table_configuration = TableConfiguration
@@ -88,7 +87,7 @@ class DashboardsController < ApplicationController
         end
 
       end
-      @extent = Project.geometry_bounds(@project_type.id, current_user.id, attribute_filters = '', filtered_form_ids = '', from_date = '', to_date = '')
+      @extent = Project.geometry_bounds(@project_type.id, current_user.id, attribute_filters = '', filtered_form_ids = '', from_date = '', to_date = '', intersect_width_layers = 'false', active_layers = '', filters_layers = {} ,timeslider_layers = {})
     end
   end
 

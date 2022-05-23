@@ -165,6 +165,10 @@ $(document).ready(function () {
     var left_position = (leaflet_layer_position.left-10)+"px";
     $('#custom_layer_control').css("top",top_position);
     $('#custom_layer_control').css("left",left_position);
+
+    $('#custom_layer_control').on('shown.bs.dropdown', function () {
+      $('.custom_dropdown_map').addClass('d-none');
+    });
   });
 
 function select_layer(layer){
@@ -185,7 +189,10 @@ function select_layer(layer){
 }
 
 function open_layer_container(){
+  $('.layer_div').removeClass('d-none');
+  $('.div_filter').addClass('d-none');
   var id_title = event.target.id.split('-')[0];
+  $('.custom_dropdown_map').not('#'+id_title).addClass('d-none')
   if($('#'+id_title).hasClass('d-none')){
     $('#'+id_title).removeClass('d-none');
   } else{
@@ -345,19 +352,19 @@ function min_photo(){
       <div class="dropdown-menu custom_dropdown_container" aria-labelledby="layersDropdown" style="z-index: 2000; width: max-content">
          
           <a class="dropdown-item" href="#" id="basemaps_container-title" onclick="open_layer_container()">Mapas Base</a>
-          <div class="modal-content custom_dropdown d-none" id="basemaps_container">
+          <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="basemaps_container">
           </div>
 
           <a class="dropdown-item" href="#" id="activeproject_container-title" onclick="open_layer_container()">Proyecto Activo</a>
-          <div class="modal-content custom_dropdown d-none" id="activeproject_container">
+          <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="activeproject_container">
           </div>
 
            <a class="dropdown-item" href="#" id="projects_container-title" onclick="open_layer_container()">Otros Proyectos</a>
-          <div class="modal-content custom_dropdown d-none" id="projects_container">
+          <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="projects_container">
           </div>
 
            <a class="dropdown-item" href="#" id="externallayers_container-title" onclick="open_layer_container()">Capas Externas</a>
-          <div class="modal-content custom_dropdown d-none" id="externallayers_container">
+          <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="externallayers_container">
           </div>          
       </div>
 </div>
@@ -385,7 +392,7 @@ function min_photo(){
 
 <div id="photos-modal" class="modal fade card text-light chart-bg-transparent pb-0 pt-0 custom_modal_photos" data-backdrop="false" draggable=true ondragstart="Navarra.photos.drag_photos(event)">
   <div class="modal-dialog m-0 mw-100">
-    <div class="modal-content" style="background: rgba(81, 89, 96, 0.5);">
+    <div class="modal-content" style="background:rgba(39, 43, 48, 0.8)">
       <div class="card-header chart-header-bg-transparent py-1 px-2">
         <p id="photo_title" class="m-1 d-inline"></p>
         <div class="view-data-container" >

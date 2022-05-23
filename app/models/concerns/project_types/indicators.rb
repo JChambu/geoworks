@@ -115,14 +115,12 @@ module ProjectTypes::Indicators
       data_query
     end
 
-    # Aplica filtro de time_slider para proyecto activo y capas y filtro de time_slider para subformularios
-    def apply_time_slider_filter data, from_date, to_date, from_date_subform, to_date_subform 
-      if !from_date.blank? || !to_date.blank?
+    # Aplica filtro de time_slider para proyecto activo, filtro de time_slider para subformularios y filtro timeslider para capas
+    def apply_time_slider_filter data, from_date, to_date, from_date_subform, to_date_subform , timeslider_layers
+      if !from_date.blank? && !to_date.blank?
         data = data.gsub('where_clause', "where_clause (main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}') AND ")
-        data = data.gsub('where_layer_clause', "where_layer_clause (sec.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}') AND ")
       else
         data = data.gsub('where_clause', "where_clause main.row_enabled = true AND ")
-        data = data.gsub('where_layer_clause', "where_layer_clause sec.row_enabled = true AND ")
       end
 
       #Aplica time_slider de hijos
@@ -130,6 +128,27 @@ module ProjectTypes::Indicators
         data = data.gsub('where_subform_clause', "where_subform_clause (sub.gwm_created_at BETWEEN '#{from_date_subform}' AND '#{to_date_subform}') AND ")
       else
         data = data.gsub('where_subform_clause', "where_subform_clause sub.row_enabled = true AND ")
+      end
+
+      #Aplica time_slider de la capa
+      if data.include?("name_layer_for_filters:")
+        name_layer = data.split("name_layer_for_filters:")[1]
+        if !timeslider_layers.nil?
+          timeslider_layer = timeslider_layers[name_layer]
+          if timeslider_layer.nil?
+            data = data.gsub('where_layer_clause', "where_layer_clause sec.row_enabled = true AND ")
+          else
+            from_date_layer = timeslider_layer["from_date"]
+            to_date_layer = timeslider_layer["to_date"]
+            if !from_date_layer.blank? && !to_date_layer.blank?
+              data = data.gsub('where_layer_clause', "where_layer_clause (sec.gwm_created_at BETWEEN '#{from_date_layer}' AND '#{to_date_layer}') AND ")
+            else
+              data = data.gsub('where_layer_clause', "where_layer_clause sec.row_enabled = true AND ")
+            end
+          end
+        else
+          data = data.gsub('where_layer_clause', "where_layer_clause sec.row_enabled = true AND ")
+        end
       end
 
       data_query = data
@@ -188,7 +207,7 @@ module ProjectTypes::Indicators
       data_query
     end
 
-    def filters_on_the_fly data, data_conditions, filtered_form_ids, filter_children, filter_user_children
+    def filters_on_the_fly data, data_conditions, filtered_form_ids, filter_children, filter_user_children, filters_layers, intersect_width_layers, active_layers, timeslider_layers
 
       # Aplica filtros row_active y current_season
       data = data.gsub('where_clause', "where_clause main.row_active = true AND ")
@@ -203,23 +222,33 @@ module ProjectTypes::Indicators
         data_conditions.each do |key|
 
           s = key.split('|')
-          @field = s[0]
-          @filter = s[1]
-          @value = s[2]
+          field = s[0]
+          filter = s[1]
+          value = s[2]
+          type = s[3]
 
           # Aplica filtro por campo usuario
-          if @field == 'app_usuario'
-            data = data.gsub('where_clause', "where_clause users.name #{@filter} '#{@value}' AND ")
+          if field == 'app_usuario'
+            data = data.gsub('where_clause', "where_clause users.name #{filter} '#{value}' AND ")
           end
 
           # Aplica filtro por campo estado
-          if @field == 'app_estado'
-            data = data.gsub('where_clause', "where_clause project_statuses.name #{@filter} '#{@value}' AND ")
+          if field == 'app_estado'
+            data = data.gsub('where_clause', "where_clause project_statuses.name #{filter} '#{value}' AND ")
           end
 
           # Aplica filtro por otro campo
-          if @field != 'app_usuario' && @field != 'app_estado'
-              data = data.gsub('where_clause', "where_clause (main.properties->>'#{@field}' #{@filter} '#{@value}') AND ")
+          if field != 'app_usuario' && field != 'app_estado'
+            if(type == '5' and value!='null')
+              text = "(main.properties->>'#{field}')::numeric #{filter}'#{value}' AND main.properties->>'#{field}' IS NOT NULL"
+            elsif (type =='3' and value!='null')
+              text = "to_date(main.properties->>'#{field}','DD/MM/YYYY') #{filter} to_date('#{value}','DD/MM/YYYY') AND main.properties->>'#{field}' IS NOT NULL"
+            else
+              text = "main.properties->>'#{field}'#{filter}'#{value}'"
+            end
+            text = text.gsub("!='null'"," IS NOT NULL ")
+            text = text.gsub("='null'"," IS NULL ")
+              data = data.gsub('where_clause', "where_clause (#{text}) AND ")
           end
 
         end
@@ -228,8 +257,8 @@ module ProjectTypes::Indicators
       # Aplica filtros de hijos
       if !filtered_form_ids.blank?
         final_array = []
-        filtered_form_ids.each do |ids_array|
-          ids_array = JSON.parse(ids_array)
+        filtered_form_ids.each do |i,ids_array|
+          #ids_array = JSON.parse(ids_array)
           if !final_array.blank?
             final_array = final_array & ids_array
           else
@@ -239,18 +268,28 @@ module ProjectTypes::Indicators
         if final_array.blank?
           final_array.push(-1)
         end
-        final_array_in = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
-        final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')').gsub(',', '),(')
+        final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')').gsub(',', '),(').gsub(/\"/, '')
         data = data.gsub('from_clause', "from_clause INNER JOIN (VALUES #{final_array} ) vals(v) ON (main.id = v) ")
         # Aplica filtros de hijos a los hijos
         # Aplica filtros por hijos
         if !filter_children.blank?
           filter_children.each do |filter_child|
             s = filter_child.split('|')
-            @field = s[0]
-            @filter = s[1]
-            @value = s[2]
-            data = data.gsub('where_subform_clause', "where_subform_clause (sub.properties->>'#{@field}' #{@filter} '#{@value}') AND ")
+            field = s[0]
+            operator = s[1]
+            value = s[2]
+            type = s[3]
+            if(type == '5' and value!='null')
+              text = "(sub.properties->>'#{field}')::numeric #{operator}'#{value}' AND sub.properties->>'#{field}' IS NOT NULL"
+            elsif (type == '3' and value!='null')
+              text = "to_date(sub.properties ->> '#{field}', 'DD/MM/YYYY') #{operator} to_date('#{value}','DD/MM/YYYY') AND sub.properties->>'#{field}' IS NOT NULL"
+            else  
+              text = "sub.properties ->> '#{field}' #{operator}'#{value}'"
+            end
+            text = text.gsub("!='null'"," IS NOT NULL ")
+            text = text.gsub("='null'"," IS NULL ")
+
+            data = data.gsub('where_subform_clause', "where_subform_clause ("+text+") AND ")
           end    
         end
         # Aplica filtros de usuario de hijos
@@ -261,6 +300,102 @@ module ProjectTypes::Indicators
           end    
         end
       end
+
+      # Aplica filtros on the fly de capas secundarias para indicadores que traen datos de esa capa secundaria
+      if data.include?("name_layer_for_filters:") #El indicador debe traer ese dato
+        name_layer = data.split("name_layer_for_filters:")[1]
+        if !filters_layers.nil?
+          filters_layer = filters_layers[name_layer]
+          if !filters_layer.nil?
+            filters_layer.each do |i,filter|
+              field = filter["filter_field"]
+              operator = filter["filter_operator"]
+              value = filter["filter_value"]
+              type = filter["field_type"]
+              if(type == '5' and value!='null')
+                text = "(sec.properties->>'#{field}')::numeric #{operator}'#{value}' AND sec.properties->>'#{field}' IS NOT NULL"
+              elsif (type == '3' and value!='null')
+                text = "to_date(sec.properties ->> '#{field}', 'DD/MM/YYYY') #{operator} to_date('#{value}','DD/MM/YYYY') AND sec.properties->>'#{field}' IS NOT NULL"
+              else  
+                text = "sec.properties ->> '#{field}' #{operator}'#{value}'"
+              end
+              text = text.gsub("!='null'"," IS NOT NULL ")
+              text = text.gsub("='null'"," IS NULL ")
+
+              data = data.gsub('where_layer_clause', "where_layer_clause ("+text+") AND ")
+            end
+          end
+        end
+        # Aplica filtros de time-slider de la capa
+        if !timeslider_layers.nil?
+          timeslider_layer = timeslider_layers[name_layer]
+          if timeslider_layer.nil?
+            data = data.gsub('where_clause', "sec.row_enabled = true AND ")
+          else
+            from_date_layer = timeslider_layer["from_date"]
+            to_date_layer = timeslider_layer["to_date"]
+            if !from_date_layer.blank? && !to_date_layer.blank?
+              data = data.gsub('where_clause', "where_clause (sec.gwm_created_at BETWEEN '#{from_date_layer}' AND '#{to_date_layer}') AND ")
+            else
+              data = data.gsub('where_clause', "where_clause sec.row_enabled = true AND ")
+            end
+          end
+        else
+          data = data.gsub('where_clause', "where_clause sec.row_enabled = true AND ")
+        end
+      end
+
+      # Aplica filtro de capas secundarias on the fly para el proyecto activo (INTERSECT DEL PROYECTO ACTIVO)
+      if(intersect_width_layers=='true')
+      current_tenant = Apartment::Tenant.current
+        if !active_layers.nil?
+          active_layers.each do |active_layer|
+            active_layer_id = ProjectType.where(name_layer: active_layer).pluck(:id).first
+            data = data.gsub('from_clause', "INNER JOIN #{current_tenant}.projects intersect_"+active_layer+" ON ST_Intersects(main.the_geom, intersect_"+active_layer+".the_geom)")         
+            data = data.gsub('where_clause', "where_clause intersect_"+active_layer+".project_type_id = #{active_layer_id} AND intersect_"+active_layer+".row_active = true AND intersect_"+active_layer+".current_season = true AND ")
+            # Aplica filtros de la capa
+            if !filters_layers.nil?
+              filters_layer = filters_layers[active_layer]
+              if !filters_layer.nil?
+                filters_layer.each do |i,filter|
+                  field = filter["filter_field"]
+                  operator = filter["filter_operator"]
+                  value = filter["filter_value"]
+                  type = filter["field_type"]
+                  if(type == '5' and value!='null')
+                    text = "(intersect_"+active_layer+".properties->>'#{field}')::numeric #{operator}'#{value}' AND intersect_"+active_layer+".properties->>'#{field}' IS NOT NULL"
+                  elsif (type == '3' and value!='null')
+                    text = "to_date(intersect_"+active_layer+".properties ->> '#{field}', 'DD/MM/YYYY') #{operator} to_date('#{value}','DD/MM/YYYY') AND intersect_"+active_layer+".properties->>'#{field}' IS NOT NULL"
+                  else  
+                    text = "intersect_"+active_layer+".properties ->> '#{field}' #{operator}'#{value}'"
+                  end
+                  text = text.gsub("!='null'"," IS NOT NULL ")
+                  text = text.gsub("='null'"," IS NULL ")
+                  data = data.gsub('where_clause', "where_clause ("+text+") AND ") 
+                end
+              end
+            end
+            # Aplica filtros de time-slider de la capa
+            if !timeslider_layers.nil?
+              timeslider_layer = timeslider_layers[active_layer]
+              if timeslider_layer.nil?
+                data = data.gsub('where_clause', "where_clause intersect_"+active_layer+".row_enabled = true AND ")
+              else
+                from_date_layer = timeslider_layer["from_date"]
+                to_date_layer = timeslider_layer["to_date"]
+                if !from_date_layer.blank? && !to_date_layer.blank?
+                  data = data.gsub('where_clause', "where_clause (intersect_"+active_layer+".gwm_created_at BETWEEN '#{from_date_layer}' AND '#{to_date_layer}') AND ")
+                else
+                  data = data.gsub('where_clause', "where_clause intersect_"+active_layer+".row_enabled = true AND ")
+                end
+              end
+            else
+              data = data.gsub('where_clause', "where_clause intersect_"+active_layer+".row_enabled = true AND ")
+            end
+          end
+        end
+      end
+      
       data_query = data
 
       data_query
@@ -277,7 +412,7 @@ module ProjectTypes::Indicators
       analytics_charts_ids
     end
 
-    def kpi_new(graph_id,project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform)
+    def kpi_new(graph_id,project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform , timeslider_layers, filters_layers,intersect_width_layers, active_layers)
       
       querys=[]
 
@@ -308,13 +443,14 @@ module ProjectTypes::Indicators
             data_query = conditions_for_attributes_and_owner data_query, user_id, project_type_id
 
             # Aplica filtro time_slider
-            data_query = apply_time_slider_filter data_query, from_date, to_date, from_date_subform, to_date_subform
+            data_query = apply_time_slider_filter data_query, from_date, to_date, from_date_subform, to_date_subform , timeslider_layers
 
             # Aplica filtros generados por el usuario y condición row_active y current_season (momentáneamente)
-            data_query =  filters_on_the_fly data_query, data_conditions, filtered_form_ids, filter_children, filter_user_children
+            data_query =  filters_on_the_fly data_query, data_conditions, filtered_form_ids, filter_children, filter_user_children, filters_layers, intersect_width_layers, active_layers, timeslider_layers
 
             data_query = data_query.gsub('where_clause', "")
             data_query = data_query.gsub('where_layer_clause', "")
+            data_query = data_query.gsub('name_layer_for_filters:', "-- name_layer_for_filters:")
             data_query = data_query.gsub('where_subform_clause', "")
             data_query = data_query.gsub('from_clause', "")
             data_query = ActiveRecord::Base.connection.execute(data_query)
@@ -332,7 +468,7 @@ module ProjectTypes::Indicators
     end
 
     
-    def kpi_without_graph_one_by_one(kpi_default,project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform, indicator_id)
+    def kpi_without_graph_one_by_one(kpi_default,project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform, indicator_id, timeslider_layers, filters_layers,intersect_width_layers, active_layers)
 
       querys = []
       query_full = ''
@@ -370,8 +506,8 @@ module ProjectTypes::Indicators
         # Aplica filtros owner, atributo e intercapa (para total también)
         total = conditions_for_attributes_and_owner total, user_id, project_type_id
 
-        # Aplica filtro time_slider (para total también)
-        total = apply_time_slider_filter total, from_date, to_date, from_date_subform, to_date_subform
+        # Aplica filtro time_slider para total
+        total = apply_time_slider_filter total, from_date, to_date, from_date_subform, to_date_subform , timeslider_layers
 
         total = total.gsub('where_clause', "")
         total = total.gsub('from_clause', "")
@@ -382,15 +518,16 @@ module ProjectTypes::Indicators
       # Aplica filtros owner, atributo e intercapa (para total también)
       query_full = conditions_for_attributes_and_owner query_full, user_id, project_type_id
 
-      # Aplica filtro time_slider (para total también)
-      query_full = apply_time_slider_filter query_full, from_date, to_date, from_date_subform, to_date_subform
+      # Aplica filtro time_slider 
+      query_full = apply_time_slider_filter query_full, from_date, to_date, from_date_subform, to_date_subform , timeslider_layers
 
       # Aplica filtros generados por el usuario y condición row_active y current_season (momentáneamente)
-      query_full =  filters_on_the_fly query_full, data_conditions, filtered_form_ids, filter_children, filter_user_children
-      
+      query_full =  filters_on_the_fly query_full, data_conditions, filtered_form_ids, filter_children, filter_user_children, filters_layers, intersect_width_layers, active_layers, timeslider_layers
+
       #Limpia el query
       query_full = query_full.gsub('where_clause', "")
       query_full = query_full.gsub('where_layer_clause', "")
+      query_full = query_full.gsub('name_layer_for_filters:', "-- name_layer_for_filters:")
       query_full = query_full.gsub('where_subform_clause', "")
       query_full = query_full.gsub('from_clause', "")
 
@@ -413,7 +550,8 @@ module ProjectTypes::Indicators
 
     end
 
-    def indicator_heatmap project_type_id, indicator_id, size_box, type_box, data_conditions, user_id, from_date, to_date, from_date_subform, to_date_subform, filtered_form_ids , filter_children , filter_user_children
+
+    def indicator_heatmap (project_type_id, indicator_id, size_box, type_box, data_conditions, user_id, from_date, to_date, from_date_subform, to_date_subform, filtered_form_ids , filter_children , filter_user_children, filters_layers, intersect_width_layers, active_layers , timeslider_layers)
       #Revisar cuando el indicador es avanzado.
       chart = AnalyticsDashboard.find(indicator_id)
 
@@ -435,13 +573,14 @@ module ProjectTypes::Indicators
       data_query = conditions_for_attributes_and_owner data_query, user_id, project_type_id
 
       # Aplica filtro time_slider
-      data_query = apply_time_slider_filter data_query, from_date, to_date, from_date_subform, to_date_subform
+      data_query = apply_time_slider_filter data_query, from_date, to_date, from_date_subform, to_date_subform , filters_layers
 
       # Aplica filtros generados por el usuario y condición row_active y current_season (momentáneamente)
-      data_query =  filters_on_the_fly data_query, data_conditions, filtered_form_ids, filter_children, filter_user_children
+      data_query =  filters_on_the_fly data_query, data_conditions, filtered_form_ids, filter_children, filter_user_children, filters_layers, intersect_width_layers, active_layers, timeslider_layers
 
       data_query = data_query.gsub('where_clause', "")
       data_query = data_query.gsub('where_layer_clause', "")
+      data_query = data_query.gsub('name_layer_for_filters:', "-- name_layer_for_filters:")
       data_query = data_query.gsub('where_subform_clause', "")
       data_query = data_query.gsub('from_clause', "")
       data_query = ActiveRecord::Base.connection.execute(data_query)

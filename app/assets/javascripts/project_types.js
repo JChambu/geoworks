@@ -18,6 +18,7 @@ Navarra.project_types.config = {
   kpi_filter: '',
   kpi_value: '',
   attribute_filters: [],
+  attribute_filters_subforms: [],
   filtered_form_ids: [],
   owner: false,
   field_point_colors:'',
@@ -31,7 +32,9 @@ Navarra.project_types.config = {
   to_date_subforms: '',
   item_selected:"",
   id_item_displayed:'',
-  current_layer_filters: ""
+  current_layer_filters: "",
+  timeslider_layers: {},
+  filters_layers: {}
 }
 
 // Select para roles

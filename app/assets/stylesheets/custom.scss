@@ -12,7 +12,8 @@ body {
   left:0%;
   position: relative;
   z-index: 401;
-  background-color: rgba(0, 0, 0, 0.2);
+  background: rgba(39, 43, 48, 0.8) !important;
+  color: #EBEBEC !important;
   transition:0.7s;
   overflow-y:hidden;
   padding-top:0px!important;
@@ -172,10 +173,10 @@ div.custom-menu.show {
   cursor: move;
 }
 .chart-header-bg-transparent {
-  background-color: rgba(81, 89, 96, 0.4);
+  background-color: transparent;
 }
 .chart-bg-transparent {
-  background-color: rgba(58, 63, 68, 0.4);
+  background-color: transparent;
 }
 .chart-bg-none {
   background: none;
@@ -248,7 +249,8 @@ div.custom-menu.show {
   display:block!important;
 }
 .leaflet-control-layers {
-  background-color: rgba(58, 63, 68, 0.5) !important;
+  background: rgba(39, 43, 48, 0.8) !important;
+  color: #EBEBEC !important;
 }
 .leaflet-control-layers-toggle {
 	background-image: url(asset_path("leaflet/layers.png")) !important;
@@ -271,7 +273,8 @@ div.custom-menu.show {
 .leaflet-draw-draw-marker,
 .leaflet-draw-edit-edit,
 .leaflet-draw-edit-remove {
-  background-color: rgba(58, 63, 68, 0.5) !important;
+  background-color: rgba(39, 43, 48, 0.8) !important;
+  color: #EBEBEC !important;
 }
 /*Modifica el comportamiento de los botones del draw en el toolbar de Leaflet */
 .leaflet-draw-edit-remove ,  .leaflet-draw-actions {
@@ -279,7 +282,7 @@ div.custom-menu.show {
 }
 
 .confirmation_geometry , .confirmation_success_geometry{
-  background-color: rgba(58, 63, 68, 0.5);
+  background-color: rgba(39, 43, 48, 0.8);
   color:white;
   padding:10px;
   border-radius: 5px;
@@ -297,13 +300,13 @@ div.custom-menu.show {
 /* Modifica el estilo del zoom de Leaflet*/
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
-  background-color: rgba(58, 63, 68, 0.5) !important;
-  color: #e8ebef !important;
+  background: rgba(39, 43, 48, 0.8) !important;
+  color: #EBEBEC !important;
   text-shadow: 1px 1px 1px #2c2e34;
 }
 .leaflet-control-zoom-in:hover,
 .leaflet-control-zoom-out:hover {
-  color: #d3d800 !important;
+  color: #EBEBEC !important;
 }
 .leaflet-top .leaflet-control , .leaflet-draw-section , .leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar , .leaflet-top  {
   display:inline-flex;
@@ -340,9 +343,8 @@ div.custom-menu.show {
 
 /* Modifica el estilo de las leyendas de Leaflet */
 .leaflet-html-legend {
-  /*border: 2px solid rgba(0, 0, 0, 0.2) !important;*/
-  /*border-radius: 5px !important;*/
-  background: rgba(58, 63, 68, 0.5) !important;
+  background: rgba(39, 43, 48, 0.8) !important;
+  color: #EBEBEC !important;
   padding: 4px !important;
   line-height: 1 !important;
   width: 180px !important;
@@ -356,8 +358,8 @@ div.custom-menu.show {
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
   border: 2px solid rgba(0, 0, 0, 0.2);
-  background: rgba(58, 63, 68, 0.7) !important;
-  color: #FFFFFF !important;
+  background: rgba(39,43,48,0.8) !important;
+  color: #EBEBEC !important;
   text-shadow: 1px 1px 1px #2c2e34;
   box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4) !important;
   border-radius: 4px !important;
@@ -429,7 +431,7 @@ div.custom-menu.show {
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: rgba(72, 75, 79, 0.5);
+  background-color: rgba(39,43,48,0.5);
 }
 ::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
@@ -720,7 +722,7 @@ div.custom-menu.show {
 /* estilo multiselector de campos listados multiples */
 .custom_dropdown_panels{
   top: 0vh;
-  right: 100.5%;
+  right: 101%;
 }
 /* registros ocultos por autorización */
 .canot_read{
@@ -914,7 +916,7 @@ div.custom-menu.show {
   position: absolute;
   top: -30vh;
   left: 35%;
-  background: rgba(81, 89, 96, 0.4);
+  background: rgba(39, 43, 48, 0.8);
   z-index: 4000;
   color: white;
   width: 30%;
@@ -949,4 +951,54 @@ div.custom-menu.show {
   display: block;
   word-break: break-word;
   max-width: 174px;
+}
+
+.static_datetimepicker .bootstrap-datetimepicker-widget{
+  white-space: normal!important;
+  background: rgba(39,43,48,1)!important;
+}
+
+.static_datetimepicker .dropdown-menu , .table_data_container .dropdown-menu{
+  background: rgba(39,43,48,1)!important;
+}
+
+.custom_overflow{
+  overflow:visible!important;
+}
+.side_hidden{
+  margin-left: 40%!important;
+  left:100%!important;
+}
+.width_table{
+  width: 70%!important;
+}
+
+.custom_dropdown_map{
+  margin-left: 103%;
+  position: absolute!important;
+  width: auto;
+  margin-top: -30px; 
+  padding-top: 10px;
+}
+
+.custom_button {
+  background: rgba(39,43,48,0.2)!important;
+}
+.custom_button:hover {
+  background: rgba(39,43,48,0.6)!important;
+}
+
+/* change boostrap css */
+.over-map .dropdown-menu , .over-map .modal-content{
+  background: rgba(39,43,48,0.8);
+  color: #EBEBEC !important
+}
+.over-map .dropdown-item {
+  color: #EBEBEC !important
+}
+.over-map .dropdown-item.active, .over-map .dropdown-item:active, .over-map .dropdown-item.focus, .over-map .dropdown-item:focus, .over-map .dropdown-item.hover, .over-map .dropdown-item:hover {
+  background-color: rgba(58,63,68,0.6) !important;
+}
+.over-map .modal:not(#info-modal):not(#modal-report) {
+  top: 8vh!important;
 }

@@ -1,5 +1,21 @@
 <script type="text/javascript">
 $(document).ready(function(){
+  $('#navbarDropdown_container').on('shown.bs.dropdown', function () {
+    $('.leaflet-top.leaflet-right').addClass('side_hidden');
+    $('.sidebar').addClass('side_hidden');
+    $('#navbarDropdown_container').addClass("is_open");
+    $("#info-modal").modal("hide");
+    $('.custom_dropdown_panels').hide();
+    $('.custom_dropdown_panels_import').hide();
+    $(".table_data_container").addClass("width_table");
+  });
+  $('#navbarDropdown_container').on('hide.bs.dropdown', function () {
+    $('.leaflet-top.leaflet-right').removeClass('side_hidden');
+    $('.sidebar').removeClass('side_hidden');
+    $('#navbarDropdown_container').removeClass("is_open");
+    $(".table_data_container").removeClass("width_table");
+  });
+  
   $('#move_indicators_right').click(function(){
     var width_element = $('.custom_indicator_container').outerWidth();
     var width_parent = $('.custom_indicator_container').parent().parent().outerWidth();
@@ -19,15 +35,15 @@ $(document).ready(function(){
   });
   $('#panelImport').on('click', function (e) {
     e.stopPropagation();
-    $('.custom_dropdown_panels_import').show();
-    $('.custom_dropdown_panels_import').css('right','100.5%');
+    $('.custom_dropdown_panels_import').toggle();
+    $('.custom_dropdown_panels_import').css('right','101%');
     var top = ($(this).offset().top -50)+ 'px';
     $('.custom_dropdown_panels_import').css('top',top)
     $('.custom_dropdown_panels').hide();
   });
   $('#panelAdmin').on('click', function (e) {
     e.stopPropagation();
-    $('.custom_dropdown_panels').show();
+    $('.custom_dropdown_panels').toggle();
     $('.custom_dropdown_panels_import').hide();
   });
 });
@@ -311,7 +327,7 @@ function open_panel(id_panel,id_table){
     </ul>
 
     <!-- Menú  -->
-    <div class="nav-item dropdown">
+    <div class="nav-item dropdown" id="navbarDropdown_container">
       <a class="nav-link dropdown-toggle nocaret" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-bars align-middle" title="Menú" style="font-size: 22px"></i>
       </a>

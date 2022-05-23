@@ -171,7 +171,20 @@ class ProjectDataChildrenController < ApplicationController
       if !filter_children.blank?
         filter_children.each do |filter_child|
           filter_parts = filter_child.split('|')
-          data = data.where("properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+" '"+filter_parts[2]+"'")
+          # verifica que el filtro corresponda al subformulario que se está iterando
+          belongs_to_subfield = ProjectSubfield.where(id: filter_parts[0]).where(project_field_id: pfid).first
+          if !belongs_to_subfield.nil?
+            if(filter_parts[3]=='5' and filter_parts[2]!='null')
+              text = "(properties ->> '"+filter_parts[0]+"')::numeric "+filter_parts[1]+" '"+filter_parts[2]+"' AND properties ->>'"+ filter_parts[0]+"' IS NOT NULL"
+            elsif (filter_parts[3]=='3' and filter_parts[2]!='null')
+              text = "to_date(properties ->> '"+filter_parts[0]+"','DD/MM/YYYY') "+filter_parts[1]+" to_date('"+filter_parts[2]+"','DD/MM/YYYY') AND properties ->>'"+filter_parts[0]+"' IS NOT NULL"
+            else
+              text = "properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+"'"+filter_parts[2]+"'"           
+            end
+            text = text.gsub("!='null'"," IS NOT NULL ")
+            text = text.gsub("='null'"," IS NULL ")
+            data = data.where(text)
+          end
         end
       end
 

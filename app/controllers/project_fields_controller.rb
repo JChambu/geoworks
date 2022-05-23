@@ -154,9 +154,37 @@ class ProjectFieldsController < ApplicationController
     render json: data
   end
 
+  def get_project_field_layer
+    name_layer = params[:name_layer]
+    data = ProjectField
+      .select('DISTINCT main.name , main.key , main.sort , main.field_type_id')
+      .from('project_fields main INNER JOIN project_types sec ON sec.id = main.project_type_id')
+      .where('main.filter_field = ?', true)
+      .where('sec.name_layer = ?', name_layer)
+      .order('sort')
+    render json: data
+  end
+
+  def get_filter_operator
+    data = ProjectType::FILTERS
+    render json: data
+  end
+
+  def get_filter_values
+    data = ProjectType::FILTERS
+    render json: data
+  end
+
   def set_project_field
     @project_field = ProjectField.find(params[:id])
     @project_subfields = @project_field.project_subfields.order(:sort)
+  end
+
+  def get_field_type
+    key = params[:key]
+    project_type_id = params[:project_type_id]
+    data = ProjectField.where(project_type_id: project_type_id).where(key: key).pluck(:field_type_id).first
+    render json: data
   end
 
   def project_field_params

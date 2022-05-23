@@ -10,6 +10,8 @@ class ProjectsController < ApplicationController
   def search_data_for_pdf
     top_level_project_type_ids = params[:top_level_project_type_ids]
     project_ids = params[:project_ids]
+    filters_layers = params[:filters_layers]
+    timeslider_layers = params[:timeslider_layers]
     projects = []
     top_level_project_type_ids.each do |project_type_id|
       data = Project
@@ -23,6 +25,49 @@ class ProjectsController < ApplicationController
         .where('main.current_season = ?', true)
         .where('sec.row_active = ?', true)
         .where('sec.current_season = ?', true)
+
+      # Aplica filtros de la capa
+          if !filters_layers.nil?
+            active_layer = ProjectType.where(id: project_type_id).pluck(:name_layer).first
+            filters_layer = filters_layers[active_layer]
+            if !filters_layer.nil?
+              filters_layer.each do |i,filter|
+                field = filter["filter_field"]
+                operator = filter["filter_operator"]
+                value = filter["filter_value"]
+                type = filter["field_type"]
+                if(type == '5' and value!='null')
+                  text = "(sec.properties->>'#{field}')::numeric #{operator}'#{value}' AND sec.properties->>'#{field}' IS NOT NULL"
+                elsif (type == '3' and value!='null')
+                  text = "to_date(sec.properties ->> '#{field}', 'DD/MM/YYYY') #{operator} to_date('#{value}','DD/MM/YYYY') AND sec.properties->>'#{field}' IS NOT NULL"
+                else  
+                  text = "sec.properties ->> '#{field}' #{operator}'#{value}'"
+                end
+                text = text.gsub("!='null'"," IS NOT NULL ")
+                text = text.gsub("='null'"," IS NULL ")
+                data = data.where(text) 
+              end
+            end
+          end
+          # Aplica filtros de time-slider de la capa
+          if !timeslider_layers.nil?
+            active_layer = ProjectType.where(id: project_type_id).pluck(:name_layer).first
+            timeslider_layer = timeslider_layers[active_layer]
+            if timeslider_layer.nil?
+              data = data.where("sec.row_enabled = true")
+            else
+              from_date_layer = timeslider_layer["from_date"]
+              to_date_layer = timeslider_layer["to_date"]
+              if !from_date_layer.blank? && !to_date_layer.blank?
+                data = data.where("sec.gwm_created_at BETWEEN '#{from_date_layer}' AND '#{to_date_layer}'")
+              else
+                data = data.where("sec.row_enabled = true")
+              end
+            end
+          else
+            data = data.where("sec.row_enabled = true")
+          end
+
       projects << data
     end
     render json: projects
@@ -66,76 +111,96 @@ class ProjectsController < ApplicationController
   end
 
   # Crea un nuevo registro
-  def create_form
+  def create_form 
+    count_sucess=0
+    count_errors=0
+    created_ids=[]
+    project_type_id=0
+    is_interpolate = params[:is_interpolate]
+    @dat = params[:data]
+    @dat.each do |i,data|
+      project_type_id = data[:project_type_id]
+      project_status_id = data[:project_status_id]
+      properties = JSON(data[:properties]) # FIXME: solución temporal a los values como string
+      geom = data[:geom]['0'][:latLng]
+      subforms = data[:subforms] # FIXME: los paremetros llegan como string
 
-    project_type_id = params[:project_type_id]
-    project_status_id = params[:project_status_id]
-    properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
-    geom = params[:geom]['0'][:latLng]
-    subforms = params[:subforms] # FIXME: los paremetros llegan como string
+      @project_type = ProjectType.find(project_type_id)
+      @project = Project.new()
 
-    @project_type = ProjectType.find(project_type_id)
-    @project = Project.new()
-
-    # Arma la nueva geometría
-    if @project_type.type_geometry == 'Point'
-      @new_geom = "POINT(#{geom['lng']} #{geom['lat']})"
-    else
-      points_array = []
-      geom.each do |a,x|
-        point = "#{x[0]} #{x[1]}"
-        points_array << point
+      # Arma la nueva geometría
+      if @project_type.type_geometry == 'Point'
+        @new_geom = "POINT(#{geom['lng']} #{geom['lat']})"
+      else
+        points_array = []
+        geom.each do |a,x|
+          point = "#{x[0]} #{x[1]}"
+          points_array << point
+        end
+        points_array << points_array[0]
+        points_array_str = points_array.join(', ')
+        @new_geom = "POLYGON((#{points_array_str}))"
       end
-      points_array << points_array[0]
-      points_array_str = points_array.join(', ')
-      @new_geom = "POLYGON((#{points_array_str}))"
+
+      datetime = Time.zone.now
+
+      properties['app_id'] = 0
+      properties['app_usuario'] = current_user.id
+      properties['app_estado'] = project_status_id.to_i
+
+      # Carga los valores
+      @project['properties'] = properties
+      @project['project_type_id'] = project_type_id
+      @project['user_id'] = current_user.id
+      @project['the_geom'] = @new_geom
+      @project['project_status_id'] = project_status_id
+      @project['gwm_created_at'] = datetime
+      @project['gwm_updated_at'] = datetime
+
+      if @project.save
+        @project['properties'].merge!('app_id': @project.id)
+        @project.save!
+
+        if subforms.present?
+
+          subforms_created = []
+          subforms.each do |i, sf|
+
+            project_field_id = sf['field_id']
+            child_id = sf['child_id'].to_i
+            properties = sf['properties']
+
+            @project_data_children = ProjectDataChild.new
+            @project_data_children.create_subform(properties, @project.id, project_field_id, current_user.id)
+            subforms_created << @project_data_children.id
+          end
+
+        end
+        count_sucess +=1
+        created_ids.push(@project.id)
+      else
+        count_errors +=1
+      end
+
     end
 
-    datetime = Time.zone.now
-
-    properties['app_id'] = 0
-    properties['app_usuario'] = current_user.id
-    properties['app_estado'] = project_status_id.to_i
-
-    # Carga los valores
-    @project['properties'] = properties
-    @project['project_type_id'] = project_type_id
-    @project['user_id'] = current_user.id
-    @project['the_geom'] = @new_geom
-    @project['project_status_id'] = project_status_id
-    @project['gwm_created_at'] = datetime
-    @project['gwm_updated_at'] = datetime
-
-    if @project.save
-      @project['properties'].merge!('app_id': @project.id)
-      @project.save!
-
-      if subforms.present?
-
-        subforms_created = []
-        subforms.each do |i, sf|
-
-          project_field_id = sf['field_id']
-          child_id = sf['child_id'].to_i
-          properties = sf['properties']
-
-          @project_data_children = ProjectDataChild.new
-          @project_data_children.create_subform(properties, @project.id, project_field_id, current_user.id)
-          subforms_created << @project_data_children.id
-        end
-
-      end
-
+    if is_interpolate == 'true'
+      @project_type.destroy_view_interpolation project_type_id
+      @project_type.create_view_interpolation project_type_id
+    else
       @project_type.destroy_view
       @project_type.create_view
       @project.update_inheritable_statuses
+    end
 
-      render json: {status: 'Creación completada.', id: @project.id, subforms_created: subforms_created}
-
+    if !is_interpolate == 'true'
+      if count_errors >0
+        render json: {status: 'Nuevos registros:'+count_sucess.to_s+'. Errores:'+count_errors.to_s, id: created_ids}
+      else
+        render json: {status: 'Nuevos registros:'+count_sucess.to_s, id: created_ids}
+      end
     else
-
-      render json: {status: 'Error en la creación.', id: '', children: ''}
-
+      render js: "window.location = '#{project_types_path}'"
     end
 
   end

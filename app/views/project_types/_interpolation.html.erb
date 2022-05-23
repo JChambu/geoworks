@@ -46,10 +46,17 @@
                 </div>
 
               </div>
-              <div id="interpolation_range" style="max-height: 40vh; overflow-y:auto"></div>
+              <div id="interpolation_range" style="max-height: 35vh; overflow-y:auto"></div>
             </div>
           </div>
-
+          <div class="m-2 ml-3">
+            <div class="custom-control custom-checkbox">
+              <input class="custom-control-input" id="save_interpolation" type="checkbox" name="save_interpolation">
+              <label id="save_interpolation_check" class="string optional control-label custom-control-label" for="save_interpolation">
+              </label>
+            </div>
+            <input type="text" class="form-control form-control-sm w-50 mr-3 d-inline" placeholder="Nuevo Proyecto" id="interpolation_name">
+          </div>
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
