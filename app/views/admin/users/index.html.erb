@@ -3,13 +3,14 @@
 <div class="card m-2 shadow">
   <div class="card-body">
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-4">
         <h1 class="m-0"><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
+        <p class="m-0 pt-2" id="notice"><%= notice %></p>
       </div>
       <div class="col-md-6 text-center">
         <%= render :partial=> 'search'%>
       </div>
-      <div class="col-md-3 text-right">
+      <div class="col-md-2 text-right">
         <%= link_to t('.new', :default => t("helpers.links.new")), new_admin_user_path,:class => 'btn btn-primary' %>
       </div>
     </div>
@@ -25,6 +26,7 @@
             <th><%= model_class.human_attribute_name(:id) %></th>
             <th><%= model_class.human_attribute_name(:name) %></th>
             <th><%= model_class.human_attribute_name(:email) %></th>
+            <th><%= model_class.human_attribute_name(:phone) %></th>
             <th class="text-center">Acciones</th>
           </tr>
         </thead>
@@ -34,6 +36,7 @@
               <td><%= user.id %></td>
               <td><%= user.name %></td>
               <td><%= user.email %></td>
+              <td><%= user.country_code%> <%= user.area_code %>-<%= user.phone %></td>
               <td class="text-center"><%= link_to edit_admin_user_path(user) do %> <i class="fas fa-edit"></i><% end %></td>
             </tr>
           <% end %>

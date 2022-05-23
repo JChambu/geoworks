@@ -21,9 +21,13 @@ class User < ApplicationRecord
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
   validates :email, :email_format => {:message => I18n.t("activerecord.errors.messages.invalid_email")}
-  # validates :role, presence: true
   validates :password, length: { minimum: 6 }, unless: -> { !:password.blank? }
   validates :password, confirmation: {case_sensitive: true}
+  validates_presence_of :user_customers, :message => "/ No se puede almacenar un usuario sin una corporación"
+  validates :country_code, length: { maximum: 4 }, presence: true, :numericality => true
+  validates :area_code, length: { maximum: 4 }, presence: true, :numericality => true
+  validates :phone, length: { maximum: 8 }, presence: true, :numericality => true
+
   # validate :is_role_valid?
   # before_destroy :has_related_pois?
   before_create :generate_token, on: :create
@@ -39,8 +43,8 @@ class User < ApplicationRecord
   end
 
   def generate_token
-      self.token = SecureRandom.base64(15)
-      self.authentication_token =  SecureRandom.base64(15)
+    self.token = SecureRandom.base64(15)
+    self.authentication_token =  SecureRandom.base64(15)
   end
 
   def is_active?
@@ -65,8 +69,6 @@ class User < ApplicationRecord
   end
 
   def is_validated?
-
-
     current_tenant = Apartment::Tenant.current
     @customer_id = Customer.where(subdomain: current_tenant)
     @user = UserCustomer.where(user_id: self.id, customer_id: @customer_id )
