@@ -25,7 +25,6 @@ function init(is_alert) {
     pdf_values_all = [];
     var table_check = $('#table_visible .custom-control-input');
     table_check.each(function(index){
-        if(this.id!='table_select_all_hidden'){
             if(this.checked){
                 var pdf_values = new Object;
                 pdf_values['id'] = this.id.split("check_select_")[1];
@@ -70,7 +69,6 @@ function init(is_alert) {
                 });
                 pdf_values_all.push(pdf_values);
             }
-        }
     });
     $('#dropdown_alert_mails').empty();
     create_pdf_view(is_alert);

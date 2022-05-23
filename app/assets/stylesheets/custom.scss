@@ -455,6 +455,11 @@ div.custom-menu.show {
   width: 100%;
 }
 
+#table_hidden th {
+  position: sticky; top: 0; z-index: 10;
+}
+
+
 /*custom checkbox and radio*/
 .custom-checkbox .custom-control-input:checked~.custom-control-label::before{
   background-color:#d3d800;
@@ -576,9 +581,6 @@ div.custom-menu.show {
   height: 2.5vh;
 }
 
-.scroll_false{
-  border-right: solid 29px transparent;
-}
 /* estilo para tabla reporte */
 .modal-report{
   width: 100%;

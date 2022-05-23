@@ -1,10 +1,6 @@
 <script type="text/javascript">
 var top_level_project_type_ids = [];
-//scroll de ambas tablas simultáneamente
 $(document).ready(function () {
-    $(".div_table").on("scroll", function() {
-      $(".div_table").scrollLeft($(this).scrollLeft());
-    });
 
 //Selector cantidad por página
 $(".option_perpage").click(function(){
@@ -149,13 +145,11 @@ function get_ids_checked(layer){
   var ids_checked = '';
   var count_ids_checked = 0;
   $('#table_visible .custom-control-input').each(function(){
-    if(this.id!='table_select_all_hidden'){
       if(this.checked){
         if(count_ids_checked>0){ids_checked +=", "}
         ids_checked += ".celd"+layer+"_id"+$(this).attr('id').split('check_select_')[1]+" ";
         count_ids_checked ++;
       }
-    }
   });
   return ids_checked;
 }
@@ -192,7 +186,6 @@ function hide_column(key){
  $('.footer_key'+key).addClass("d-none");
  $('.footer_key'+key).html("");
  $('.footer_function_key'+key).removeClass('footer_function_key'+key);
- adjust_colum_width();
 }
 
 //muestra columnas
@@ -207,7 +200,6 @@ function show_column(key){
    $('.fa-plus').addClass("d-none");
  }
  $('.footer_key'+key).removeClass("d-none");
- adjust_colum_width();
 }
 
 //mostrar dato en el mapa
@@ -415,22 +407,6 @@ function show_subfield(field_ids){
         new_column_subform.setAttribute('colspan',1);
         $('#tr_visible').append(new_column_subform);
         set_hover();
-
-        // agrega body oculto
-        var new_column_width_only = document.createElement("TD");
-        new_column_width_only.setAttribute('colspan',1);
-        new_column_width_only.id = "body_only_width_subform_"+id_field;
-        new_column_width_only.className = "custom_row width_only"
-        $('#tbody_hidden tr').append(new_column_width_only);
-
-        // Agrega cabecera oculta
-        var new_column = document.createElement('TH');
-        new_column.className='subfield_column_'+id_field
-        new_column.style.minWidth ='100px';
-        new_column.style.whiteSpace = 'nowrap';
-        new_column.innerHTML = father_field.project_field_name.toUpperCase();
-        $('.data_fields').append(new_column);
-
         
       // valores para la tabla
       var data_child = father_field.body
@@ -522,8 +498,6 @@ function show_subfield(field_ids){
         });
         
       });//end forEach
-      verify_scroll_table();
-      adjust_colum_width();
     }//end success
   });//end ajax
 }
@@ -554,7 +528,9 @@ function get_layer_data(){
             properties_layer= row_layer['properties'];
           $('.header_column_layer').not('.d-none').each(function(){
             var prop = $(this).attr('key_layer').substring(3);
-            html_div = "<div id_layer_row="+row_layer.id+">"+row_layer['properties'][prop]+"</div>"
+            var row_text = row_layer['properties'][prop];
+            if (row_text == undefined ){ row_text = ""}
+            html_div = "<div id_layer_row="+row_layer.id+">"+row_text+"</div>"
             $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).append(html_div);
           })
         });//end forEach      
@@ -570,26 +546,20 @@ function show_column_layer(key_layer,id_layer){
   get_layer_data();
   $('#columnfake_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
   $('#subcolumnfake_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
-  $('#columnfake_data_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
   $('#column_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
   $('.celdlayer_key'+id_layer+'\\|'+key_layer).removeClass("d-none");
   $('#addcolumn_layer\\|'+key_layer+'\\|'+id_layer).addClass("d-none");
   $('.footerlayer_key'+id_layer+'\\|'+key_layer).removeClass("d-none");
-  adjust_colum_width();
-  verify_scroll_table();
 }
 
 function hide_column_layer(key_layer,id_layer){
   $('#columnfake_layer_'+key_layer+"_"+id_layer).addClass("d-none");
   $('#subcolumnfake_layer_'+key_layer+"_"+id_layer).addClass("d-none");
-  $('#columnfake_data_layer_'+key_layer+"_"+id_layer).addClass("d-none");
   $('#column_layer_'+key_layer+"_"+id_layer).addClass("d-none");
   $('.celdlayer_key'+id_layer+'\\|'+key_layer).addClass("d-none");
   $('#addcolumn_layer\\|'+key_layer+'\\|'+id_layer).removeClass("d-none");
   $('.footerlayer_key'+id_layer+'\\|'+key_layer).addClass("d-none");
   $('.footerlayer_key'+id_layer+'\\|'+key_layer).html("");
-  adjust_colum_width();
-  verify_scroll_table();
 }
 
 function create_layers_table(){
@@ -628,8 +598,6 @@ function open_subcolumn(event){
     var new_colsapan =  parseInt($('#header_column_'+id_field).attr('colspan'))+1;
     $('#header_column_'+id_field).attr('colspan',new_colsapan);
     $('#body_only_width_subform_'+id_field).attr('colspan',new_colsapan);
-    verify_scroll_table();
-    adjust_colum_width();
 }
 
 function remove_subcolumn(id_field,id_subfield){
@@ -642,8 +610,6 @@ function remove_subcolumn(id_field,id_subfield){
     $('#header_column_'+id_field).attr('colspan',new_colsapan);
     $('#body_only_width_subform_'+id_field).attr('colspan',new_colsapan);
   verify_close_subheader();
-  verify_scroll_table();
-  adjust_colum_width();
 }
 
 function remove_column(id_field){
@@ -653,17 +619,16 @@ function remove_column(id_field){
   $('#tr_footer_suborm'+id_field).remove();
   $('#open_subform'+id_field).removeClass('d-none');
   verify_close_subheader();
-  adjust_colum_width();
 }
 
 function verify_close_subheader(){
   // verifica subcolumnas abiertas
   var count_open_subforms = verify_open_columns();
   if(count_open_subforms==0){
-     $('#table_visible_container').css('height','30px');
+    // ojo revisar
+    // $('#table_visible_container').css('height','30px');
   }
   adjust_table_height();
-  verify_scroll_table();
 }
 
 function verify_open_columns(){
@@ -870,7 +835,7 @@ function open_alert_modal(event){
 
 // Modal PDF
 function show_pdf(is_alert){
-  if($('#table_visible .custom-control-input:checked').not('#table_select_all').not('#table_select_all_hidden').length==0){
+  if($('#table_visible .custom-control-input:checked').not('#table_select_all').length==0){
     $('#text_toast').html("No hay registros seleccionados");
     $('#toast').toast('show');
     return;
@@ -899,7 +864,7 @@ function generate_alerts(){
   }
   var pattern_mail = /^\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i
   var wrong_mail_count = 0
-  $('#table_visible .custom-control-input:checked').not('#table_select_all').not('#table_select_all_hidden').each(function(){
+  $('#table_visible .custom-control-input:checked').not('#table_select_all').each(function(){
     var id_checked = $(this).attr('id').substring(13);
     var alert_mail_value = $('.'+text_celd+'_id'+id_checked+'.'+text_celd+'_key'+alert_mail_key).html();
     //verifica si es formato mail
@@ -1085,9 +1050,9 @@ function generate_alerts(){
     </nav>
   </div>
 </div>
-<div class="table-responsive div_table no_scroll" id="table_visible_container" style="height: 30px; overflow-y: hidden; border-bottom: solid 2px rgba(0,0,0,0.6);">
+<div class="table-responsive div_table no_scroll" id="table_visible_container" style="border-bottom: solid 2px rgba(0,0,0,0.6);">
   <table class="table table-hover m-0 card-body" id="table_hidden" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
-    <thead  id="thead_table_visible" class="scroll_false">
+    <thead  id="thead_table_visible">
       <tr id="tr_visible">
         <th class="border-0 head_key#_action" style="padding-top: 0px; vertical-align: top; cursor: pointer;">
           <p style="color:white; margin-bottom: 0px"></p>
@@ -1101,6 +1066,7 @@ function generate_alerts(){
           <i class="fas fa-image icons invisible"></i>
 
         </th>
+        <!-- Aqui se eliminó código -->
         <th class="border-0" style="padding-top: 0px; vertical-align: top; cursor: pointer;">#
           <input type="text" class="d-none field_key" value="#">
           <div id="layer_container_visible">
@@ -1199,95 +1165,6 @@ function generate_alerts(){
               </th>
               <% end %>
             <% end %>  
-          <% end %>
-        <% end %>
-      </tr>
-    </thead>
-    <tbody id="tbody_hidden" style="visibility: hidden;">
-      <tr>
-        <td class="custom_row width_only"></td>
-        <td class="custom_row width_only"></td>
-        <td class="custom_row width_only" id="columnfake_datacount"></td>
-        <!-- body oculto en primera tabla para ancho de columna -->
-          <% if !@top_level_fields.nil? %>
-            <% @top_level_fields.each do |field|  %>
-              <!-- Verifica que tenga autorización para ver el campo -->
-              <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
-              <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
-                <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-                  <td class="custom_row width_only d-none" id=<%="columnfake_data_layer_"+field.key+"_"+field.project_type.id.to_s %>></td>
-                <% end %>
-              <% end %>
-            <% end %>  
-          <% end %>    
-        
-        <% if !@fields.nil? %>
-        <% index = 0 %>
-          <% @fields.each do |field|  %>
-            <!-- Verifica que tenga autorización para ver el campo -->
-            <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
-            <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
-              <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-                <% index=index+1 %>
-                <% if !field.popup %>
-                  <td class="d-none custom_row width_only" id=<%="columnfake_data_"+field.key %>></td>
-                <% else %>
-                  <td class="custom_row width_only" id=<%="columnfake_data_"+field.key %>></td>
-                <% end %>
-              <% end %>
-            <% end %>  
-          <% end %>  
-        <% end %>    
-      </tr> 
-    </tbody>
-  </table>
-</div>
-<div class="table-responsive div_table scroll table_scroll"  style="position: relative; z-index: 10; transition: 1s;" id="div_table_data">
-  <table class="table table-hover m-0 card-body" id="table_visible" style="font-size: 0.8em; position: relative;top: -50px; text-align: center;">
-    <thead style="visibility: hidden; border-bottom: solid transparent">
-      <tr class="data_fields">
-        <th></th>
-        <th>
-          <div style="white-space: nowrap;">
-          <div class="custom-control custom-checkbox">
-            <input class="custom-control-input just_header" id="table_select_all_hidden" type="checkbox">
-            <label class="string optional control-label custom-control-label" for="table_select_all_hidden"> </label>
-          </div>
-          <i class="fas fa-image icons"></i>
-        </div>
-        </th>
-        <th>#
-          <div id="layer_container_hidden">
-            <% if !@top_level_fields.nil? %>
-              <% @top_level_fields.each do |field|  %>
-                <!-- Verifica que tenga autorización para ver el campo -->
-                <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
-                <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
-                  <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-                    <th class="header_column border-0 d-none" id=<%="column_layer_"+field.key+"_"+field.project_type.id.to_s %>>
-                      <div class="th-hover custom_header">
-                        <p class="custom_p_header" ><%= field.name %></p>
-                      </div>
-                    </th>
-                  <% end %>
-                <% end %>  
-              <% end %>
-            <% end %>
-          </div>
-        </th>
-        <% if !@fields.nil? %>
-          <% @fields.each do |field|  %>
-            <!-- Verifica que tenga autorización para ver el campo -->
-            <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
-            <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
-              <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-                <% if !field.popup %>
-                  <th style="min-width: 100px; white-space: nowrap;" class="d-none" id=<%="column_"+field.key %>><%= field.name %></th>
-                <% else %>
-                  <th style="min-width: 100px; white-space: nowrap;" id=<%="column_"+field.key %>><%= field.name %></th>
-                <% end %>
-              <% end %>
-            <% end %>
           <% end %>
         <% end %>
       </tr>

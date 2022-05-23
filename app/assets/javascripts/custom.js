@@ -1402,7 +1402,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
   //cierra modal de información del registro
   if(close_info){$("#info-modal").modal("hide");}
   // descliquea checkbox select_all
-  $('#table_select_all_hidden').prop('checked', false);
   $('#table_select_all').prop('checked', false);
   $(".fakeLoader").css("display", "block");
   var type_box = 'polygon';
@@ -1474,8 +1473,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
         // Verifica si tiene que crear tabla de subformularios
         create_subforms_table(subfield_ids_saved);
         // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
-        verify_scroll_table();
-        adjust_colum_width();
         return;
       }
       data_dashboard = data.data
@@ -1483,7 +1480,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
       // borramos los datos anteriores
       $("#tbody_visible").empty();
       $("#total_table").empty();
-      $(".width_only").html("");
       Navarra.dashboards.app_ids_table=[];
 
       // verificamos columnas ocultas
@@ -1534,9 +1530,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
       create_subforms_table(subfield_ids_saved);
       // Verifica si tiene que crear tabla de capas
       create_layers_table();
-      // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
-      verify_scroll_table();
-      adjust_colum_width();
     }
   });
 
@@ -1626,10 +1619,12 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   if (column.value == "#") {
     if (isNaN(per_page_value)) {
         array_datos.push(index+1);
-      document.getElementById('columnfake_datacount').innerHTML=(index + 1);
+        //ojo revisar
+      //document.getElementById('columnfake_datacount').innerHTML=(index + 1);
     } else {
         array_datos.push((index + 1) + (active_page - 1) * per_page_value);
-      document.getElementById('columnfake_datacount').innerHTML=(index + 1) + (active_page - 1) * per_page_value;
+        //ojo revisar
+        //document.getElementById('columnfake_datacount').innerHTML=(index + 1) + (active_page - 1) * per_page_value;
     }
     $('.field_key_layer').each(function(key_layer){
       array_datos.push("");
@@ -1803,23 +1798,6 @@ function open_subheaders_no_data(id_field){
     if(subheader.id_field ==  id_field){
       $('#'+id_field+'_subfield_'+subheader.id_subfield).addClass('d-none');
     }
-  });
-}
-
-function verify_scroll_table(){
-  if(document.getElementById('table_visible').scrollHeight>parseInt(document.getElementById('div_table_data').style.height)){
-    $('#thead_table_visible').addClass('scroll_false');
-  } else{
-    $('#thead_table_visible').removeClass('scroll_false');
-  }
-}
-
-function adjust_colum_width(){
-  $('.width_only').each(function(index){
-    var index_col = index+1;
-    var cel_width = $('#tbody_visible tr:nth-child(1) td:nth-child('+index_col+')');
-    max_width = cel_width.outerWidth() + 'px';
-    this.style.minWidth = max_width;
   });
 }
 
@@ -2337,11 +2315,6 @@ function init_report() {
       var fields = document.getElementById('thead_report_visible').querySelectorAll(".field_key_report");
       // borramos los datos anteriores
       document.getElementById("tbody_visible_report").remove();
-      document.getElementById("tbody_hidden_report").remove();
-      var new_body = document.createElement("TBODY");
-      new_body.style.visibility = "hidden";
-      new_body.id = "tbody_hidden_report";
-      document.getElementById("table_hidden_report").appendChild(new_body);
       var new_body = document.createElement("TBODY");
       new_body.style.className = "project_data_div";
       new_body.id = "tbody_visible_report";
@@ -2367,8 +2340,7 @@ function init_report() {
           }
           new_row.appendChild(new_celd);
         });
-        document.getElementById("tbody_visible_report").appendChild(new_row.cloneNode(true));
-        document.getElementById("tbody_hidden_report").appendChild(new_row);
+        document.getElementById("tbody_visible_report").appendChild(new_row);
       });
 
       $('#modal-report').modal('show');
@@ -3837,9 +3809,6 @@ function edit_file(edit_parent, edit_child, edit_status){
         create_subforms_table();
         // Verifica si tiene que crear tabla de capas
         create_layers_table();
-        // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
-        verify_scroll_table();
-        adjust_colum_width();
       }
 
 
