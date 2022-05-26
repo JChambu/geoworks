@@ -51,17 +51,22 @@ class DashboardsController < ApplicationController
           .pluck(:role_id)
           .first
       end
-      # Campos de los proyectos que están por encima del proyecto actual
+      # Campos de los proyectos que están por encima del proyecto actual (se quitó esa restricción)
+      # Se agregó restricción de proyectos compartidos
+      @projects_shared = ProjectType
+        .joins(:has_project_types)
+        .where(has_project_types: {user_id: current_user.id})
+        .pluck(:id)
       @top_level_fields = ProjectField
         .joins(:project_type)
         .where.not(project_type_id: @project_type.id)
-        .order('project_types.level DESC', :sort)
+        .where(project_type_id: @projects_shared)
+        .order('project_types.level DESC','project_types.id', :sort)
 
       @table_configuration = TableConfiguration
         .where(project_type_id: @project_type.id)
         .where(user_id: current_user.id)
 
-      @project_types_all = ProjectType.where(enabled_as_layer: true).order(level: :desc)
       @current_tenant = Apartment::Tenant.current
 
       @project_filters = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id).first

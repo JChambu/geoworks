@@ -23,14 +23,17 @@ function init(is_alert) {
         $('.alert_header').addClass('d-none');
     }
     pdf_values_all = [];
-    var table_check = $('#table_visible .custom-control-input');
+    var table_check = $('#table_hidden .custom-control-input').not('#table_select_all');
     table_check.each(function(index){
+        index=index+1;
+        console.log("checked")
+        console.log($(this))
             if(this.checked){
                 var pdf_values = new Object;
                 pdf_values['id'] = this.id.split("check_select_")[1];
                 pdf_values['properties'] = new Object;
                 pdf_values['children'] = new Object;
-                var row_selected = $('#table_visible tr:nth-child('+index+') td').not('.custom_row_child').not('.child_celd').not('.footer_key');
+                var row_selected = $('#table_hidden tr:nth-child('+index+') td').not('.custom_row_child').not('.child_celd').not('.footer_key');
                 row_selected.each(function(index_column){
                     if(index_column>2 && this.innerHTML!='' && !this.classList.contains('d-none')){
                         var column_name = $('#tr_visible th:nth-child('+(index_column+1)+')')[0].childNodes[1].childNodes[1];
@@ -40,7 +43,9 @@ function init(is_alert) {
                         pdf_values['properties'][column_key.value]['name'] = column_name.innerHTML;
                     }
                     });
-                row_selected_child = $('#table_visible tr:nth-child('+index+') .custom_row_child tr');
+                console.log("Datos de la propiedad")
+                console.log(pdf_values)
+                row_selected_child = $('#table_hidden tr:nth-child('+index+') .custom_row_child tr');
                     row_selected_child.each(function(){
                         var field_child = $(this).find('td');
                         var id_child_json = 0;

@@ -1,6 +1,13 @@
 <script type="text/javascript">
 var top_level_project_type_ids = [];
 $(document).ready(function () {
+    $(".div_table").on("scroll", function() {
+      if($(this).scrollTop()>5){
+        $('#thead_table_visible').css("background","rgba(39,43,48,1)");
+      } else {
+        $('#thead_table_visible').css("background","transparent");
+      }
+  });
 
 //Selector cantidad por página
 $(".option_perpage").click(function(){
@@ -144,7 +151,7 @@ function cal_column(key,id_proyect,layer,operator){
 function get_ids_checked(layer){
   var ids_checked = '';
   var count_ids_checked = 0;
-  $('#table_visible .custom-control-input').each(function(){
+  $('#table_hidden .custom-control-input').not('#table_select_all').each(function(){
       if(this.checked){
         if(count_ids_checked>0){ids_checked +=", "}
         ids_checked += ".celd"+layer+"_id"+$(this).attr('id').split('check_select_')[1]+" ";
@@ -178,8 +185,6 @@ function search_column(key){
 function hide_column(key){
  $('#columnfake_'+key).addClass("d-none");
  $('#subcolumnfake_'+key).addClass("d-none");
- $('#columnfake_data_'+key).addClass("d-none");
- $('#column_'+key).addClass("d-none");
  $('.celd_key'+key).addClass("d-none");
  $('#addcolumn_'+key).removeClass("d-none");
  $('.fa-plus').removeClass("d-none");
@@ -192,8 +197,6 @@ function hide_column(key){
 function show_column(key){
  $('#columnfake_'+key).removeClass("d-none");
  $('#subcolumnfake_'+key).removeClass("d-none");
- $('#columnfake_data_'+key).removeClass("d-none");
- $('#column_'+key).removeClass("d-none");
  $('.celd_key'+key).removeClass("d-none");
  $('#addcolumn_'+key).addClass("d-none");
  if($(".addcolumns").children().length == $(".column_data.d-none").length){
@@ -232,8 +235,8 @@ function show_item(appid_selected){
 
 //mostrar dato en el mapa
 function show_item_all(){
-  $('#table_visible .custom-control-input').prop('checked',true);
-    $('#table_visible tr').addClass('tr_checked');
+  $('#table_hidden .custom-control-input').prop('checked',true);
+    $('#table_hidden tr').addClass('tr_checked');
   $('table tbody tr').addClass('found');
   var string_filter = get_string_filter();
   Navarra.project_types.config.data_dashboard=string_filter;
@@ -241,8 +244,8 @@ function show_item_all(){
 }
 
 function unselect_item_all(){
-  $('#table_visible .custom-control-input').prop('checked',false);
-  $('#table_visible tr').removeClass('tr_checked');
+  $('#table_hidden .custom-control-input').prop('checked',false);
+  $('#table_hidden tr').removeClass('tr_checked');
   $('table tbody tr').removeClass('found');
   Navarra.project_types.config.data_dashboard="";
   Navarra.geomaps.current_layer();
@@ -250,7 +253,7 @@ function unselect_item_all(){
 
 function get_string_filter(){
   var array_ids = [];
-  $('#table_visible .custom-control-input:checked').not('.just_header').each(function(){
+  $('#table_hidden .custom-control-input:checked').not('#table_select_all').each(function(){
       array_ids.push($(this).attr('id').split('_')[2]);
     });
   var string_filter=""
@@ -263,6 +266,7 @@ function get_string_filter(){
 
 // FUNCIONES PARA TRAER DATOS DE SUBFORMULARIOS
 function show_subfield(field_ids){
+  $('#tr_subfields').removeClass('d-none');
   var app_ids_table = Navarra.dashboards.app_ids_table;
   var from_date_subforms = Navarra.project_types.config.from_date_subforms;
   var to_date_subforms = Navarra.project_types.config.to_date_subforms;
@@ -290,14 +294,12 @@ function show_subfield(field_ids){
     success: function(data) {
       data.forEach(function(father_field){
         var count_columns = $('#tr_visible').find('th').length;
-        var column_par = count_columns%2;
         var id_field = father_field.project_field_id;
         //Oculta opción
         $('#open_subform'+id_field).addClass('d-none');
         // Agrega cabecera visible
         var new_column_subform = document.createElement('TH');
         new_column_subform.className = 'border-0 header_column subfield_column_'+id_field;
-        if(column_par==0){new_column_subform.classList.add('zebra')}
         new_column_subform.id = 'header_column_'+id_field;
         var new_div = document.createElement('DIV');
         new_div.className = "th-hover custom_header";
@@ -326,14 +328,12 @@ function show_subfield(field_ids){
         var new_column = document.createElement('TH');
         new_column.style.minWidth = "204px";
         new_column.style.width = "204px";
+        new_column.style.border = "none";
         new_column.className = 'header_column subfield_column_'+id_field;
-        if(column_par==0){new_column.classList.add('zebra')}
         new_column.innerHTML = "Fecha / Usuario"
         $('#tr_subfields').append(new_column);
-        // elimina y agrega footer nuevo
-        $('.tr_footer_suborm').remove();
-        var celd_footer = "<tr id='tr_footer_suborm"+id_field+"' class='tr_footer_suborm' style='display: flex; border-top: none;'>"
-        celd_footer += "<td style = 'min-width:204px; with:204px' class='footersubform_key_date"+id_field+"'></td>"
+      
+        celd_footer = "<td style = 'min-width:204px; with:204px' class='footersubform_key_date"+id_field+"'></td>"
         father_field.head.forEach(function(child_field){
           if(child_field.hidden==false && child_field.field_type_id!=11 && child_field.can_read == true){
             var new_option = document.createElement("A");
@@ -346,8 +346,8 @@ function show_subfield(field_ids){
             //Agrega Subcabecera
             var new_column = document.createElement('TH');
             new_column.className = 'header_column d-none '+'subfield_column_'+id_field+" " + id_field+"sub"+child_field.field_id;
-            if(column_par==0){new_column.classList.add('zebra')}
             new_column.style.whiteSpace = "nowrap";
+            new_column.style.border = "none";
             var new_tr = document.createElement('TR');
             new_tr.className = "th-hover custom_header";
             new_tr.style.display = 'inline-block'
@@ -379,7 +379,7 @@ function show_subfield(field_ids){
                 var new_icon = document.createElement('I');
                 new_icon.className = "fas fa-"+icons_function[i]+" icons custom_function_icon text-dark footer_"+icons_class[i]+"subform_key"+child_field.field_id;
                 new_icon.title = icons_title[i];
-                new_icon.setAttribute("onClick",icons_class[i]+"_column("+child_field.field_id+","+id_field+",'subform')");
+                new_icon.setAttribute("onClick","cal_column("+child_field.field_id+","+id_field+",'subform','"+icons_class[i]+"')");
                 new_div1.appendChild(new_icon);
               }
             }
@@ -389,11 +389,10 @@ function show_subfield(field_ids){
             $('#tr_subfields').append(new_column);
 
             // Agrega footer
-            celd_footer += "<td name_function='"+child_field.name+"' class='d-none footer_key footersubform_key"+child_field.field_id+"'></td>"
+            celd_footer += "<td name_function='"+child_field.name+"' class='d-none footer_field_"+id_field+" footer_key footersubform_key"+child_field.field_id+"'></td>"
           }
         });
         // Agrega footer
-          celd_footer += "</tr>"
           $('#total_table').append(celd_footer);
 
         new_div1.appendChild(new_drop)  
@@ -416,12 +415,12 @@ function show_subfield(field_ids){
             $('#link_dropdown_'+id_field).find('i').attr('title','No hay datos para mostrar');
           }
         $('.row_data').each(function(row){
+          var key_data = $(this).attr("id").substring(14); 
+          var row_table = $(this);
           var new_td = document.createElement('TD');
           new_td.className="custom_row custom_row_child subfield_column_"+id_field;
-          new_td.style.minWidth = '204px';
-          if(column_par==0){new_td.classList.add('zebra')}
-          var key_data = $(this).attr("id").substring(14);          
-          if(data_child[key_data]!=undefined){
+          new_td.style.minWidth = '204px';    
+          if(data_child[key_data]!=undefined){            
             data_child[key_data].forEach(function(column,indexColumn){
               var new_sub_column = document.createElement('TR');
               new_sub_column.style.display = 'flex';
@@ -437,11 +436,13 @@ function show_subfield(field_ids){
                 new_cel_subform.style.width='30px';
                 new_cel_subform.style.minWidth='30px';
                 new_cel_subform.className='child_celd';
+                new_cel_subform.setAttribute("id_child",column.id)
                 var new_icon = document.createElement('I');
                 new_icon.className = "fas fa-image icons";
                 new_icon.setAttribute('onClick', 'Navarra.photos.open_photos('+column.id+',true)')
                 new_cel_subform.appendChild(new_icon);
                 new_sub_column.appendChild(new_cel_subform);
+                new_td.appendChild(new_sub_column);
 
               // agrega fecha de creación
               var new_cel_subform = document.createElement('TD');
@@ -451,6 +452,7 @@ function show_subfield(field_ids){
                 new_cel_subform.style.whiteSpace='nowrap';  
                 new_cel_subform.className='child_celd';
                 new_cel_subform.id = id_field+"_childdate_"+column.id;
+                new_cel_subform.setAttribute("id_child",column.id)
                 if(column.gwm_created_at!=null){
                   var created_date = column.gwm_created_at.split('T')[0];
                   var created_time = column.gwm_created_at.split('T')[1].substring(0,5)
@@ -459,26 +461,51 @@ function show_subfield(field_ids){
                 new_cel_subform.style.width='200px';
                 new_cel_subform.style.minWidth='200px';
                 new_sub_column.appendChild(new_cel_subform);
+                new_td.appendChild(new_sub_column);
+              });
+            }
+            row_table.append(new_td);
+            
 
-              var sub_columns_visibles = $('.'+id_field+'subfield');
-              sub_columns_visibles.each(function(index){
-                var colname = $(this).attr('id').split('_')[2];
-                var new_cel_subform = document.createElement('TD');
-                new_cel_subform.style.padding='5px';  
-                new_cel_subform.className = id_field+"sub"+colname + " d-none child_celd celdsubform_id"+key_data;
-                new_cel_subform.id = id_field+"_subceld_"+colname + "_" + column.id ;
-                new_cel_subform.style.whiteSpace='nowrap';
-                new_cel_subform.style.border='none';
-                new_cel_subform
-                if(column.properties[colname]!=undefined){
-                  new_cel_subform.innerHTML = column.properties[colname];
-                }
-                new_sub_column.appendChild(new_cel_subform);
-              })
-              new_td.appendChild(new_sub_column);
-            })           
-          }
-          $(this).append(new_td);
+            //Columnas de subformularios
+            var sub_columns_visibles = $('.'+id_field+'subfield');
+            sub_columns_visibles.each(function(index){
+              sub_col_ = $(this);
+              var colname = sub_col_.attr('id').split('_')[2];
+              var new_td = document.createElement('TD');
+              new_td.className="custom_row d-none custom_row_child subfield_column_"+id_field;
+              new_td.style.minWidth = '204px';
+              new_td.setAttribute("id_container",id_field+"container"+colname)
+              if(data_child[key_data]!=undefined){ 
+                data_child[key_data].forEach(function(column,indexColumn){
+                  var new_sub_column = document.createElement('TR');
+                  new_sub_column.style.display = 'flex';
+                  new_sub_column.style.flexDirection = 'column';
+                  new_sub_column.style.marginLeft = '-5px';
+                  new_sub_column.style.paddingLeft = '5px';
+                  if(indexColumn==0){
+                    new_sub_column.style.borderTop= 'none';
+                  } else {
+                    new_sub_column.style.borderTop= 'solid 1px rgba(0,0,0,0.5)';
+                  }
+
+                  var new_cel_subform = document.createElement('TD');
+                  new_cel_subform.style.padding='5px';  
+                  new_cel_subform.setAttribute("id_child",column.id)
+                  new_cel_subform.className = id_field+"sub"+colname + " d-none child_celd celdsubform_id"+key_data;
+                  new_cel_subform.id = id_field+"_subceld_"+colname + "_" + column.id ;
+                  new_cel_subform.style.whiteSpace='nowrap';
+                  new_cel_subform.style.border='none';
+                  new_cel_subform
+                  if(column.properties[colname]!=undefined){
+                    new_cel_subform.innerHTML = column.properties[colname];
+                  }
+                  new_sub_column.appendChild(new_cel_subform);
+                  new_td.appendChild(new_sub_column);
+                })
+              }
+              row_table.append(new_td);
+            });        
         });
         if(Object.keys(data_child).length!=0){
           open_subheaders(id_field);
@@ -496,8 +523,9 @@ function show_subfield(field_ids){
           $('.custom_drop_subforms').css('margin-left',x);
         });
         });
-        
+
       });//end forEach
+      verify_close_subheader();
     }//end success
   });//end ajax
 }
@@ -527,11 +555,15 @@ function get_layer_data(){
         data_project.forEach(function(row_layer,index_row){
             properties_layer= row_layer['properties'];
           $('.header_column_layer').not('.d-none').each(function(){
-            var prop = $(this).attr('key_layer').substring(3);
-            var row_text = row_layer['properties'][prop];
-            if (row_text == undefined ){ row_text = ""}
-            html_div = "<div id_layer_row="+row_layer.id+">"+row_text+"</div>"
-            $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).append(html_div);
+            // verifica id del proyecto para keys iguales
+            id_project_layer = $(this).attr("id_project_layer");
+            if (id_project_layer == row_layer.project_type_id){
+              var prop = $(this).attr('key_layer').substring(3);
+              var row_text = row_layer['properties'][prop];
+              if (row_text == undefined ){ row_text = ""}
+              html_div = "<div id_layer_row="+row_layer.id+">"+row_text+"</div>"
+              $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).append(html_div);
+            }
           })
         });//end forEach      
       });
@@ -546,7 +578,6 @@ function show_column_layer(key_layer,id_layer){
   get_layer_data();
   $('#columnfake_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
   $('#subcolumnfake_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
-  $('#column_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
   $('.celdlayer_key'+id_layer+'\\|'+key_layer).removeClass("d-none");
   $('#addcolumn_layer\\|'+key_layer+'\\|'+id_layer).addClass("d-none");
   $('.footerlayer_key'+id_layer+'\\|'+key_layer).removeClass("d-none");
@@ -555,7 +586,6 @@ function show_column_layer(key_layer,id_layer){
 function hide_column_layer(key_layer,id_layer){
   $('#columnfake_layer_'+key_layer+"_"+id_layer).addClass("d-none");
   $('#subcolumnfake_layer_'+key_layer+"_"+id_layer).addClass("d-none");
-  $('#column_layer_'+key_layer+"_"+id_layer).addClass("d-none");
   $('.celdlayer_key'+id_layer+'\\|'+key_layer).addClass("d-none");
   $('#addcolumn_layer\\|'+key_layer+'\\|'+id_layer).removeClass("d-none");
   $('.footerlayer_key'+id_layer+'\\|'+key_layer).addClass("d-none");
@@ -575,33 +605,28 @@ function open_subcolumn(event){
   var id_field = event.target.id.split('_')[0];
   var id_subfield = event.target.id.split('_')[2];
   $('.'+id_field+'sub'+id_subfield).removeClass('d-none');
+  $('[id_container = '+id_field+'container'+id_subfield+']').removeClass('d-none');
   $('.footersubform_key'+id_subfield).removeClass('d-none');
   $(event.target).addClass('d-none');
-  $('#table_visible_container').css('height','60px');
-  var count_open_subforms = verify_open_columns();
-  if(count_open_subforms>0){
-     $('#table_visible_container').css('height','60px');
-  }
   adjust_table_height();
   var width_array = [];
-  //Ajusta ancho columnas
-    $('.'+id_field+'sub'+id_subfield).each(function(){
-      width_array.push($(this).width());
-    });
-    var max = Math.max.apply(Math,width_array);
-    if(max>200){max=200}
-    max = (parseInt(max)+30)+'px';
-    $('.'+id_field+'sub'+id_subfield).css('whiteSpace',"normal");
-    $('.'+id_field+'sub'+id_subfield).css('minWidth',max);
-    $('.footersubform_key'+id_subfield).css('minWidth',max);
-    // ajusta colspan
-    var new_colsapan =  parseInt($('#header_column_'+id_field).attr('colspan'))+1;
-    $('#header_column_'+id_field).attr('colspan',new_colsapan);
-    $('#body_only_width_subform_'+id_field).attr('colspan',new_colsapan);
+  var max = Math.max.apply(Math,width_array);
+  if(max>200){max=200}
+  max = (parseInt(max)+30)+'px';
+  $('.'+id_field+'sub'+id_subfield).css('whiteSpace',"normal");
+  $('.'+id_field+'sub'+id_subfield).css('minWidth',max);
+  $('.footersubform_key'+id_subfield).css('minWidth',max);
+  // ajusta colspan
+  var new_colsapan =  parseInt($('#header_column_'+id_field).attr('colspan'))+1;
+  $('#header_column_'+id_field).attr('colspan',new_colsapan);
+  $('#body_only_width_subform_'+id_field).attr('colspan',new_colsapan);
+  verify_close_subheader();
+  adjust_height_rows()
 }
 
 function remove_subcolumn(id_field,id_subfield){
   $('.'+id_field+'sub'+id_subfield).addClass('d-none');
+  $('[id_container = '+id_field+'container'+id_subfield+']').addClass('d-none');
   $('#'+id_field+'_subfield_'+id_subfield).removeClass('d-none');
   $('.footersubform_key'+id_subfield).addClass('d-none');
   $('.footersubform_key'+id_subfield).html('');
@@ -610,13 +635,30 @@ function remove_subcolumn(id_field,id_subfield){
     $('#header_column_'+id_field).attr('colspan',new_colsapan);
     $('#body_only_width_subform_'+id_field).attr('colspan',new_colsapan);
   verify_close_subheader();
+  adjust_height_rows();
 }
 
+function adjust_height_rows(){
+  // ajusta alto de filas
+  $('.child_celd').css("height","auto");
+  var height_rows = {};
+  $('.child_celd').each(function(){
+    if(height_rows[$(this).attr("id_child")]==undefined || height_rows[$(this).attr("id_child")] < $(this).outerHeight() ){
+      height_rows[$(this).attr("id_child")] = $(this).outerHeight();
+    }
+  });
+  $.each( height_rows, function( key, value ) {
+    valuepx = value + "px";
+    $('td[id_child='+key+']').css("height",valuepx);
+  });
+}
 function remove_column(id_field){
   // elimina columna de campos subformularios
   $('.subfield_column_'+id_field).remove();
+  $('.footer_field_'+id_field).remove();
+  $('.footersubform_key_date'+id_field).remove();
   $('#body_only_width_subform_'+id_field).remove();
-  $('#tr_footer_suborm'+id_field).remove();
+  $('.tr_footer_suborm'+id_field).remove();
   $('#open_subform'+id_field).removeClass('d-none');
   verify_close_subheader();
 }
@@ -625,8 +667,9 @@ function verify_close_subheader(){
   // verifica subcolumnas abiertas
   var count_open_subforms = verify_open_columns();
   if(count_open_subforms==0){
-    // ojo revisar
-    // $('#table_visible_container').css('height','30px');
+     $('#tr_subfields').addClass('d-none');
+  } else {
+    $('#tr_subfields').removeClass('d-none');
   }
   adjust_table_height();
 }
@@ -645,14 +688,15 @@ function verify_open_columns(){
 function adjust_table_height(){
   var height_browser = window.innerHeight
   var height_card=$(".card_data").innerHeight()
-  var height_table_head = $('#table_visible_container').innerHeight();
+  //ojo revisar
+  //var height_table_head = $('#table_visible_container').innerHeight();
   if($('#status-view').hasClass('status-view-expanded')){
-    var height_table = height_browser - $("#nav_bar").innerHeight() -height_card - height_table_head - 20;
-    $(".table_scroll").css("height", height_table);
+    var height_table = height_browser - $("#nav_bar").innerHeight() -height_card - 20;
+    $("#table_visible_container").css("height", height_table);
   } else {
     if(!$('#status-view').hasClass('status-view-condensed')){
-    var height_table = height_browser*.5 - height_card - height_table_head - 20;
-    $(".table_scroll").css("height", height_table);
+    var height_table = height_browser*.5 - height_card - 20;
+    $("#table_visible_container").css("height", height_table);
   }
   }
 }
@@ -835,7 +879,7 @@ function open_alert_modal(event){
 
 // Modal PDF
 function show_pdf(is_alert){
-  if($('#table_visible .custom-control-input:checked').not('#table_select_all').length==0){
+  if($('#table_hidden .custom-control-input:checked').not('#table_select_all').length==0){
     $('#text_toast').html("No hay registros seleccionados");
     $('#toast').toast('show');
     return;
@@ -864,7 +908,7 @@ function generate_alerts(){
   }
   var pattern_mail = /^\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i
   var wrong_mail_count = 0
-  $('#table_visible .custom-control-input:checked').not('#table_select_all').each(function(){
+  $('#table_hidden .custom-control-input:checked').not('#table_select_all').each(function(){
     var id_checked = $(this).attr('id').substring(13);
     var alert_mail_value = $('.'+text_celd+'_id'+id_checked+'.'+text_celd+'_key'+alert_mail_key).html();
     //verifica si es formato mail
@@ -1050,11 +1094,11 @@ function generate_alerts(){
     </nav>
   </div>
 </div>
-<div class="table-responsive div_table no_scroll" id="table_visible_container" style="border-bottom: solid 2px rgba(0,0,0,0.6);">
+<div class="table-responsive div_table" id="table_visible_container" style="border-bottom: solid 2px rgba(0,0,0,0.6);">
   <table class="table table-hover m-0 card-body" id="table_hidden" style="font-size: 0.8em; text-align: center; border:solid 2px transparent;">
     <thead  id="thead_table_visible">
       <tr id="tr_visible">
-        <th class="border-0 head_key#_action" style="padding-top: 0px; vertical-align: top; cursor: pointer;">
+        <th class="border-0 head_key#_action" id="first_th" style="padding-top: 0px; vertical-align: top; cursor: pointer;">
           <p style="color:white; margin-bottom: 0px"></p>
           <input type="text" class="d-none field_key" value="#_action">
         </th>
@@ -1066,7 +1110,6 @@ function generate_alerts(){
           <i class="fas fa-image icons invisible"></i>
 
         </th>
-        <!-- Aqui se eliminó código -->
         <th class="border-0" style="padding-top: 0px; vertical-align: top; cursor: pointer;">#
           <input type="text" class="d-none field_key" value="#">
           <div id="layer_container_visible">
@@ -1076,12 +1119,13 @@ function generate_alerts(){
                 <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
                 <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
                   <% if field.field_type_id != 11 && field.field_type_id != 7  %>
-                    <th class="header_column border-0 header_column_layer d-none " id=<%="columnfake_layer_"+field.key+"_"+field.project_type.id.to_s %> key_layer=<%="key"+field.key%>>
+                    <th class="header_column border-0 header_column_layer d-none " id=<%="columnfake_layer_"+field.key+"_"+field.project_type.id.to_s %> key_layer=<%="key"+field.key%> id_project_layer=<%=field.project_type_id%>>
                       <div class="th-hover custom_header">
                         <p class="custom_p_header" ><%= field.name %></p>
                         <div class="custom_div_table">
                           <i class="fas fa-times icons" onclick="hide_column_layer(<%="'"+field.key+"','"+field.project_type.id.to_s+"'"%>)"></i>
                           <input type="text" class="d-none field_key_layer" id=<%= "headlayer"+field.project_type.id.to_s+"|"+field.key %> value=<%= field.id %>>
+                          <br/>
                           <% if field.field_type_id == 5 %>                
                             <i class="<%="fa fa-plus icons custom_function_icon text-dark footer_sumlayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="cal_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"', 'layer' , 'sum'"%>)" title="Sumar"></i>
                             <i class="<%="fa fa-greater-than icons custom_function_icon text-dark footer_maxlayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="cal_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer' , 'max'"%>)" title="Máximo"></i>
@@ -1115,6 +1159,7 @@ function generate_alerts(){
                       <i class="fas fa-search icons text-white" onclick="search_column(<%="'"+field.key+"'"%>)" title="Buscar"></i>
                       <i class="fas fa-times icons text-white" onclick="hide_column(<%="'"+field.key+"'"%>)" title="Cerrar"></i>
                       <input type="text" class="d-none field_key" id=<%= "field_key"+field.key %> value=<%= field.key %>>
+                      <br/>
                       <% if field.field_type_id == 5 %>                
                         <i class="<%="fa fa-plus icons custom_function_icon text-dark footer_sum_key"+field.key%>" onclick="cal_column(<%="'"+field.key+"','','', 'sum'"%>)" title="Sumar"></i>
                         <i class="<%="fa fa-greater-than icons custom_function_icon text-dark footer_max_key"+field.key%>" onclick="cal_column(<%="'"+field.key+"','','' , 'max'"%>)" title="Máximo"></i>
@@ -1130,7 +1175,7 @@ function generate_alerts(){
         <% end %>
       <% end %>
       </tr>
-      <tr id="tr_subfields">
+      <tr id="tr_subfields" class="d-none" >
         <th class="border-0 head_key#_action"></th>
         <th class="border-0 head_key#_select"></th>
         <th class="border-0"></th>

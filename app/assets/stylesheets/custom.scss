@@ -455,10 +455,12 @@ div.custom-menu.show {
   width: 100%;
 }
 
-#table_hidden th {
-  position: sticky; top: 0; z-index: 10;
+#thead_table_visible {
+  position: sticky; 
+  top: -1px; 
+  z-index: 10;
+  transition: 0.2s
 }
-
 
 /*custom checkbox and radio*/
 .custom-checkbox .custom-control-input:checked~.custom-control-label::before{

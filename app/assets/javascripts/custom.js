@@ -1619,12 +1619,8 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   if (column.value == "#") {
     if (isNaN(per_page_value)) {
         array_datos.push(index+1);
-        //ojo revisar
-      //document.getElementById('columnfake_datacount').innerHTML=(index + 1);
     } else {
         array_datos.push((index + 1) + (active_page - 1) * per_page_value);
-        //ojo revisar
-        //document.getElementById('columnfake_datacount').innerHTML=(index + 1) + (active_page - 1) * per_page_value;
     }
     $('.field_key_layer').each(function(key_layer){
       array_datos.push("");
@@ -2521,9 +2517,11 @@ function table_to_excel() {
   var id_subcolumn_before = 0;
   var subcolumn_open_count_before = 0;
   td_th.forEach(function(e,index){
+    console.log("iteración")
+    console.log(e)
     //resta la celda del icono imagen
     var subcolumn_open_count = $(e).find('td').length-1;
-    var id_subcolumn = $(e).find('td').eq(1).attr('id').split('_')[0];
+    var id_subcolumn = $(e).find('tr').eq(1).attr('id').split('_')[0];
     if(index==0){first_subcolumn_id = id_subcolumn}
     if(id_subcolumn_before!=0 && id_subcolumn_before!=id_subcolumn){
       subcolumn_count+=subcolumn_open_count_before;
@@ -2583,11 +2581,11 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
   }
   if(is_multiple){
     $('#multiple_edit').addClass("multiple_on");
-    var total_files_to_edit = $('#table_visible .custom-control-input:checked').not('.just_header').length;
+    var total_files_to_edit = $('#table_hidden .custom-control-input:checked').not('#table_select_all').length;
     $('#info_title').html(total_files_to_edit + " registros seleccionados ");
   } else{
       $('#multiple_edit').removeClass("multiple_on");
-      if( $('#table_visible .custom-control-input:checked').length>0){
+      if( $('#table_hidden .custom-control-input:checked').length>0){
         // si se llamó a edición simple pero hay multiple registros seleccionados, se limpia la selección
         $('#table_select_all').prop('checked',false);
         $('#multiple_edit').addClass("d-none");
@@ -3925,7 +3923,7 @@ function delete_file(){
 function getapp_ids(){
   var app_ids = [];
   if($('#multiple_edit').hasClass("multiple_on")){
-    $('#table_visible .custom-control-input:checked').not('.just_header').each(function(){
+    $('#table_hidden.custom-control-input:checked').not('#table_select_all').each(function(){
       app_ids.push($(this).attr('id').split('_')[2]);
     });
   } else{
@@ -4098,12 +4096,12 @@ function changeSelected(){
   } else{
     $('#row_table_data'+id_checked).removeClass('tr_checked');
   }
-  if($('#table_visible .custom-control-input:checked').not('.just_header').length>=2){
+  if($('#table_hidden .custom-control-input:checked').not('#table_select_all').length>=2){
     $('#multiple_edit').removeClass('d-none');
   } else{
     $('#multiple_edit').addClass('d-none');
   }
-  if($('#table_visible .custom-control-input:checked').not('.just_header').length==0){
+  if($('#table_hidden .custom-control-input:checked').not('#table_select_all').length==0){
     $('#table_select_all').prop('checked',false);
   }
   calculate_functions_table();
