@@ -1,0 +1,31 @@
+<fieldset>
+  <div class="row justify-content-center">
+    <div class="col-md-4 row">
+      <%= f.label "Filtro para user_id: #{@user.id}", class:'col-md-10 text-right col-form-label' %>
+    </div>
+
+    <div class="col-md-4 row">
+      <%= f.label 'Proyecto', class:'col-md-6 text-right col-form-label' %>
+      <div class="col-md-6">
+        <%= f.input :project_type_id,
+        required: true,
+        collection: projects_customer_for_select(@customer_id_num),
+        prompt: t('simple_form.select_item_prompt'),
+        label: false,
+        input_html: {
+          class: 'w-100 form-control form-control-sm project_types_container',
+        }
+        %>
+        <%= f.hidden_field :_destroy%>
+      </div>
+    </div>
+    <div class="col-md-4 row d-flex">
+      <%= f.label 'Owner?', class:'col-md-6 text-right col-form-label' %>
+      <%= f.check_box :owner, class:'mt-auto mb-auto ml-0' %>
+      <%= f.hidden_field :_destroy%>
+    </div>
+    <div class="col-md-1 d-flex">
+      <%= link_to '#', class: "remove m-auto" do %><i class="fas fa-trash-alt" title="Eliminar filtro"></i><% end %>
+    </div>
+  </div>
+</fieldset>

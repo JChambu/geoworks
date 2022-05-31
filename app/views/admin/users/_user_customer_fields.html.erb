@@ -33,5 +33,17 @@
         <%= link_to '#', class: "remove" do %><i class="fas fa-trash-alt" title="Eliminar corporación"></i><% end %>
       </div>
     </div>
+
+    <div class="col-md-12">
+      <div class="text-center">
+        <%= f.fields_for :project_filters do |i| %>
+          <%= render "project_filter_fields", f: i %>
+        <% end %>
+      </div>
+      <div class="text-center mb-4">
+        <%= link_to_add_fields "<i class='fas fa-filter' title='Agregar filtros' onclick='add_filter(event)'></i>".html_safe, f, :project_filters %>
+      </div>
+    </div>
+    <br>
   </div>
 </fieldset>

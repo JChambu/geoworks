@@ -9,9 +9,24 @@ module CustomersHelper
   end
 
   def roles_customers_for_select(customer_id)
-    customer_name = Customer.where(id: customer_id).pluck(:subdomain).first
-    Apartment::Tenant.switch customer_name do
-      @roles = Role.all.map {|role| [role.name, role.id] }
+    if customer_id.nil?
+      @roles = []
+    else
+      customer_name = Customer.where(id: customer_id).pluck(:subdomain).first
+      Apartment::Tenant.switch customer_name do
+        @roles = Role.all.map {|role| [role.name, role.id] }
+      end
+    end
+  end
+
+  def projects_customer_for_select(customer_id)
+    if customer_id.nil?
+      @projects = []
+    else
+      customer_name = Customer.where(id: customer_id).pluck(:subdomain).first
+      Apartment::Tenant.switch customer_name do
+        @projects = ProjectType.all.map {|project| [project.name, project.id] }
+      end
     end
   end
 

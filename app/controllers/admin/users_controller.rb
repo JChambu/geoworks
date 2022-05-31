@@ -7,7 +7,7 @@ class Admin::UsersController < ApplicationController
   # GET /users.json
 
   def search_projects
-    @p = ProjectType.search_projects_for_tenant  params
+    @p = ProjectType.search_projects_for_tenant params['customer_id']
   end
 
   # Busca los roles luego de seleccionar la corporación
@@ -107,8 +107,9 @@ class Admin::UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :email, :country_code, :area_code, :phone, :password, :password_confirmation, :active,
-      has_project_types_attributes: [:id, :project_type_id, :user_id, :owner, :properties, :_destroy],
-      user_customers_attributes: [:id, :user_id, :customer_id, :role_id, :_destroy]
+      user_customers_attributes: [:id, :user_id, :customer_id, :role_id, :_destroy,
+      project_filters_attributes: [:id, :user_id, :project_type_id, :owner, :_destroy]
+      ]
     )
   end
 end

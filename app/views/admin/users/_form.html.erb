@@ -79,16 +79,47 @@
 <script type="text/javascript">
   function change_customer(e){
     var customer_id_selected = $(e.target).val();
-    // $(e.target).attr('id','user_customers_customer_id_'+customer_id_selected)
-    $.ajax({
-      url:  "<%= admin_users_search_roles_path %>",
-      type: "GET",
-      data: { customer_id: customer_id_selected },
-      success: function(data) {
-        $(e.target).closest('.customer_container').find('.roles_container').html(roles);
-        // $(e.target).closest('.customer_container').find('.roles_container_select').attr('id','role_id_id_'+customer_id_selected);
-        console.log($(e.target).closest('.customer_container').find('.roles_container').html(roles));
-      }
-    });
+    console.log('customer_id_selected');
+    console.log(customer_id_selected);
+    if (customer_id_selected != '') {
+      $.ajax({
+        url:  "<%= admin_users_search_roles_path %>",
+        type: "GET",
+        data: { customer_id: customer_id_selected },
+        success: function(data) {
+          $(e.target).closest('.customer_container').find('.roles_container').html(roles);
+        }
+      });
+    }
+    else {
+      $(e.target).closest('.customer_container').find('.roles_container').empty();
+    }
+    set_project_filters(customer_id_selected, e);
+  }
+
+  function add_filter(e) {
+    var customer_id_selected = $(e.target).closest('.customer_container').find('.customer_java').val();
+    set_project_filters(customer_id_selected, e, true);
+  }
+
+  function set_project_filters(customer_id_selected, e, last) {
+    if (customer_id_selected != '') {
+      $.ajax({
+        url:  "<%= admin_users_search_projects_path %>",
+        type: "GET",
+        data: { customer_id: customer_id_selected },
+        success: function(data) {
+          if (last) {
+            $(e.target).closest('.customer_container').find('.project_types_container').last().html(projects);
+          }
+          else {
+            $(e.target).closest('.customer_container').find('.project_types_container').html(projects);
+          }
+        }
+      });
+    }
+    else {
+      $(e.target).closest('.customer_container').find('.project_types_container').empty();
+    }
   }
 </script>
