@@ -244,7 +244,7 @@ function sarch_photos_report(){
                             });
                         });
                     });        
-                  //  save_pdf(pdf_values_all, is_grouped);     
+                    save_pdf(pdf_values_all, is_grouped);     
                 } // termina success fotos hijos
             }); // termina ajax fotos hijos
         }// termina success fotos padres
@@ -701,6 +701,8 @@ function save_pdf(pdf_values_all, is_grouped){
     var actual_date = d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day + " " + d.getHours() + ":" +d.getMinutes();
     data_report["date"] = actual_date
     var hash_pdf = {}
+    console.log("Es agrupado???")
+    console.log(is_grouped)
     if (is_grouped) {
         hash_pdf["name"] = "group_report";
     } else {
