@@ -1658,18 +1658,12 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   if(is_new_file && (data_properties[column_name]!=undefined || column_name=="#_action" || column_name == "#_select")){
     if(column_name=="#"){
       new_celd_create = new_celd_create = "<td class='_columnname custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
-      //Verificar si hace falta
-      /*
-      $('.field_key_layer').each(function(index,key_layer){
-        new_celd_create += "<td style='background:red' class='_columnname custom_row d-none celdlayer_id"+appid_selected+" celdlayer_key"+key_layer.id.substring(9)+"' onclick='show_item("+appid_selected+")'></td>"
-      });
-      */
     } else{
       if(data_properties[column_name]!=undefined){
         new_celd_create = "<td class='_columnname custom_row celd_id"+appid_selected+" celd_key"+column_name+" "+text_hidden+"' onclick='show_item("+appid_selected+")'>"+data_properties[column_name]+"</td>"
       }
       if(column_name=="#_action" || column_name == "#_select"){
-        new_celd_create = "<td class='_columnname custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'>"+new_dom+"</td>"
+        new_celd_create = "<td class='_columnname action_celd custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'>"+new_dom+"</td>"
       }
     }
   } else{
@@ -1683,7 +1677,11 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
         }
       });
     } else{
-      new_celd_create = "<td class='_columnname custom_row celd_id"+appid_selected+" celd_key"+column_name+" "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
+      if(column_name=="#_action" || column_name == "#_select"){
+        new_celd_create = "<td class='_columnname action_celd custom_row celd_id"+appid_selected+" celd_key"+column_name+" "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
+      } else{
+        new_celd_create = "<td class='_columnname custom_row celd_id"+appid_selected+" celd_key"+column_name+" "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
+      }
     }
   }
   
@@ -2467,79 +2465,6 @@ function report_to_excel() {
   export_to_excel('clone_table', 'geoworks', 'reporte.xls')
 }
 
-// exportar tabla a excel
-function table_to_excel() {
-  var clone_table =  document.createElement("TABLE");
-  clone_table.id = "clone_table";
-  clone_table.style.display = "none";
-  var origin_head = document.getElementById('thead_table_visible');
-  var clone_head = origin_head.cloneNode(true);
-  clone_table.appendChild(clone_head);
-  var origin_body = document.getElementById('tbody_visible');
-  var clone_body = origin_body.cloneNode(true);
-  clone_table.appendChild(clone_body);
-  
-  $('body').append(clone_table);
-  //remueve divs de la cabecera
-  document.querySelectorAll('#clone_table .custom_onclick').forEach(e => e.parentNode.removeChild(e));
-  //elimina primeras columnas y columnas ocultas de la cabecera
-  var th_clone = document.querySelectorAll('#clone_table th');
-  th_clone.forEach(function(e) {
-    if (e.classList.contains('d-none') || e.classList.contains('head_key#_action') || e.classList.contains('head_key#_select') ) {
-      e.parentNode.removeChild(e);
-    } 
-  });
-  // limpia la fila de subcabeceras
-  var tr_th =  document.querySelectorAll('#clone_table th tr');
-  tr_th.forEach(function(e){
-    new_p = document.createElement('P');
-    new_p.innerHTML = e.firstChild.innerHTML;
-    e.parentNode.appendChild(new_p);
-    e.parentNode.removeChild(e);
-  });
-  
-  // elimina divs de seleccion en cabecera e inputs
-  document.querySelectorAll('#clone_table .custom_div_table').forEach(e => e.parentNode.removeChild(e));
-  document.querySelectorAll('#clone_table input').forEach(e => e.parentNode.removeChild(e));
-  
-  //elimina primeras columnas y columnas ocultas del cuerpo
-  var td_clone = document.querySelectorAll('#clone_table td');
-  td_clone.forEach(function(e) {
-    if (e.classList.contains('d-none') || e.classList.contains('celd_key#_action') || e.classList.contains('celd_key#_select') ) {
-      e.parentNode.removeChild(e);
-    } 
-  });
-
-  var column_count = $('.column_data.d-none').length + $('.column_data_layer.d-none').length 
-  subcolumn_count = 0;
-  // acomoda las columnas de hijos
-  var td_th = document.querySelectorAll('#clone_table td tr');
-  var id_subcolumn_before = 0;
-  var subcolumn_open_count_before = 0;
-  td_th.forEach(function(e,index){
-    console.log("iteración")
-    console.log(e)
-    //resta la celda del icono imagen
-    var subcolumn_open_count = $(e).find('td').length-1;
-    var id_subcolumn = $(e).find('tr').eq(1).attr('id').split('_')[0];
-    if(index==0){first_subcolumn_id = id_subcolumn}
-    if(id_subcolumn_before!=0 && id_subcolumn_before!=id_subcolumn){
-      subcolumn_count+=subcolumn_open_count_before;
-    }
-    id_subcolumn_before = id_subcolumn;
-    subcolumn_open_count_before = subcolumn_open_count;
-    if(id_subcolumn==first_subcolumn_id){
-      subcolumn_count = 0;
-    }
-    column_count_total = column_count + subcolumn_count;
-    for(c=0;c<column_count_total;c++){
-      var new_celd =  document.createElement("TD");
-      e.prepend(new_celd);
-    }
-  });
-
-  export_to_excel('clone_table', 'geoworks', 'tabla.xls')
-}
 
 function export_to_excel(table, name, filename) {
   let uri = 'data:application/vnd.ms-excel;base64,',
@@ -3923,7 +3848,7 @@ function delete_file(){
 function getapp_ids(){
   var app_ids = [];
   if($('#multiple_edit').hasClass("multiple_on")){
-    $('#table_hidden.custom-control-input:checked').not('#table_select_all').each(function(){
+    $('#table_hidden').find('.custom-control-input:checked').not('#table_select_all').each(function(){
       app_ids.push($(this).attr('id').split('_')[2]);
     });
   } else{
