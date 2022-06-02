@@ -423,30 +423,16 @@ function min_photo(){
           <div class="dropdown-menu scroll p-2" id="dropdown_alert_mails" aria-labelledby="mails_alert_button" style="max-height: 80vh; max-width: 80%;overflow-y: auto; position: absolute;">
           </div>
             <i class="fas fa-envelope view-data d-none" id="send_alerts_button" title="Enviar" onclick="Navarra.pdf.send_alerts()" ></i>
-            <i class="fas fa-save view-data d-none" id="save_pdf_button" title="Guardar Reporte" onclick="Navarra.pdf.save_pdf()" ></i>
-            <i class="fas fa-edit view-data d-none" id="edit_pdf_button" title="Elimine imágnes y ajuste problemas de superposición" onclick="Navarra.pdf.edit_pdf()"></i>
             <i class="fas fa-times view-data" type="button" class="close" onclick="Navarra.pdf.close_pdf()" aria-label="Close"></i>
           </div>
       </div>
-      <div class="modal-body p-1 pl-4 pr-4 pt-2" style="position: relative;">
-        <div class="pdf_header">
-          <img class="logo_coorp_pdf logo_coorp_pdf_src element_pdf">
-          <div class="w-100 text-center" style = "line-height: 1;">
-            <p class="pdf_title element_pdf" id="report_alert_title" style="font-size:1.5vh">REPORTE</p>
-            <br/>
-            <p class="element_pdf pdf_title pdf_created" style="font-size:1.3vh"></p>
-          </div>
-          <div class="div_powered">
-            <p class="pdf_powered">powered by</p>
-            <%= image_tag "logo_gw_hor_2.png", class: 'logo_pdf' %>
-          </div>
-        </div>
+      <div class="modal-body p-1 pl-4 pr-4 pt-2" style="position: relative; background: white">
          <div class="alert_header text-center p-4">
           <img class="logo_coorp_pdf_src" style="max-width:35%">
           <div style = "margin-top: 30px;" id="header_alert_text">
             <p class="pdf_title" id="message_type" style="display: inline-block; font-size: 28px;margin: 0px; color: red; font-weight: bold;"></p>
             <br/>
-            <p class="pdf_created" style="font-size:0.8em; display: inline-block; margin: 0px"></p>
+            <p class="pdf_created" style="font-size:0.8em; display: inline-block; margin: 0px; color: rgb(16,16,16)"></p>
           </div>
           <div style="width: 100%; margin-top: 10px; display: inline-block;">
             <a href="http://www.gisworking.com/" target="_blank" style="text-decoration: none;">

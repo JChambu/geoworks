@@ -18,7 +18,26 @@ class DashboardsController < ApplicationController
     @img_attach_src = params[:img_attach_src]
     @plain_content = params[:plain_content]
     UserMailer.send_alert(@to,@name_corp,@logo_corp,@header_content,@html_content,@img_attach_src,@plain_content).deliver_now
-  end  
+  end
+
+  def send_report
+      require 'net/http'
+      require 'uri'
+      uri = URI.parse("http://gisworking.com:5488/api/report")
+      request = Net::HTTP::Post.new(uri)
+     # request.basic_auth(ENV['usuario'], ENV['contraseña'])
+      request.content_type = "application/json"
+      req_options = {responseType: 'blob'}
+      request.body = params.to_json
+      #req_options = {
+        #use_ssl: uri.scheme == "https",
+      #}
+      response = Net::HTTP.start(uri.hostname, uri.port ,req_options) do |http|
+        http.request(request)
+      end
+
+      send_data(response.body)
+    end
 
   def create_graph
 
@@ -51,17 +70,22 @@ class DashboardsController < ApplicationController
           .pluck(:role_id)
           .first
       end
-      # Campos de los proyectos que están por encima del proyecto actual
+      # Campos de los proyectos que están por encima del proyecto actual (se quitó esa restricción)
+      # Se agregó restricción de proyectos compartidos
+      @projects_shared = ProjectType
+        .joins(:has_project_types)
+        .where(has_project_types: {user_id: current_user.id})
+        .pluck(:id)
       @top_level_fields = ProjectField
         .joins(:project_type)
         .where.not(project_type_id: @project_type.id)
-        .order('project_types.level DESC', :sort)
+        .where(project_type_id: @projects_shared)
+        .order('project_types.level DESC','project_types.id', :sort)
 
       @table_configuration = TableConfiguration
         .where(project_type_id: @project_type.id)
         .where(user_id: current_user.id)
 
-      @project_types_all = ProjectType.where(enabled_as_layer: true).order(level: :desc)
       @current_tenant = Apartment::Tenant.current
 
       @project_filters = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id).first
