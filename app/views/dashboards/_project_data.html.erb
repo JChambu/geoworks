@@ -67,7 +67,7 @@ $('#table_select_all').click(function(){
   });
 
   // evita cierre de modal selectores para reporte de alertas y para agrupar por subformularios en reportes pdf
-  $('#alert_type, #alert_mail , #alert_group , #set_subfield_grouped, #set_subfield_grouped_container' ).click(function(e){
+  $('#alert_type, #alert_mail , #alert_group , #set_subfield_grouped, #set_subfield_grouped_container ,#set_map, #set_map_container , #set_photos, #set_photos_container' ).click(function(e){
     e.stopPropagation();
   })
 });
@@ -300,7 +300,7 @@ function show_subfield(field_ids){
         $('#open_subform'+id_field).addClass('d-none');
         // Agrega cabecera visible
         var new_column_subform = document.createElement('TH');
-        new_column_subform.className = 'border-0 header_column subfield_column_'+id_field;
+        new_column_subform.className = 'border-0 header_column subheader_column subfield_column_'+id_field;
         new_column_subform.id = 'header_column_'+id_field;
         var new_div = document.createElement('DIV');
         new_div.className = "th-hover custom_header";
@@ -436,7 +436,7 @@ function show_subfield(field_ids){
                 new_cel_subform.style.padding='5px';   
                 new_cel_subform.style.width='30px';
                 new_cel_subform.style.minWidth='30px';
-                new_cel_subform.className='child_celd';
+                new_cel_subform.className='child_celd just_date';
                 new_cel_subform.setAttribute("id_child",column.id)
                 var new_icon = document.createElement('I');
                 new_icon.className = "fas fa-image icons";
@@ -451,7 +451,7 @@ function show_subfield(field_ids){
                 new_cel_subform.style.padding='5px'; 
                 new_cel_subform.style.textAlign='left'; 
                 new_cel_subform.style.whiteSpace='nowrap';  
-                new_cel_subform.className='child_celd';
+                new_cel_subform.className='child_celd just_date celdsubform_date_id'+key_data;
                 new_cel_subform.id = id_field+"_childdate_"+column.id;
                 new_cel_subform.setAttribute("id_child",column.id)
                 if(column.gwm_created_at!=null){
@@ -692,8 +692,6 @@ function verify_open_columns(){
 function adjust_table_height(){
   var height_browser = window.innerHeight
   var height_card=$(".card_data").innerHeight()
-  //ojo revisar
-  //var height_table_head = $('#table_visible_container').innerHeight();
   if($('#status-view').hasClass('status-view-expanded')){
     var height_table = height_browser - $("#nav_bar").innerHeight() -height_card - 20;
     $("#table_visible_container").css("height", height_table);
@@ -888,9 +886,13 @@ function show_pdf(is_alert){
     $('#toast').toast('show');
     return;
   }
-  $("#pdf-modal").modal('show'); 
-  $('.table_data_container').addClass('d-none');
-  Navarra.pdf.init(is_alert);
+  if(is_alert){
+    $("#pdf-modal").modal('show'); 
+    $('.table_data_container').addClass('d-none');
+    Navarra.pdf.init();
+  } else{
+    Navarra.pdf.init_report_api();
+  }
 }
 
 //Funciones para armar alertas
@@ -929,7 +931,6 @@ function generate_alerts(){
   show_pdf(true);
 }
 
-
 </script>
 
 <div class="card-header chart-header-bg-transparent py-1 px-2 card_data">
@@ -952,11 +953,21 @@ function generate_alerts(){
     </a>
     <div class="dropdown-menu scroll p-2" aria-labelledby="share_table" style="max-height:44vh; overflow-y:auto;">
       <a data-toggle="modal" id="show_pdf" onclick="show_pdf(false)" style="cursor: pointer;" class="dropdown-item text-left"><i class="fas fa-file-pdf mr-2"></i> Reporte pdf
+        <div class="custom-control custom-checkbox ml-5"  id="set_map_container" title="Mapa">
+          <input class="custom-control-input" id="set_map" type="checkbox" checked= true>
+          <label class="string optional control-label custom-control-label" for="set_map"> </label>
+          <h7 style="font-size:0.8em">Mapa</h7>
+        </div>
+        <div class="custom-control custom-checkbox ml-5"  id="set_photos_container" title="Fotos">
+          <input class="custom-control-input" id="set_photos" type="checkbox" checked=true >
+          <label class="string optional control-label custom-control-label" for="set_photos"> </label>
+          <h7 style="font-size:0.8em">Fotos</h7>
+        </div>
         <div class="custom-control custom-checkbox ml-5"  id="set_subfield_grouped_container" title="Agrupar por Subformularios">
-            <input class="custom-control-input" id="set_subfield_grouped" type="checkbox">
-            <label class="string optional control-label custom-control-label" for="set_subfield_grouped"> </label>
-            <h7 style="font-size:0.8em">Agrupar Subformularios</h7>
-          </div>
+          <input class="custom-control-input" id="set_subfield_grouped" type="checkbox">
+          <label class="string optional control-label custom-control-label" for="set_subfield_grouped"> </label>
+          <h7 style="font-size:0.8em">Agrupar Subformularios</h7>
+        </div>
       </a>
       <% if can? :data, :alert %>
         <a data-toggle="modal" id="show_alert"  onclick="open_alert_modal(event)" style="cursor: pointer;" class="dropdown-item text-left" ><i class="fas fa-bullhorn mr-2" ></i> Recomendaciones/Alertas/Notificaciones
@@ -987,7 +998,7 @@ function generate_alerts(){
         </div>
       <% end %>
       <% if can? :data, :export %>
-        <a onclick="table_to_excel()" style="cursor: pointer;" class="dropdown-item text-left">
+        <a onclick="table_to_excel_api()" style="cursor: pointer;" class="dropdown-item text-left">
           <i class="fas fa-download mr-2"></i> Exportar a Excel
         </a>
         <a class="dropdown-item text-left" style="cursor: pointer;" data-toggle="modal" id="show_report"><i class="fas fa-clipboard-list mr-3" ></i> Reporte

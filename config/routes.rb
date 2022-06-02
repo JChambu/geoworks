@@ -49,10 +49,13 @@ Rails.application.routes.draw do
   get 'choice_lists/export_all_csv'=> 'choice_lists#export_all_csv', as: 'export_all_csv'
   post 'graphics/update_sort' => 'graphics#update_sort', as: :update_sort
   get 'photos/show_photos' => 'photos#show_photos'
+  get 'photos/get_photos' => 'photos#get_photos'
   get 'photos_children/show_photos_children' => 'photos_children#show_photos_children'
+  get 'photos_children/get_photos_children' => 'photos_children#get_photos_children'
   post 'project_data_children/show_children' => 'project_data_children#show_children', as: :show_children
   get 'users/get_user_id_and_customer_id' => 'users#get_user_id_and_customer_id'
   post 'dashboards/send_alerts'
+  post 'dashboards/send_report'
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
     post 'project_fields/create'

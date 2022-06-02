@@ -193,14 +193,14 @@ class ProjectsController < ApplicationController
       @project.update_inheritable_statuses
     end
 
-    if !is_interpolate == 'true'
+    if is_interpolate == 'true'
+      render js: "window.location = '#{project_types_path}'"
+    else
       if count_errors >0
         render json: {status: 'Nuevos registros:'+count_sucess.to_s+'. Errores:'+count_errors.to_s, id: created_ids}
       else
         render json: {status: 'Nuevos registros:'+count_sucess.to_s, id: created_ids}
-      end
-    else
-      render js: "window.location = '#{project_types_path}'"
+      end      
     end
 
   end

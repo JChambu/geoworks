@@ -24,4 +24,30 @@ class PhotosController < ApplicationController
 
     end
 
+    def get_photos
+
+      ids = params[:ids]
+
+      photos_all = []
+      if !ids.nil?
+        ids.each do | project_id |
+          father_photos = Photo
+            .where(project_id: project_id)
+            .where(row_active: true)
+            .order(gwm_created_at: :desc)
+
+          father_photos_array = []
+
+          father_photos.each do |f_photo|
+            f_photo_hash = {}
+            f_photo_hash[project_id] = f_photo.image
+            father_photos_array.push(f_photo_hash)
+          end
+          photos_all.push(father_photos_array)
+        end
+      end
+      render json: photos_all
+
+    end
+
 end

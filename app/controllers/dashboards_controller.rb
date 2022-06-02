@@ -18,7 +18,26 @@ class DashboardsController < ApplicationController
     @img_attach_src = params[:img_attach_src]
     @plain_content = params[:plain_content]
     UserMailer.send_alert(@to,@name_corp,@logo_corp,@header_content,@html_content,@img_attach_src,@plain_content).deliver_now
-  end  
+  end
+
+  def send_report
+      require 'net/http'
+      require 'uri'
+      uri = URI.parse("http://gisworking.com:5488/api/report")
+      request = Net::HTTP::Post.new(uri)
+     # request.basic_auth(ENV['usuario'], ENV['contraseña'])
+      request.content_type = "application/json"
+      req_options = {responseType: 'blob'}
+      request.body = params.to_json
+      #req_options = {
+        #use_ssl: uri.scheme == "https",
+      #}
+      response = Net::HTTP.start(uri.hostname, uri.port ,req_options) do |http|
+        http.request(request)
+      end
+
+      send_data(response.body)
+    end
 
   def create_graph
 
