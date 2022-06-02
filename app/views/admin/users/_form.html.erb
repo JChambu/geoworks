@@ -1,59 +1,67 @@
 <div class="offset-md-3 col-md-6">
   <div class="card m-2 shadow">
     <div class="card-body">
-
       <%= simple_form_for([:admin,@user]) do |f| %>
-        <%= render 'shared/errors', obj: @user %>
-
+      <% if @user.errors.any? %>
+        <div id="error_explanation">
+          <ul><% @user.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
+        </div>
+      <% end %>
+      <p class="m-0 pt-2" id="notice"><%= notice %></p>
+      <br>
         <div class="form-group">
           <div class="row justify-content-center">
-            <%= f.label :name, class:'col-md-4 text-right col-form-label' %>
-            <div class="col-md-6">
+            <%= f.label :name, class:'col-md-2 text-right col-form-label' %>
+            <div class="col-md-4">
               <%= f.input :name, label: false, input_html: {class: 'form-control form-control-sm'} %>
             </div>
           </div>
           <div class="row justify-content-center">
-            <%= f.label :email, class:'col-md-4 text-right col-form-label' %>
-            <div class="col-md-6">
+            <%= f.label :email, class:'col-md-2 text-right col-form-label' %>
+            <div class="col-md-4">
               <%= f.input :email, label: false, input_html: {class: 'form-control form-control-sm'} %>
             </div>
           </div>
-
-          <%if params[:action]== 'new'|| params[:action] == 'create' %>
-            <div class="row justify-content-center">
-              <%= f.label 'Corporación', class:'col-md-4 text-right col-form-label' %>
-              <div class="col-md-6">
-                <%= f.input :customer_id, required: true, collection: customers_for_select, prompt: t('simple_form.select_item_prompt'), label: false, input_html: {class: 'form-control form-control-sm'}, selected: @user_customer.nil? ? '' : @user_customer.customer_id%>
-              </div>
-            </div>
-            <div class="row justify-content-center">
-              <label class="col-md-4 text-right col-form-label">Rol</label>
-              <div class="col-md-6">
-                <div id='search_roles'></div>
-              </div>
-            </div>
-          <% else %>
-            <div class="row justify-content-center">
-              <%= f.label 'Corporación', class:'col-md-4 text-right col-form-label' %>
-              <div class="col-md-6">
-                <%= f.input :customer_name, readonly: true, label: false, input_html: {class: 'form-control form-control-sm', value: @user_customer.customer.name} %>
-                <%= f.input :customer_id, as: :hidden,  input_html: {value: @user_customer.customer_id } %>
+          <br>
+          <div class="row justify-content-center">
+            <div class="col-md-4 row">
+              <%= f.label :country_code, class:'col-md-6 text-right col-form-label' %>
+              <div class="col-md-5">
+                <%= f.input :country_code, as: :email, label: false, input_html: {class: 'w-100 form-control form-control-sm'} %>
               </div>
             </div>
 
-            <div class="row justify-content-center">
-              <label class="col-md-4 text-right col-form-label">Rol</label>
-              <div class="col-md-6">
-                <%=f.input :role_id, collection: @roles,  prompt: ('Seleccione un rol'), label: false, input_html: {class: 'form-control form-control-sm'}, selected: @user_customer.nil? ? '' : @user_customer.role_id%>
+            <div class="col-md-4 row">
+              <%= f.label :area_code, class:'col-md-6 text-right col-form-label' %>
+              <div class="col-md-5">
+                <%= f.input :area_code, label: false, input_html: {class: 'w-100 form-control form-control-sm'} %>
               </div>
             </div>
 
-          <% end %>
-
+            <div class="col-md-4 row">
+              <%= f.label :phone, class:'col-md-6 text-right col-form-label' %>
+              <div class="col-md-5">
+                <%= f.input :phone, label: false, input_html: {class: 'w-100 form-control form-control-sm'} %>
+              </div>
+            </div>
+          </div>
+          <hr size="8" width="60%" align="center" color="#605757">
+          <br>
+          <div class="text-center">
+            <% @customer_count = 0 %>
+            <%= f.fields_for :user_customers do |i| %>
+              <% @customer_id_num = @user.user_customers[@customer_count].customer_id%>
+              <%= render "user_customer_fields", f: i %>
+              <% @customer_count += 1 %>
+            <% end %>
+          </div>
+          <div class="text-center mb-4">
+            <%= link_to_add_fields "<i class='fas fa-plus' title='Agregar usuario'></i>".html_safe, f, :user_customers %>
+          </div>
 
           <div class="row justify-content-center">
             <%= f.label 'Activo', class:'col-md-4 text-right form-check-label' %>
-            <div class="col-md-6">
+            <div class="col-md-4">
               <%= f.check_box :active, label: false, input_html: {class: 'form-check-input'} %>
             </div>
           </div>
@@ -63,21 +71,24 @@
           <%= link_to t('.cancel', :default => t("helpers.links.cancel")), admin_users_path, :class => 'btn btn-secondary mr-1' %>
           <%= f.submit  :class => 'btn btn-primary', value: 'Guardar' %>
         </div>
-
       <% end %>
-
     </div>
   </div>
 </div>
 
 <script type="text/javascript">
-  $(document).ready(function() {
-    $('#user_customer_id').on('change', function() {
-      $.ajax({
-        url:  "<%= admin_users_search_roles_path %>",
-        type: "GET",
-        data: { customer_id: $(this).val() },
-      });
+  function change_customer(e){
+    var customer_id_selected = $(e.target).val();
+    // $(e.target).attr('id','user_customers_customer_id_'+customer_id_selected)
+    $.ajax({
+      url:  "<%= admin_users_search_roles_path %>",
+      type: "GET",
+      data: { customer_id: customer_id_selected },
+      success: function(data) {
+        $(e.target).closest('.customer_container').find('.roles_container').html(roles);
+        // $(e.target).closest('.customer_container').find('.roles_container_select').attr('id','role_id_id_'+customer_id_selected);
+        console.log($(e.target).closest('.customer_container').find('.roles_container').html(roles));
+      }
     });
-  });
+  }
 </script>

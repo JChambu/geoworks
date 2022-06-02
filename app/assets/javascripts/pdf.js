@@ -553,6 +553,8 @@ function create_htm_pdf(pdf_object,index_pdf){
 
     pdf_content += "<div class = 'div_pdf div_pdf"+pdf_object['id']+"' "+class_div+">";
     pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' "+class_title+">"+Navarra.dashboards.config.name_project+"</p>";
+    console.log("PDF a crear")
+    console.log(pdf_object)
     Object.keys(pdf_object['properties']).forEach(function(key) {
         pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' "+class_p+" >"+pdf_object['properties'][key]['name']+": "+pdf_object['properties'][key]['value']+"</p></div>";
         if(key == alert_mail_key){

@@ -1,0 +1,37 @@
+<fieldset>
+  <div class="row justify-content-center customer_container">
+    <div class="col-md-6 row">
+      <%= f.label 'Corporación', class:'col-md-4 text-right col-form-label' %>
+      <div class="col-md-6">
+        <%= f.input :customer_id,
+        required: true,
+        collection: customers_for_select,
+        prompt: t('simple_form.select_item_prompt'),
+        label: false,
+        input_html: {
+          class: 'w-100 form-control form-control-sm',
+          onchange: "change_customer(event)"
+        }
+        %>
+        <%= f.hidden_field :_destroy%>
+      </div>
+    </div>
+    <div class="col-md-6 row">
+      <%= f.label 'Rol', class:'col-md-4 text-right col-form-label' %>
+      <div class="col-md-6">
+        <%= f.input :role_id,
+          required: true,
+          collection: roles_customers_for_select(@customer_id_num),
+          prompt: t('simple_form.select_item_prompt'),
+          label: false,
+          input_html: {
+            class: 'w-100 form-control form-control-sm roles_container',
+          }
+        %>
+      </div>
+      <div class="col-md-1">
+        <%= link_to '#', class: "remove" do %><i class="fas fa-trash-alt" title="Eliminar corporación"></i><% end %>
+      </div>
+    </div>
+  </div>
+</fieldset>
