@@ -126,18 +126,18 @@ table_to_excel_api = function (){
     hash_pdf["name"] = "excel_rep";
     var data = {}
     data["template"] = hash_pdf;
-    data["data"] = data_report;
-    data["file"] = "tabla.xlsx";
+    data["data"] = JSON.stringify(data_report);
 
     $.ajax({
       type: 'POST',
-      url: 'http://gisworking.com:5488/api/report',
+     	url: '/dashboards/send_report',
       xhrFields: {
             responseType: 'blob'
         },
       datatype: 'application/json',
       data: data,
       success: function(data) {
+
         //Convert the Byte Data to BLOB object.
         var blob = new Blob([data], { type: "application/octetstream" });
         var url = window.URL || window.webkitURL;

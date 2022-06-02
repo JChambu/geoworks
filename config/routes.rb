@@ -55,6 +55,7 @@ Rails.application.routes.draw do
   post 'project_data_children/show_children' => 'project_data_children#show_children', as: :show_children
   get 'users/get_user_id_and_customer_id' => 'users#get_user_id_and_customer_id'
   post 'dashboards/send_alerts'
+  post 'dashboards/send_report'
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
     post 'project_fields/create'

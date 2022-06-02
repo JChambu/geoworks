@@ -26,7 +26,19 @@ function init_report_api(){
                         var column_name = $('#tr_visible th:nth-child('+(index_column+1)+')')[0].childNodes[1].childNodes[1];
                         var column_key = $('#tr_visible th:nth-child('+(index_column+1)+') input')[0];
                         pdf_values['properties'][column_key.value]= new Object;
-                        pdf_values['properties'][column_key.value]['value'] = this.innerHTML;
+                        // revisa si es capa y le elimina
+                        if ($(this).find('div').length>0){
+                            var multi_celd = "";
+                            $(this).find('div').each(function(i){
+                                if(i != 0){
+                                    multi_celd += " - ";
+                                }
+                                multi_celd += $(this).html();
+                            });
+                            pdf_values['properties'][column_key.value]['value'] = multi_celd;
+                        } else {
+                            pdf_values['properties'][column_key.value]['value'] = this.innerHTML;
+                        }
                         pdf_values['properties'][column_key.value]['name'] = column_name.innerHTML;
                     }
                     });
@@ -701,8 +713,6 @@ function save_pdf(pdf_values_all, is_grouped){
     var actual_date = d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day + " " + d.getHours() + ":" +d.getMinutes();
     data_report["date"] = actual_date
     var hash_pdf = {}
-    console.log("Es agrupado???")
-    console.log(is_grouped)
     if (is_grouped) {
         hash_pdf["name"] = "group_report";
     } else {
@@ -712,9 +722,10 @@ function save_pdf(pdf_values_all, is_grouped){
     data["template"] = hash_pdf;
     data["data"] = data_report;
     data["file"] = "reporte.pdf";
+
     $.ajax({
       type: 'POST',
-      url: 'http://gisworking.com:5488/api/report',
+      url: '/dashboards/send_report',
       xhrFields: {
             responseType: 'blob'
         },

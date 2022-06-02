@@ -1770,6 +1770,8 @@ function create_subforms_table(subfield_ids_saved){
     });
     field_ids.push(id);
     $('.subfield_column_'+id).remove();
+    $('.footer_field_'+id).remove();
+    $('.footersubform_key_date'+id).remove();
   });
   if(subfield_ids_saved!=undefined){
     subheader_open = subfield_ids_saved;
