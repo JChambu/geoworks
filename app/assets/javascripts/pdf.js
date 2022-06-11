@@ -698,7 +698,24 @@ function change_alert_mail(index){
 }
 
 
-function save_pdf(pdf_values_all, is_grouped){
+function save_pdf(pdf_values_all, is_grouped, is_qr){
+    is_qr = true;
+    var nuevo=document.createElement('DIV');
+    nuevo.style.textAlign='center';
+    nuevo.style.display="inline-block";
+    nuevo.style.verticalAlign='middle';
+    nuevo.style.margin='20px 12% 20px 5%'
+    nuevo.id='barcode';
+    var urlQR = "www.viamimenu.com";
+    $('body').append(nuevo);
+    jQuery("#barcode").qrcode({
+    render:"canvas",
+    width: 200,
+    height: 200,
+    text: urlQR
+    });
+
+    
     $('#text_toast').html("Generando Reporte. En breve se descargará su archivo.");
     $('#toast').toast('show');
     data_report ={}
@@ -725,6 +742,9 @@ function save_pdf(pdf_values_all, is_grouped){
     data["data"] = data_report;
     data["file"] = "reporte.pdf";
 
+    console.log("url con blob")
+    console.log(JSON.stringify(data))
+
     $.ajax({
       type: 'POST',
       url: '/dashboards/send_report',
@@ -734,6 +754,8 @@ function save_pdf(pdf_values_all, is_grouped){
       datatype: 'application/json',
       data: data,
       success: function(data) {
+        console.log("Data")
+        console.log(data)
         //Convert the Byte Data to BLOB object.
         var blob = new Blob([data], { type: "application/octetstream" });
         var url = window.URL || window.webkitURL;

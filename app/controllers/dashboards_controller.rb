@@ -36,6 +36,11 @@ class DashboardsController < ApplicationController
         http.request(request)
       end
 
+      pdf_path = File.join(Rails.root, "public", "reports", "ejemplo.pdf")
+      File.open(pdf_path, 'wb') do |f|
+        f.write response.body
+      end
+
       send_data(response.body)
     end
 
