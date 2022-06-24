@@ -32,6 +32,7 @@
 
 <script>
   var $select_field = $('#q_project_field');
+  var xhr_fil = null;
   $select_field.on('change', function() {
     // Busca tipo de campo
     if($(this.options[this.selectedIndex]).closest('optgroup').prop('label')=="Formularios"){
@@ -39,7 +40,10 @@
     } else {
       url = "/project_subfields/get_field_type.json"
     }
-    $.ajax({
+    if (xhr_fil && xhr_fil.readyState != 4) {
+      xhr_fil.abort();
+    }
+    xhr_fil = $.ajax({
       url: url,
       type: "GET",
       data: {
