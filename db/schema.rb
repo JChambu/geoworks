@@ -273,7 +273,7 @@ ActiveRecord::Schema.define(version: 20220412210623) do
     t.integer "field_type_id"
     t.boolean "hidden", default: false
     t.integer "sort"
-    t.boolean "readonly", default: false
+    t.boolean "read_only", default: false
     t.boolean "popup", default: false
     t.string "calculated_field"
     t.string "roles_read"
@@ -301,7 +301,8 @@ ActiveRecord::Schema.define(version: 20220412210623) do
 
   create_table "project_statuses", force: :cascade do |t|
     t.string "name"
-    t.bigint "project_status_id"
+    t.bigint "project_type_id"
+    t.string "color"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status_type"
@@ -409,9 +410,9 @@ ActiveRecord::Schema.define(version: 20220412210623) do
   create_table "user_customers", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "customer_id"
+    t.integer "role_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "role_id"
     t.index ["user_id", "customer_id"], name: "index_user_customers_on_user_id_and_customer_id", unique: true
   end
 
@@ -426,13 +427,13 @@ ActiveRecord::Schema.define(version: 20220412210623) do
     t.datetime "last_sign_in_at"
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
+    t.string "authentication_token"
+    t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
-    t.string "token"
-    t.string "authentication_token", limit: 30
     t.string "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
