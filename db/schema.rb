@@ -310,7 +310,7 @@ ActiveRecord::Schema.define(version: 20220412210623) do
     t.string "timer"
     t.integer "inherit_project_type_id"
     t.integer "inherit_status_id"
-    t.index ["project_status_id"], name: "index_project_statuses_on_project_status_id"
+    t.index ["project_type_id"], name: "index_project_statuses_on_project_type_id"
   end
 
   create_table "project_subfields", force: :cascade do |t|
@@ -378,7 +378,7 @@ ActiveRecord::Schema.define(version: 20220412210623) do
     t.boolean "row_enabled", default: true
     t.datetime "disabled_at"
     t.index ["project_status_id"], name: "index_projects_on_project_status_id"
-    t.index ["project_type_id"], name: "project_type_idx"
+    t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["user_id"], name: "index_projects_on_user_id"
   end
 
@@ -446,10 +446,10 @@ ActiveRecord::Schema.define(version: 20220412210623) do
     t.string "area_code"
     t.string "country_code"
     t.index ["authentication_token"], name: "index_users_on_authentication_token_2", unique: true
-    t.index ["email"], name: "index_users_on_email_2", unique: true
+    t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["role_id"], name: "index_users_on_role_id"
     t.index ["token"], name: "index_users_on_token_2", unique: true
-    t.index ["unlock_token"], name: "index_users_on_unlock_token_2", unique: true
+    t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
   create_table "versions", id: :serial, force: :cascade do |t|
@@ -469,7 +469,7 @@ ActiveRecord::Schema.define(version: 20220412210623) do
   add_foreign_key "photo_children", "project_data_children"
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_filters", "project_types"
-  add_foreign_key "project_statuses", "project_statuses"
+  add_foreign_key "project_statuses", "project_types"
   add_foreign_key "projects", "project_statuses"
   add_foreign_key "projects", "project_types"
 end
