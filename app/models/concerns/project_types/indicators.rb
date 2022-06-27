@@ -7,6 +7,10 @@ module ProjectTypes::Indicators
         return "(main.properties->>'#{field.key}')::numeric"
       elsif field.field_type.name == 'Listado (opción multiple)' && method == 'group'
         return "jsonb_array_elements_text(main.properties->'#{field.key}')"
+      elsif field.field_type.name == 'Fecha' && method == 'group'
+        #elimina la hora y da vuelta el formato
+        #el replace -- es temporal mientras se eliminan las fechas mal formateadas en la db
+        return "replace(concat(split_part(split_part(properties->>'#{field.key}',' ',1),'/',3),'-',split_part(split_part(properties->>'#{field.key}',' ',1),'/',2),'-',split_part(split_part(properties->>'#{field.key}',' ',1),'/',1)),'--','')"
       else
         return "main.properties->>'#{field.key}'"
       end
