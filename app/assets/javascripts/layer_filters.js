@@ -207,6 +207,7 @@ Navarra.layer_filters = function() {
 		create_layers_table();
 	}
 
+	xhr_fil_layer = null;
 	function set_values_layer(e,layer){
 		if(e==null){
 			var namelayer = layer;
@@ -227,7 +228,10 @@ Navarra.layer_filters = function() {
 			$('#filter_value_layer_'+namelayer).addClass('d-none');
 			var filter_field_layer = $('#filter_field_layer_'+namelayer).val();
 			//Busca valores para filtro de la capa
-				$.ajax({
+			if (xhr_fil_layer && xhr_fil_layer.readyState != 4) {
+      	xhr_fil_layer.abort();
+    	}
+				xhr_fil_layer = $.ajax({
     				type: 'GET',
     				url: "/projects/search_data.json",
       				data: {

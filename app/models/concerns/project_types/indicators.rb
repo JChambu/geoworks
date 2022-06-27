@@ -351,7 +351,7 @@ module ProjectTypes::Indicators
         if !active_layers.nil?
           active_layers.each do |active_layer|
             active_layer_id = ProjectType.where(name_layer: active_layer).pluck(:id).first
-            data = data.gsub('from_clause', "INNER JOIN #{current_tenant}.projects intersect_"+active_layer+" ON ST_Intersects(main.the_geom, intersect_"+active_layer+".the_geom)")         
+            data = data.gsub('from_clause', "from_clause INNER JOIN #{current_tenant}.projects intersect_"+active_layer+" ON ST_Intersects(main.the_geom, intersect_"+active_layer+".the_geom)")         
             data = data.gsub('where_clause', "where_clause intersect_"+active_layer+".project_type_id = #{active_layer_id} AND intersect_"+active_layer+".row_active = true AND intersect_"+active_layer+".current_season = true AND ")
             # Aplica filtros de la capa
             if !filters_layers.nil?
