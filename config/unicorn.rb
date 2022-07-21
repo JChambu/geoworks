@@ -1,5 +1,5 @@
 #set path to the application
-app_dir= "/opt/geoworks"
+app_dir= "/data/geoworks"
 shared_dir = "#{app_dir}/shared/tmp"
 working_directory "#{app_dir}/current"
 
@@ -12,8 +12,8 @@ timeout 30000000
 listen "#{shared_dir}/sockets/unicorn.sock", :backlog => 64
 
 # Set path for logging
-stderr_path "/opt/geoworks/shared/log/unicorn.stderr.log"
-stdout_path "/opt/geoworks/shared/log/unicorn.stdout.log"
+stderr_path "#{app_dir}/shared/log/unicorn.stderr.log"
+stdout_path "#{app_dir}/shared/log/unicorn.stdout.log"
 
 # Set proccess id path
-pid "#{shared_dir}/pids/unicorn.pid"                                            
+pid "#{shared_dir}/pids/unicorn.pid"
