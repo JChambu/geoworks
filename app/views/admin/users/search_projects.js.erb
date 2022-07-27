@@ -1,14 +1,14 @@
 projects = "<%= j(collection_select(:project, :id, @p, :id, :name, {prompt: true}, {class: 'form-control form-control-sm'})) %>";
-$('#search_projects').html(projects);
-customer_name = $("#user_customer_id").val();
-$('#project_id').on('change', function() {
-        alert("Hoola estoy en search projects js")
-        $.ajax({
-          url:  "<%= admin_users_search_fields_path %>",
-          type: "POST",
-          data: { project_id: $(this).val(), customer_name: customer_name },
-          success: function(data){
-          }
-        });
-
-});
+$('#projects_for_filters').html(projects);
+// customer_name = $("#user_customer_id").val();
+// $('#project_id').on('change', function() {
+//         alert("Hoola estoy en search projects js")
+//         $.ajax({
+//           url:  "<%= admin_users_search_fields_path %>",
+//           type: "POST",
+//           data: { project_id: $(this).val(), customer_name: customer_name },
+//           success: function(data){
+//           }
+//         });
+//
+// });

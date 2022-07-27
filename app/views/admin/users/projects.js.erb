@@ -1,0 +1,8 @@
+
+$("<%= j (render 'projects', projects: 'prueba') %>").on('hidden.bs.modal', function (e) {
+  // Cuando se termina de ocultar el modal lo elimina para evitar que se quede pegado el tab
+  $(this).remove();
+  $('.modal-backdrop').remove();
+}).on('shown.bs.modal', function (e) {
+  alert('Eliminar modal')
+  }).modal();

@@ -9,13 +9,23 @@
         prompt: t('simple_form.select_item_prompt'),
         label: false,
         input_html: {
-          class: 'w-100 form-control form-control-sm',
-          onchange: "change_customer(event)"
+          class: 'w-100 form-control form-control-sm corp_id',
+          onchange: "change_customer(event)",
+          corp_id: '1'
         }
         %>
         <%= f.hidden_field :_destroy%>
       </div>
+      <%= link_to admin_users_projects_path(), :remote=> true do %> <i class= "fas fa-filter icon_filter"></i> <% end %>
+      <%# <%= link_to '', admin_users_projects_path, {:remote => true, 'data-toggle' =>  "modal", 'data-target' => '#modal_filter_user', class: 'fas fa-filter icon_filter'}  %>
+      <!-- <div id="modal_filter_user" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content"></div>
+        </div>
+      </div> -->
+
     </div>
+
     <div class="col-md-6 row">
       <%= f.label 'Rol', class:'col-md-4 text-right col-form-label' %>
       <div class="col-md-6">
@@ -33,17 +43,5 @@
         <%= link_to '#', class: "remove" do %><i class="fas fa-trash-alt" title="Eliminar corporación"></i><% end %>
       </div>
     </div>
-
-    <div class="col-md-12">
-      <div class="text-center">
-        <%= f.fields_for :project_filters do |i| %>
-          <%= render "project_filter_fields", f: i %>
-        <% end %>
-      </div>
-      <div class="text-center mb-4">
-        <%= link_to_add_fields "<i class='fas fa-filter' title='Agregar filtros' onclick='add_filter(event)'></i>".html_safe, f, :project_filters %>
-      </div>
-    </div>
-    <br>
   </div>
 </fieldset>

@@ -10,6 +10,14 @@ class Admin::UsersController < ApplicationController
     @p = ProjectType.search_projects_for_tenant params['customer_id']
   end
 
+  def create_filters
+    puts ''
+    puts ' *************************** puts controller *************************** '
+    p 'Algo'
+    puts ' *********************************************************** '
+    puts ''
+  end
+
   # Busca los roles luego de seleccionar la corporación
   def search_roles
     @r = Role.search_roles_for_tenant params['customer_id']
@@ -21,6 +29,13 @@ class Admin::UsersController < ApplicationController
 
   def search_properties_data
     @data = Project.search_properties_data_for_tenant params
+  end
+
+  def projects
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   def index

@@ -11,6 +11,7 @@
         <br>
         <div class="form-group">
           <div class="row justify-content-center">
+            <p id="user_selected_id" class="d-none"> <%= @user.id %> </p>
             <%= f.label :name, class:'col-md-2 text-right col-form-label' %>
             <div class="col-md-4">
               <%= f.input :name, label: false, input_html: {class: 'form-control form-control-sm'} %>
@@ -69,7 +70,7 @@
 
         <div class="row justify-content-center">
           <%= link_to t('.cancel', :default => t("helpers.links.cancel")), admin_users_path, :class => 'btn btn-secondary mr-1' %>
-          <%= f.submit  :class => 'btn btn-primary', value: 'Guardar' %>
+          <%= f.submit :class => 'btn btn-primary', value: 'Guardar' %>
         </div>
       <% end %>
     </div>
@@ -79,14 +80,14 @@
 <script type="text/javascript">
   function change_customer(e){
     var customer_id_selected = $(e.target).val();
-    console.log('customer_id_selected');
-    console.log(customer_id_selected);
     if (customer_id_selected != '') {
       $.ajax({
         url:  "<%= admin_users_search_roles_path %>",
         type: "GET",
         data: { customer_id: customer_id_selected },
         success: function(data) {
+          console.log($(e.target).closest('.customer_container').find('.icon_filter'));
+          $(e.target).closest('.customer_container').find('.icon_filter').attr('filter_corp_id', customer_id_selected)
           $(e.target).closest('.customer_container').find('.roles_container').html(roles);
         }
       });
