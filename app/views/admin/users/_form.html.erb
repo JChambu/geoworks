@@ -77,6 +77,32 @@
   </div>
 </div>
 
+<div id="modal_filter_user" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"> Filtros </h5>
+            <button type="button" class="close" data-dismiss="modal">x</button>
+          </div>
+          <div class="modal-body">
+            <div class="filters_select" id="projects_for_filters">
+            </div>
+          </div>
+          <div id="filters_project_container">
+            <label>Filtro Owner</label>
+            <input type="checkbox" name="">
+            <label>Filtros por atributos</label>
+            <input type="text" value="blablabla">
+          </div>
+          
+          <div class="modal-footer">
+        <%= link_to t('.cancel', :default => t("helpers.links.cancel")), admin_users_path, :class => '    btn       btn-secondary mr-1' %>
+        <%= button_tag 'Guardar', :id => 'save_filters', :class => 'btn btn-primary', value: 'Guardar',     onclick: 'save_filter()' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
 <script type="text/javascript">
   function change_customer(e){
     var customer_id_selected = $(e.target).val();
@@ -86,8 +112,7 @@
         type: "GET",
         data: { customer_id: customer_id_selected },
         success: function(data) {
-          console.log($(e.target).closest('.customer_container').find('.icon_filter'));
-          $(e.target).closest('.customer_container').find('.icon_filter').attr('filter_corp_id', customer_id_selected)
+          $(e.target).closest('.customer_container').find('.icon_filter').attr('data-filter_corp_id', customer_id_selected)
           $(e.target).closest('.customer_container').find('.roles_container').html(roles);
         }
       });
@@ -95,7 +120,8 @@
     else {
       $(e.target).closest('.customer_container').find('.roles_container').empty();
     }
-    set_project_filters(customer_id_selected, e);
+    //Vamos a buscar los proyectos cuando se abra el modal para saber que corporación se está editando
+    //set_project_filters(customer_id_selected, e);
   }
 
   function add_filter(e) {
@@ -103,24 +129,67 @@
     set_project_filters(customer_id_selected, e, true);
   }
 
-  function set_project_filters(customer_id_selected, e, last) {
-    if (customer_id_selected != '') {
+  //Funciones para modal
+  $(".icon_filter").on('click', function(e) {
+    $('#modal_filter_user').modal('show', $(this));
+ });
+
+$("#modal_filter_user").on('shown.bs.modal', function (e) {
+  var button = $(e.relatedTarget) // Button that triggered the modal
+  id_corporacion = button.data('filter_corp_id')
+  console.log("id de la corp"+id_corporacion)
+  //Busca los proyectos de esa corporación
+    if (id_corporacion != '') {
       $.ajax({
         url:  "<%= admin_users_search_projects_path %>",
         type: "GET",
-        data: { customer_id: customer_id_selected },
+        data: { customer_id: id_corporacion },
         success: function(data) {
-          if (last) {
-            $(e.target).closest('.customer_container').find('.project_types_container').last().html(projects);
-          }
-          else {
-            $(e.target).closest('.customer_container').find('.project_types_container').html(projects);
-          }
+          console.log("DATA!!!")
+          console.log(data)
         }
       });
     }
-    else {
-      $(e.target).closest('.customer_container').find('.project_types_container').empty();
-    }
+  })
+
+var id_corporacion;
+
+function save_filter() {
+    var project_id = $('#project_id').val();
+    console.log("ID del proyecto "+project_id)
+    user_selected_id = $('#user_selected_id').html()
+    console.log("Usuario "+user_selected_id);
+  
+    $.ajax({
+      url:  "<%= admin_users_create_filters_path %>",
+      type: "POST",
+      data: { 
+        'id_corporacion': id_corporacion, 
+        'user_selected_id': user_selected_id,
+        'project_id':project_id },
+      success: function(data) {
+        console.log(data);
+      }
+    });
+  }
+
+  //Funcion onchange search_projects.js.erb
+  function search_filters_for_project(){
+   $.ajax({
+      //Cambiar ruta
+      url:  "<%= admin_users_create_filters_path %>",
+      type: "GET",
+      data: { 
+        'id_corporacion': id_corporacion, 
+        'user_selected_id': user_selected_id,
+        'project_id':project_id },
+      success: function(data) {
+        console.log(data);
+        // recibir un json con
+        // filter_owner true or false
+        // array de filters por atributos
+        // array de filters intercapa
+      }
+    }); 
   }
 </script>

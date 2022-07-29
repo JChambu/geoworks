@@ -16,6 +16,10 @@ class Admin::UsersController < ApplicationController
     p 'Algo'
     puts ' *********************************************************** '
     puts ''
+    puts "PARAMETROS!!!!"
+    puts params[:id_corporacion]
+    puts params[:user_selected_id]
+    puts params[:project_id]
   end
 
   # Busca los roles luego de seleccionar la corporación

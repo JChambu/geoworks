@@ -16,16 +16,9 @@
         %>
         <%= f.hidden_field :_destroy%>
       </div>
-      <%= link_to admin_users_projects_path(), :remote=> true do %> <i class= "fas fa-filter icon_filter"></i> <% end %>
-      <%# <%= link_to '', admin_users_projects_path, {:remote => true, 'data-toggle' =>  "modal", 'data-target' => '#modal_filter_user', class: 'fas fa-filter icon_filter'}  %>
-      <!-- <div id="modal_filter_user" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content"></div>
-        </div>
-      </div> -->
+      <%= link_to admin_users_projects_path(),class:'icon_filter', :remote=> true , 'data-toggle' =>  "modal" ,'data-filter_corp_id' => @customer_id_num do %> <i class= "fas fa-filter"></i> <% end %>
 
     </div>
-
     <div class="col-md-6 row">
       <%= f.label 'Rol', class:'col-md-4 text-right col-form-label' %>
       <div class="col-md-6">
@@ -45,3 +38,9 @@
     </div>
   </div>
 </fieldset>
+
+
+<script type="text/javascript">
+  
+
+</script>
