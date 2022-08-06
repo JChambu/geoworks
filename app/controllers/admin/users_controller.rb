@@ -8,23 +8,36 @@ class Admin::UsersController < ApplicationController
 
   def search_projects
     @p = ProjectType.search_projects_for_tenant params['customer_id']
+    render json: {data: @p}
   end
 
   def create_filters
-    puts ''
-    puts ' *************************** puts controller *************************** '
-    p 'Algo'
-    puts ' *********************************************************** '
-    puts ''
-    puts "PARAMETROS!!!!"
-    puts params[:id_corporacion]
-    puts params[:user_selected_id]
-    puts params[:project_id]
+
   end
 
   # Busca los roles luego de seleccionar la corporación
   def search_roles
     @r = Role.search_roles_for_tenant params['customer_id']
+  end
+
+  def search_filters
+
+    id_corp = params[:id_corporacion]
+    user_selected_id = params[:user_selected_id]
+    pro_id = params[:project_id]
+
+    customer_name = Customer.where(id: id_corp).pluck(:subdomain).first
+    Apartment::Tenant.switch customer_name do
+      filter_owner = ProjectFilter.all.where(user_id: user_selected_id).where(project_type_id: pro_id).where(owner: true).pluck(:id).last
+      attributes = ProjectFilter.all.where(user_id: user_selected_id).where(project_type_id: pro_id).where.not(properties: nil).pluck(:id, :properties)
+      render json: {owner: filter_owner, attributes: attributes}
+
+      puts ''
+      puts ' *************************** puts attributes *************************** '
+      p attributes
+      puts ' *********************************************************** '
+      puts ''
+    end
   end
 
   def search_fields

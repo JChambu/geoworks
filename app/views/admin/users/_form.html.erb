@@ -78,30 +78,37 @@
 </div>
 
 <div id="modal_filter_user" class="modal fade">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title"> Filtros </h5>
-            <button type="button" class="close" data-dismiss="modal">x</button>
-          </div>
-          <div class="modal-body">
-            <div class="filters_select" id="projects_for_filters">
-            </div>
-          </div>
-          <div id="filters_project_container">
-            <label>Filtro Owner</label>
-            <input type="checkbox" name="">
-            <label>Filtros por atributos</label>
-            <input type="text" value="blablabla">
-          </div>
-          
-          <div class="modal-footer">
-        <%= link_to t('.cancel', :default => t("helpers.links.cancel")), admin_users_path, :class => '    btn       btn-secondary mr-1' %>
-        <%= button_tag 'Guardar', :id => 'save_filters', :class => 'btn btn-primary', value: 'Guardar',     onclick: 'save_filter()' %>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"> Filtros </h5>
+        <button type="button" class="close" data-dismiss="modal">x</button>
+      </div>
+      <div class="modal-body">
+        <div class="filters_select">
+          <select id="projects_for_filters" onchange="search_filters_for_project()">
+
+          </select>
+        </div>
+        <br>
+        <div id="filters_project_container">
+          <label>Filtro Owner</label>
+          <input type="checkbox" id="owner_filter">
+          <br>
+          <label>Filtros por atributos: </label>
+          <div id="attr_filter_container">
+
           </div>
         </div>
       </div>
+
+      <div class="modal-footer">
+        <%= link_to t('.cancel', :default => t("helpers.links.cancel")), admin_users_path, :class => '    btn       btn-secondary mr-1' %>
+        <%= button_tag 'Guardar', :id => 'save_filters', :class => 'btn btn-primary', value: 'Guardar',     onclick: 'save_filter()' %>
+      </div>
     </div>
+  </div>
+</div>
 
 <script type="text/javascript">
   function change_customer(e){
@@ -135,36 +142,44 @@
  });
 
 $("#modal_filter_user").on('shown.bs.modal', function (e) {
+  console.log("ABRE MODAL");
   var button = $(e.relatedTarget) // Button that triggered the modal
   id_corporacion = button.data('filter_corp_id')
   console.log("id de la corp"+id_corporacion)
   //Busca los proyectos de esa corporación
-    if (id_corporacion != '') {
-      $.ajax({
-        url:  "<%= admin_users_search_projects_path %>",
-        type: "GET",
-        data: { customer_id: id_corporacion },
-        success: function(data) {
-          console.log("DATA!!!")
-          console.log(data)
-        }
-      });
-    }
-  })
+  if (id_corporacion != '') {
+    $.ajax({
+      url:  "<%= admin_users_search_projects_path %>",
+      type: "GET",
+      data: { customer_id: id_corporacion },
+      success: function(data) {
+        console.log("DATA!!!")
+        console.log(data)
+        console.log(data.data);
+
+        data.data.forEach(function(item){
+          console.log(item.name);
+          var new_option = '<option value='+ item.id + '>' + item.name + '</option>'
+          $('#projects_for_filters').append(new_option)
+        })
+      }
+    });
+  }
+})
 
 var id_corporacion;
 
 function save_filter() {
-    var project_id = $('#project_id').val();
+    var project_id = $('#projects_for_filters').val();
     console.log("ID del proyecto "+project_id)
     user_selected_id = $('#user_selected_id').html()
     console.log("Usuario "+user_selected_id);
-  
+
     $.ajax({
       url:  "<%= admin_users_create_filters_path %>",
       type: "POST",
-      data: { 
-        'id_corporacion': id_corporacion, 
+      data: {
+        'id_corporacion': id_corporacion,
         'user_selected_id': user_selected_id,
         'project_id':project_id },
       success: function(data) {
@@ -175,21 +190,44 @@ function save_filter() {
 
   //Funcion onchange search_projects.js.erb
   function search_filters_for_project(){
-   $.ajax({
+    var project_id = $('#projects_for_filters').val();
+    user_selected_id = $('#user_selected_id').html()
+    console.log("Variables");
+    console.log(id_corporacion);
+    console.log(user_selected_id);
+    console.log(project_id);
+    console.log("Adentroooo");
+
+    $.ajax({
       //Cambiar ruta
-      url:  "<%= admin_users_create_filters_path %>",
+      url:  "<%= admin_users_search_filters_path %>",
       type: "GET",
-      data: { 
-        'id_corporacion': id_corporacion, 
-        'user_selected_id': user_selected_id,
-        'project_id':project_id },
+      datatype: "json",
+      data: {
+        id_corporacion: id_corporacion,
+        user_selected_id: user_selected_id,
+        project_id: project_id },
+
       success: function(data) {
         console.log(data);
-        // recibir un json con
-        // filter_owner true or false
-        // array de filters por atributos
-        // array de filters intercapa
+        console.log(data.owner);
+        if (data.owner == null){
+          $('#owner_filter').prop('checked', false);
+          $('#owner_filter').attr('filter_id', data.owner);
+        }else {
+          $('#owner_filter').prop('checked', true);
+          $('#owner_filter').attr('filter_id', data.owner);
+        }
+
+        if (data.attributes.length > 0){
+          data.attributes.forEach(function(a){
+            var new_filter = '<input filter_id= '+ a[0] +' value='+ JSON.stringify(a[1]) +' > </input>'
+            $('#attr_filter_container').append(new_filter)
+          })
+        }else{
+          $('#attr_filter_container').empty()
+        }
       }
-    }); 
+    });
   }
 </script>
