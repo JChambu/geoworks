@@ -12,6 +12,24 @@ class Admin::UsersController < ApplicationController
   end
 
   def create_filters
+    id_corp = params[:id_corporacion]
+    user_selected_id = params[:user_selected_id]
+    pro_id = params[:project_id]
+    check_filter_owner = params[:filter_owner]
+
+    customer_name = Customer.where(id: id_corp).pluck(:subdomain).first
+    Apartment::Tenant.switch customer_name do
+      filter_owner = ProjectFilter.all.where(user_id: user_selected_id).where(project_type_id: pro_id).where(owner: true)
+
+      if filter_owner.empty? && check_filter_owner == 'true'
+        @new_filter_owner = ProjectFilter.new(user_id: user_selected_id, project_type_id: pro_id, owner: true)
+        @new_filter_owner.save
+      end
+
+      if !filter_owner.empty? && check_filter_owner == 'false'
+        filter_owner.update(owner: false)
+      end
+    end
 
   end
 
@@ -30,7 +48,27 @@ class Admin::UsersController < ApplicationController
     Apartment::Tenant.switch customer_name do
       filter_owner = ProjectFilter.all.where(user_id: user_selected_id).where(project_type_id: pro_id).where(owner: true).pluck(:id).last
       attributes = ProjectFilter.all.where(user_id: user_selected_id).where(project_type_id: pro_id).where.not(properties: nil).pluck(:id, :properties)
-      render json: {owner: filter_owner, attributes: attributes}
+      filters = []
+      attributes.each do |a|
+        filter = {}
+
+        filter["id"] = a[0]
+        filter["name"] = a[1]
+        cross_layer_filter = ProjectFilter.joins(:project_type).where(user_id: user_selected_id).where(cross_layer_filter_id: a).pluck(:id, :name)
+        all_cross_layers = []
+
+        cross_layer_filter.each do |cl|
+          filter_cross_layer = {}
+          filter_cross_layer['id_cross_layer'] = cl[0]
+          filter_cross_layer['name'] = cl[1]
+          all_cross_layers.push(filter_cross_layer)
+        end
+
+        filter["cross_layer_filter"] = all_cross_layers
+
+        filters.push(filter)
+      end
+      render json: {owner: filter_owner, attributes: filters}
 
       puts ''
       puts ' *************************** puts attributes *************************** '

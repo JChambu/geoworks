@@ -87,7 +87,7 @@
       <div class="modal-body">
         <div class="filters_select">
           <select id="projects_for_filters" onchange="search_filters_for_project()">
-
+            <option></option>
           </select>
         </div>
         <br>
@@ -153,6 +153,8 @@ $("#modal_filter_user").on('shown.bs.modal', function (e) {
       type: "GET",
       data: { customer_id: id_corporacion },
       success: function(data) {
+        $('#projects_for_filters').empty()
+        $('#projects_for_filters').append('<option> </option>')
         console.log("DATA!!!")
         console.log(data)
         console.log(data.data);
@@ -169,23 +171,46 @@ $("#modal_filter_user").on('shown.bs.modal', function (e) {
 
 var id_corporacion;
 
-function save_filter() {
+  function save_filter() {
     var project_id = $('#projects_for_filters').val();
     console.log("ID del proyecto "+project_id)
     user_selected_id = $('#user_selected_id').html()
     console.log("Usuario "+user_selected_id);
+    var filter_owner = $('#owner_filter').prop('checked');
+    console.log(filter_owner);
+    var attrs_filter = [];
 
-    $.ajax({
-      url:  "<%= admin_users_create_filters_path %>",
-      type: "POST",
-      data: {
-        'id_corporacion': id_corporacion,
-        'user_selected_id': user_selected_id,
-        'project_id':project_id },
-      success: function(data) {
-        console.log(data);
+    $('.attribute_id').each(function(){
+      console.log("pesos cross layer from");
+      console.log($('.cross_layer_from_' + $(this).attr('id')).attr('id'));
+      console.log($('.cross_layer_from_' + $(this).attr('id')));
+      console.log($('.cross_layer_from_128'));
+      console.log($(this).attr('id'));
+
+      var id_filter = $(this).attr('id').split('attribute_id_')[1];
+      filter_object = {
+        'id': id_filter,
+        'filter': $(this).val(),
+        'cross_layer': $('.cross_layer_from_' + id_filter).attr('id').split('cross_layer_check_')[1]
       }
-    });
+
+      attrs_filter.push(filter_object)
+    })
+    console.log("attributes filter");
+    console.log(attrs_filter);
+    // $.ajax({
+    //   url:  "<%= admin_users_create_filters_path %>",
+    //   type: "POST",
+    //   data: {
+    //     'id_corporacion': id_corporacion,
+    //     'user_selected_id': user_selected_id,
+    //     'project_id': project_id,
+    //     'filter_owner': filter_owner
+    //   },
+    //   success: function(data) {
+    //     console.log(data);
+    //   }
+    // });
   }
 
   //Funcion onchange search_projects.js.erb
@@ -221,8 +246,20 @@ function save_filter() {
 
         if (data.attributes.length > 0){
           data.attributes.forEach(function(a){
-            var new_filter = '<input filter_id= '+ a[0] +' value='+ JSON.stringify(a[1]) +' > </input>'
+            console.log("a");
+            console.log(a);
+            var new_filter = '<input class="attribute_id" id= "attribute_id_'+ a['id'] +'" value='+ JSON.stringify(a['name']) +' > </input>'
             $('#attr_filter_container').append(new_filter)
+
+            var cross_layer_filter = a['cross_layer_filter'];
+            if (cross_layer_filter.length > 0) {
+              $('#attr_filter_container').append('<h5> Filtros Intercapa: </h5>')
+
+              cross_layer_filter.forEach(function(c){
+                var new_filter = '<div style= "display: flex"> <p> '+ c['name'] +' </p> <input type= "checkbox" class="cross_layer_from_'+ a['id'] +'" id= "cross_layer_check_" ' + c['id_cross_layer'] + '>  </input></div>'
+                $('#attr_filter_container').append(new_filter)
+              })
+            }
           })
         }else{
           $('#attr_filter_container').empty()
