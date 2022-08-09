@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20220627183904) do
+ActiveRecord::Schema.define(version: 20220806144343) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -275,9 +275,9 @@ ActiveRecord::Schema.define(version: 20220627183904) do
     t.integer "sort"
     t.boolean "read_only", default: false
     t.boolean "popup", default: false
-    t.string "calculated_field"
+    t.string "calculated_field", default: ""
     t.string "roles_read"
-    t.text "data_script"
+    t.text "data_script", default: ""
     t.boolean "filter_field", default: false
     t.boolean "heatmap_field", default: false
     t.boolean "colored_points_field", default: false
@@ -326,10 +326,10 @@ ActiveRecord::Schema.define(version: 20220627183904) do
     t.boolean "hidden", default: false
     t.boolean "read_only", default: false
     t.boolean "popup", default: false
-    t.string "calculated_field"
+    t.string "calculated_field", default: ""
     t.string "roles_read"
     t.integer "sort"
-    t.text "data_script"
+    t.text "data_script", default: ""
     t.string "roles_edit"
     t.boolean "filter_field", default: false
     t.index ["choice_list_id"], name: "index_project_subfields_on_choice_list_id"
