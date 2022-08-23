@@ -638,7 +638,7 @@ Navarra.geomaps = function() {
     }
     current_tenement = Navarra.dashboards.config.current_tenement;
     layer_current = current_tenement + ":" + name_layer;
-    projectFilterLayer = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
+    projectFilterLayer = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?"+Navarra.dashboards.config.geo_key+"", {
       layers: layer_current, //nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
@@ -862,7 +862,7 @@ Navarra.geomaps = function() {
           CQL_FILTER: value_filter
         };
 
-        source = new L.tileLayer.betterWms(protocol + "//" + url + ":" + port + "/geoserver/wms", options);
+        source = new L.tileLayer.betterWms(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?"+Navarra.dashboards.config.geo_key+"", options);
         ss.push(source);
 
         // Elimina corchetes y comillas para leyenda
@@ -1114,8 +1114,9 @@ Navarra.geomaps = function() {
     }
 
     // agrega registros NO seleccionados en la tabla
+    current_tenement = Navarra.dashboards.config.current_tenement;
     var randint = Math.floor( Math.random() * 200000 ) + 1;
-    layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms?random=" + randint, {
+    layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?"+Navarra.dashboards.config.geo_key+"&random=" + randint, {
       layers: current_layer, //nombre de la capa (ver get capabilities)
       format: 'image/png',
       crs: L.CRS.EPSG4326,
@@ -1144,8 +1145,8 @@ Navarra.geomaps = function() {
     } else {
       style = 'polygon_new_selected';
     }
-
-    layerProjectsSelected = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
+    current_tenement = Navarra.dashboards.config.current_tenement;
+    layerProjectsSelected = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?"+Navarra.dashboards.config.geo_key+"", {
       layers: current_layer, //nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
@@ -1206,7 +1207,7 @@ Navarra.geomaps = function() {
       var cql_filter = getCQLFilter_layer(dat);
       // genera capa con todos los datos, sin tener en cuenta la intersección con la capa activa
       layer_current = workspace + ":" + layer;
-      layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
+      layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+workspace+"/wms?"+Navarra.dashboards.config.geo_key+"", {
         layers: layer_current, //nombre de la capa (ver get capabilities)
         format: 'image/png',
         transparent: 'true',
@@ -1238,7 +1239,7 @@ Navarra.geomaps = function() {
     // genera capa con todos los datos de la intersección con la capa activa
 
       layer_current_intersect = workspace + ":" + layer;
-      layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/wms", {
+      layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+workspace+"/wms?"+Navarra.dashboards.config.geo_key+"", {
         layers: layer_current_intersect, //nombre de la capa (ver get capabilities)
         format: 'image/png',
         transparent: 'true',

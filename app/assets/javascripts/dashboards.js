@@ -93,7 +93,8 @@ Navarra.dashboards.config = {
   field_geometric_calculated_length_all: 0,
   field_geometric_calculated_count: 0,
   field_geometric_calculated_count_all: 0,
-  app_ids_table: []
+  app_ids_table: [],
+  geo_key: ''
 };
 
 resize_graphics = function(){
@@ -319,7 +320,15 @@ Navarra.dashboards.action_show = function(){
           graphic_id = value_graph.split('canvas');
           $.getScript("/project_types/"+ project_type_id+"/dashboards/"+dashboard_id+"/graphics/"+graphic_id[1]+"/edit");
         });
-    Navarra.geomaps.init();
+    $.ajax({
+      type: 'GET',
+      url: '/project_types/get_geo_key',
+      datatype: 'json',
+      success: function(data) {
+        Navarra.dashboards.config.geo_key = data.data;
+        Navarra.geomaps.init();
+      }
+    });
   }
 
 
