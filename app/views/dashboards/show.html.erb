@@ -156,7 +156,8 @@
     }
 
 //Funciones para modal de capas
-$(document).ready(function () {
+function set_layer_modal() {
+  alert("Modal capas")
     $(".custom_dropdown_container").click(function (e) {
       e.stopPropagation();
     });
@@ -169,7 +170,7 @@ $(document).ready(function () {
     $('#custom_layer_control').on('shown.bs.dropdown', function () {
       $('.custom_dropdown_map').addClass('d-none');
     });
-  });
+  };
 
 function select_layer(layer){
   if(layer!=undefined){

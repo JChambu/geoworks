@@ -327,6 +327,7 @@ Navarra.dashboards.action_show = function(){
       success: function(data) {
         Navarra.dashboards.config.geo_key = data.data;
         Navarra.geomaps.init();
+        set_layer_modal();
       }
     });
   }
