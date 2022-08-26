@@ -282,7 +282,7 @@ class ProjectTypesController < ApplicationController
 
   def get_geo_key
     if !ENV['GEOSERVER_AUTH_KEY'].nil?
-      render json: {"data": 'authkey='+ENV['GEOSERVER_AUTH_KEY']}
+      render json: {"data": ENV['GEOSERVER_AUTH_KEY']}
     else
       render json: {"data": ''}
     end

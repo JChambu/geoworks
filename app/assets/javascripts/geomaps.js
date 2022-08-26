@@ -638,7 +638,7 @@ Navarra.geomaps = function() {
     }
     current_tenement = Navarra.dashboards.config.current_tenement;
     layer_current = current_tenement + ":" + name_layer;
-    projectFilterLayer = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?"+Navarra.dashboards.config.geo_key+"", {
+    projectFilterLayer = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?authkey="+Navarra.dashboards.config.geo_key+"", {
       layers: layer_current, //nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
@@ -862,7 +862,7 @@ Navarra.geomaps = function() {
           CQL_FILTER: value_filter
         };
 
-        source = new L.tileLayer.betterWms(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?"+Navarra.dashboards.config.geo_key+"", options);
+        source = new L.tileLayer.betterWms(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?authkey="+Navarra.dashboards.config.geo_key+"", options);
         ss.push(source);
 
         // Elimina corchetes y comillas para leyenda
@@ -1116,7 +1116,7 @@ Navarra.geomaps = function() {
     // agrega registros NO seleccionados en la tabla
     current_tenement = Navarra.dashboards.config.current_tenement;
     var randint = Math.floor( Math.random() * 200000 ) + 1;
-    layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?"+Navarra.dashboards.config.geo_key+"&random=" + randint, {
+    layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?authkey="+Navarra.dashboards.config.geo_key+"&random=" + randint, {
       layers: current_layer, //nombre de la capa (ver get capabilities)
       format: 'image/png',
       crs: L.CRS.EPSG4326,
@@ -1146,7 +1146,7 @@ Navarra.geomaps = function() {
       style = 'polygon_new_selected';
     }
     current_tenement = Navarra.dashboards.config.current_tenement;
-    layerProjectsSelected = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?"+Navarra.dashboards.config.geo_key+"", {
+    layerProjectsSelected = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?authkey="+Navarra.dashboards.config.geo_key+"", {
       layers: current_layer, //nombre de la capa (ver get capabilities)
       format: 'image/png',
       transparent: 'true',
@@ -1207,7 +1207,7 @@ Navarra.geomaps = function() {
       var cql_filter = getCQLFilter_layer(dat);
       // genera capa con todos los datos, sin tener en cuenta la intersección con la capa activa
       layer_current = workspace + ":" + layer;
-      layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+workspace+"/wms?"+Navarra.dashboards.config.geo_key+"", {
+      layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+workspace+"/wms?authkey="+Navarra.dashboards.config.geo_key+"", {
         layers: layer_current, //nombre de la capa (ver get capabilities)
         format: 'image/png',
         transparent: 'true',
@@ -1239,7 +1239,7 @@ Navarra.geomaps = function() {
     // genera capa con todos los datos de la intersección con la capa activa
 
       layer_current_intersect = workspace + ":" + layer;
-      layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+workspace+"/wms?"+Navarra.dashboards.config.geo_key+"", {
+      layerSubProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+workspace+"/wms?authkey="+Navarra.dashboards.config.geo_key+"", {
         layers: layer_current_intersect, //nombre de la capa (ver get capabilities)
         format: 'image/png',
         transparent: 'true',
@@ -1582,13 +1582,14 @@ function show_labels(setbbox){
   $(".fakeLoader").css("display", "block");
   var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
   var defaultParameters = {
+    authkey: Navarra.dashboards.config.geo_key,
     service: 'WFS',
     version: '1.0.0',
     crs: L.CRS.EPSG4326,
     request: 'GetFeature',
     typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
     outputFormat: 'application/json',
-    CQL_FILTER: cql_filter
+    //CQL_FILTER: cql_filter
   };
   var parameters = L.Util.extend(defaultParameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
@@ -1654,6 +1655,7 @@ function edit_geometry_in_map(event){
   $('.confirmation_geometry').removeClass('d-none');
   var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
   var defaultParameters = {
+    authkey: Navarra.dashboards.config.geo_key,
     service: 'WFS',
     version: '1.0.0',
     crs: L.CRS.EPSG4326,
@@ -2217,6 +2219,7 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
   }
   var cql_filter =  getCQLFilter(true);
   var defaultParameters = {
+    authkey: Navarra.dashboards.config.geo_key,
     service: 'WFS',
     version: '1.0.0',
     crs: L.CRS.EPSG4326,
@@ -2282,6 +2285,7 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name, s
           cql_filter_layer += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + name_layer + "', 'the_geom', '" + current_layer_filters + "')))";
         }
         var defaultParameters = {
+          authkey: Navarra.dashboards.config.geo_key,
           service: 'WFS',
           version: '1.0.0',
           crs: L.CRS.EPSG4326,
