@@ -92,19 +92,20 @@
         </div>
         <br>
         <div id="filters_project_container">
-          <label>Filtro Owner</label>
+          <label>Filtro Owner:</label>
           <input type="checkbox" id="owner_filter">
           <br>
-          <label>Filtros por atributos: </label>
-          <div id="attr_filter_container">
-
+          <div class="row mb-6">
+            <label class="col-sm-4 col-form-label">Filtros por atributos: </label>
+            <div class="col-md-4 row d-flex" id="attr_filter_container"></div>
           </div>
+          <br>
         </div>
       </div>
 
       <div class="modal-footer">
-        <%= link_to t('.cancel', :default => t("helpers.links.cancel")), admin_users_path, :class => '    btn       btn-secondary mr-1' %>
-        <%= button_tag 'Guardar', :id => 'save_filters', :class => 'btn btn-primary', value: 'Guardar',     onclick: 'save_filter()' %>
+        <%= link_to t('.cancel', :default => t("helpers.links.cancel")), admin_users_path, :class => 'btn btn-secondary mr-1' %>
+        <%= button_tag 'Guardar', :id => 'save_filters', :class => 'btn btn-primary', value: 'Guardar', onclick: 'save_filter()' %>
       </div>
     </div>
   </div>
@@ -139,37 +140,37 @@
   //Funciones para modal
   $(".icon_filter").on('click', function(e) {
     $('#modal_filter_user').modal('show', $(this));
- });
+  });
 
-$("#modal_filter_user").on('shown.bs.modal', function (e) {
-  console.log("ABRE MODAL");
-  var button = $(e.relatedTarget) // Button that triggered the modal
-  id_corporacion = button.data('filter_corp_id')
-  console.log("id de la corp"+id_corporacion)
-  //Busca los proyectos de esa corporación
-  if (id_corporacion != '') {
-    $.ajax({
-      url:  "<%= admin_users_search_projects_path %>",
-      type: "GET",
-      data: { customer_id: id_corporacion },
-      success: function(data) {
-        $('#projects_for_filters').empty()
-        $('#projects_for_filters').append('<option> </option>')
-        console.log("DATA!!!")
-        console.log(data)
-        console.log(data.data);
+  $("#modal_filter_user").on('shown.bs.modal', function (e) {
+    console.log("ABRE MODAL");
+    var button = $(e.relatedTarget) // Button that triggered the modal
+    id_corporacion = button.data('filter_corp_id')
+    console.log("id de la corp"+id_corporacion)
+    //Busca los proyectos de esa corporación
+    if (id_corporacion != '') {
+      $.ajax({
+        url:  "<%= admin_users_search_projects_path %>",
+        type: "GET",
+        data: { customer_id: id_corporacion },
+        success: function(data) {
+          $('#projects_for_filters').empty()
+          $('#projects_for_filters').append('<option> </option>')
+          console.log("DATA!!!")
+          console.log(data)
+          console.log(data.data);
 
-        data.data.forEach(function(item){
-          console.log(item.name);
-          var new_option = '<option value='+ item.id + '>' + item.name + '</option>'
-          $('#projects_for_filters').append(new_option)
-        })
-      }
-    });
-  }
-})
+          data.data.forEach(function(item){
+            console.log(item.name);
+            var new_option = '<option value='+ item.id + '>' + item.name + '</option>'
+            $('#projects_for_filters').append(new_option)
+          })
+        }
+      });
+    }
+  })
 
-var id_corporacion;
+  var id_corporacion;
 
   function save_filter() {
     var project_id = $('#projects_for_filters').val();
@@ -253,7 +254,7 @@ var id_corporacion;
 
             var cross_layer_filter = a['cross_layer_filter'];
             if (cross_layer_filter.length > 0) {
-              $('#attr_filter_container').append('<h5> Filtros Intercapa: </h5>')
+              $('#attr_filter_container').append('<br> <h5> Filtros Intercapa: </h5> <br>')
 
               cross_layer_filter.forEach(function(c){
                 var new_filter = '<div style= "display: flex"> <p> '+ c['name'] +' </p> <input type= "checkbox" class="cross_layer_from_'+ a['id'] +'" id= "cross_layer_check_" ' + c['id_cross_layer'] + '>  </input></div>'
