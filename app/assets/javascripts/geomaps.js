@@ -1580,7 +1580,8 @@ function show_labels(setbbox){
     }
 
   $(".fakeLoader").css("display", "block");
-  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
+  current_tenement = Navarra.dashboards.config.current_tenement;
+  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
   var defaultParameters = {
     authkey: Navarra.dashboards.config.geo_key,
     service: 'WFS',
@@ -1653,7 +1654,8 @@ function edit_geometry_in_map(event){
   }
 
   $('.confirmation_geometry').removeClass('d-none');
-  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
+  current_tenement = Navarra.dashboards.config.current_tenement;
+  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
   var defaultParameters = {
     authkey: Navarra.dashboards.config.geo_key,
     service: 'WFS',
@@ -2228,7 +2230,8 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
     outputFormat: 'application/json',
     CQL_FILTER: cql_filter
   };
-  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
+  current_tenement = Navarra.dashboards.config.current_tenement;
+  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
   var parameters = L.Util.extend(defaultParameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
   $.ajax({
@@ -2294,7 +2297,8 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name, s
           outputFormat: 'application/json',
           CQL_FILTER: cql_filter_layer
         };
-        var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/wfs";
+        current_tenement = Navarra.dashboards.config.current_tenement;
+        var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
         var parameters = L.Util.extend(defaultParameters);
         var URL = owsrootUrl + L.Util.getParamString(parameters);
         $.ajax({
