@@ -86,20 +86,26 @@
       </div>
       <div class="modal-body">
         <div class="filters_select">
-          <select id="projects_for_filters" onchange="search_filters_for_project()">
+          <strong><label>Proyecto:</label> </strong> <select id="projects_for_filters" onchange="search_filters_for_project()">
             <option></option>
           </select>
         </div>
         <br>
         <div id="filters_project_container">
-          <label>Filtro Owner:</label>
-          <input type="checkbox" id="owner_filter">
-          <br>
-          <div class="row mb-6">
-            <label class="col-sm-4 col-form-label">Filtros por atributos: </label>
-            <div class="col-md-4 row d-flex" id="attr_filter_container"></div>
+          <div class="row mb-12">
+            <div class="col-md-5 col-form-label"><strong><label>Filtro Owner:</label></strong></div>
+            <div class="col-md-7 col-form-label" id="checkbox_owner"></div>
           </div>
           <br>
+          <div class="row mb-12">
+            <div class="col-md-5 col-form-label"><strong><label>Filtros por atributos: </label></strong></div>
+            <div class="col-md-7 col-form-label" id="attr_filter_container"></div>
+          </div>
+          <br>
+          <div class="row mb-12">
+            <div class="col-md-5 col-form-label"><strong><label>Filtros Intercapas: </label></strong></div>
+            <div class="col-md-7 col-form-label" id="attr_cross_layer_container"></div>
+          </div>
         </div>
       </div>
 
@@ -143,10 +149,13 @@
   });
 
   $("#modal_filter_user").on('shown.bs.modal', function (e) {
-    console.log("ABRE MODAL");
+    $('#attr_filter_container').empty()
+    $('#attr_cross_layer_container').empty()
+    $('#checkbox_owner').empty()
+
     var button = $(e.relatedTarget) // Button that triggered the modal
     id_corporacion = button.data('filter_corp_id')
-    console.log("id de la corp"+id_corporacion)
+
     //Busca los proyectos de esa corporación
     if (id_corporacion != '') {
       $.ajax({
@@ -156,12 +165,8 @@
         success: function(data) {
           $('#projects_for_filters').empty()
           $('#projects_for_filters').append('<option> </option>')
-          console.log("DATA!!!")
-          console.log(data)
-          console.log(data.data);
 
           data.data.forEach(function(item){
-            console.log(item.name);
             var new_option = '<option value='+ item.id + '>' + item.name + '</option>'
             $('#projects_for_filters').append(new_option)
           })
@@ -174,55 +179,57 @@
 
   function save_filter() {
     var project_id = $('#projects_for_filters').val();
-    console.log("ID del proyecto "+project_id)
     user_selected_id = $('#user_selected_id').html()
-    console.log("Usuario "+user_selected_id);
     var filter_owner = $('#owner_filter').prop('checked');
-    console.log(filter_owner);
     var attrs_filter = [];
 
     $('.attribute_id').each(function(){
-      console.log("pesos cross layer from");
-      console.log($('.cross_layer_from_' + $(this).attr('id')).attr('id'));
-      console.log($('.cross_layer_from_' + $(this).attr('id')));
-      console.log($('.cross_layer_from_128'));
-      console.log($(this).attr('id'));
-
       var id_filter = $(this).attr('id').split('attribute_id_')[1];
+      var interlayer_filters = []
+      var interlayer_filters_new = []
+
+      $('.cross_layer_from_' + id_filter).each(function(){
+        var interlayer_filter = { 'id': $(this).attr('id').split('cross_layer_check_')[1], 'checked': $(this).is(":checked")  }
+        interlayer_filters.push(interlayer_filter)
+      })
+
+      $('.cross_layer_new_' + id_filter).each(function(){
+        if ($(this).is(":checked")) {
+          var cross_layer_new_check_ = { 'id_project': $(this).attr('id').split('cross_layer_new_')[1], 'cross_layer_id': $(this).attr('cross_layer_id') }
+          interlayer_filters_new.push(cross_layer_new_check_)
+        }
+      })
+
       filter_object = {
         'id': id_filter,
-        'filter': $(this).val(),
-        'cross_layer': $('.cross_layer_from_' + id_filter).attr('id').split('cross_layer_check_')[1]
+        'filter': JSON.parse($(this).val()),
+        'cross_layer': interlayer_filters,
+        'interlayer_filters_new': interlayer_filters_new
       }
 
       attrs_filter.push(filter_object)
     })
-    console.log("attributes filter");
-    console.log(attrs_filter);
-    // $.ajax({
-    //   url:  "<%= admin_users_create_filters_path %>",
-    //   type: "POST",
-    //   data: {
-    //     'id_corporacion': id_corporacion,
-    //     'user_selected_id': user_selected_id,
-    //     'project_id': project_id,
-    //     'filter_owner': filter_owner
-    //   },
-    //   success: function(data) {
-    //     console.log(data);
-    //   }
-    // });
+
+    $.ajax({
+      url:  "<%= admin_users_create_filters_path %>",
+      type: "POST",
+      data: {
+        'id_corporacion': id_corporacion,
+        'user_selected_id': user_selected_id,
+        'project_id': project_id,
+        'filter_owner': filter_owner,
+        'attrs_filter': attrs_filter
+      },
+      success: function(data) {
+        location.reload();
+      }
+    });
   }
 
   //Funcion onchange search_projects.js.erb
   function search_filters_for_project(){
     var project_id = $('#projects_for_filters').val();
     user_selected_id = $('#user_selected_id').html()
-    console.log("Variables");
-    console.log(id_corporacion);
-    console.log(user_selected_id);
-    console.log(project_id);
-    console.log("Adentroooo");
 
     $.ajax({
       //Cambiar ruta
@@ -235,35 +242,43 @@
         project_id: project_id },
 
       success: function(data) {
-        console.log(data);
-        console.log(data.owner);
+        $('#checkbox_owner').empty()
         if (data.owner == null){
-          $('#owner_filter').prop('checked', false);
-          $('#owner_filter').attr('filter_id', data.owner);
+          var owner_check = '<input type="checkbox" filter_id="'+ data.owner +'" id="owner_filter"></input>'
+          $('#checkbox_owner').append(owner_check)
         }else {
-          $('#owner_filter').prop('checked', true);
-          $('#owner_filter').attr('filter_id', data.owner);
+          var owner_check = '<input type="checkbox" checked filter_id="'+ data.owner +'" id="owner_filter"></input>'
+          $('#checkbox_owner').append(owner_check)
         }
 
         if (data.attributes.length > 0){
           data.attributes.forEach(function(a){
-            console.log("a");
-            console.log(a);
-            var new_filter = '<input class="attribute_id" id= "attribute_id_'+ a['id'] +'" value='+ JSON.stringify(a['name']) +' > </input>'
+            $('#attr_filter_container').empty()
+            $('#attr_cross_layer_container').empty()
+
+            var new_filter = '<textarea class="attribute_id" id="attribute_id_'+ a['id'] +'"> '+ JSON.stringify(a['name'], undefined, 2) +' </textarea>'
             $('#attr_filter_container').append(new_filter)
 
             var cross_layer_filter = a['cross_layer_filter'];
-            if (cross_layer_filter.length > 0) {
-              $('#attr_filter_container').append('<br> <h5> Filtros Intercapa: </h5> <br>')
 
+            if (cross_layer_filter.length > 0) {
               cross_layer_filter.forEach(function(c){
-                var new_filter = '<div style= "display: flex"> <p> '+ c['name'] +' </p> <input type= "checkbox" class="cross_layer_from_'+ a['id'] +'" id= "cross_layer_check_" ' + c['id_cross_layer'] + '>  </input></div>'
-                $('#attr_filter_container').append(new_filter)
+                var new_filter = '<div style= "display: flex; align-items: baseline"> <p> '+ c['name'] +' </p> <input type= "checkbox" checked class="ml-2 cross_layer_from_'+ a['id'] +'" id= "cross_layer_check_' + c['id_cross_layer'] + '"> </input></div>'
+                $('#attr_cross_layer_container').append(new_filter)
               })
             }
+
+            var all_project_types = a['all_project_types'];
+            all_project_types.forEach(function(apt){
+              var new_filter = '<div style="display: flex; align-items: baseline"> <p> '+ apt['name'] +' </p> <input type= "checkbox" class="ml-2 cross_layer_new_'+ a['id'] +'" cross_layer_id= "'+ a['id'] +'" id= "cross_layer_new_' + apt['id_project_type'] + '">  </input></div>'
+              $('#attr_cross_layer_container').append(new_filter)
+            })
           })
         }else{
           $('#attr_filter_container').empty()
+          $('#attr_cross_layer_container').empty()
+          var new_filter = '<input class="attribute_id" id= "attribute_id_0" > </input>'
+          $('#attr_filter_container').append(new_filter)
         }
       }
     });
