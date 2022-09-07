@@ -18,7 +18,7 @@
       </div>
 
       <% if params[:action] == 'update' || params[:action] == 'edit' %>
-        <%= link_to admin_users_projects_path(), class: 'icon_filter', :remote=> true, 'data-toggle' =>  "modal", 'data-filter_corp_id' => @customer_id_num do %> <i class= "fas fa-filter"></i> <% end %>
+        <%= link_to admin_users_projects_path(), class: 'icon_filter', :remote=> true, 'data-toggle' => "modal", 'data-filter_corp_id' => @customer_id_num do %> <i class= "fas fa-filter" title="Filtros"></i> <% end %>
       <% end %>
 
     </div>
