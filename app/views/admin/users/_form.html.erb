@@ -86,14 +86,14 @@
       </div>
       <div class="modal-body">
         <div class="filters_select">
-          <strong><label>Proyecto:</label> </strong> <select id="projects_for_filters" onchange="search_filters_for_project()">
+          <strong><label>Proyecto:</label></strong> <select id="projects_for_filters" onchange="search_filters_for_project()">
             <option></option>
           </select>
         </div>
         <br>
         <div id="filters_project_container">
           <div class="row mb-12">
-            <div class="col-md-5 col-form-label"><strong><label>Filtro Owner:</label></strong></div>
+            <div class="col-md-5 col-form-label"><strong><label>Filtro Owner: </label></strong></div>
             <div class="col-md-7 col-form-label" id="checkbox_owner"></div>
           </div>
           <br>
@@ -135,7 +135,6 @@
       $(e.target).closest('.customer_container').find('.roles_container').empty();
     }
     //Vamos a buscar los proyectos cuando se abra el modal para saber que corporación se está editando
-    //set_project_filters(customer_id_selected, e);
   }
 
   function add_filter(e) {
@@ -153,7 +152,7 @@
     $('#attr_cross_layer_container').empty()
     $('#checkbox_owner').empty()
 
-    var button = $(e.relatedTarget) // Button that triggered the modal
+    var button = $(e.relatedTarget)
     id_corporacion = button.data('filter_corp_id')
 
     //Busca los proyectos de esa corporación
@@ -183,32 +182,56 @@
     var filter_owner = $('#owner_filter').prop('checked');
     var attrs_filter = [];
 
-    $('.attribute_id').each(function(){
-      var id_filter = $(this).attr('id').split('attribute_id_')[1];
-      var interlayer_filters = []
-      var interlayer_filters_new = []
+    var id_filter = $('.attribute_id_key').attr('id').split('attribute_id_key_')[1];
+    var interlayer_filters = []
+    var interlayer_filters_new = []
 
-      $('.cross_layer_from_' + id_filter).each(function(){
-        var interlayer_filter = { 'id': $(this).attr('id').split('cross_layer_check_')[1], 'checked': $(this).is(":checked")  }
-        interlayer_filters.push(interlayer_filter)
-      })
+    $('.cross_layer_from_' + id_filter).each(function(){
+      var interlayer_filter = { 'id': $(this).attr('id').split('cross_layer_check_')[1], 'checked': $(this).is(":checked")  }
+      interlayer_filters.push(interlayer_filter)
+    })
 
-      $('.cross_layer_new_' + id_filter).each(function(){
-        if ($(this).is(":checked")) {
-          var cross_layer_new_check_ = { 'id_project': $(this).attr('id').split('cross_layer_new_')[1], 'cross_layer_id': $(this).attr('cross_layer_id') }
-          interlayer_filters_new.push(cross_layer_new_check_)
-        }
-      })
+    $('.cross_layer_new_' + id_filter).each(function(){
+      if ($(this).is(":checked")) {
+        var cross_layer_new_check_ = { 'id_project': $(this).attr('id').split('cross_layer_new_')[1], 'cross_layer_id': $(this).attr('cross_layer_id') }
+        interlayer_filters_new.push(cross_layer_new_check_)
+      }
+    })
+
+    if($('.attribute_id_value').val() !== "" && $('.attribute_id_key').val() !== ""){
+      new_object = {};
+      new_object_key = $('.attribute_id_key').val()
+      new_object_value = $('.attribute_id_value').val()
+
+      try {
+        new_object[new_object_key] = JSON.parse(new_object_value)
+      } catch {
+        alert("Objeto no válido")
+        return;
+      }
 
       filter_object = {
         'id': id_filter,
-        'filter': JSON.parse($(this).val()),
+        'filter': new_object,
         'cross_layer': interlayer_filters,
         'interlayer_filters_new': interlayer_filters_new
       }
-
       attrs_filter.push(filter_object)
-    })
+    }else {
+      if ($('.attribute_id_value').val() === "" && $('.attribute_id_key').val() === "") {
+
+        filter_object = {
+          'id': id_filter,
+          'filter': null,
+          'cross_layer': interlayer_filters,
+          'interlayer_filters_new': interlayer_filters_new
+        }
+        attrs_filter.push(filter_object);
+      }else{
+        alert("Objeto no válido");
+        return;
+      }
+    }
 
     $.ajax({
       url:  "<%= admin_users_create_filters_path %>",
@@ -232,7 +255,6 @@
     user_selected_id = $('#user_selected_id').html()
 
     $.ajax({
-      //Cambiar ruta
       url:  "<%= admin_users_search_filters_path %>",
       type: "GET",
       datatype: "json",
@@ -255,8 +277,13 @@
           data.attributes.forEach(function(a){
             $('#attr_filter_container').empty()
             $('#attr_cross_layer_container').empty()
+            var aname = a['name']
+            var aname_key = Object.keys(aname)[0]
+            var aname_value = aname[aname_key]
 
-            var new_filter = '<textarea class="attribute_id" id="attribute_id_'+ a['id'] +'"> '+ JSON.stringify(a['name'], undefined, 2) +' </textarea>'
+            var new_filter = '<label>Key</label><input class="w-100 attribute_id_key attribute_id mb-3" id="attribute_id_key_'+ a['id'] +'" value="'+ aname_key +'"> </input>'
+            new_filter += '<label>Value</label><textarea class="attribute_id_value attribute_id" rows="1" id="attribute_id_value_'+ a['id'] +'"> '+ JSON.stringify(aname_value, undefined, 0) +' </textarea><span style="font-size:0.8em;display:block"><strong>(Agregar comillas. Y en listados corchetes)</strong></span>'
+
             $('#attr_filter_container').append(new_filter)
 
             var cross_layer_filter = a['cross_layer_filter'];
@@ -277,7 +304,9 @@
         }else{
           $('#attr_filter_container').empty()
           $('#attr_cross_layer_container').empty()
-          var new_filter = '<input class="attribute_id" id= "attribute_id_0" > </input>'
+
+          var new_filter = '<label>Key</label><input class="w-100 attribute_id_key attribute_id mb-3" id="attribute_id_key_0"> </input>'
+          new_filter += '<label>Value</label><input class="attribute_id_value attribute_id" id="attribute_id_value_0"> </input><span style="font-size:0.8em;display:block"><strong>(Agregar comillas. Y en listados corchetes)</strong></span>'
           $('#attr_filter_container').append(new_filter)
         }
       }
