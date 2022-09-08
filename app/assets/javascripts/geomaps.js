@@ -1590,7 +1590,7 @@ function show_labels(setbbox){
     request: 'GetFeature',
     typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
     outputFormat: 'application/json',
-    //CQL_FILTER: cql_filter
+    CQL_FILTER: cql_filter
   };
   var parameters = L.Util.extend(defaultParameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
