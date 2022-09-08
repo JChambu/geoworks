@@ -280,6 +280,14 @@ class ProjectTypesController < ApplicationController
     end
   end
 
+  def get_geo_key
+    if !ENV['GEOSERVER_AUTH_KEY'].nil?
+      render json: {"data": ENV['GEOSERVER_AUTH_KEY']}
+    else
+      render json: {"data": ''}
+    end
+  end
+
   def get_filtered_form_ids 
     filtered_form_ids_text = params[:filtered_form_ids_text]
     project_type_id = params[:project_type_id]

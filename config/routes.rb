@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get 'project_types/graph3' => 'project_types#graph2'
   get 'project_types/project_type_layers' => 'project_types#project_type_layers'
   get 'project_types/get_filtered_form_ids' => 'project_types#get_filtered_form_ids'
+  get 'project_types/get_geo_key' => 'project_types#get_geo_key'
   get 'layers/find' => 'layers#find'
   get 'project_fields/field_popup' => 'project_fields#field_popup'
   get 'project_fields/get_project_field_layer' => 'project_fields#get_project_field_layer'

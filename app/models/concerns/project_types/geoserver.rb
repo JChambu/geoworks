@@ -84,7 +84,7 @@ module ProjectTypes::Geoserver
       #http://localhost:8080/geoserver/rest/workspaces/incorp/layers/plantacion
       uri = URI.parse("http://#{ENV['GEOSERVER_HOST']}:8080/geoserver/rest/workspaces/#{current_tenant}/layers/#{name_layer}?recurse=true")
       request = Net::HTTP::Delete.new(uri)
-      request.basic_auth('admin', ENV['GEOSERVER_ADMIN_PASSWORD'])
+      request.basic_auth(ENV['GEOSERVER_USER'], ENV['GEOSERVER_PASSWORD'])
       req_options = {
           use_ssl: uri.scheme == 'https',
       }
