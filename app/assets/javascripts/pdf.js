@@ -699,16 +699,17 @@ function change_alert_mail(index){
 
 
 function save_pdf(pdf_values_all, is_grouped){
-    $('#text_toast').html("Generando Reporte. En breve se descargará su archivo.");
+    $('#text_toast').html("Generando PDF. En breve se descargará su archivo.");
     $('#toast').toast('show');
+    template_type = $('#pdf_type').val();
     data_report ={}
     data_report["data"] = pdf_values_all;
     data_report["name"] = Navarra.dashboards.config.name_project;
     data_report["user"] = user_name;
     data_report["map"] = imgData_pdf;
     data_report["logo"] = logo_corp;
-    data_report["cover"] = cover_corp;
     data_report["totals"] = footer;
+    data_report[template_type] = true;
     var d = new Date();
     var month = d.getMonth()+1;
     var day = d.getDate();
@@ -746,6 +747,74 @@ function save_pdf(pdf_values_all, is_grouped){
         $("body").remove(a);
       }
   });
+}
+
+function save_pdf_charts(){
+    $('#text_toast').html("Generando PDF. En breve se descargará su archivo.");
+    $('#toast').toast('show');
+    charts_for_pdf = [];
+    $('.chart_container').each(function(){
+        if(!$(this).hasClass('d-none')){
+            var new_chart = {}
+            var id_chart = $(this).attr('id').split('chart_container')[1];
+            var chart_title = $('#text_chart'+id_chart).html();
+            var chart_canvas = document.getElementById('canvas'+id_chart);
+            var pngUrl = chart_canvas.toDataURL();
+            new_chart["chart_title"] = chart_title;
+            new_chart["chart"] = pngUrl;
+            charts_for_pdf.push(new_chart)
+        }
+    });
+    if($('#sidebar_all').hasClass('charts-container_expanded')){
+        size_chart = "expanded";
+    } else {
+        size_chart = "condensed";
+    }
+    template_type = "charts_report";
+    data_report ={}
+    data_report["data"] = charts_for_pdf;
+    data_report["name"] = Navarra.dashboards.config.name_project;
+    data_report["user"] = user_name;
+    data_report["map"] = imgData_pdf;
+    data_report["logo"] = logo_corp;
+    data_report[size_chart] = true;
+    data_report[template_type] = true;
+    var d = new Date();
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+    var actual_date = d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day + " " + d.getHours() + ":" +d.getMinutes();
+    data_report["date"] = actual_date
+    var hash_pdf = {}
+    hash_pdf["name"] = "example_report";
+    var data = {}
+    data["template"] = hash_pdf;
+    data["data"] = data_report;
+    data["file"] = "reporte.pdf";
+    console.log("DATA a Enviar")
+    console.log(data)
+    /*
+    $.ajax({
+      type: 'POST',
+      url: '/dashboards/send_report',
+      xhrFields: {
+            responseType: 'blob'
+        },
+      datatype: 'application/json',
+      data: data,
+      success: function(data) {
+        //Convert the Byte Data to BLOB object.
+        var blob = new Blob([data], { type: "application/octetstream" });
+        var url = window.URL || window.webkitURL;
+        link = url.createObjectURL(blob);
+        var a = $("<a />");
+        a.attr("download", "reporte.pdf");
+        a.attr("href", link);
+        $("body").append(a);
+        a[0].click();
+        $("body").remove(a);
+      }
+  });
+  */
 }
 
 
@@ -839,6 +908,7 @@ return {
     save_pdf: save_pdf,
     change_alert_mail: change_alert_mail,
     send_alerts: send_alerts,
-    close_pdf: close_pdf
+    close_pdf: close_pdf,
+    save_pdf_charts: save_pdf_charts
 }
 }();

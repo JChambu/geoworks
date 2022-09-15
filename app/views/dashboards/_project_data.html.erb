@@ -67,7 +67,7 @@ $('#table_select_all').click(function(){
   });
 
   // evita cierre de modal selectores para reporte de alertas y para agrupar por subformularios en reportes pdf
-  $('#alert_type, #alert_mail , #alert_group , #set_subfield_grouped, #set_subfield_grouped_container ,#set_map, #set_map_container , #set_photos, #set_photos_container' ).click(function(e){
+  $('#pdf_type , #alert_type, #alert_mail , #alert_group , #set_subfield_grouped, #set_subfield_grouped_container ,#set_map, #set_map_container , #set_photos, #set_photos_container' ).click(function(e){
     e.stopPropagation();
   })
 });
@@ -879,6 +879,15 @@ function open_alert_modal(event){
   }
 }
 
+function open_pdf_modal(event){
+  event.stopPropagation();
+  if($('#pdf_options').hasClass('d-none')){
+    $('#pdf_options').removeClass('d-none');
+  } else {
+    $('#pdf_options').addClass('d-none');
+  }
+}
+
 // Modal PDF
 function show_pdf(is_alert){
   if($('#table_hidden .custom-control-input:checked').not('#table_select_all').length==0){
@@ -952,25 +961,42 @@ function generate_alerts(){
     <a data-toggle="dropdown" id="share_table" href="#" aria-haspopup="true" aria-expanded="false"><i class="fas fa-share-square ml-2" onclick="open_share_table()" title="Compartir Datos" style="cursor: pointer;" ></i>
     </a>
     <div class="dropdown-menu scroll p-2" aria-labelledby="share_table" style="max-height:44vh; overflow-y:auto;">
-      <a data-toggle="modal" id="show_pdf" onclick="show_pdf(false)" style="cursor: pointer;" class="dropdown-item text-left"><i class="fas fa-file-pdf mr-2"></i> Reporte pdf
-        <div class="custom-control custom-checkbox ml-5"  id="set_map_container" title="Mapa">
-          <input class="custom-control-input" id="set_map" type="checkbox" checked= true>
-          <label class="string optional control-label custom-control-label" for="set_map"> </label>
-          <h7 style="font-size:0.8em">Mapa</h7>
-        </div>
-        <div class="custom-control custom-checkbox ml-5"  id="set_photos_container" title="Fotos">
-          <input class="custom-control-input" id="set_photos" type="checkbox" checked=true >
-          <label class="string optional control-label custom-control-label" for="set_photos"> </label>
-          <h7 style="font-size:0.8em">Fotos</h7>
-        </div>
-        <div class="custom-control custom-checkbox ml-5"  id="set_subfield_grouped_container" title="Agrupar por Subformularios">
-          <input class="custom-control-input" id="set_subfield_grouped" type="checkbox">
-          <label class="string optional control-label custom-control-label" for="set_subfield_grouped"> </label>
-          <h7 style="font-size:0.8em">Agrupar Subformularios</h7>
-        </div>
+      <a data-toggle="modal" id="show_pdf" onclick="open_pdf_modal(event)" style="cursor: pointer;" class="dropdown-item text-left"><i class="fas fa-file-pdf mr-2"></i> Archivo PDF
       </a>
+          <div id="pdf_options" class="pl-5 d-none border-bottom border-secondary pb-1" style="font-size: 0.8em">
+            <div class="d-flex">
+              <label class="mt-1 mb-2 w-25">Tipo:</label>
+              <select  id="pdf_type" class="form-control form-control-sm w-50 mr-3" style="font-size: 0.8em">
+                <option value="template_report">Reporte</option>
+                <option value="template_alert">Alerta</option>
+                <option value="template_notificacion">Notificación</option>
+                <option value="template_recomendacion">Recomendación</option>
+              </select>
+            </div>
+            <div class="d-flex">
+              <div class="custom-control custom-checkbox"  id="set_map_container" title="Mapa">
+                <input class="custom-control-input" id="set_map" type="checkbox" checked= true>
+                <label class="string optional control-label custom-control-label" for="set_map"></label>
+                <h7 style="font-size:0.8em">Mapa</h7>
+              </div>
+              <div class="custom-control custom-checkbox ml-5"  id="set_photos_container" title="Fotos">
+                <input class="custom-control-input" id="set_photos" type="checkbox" checked=true >
+                <label class="string optional control-label custom-control-label" for="set_photos"> </label>
+                <h7 style="font-size:0.8em">Fotos</h7>
+              </div>
+              <div class="custom-control custom-checkbox ml-5"  id="set_subfield_grouped_container" title="Agrupar por Subformularios">
+                <input class="custom-control-input" id="set_subfield_grouped" type="checkbox">
+                <label class="string optional control-label custom-control-label" for="set_subfield_grouped"> </label>
+                <h7 style="font-size:0.8em">Agrupar Subformularios</h7>
+              </div>
+            </div>
+            <div class="text-right">
+              <button class="btn btn-primary p-1 mt-2" style="font-size: 1em" type="button" onclick="show_pdf(false)">Generar</button>
+            </div>
+        </div>
+      
       <% if can? :data, :alert %>
-        <a data-toggle="modal" id="show_alert"  onclick="open_alert_modal(event)" style="cursor: pointer;" class="dropdown-item text-left" ><i class="fas fa-bullhorn mr-2" ></i> Recomendaciones/Alertas/Notificaciones
+        <a data-toggle="modal" id="show_alert"  onclick="open_alert_modal(event)" style="cursor: pointer;" class="dropdown-item text-left" ><i class="fas fa-bullhorn mr-2" ></i> Notificaciones por mail
         </a>
         <div id="alert_options" class="pl-5 d-none border-bottom border-secondary pb-1" style="font-size: 0.8em">
           <div class="d-flex">
