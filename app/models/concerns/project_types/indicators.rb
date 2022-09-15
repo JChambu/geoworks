@@ -334,18 +334,18 @@ module ProjectTypes::Indicators
         if !timeslider_layers.nil?
           timeslider_layer = timeslider_layers[name_layer]
           if timeslider_layer.nil?
-            data = data.gsub('where_clause', "sec.row_enabled = true AND ")
+            data = data.gsub('where_layer_clause', "where_layer_clause sec.row_enabled = true AND ")
           else
             from_date_layer = timeslider_layer["from_date"]
             to_date_layer = timeslider_layer["to_date"]
             if !from_date_layer.blank? && !to_date_layer.blank?
-              data = data.gsub('where_clause', "where_clause (sec.gwm_created_at BETWEEN '#{from_date_layer}' AND '#{to_date_layer}') AND ")
+              data = data.gsub('where_layer_clause', "where_layer_clause (sec.gwm_created_at BETWEEN '#{from_date_layer}' AND '#{to_date_layer}') AND ")
             else
-              data = data.gsub('where_clause', "where_clause sec.row_enabled = true AND ")
+              data = data.gsub('where_layer_clause', "where_layer_clause sec.row_enabled = true AND ")
             end
           end
         else
-          data = data.gsub('where_clause', "where_clause sec.row_enabled = true AND ")
+          data = data.gsub('where_layer_clause', "where_layer_clause sec.row_enabled = true AND ")
         end
       end
 
