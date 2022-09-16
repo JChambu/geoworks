@@ -102,7 +102,7 @@ function init_report_api(){
     }
 }
 
-function search_data_pdf(){
+function search_data_pdf(is_chart){
     $.ajax({
     type: 'GET',
     url: '/customers/search_customer',
@@ -123,7 +123,12 @@ function search_data_pdf(){
             cover_corp = '';
         }
         user_name = data.username;
-        sarch_photos_report();
+        if (is_chart){
+            save_pdf_charts();
+        } else {
+            sarch_photos_report();
+        }
+        
     },
     error: function( jqXHR, textStatus, errorThrown ) {
     }
@@ -749,6 +754,10 @@ function save_pdf(pdf_values_all, is_grouped){
   });
 }
 
+function init_pdf_charts(){
+    search_data_pdf(true);
+}
+
 function save_pdf_charts(){
     $('#text_toast').html("Generando PDF. En breve se descargará su archivo.");
     $('#toast').toast('show');
@@ -765,11 +774,6 @@ function save_pdf_charts(){
             charts_for_pdf.push(new_chart)
         }
     });
-    if($('#sidebar_all').hasClass('charts-container_expanded')){
-        size_chart = "expanded";
-    } else {
-        size_chart = "condensed";
-    }
     template_type = "charts_report";
     data_report ={}
     data_report["data"] = charts_for_pdf;
@@ -777,7 +781,9 @@ function save_pdf_charts(){
     data_report["user"] = user_name;
     data_report["map"] = imgData_pdf;
     data_report["logo"] = logo_corp;
-    data_report[size_chart] = true;
+    if($('#sidebar_all').hasClass('charts-container_expanded')){
+        data_report["expanded"] = true;
+    }
     data_report[template_type] = true;
     var d = new Date();
     var month = d.getMonth()+1;
@@ -790,9 +796,6 @@ function save_pdf_charts(){
     data["template"] = hash_pdf;
     data["data"] = data_report;
     data["file"] = "reporte.pdf";
-    console.log("DATA a Enviar")
-    console.log(data)
-    /*
     $.ajax({
       type: 'POST',
       url: '/dashboards/send_report',
@@ -814,7 +817,6 @@ function save_pdf_charts(){
         $("body").remove(a);
       }
   });
-  */
 }
 
 
@@ -909,6 +911,7 @@ return {
     change_alert_mail: change_alert_mail,
     send_alerts: send_alerts,
     close_pdf: close_pdf,
-    save_pdf_charts: save_pdf_charts
+    save_pdf_charts: save_pdf_charts,
+    init_pdf_charts: init_pdf_charts
 }
 }();
