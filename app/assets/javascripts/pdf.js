@@ -140,12 +140,27 @@ function sarch_photos_report(){
         // busca fotos padres
         var ids = [];
         if(is_grouped){
+            console.log("Es agrupado")
             pdf_values_all.forEach(function(pdf_object){
+                console.log("Iteracion")
                 key = Object.keys(pdf_object);
-                obj = pdf_object[key];
-                keyb = Object.keys(obj);
-                var fathers = obj[keyb]["fathers"];
-                ids = Object.keys(fathers);
+                console.log("key")
+                console.log(key)
+                console.log("Objeto pdf")
+                console.log(pdf_object)
+                key.forEach(function(k){
+                    obj = pdf_object[k];
+                    console.log(obj)
+                    keyb = Object.keys(obj);
+                    console.log("keyb")
+                    console.log(keyb)
+                    var fathers = obj[keyb]["fathers"];
+                    console.log("fathers")
+                    console.log(fathers)
+                    ids.push(Object.keys(fathers));
+                    console.log(ids)
+                });
+                
             });
         } else {
             pdf_values_all.forEach(function(pdf_object){
@@ -199,9 +214,11 @@ function sarch_photos_report(){
                 if(is_grouped){
                     pdf_values_all.forEach(function(pdf_object){
                         key = Object.keys(pdf_object);
-                        obj = pdf_object[key];
-                        keyb = Object.keys(obj);
-                        ids = obj[keyb]["ids"];
+                        key.forEach(function(k){
+                            obj = pdf_object[k];
+                            keyb = Object.keys(obj);
+                            ids = obj[keyb]["ids"];
+                        });
                         ids = ids.unique();
                     });
 
@@ -796,6 +813,8 @@ function save_pdf_charts(){
     data["template"] = hash_pdf;
     data["data"] = data_report;
     data["file"] = "reporte.pdf";
+    console.log("DATA a Enviar")
+    console.log(data)
     $.ajax({
       type: 'POST',
       url: '/dashboards/send_report',
