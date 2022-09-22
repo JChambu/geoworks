@@ -231,6 +231,11 @@ function min_photo(){
   $('.custom_modal_photos').removeClass('custom_modal_photos_max');
 }
 
+//funciones para crear pdf_chart
+function pdf_chart(){
+  Navarra.pdf.init_pdf_charts();
+}
+
 </script>
 
 <% end %>
@@ -317,6 +322,7 @@ function min_photo(){
     <div class="card text-light chart-bg-transparent pb-0 pt-0">
         <div class="card-header chart-header-bg-transparent py-1 px-2">
           <div class="view-data-container status-view-middle" id="status-view-sidebar" >
+            <i class="fas fa-file-pdf view-data" id="pdf-charts" onclick="pdf_chart()"></i>
             <i class="fas fa-window-maximize view-data" id="view-charts" onclick="show_sidebar('charts-container')"></i>
             <i class="fas fa-square view-data" onclick="expand_sidebar('charts-container')"></i>
             <i class="fas fa-times view-data" onclick="hidde_sidebar('charts-container')"></i>

@@ -801,9 +801,10 @@ function draw_charts(data) {
 
     var html_new_graph = "<div class='w-100'>"
     html_new_graph += "<div class='py-1 px-2' id='header"+graphic_id+"'>"
-    html_new_graph += "<text>"+title+"</text>"
+    html_new_graph += "<text id='text_chart"+graphic_id+"'>"+title+"</text>"
     html_new_graph += "<span class='fas fa-expand-arrows-alt' style='float: right; cursor: pointer' onclick='maximize_chart(event)'></span>"
     html_new_graph += "<span class='fas fa-table mr-2' id='show_data_chart"+graphic_id+"' style='float: right; cursor: pointer' title='Mostrar Datos' onclick='show_data_chart("+graphic_id+")'></span>"
+    html_new_graph += "<span class='fas fa-eye-slash mr-2' id='hide_chart"+graphic_id+"' style='float: right; cursor: pointer' title='Ocultar Gráfico' onclick='hide_chart("+graphic_id+")'></span>"
     html_new_graph += "</div>"
     html_new_graph += "<div class='collapse show' id='collapse_"+graphic_id+"'>"
     html_new_graph += "<div class='d-none card-body px-1 pb-0 chart_body_custom' style='overflow-x: auto' id='body_graph_table"+graphic_id+"'>"
@@ -1280,6 +1281,9 @@ function maximize_chart(e){
   }
 }
 
+function hide_chart(id_chart){
+  $('#chart_container'+id_chart).addClass('d-none');
+}
 function hide_data_chart(id_chart){
   $('#show_data_chart'+id_chart).addClass('fa-table');
   $('#show_data_chart'+id_chart).removeClass('fa-chart-bar');
