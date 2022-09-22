@@ -1701,18 +1701,18 @@ function edit_geometry_in_map(event){
 
 function create_marker(latlong,index, title_id, is_aditional_marker){
   var  myIcon = L.icon({
-      iconUrl: "/assets/leaflet/custom_icon.png",
+      iconUrl: "<%= asset_path('leaflet/custom_icon.png') %>",
       iconSize: [44, 56],
       iconAnchor: [22, 55],
-      shadowUrl: "/assets/leaflet/marker-shadow.png",
+      shadowUrl: "<%= asset_path('leaflet/marker-shadow.png') %>",
       shadowSize: [41, 41],
       shadowAnchor: [10, 40]
     });
   var  myIcon_selected = L.icon({
-      iconUrl: "/assets/leaflet/custom_icon_delete.png",
+      iconUrl: "<%= asset_path('leaflet/custom_icon_delete.png') %>",
       iconSize: [44, 66],
       iconAnchor: [22, 65],
-      shadowUrl: "/assets/leaflet/marker-shadow.png",
+      shadowUrl: "<%= asset_path('leaflet/marker-shadow.png') %>",
       shadowSize: [41, 41],
       shadowAnchor: [10, 40]
     });
