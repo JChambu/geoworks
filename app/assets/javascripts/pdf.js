@@ -140,25 +140,15 @@ function sarch_photos_report(){
         // busca fotos padres
         var ids = [];
         if(is_grouped){
-            console.log("Es agrupado")
             pdf_values_all.forEach(function(pdf_object){
-                console.log("Iteracion")
                 key = Object.keys(pdf_object);
-                console.log("key")
-                console.log(key)
-                console.log("Objeto pdf")
-                console.log(pdf_object)
                 key.forEach(function(k){
                     obj = pdf_object[k];
-                    console.log(obj)
                     keyb = Object.keys(obj);
-                    console.log("keyb")
-                    console.log(keyb)
-                    var fathers = obj[keyb]["fathers"];
-                    console.log("fathers")
-                    console.log(fathers)
-                    ids.push(Object.keys(fathers));
-                    console.log(ids)
+                    if(keyb != undefined){
+                        var fathers = obj[keyb]["fathers"];
+                        ids.push(Object.keys(fathers));
+                    }
                 });
                 
             });
@@ -183,18 +173,19 @@ function sarch_photos_report(){
                             pdf_values_all.forEach(function(pdf_object){
                                 key = Object.keys(pdf_object);
                                 obj = pdf_object[key];
-                                keyb = Object.keys(obj);
-                                var fathers = obj[keyb]["fathers"];
-                                ids = Object.keys(fathers);
-                                ids.forEach(function(id){
-                                    if(id == k){
-                                    if(obj[keyb]["fathers"][id]["photos"] ==  undefined){
-                                        obj[keyb]["fathers"][id]["photos"] = [];
+                                if(obj != undefined){
+                                    keyb = Object.keys(obj);
+                                    var fathers = obj[keyb]["fathers"];
+                                    ids = Object.keys(fathers);
+                                    ids.forEach(function(id){
+                                        if(id == k){
+                                        if(obj[keyb]["fathers"][id]["photos"] ==  undefined){
+                                            obj[keyb]["fathers"][id]["photos"] = [];
+                                        }
+                                        obj[keyb]["fathers"][id]["photos"].push(p[k]);
                                     }
-                                    obj[keyb]["fathers"][id]["photos"].push(p[k]);
+                                    });
                                 }
-
-                                });
                             });
                         } else {
                             pdf_values_all.forEach(function(ob){
@@ -575,8 +566,6 @@ function create_htm_pdf(pdf_object,index_pdf){
 
     pdf_content += "<div class = 'div_pdf div_pdf"+pdf_object['id']+"' "+class_div+">";
     pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' "+class_title+">"+Navarra.dashboards.config.name_project+"</p>";
-    console.log("PDF a crear")
-    console.log(pdf_object)
     Object.keys(pdf_object['properties']).forEach(function(key) {
         pdf_content += "<div class='m-0 ml-2 d-flex'> <p class='p_pdf element_pdf' "+class_p+" >"+pdf_object['properties'][key]['name']+": "+pdf_object['properties'][key]['value']+"</p></div>";
         if(key == alert_mail_key){
@@ -813,8 +802,6 @@ function save_pdf_charts(){
     data["template"] = hash_pdf;
     data["data"] = data_report;
     data["file"] = "reporte.pdf";
-    console.log("DATA a Enviar")
-    console.log(data)
     $.ajax({
       type: 'POST',
       url: '/dashboards/send_report',
