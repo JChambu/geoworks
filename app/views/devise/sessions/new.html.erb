@@ -7,7 +7,7 @@
     <%= simple_form_for(resource, :as => resource_name, :url => session_path(resource_name), html: {class: 'form-signin pl-5 pr-5'}) do |f| %>
 
     <div class="form-group">
-      <center><%=image_tag 'logo_gw_ver_2.png', class:'mb-2', width:"252"%></center>
+      <center><%=image_tag ENV['VERTICAL_LOGO'], class:'mb-2', width:"252"%></center>
       <%= f.input :email, label: false, placeholder: "E-mail", required: false, autofocus: true, input_html: {class: "form-control"} %>
       <%= f.input :password, label: false, placeholder: "Contraseña", input_html: {class: "form-control"} %>
     </div>

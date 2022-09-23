@@ -24,7 +24,7 @@ body {
 }
 
 .fas:hover {
-  color: #d3d800 !important;
+  color: var(--primary-color) !important;
 }
 .fas {
   color: #9b9b9b;
@@ -94,7 +94,7 @@ body {
 }
 .pagination a:hover {
     background: #BFC400 none repeat scroll 0 0;
-    text-shadow: 1px 1px 1px #d3d800;
+    text-shadow: 1px 1px 1px var(--primary-color);
     color: #000;
 }
 .pagination a:active {
@@ -104,7 +104,7 @@ body {
 .pagination .current {
     background: #BFC400 none repeat scroll 0 0;
     color: #000;
-    text-shadow: 1px 1px 1px #d3d800;
+    text-shadow: 1px 1px 1px var(--primary-color);
 }
 .pagination .disabled {
     color: #798088;
@@ -222,7 +222,7 @@ div.custom-menu.show {
 
 /* Personaliza colores del custom switch en Roles */
 .custom-switch .custom-control-input:checked~.custom-role-colour::after {
-  background-color: #d3d800;
+  background-color: var(--primary-color);
 }
 .custom-switch .custom-role-colour::after {
   background-color: #798088;
@@ -464,14 +464,14 @@ div.custom-menu.show {
 
 /*custom checkbox and radio*/
 .custom-checkbox .custom-control-input:checked~.custom-control-label::before{
-  background-color:#d3d800;
+  background-color:var(--primary-color);
 }
 .custom-checkbox{
   display:inline-block;
   vertical-align:middle;
 }
 .custom-radio .custom-control-input:checked~.custom-control-label::before{
-  background-color:#d3d800;
+  background-color:var(--primary-color);
 }
 .img-project{
   width:10%; height: 56px;background-position: 100% 50%; background-size: contain;background-repeat: no-repeat; position: absolute; margin-top: -18px; left: 89%; transition:1s; z-index:300
@@ -565,7 +565,7 @@ div.custom-menu.show {
   background: none;
 }
 .found {
-  background: #d3d80080!important;
+  background: var(--primary-color-transparent)!important;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -684,7 +684,7 @@ div.custom-menu.show {
   white-space: pre-wrap!important;
 }
 .field_div .selected_multiple_item , .div_confirmation .selected_multiple_item{
-  background:#d3d80080 !important;
+  background:var(--primary-color-transparent) !important;
   color:white!important;
   width: 100%;
 }
