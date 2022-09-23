@@ -1,5 +1,5 @@
 #set path to the application
-app_dir= "/opt/geoworks"
+app_dir= "/data/geoworks"
 shared_dir = "#{app_dir}/shared/tmp"
 working_directory "#{app_dir}/current"
 

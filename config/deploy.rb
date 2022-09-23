@@ -10,7 +10,7 @@ set :repo_url, "https://github.com/JChambu/geoworks.git"
 ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
-set :deploy_to, "/opt/geoworks"
+set :deploy_to, "/data/geoworks"
 set :rvm_ruby_version, '2.3.0'
 set :migration_role, :db
 
