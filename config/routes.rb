@@ -57,6 +57,7 @@ Rails.application.routes.draw do
   get 'users/get_user_id_and_customer_id' => 'users#get_user_id_and_customer_id'
   post 'dashboards/send_alerts'
   post 'dashboards/send_report'
+  get 'reports/get_reports' => 'reports#get_reports', as: :get_reports
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
     post 'project_fields/create'
