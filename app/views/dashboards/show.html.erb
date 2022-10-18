@@ -418,6 +418,27 @@ function pdf_chart(){
   </div>
 </div>
 
+<div id="qr-modal" class="modal fade card text-light pb-0 pt-0 custom_modal_qr" data-backdrop="false">
+  <div class="modal-dialog m-0 mw-100">
+    <div class="modal-content">
+      <div class="card-header chart-header-bg-transparent py-1 px-2">
+        <p class="m-1 d-inline">QR Generado</p>
+        <div class="view-data-container" >
+            <i class="fas fa-times view-data" type="button" class="close" data-dismiss="modal" aria-label="Close"></i>
+        </div>
+      </div>
+      <div class="modal-body p-4 text-center" style="background:white" id="qr_modal_body">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="actions text-right">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      <button type="button" class="btn btn-primary" onclick="Navarra.pdf.download_qr()">Descargar</button>
+    </div>
+  </div>
+</div>
+
 <div id="pdf-modal" class="modal fade card text-light chart-bg-transparent pb-0 pt-0 custom_modal_pdf" data-backdrop="false">
   <div class="modal-dialog m-0 mw-100">
     <div class="modal-content white_transparent" style="min-height:89.5vh">

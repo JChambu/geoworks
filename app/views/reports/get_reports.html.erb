@@ -1,1 +1,304 @@
-<%= @hola %>
+<script type="text/javascript">
+var template_id = getParameterByName('template_id');
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+    results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+let text;
+
+if (template_id != "") {
+  // el template id tiene números aleatoreos en los primeros 4 y últimos 4 dígitos;
+  template_id = template_id.substr(4,template_id.length - 8 );
+  console.log(template_id);
+  $.ajax({
+    type: 'GET',
+    url: '/reports/get_data_report.json',
+    datatype: 'JSON',
+    data: {id_report: template_id},
+    success: function(data) {
+      console.log(data)
+      if(data.length > 0){
+      $('.body_report').removeClass('d-none');
+      text = data[0]['report_data']
+    	  document.getElementById('user').innerHTML = text.user;
+      	document.getElementById('date').innerHTML = text.date;
+      	document.getElementById('name_p').innerHTML = text.name;
+    
+      	let content = document.getElementById("propertiesContainer");
+      	let logo = text.logo;
+      	document.getElementById('logo').src ='data:image/png;base64,'+ logo;
+      	let data_report = text.data;
+        if(data_report != null){
+          console.log(data_report)
+      	 Object.keys(data_report).forEach(key => {
+            d = data_report[key];
+        	 content.innerHTML += "<div class='linea'></div>"
+        	 // Itera properties
+           let valu = d.properties;
+           if(valu != null){
+        	   let val = Object.values(valu);
+        	   val.forEach((itm, i) => {    
+          		    let names = itm.name;
+          		    let value = itm.value;
+	          	  var element = `<div class= "pp_field"><span class="pp_subfield_name">${names}: </span>  `;
+          		    if (itm.color_status != undefined){
+            	element += `<div class="status_report" style="background-color:${itm.color_status}   "></div>`
+	          	    }
+          		    element +=`<span class="pp_subfield_value">${value}</span></div>`
+          	   content.innerHTML += element;
+        	   });
+            }
+            // Itera fotos
+            let photos = d.photos;
+            if(photos != null){
+              content.innerHTML += '<div class="photos_container_report">';
+              photos.forEach((itm) => {   
+                  var element = ` <img class="photo_report" src="data:image/png;base64,${itm}"></img>`;
+                  content.innerHTML += element;
+                  content.innerHTML += '</div>';
+              });
+            }
+
+            // Itera hijos
+        	   let child = d.children;
+             if(child != null){
+        	       let val_ch1 = Object.values(child);
+        	       val_ch1.forEach((chl, index) => {
+          		      let name_field = chl.name_field;
+          		      let date = chl.date;
+                      
+          		      var element_child = `<div class = "pp_subtitle"> ${name_field} </div>`;
+          		      element_child += `<div class = "pp_date"> ${date} </div>`;
+          		      content.innerHTML += element_child;
+      
+          		      prop = chl.properties;
+                    if( prop != null ){
+    		              Object.keys(prop).forEach( p => {
+              		      let prop_name = prop[p].name;
+		                    let prop_value = prop[p].value;
+                    		var element_child = `<div class = "pp_subfield" ><span class = "pp_subfield_name">${      prop_name} :</span>`;
+            		        element_child += `<span> ${prop_value} </span></div>`;
+            		        content.innerHTML += element_child;
+          		        });   
+                    }
+                    let photos = chl.photos;
+                    if(photos != null){
+                      content.innerHTML += '<div class="photos_child_container">';
+                      photos.forEach((itm) => {    
+                          var element = ` <img class="photo_report" src="data:image/png;base64,${itm}"></img>`;
+                          content.innerHTML += element;
+                          content.innerHTML += '</div>';
+                      });
+                    }
+        	     });
+             }
+  
+      	 });
+        }
+      
+       	let total = text.totals;
+        if (total != null) {
+          content.innerHTML += `<p class="totals">${total}</p>`;
+        }
+        let map = text.map;
+        if (map != null) {
+          if(text.map_mobile == true){
+            content.innerHTML += `<img class="map_mobile" src="${map}">`;
+          } else {
+            content.innerHTML += `<img class="map" src="${map}">`;
+          }
+        }
+              
+        if  (text.template_report == "true") {
+            document.getElementById('header').style.backgroundImage = 'url("<%= asset_path("report/report.png") %>")';
+            document.getElementById('pp_title_head').innerHTML="REPORTE";
+            document.getElementById('ftr').style.backgroundImage = 'url("<%= asset_path("report/report_foot.png") %>")'
+            document.getElementById('pp_title_foot').innerHTML="REPORTE";
+        }
+
+        if  (text.template_alert == "true") {
+            document.getElementById('header').style.backgroundImage = 'url("<%= asset_path("report/alert.png") %>")';
+            document.getElementById('pp_title_head').innerHTML="ALERTA";
+            document.getElementById('pp_title_head').style.color= "red";            
+            document.getElementById('ftr').style.backgroundImage = 'url("<%= asset_path("report/alert_foot.png") %>")'
+            document.getElementById('pp_title_foot').innerHTML="ALERTA";
+        }
+
+        if  (text.template_notificacion == "true") {
+            document.getElementById('header').style.backgroundImage = 'url("<%= asset_path("report/report.png") %>")';
+            document.getElementById('pp_title_head').innerHTML="NOTIFICACION";
+            document.getElementById('ftr').style.backgroundImage = 'url("<%= asset_path("report/report_foot.png") %>")'
+            document.getElementById('pp_title_foot').innerHTML="NOTIFICACION";
+        }
+
+        if  (text.template_recomendacion == "true") {
+            document.getElementById('header').style.backgroundImage = 'url("<%= asset_path("report/report.png") %>")';
+            document.getElementById('pp_title_head').innerHTML="RECOMENDACIÓN";
+            document.getElementById('ftr').style.backgroundImage = 'url("<%= asset_path("report/report_foot.png") %>")'
+            document.getElementById('pp_title_foot').innerHTML="RECOMENDACIÓN";
+        }
+      }
+    }
+    });
+}
+    
+function download_report(){
+  $('#text_toast').html("Generando PDF. En breve se descargará su archivo.");
+  $('#toast').toast('show');
+  var hash_pdf = {}
+  hash_pdf["name"] = "example_report";
+  var data = {}
+    data["template"] = hash_pdf;
+    data["data"] = text;
+  $.ajax({
+      type: 'POST',
+      url: '/dashboards/send_report',
+      xhrFields: {
+            responseType: 'blob'
+        },
+      datatype: 'application/json',
+      data: data,
+      success: function(data) {
+        //Convert the Byte Data to BLOB object.
+        var blob = new Blob([data], { type: "application/octetstream" });
+        var url = window.URL || window.webkitURL;
+        link = url.createObjectURL(blob);
+        var a = $("<a />");
+        a.attr("download", "reporte.pdf");
+        a.attr("href", link);
+        $("body").append(a);
+        a[0].click();
+        $("body").remove(a);
+      }
+  });
+}
+
+function send_form_report(){
+    let form_report = {}
+    form_report["nombre"] = $('#form_name').val();
+    form_report["empresa"] = $('#form_company').val();
+    form_report["observaciones"] = $('#form_coments').val();
+    $.ajax({
+      type: 'POST',
+      url: '/reports/save_form_report',
+      datatype: 'application/json',
+      data: {
+        form_report: form_report,
+        id_report: template_id,
+        fecha: new Date().toLocaleString()
+      }, 
+      success: function(response) {
+        $('#text_toast').html("Gracias por enviar sus comentarios");
+        $('#toast').toast('show');
+        $('#form_name').val("");
+        $('#form_company').val("");
+        $('#form_coments').val("");
+      }
+    });
+  
+}
+</script>
+<div class="body_report d-none">
+  <a onclick="download_report()">
+    <i class="fas fa-download mr-2 download_report_icon"></i>
+  </a>
+	<header class="header_report" id="header" style="position: fixed; top: 0px">
+   		<div class="cont_img1">
+       		<div class="cont_img">
+         		<img id="logo">
+    		</div>
+   		</div>
+   		<div class="title_report">
+        <div class="mb-2">
+          <i class="d-inline fas fa-user text-white"></i>
+       		<p class="pp_head_user d-inline ml-2" id="user"></p>
+        </div>
+        <div>
+          <i class="d-inline fas fa-calendar text-white"></i>
+       		<p class="pp_head_date d-inline ml-2" id="date"></p>
+ 		     </div>
+    </div>
+   		<div class="powered_r">
+     		<img class="icon_report" src=<%= asset_path("report/icono_report.png") %>>
+     		<p class="pp_title_head_r" id="pp_title_head"></p>
+ 		</div>
+  		<div id="header-report"></div>
+	</header>
+	
+	<div class="body_content">
+    	<div class="report_body">
+        	<h3 class="is_p h3_report" id="name_p"></h3>
+      	<div id="propertiesContainer" class="containerdiv">
+        	<div id= "pp_sub" class="pp_subfield"></div>
+      	</div>
+    	</div>
+	</div>
+  
+  <!-- Formulario -->
+  <div class="custom_modal_form">
+  <div class="over-map modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header" style="background:#60789e">
+        <h4 class="modal-title"> Completando este formulario nos ayuda a mejorar nuestro servicio </h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group col-md-5 text-right">
+              <label class="string optional control-label text-right">Nombre</label>
+          </div>
+          <div class="form-group col-md-5">
+              <input class="string optional form-control form-control-sm form-control form-control-sm-sm" id="form_name" type="text">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-5 text-right">
+              <label class="string optional control-label text-right">Empresa</label>
+          </div>
+          <div class="form-group col-md-5">
+              <input class="string optional form-control form-control-sm form-control form-control-sm-sm" id="form_company" type="text">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-5 text-right">
+              <label class="string optional control-label text-right">Comentarios</label>
+          </div>
+          <div class="form-group col-md-5">
+              <textarea class="string optional form-control form-control-sm form-control form-control-sm-sm" id="form_coments" style="resize: none; height: 200px;" ></textarea>
+          </div>
+        </div>
+      </div>
+    
+      <div class="modal-footer" style="background: #84a5d0">
+        <div class="actions text-right">
+      <input type="submit" name="commit" value="Enviar" class="btn btn-primary" style="background:#60789e" onclick="send_form_report()">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Fin Formulario -->
+
+
+	<div class="footer_1" id="ftr">
+  		<img class="logo_foot" src=<%= asset_path("report/logo_report_foot.png") %>>
+  		<p id="pp_title_foot" class="pp_title_foot"></p>
+	</div>
+</div>
+<div class="toast custom_toast" id="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000" style="position: fixed;">
+  <div class="toast-header">
+    <%= image_tag ENV['HORIZONTAL_LOGO'], class: 'mr-auto', height:"30" %>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+    <h7 id="text_toast"></h7>
+  </div>
+</div>
+
+
+

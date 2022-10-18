@@ -58,6 +58,9 @@ Rails.application.routes.draw do
   post 'dashboards/send_alerts'
   post 'dashboards/send_report'
   get 'reports/get_reports' => 'reports#get_reports', as: :get_reports
+  get 'reports/get_data_report' => 'reports#get_data_report', as: :get_data_report
+  post 'reports/save_data_report' => 'reports#save_data_report', as: :save_data_report
+  post 'reports/save_form_report' => 'reports#save_form_report', as: :save_form_report
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
     post 'project_fields/create'

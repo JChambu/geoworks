@@ -1,0 +1,265 @@
+@font-face {
+   font-family: 'FuturaCustom';
+    src: url('futura light bt.ttf') format("truetype");
+ }
+ /*
+@font-face {
+    font-family: 'Futura Std Heavy';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Futura Std Heavy'), url('FuturaStdHeavy.woff') format('woff');
+ }
+ @font-face{
+   font-family:"helvetica-neue-lt-std-45-light";
+      src:url("https://candyfonts.com/wp-data/2019/04/06/5121HelveticaNeueLTStd-Lt.otf")format("woff"),
+      url("https://candyfonts.com/wp-data/2019/04/06/5121HelveticaNeueLTStd-Lt.otf")format("opentype"),
+      url("https://candyfonts.com/wp-data/2019/04/06/5121HelveticaNeueLTStd-Lt.otf")format("truetype");
+ }
+
+@import url('https://fontsgeek.com/fonts/helvetica-neue-lt-std-95-black');
+@import url(//db.onlinewebfonts.coc06137036ee2d59941c9bda383866b943?family=Helvetica+Neue+LT+Std);
+@import url('http://fonts.cdnfonts.com/css/helvetica-neue-9?styles=49032');
+*/
+
+.download_report_icon {
+    position: fixed;
+    font-size: 1.5em;
+    top: 10px;
+    z-index: 4009;
+    right: 10%;
+}
+.body_report{
+    color: black;
+    margin: 0px;
+    padding: 0px; 
+}
+.pp_head_user{
+    font-size: 1.2em;
+    text-transform: uppercase;
+}
+.pp_head_date{
+    font-size: 0.9em;
+    font-size: 1.1em;
+}
+.powered_r {
+    position: absolute;
+    margin-left: 450px;
+    text-align: left;
+    color: white;
+    font-size: 1.6em;
+    font-weight: bold;
+}
+.pp_title_head_r{
+    margin-top: 50px;
+}
+.pp_title_foot{
+    margin: 10px 120px 0px 0px;
+    text-align: right;
+    color: white;
+    font-size: 1.6em;
+    font-weight: bold;
+    font-family: '', sans-serif;
+}
+.icon_report{
+    position: absolute;
+    margin-left: -40px;
+    top: 50px;
+}
+.logo_foot{
+    position: absolute;
+    width: 120px;
+    right: 320px;
+    margin-top: 5px;
+}
+.body_content{
+    margin-top: 180px;
+    font-size: 1.2em;
+    }
+.footer_1 {
+    width: 100%;
+    padding: 0px;
+    display:flex;
+    top: 90%;
+    justify-content: center;
+    flex-direction: column;
+    background-position: 100% 0%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 75px;
+}
+.h3_report{
+    font-weight: 500;
+    text-transform: uppercase;
+    padding: 1px;
+    margin: 20px 5% 20px 5%;
+    text-shadow: none;
+    letter-spacing: -1px;
+}
+.is_p{
+    color: #67696A;
+    font-family: 'League Spartan', sans-serif;
+}
+
+.header_report {
+    width: 100%;
+    padding: 0px;
+    display:flex;
+    font-family: 'League Spartan', sans-serif;
+    background-position: 0% 0%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 120px;
+    z-index: 4000;
+}
+.segundo {
+    width: 100%;
+    position: relative;
+}
+.cont_img img{
+    object-fit: contain;
+    object-position: center center;
+    height: 100%;
+    width: 100%;
+}
+.cont_img1{
+    width: 100px; 
+    text-align: center;
+    margin-top: 15px;
+    margin-left: 5px;
+    position: absolute;
+}
+.cont_img{
+    display: inline-flex;
+    justify-content: center;
+    width: 90px;
+    height: 90px;
+    padding: 0px;
+    marging-left: 10px;
+    align-items: center;
+    }
+.title_report {
+    margin: 30px 0px 0px 180px;
+    color: #67696A;
+    font-family: 'League Spartan', sans-serif;
+}
+.pp_subtitle{
+    margin-top: 30px; 
+    margin-bottom: 0px; 
+    margin-left: 10%; 
+    color: #67696A;
+    text-transform: uppercase;
+    font-family: 'League Spartan', sans-serif;  
+}
+.pp_date{
+    font-family: 'League Spartan', sans-serif;   
+    color: #67696A;  
+    margin-top: 0px;
+    margin-left: 10%;
+    margin-bottom: 10px;            
+}
+.pp_field{
+    margin: 0px 0px 5px 0px;
+    font-size: 13px;
+    max-width: 80%;
+    font-size: 0.8em;
+}
+.pp_subfield{
+    margin: 0px 0px 5px 10%;
+    font-size: 0.8em;
+    max-width: 80%;
+}
+.pp_subfield_name{
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;                                 
+}
+.pp_subfield_value{
+    margin-left: 2px;
+    font-weight: 500;
+    font-size: 1.1em;
+}
+.status_report{
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    border-radius: 50%;
+    vertical-align:middle;
+}
+.pp_chart{
+    margin: 0px 0px 5px 80px;
+    font-size: 20px;
+    width: 80%;
+    text-align: center;
+    display: block;
+}
+.header-report{
+    height: 60px;
+}
+.centrar_page{
+    display: flex;
+    justify-content: center;
+    margin-left: 746px;
+    margin-top: 17px;
+    width: 30px;
+    height: 30px;
+    font-size: 1em;
+    background-image: transparent;
+    position: absolute;
+    align-items: center;
+    font-family: 'League Spartan', sans-serif;
+}
+.linea {
+    border-top: 2px solid #67696A;
+    height: 3px;
+    padding: 1px;
+    margin: 20px 0% 20px 0%;
+}
+.containerdiv {
+    padding: 1px;
+    margin: 20px 5% 20px 5%;
+    font-family: 'League Spartan', sans-serif;                  
+}
+
+.photos_container_report{
+    margin: 0px 5%; 
+}
+.photos_child_container{
+    margin: 0px 10%; 
+}
+.photo_report{
+    width: 22%;
+    margin: 20px 2% 20px 0%;
+}
+.map{
+    width:90%;
+    margin:30px 5%;
+}
+.map_mobile{
+    width:50%;
+    margin:30px 25%;
+}
+.custom_modal_form{
+    padding: 10vh 10%;
+}
+@media all and (max-width: 1024px){ 
+    .powered_r{  
+        margin-left: 140px;
+        margin-top: 30px;
+        font-size: 1.4em;
+        text-align: center;
+        width: 200px;                      
+    }
+    .icon_report{
+        display:none;
+    }
+    .title_report{
+        margin: 10px 0px 0px 180px;
+    }
+    .pp_title_foot{
+        margin: 10px 90px 0px 0px;
+        font-size: 1.2em;
+    }
+    .logo_foot{
+        right: 240px;
+        width: 100px;
+    }
+}

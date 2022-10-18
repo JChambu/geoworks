@@ -770,6 +770,14 @@ div.custom-menu.show {
   background: #3A3F44;
 }
 
+/* modal QR */
+.custom_modal_qr{
+  width:auto;
+  height:auto;
+  top:10vh !important;
+  left:5%;
+}
+
 /* modal fotos */
 .custom_modal_photos{
   width:auto;
@@ -998,6 +1006,6 @@ div.custom-menu.show {
 .over-map .dropdown-item.active, .over-map .dropdown-item:active, .over-map .dropdown-item.focus, .over-map .dropdown-item:focus, .over-map .dropdown-item.hover, .over-map .dropdown-item:hover {
   background-color: rgba(58,63,68,0.6) !important;
 }
-.over-map .modal:not(#info-modal):not(#modal-report) {
+.over-map .modal:not(#info-modal):not(#modal-report):not(#qr-modal) {
   top: 8vh!important;
 }

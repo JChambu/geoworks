@@ -17,6 +17,7 @@
 //= require switchery/switchery.min
 //= require nicescroll/jquery.nicescroll.min
 //= require jquery.csv
+//= require jquery.qrcode.min
 //= require progressbar
 //= require moment.min
 //= require custom

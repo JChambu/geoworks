@@ -710,6 +710,7 @@ function change_alert_mail(index){
 
 
 function save_pdf(pdf_values_all, is_grouped){
+    $('#qr_modal_body').empty();
     $('#text_toast').html("Generando PDF. En breve se descargará su archivo.");
     $('#toast').toast('show');
     template_type = $('#pdf_type').val();
@@ -720,6 +721,7 @@ function save_pdf(pdf_values_all, is_grouped){
     data_report["map"] = imgData_pdf;
     data_report["logo"] = logo_corp;
     data_report["totals"] = footer;
+
     data_report[template_type] = true;
     var d = new Date();
     var month = d.getMonth()+1;
@@ -737,6 +739,43 @@ function save_pdf(pdf_values_all, is_grouped){
     data["data"] = data_report;
     data["file"] = "reporte.pdf";
 
+    if(($('#set_qr').is(':checked'))){
+        //guarda datos si se solicita QR
+        $.ajax({
+            type: 'POST',
+            url: '/reports/save_data_report',
+            datatype: 'application/json',
+            data: data, 
+            success: function(response) {
+                let new_report_id = response.report_id;
+                const rdm1 = Math.floor(1000 + Math.random() * 9000);
+                const rdm2 = Math.floor(1000 + Math.random() * 9000);
+                const protocol = window.location.protocol;
+                const path_qr = window.location.host;
+                var urlQR = protocol+"//"+path_qr+"/reports/get_reports?template_id="+rdm1+""+new_report_id+""+rdm2;
+                var nuevo = "<div><div id = barcode></div></div>"
+                $('#qr_modal_body').append(nuevo);
+                $('#qr_modal_body').append(`<p id="copy_clipboard" class="mt-3 text-dark d-inline">${urlQR}</p>`);
+                $('#qr_modal_body').append(`<i class="d-inline fas fa-copy ml-4 text-dark custom_cursor" onclick="Navarra.pdf.copy_clipboard()"></i>`);
+                jQuery("#barcode").qrcode({
+                render:"canvas",
+                width: 200,
+                height: 200,
+                text: urlQR
+                });
+                $('#qr-modal').modal('show');
+                data["data"]["qr"] = $('#barcode canvas:nth-child(1)')[0].toDataURL();
+                final_pdf(data);
+                console.log("Data final")
+                console.log(data);
+            }
+        });
+    } else {
+        final_pdf(data);
+    }  
+}
+
+function final_pdf(data){
     $.ajax({
       type: 'POST',
       url: '/dashboards/send_report',
@@ -877,6 +916,43 @@ function close_pdf(){
     $('.table_data_container').removeClass('d-none');
 }
 
+function copy_clipboard(){
+    var copyText = document.getElementById("copy_clipboard").innerHTML;
+    if (navigator.clipboard && window.isSecureContext) {
+        // navigator clipboard api method'
+        return navigator.clipboard.writeText(copyText);
+        $('#text_toast').html("Se ha copiado la url");
+        $('#toast').toast('show');
+    } else {
+        // text area method
+        let textArea = document.createElement("textarea");
+        textArea.value = copyText;
+        // make the textarea out of viewport
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        return new Promise((res, rej) => {
+            document.execCommand('copy') ? res() : rej();
+            textArea.remove();
+            $('#text_toast').html("Se ha copiado la url");
+            $('#toast').toast('show');
+        });
+    }
+}
+
+function download_qr(){
+    link = $('#barcode canvas:nth-child(1)')[0].toDataURL();
+    var a = $("<a />");
+    a.attr("download", "qr.png");
+    a.attr("href", link);
+    $("body").append(a);
+    a[0].click();
+    $("body").remove(a);
+}
+
 function tamVentana() {
   var tam = [0, 0];
   if (typeof window.innerWidth != 'undefined')
@@ -918,6 +994,8 @@ return {
     send_alerts: send_alerts,
     close_pdf: close_pdf,
     save_pdf_charts: save_pdf_charts,
-    init_pdf_charts: init_pdf_charts
+    init_pdf_charts: init_pdf_charts,
+    copy_clipboard: copy_clipboard,
+    download_qr: download_qr
 }
 }();
