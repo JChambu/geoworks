@@ -33,71 +33,11 @@ if (template_id != "") {
       	document.getElementById('logo').src ='data:image/png;base64,'+ logo;
       	let data_report = text.data;
         if(data_report != null){
-          console.log(data_report)
-      	 Object.keys(data_report).forEach(key => {
-            d = data_report[key];
-        	 content.innerHTML += "<div class='linea'></div>"
-        	 // Itera properties
-           let valu = d.properties;
-           if(valu != null){
-        	   let val = Object.values(valu);
-        	   val.forEach((itm, i) => {    
-          		    let names = itm.name;
-          		    let value = itm.value;
-	          	  var element = `<div class= "pp_field"><span class="pp_subfield_name">${names}: </span>  `;
-          		    if (itm.color_status != undefined){
-            	element += `<div class="status_report" style="background-color:${itm.color_status}   "></div>`
-	          	    }
-          		    element +=`<span class="pp_subfield_value">${value}</span></div>`
-          	   content.innerHTML += element;
-        	   });
-            }
-            // Itera fotos
-            let photos = d.photos;
-            if(photos != null){
-              content.innerHTML += '<div class="photos_container_report">';
-              photos.forEach((itm) => {   
-                  var element = ` <img class="photo_report" src="data:image/png;base64,${itm}"></img>`;
-                  content.innerHTML += element;
-                  content.innerHTML += '</div>';
-              });
-            }
-
-            // Itera hijos
-        	   let child = d.children;
-             if(child != null){
-        	       let val_ch1 = Object.values(child);
-        	       val_ch1.forEach((chl, index) => {
-          		      let name_field = chl.name_field;
-          		      let date = chl.date;
-                      
-          		      var element_child = `<div class = "pp_subtitle"> ${name_field} </div>`;
-          		      element_child += `<div class = "pp_date"> ${date} </div>`;
-          		      content.innerHTML += element_child;
-      
-          		      prop = chl.properties;
-                    if( prop != null ){
-    		              Object.keys(prop).forEach( p => {
-              		      let prop_name = prop[p].name;
-		                    let prop_value = prop[p].value;
-                    		var element_child = `<div class = "pp_subfield" ><span class = "pp_subfield_name">${      prop_name} :</span>`;
-            		        element_child += `<span> ${prop_value} </span></div>`;
-            		        content.innerHTML += element_child;
-          		        });   
-                    }
-                    let photos = chl.photos;
-                    if(photos != null){
-                      content.innerHTML += '<div class="photos_child_container">';
-                      photos.forEach((itm) => {    
-                          var element = ` <img class="photo_report" src="data:image/png;base64,${itm}"></img>`;
-                          content.innerHTML += element;
-                          content.innerHTML += '</div>';
-                      });
-                    }
-        	     });
-             }
-  
-      	 });
+          if (text.grouped == 'true') {
+            createElementsGrouped(data_report, content);
+          } else {
+            createElements(data_report, content);
+          }
         }
       
        	let total = text.totals;
@@ -122,6 +62,7 @@ if (template_id != "") {
 
         if  (text.template_alert == "true") {
             document.getElementById('header').style.backgroundImage = 'url("<%= asset_path("report/alert.png") %>")';
+            document.getElementById('logo_report_foot').src = '<%= asset_path("report/logo_report_foot_alert.png") %>';
             document.getElementById('pp_title_head').innerHTML="ALERTA";
             document.getElementById('pp_title_head').style.color= "red";            
             document.getElementById('ftr').style.backgroundImage = 'url("<%= asset_path("report/alert_foot.png") %>")'
@@ -146,6 +87,225 @@ if (template_id != "") {
     });
 }
     
+function createElements(data_report, content){
+  console.log(data_report)
+  Object.keys(data_report).forEach(key => {
+      //itera padres
+      let subform_name = "";
+      d = data_report[key];
+    content.innerHTML += "<div class='linea'></div>"
+    // Itera properties
+    let valu = d.properties;
+    if(valu != null){
+      let val = Object.values(valu);
+      val.forEach((itm, i) => {    
+            let names = itm.name;
+            let value = itm.value;
+          var element = `<div class= "pp_field"><span class="pp_subfield_name">${names}: </span>  `;
+            if (itm.color_status != undefined){
+        element += `<div class="status_report" style="background-color:${itm.color_status}   "></div>`
+            }
+            element +=`<span class="pp_subfield_value">${value}</span></div>`
+        content.innerHTML += element;
+      });
+      }
+      // Itera fotos
+      let photos = d.photos;
+      if(photos != null){
+        content.innerHTML += '<div class="photos_container_report">';
+        photos.forEach((itm) => {   
+            var element = ` <img class="photo_report" src="data:image/png;base64,${itm}"></img>`;
+            content.innerHTML += element;
+            content.innerHTML += '</div>';
+        });
+      }
+      // Itera hijos
+      // Si es modo tabla
+      if(text.child_table == "true"){  
+      let child = d.children;
+      if(child != null){
+          let table_child = "";
+          let val_ch1 = Object.values(child);
+          val_ch1.forEach((chl, index) => {
+              let name_field = chl.name_field;
+              let date = chl.date;
+              prop = chl.properties;
+              if( subform_name == "" || subform_name!= name_field){
+                if(subform_name != ""){
+                  console.log("Cierra tabla");
+                  table_child += "</table>"
+                }
+                subform_name = name_field;
+                table_child += `<div class = "pp_subtitle_table"> ${name_field} </div>`;
+                // crea tabla, cabecera y primera columna
+                table_child += '<table class="w-100 mt-3 mb-5" >';
+                table_child += '<tr>';
+                if( prop != null ){
+                  table_child += `<th class="p-2 report_th"></th>`;
+                  Object.keys(prop).forEach( p => {
+                    table_child += `<th class="p-2 report_th">${prop[p].name}</th>`;
+                  });
+                  table_child += '</tr>'; 
+                  table_child += '<tr>';
+                  table_child += `<td class="p-2 report_td">${date} </td>`;
+                  Object.keys(prop).forEach( p => {
+                    table_child += `<td class="report_td">${prop[p].value}</td>`;                            
+                  });
+                  table_child += '</tr>';
+                }
+              } 
+              else {
+                if( prop != null ){
+                  table_child += `<td class="p-2 report_td">${date} </td>`;
+                  Object.keys(prop).forEach( p => {
+                    table_child += `<td class="report_td">${prop[p].value}</td>`;                      
+                  });
+                  table_child += '</tr>';
+                }
+              }
+          });
+          content.innerHTML += table_child; 
+        }
+      }
+    // si no es modo tabla
+    else{
+    let child = d.children;
+    if(child != null){
+      let val_ch1 = Object.values(child);
+      val_ch1.forEach((chl, index) => {
+          let name_field = chl.name_field;
+          let date = chl.date;                      
+          var element_child = `<div class = "pp_subtitle"> ${name_field} </div>`;
+          element_child += `<div class = "pp_date"> ${date} </div>`;
+          content.innerHTML += element_child;      
+          prop = chl.properties;
+          if( prop != null ){
+            Object.keys(prop).forEach( p => {
+              let prop_name = prop[p].name;
+              let prop_value = prop[p].value;
+                var element_child = `<div class = "pp_subfield" ><span class ="pp_subfield_name">${prop_name} :</span>`;
+                     element_child += `<span> ${prop_value} </span></div>`;
+                     content.innerHTML += element_child;
+                   });   
+                 }
+                 let photos = chl.photos;
+                 if(photos != null){
+                   content.innerHTML += '<div class="photos_child_container">';
+                   photos.forEach((itm) => {    
+                        var element = ` <img class="photo_report" src="data:image/png;base64,${itm}"></img`;
+                    content.innerHTML += element;
+                    content.innerHTML += '</div>';
+                });
+              }
+        });
+      }
+      }
+  });
+}
+function createElementsGrouped(data_report, content){
+  console.log("Ingresa Grouped")
+  console.log(data_report)
+  Object.keys(data_report).forEach(key2 => {
+      //itera hijos agrupados
+      d2 = data_report[key2];
+    Object.keys(d2).forEach(key1 => { 
+      d1 = d2[key1];
+      Object.keys(d1).forEach(key => {
+      d = d1[key]; 
+        content.innerHTML += "<div class='linea'></div>"
+        content.innerHTML += `<p class="pp_subtitle ml-1">${d.child.name_field}</p>`
+        content.innerHTML += `<p class="pp_date ml-1">${d.child.date}</p>`
+      
+
+    // Itera properties hijos
+    let valu = d.child.properties;
+    if(valu != null){
+      let val = Object.values(valu);
+      val.forEach((itm, i) => {    
+          let names = itm.name;
+          let value = itm.value;
+          var element = `<div class= "pp_field"><span class="pp_subfield_name">${names}: </span>  `;
+            element +=`<span class="pp_subfield_value">${value}</span></div>`
+        content.innerHTML += element;
+      });
+      }
+      // Itera fotos
+      let photos = d.child.photos;
+      if(photos != null){
+        content.innerHTML += '<div class="photos_container_report">';
+        photos.forEach((itm) => {   
+            var element = ` <img class="photo_report" src="data:image/png;base64,${itm}"></img>`;
+            content.innerHTML += element;
+            content.innerHTML += '</div>';
+        });
+      }
+      // Itera padres
+      // Si es modo tabla
+      if(text.child_table == "true"){  
+        let fathers = d.fathers;
+        if(fathers != null){
+          let table_child = "";
+          table_child += '<table class="w-100 mt-3 mb-5" >';
+          let val_ch1 = Object.values(fathers);
+          val_ch1.forEach((chl, index) => {
+              prop = chl.props;
+              if( prop != null ){
+                propKeys = Object.keys(prop).sort((a,b) => parseInt(a.order) - parseInt(b.order));
+              console.log("Propiedades ordenadas")
+              console.log(propKeys)
+                  if(index == 0){
+                    table_child += '<tr>';
+                    Object.keys(prop).forEach( p => {
+                      table_child += `<th class="p-2 report_th">${prop[p].name}</th>`;
+                    });
+                    table_child += '</tr>'; 
+                  }
+                  table_child += '<tr>';
+                  Object.keys(prop).forEach( p => {
+                    table_child += `<td class="report_td">${prop[p].value}</td>`;                            
+                  });
+                  table_child += '</tr>';
+                }
+              });
+             content.innerHTML += "</table>";  
+             content.innerHTML += table_child;
+          }
+           
+      }
+    // si no es modo tabla
+    else{
+      let fathers = d.fathers;
+      if(fathers != null){
+        let val_ch1 = Object.values(fathers);
+        val_ch1.forEach((chl, index) => {   
+          prop = chl.props;
+          if( prop != null ){
+            Object.keys(prop).forEach( p => {
+              let prop_name = prop[p].name;
+              let prop_value = prop[p].value;
+                var element_child = `<div class = "pp_subfield" ><span class ="pp_subfield_name">${prop_name} :</span>`;
+                     element_child += `<span> ${prop_value} </span></div>`;
+                     content.innerHTML += element_child;
+                   });   
+                 }
+                 let photos = chl.photos;
+                 if(photos != null){
+                   content.innerHTML += '<div class="photos_child_container">';
+                   photos.forEach((itm) => {    
+                        var element = ` <img class="photo_report" src="data:image/png;base64,${itm}"></img`;
+                    content.innerHTML += element;
+                    content.innerHTML += '</div>';
+                });
+              }
+          });
+        }
+      }
+  });
+  });
+  });
+}
+
+
 function download_report(){
   $('#text_toast').html("Generando PDF. En breve se descargará su archivo.");
   $('#toast').toast('show');
@@ -241,7 +401,7 @@ function send_form_report(){
   <!-- Formulario -->
   <div class="custom_modal_form">
   <div class="over-map modal-dialog modal-lg">
-    <div class="modal-content">
+    <div class="modal-content" style="border:none">
       <div class="modal-header" style="background:#60789e">
         <h4 class="modal-title"> Completando este formulario nos ayuda a mejorar nuestro servicio </h4>
       </div>
@@ -274,7 +434,7 @@ function send_form_report(){
     
       <div class="modal-footer" style="background: #84a5d0">
         <div class="actions text-right">
-      <input type="submit" name="commit" value="Enviar" class="btn btn-primary" style="background:#60789e" onclick="send_form_report()">
+      <input type="submit" name="commit" value="Enviar" class="btn btn-primary" style="background:#60789e; border: none;" onclick="send_form_report()">
         </div>
       </div>
     </div>
@@ -284,7 +444,7 @@ function send_form_report(){
 
 
 	<div class="footer_1" id="ftr">
-  		<img class="logo_foot" src=<%= asset_path("report/logo_report_foot.png") %>>
+  		<img class="logo_foot" id="logo_report_foot" src=<%= asset_path("report/logo_report_foot.png") %>>
   		<p id="pp_title_foot" class="pp_title_foot"></p>
 	</div>
 </div>

@@ -240,6 +240,17 @@
 .custom_modal_form{
     padding: 10vh 10%;
 }
+.report_th{
+    border: solid 1px #60789e;
+    background: #60789e;
+    color: white;
+    text-align: center;    
+}
+.report_td{
+    border: solid 1px #84a5d0;
+    text-align: center;   
+}
+
 @media all and (max-width: 1024px){ 
     .powered_r{  
         margin-left: 140px;
