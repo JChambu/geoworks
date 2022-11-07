@@ -155,6 +155,9 @@ var is_multiple = $('#multiple_edit').hasClass("multiple_on");
         if($(texto_campo_id_script).length>0){
             if(!is_multiple){
                 $(texto_campo_id_script).val(scriptValue[arraykeys[x]]);
+                if($(texto_campo_id_script).hasClass('multiselect_field')){
+                    $(texto_campo_id_script).multiselect('rebuild');
+                }
             } else{
                 $(texto_campo_id_script).addClass('readonly_field');
             }
@@ -216,7 +219,6 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
             }
 
             if(CalculateObj_keys[k]=="semanaDesde"){
-                console.log("Ingresa a Semana Desde")
                 if(!is_multiple){
                     if(isparent){
                         var val_from = $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).val();
@@ -470,16 +472,12 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                 data = {
                     current_tenement: Navarra.dashboards.config.current_tenement,
                 }
-                console.log('PARAMS get_user_id_and_customer_id');
-                console.log(data);
                 $.ajax({
                     type: 'GET',
                     url: '/users/get_user_id_and_customer_id',
                     datatype: 'JSON',
                     data: data,
                     success: function(data) {
-                    console.log('RESPONSE get_userid_and_customerid');
-                    console.log(data);
                     var id_unique = data.customer_id + "."+data.user_id+"-"+today_id
                     $(texto_campo_id).val(id_unique);
                     }
@@ -493,6 +491,16 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
             //Iscamen
             if(CalculateObj_keys[k]=="codigo_fenologia"){
                 // es campo para hijo. Se desarrollará a continuación
+            }
+
+            if(CalculateObj_keys[k]=="datos_padre"){
+                try{
+                    var id_field_father = CalculateObj.datos_padre.field_id;
+                    var value_father = $('#field_id_'+id_field_father).val();
+                    $(texto_campo_id).val(value_father);
+                } catch {
+                    console.log("Error buscando el id del padre " )
+                }
             }
             
         }    
