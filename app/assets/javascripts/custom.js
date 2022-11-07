@@ -1463,7 +1463,7 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
         // comienza llenado de la tabla
           var column_to_fill =  document.querySelectorAll('._columnname');
           column_to_fill.forEach(function(col,index_data){
-            col.innerHTML = array_datos[index_data].toString();
+            col.innerHTML = array_datos[index_data].toString().replace(/[{}[\]"]/g,"");
           });
         // termina llenado de la tabla
 

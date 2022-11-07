@@ -8,6 +8,7 @@ var cover_corp;
 var user_name;
 var footer ="";
 var is_grouped = false;
+let new_report_id;
 
 function init_report_api(){
     is_grouped = false;
@@ -58,6 +59,7 @@ function init_report_api(){
                         pdf_values['children'][id_child_json]['name_field'] = $('#header_columntext_'+id_father_json).html();
                         pdf_values['children'][id_child_json]['properties'] =  new Object;
                 });
+                let ind = 0;
                 Object.keys(pdf_values.children).forEach(function(key){
                     var row_selected_child = $("[id_child="+key+"]").not('.d-none').not('.just_date');
                     row_selected_child.each(function(index_child){
@@ -70,6 +72,8 @@ function init_report_api(){
                             pdf_values['children'][key]['properties'][id_father_field_json]['value'] = this.innerHTML;
                             pdf_values['children'][key]['properties'][id_father_field_json]['name'] = column_child_name;
                             pdf_values['children'][key]['properties'][id_father_field_json]['unique_id'] = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr("unique_id");
+                            pdf_values['children'][key]['properties'][id_father_field_json]['order'] = ind;
+                            ind++;
                         }
                     });
                 });
@@ -737,7 +741,7 @@ function save_pdf(pdf_values_all, is_grouped){
     var d = new Date();
     var month = d.getMonth()+1;
     var day = d.getDate();
-    var actual_date = d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day + " " + d.getHours() + ":" +d.getMinutes();
+    var actual_date = d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day + " " + (d.getHours() <10 ? '0' : '') + d.getHours() + ":" + (d.getMinutes() <10 ? '0' : '')  +d.getMinutes();
     data_report["date"] = actual_date
     var hash_pdf = {}
     if (is_grouped) {
@@ -761,7 +765,8 @@ function save_pdf(pdf_values_all, is_grouped){
             datatype: 'application/json',
             data: data, 
             success: function(response) {
-                let new_report_id = response.report_id;
+                new_report_id = response.report_id;
+                console.log("Reporte id "+new_report_id);
                 const rdm1 = Math.floor(1000 + Math.random() * 9000);
                 const rdm2 = Math.floor(1000 + Math.random() * 9000);
                 const protocol = window.location.protocol;
@@ -847,7 +852,7 @@ function save_pdf_charts(){
     var d = new Date();
     var month = d.getMonth()+1;
     var day = d.getDate();
-    var actual_date = d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day + " " + d.getHours() + ":" +d.getMinutes();
+    var actual_date = d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day + " " + (d.getHours() <10 ? '0' : '') + d.getHours() + ":" + (d.getMinutes() <10 ? '0' : '')  +d.getMinutes();
     data_report["date"] = actual_date
     var hash_pdf = {}
     hash_pdf["name"] = "example_report";
@@ -958,9 +963,17 @@ function copy_clipboard(){
 }
 
 function download_qr(){
-    link = $('#barcode canvas:nth-child(1)')[0].toDataURL();
+    img = $('#barcode canvas:nth-child(1)')[0];
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 260;
+    canvas.height = 260;
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 30, 30 , 200, 200);
+    link = canvas.toDataURL()
     var a = $("<a />");
-    a.attr("download", "qr.png");
+    a.attr("download", "qr-"+new_report_id+".png");
     a.attr("href", link);
     $("body").append(a);
     a[0].click();

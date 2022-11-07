@@ -141,24 +141,29 @@ function createElements(data_report, content){
                 table_child += '<table class="w-100 mt-3 mb-5" >';
                 table_child += '<tr>';
                 if( prop != null ){
-                  table_child += `<th class="p-2 report_th"></th>`;
-                  Object.keys(prop).forEach( p => {
-                    table_child += `<th class="p-2 report_th">${prop[p].name}</th>`;
+                  //eliminado columna fecha y usuario
+                  //table_child += `<th class="p-2 report_th"></th>`;
+                  elem = Object.entries(prop);
+                  elem.sort((a,b) => a[1].order - b[1].order);
+                  elem.forEach( p => {
+                    table_child += `<th class="p-2 report_th">${p[1].name}</th>`;
                   });
                   table_child += '</tr>'; 
                   table_child += '<tr>';
-                  table_child += `<td class="p-2 report_td">${date} </td>`;
-                  Object.keys(prop).forEach( p => {
-                    table_child += `<td class="report_td">${prop[p].value}</td>`;                            
+                  //table_child += `<td class="p-2 report_td">${date} </td>`;
+                  elem.forEach( p => {
+                    table_child += `<td class="report_td">${p[1].value}</td>`;                            
                   });
                   table_child += '</tr>';
                 }
               } 
               else {
                 if( prop != null ){
-                  table_child += `<td class="p-2 report_td">${date} </td>`;
-                  Object.keys(prop).forEach( p => {
-                    table_child += `<td class="report_td">${prop[p].value}</td>`;                      
+                  //table_child += `<td class="p-2 report_td">${date} </td>`;
+                  elem = Object.entries(prop);
+                  elem.sort((a,b) => a[1].order - b[1].order);
+                  elem.forEach( p => {
+                    table_child += `<td class="report_td">${p[1].value}</td>`;                      
                   });
                   table_child += '</tr>';
                 }
@@ -180,9 +185,11 @@ function createElements(data_report, content){
           content.innerHTML += element_child;      
           prop = chl.properties;
           if( prop != null ){
-            Object.keys(prop).forEach( p => {
-              let prop_name = prop[p].name;
-              let prop_value = prop[p].value;
+            elem = Object.entries(prop);
+            elem.sort((a,b) => a[1].order - b[1].order);
+            elem.forEach( p => {
+              let prop_name = p[1].name;
+              let prop_value = p[1].value;
                 var element_child = `<div class = "pp_subfield" ><span class ="pp_subfield_name">${prop_name} :</span>`;
                      element_child += `<span> ${prop_value} </span></div>`;
                      content.innerHTML += element_child;
@@ -250,19 +257,18 @@ function createElementsGrouped(data_report, content){
           val_ch1.forEach((chl, index) => {
               prop = chl.props;
               if( prop != null ){
-                propKeys = Object.keys(prop).sort((a,b) => parseInt(a.order) - parseInt(b.order));
-              console.log("Propiedades ordenadas")
-              console.log(propKeys)
+                elem = Object.entries(prop);
+                elem.sort((a,b) => a[1].order - b[1].order);
                   if(index == 0){
                     table_child += '<tr>';
-                    Object.keys(prop).forEach( p => {
-                      table_child += `<th class="p-2 report_th">${prop[p].name}</th>`;
+                    elem.forEach( p => {
+                      table_child += `<th class="p-2 report_th">${p[1].name}</th>`;
                     });
                     table_child += '</tr>'; 
                   }
                   table_child += '<tr>';
-                  Object.keys(prop).forEach( p => {
-                    table_child += `<td class="report_td">${prop[p].value}</td>`;                            
+                  elem.forEach( p => {
+                    table_child += `<td class="report_td">${p[1].value}</td>`;                            
                   });
                   table_child += '</tr>';
                 }
@@ -280,9 +286,11 @@ function createElementsGrouped(data_report, content){
         val_ch1.forEach((chl, index) => {   
           prop = chl.props;
           if( prop != null ){
-            Object.keys(prop).forEach( p => {
-              let prop_name = prop[p].name;
-              let prop_value = prop[p].value;
+            elem = Object.entries(prop);
+            elem.sort((a,b) => a[1].order - b[1].order);
+            elem.forEach( p => {
+              let prop_name = p[1].name;
+              let prop_value = p[1].value;
                 var element_child = `<div class = "pp_subfield" ><span class ="pp_subfield_name">${prop_name} :</span>`;
                      element_child += `<span> ${prop_value} </span></div>`;
                      content.innerHTML += element_child;
