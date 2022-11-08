@@ -500,6 +500,10 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                     var value_father = $('#field_id_'+id_field_father).val();
                     console.log("El valor a cargar es "+value_father)
                     $(texto_campo_id).val(value_father);
+                    if($(texto_campo_id).hasClass('multiselect_field')){
+                        $(texto_campo_id).multiselect('rebuild');
+                    }
+
                 } catch(e) {
                     console.log("Error buscando el id del padre " )
                 }
