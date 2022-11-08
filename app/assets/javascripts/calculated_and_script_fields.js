@@ -496,9 +496,11 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
             if(CalculateObj_keys[k]=="datos_padre"){
                 try{
                     var id_field_father = CalculateObj.datos_padre.field_id;
+                    console.log("El id del campo buscado es " + id_field_father)
                     var value_father = $('#field_id_'+id_field_father).val();
+                    console.log("El valor a cargar es "+value_father)
                     $(texto_campo_id).val(value_father);
-                } catch(e){
+                } catch {
                     console.log("Error buscando el id del padre " )
                 }
             }
