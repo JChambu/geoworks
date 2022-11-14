@@ -728,7 +728,7 @@ Navarra.geomaps = function() {
     if (attribute_filters.length > 0) {
       $.each(attribute_filters, function(a, b) {
         data_filter = b.split('|');
-        if(data_filter[3]==5 && data_filter[2]!='null'){
+        if(data_filter[3]==5 && data_filter[2]!='null' && data_filter[0] != 'app_estado' && data_filter[0] != 'app_usuario'){
           //!=null porque a los valores null los considera menores a
           cql_filter += " and parseDouble(" + data_filter[0] + ") " + data_filter[1] + " '" + data_filter[2] + "' and " + data_filter[0] + " IS NOT NULL";
         }
@@ -1346,7 +1346,7 @@ function getCQLFilter_layer(dat){
         var filter_operator = filter.filter_operator;
         var filter_value = filter.filter_value;
         var field_type = filter.field_type;
-        if(field_type==5 && filter_value!='null'){
+        if(field_type==5 && filter_value!='null' && filter_field != 'app_estado' && filter_field != 'app_usuario'){
           //!=null porque a los valores null los considera menores a
           cql_filter += " AND parseDouble("+ filter_field + ") "+ filter_operator + " '" + filter_value + "' and "+filter_field+" is not null";
         } 
@@ -1360,7 +1360,6 @@ function getCQLFilter_layer(dat){
       cql_filter = cql_filter.replace(/!= 'null'/g, " IS NOT NULL ");
       cql_filter = cql_filter.replace(/= 'null'/g, " IS NULL ");
     } 
-
   return cql_filter;
 }
 
