@@ -2,29 +2,22 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-
     # user ||= User.new # guest user (not logged in)
-
     if user.nil?
-
       # Permite resetear la contraseña
       can :update, User
-
     else
-
       current_tenant = Apartment::Tenant.current
       @customer = Customer.where(subdomain: current_tenant).first
       @user_c =  UserCustomer.where(user_id: user.id).where(customer_id: @customer.id).first
-      @user_c.role.permissions.each do |permission|
+      @user_c&.role&.permissions&.each do |permission|
         can permission.model_type.name.to_sym, permission.event.name.to_sym
       end
 
-      if @user_c.role.name == "superadmin"
+      if @user_c&.role&.name == "superadmin"
         can :manage, :all
       end
-
     end
-
 
     # if user.is? "Moderator"
     #   can :manage, :all

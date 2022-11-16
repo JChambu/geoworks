@@ -67,7 +67,7 @@ $('#table_select_all').click(function(){
   });
 
   // evita cierre de modal selectores para reporte de alertas y para agrupar por subformularios en reportes pdf
-  $('#pdf_type , #alert_type, #alert_mail , #alert_group , #set_subfield_grouped, #set_subfield_grouped_container ,#set_map, #set_map_container , #set_photos, #set_photos_container' ).click(function(e){
+  $('#pdf_type , #alert_type, #alert_mail , #alert_group , #set_subfield_grouped, #set_subfield_grouped_container, #set_subfield_table, #set_subfield_table_container ,#set_map, #set_map_container , #set_photos, #set_photos_container, #set_qr_container , #set_qr' ).click(function(e){
     e.stopPropagation();
   })
 });
@@ -983,6 +983,18 @@ function generate_alerts(){
                 <input class="custom-control-input" id="set_photos" type="checkbox" checked=true >
                 <label class="string optional control-label custom-control-label" for="set_photos"> </label>
                 <h7 style="font-size:0.8em">Fotos</h7>
+              </div>
+              <div class="custom-control custom-checkbox ml-5"  id="set_qr_container" title="Generar QR">
+                <input class="custom-control-input" id="set_qr" type="checkbox">
+                <label class="string optional control-label custom-control-label" for="set_qr"> </label>
+                <h7 style="font-size:0.8em">Generar QR</h7>
+              </div>
+            </div>
+            <div class="d-flex">
+              <div class="custom-control custom-checkbox ml-5"  id="set_subfield_table_container" title="Modo tabla">
+                <input class="custom-control-input" id="set_subfield_table" type="checkbox">
+                <label class="string optional control-label custom-control-label" for="set_subfield_table"> </label>
+                <h7 style="font-size:0.8em">Modo tabla</h7>
               </div>
               <div class="custom-control custom-checkbox ml-5"  id="set_subfield_grouped_container" title="Agrupar por Subformularios">
                 <input class="custom-control-input" id="set_subfield_grouped" type="checkbox">

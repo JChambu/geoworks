@@ -8,8 +8,10 @@ var cover_corp;
 var user_name;
 var footer ="";
 var is_grouped = false;
+let new_report_id;
 
 function init_report_api(){
+    is_grouped = false;
     // Obtiene todos los valores de la tabla
     pdf_values_all = [];
     var table_check = $('#table_hidden .custom-control-input').not('#table_select_all');
@@ -22,24 +24,28 @@ function init_report_api(){
                 pdf_values['children'] = new Object;
                 var row_selected = $('#table_hidden tr:nth-child('+index+') td').not('.custom_row_child').not('.child_celd').not('.footer_key');
                 row_selected.each(function(index_column){
-                    if(index_column>2 && this.innerHTML!='' && !this.classList.contains('d-none')){
-                        var column_name = $('#tr_visible th:nth-child('+(index_column+1)+')')[0].childNodes[1].childNodes[1];
-                        var column_key = $('#tr_visible th:nth-child('+(index_column+1)+') input')[0];
-                        pdf_values['properties'][column_key.value]= new Object;
-                        // revisa si es capa y le elimina
-                        if ($(this).find('div').length>0){
-                            var multi_celd = "";
-                            $(this).find('div').each(function(i){
-                                if(i != 0){
-                                    multi_celd += " - ";
-                                }
-                                multi_celd += $(this).html();
-                            });
-                            pdf_values['properties'][column_key.value]['value'] = multi_celd;
-                        } else {
-                            pdf_values['properties'][column_key.value]['value'] = this.innerHTML;
+                    if(index_column>2 && (this.innerHTML!='' || ( $('#set_subfield_table').is(':checked') && $('#set_subfield_grouped').is(':checked') ) ) && !this.classList.contains('d-none') ){
+                        var head_c = $('#tr_visible th:nth-child('+(index_column+1)+')').not('.subheader_column');
+                        if(head_c.length>0){
+                            var column_name = $('#tr_visible th:nth-child('+(index_column+1)+')').not('.subheader_column')[0].childNodes[1].childNodes[1];
+                            var column_key = $('#tr_visible th:nth-child('+(index_column+1)+') input')[0];
+                            pdf_values['properties'][column_key.value]= new Object;
+                            // revisa si es capa y le elimina
+                            if ($(this).find('div').length>0){
+                                var multi_celd = "";
+                                $(this).find('div').each(function(i){
+                                    if(i != 0){
+                                        multi_celd += " - ";
+                                    }
+                                    multi_celd += $(this).html();
+                                });
+                                pdf_values['properties'][column_key.value]['value'] = multi_celd;
+                            } else {
+                                pdf_values['properties'][column_key.value]['value'] = this.innerHTML;
+                            }
+                            pdf_values['properties'][column_key.value]['name'] = column_name.innerHTML;
+                            pdf_values['properties'][column_key.value]['order'] = index_column;
                         }
-                        pdf_values['properties'][column_key.value]['name'] = column_name.innerHTML;
                     }
                     });
 
@@ -53,10 +59,11 @@ function init_report_api(){
                         pdf_values['children'][id_child_json]['name_field'] = $('#header_columntext_'+id_father_json).html();
                         pdf_values['children'][id_child_json]['properties'] =  new Object;
                 });
+                let ind = 0;
                 Object.keys(pdf_values.children).forEach(function(key){
                     var row_selected_child = $("[id_child="+key+"]").not('.d-none').not('.just_date');
                     row_selected_child.each(function(index_child){
-                        if(this.innerHTML!=""){
+                        if(this.innerHTML!="" || $('#set_subfield_table').is(':checked')){
                             var id_father_field_json = this.id.split('_')[2];
                             id_father_json = pdf_values.children[key].id_field;
                             var column_child_name = $('#'+id_father_json+'_subheader_'+id_father_field_json ).html();
@@ -65,6 +72,8 @@ function init_report_api(){
                             pdf_values['children'][key]['properties'][id_father_field_json]['value'] = this.innerHTML;
                             pdf_values['children'][key]['properties'][id_father_field_json]['name'] = column_child_name;
                             pdf_values['children'][key]['properties'][id_father_field_json]['unique_id'] = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr("unique_id");
+                            pdf_values['children'][key]['properties'][id_father_field_json]['order'] = ind;
+                            ind++;
                         }
                     });
                 });
@@ -710,6 +719,7 @@ function change_alert_mail(index){
 
 
 function save_pdf(pdf_values_all, is_grouped){
+    $('#qr_modal_body').empty();
     $('#text_toast').html("Generando PDF. En breve se descargará su archivo.");
     $('#toast').toast('show');
     template_type = $('#pdf_type').val();
@@ -720,11 +730,18 @@ function save_pdf(pdf_values_all, is_grouped){
     data_report["map"] = imgData_pdf;
     data_report["logo"] = logo_corp;
     data_report["totals"] = footer;
+    if($('#set_subfield_table').is(':checked')){
+        data_report["child_table"] = 'true' ;
+    }
+    if($('#set_subfield_grouped').is(':checked')){
+        data_report["grouped"] = 'true' ;
+    }
+
     data_report[template_type] = true;
     var d = new Date();
     var month = d.getMonth()+1;
     var day = d.getDate();
-    var actual_date = d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day + " " + d.getHours() + ":" +d.getMinutes();
+    var actual_date = d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day + " " + (d.getHours() <10 ? '0' : '') + d.getHours() + ":" + (d.getMinutes() <10 ? '0' : '')  +d.getMinutes();
     data_report["date"] = actual_date
     var hash_pdf = {}
     if (is_grouped) {
@@ -737,6 +754,47 @@ function save_pdf(pdf_values_all, is_grouped){
     data["data"] = data_report;
     data["file"] = "reporte.pdf";
 
+    console.log("Data")
+    console.log(data)
+
+    if(($('#set_qr').is(':checked'))){
+        //guarda datos si se solicita QR
+        $.ajax({
+            type: 'POST',
+            url: '/reports/save_data_report',
+            datatype: 'application/json',
+            data: data, 
+            success: function(response) {
+                new_report_id = response.report_id;
+                console.log("Reporte id "+new_report_id);
+                const rdm1 = Math.floor(1000 + Math.random() * 9000);
+                const rdm2 = Math.floor(1000 + Math.random() * 9000);
+                const protocol = window.location.protocol;
+                const path_qr = window.location.host;
+                var urlQR = protocol+"//"+path_qr+"/reports/get_reports?template_id="+rdm1+""+new_report_id+""+rdm2;
+                var nuevo = "<div><div id = barcode></div></div>"
+                $('#qr_modal_body').append(nuevo);
+                $('#qr_modal_body').append(`<p id="copy_clipboard" class="mt-3 text-dark d-inline">${urlQR}</p>`);
+                $('#qr_modal_body').append(`<i class="d-inline fas fa-copy ml-4 text-dark custom_cursor" onclick="Navarra.pdf.copy_clipboard()"></i>`);
+                jQuery("#barcode").qrcode({
+                render:"canvas",
+                width: 200,
+                height: 200,
+                text: urlQR
+                });
+                $('#qr-modal').modal('show');
+                data["data"]["qr"] = $('#barcode canvas:nth-child(1)')[0].toDataURL();
+                final_pdf(data);
+                console.log("Data final")
+                console.log(data);
+            }
+        });
+    } else {
+        final_pdf(data);
+    }  
+}
+
+function final_pdf(data){
     $.ajax({
       type: 'POST',
       url: '/dashboards/send_report',
@@ -794,7 +852,7 @@ function save_pdf_charts(){
     var d = new Date();
     var month = d.getMonth()+1;
     var day = d.getDate();
-    var actual_date = d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day + " " + d.getHours() + ":" +d.getMinutes();
+    var actual_date = d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day + " " + (d.getHours() <10 ? '0' : '') + d.getHours() + ":" + (d.getMinutes() <10 ? '0' : '')  +d.getMinutes();
     data_report["date"] = actual_date
     var hash_pdf = {}
     hash_pdf["name"] = "example_report";
@@ -877,6 +935,51 @@ function close_pdf(){
     $('.table_data_container').removeClass('d-none');
 }
 
+function copy_clipboard(){
+    var copyText = document.getElementById("copy_clipboard").innerHTML;
+    if (navigator.clipboard && window.isSecureContext) {
+        // navigator clipboard api method'
+        return navigator.clipboard.writeText(copyText);
+        $('#text_toast').html("Se ha copiado la url");
+        $('#toast').toast('show');
+    } else {
+        // text area method
+        let textArea = document.createElement("textarea");
+        textArea.value = copyText;
+        // make the textarea out of viewport
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        return new Promise((res, rej) => {
+            document.execCommand('copy') ? res() : rej();
+            textArea.remove();
+            $('#text_toast').html("Se ha copiado la url");
+            $('#toast').toast('show');
+        });
+    }
+}
+
+function download_qr(){
+    img = $('#barcode canvas:nth-child(1)')[0];
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 260;
+    canvas.height = 260;
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 30, 30 , 200, 200);
+    link = canvas.toDataURL()
+    var a = $("<a />");
+    a.attr("download", "qr-"+new_report_id+".png");
+    a.attr("href", link);
+    $("body").append(a);
+    a[0].click();
+    $("body").remove(a);
+}
+
 function tamVentana() {
   var tam = [0, 0];
   if (typeof window.innerWidth != 'undefined')
@@ -918,6 +1021,8 @@ return {
     send_alerts: send_alerts,
     close_pdf: close_pdf,
     save_pdf_charts: save_pdf_charts,
-    init_pdf_charts: init_pdf_charts
+    init_pdf_charts: init_pdf_charts,
+    copy_clipboard: copy_clipboard,
+    download_qr: download_qr
 }
 }();
