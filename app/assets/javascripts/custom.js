@@ -3177,7 +3177,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
           if(!is_multiple){
             if(element_child_field.value==null){isnull_value=null}else{isnull_value="\""+element_child_field.value+"\""}
               var id_child_toScript = element_child_field.field_id+"|"+element_child.children_id;
-              new_p.setAttribute('onChange', 'set_script('+element_child_field.data_script+ ',' +element_child_field.field_type_id+ ', "' +id_child_toScript +'",' +isnull_value+',' +found_nested +',event , false)');
+              new_p.setAttribute('onChange', 'set_script('+element_child_field.data_script+ ',' +element_child_field.field_type_id+ ', "' +id_child_toScript +'",' +isnull_value+',' +found_nested +',event , false, '+element_field_id +')');
           } else{
             new_p.setAttribute('onChange','changeChild('+element_child.children_id+',' +found_nested +',event)');
           }
@@ -3210,7 +3210,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
           if(!is_multiple){
             if(element_child_field.value==null){isnull_value=null}else{isnull_value="\""+element_child_field.value+"\""}
               var id_child_toScript = element_child_field.field_id+"|"+element_child.children_id;
-              new_p.setAttribute('onChange', 'set_script('+element_child_field.data_script+ ',' +element_child_field.field_type_id+ ', "' +id_child_toScript +'",' +isnull_value+',' +false +',event , false)');
+              new_p.setAttribute('onChange', 'set_script('+element_child_field.data_script+ ',' +element_child_field.field_type_id+ ', "' +id_child_toScript +'",' +isnull_value+',' +false +',event , false, '+element_field_id +')');
           } else{
             new_p.setAttribute('onChange','changeChild('+element_child.children_id+')');
           }
@@ -3813,7 +3813,7 @@ function update_all(){
   Navarra.geomaps.delete_markers();
 }
 
-function set_script(data_script,field_type_id,field_id,value,isnested,event, isparent){
+function set_script(data_script,field_type_id,field_id,value,isnested,event, isparent,id_field_father){
   // Script de campos padres
   if(isparent){
     filechange = true;
@@ -3828,6 +3828,8 @@ function set_script(data_script,field_type_id,field_id,value,isnested,event, isp
   }
   if(isparent){
     calculate_all(false,true);
+  } else {
+    calculate_all(false,false,field_id.split('|')[1],id_field_father);
   }
 }
 
