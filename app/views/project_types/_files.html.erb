@@ -42,7 +42,7 @@
           <%= f.label :type_geometry, 'Tipo:', class:'col-form-label-sm mb-0 p-0' %>
         </div>
         <div class="row">
-          <%= f.select :type_geometry, options_for_select(['Point', 'Polygon'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
+          <%= f.select :type_geometry, options_for_select(['Point', 'Polygon' , 'LineString'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
         </div>
     </div>
 
@@ -138,7 +138,7 @@
     <%= f.label :file, 'Cargar Archivos:', class:'col-md-2 text-right col-form-label' %>
     <div class="col-md-4">
       <%= f.file_field(:file, multiple: true, class: 'project_typ_file filestyle col-md-12', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '')  %>
-      <p class="mb-0"><i class="fas fa-exclamation-circle"></i> Sólo acepta archivos <b>geojson</b> de tipo <b>Polygon</b> y <b>Point</b></p>
+      <p class="mb-0"><i class="fas fa-exclamation-circle"></i> Sólo acepta archivos <b>geojson</b> de tipo <b>Polygon</b>, <b>LineString</b> y <b>Point</b></p>
       <p class="mt-0 ml-3"><b>Lat long WGS84 - EPSG o SRID 4326</b></p>
     </div>
   </div>

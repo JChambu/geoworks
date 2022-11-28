@@ -93,8 +93,8 @@ class ProjectType < ApplicationRecord
     vv += " projects.row_enabled, "
     vv += " projects.disabled_at, "
     vv += " projects.project_type_id, "
-    vv += " shared_extensions.st_y(the_geom),  " if type_geometry != 'Polygon'
-    vv += " shared_extensions.st_x(the_geom), "if type_geometry != 'Polygon'
+    vv += " shared_extensions.st_y(the_geom),  " if type_geometry == 'Point'
+    vv += " shared_extensions.st_x(the_geom), "if type_geometry == 'Point'
     vv += " project_statuses.color, "
     vv += " the_geom "
     vv += " FROM #{current_tenant}.projects "

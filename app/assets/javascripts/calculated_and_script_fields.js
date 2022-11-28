@@ -399,11 +399,55 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                     $("#field_id_"+id_field).val(area_calculated);
                 }
             }
+            if(CalculateObj_keys[k]=="longitud"){
+                if(edition_type=="geometry_edition"){
+                    if($('#checkbox_split_line').is(":checked")){
+                        long_calculated = Navarra.geomaps.get_length_split();
+                    } else {
+                        long_calculated = Math.round(Navarra.geomaps.get_length()*1000*100)/100;
+                    }
+                    var data_calculated = {
+                        id: geom.id,
+                        field_key: field_key,
+                        value_calculated: long_calculated
+                    }
+                    Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
+                    save_geometry_after_all_success_ajaxs();
+                } else {
+                    long_calculated = Math.round(Navarra.geomaps.get_length()*1000*100)/100;
+                    $("#field_id_"+id_field).val(long_calculated);
+                }
+            }
             if(CalculateObj_keys[k]=="provincia" ){
-                 $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom.latLng.lat+'&lon='+geom.latLng.lng, function(data,err) {
-                        // JSON result in `data` variable
-                        if(err=='success'){
-                            if(edition_type=="geometry_edition"){
+                if(edition_type=="geometry_edition"){
+                    if($('#checkbox_split_line').is(":checked")){
+                        array_lineString = Navarra.geomaps.get_centroid_split();
+                        const array_provincias = array_lineString.flatMap(arr => {
+                            let geom_split = arr.geometry.coordinates;
+                            return $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom_split[1]+'&lon='+geom_split[0], function(data,err) {                       })
+                            })
+                       
+                        // Async function to perform execution of all promise
+                        let promiseExecution = async () => {
+                            let promise = await Promise.all(array_provincias);
+                            let result = [];
+                            promise.forEach(p => {
+                                result.push(p.ubicacion.provincia.nombre);
+                            })
+                            var data_calculated = {
+                                id: geom.id,
+                                field_key: field_key,
+                                value_calculated: result,
+                                remove_location:true
+                            }
+                            Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
+                            save_geometry_after_all_success_ajaxs();
+                        };
+                        promiseExecution();
+                    } else {
+                        $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom.latLng.lat+'&lon='+geom.latLng.lng, function(data,err) {
+                            // JSON result in `data` variable
+                            if(err=='success'){
                                 var data_calculated = {
                                     id: geom.id,
                                     field_key: field_key,
@@ -412,36 +456,72 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                                 }
                                 Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
                                 save_geometry_after_all_success_ajaxs();
-                            } else{
+                            } 
+                        });
+                    }
+                } else{
+                     $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom.latLng.lat+'&lon='+geom.latLng.lng, function(data,err) {
+                        // JSON result in `data` variable
+                        if(err=='success'){
                                 $("#field_id_"+id_field).val(data.ubicacion.provincia.nombre);
                             }
-                        } 
                     });
+                 }
             }
             
             if(CalculateObj_keys[k]=="municipio"){
-                $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom.latLng.lat+'&lon='+geom.latLng.lng, function(data,err) {
+                if(edition_type=="geometry_edition"){
+                    if($('#checkbox_split_line').is(":checked")){
+                        array_lineString = Navarra.geomaps.get_centroid_split();
+                        const array_provincias = array_lineString.flatMap(arr => {
+                            let geom_split = arr.geometry.coordinates;
+                            return $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom_split[1]+'&lon='+geom_split[0], function(data,err) {                       })
+                            })
+                       
+                        // Async function to perform execution of all promise
+                        let promiseExecution = async () => {
+                            let promise = await Promise.all(array_provincias);
+                            let result = [];
+                            promise.forEach(p => {
+                                result.push(p.ubicacion.municipio.nombre);
+                            })
+                            var data_calculated = {
+                                id: geom.id,
+                                field_key: field_key,
+                                value_calculated: result,
+                                remove_location:true
+                            }
+                            Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
+                            save_geometry_after_all_success_ajaxs();
+                        };
+                        promiseExecution();
+                    } else {
+                        $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom.latLng.lat+'&lon='+geom.latLng.lng, function(data,err) {
+                            // JSON result in `data` variable
+                            if(err=='success'){
+                                    var data_calculated = {
+                                        id: geom.id,
+                                        field_key: field_key,
+                                        value_calculated: data.ubicacion.municipio.nombre,
+                                        remove_location:true
+                                    }
+                                    Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
+                                    save_geometry_after_all_success_ajaxs();
+                                }
+                            });
+                    }
+                }else{
+                    $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom.latLng.lat+'&lon='+geom.latLng.lng, function(data,err) {
                         // JSON result in `data` variable
                         if(err=='success'){
-                            if(edition_type=="geometry_edition"){
-                                var data_calculated = {
-                                    id: geom.id,
-                                    field_key: field_key,
-                                    value_calculated: data.ubicacion.municipio.nombre,
-                                    remove_location:true
-                                }
-                                Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
-                                save_geometry_after_all_success_ajaxs();
-                            } else{
-                                $("#field_id_"+id_field).val(data.ubicacion.municipio.nombre);
-                            }
-                        
+                            $("#field_id_"+id_field).val(data.ubicacion.municipio.nombre);  
                         }
                     });
+                }  
             }
-            
-        }   
+        }
     }
+
     // Cálculos permitidos al crear registro
     if(edition_type== "new_file"){
 
@@ -496,9 +576,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
             if(CalculateObj_keys[k]=="datos_padre"){
                 try{
                     var id_field_father = CalculateObj.datos_padre.field_id;
-                    console.log("El id del campo buscado es " + id_field_father)
                     var value_father = $('#field_id_'+id_field_father).val();
-                    console.log("El valor a cargar es "+value_father)
                     $(texto_campo_id).val(value_father);
                     if($(texto_campo_id).hasClass('multiselect_field')){
                         $(texto_campo_id).multiselect('rebuild');
@@ -533,10 +611,16 @@ function save_geometry_after_all_success_ajaxs(){
         Navarra.dashboards.config.field_geometric_calculated_count=0;
         Navarra.dashboards.config.field_geometric_calculated=[];
         if(Navarra.dashboards.config.field_geometric_calculated_count_all==Navarra.dashboards.config.field_geometric_calculated_length_all){
-        Navarra.geomaps.save_geometry_width_calculated_fields(); 
+            Navarra.geomaps.save_geometry_width_calculated_fields(); 
         }
     }
 }   
+
+async function getArrayProvincias(geom){
+    return await $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom.latLng.lat+'&lon='+geom.latLng.lng, function(data,err) {
+        // JSON result in `data` variable
+    });
+}
 
 return {
     Script: Script,

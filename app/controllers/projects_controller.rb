@@ -137,9 +137,15 @@ class ProjectsController < ApplicationController
           point = "#{x[0]} #{x[1]}"
           points_array << point
         end
-        points_array << points_array[0]
-        points_array_str = points_array.join(', ')
-        @new_geom = "POLYGON((#{points_array_str}))"
+        if @project_type.type_geometry == 'Polygon'
+          points_array << points_array[0]
+          points_array_str = points_array.join(', ')
+          @new_geom = "POLYGON((#{points_array_str}))"
+        end
+        if @project_type.type_geometry == 'LineString'
+          points_array_str = points_array.join(', ')
+          @new_geom = "LINESTRING(#{points_array_str})"
+        end
       end
 
       datetime = Time.zone.now
@@ -272,9 +278,15 @@ class ProjectsController < ApplicationController
           point = "#{x[0]} #{x[1]}"
           points_array << point
         end
-        points_array << points_array[0]
-        points_array_str = points_array.join(', ')
-        @new_geom = "POLYGON((#{points_array_str}))"
+        if @project_type.type_geometry == 'Polygon'
+          points_array << points_array[0]
+          points_array_str = points_array.join(', ')
+          @new_geom = "POLYGON((#{points_array_str}))"
+        end
+        if @project_type.type_geometry == 'LineString'
+          points_array_str = points_array.join(', ')
+          @new_geom = "LINESTRING(#{points_array_str})"
+        end
       end
 
       # Arma el properties con los campos calculados a modificar
@@ -293,7 +305,7 @@ class ProjectsController < ApplicationController
             # Elimina la localidad si se modifican provincia o departamento
             if remove_location
               key_localidad = ProjectField
-                .where(calculated_field: '{"localidad":"54,419"}')
+                .where("calculated_field LIKE ?", "%localidad%")
                 .where(project_type_id: project_type_id)
                 .pluck(:key)
                 .first
@@ -311,6 +323,113 @@ class ProjectsController < ApplicationController
     @project_type.create_view
     render json: {status: 'Edición completada.'}
 
+  end
+
+def split_geometry
+    count_sucess=0
+    count_errors=0
+
+    data_to_edit = params[:data_to_edit]
+    project_type_id = params[:project_type_id]
+    @project_type = ProjectType.find(project_type_id)
+
+    data_to_edit.each do |i, data|
+
+      id = data['id']
+      geom = data['latLng']
+      calculated_fields = data['fields_calculated']
+      @project_to_delete = Project.find(id)
+      project_status_id = @project_to_delete.project_status_id
+      properties = @project_to_delete.properties
+      @childs_to_delete = ProjectDataChild.where(project_id: @project_to_delete.id)
+
+      # Arma las nuevas geometrías
+        points_array = []
+        geom.each do |a,x|
+          point = "#{x[0]} #{x[1]}"
+          points_array << point
+        end
+
+        @last_point = nil
+        points_array.each_with_index do |point,i|
+          if i !=0
+            points_array_str = "#{@last_point}, #{point}"
+            @new_geom = "LINESTRING(#{points_array_str})"
+            @project = Project.new()
+            properties['app_id'] = 0
+            properties['app_usuario'] = current_user.id
+            properties['app_estado'] = project_status_id.to_i
+            @project['properties'] = properties
+            @project['project_type_id'] = project_type_id
+            @project['user_id'] = current_user.id
+            @project['the_geom'] = @new_geom
+            @project['project_status_id'] = project_status_id
+            datetime = Time.zone.now
+            @project['gwm_created_at'] = datetime
+            @project['gwm_updated_at'] = datetime
+
+            # cambia campos calculados
+              calculated_fields = data['fields_calculated']
+              unless calculated_fields.nil?
+                calculated_fields.each do |n, field|
+                  key = field['field_key']
+                  value = field['value_calculated'][i-1]
+                  remove_location = field['remove_location']
+                  loaded_value = @project.properties[key]
+        
+                  if loaded_value != value
+                    @project.properties[key] = value
+                    # Elimina la localidad si se modifican provincia o departamento
+                    if remove_location
+                      key_localidad = ProjectField
+                        .where("calculated_field LIKE ?", "%localidad%")
+                        .where(project_type_id: project_type_id)
+                        .pluck(:key)
+                        .first
+                      unless key_localidad.nil?
+                        @project.properties[key_localidad] = []
+                      end
+                    end
+                  end
+                end
+              end
+
+            if @project.save
+              @project['properties'].merge!('app_id': @project.id)
+              @project.save!
+              count_sucess +=1
+              @childs_to_delete.each do |c|
+                @new_child = ProjectDataChild.new();
+                @new_child['properties'] = c.properties
+                @new_child['project_id'] = @project.id
+                @new_child['project_field_id'] = c.project_field_id
+                @new_child['user_id'] = c.user_id
+                @new_child['gwm_created_at'] = c.gwm_created_at
+                @new_child['gwm_updated_at'] = c.gwm_updated_at
+                @new_child.save!
+              end
+            else
+              count_errors +=1
+            end
+
+          end
+          @last_point = point
+        end
+
+        @project_type.destroy_view
+        @project_type.create_view
+        @project.update_inheritable_statuses
+
+        if count_errors >0
+          render json: {status: count_errors.to_s + ' segmentos NO pudieron guardarse. La geometría original se ha mantenido'}
+        else
+          @project_to_delete.destroy
+          @childs_to_delete.each do |c|
+            c.destroy
+          end
+          render json: {status: count_sucess.to_s + ' nuevos segmentos'}
+        end 
+    end
   end
 
 

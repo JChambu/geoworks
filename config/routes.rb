@@ -41,6 +41,7 @@ Rails.application.routes.draw do
   post 'projects/create_form' => 'projects#create_form'
   patch 'projects/update_form' => 'projects#update_form'
   patch 'projects/update_geom_and_calculated_fields' => 'projects#update_geom_and_calculated_fields'
+  post 'projects/split_geometry' => 'projects#split_geometry'
   patch 'projects/change_owner' => 'projects#change_owner'
   patch 'projects/disable_form' => 'projects#disable_form'
   patch 'projects/destroy_form' => 'projects#destroy_form'
