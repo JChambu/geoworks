@@ -348,8 +348,10 @@ PostGIS - PostGIS Database
           <!-- like a polygonsymbolizer -->
           <LineSymbolizer>
             <Stroke>
-              <CssParameter name="stroke">#0000FF</CssParameter>
-              <CssParameter name="stroke-width">5</CssParameter>
+              <CssParameter name="stroke">
+                              <ogc:PropertyName>color</ogc:PropertyName>
+                            </CssParameter>
+                          <CssParameter name="stroke-width">5</CssParameter>
             </Stroke>
           </LineSymbolizer>
         </Rule>
@@ -393,8 +395,10 @@ PostGIS - PostGIS Database
           <!-- like a polygonsymbolizer -->
           <LineSymbolizer>
             <Stroke>
-              <CssParameter name="stroke">#d3d800</CssParameter>
-              <CssParameter name="stroke-width">5</CssParameter>
+              <CssParameter name="stroke">
+                              <ogc:PropertyName>"#d3d800"</ogc:PropertyName>
+                            </CssParameter>
+                          <CssParameter name="stroke-width">5</CssParameter>
             </Stroke>
           </LineSymbolizer>
         </Rule>
