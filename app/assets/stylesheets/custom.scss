@@ -1009,3 +1009,29 @@ div.custom-menu.show {
 .over-map .modal:not(#info-modal):not(#modal-report):not(#qr-modal) {
   top: 8vh!important;
 }
+
+/* Status Panel */
+.status_panel{
+  position: fixed;
+  top:16vh;
+  left: 10px;
+  z-index: 500;
+  background: rgba(39, 43, 48, 0.8) !important;
+  color: #EBEBEC !important;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-y:auto;
+}
+.status_panel_color{
+  background: red;
+  width:10px;
+  height:10px;
+  display: inline-block;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.status_panel_text{
+  font-size: 0.8em;
+  line-height: 10px;
+  margin: 0px;
+}

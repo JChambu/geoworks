@@ -103,9 +103,9 @@ class ProjectData
   end
 
   def line_coordinates
-    raw_coordinates = geometry['coordinates'][0]
+    raw_coordinates = geometry['coordinates']
     coordinates = raw_coordinates.map { |latitude, longitude| "#{latitude} #{longitude}" }
-    "LINESTRING((#{coordinates.join(', ')}))"
+    "LINESTRING(#{coordinates.join(', ')})"
   end
 
   def polygon_coordinates
