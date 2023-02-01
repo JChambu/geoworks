@@ -1035,3 +1035,14 @@ div.custom-menu.show {
   line-height: 10px;
   margin: 0px;
 }
+
+.popup_iot{
+  position: absolute;
+  z-index: 50000;
+  top: 15vh;
+  left: 45%;
+  width: 55%;
+  height: 80vh;
+  border: none;
+  border-radius: 10px;
+}
