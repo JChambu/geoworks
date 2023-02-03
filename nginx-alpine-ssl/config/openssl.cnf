@@ -1,0 +1,25 @@
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+
+[req_distinguished_name]
+countryName = AR
+countryName_default = AR
+stateOrProvinceName = Mendoza
+stateOrProvinceName_default = Mendoza
+localityName = Mendoza
+localityName_default = Mendoza
+organizationalUnitName = Mendoza Geoworks
+organizationalUnitName_default = Mendoza Geoworks
+commonName = *.lvh.me
+commonName_max = 64
+
+[ v3_req ]
+# Extensions to add to a certificate request
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = *.lvh.me
+DNS.2 = *.sii.lvh.me

@@ -4,38 +4,56 @@ services:
     build: ./postgres
     image: gw-db
     container_name: gw-db
-    volumes:
-      - dbdata:/var/lib/postgresql/data
+    #volumes:
+    #  - ./postgres/data_dir/:/var/lib/postgresql/data
     ports:
-      - "5555:5432"
+      - "$POSTGRES_PORT:5432"
     env_file:
       - .env
+      
+
   geoserver:
-    image: kartoza/geoserver:2.18.0
+    image: oscarfonts/geoserver:2.21.1
+    #image: kartoza/geoserver:2.18.0
     container_name: gw-geoserver
-    volumes:
-      - ./geoserver/data_dir/:/opt/geoserver/data_dir/
+    #volumes:
+    #  - ./geoserver/data_dir/:/opt/geoserver/data_dir/
     ports:
       - "$GEOSERVER_PORT:8080"
     env_file:
       - .env
     depends_on:
       - db
+
   app:
     build: .
     image: gw-app
     container_name: gw-app
+    working_dir: /app/
+    environment:
+      - RACK_ENV
+      - VIRTUAL_HOST
     ports:
       - "$APP_PORT:3000"
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
-    volumes:
-     - .:/opt/geoworks
+    #volumes:
+    # - .:/opt/geoworks
     env_file:
       - .env
     depends_on:
       - db
-volumes:
-  dbdata:
-networks:
-  default:
-    name: geoworks_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/healthcheck"]
+      interval: 45s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  nginx:
+    image: nginxssltest:latest
+    container_name: gw-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app
+    restart: unless-stopped

@@ -1,0 +1,9 @@
+# Ignore
+data
+data_dir
+docker-compose.yml
+Dockerfile
+nginx-alpine-ssl
+postgres
+README.md
+

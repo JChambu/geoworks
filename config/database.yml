@@ -28,11 +28,11 @@ default: &default
 
 development:
   <<: *default
-  database: geoworks_development
+  database: <%= ENV.fetch("POSTGRES_DATABASE") { "geoworks_development" } %>
 
 staging:
   <<: *default
-  database: geoworks
+  database: <%= ENV.fetch("POSTGRES_DATABASE") { "geoworks_staging" } %>
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
   # When left blank, postgres will use the default role. This is
@@ -65,7 +65,7 @@ staging:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: geoworks_test
+  database: <%= ENV.fetch("POSTGRES_DATABASE") { "geoworks_test" } %>
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -88,4 +88,4 @@ test:
 #
 production:
   <<: *default
-  database: geoworks
+  database: <%= ENV.fetch("POSTGRES_DATABASE") { "geoworks_prod" } %>
