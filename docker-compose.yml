@@ -49,7 +49,7 @@ services:
       start_period: 5s
 
   nginx:
-    image: nginxssltest:latest
+    image: gw-nginx:latest
     container_name: gw-nginx
     ports:
       - "80:80"
