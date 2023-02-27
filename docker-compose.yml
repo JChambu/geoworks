@@ -49,6 +49,7 @@ services:
       start_period: 5s
 
   nginx:
+    build: ./nginx-alpine-ssl
     image: gw-nginx:latest
     container_name: gw-nginx
     ports:
