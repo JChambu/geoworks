@@ -25,6 +25,7 @@ POSTGRES_PASSWORD=<postgres-password>
 
 # App
 APP_PORT=80
+API_REPORTS_URL=path/to/api/report
 ```
 
 *geoworks/config/application.yml*

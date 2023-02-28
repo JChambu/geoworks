@@ -23,7 +23,7 @@ class DashboardsController < ApplicationController
   def send_report
       require 'net/http'
       require 'uri'
-      uri = URI.parse("http://gisworking.com:5488/api/report")
+      uri = URI.parse(ENV['API_REPORTS_URL'])
       request = Net::HTTP::Post.new(uri)
      # request.basic_auth(ENV['usuario'], ENV['contraseña'])
       request.content_type = "application/json"
