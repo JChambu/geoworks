@@ -1,19 +1,16 @@
 <div class="row w-100 align-items-center m-0" >
   <div class="col-md-6 align-middle form-sinin-img vh-100" style="overflow:hidden;" >
-
   </div>
-  
+
   <div class="col-md-6 align-middle text-center p-0">
     <%= simple_form_for(resource, :as => resource_name, :url => session_path(resource_name), html: {class: 'form-signin pl-5 pr-5'}) do |f| %>
-
-    <div class="form-group">
-      <center><%=image_tag ENV['VERTICAL_LOGO'], class:'mb-2', width:"252"%></center>
-      <%= f.input :email, label: false, placeholder: "E-mail", required: false, autofocus: true, input_html: {class: "form-control"} %>
-      <%= f.input :password, label: false, placeholder: "Contraseña", input_html: {class: "form-control"} %>
-    </div>
-
+      <div class="form-group">
+        <center><%=image_tag ENV['VERTICAL_LOGO'], class:'mb-2', width:"252"%></center>
+        <%= f.input :email, label: false, placeholder: "E-mail", required: false, autofocus: true, input_html: {class: "form-control"} %>
+        <%= f.input :password, label: false, placeholder: "Contraseña", input_html: {class: "form-control"} %>
+      </div>
       <%= f.button :submit, "Ingresar", class: 'btn btn-lg btn-primary btn-block mb-2' %>
-
+      <%= link_to 'Registrarse', new_user_registration_path, class: 'btn btn-lg btn-primary btn-block mb-2'  %>
       <br/>
       <div class="text-right">
         <%= render "devise/shared/links" %>
@@ -24,4 +21,3 @@
     <% end %>
   </div>
 </div>
-
