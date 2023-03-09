@@ -24,6 +24,7 @@ Navarra.geomaps = function() {
   var last_long = 0;
   var inn = ""
   var first_time_internal_layers = true;
+  var geojson_color_attr;
 
   var isobands_layer;
 
@@ -2294,6 +2295,201 @@ function get_latlng(){
     return area;
 }
 
+function color_by_attribute_function(color_by_attributte_field, breaks,colors,field_name, is_subform, sub_values, is_value){
+$('#text_toast').html("Buscando datos para colorear ...");
+$('#toast').toast('show');
+var cql_filter =  getCQLFilter(true);
+//cql_filter = "project_type_id = 7 AND row_enabled = true and cantidad_de_plantas < '3' and cantidad_de_plantas IS NOT NULL AND BBOX(the_geom, -68.61717224121095, -32.84123138501964, -68.58756065368654, -32.82828616988068)"
+console.log(cql_filter);
+// review when parseDouble !!!!!!
+var defaultParameters = {
+    authkey: Navarra.dashboards.config.geo_key,
+    service: 'WFS',
+    version: '1.0.0',
+    crs: L.CRS.EPSG4326,
+    request: 'GetFeature',
+    typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
+    outputFormat: 'application/json',
+    CQL_FILTER: cql_filter
+  };
+  current_tenement = Navarra.dashboards.config.current_tenement;
+  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
+  var parameters = L.Util.extend(defaultParameters);
+  var URL = owsrootUrl + L.Util.getParamString(parameters);
+  $.ajax({
+    url: URL,
+    success: function (data) {
+      console.log("Data!!!");
+      console.log(data);
+      try{
+        var points = data;
+        //si es subformulario, agrega el resultado en el properties del feature
+        if(is_subform){
+          $('#text_toast').html("Calculando "+field_name+". Por favor espere");
+          $('#toast').toast('show');
+          var subform_values = JSON.parse(sub_values);
+          points.features.forEach(function(feature){
+            var id_feature = feature.properties["app_id"];
+            subform_values.forEach(function(sub){
+              if(sub.id == id_feature){
+                new_propertie = sub.interpolate_field;
+              }
+            })
+            feature.properties[color_by_attributte_field] = new_propertie;
+          });
+        }
+        if(!is_value){
+          points.features = points.features.filter(v => !isNaN(v.properties[color_by_attributte_field]));
+        }
+        let leyend = '<i class="fas fa-times" style="float:right" onclick="Navarra.geomaps.cancel_color_attr()"></i>'
+        leyend += '<p class="mt-2">'+field_name+'</p>';
+        if(is_value) {
+          for (b=0;b<breaks.length;b++){
+              leyend += '<div class="d-flex mt-1 mb-1">';
+              leyend += '<div class="status_panel_color" style="background:'+colors[b]+'"></div>';
+              leyend += '<h6 class="status_panel_text d-inline">'+breaks[b].replace(/[\[\]]/g, "").replace(/\", \"/g, " | ").replace(/\"/g, "")+'</h6>';
+              leyend += '</div>';
+          }
+
+        } else {
+          for (b=0;b<breaks.length-1;b++){
+              leyend += '<div class="d-flex mt-1 mb-1">';
+              leyend += '<div class="status_panel_color" style="background:'+colors[b]+'"></div>';
+              leyend += '<h6 class="status_panel_text d-inline">'+breaks[b]+' - '+breaks[b+1]+'</h6>';
+              leyend += '</div>';
+          }
+        }
+        
+  
+        if(geojson_color_attr != undefined) {
+          mymap.removeLayer(geojson_color_attr);
+        }
+
+        if(is_value) {
+          if(type_geometry=="Polygon" || type_geometry=="LineString"){
+            geojson_color_attr = new L.geoJson(points, { 
+              style: function (feature) { 
+                var colorRange = colors[breaks.length-1];
+                for (b=0;b<breaks.length;b++){
+                  if(feature.properties[color_by_attributte_field] === breaks[b]) {
+                    colorRange = colors[b];
+                  }
+                }
+                if (type_geometry=="Polygon") {
+                  return {weight: 1, color: colorRange, opacity: 1, 
+                    fillColor: colorRange, fillOpacity: 0.6  
+                  };
+                }
+                if (type_geometry=="LineString"){
+                  return {weight: 6, color: colorRange, opacity: 1, 
+                    fillColor: colorRange, fillOpacity: 0.6  
+                  };
+                }  
+              }
+            }).addTo(mymap);
+          }
+          if(type_geometry=="Point"){
+            var geojsonOptions = (feature) => {
+              var colorRange = colors[breaks.length-1];
+                for (b=0;b<breaks.length;b++){
+                  if(feature.properties[color_by_attributte_field] === breaks[b]) {
+                    colorRange = colors[b];
+                  }
+                }
+              return {
+                radius: 6,
+                fillColor: colorRange,
+                color: colorRange,
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.6
+              }
+            };
+            geojson_color_attr = new L.geoJson(points  ,{
+                pointToLayer: function(feature,latlng){
+                return L.circleMarker(latlng,geojsonOptions(feature));
+              }
+            }).addTo(mymap);
+          }
+        } else {
+          if(type_geometry=="Polygon" || type_geometry=="LineString"){
+            geojson_color_attr = new L.geoJson(points, { 
+              style: function (feature) { 
+                var colorRange = colors[breaks.length-2];
+                for (b=0;b<breaks.length-1;b++){
+                  if(parseFloat(feature.properties[color_by_attributte_field])>=breaks[b] 
+                    && parseFloat(feature.properties[color_by_attributte_field])<breaks[b+1]  ) {
+                    colorRange = colors[b];
+                  }
+                }
+                if (type_geometry=="Polygon") {
+                  return {weight: 1, color: colorRange, opacity: 1, 
+                    fillColor: colorRange, fillOpacity: 0.6  
+                  };  
+                }
+                if (type_geometry=="LineString") {
+                  return {weight: 6, color: colorRange, opacity: 1, 
+                    fillColor: colorRange, fillOpacity: 0.6  
+                  };  
+                }
+              },
+            }).addTo(mymap);
+          }
+          if(type_geometry=="Point"){
+            var geojsonOptions = (feature) => {
+              var colorRange = colors[breaks.length-2];
+                for (b=0;b<breaks.length-1;b++){
+                  if(parseFloat(feature.properties[color_by_attributte_field])>=breaks[b] 
+                    && parseFloat(feature.properties[color_by_attributte_field])<breaks[b+1]  ) {
+                    colorRange = colors[b];
+                  }
+                }
+              return {
+                radius: 6,
+                fillColor: colorRange,
+                color: colorRange,
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.6
+              }
+            };
+            geojson_color_attr = new L.geoJson(points  ,{
+                pointToLayer: function(feature,latlng){
+                return L.circleMarker(latlng,geojsonOptions(feature));
+              }
+            }).addTo(mymap);
+          }
+        }
+        
+        mymap.removeLayer(project_current);
+        mymap.removeLayer(project_current_selected);
+        if(projectss != undefined) {mymap.removeLayer(projectss);}
+        $('.status_panel_default').addClass('d-none');
+        $('.status_panel_colored_by_attr').empty();
+        $('.status_panel_colored_by_attr').append(leyend);
+    }catch(e) {
+      $('#text_toast').html("Hubo un problema para colorear por ese atributo");
+      $('#toast').toast('show');
+      console.log(e)
+    }
+  }
+  });
+}
+
+function cancel_color_attr(){
+  if(projectss != undefined) {
+    mymap.addLayer(projectss);
+  } else {
+    mymap.addLayer(project_current);
+    mymap.addLayer(project_current_selected);
+  }  
+  if(geojson_color_attr != undefined) {
+    mymap.removeLayer(geojson_color_attr);
+  }
+  $('.status_panel_default').removeClass('d-none');
+  $('.status_panel_colored_by_attr').empty();
+}
+
 function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_celd_size,field_name, is_subform, sub_values, save_interpolation, interpolation_name){
   if(!get_celd_size){
     $('#text_toast').html("Buscando datos ...");
@@ -2343,7 +2539,7 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
         $('#toast').toast('show');
         // elimina features que no tienen datos válidos
         points.features = points.features.filter(v => !isNaN(v.properties[interpolation_field]));
-        get_layers_clip(points, interpolation_field,breaks,colors,field_name, save_interpolation, interpolation_name);  
+        get_layers_clip(points, interpolation_field,breaks,colors,field_name, save_interpolation, interpolation_name);
       }
     }
   });
@@ -2675,6 +2871,8 @@ function open_iot_monitoring(app_id_popup){
     continue_iterpolation:continue_iterpolation,
     continue_isobands: continue_isobands,
     intersect_layers: intersect_layers,
-    open_iot_monitoring: open_iot_monitoring
+    color_by_attribute_function: color_by_attribute_function,
+    open_iot_monitoring: open_iot_monitoring,
+    cancel_color_attr: cancel_color_attr
   }
 }();

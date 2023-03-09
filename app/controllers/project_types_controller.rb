@@ -1167,6 +1167,9 @@ class ProjectTypesController < ApplicationController
   def interpolation
   end
 
+  def color_by_attribute
+  end
+
   def point_colors
   end
 
@@ -1188,6 +1191,9 @@ class ProjectTypesController < ApplicationController
   end
 
   def create_interpolation
+  end
+
+  def create_color_by_attribute
   end
 
   def filter_heatmap
