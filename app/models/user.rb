@@ -8,9 +8,11 @@ class User < ApplicationRecord
   has_many :customers, through: :user_customers
   has_many :project_filters, dependent: :destroy
   has_many :projects
-  accepts_nested_attributes_for :user_customers, allow_destroy: true
-
   belongs_to :role
+
+  accepts_nested_attributes_for :user_customers, allow_destroy: true
+  accepts_nested_attributes_for :has_project_types, allow_destroy: true
+  accepts_nested_attributes_for :project_filters, allow_destroy: true
 
   # Include devise modules. Others available are:
   # :confirmable, :validatable :registerable, :timeoutable and :omniauthable
@@ -23,7 +25,7 @@ class User < ApplicationRecord
   validates :email, :email_format => {:message => I18n.t("activerecord.errors.messages.invalid_email")}
   validates :password, length: { minimum: 6 }, unless: -> { !:password.blank? }
   validates :password, confirmation: {case_sensitive: true}
-  # validates_presence_of :user_customers, :message => "/ No se puede almacenar un usuario sin una corporación"
+  validates_presence_of :user_customers, :message => "/ No se puede almacenar un usuario sin una corporación"
   validates :country_code, length: { maximum: 4 }, presence: true, :numericality => true
   validates :area_code, length: { maximum: 4 }, presence: true, :numericality => true
   validates :phone, length: { maximum: 8 }, presence: true, :numericality => true
