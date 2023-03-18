@@ -680,7 +680,7 @@ Navarra.geomaps = function() {
     show_labels(false);
   }
 
-  function getCQLFilter(set_bbox){
+  function getCQLFilter(set_bbox, is_new_version){
     var cql_filter = 'project_type_id = ' + Navarra.dashboards.config.project_type_id;
 
     // Aplica filtros por hijos generados por el usuario
@@ -777,7 +777,11 @@ Navarra.geomaps = function() {
       var geometry_draw_array = Navarra.dashboards.config.size_polygon;
       if (geometry_draw_array.length == 0) {
         var size_ext = Navarra.dashboards.config.size_box;
-        var bbox_text = " AND BBOX(the_geom, "+size_ext['_southWest']['lng']+", "+size_ext['_southWest']['lat']+", "+size_ext['_northEast']['lng']+", "+size_ext['_northEast']['lat']+")";
+        if (is_new_version) {
+          var bbox_text = " AND BBOX(the_geom, "+size_ext['_southWest']['lat']+", "+size_ext['_southWest']['lng']+", "+size_ext['_northEast']['lat']+", "+size_ext['_northEast']['lng']+")";
+        } else {
+          var bbox_text = " AND BBOX(the_geom, "+size_ext['_southWest']['lng']+", "+size_ext['_southWest']['lat']+", "+size_ext['_northEast']['lng']+", "+size_ext['_northEast']['lat']+")";
+        }
         cql_filter += bbox_text;
       } else{
         let geometry_draw = Navarra.geomap_tools.get_geometry_draw(geometry_draw_array);
@@ -2298,15 +2302,13 @@ function get_latlng(){
 function color_by_attribute_function(color_by_attributte_field, breaks,colors,field_name, is_subform, sub_values, is_value){
 $('#text_toast').html("Buscando datos para colorear ...");
 $('#toast').toast('show');
-var cql_filter =  getCQLFilter(true);
-//cql_filter = "project_type_id = 7 AND row_enabled = true and cantidad_de_plantas < '3' and cantidad_de_plantas IS NOT NULL AND BBOX(the_geom, -68.61717224121095, -32.84123138501964, -68.58756065368654, -32.82828616988068)"
-console.log(cql_filter);
-// review when parseDouble !!!!!!
+var cql_filter =  getCQLFilter(true, true);
 var defaultParameters = {
     authkey: Navarra.dashboards.config.geo_key,
     service: 'WFS',
-    version: '1.0.0',
+    version: '2.0.0',
     crs: L.CRS.EPSG4326,
+    srsName: 'EPSG:4326',
     request: 'GetFeature',
     typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
     outputFormat: 'application/json',
@@ -2319,8 +2321,6 @@ var defaultParameters = {
   $.ajax({
     url: URL,
     success: function (data) {
-      console.log("Data!!!");
-      console.log(data);
       try{
         var points = data;
         //si es subformulario, agrega el resultado en el properties del feature
@@ -2470,7 +2470,6 @@ var defaultParameters = {
     }catch(e) {
       $('#text_toast').html("Hubo un problema para colorear por ese atributo");
       $('#toast').toast('show');
-      console.log(e)
     }
   }
   });
@@ -2832,7 +2831,6 @@ function intersect_layers(){
 }
 
 function open_iot_monitoring(app_id_popup){
-  console.log(app_id_popup);
   let iframeHtml = '<iframe src="https://iot.geoworks.com.ar/" ';
   iframeHtml+=' class="popup_iot"></iframe>'
   $(document.body).append(iframeHtml);
