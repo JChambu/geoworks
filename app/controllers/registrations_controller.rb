@@ -3,9 +3,8 @@ class RegistrationsController < Devise::RegistrationsController
   private
 
   def sign_up_params
-    # byebug
-    user_rol = Role.where(name: 'Público').pluck(:id).first
-    user_project = ProjectType.where(name: 'Demo Público').pluck(:id).first
+    user_rol = Role.find_by(name: 'Público')&.id
+    user_project = ProjectType.find_by(name: 'Demo Público')&.id
 
     params.require(:user).permit(:email, :name, :password, :password_confirmation, :country_code, :area_code, :phone)
           .reverse_merge(user_customers_attributes: [customer_id: current_tenant.id, role_id: user_rol],

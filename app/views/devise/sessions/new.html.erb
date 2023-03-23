@@ -9,10 +9,6 @@
         <%= f.input :password, label: false, placeholder: "Contraseña", input_html: {class: "form-control"} %>
       </div>
       <%= f.button :submit, "Ingresar", class: 'btn btn-lg btn-primary btn-block mb-2' %>
-      <% if Apartment::Tenant.current == 'agricultura' %>
-        <%= link_to 'Registrarse', new_user_registration_path, class: 'btn btn-lg btn-primary btn-block mb-2' %>
-      <% end %>
-      <br/>
       <div class="text-right">
         <%= render "devise/shared/links" %>
       </div>

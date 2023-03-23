@@ -1,5 +1,7 @@
 <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-  <%= link_to "Sign up", new_registration_path(resource_name) %><br />
+  <% if Apartment::Tenant.current == 'agricultura' %>
+    <%= link_to "Registrarse", new_registration_path(resource_name), class: 'btn btn-lg btn-primary btn-block mb-2' %><br/>
+  <% end %>
 <% end -%>
 
 <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
