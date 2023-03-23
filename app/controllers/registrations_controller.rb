@@ -7,7 +7,7 @@ class RegistrationsController < Devise::RegistrationsController
     user_project = ProjectType.find_by(name: 'Demo Público')&.id
 
     params.require(:user).permit(:email, :name, :password, :password_confirmation, :country_code, :area_code, :phone)
-          .reverse_merge(user_customers_attributes: [customer_id: current_tenant.id, role_id: user_rol],
+          .reverse_merge(user_customers_attributes: [role_id: user_rol],
                          has_project_types_attributes: [project_type_id: user_project],
                          project_filters_attributes:[project_type_id: user_project, owner: true],
                          active: true
