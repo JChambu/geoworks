@@ -103,6 +103,18 @@
     </div>
 
     <div class="col mx-2">
+      <div class="row">
+        <%= f.label :iot, "IoT?", class:'col-form-label-sm mb-0 p-0' %>
+      </div>
+      <div class="row">
+        <div class="custom-control custom-checkbox mb-2">
+          <%= f.check_box :iot , class:'custom-control-input', id:'customCheck4'%>
+          <label class="custom-control-label" for="customCheck4"></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="col mx-2">
         <div class="row">
           <%= f.label :multiple_edition, "Edición Multiple", class:'col-form-label-sm mb-0 p-0' %>
         </div>
@@ -128,7 +140,7 @@
           <%= f.label :notification_email, 'Mail notif. :', class:'col-form-label-sm mb-0 p-0' %>
         </div>
         <div class="row">
-          <%= f.text_field :notification_email, class: 'form-control form-control-sm' %> 
+          <%= f.text_field :notification_email, class: 'form-control form-control-sm' %>
         </div>
       </div>
 
