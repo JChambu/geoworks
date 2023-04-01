@@ -26,82 +26,76 @@
 </script>
 <%= simple_form_for @project_type, html: {multipart: true}  do |f| %>
 
-   <div class="d-flex justify-content-around align-items-center mb-2">
-     <%= f.input :kind_file, as: :hidden, input_html: {value: 'true' } , wrapper_html: { class: 'd-none' }%>
+  <div class="d-flex justify-content-around align-items-center mb-2">
+    <%= f.input :kind_file, as: :hidden, input_html: {value: 'true' } , wrapper_html: { class: 'd-none' } %>
     <div class="col mx-2">
-        <div class="row">
-          <%= f.label :name, 'Nombre:', class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <%= f.text_field :name, class: 'form-control form-control-sm' %>
+      <div class="row">
+        <%= f.label :name, 'Nombre:', class:'col-form-label-sm mb-0 p-0' %>
+      </div>
+      <div class="row">
+        <%= f.text_field :name, class: 'form-control form-control-sm' %>
+      </div>
+    </div>
+    <div class="col mx-2">
+      <div class="row">
+        <%= f.label :type_geometry, 'Tipo:', class:'col-form-label-sm mb-0 p-0' %>
+      </div>
+      <div class="row">
+        <%= f.select :type_geometry, options_for_select(['Point', 'Polygon' , 'LineString'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
+      </div>
+    </div>
+    <div class="col mx-2">
+      <div class="row">
+        <%= f.label :tracking, "Recorido", class:'col-form-label-sm mb-0 p-0' %>
+      </div>
+      <div class="row">
+        <div class="custom-control custom-checkbox mb-2">
+          <%= f.check_box :tracking, class:'custom-control-input', id:'customCheck1' %>
+          <label class="custom-control-label" for="customCheck1"></label>
         </div>
       </div>
-
-    <div class="col mx-2">
-        <div class="row">
-          <%= f.label :type_geometry, 'Tipo:', class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <%= f.select :type_geometry, options_for_select(['Point', 'Polygon' , 'LineString'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
-        </div>
     </div>
-
     <div class="col mx-2">
-        <div class="row">
-          <%= f.label :tracking, "Recorido", class:'col-form-label-sm mb-0 p-0' %>
+      <div class="row">
+        <%= f.label :enabled_as_layer, "Capa", class:'col-form-label-sm mb-0 p-0' %>
+      </div>
+      <div class="row">
+        <div class="custom-control custom-checkbox mb-2">
+          <%= f.check_box :enabled_as_layer , class:'custom-control-input', id:'customCheck2'%>
+          <label class="custom-control-label" for="customCheck2"></label>
         </div>
-        <div class="row">
-          <div class="custom-control custom-checkbox mb-2">
-            <%= f.check_box :tracking, class:'custom-control-input', id:'customCheck1' %>
-            <label class="custom-control-label" for="customCheck1"></label>
-          </div>
-        </div>
+        <%= f.color_field :layer_color, class: 'form-control form-control-sm mb-2', style:'width:30px; padding:1px' %>
+      </div>
     </div>
-
-    <div class="col mx-2">
-        <div class="row">
-          <%= f.label :enabled_as_layer, "Capa", class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <div class="custom-control custom-checkbox mb-2">
-            <%= f.check_box :enabled_as_layer , class:'custom-control-input', id:'customCheck2'%>
-            <label class="custom-control-label" for="customCheck2"></label>
-          </div>
-          <%= f.color_field :layer_color, class: 'form-control form-control-sm mb-2', style:'width:30px; padding:1px' %>
-        </div>
-    </div>
-
     <div class="col-md-2 ">
-        <div class="row">
-          <%= f.label :cover, "Imagen", class:'col-form-label-sm mb-0 p-0' %>
+      <div class="row">
+        <%= f.label :cover, "Imagen", class:'col-form-label-sm mb-0 p-0' %>
+      </div>
+      <div class="row">
+        <div class="col-3">
+          <%= f.file_field(:cover, multiple: false,id:"file-input_file", :onchange=>"loadFile_files(event)" , class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '' , 'data-size':'sm' , 'data-input':false , 'data-badge':'false') %>
         </div>
-        <div class="row">
-          <div class="col-3">
-            <%= f.file_field(:cover, multiple: false,id:"file-input_file", :onchange=>"loadFile_files(event)" , class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '' , 'data-size':'sm' , 'data-input':false , 'data-badge':'false') %>
-          </div>
-          <div class="col-9">
-            <div class="h6 text-nowrap me-2"><small id="error_text_file"></small></div>
-          </div>
+        <div class="col-9">
+          <div class="h6 text-nowrap me-2"><small id="error_text_file"></small></div>
         </div>
+      </div>
     </div>
     <div class="col me-2">
-        <div class="row">
-          <%= f.label :geo_restriction, 'Restricción (m):', class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <%= f.text_field :geo_restriction, class: 'form-control form-control-sm d-flex', style:'width: 50px' %>
-        </div>
+      <div class="row">
+        <%= f.label :geo_restriction, 'Restricción (m):', class:'col-form-label-sm mb-0 p-0' %>
+      </div>
+      <div class="row">
+        <%= f.text_field :geo_restriction, class: 'form-control form-control-sm d-flex', style:'width: 50px' %>
+      </div>
     </div>
-
     <div class="col mx-2">
-        <div class="row">
-          <%= f.label :level, 'Nivel:', class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <%= f.text_field :level, class: 'form-control form-control-sm d-flex', style:'width: 50px' %>
-        </div>
+      <div class="row">
+        <%= f.label :level, 'Nivel:', class:'col-form-label-sm mb-0 p-0' %>
+      </div>
+      <div class="row">
+        <%= f.text_field :level, class: 'form-control form-control-sm d-flex', style:'width: 50px' %>
+      </div>
     </div>
-
     <div class="col mx-2">
       <div class="row">
         <%= f.label :iot, "IoT?", class:'col-form-label-sm mb-0 p-0' %>
@@ -113,37 +107,33 @@
         </div>
       </div>
     </div>
-
     <div class="col mx-2">
-        <div class="row">
-          <%= f.label :multiple_edition, "Edición Multiple", class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <div class="custom-control custom-checkbox mb-2">
-            <%= f.check_box :multiple_edition , class:'custom-control-input', id:'customCheck3'%>
-            <label class="custom-control-label" for="customCheck3"></label>
-          </div>
-        </div>
-    </div>
-
-    <div class="col mx-2">
-        <div class="row">
-          <%= f.label :enable_period, 'Deshabilitar:', class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <%= f.select :enable_period, options_for_select(['Nunca', 'Semana', 'Mes' , 'Año'], selected: @project_type.enable_period), {:include_blank => false}, {class: 'form-control form-control-sm'} %>
-        </div>
-    </div>
-
-    <div class="col mx-2">
-        <div class="row">
-          <%= f.label :notification_email, 'Mail notif. :', class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <%= f.text_field :notification_email, class: 'form-control form-control-sm' %>
+      <div class="row">
+        <%= f.label :multiple_edition, "Edición Multiple", class:'col-form-label-sm mb-0 p-0' %>
+      </div>
+      <div class="row">
+        <div class="custom-control custom-checkbox mb-2">
+          <%= f.check_box :multiple_edition , class:'custom-control-input', id:'customCheck3'%>
+          <label class="custom-control-label" for="customCheck3"></label>
         </div>
       </div>
-
+    </div>
+    <div class="col mx-2">
+      <div class="row">
+        <%= f.label :enable_period, 'Deshabilitar:', class:'col-form-label-sm mb-0 p-0' %>
+      </div>
+      <div class="row">
+        <%= f.select :enable_period, options_for_select(['Nunca', 'Semana', 'Mes' , 'Año'], selected: @project_type.enable_period), {:include_blank => false}, {class: 'form-control form-control-sm'} %>
+      </div>
+    </div>
+    <div class="col mx-2">
+      <div class="row">
+        <%= f.label :notification_email, 'Mail notif. :', class:'col-form-label-sm mb-0 p-0' %>
+      </div>
+      <div class="row">
+        <%= f.text_field :notification_email, class: 'form-control form-control-sm' %>
+      </div>
+    </div>
   </div>
 
   <div class="row justify-content-center my-4">
