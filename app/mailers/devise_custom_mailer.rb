@@ -8,4 +8,17 @@ class DeviseCustomMailer < Devise::Mailer
   def add_inline_attachment!
     attachments.inline['logo_gw_ver_1.png'] = File.read("#{Rails.root}/app/assets/images/logo_gw_ver_1.png")
   end
+
+  def confirmation_instructions(record, token, opts={})
+    @token = token
+    @resource = record
+    @random_password = Devise.friendly_token.first(8)
+
+    if @resource.password.nil?
+      @resource.password = @random_password
+      @resource.save
+    end
+
+    devise_mail(record, :confirmation_instructions, opts)
+  end
 end
