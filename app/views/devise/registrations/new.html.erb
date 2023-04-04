@@ -4,12 +4,14 @@
     <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: {class: 'form-signin pl-6 pr-6'}) do |f| %>
       <div class="form-group">
         <center><%=image_tag ENV['VERTICAL_LOGO'], class:'mb-2', width:"252"%></center>
-        <% if @minimum_password_length %>
-          <em>(<%= @minimum_password_length %> characters minimum)</em>
-        <% end %>
         <div class="row mb-3">
           <div class="col-md-12">
             <%= f.input :name, label: "Nombre", input_html: {class: "form-control"} %>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <%= f.input :email, label: "E-mail", placeholder: "some@mail.com", autofocus: true, input_html: {class: "form-control"} %>
           </div>
         </div>
         <div class="row mb-3">
@@ -20,21 +22,14 @@
             <%= f.input :area_code, autocomplete: "off", label: "Cód. Área", placeholder: "261", input_html: {class: "form-control"} %>
           </div>
           <div class="col-md-4">
-            <%= f.input :phone, autocomplete: "off", label: "Teléfono", placeholder: "123456", input_html: {class: "form-control"} %>
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-md-12">
-            <%= f.input :email, label: "E-mail", placeholder: "some@mail.com", autofocus: true, input_html: {class: "form-control"} %>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <%= f.input :password, autocomplete: "off", label: "Contraseña", input_html: {class: "form-control"} %>
+            <%= f.input :phone, autocomplete: "off", label: "Teléfono", placeholder: "1234567", input_html: {class: "form-control"} %>
           </div>
         </div>
       </div>
       <%= f.submit 'Registrarse', class: 'btn btn-lg btn-primary btn-block mb-2' %>
+      <div class="text-center">
+        <%= render "devise/shared/links" %>
+      </div>
       <div class="text-left">
         <%= render "devise/shared/success_messages", resource: resource %>
       </div>
