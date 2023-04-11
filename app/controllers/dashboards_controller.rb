@@ -23,15 +23,16 @@ class DashboardsController < ApplicationController
   def send_report
       require 'net/http'
       require 'uri'
+
       uri = URI.parse(ENV['API_REPORTS_URL'])
       request = Net::HTTP::Post.new(uri)
-     # request.basic_auth(ENV['usuario'], ENV['contraseña'])
+      # request.basic_auth(ENV['usuario'], ENV['contraseña'])
       request.content_type = "application/json"
       req_options = {responseType: 'blob'}
       request.body = params.to_json
-      #req_options = {
-        #use_ssl: uri.scheme == "https",
-      #}
+      req_options = {
+        use_ssl: uri.scheme == "https",
+      }
       response = Net::HTTP.start(uri.hostname, uri.port ,req_options) do |http|
         http.request(request)
       end
