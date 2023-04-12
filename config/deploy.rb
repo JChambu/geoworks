@@ -1,7 +1,7 @@
 # config valid only for current version of Capistrano
 
 #lock "3.7.2"
-lock "3.16.0"
+lock "3.11.0"
 
 set :application, "geoworks"
 set :repo_url, "https://github.com/JChambu/geoworks.git"
