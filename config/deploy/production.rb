@@ -11,7 +11,7 @@
   set :rails_env, 'production'
   #set :default_env, { 'NODE_ENV' => 'production' }
 
-  server '192.168.206.82', user: 'deployer', roles: %w{ web app}, my_property: :my_value
+  server '192.168.204.43', user: 'deployer', roles: %w{ web app}, my_property: :my_value
 # role-based syntax
 # ==================
 
@@ -21,9 +21,9 @@
 # Don't use `:all`, it's a meta role.
 
   #set :rbenv_ruby, '2.3.0'
-  role :app, %w{deployer@192.168.206.82}
-  role :web, %w{deployer@192.168.206.82}
-  role :db,  %w{deployer@192.168.206.82}
+  role :app, %w{deployer@192.168.204.43}
+  role :web, %w{deployer@192.168.204.43}
+  role :db,  %w{deployer@192.168.204.43}
 
 
 # role-based syntax
