@@ -400,7 +400,7 @@ Navarra.geomaps = function() {
             new_a.className = "leaflet-draw-draw-polygon";
             new_a.title = "Nueva Geometría";
             var img = L.DomUtil.create('I');
-            img.className = 'fas fa-map-marker-alt'; 
+            img.className = 'fas fa-map-marker-alt';
             img.style.color = "#EBEBEC";
             img.style.cursor = "pointer"
             img.style.textShadow = "1px 1px 2px rgba(0,0,0,0.5)"
@@ -743,7 +743,7 @@ Navarra.geomaps = function() {
       cql_filter = cql_filter.replace(/!= 'null'/g, " IS NOT NULL ");
       cql_filter = cql_filter.replace(/= 'null'/g, " IS NULL ");
     }
-    
+
     //Aplica filtro Intersect (definido por el usuario) con las capas activas
     if($('#switch_intersect_layers').is(":checked")){
       active_internal_layers = get_layers_checked();
@@ -1257,7 +1257,7 @@ Navarra.geomaps = function() {
       layerControl.addOverlay(projectsa, layer+ "-filtrados", null, {
         sortLayers: true
       });
-      layer_array.push(projectsa);          
+      layer_array.push(projectsa);
     }) // Cierra each data
     first_time_internal_layers = false;
     //vuelve a checkear las capas anteriormente checkeadas
@@ -1297,7 +1297,7 @@ function getCQLFilter_layer(dat){
     data_filter = dat.layer_filters.attribute_filter.split('|');
     cql_filter += " and " + data_filter[0] + " " + data_filter[1] + " " + data_filter[2];
   }
-  
+
   // Aplica filtro por owner de la capa (Filtros de usuarios)
   if (dat.layer_filters.owner_filter) {
     var user_name = Navarra.dashboards.config.user_name;
@@ -1349,7 +1349,7 @@ function getCQLFilter_layer(dat){
         if(field_type==5 && filter_value!='null' && filter_field != 'app_estado' && filter_field != 'app_usuario'){
           //!=null porque a los valores null los considera menores a
           cql_filter += " AND parseDouble("+ filter_field + ") "+ filter_operator + " '" + filter_value + "' and "+filter_field+" is not null";
-        } 
+        }
         else if(field_type==3 && filter_value!='null'){
            cql_filter += " AND dateFormat('yyyy/MM/dd',dateParse('dd/MM/yyyy'," + filter_field + ")) " + filter_operator + " dateFormat('yyyy/MM/dd',dateParse('dd/MM/yyyy','" + filter_value + "')) and " + filter_field + " IS NOT NULL";
         }
@@ -1359,7 +1359,7 @@ function getCQLFilter_layer(dat){
       });
       cql_filter = cql_filter.replace(/!= 'null'/g, " IS NOT NULL ");
       cql_filter = cql_filter.replace(/= 'null'/g, " IS NULL ");
-    } 
+    }
   return cql_filter;
 }
 
@@ -1454,6 +1454,15 @@ function getCQLFilter_layer(dat){
                       new_p.className="p_popup"
                       new_p.innerHTML=label + ': ' + val;
                       div_popup.appendChild(new_p);
+
+                      var urlRegex = /(https?:\/\/)?(www\.)?[^\s]+\.[^\s]+/g;
+                      if (urlRegex.test(val)) {
+                        var hyperlink = val.replace(urlRegex, function(url) {
+                          return '<a href="' + url + '">' + url + '</a>';
+                        });
+                        new_p.innerHTML=label + ': ' + hyperlink;
+                      }
+
                     }
                   });
                   app_id_popup=prop["app_id"];
@@ -1510,7 +1519,7 @@ function makeDraggable(popup){
       //L.DomUtil.setPosition(popup._wrapper.parentNode, pos);
       var draggable = new L.Draggable(popup._container, popup._wrapper);
       draggable.enable();
-      
+
       draggable.on('dragend', function() {
         $('.leaflet-popup-tip').css('display','none')
       });
@@ -1746,10 +1755,10 @@ function create_marker(latlong,index, title_id, is_aditional_marker){
       if (g.id == event.target.options.title){
         index_to_delete = index;
       }
-    })  
+    })
     if(index_to_delete>=0){
       geometries_to_edit.splice(index_to_delete,1);
-    } 
+    }
     geometries_to_edit.push(data_to_edit);
     event.target.setOpacity(1)
   });
@@ -2107,14 +2116,14 @@ function set_onclick_map(is_default) {
     mymap.off('click', on_click_map_create);
     mymap.on('click', on_click_map_default);
     mymap.off('dblclick', on_dblclick_map_create);
-    mymap.doubleClickZoom.enable(); 
-      
+    mymap.doubleClickZoom.enable();
+
   } else{
     // on click crea geometría en el mapa
     mymap.off('click', on_click_map_default)
     mymap.on('click', on_click_map_create);
     // on doubleclick cierra geometría en el mapa
-    mymap.doubleClickZoom.disable();  
+    mymap.doubleClickZoom.disable();
     mymap.on('dblclick', on_dblclick_map_create);
   }
 }
@@ -2157,7 +2166,7 @@ function on_click_map_create(e){
       id: 0,
       latLng: latlong
     }
-    geometries_to_edit = []; 
+    geometries_to_edit = [];
     geometries_to_edit.push(data_to_edit);
   return false;
 }
@@ -2262,19 +2271,19 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
         $('#toast').toast('show');
         // elimina features que no tienen datos válidos
         points.features = points.features.filter(v => !isNaN(v.properties[interpolation_field]));
-        get_layers_clip(points, interpolation_field,breaks,colors,field_name, save_interpolation, interpolation_name);  
+        get_layers_clip(points, interpolation_field,breaks,colors,field_name, save_interpolation, interpolation_name);
       }
     }
   });
 }
 
 function get_layers_clip(points, interpolation_field,breaks,colors,field_name, save_interpolation, interpolation_name) {
-  // trae capas 
+  // trae capas
   var active_internal_layers = get_layers_checked();
   if(active_internal_layers.length>0){
     $('#text_toast').html("Extrapolando hacia los límites de la capa. Por favor espere");
     $('#toast').toast('show');
-    
+
     data = project_type_layers;
     var concat_features = null;
     var layers_count = 0;
@@ -2303,7 +2312,7 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name, s
         $.ajax({
           url: URL,
           success: function (data) {
-            if(concat_features == null) { 
+            if(concat_features == null) {
               concat_features = data;
             } else {
               concat_features = turf.featureCollection(concat_features.features.concat(data.features));
@@ -2322,26 +2331,26 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name, s
               $.each(points.features, function(i, v) {
               if (v.geometry.coordinates[1] == max_lat) {
                 v1 = turf.clone(v);
-                v1.geometry.coordinates[1] = bbox[3];  
+                v1.geometry.coordinates[1] = bbox[3];
                 points = turf.featureCollection(points.features.concat(v1));
               return;
               }
               if (v.geometry.coordinates[1] == min_lat) {
                 v1 = turf.clone(v);
-                v1.geometry.coordinates[1] = bbox[1];  
+                v1.geometry.coordinates[1] = bbox[1];
                 points = turf.featureCollection(points.features.concat(v1));
               return;
               }
               if (v.geometry.coordinates[0] == max_lng) {
                 v1 = turf.clone(v);
-                v1.geometry.coordinates[0] = bbox[2];  
+                v1.geometry.coordinates[0] = bbox[2];
                 points = turf.featureCollection(points.features.concat(v1));
               return;
               }
               if (v.geometry.coordinates[0] == min_lng) {
                 v1 = turf.clone(v);
-                v1.geometry.coordinates[0] = bbox[0]; 
-                points = turf.featureCollection(points.features.concat(v1)); 
+                v1.geometry.coordinates[0] = bbox[0];
+                points = turf.featureCollection(points.features.concat(v1));
               return;
               }
               });
@@ -2372,7 +2381,7 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name, s
       $('#toast_decision').toast('show');
     } else{
       continue_iterpolation(points, interpolation_field,breaks,colors,field_name, null, save_interpolation, interpolation_name);
-    }        
+    }
   }
 }
 
@@ -2393,8 +2402,8 @@ function continue_iterpolation(points, interpolation_field,breaks,colors,field_n
       $('#toast_decision').toast('show');
     } else{
       continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name, save_interpolation, interpolation_name);
-    }   
-  },200); 
+    }
+  },200);
 }
 
 function continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name, save_interpolation, interpolation_name){
@@ -2404,7 +2413,7 @@ function continue_isobands(grid, interpolation_field,breaks,colors,combined,fiel
   setTimeout(function(){ // delay para que cierre el toast_decision.
     get_isobands(grid, interpolation_field,breaks,colors,combined,field_name, save_interpolation, interpolation_name);
     //Para ver los puntos y sus propiedades
-     /* 
+     /*
     grid.features.forEach(function(point){
     var new_pos = new L.latLng (point.geometry.coordinates[1], point.geometry.coordinates[0]);
     const popupContent = '<h7>' + point.properties[interpolation_field] + '</h7>'
@@ -2412,11 +2421,11 @@ function continue_isobands(grid, interpolation_field,breaks,colors,combined,fiel
     });
     */
     // var geojson = L.geoJSON(grid).addTo(mymap);
-  },200);  
+  },200);
 }
 
 function get_isobands(grid, interpolation_field, breaks, colors, combined, field_name,save_interpolation, interpolation_name){
-  pointGrid = grid  
+  pointGrid = grid
   if(isobands_layer!=undefined){
     mymap.removeLayer(isobands_layer);
   }
@@ -2531,8 +2540,8 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined, field
                 url: '/projects/create_form',
                 datatype: 'json',
                 data: {
-                  data: params, 
-                  is_interpolate: 'true' 
+                  data: params,
+                  is_interpolate: 'true'
                 },
                 success: function(data) {
                   $('#text_toast').html(data['status']);
@@ -2543,7 +2552,7 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined, field
           });
         }
 
-      } // Cierra primer success  
+      } // Cierra primer success
    });
   }
   isobands_layer.addTo(mymap);
