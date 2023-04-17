@@ -1457,7 +1457,7 @@ function getCQLFilter_layer(dat){
                       new_p.innerHTML=label + ': ' + val;
                       div_popup.appendChild(new_p);
 
-                      if (field_type_id == 8) {
+                      if (field_type_id == 12) {
                         var hyperlink;
                         if (val.indexOf("http://") === 0 || val.indexOf("https://") === 0) {
                           hyperlink = "<a href='" + val + "' target='_blank' onclick='return confirm(\"¿Estás seguro de que deseas salir de Geoworks?\");'>" + val + "</a>";

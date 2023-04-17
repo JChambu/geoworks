@@ -2692,7 +2692,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
               if(element.field_type_id == 10){new_celd.classList.add("ok_button")}
 
               // Adapta el código a los diferentes tipos de campos
-              if (element.field_type_id == 1 || element.field_type_id == 8) {
+              if (element.field_type_id == 1 || element.field_type_id == 12) {
                 var new_p = document.createElement('TEXTAREA');
                 new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
                 if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
