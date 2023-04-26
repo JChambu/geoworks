@@ -2,12 +2,7 @@
     background-color: rgba(0,0,0,0.5);
 }
 .leaflet-measure-toggle {
-    background-size: 50px 20px;
-    background-color: rgba(0,0,0,0.5);
-    background-image: url('data:image/svg+xml;utf8,<svg t="1599643864260" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="26869" width="32" height="32"><path d="M910.623 777.748h-79.725V325.977l-53.15 53.149v398.622H282.715l580.416-605.875-37.58-37.578-579.299 604.707v-492.75h372.591l48.92-53.149H246.252v-79.725c0-14.688-11.886-26.575-26.575-26.575-14.688 0-26.575 11.886-26.575 26.575v79.725h-79.724c-14.689 0-26.575 11.886-26.575 26.575s11.886 26.575 26.575 26.575h79.724v584.646h584.646v79.725c0 14.688 11.887 26.574 26.574 26.574 14.689 0 26.576-11.887 26.576-26.574v-79.725h79.725c14.688 0 26.574-11.887 26.574-26.576 0-14.688-11.886-26.575-26.574-26.575z"></path></svg>');
     border: 0;
-    border-radius: 4px;
-    text-indent: 100%;
     white-space: nowrap;
     overflow: hidden;
     box-shadow: none;

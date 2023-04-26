@@ -11,7 +11,6 @@
     // attach your plugin to the global 'L' variable
     if (typeof window !== "undefined" && window.L) {
         factory(L);
-        console.log(L);
     }
 })(function (L) {
     L.Measure = {
@@ -45,7 +44,11 @@
             this._contents = L.DomUtil.create("div", "leaflet-measure-contents", this._container);
 
             this._link = L.DomUtil.create("a", "leaflet-measure-toggle", this._container);
-            this._link.title = this.options.title || "Measurement";
+            this._link.title = this.options.title || "Medir";
+            this._link.className = 'fas fa-ruler';
+            this._link.style.backgroundColor = "rgba(0,0,0,0.25)";
+            this._link.style.textShadow = "1px 1px 2px rgba(0,0,0,0.5)"
+            this._link.style.color = '#FFFFFF';
             this._link.href = "#";
 
             if (this.options.title) {
