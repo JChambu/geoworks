@@ -12,9 +12,9 @@ class DeviseCustomMailer < Devise::Mailer
   def confirmation_instructions(record, token, opts={})
     @token = token
     @resource = record
-    @random_password = Devise.friendly_token.first(8)
 
     if @resource.password.nil?
+      @random_password = Devise.friendly_token.first(8)
       @resource.password = @random_password
       @resource.save
     end
