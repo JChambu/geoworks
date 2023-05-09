@@ -17,7 +17,7 @@
 </div>
 
 <div>
-  <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' && controller_name != 'passwords' && controller_name != 'sessions' %>
+  <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' && controller_name != 'passwords' && controller_name != 'sessions' && controller_name != 'confirmations' && controller_name != 'registrations' %>
     <%= link_to "¿Bloqueó su cuenta?", new_unlock_path(resource_name) , class:"text-dark" %>
   <% end -%>
 </div>
