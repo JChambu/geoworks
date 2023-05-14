@@ -156,7 +156,7 @@ div.custom-menu.show {
   padding: 1px 10px;
 
 }
-.view-data {
+.view-data, .iot_icon {
   cursor: pointer;
   font-size: 12px;
   color: #e9ecef;
@@ -1039,10 +1039,23 @@ div.custom-menu.show {
 .popup_iot{
   position: absolute;
   z-index: 50000;
-  top: 15vh;
-  left: 45%;
-  width: 55%;
-  height: 80vh;
   border: none;
   border-radius: 10px;
+  background: rgba(39, 43, 48, 0.8)
+}
+.pop_iot_container{
+  height: 84vh;
+}
+.popup_iot_right{
+  left: 50.5%;
+  width: 49%;
+}
+.popup_iot_left{
+  left: 0.5%;
+  width: 49%;
+}
+
+.popup_iot_iframe{
+  width: 100%;
+  height: inherit;
 }

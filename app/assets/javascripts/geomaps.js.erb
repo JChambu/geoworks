@@ -1445,7 +1445,7 @@ function getCQLFilter_layer(dat){
                     div_popup_icon.appendChild(new_p);
                     if(Navarra.dashboards.config.current_tenement == "fepedi" || Navarra.dashboards.config.current_tenement == "amandes"  ){// si es proyecto iot por ahora hardcode para fepedi
                       var new_p = document.createElement('I');
-                      new_p.setAttribute("onclick",'Navarra.geomaps.open_iot_monitoring('+app_id_popup+')');
+                      new_p.setAttribute("onclick",'Navarra.iot.open_iot_monitoring('+app_id_popup+')');
                       new_p.className="fas fa-chart-line info_icon";
                       div_popup_icon.appendChild(new_p);
                     }
@@ -2871,8 +2871,6 @@ function open_iot_monitoring(app_id_popup){
     continue_isobands: continue_isobands,
     intersect_layers: intersect_layers,
     color_by_attribute_function: color_by_attribute_function,
-    open_iot_monitoring: open_iot_monitoring,
-    cancel_color_attr: cancel_color_attr
-    open_iot_monitoring: open_iot_monitoring
+    cancel_color_attr: cancel_color_attr,
   }
 }();
