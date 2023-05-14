@@ -112,6 +112,8 @@ class DashboardsController < ApplicationController
 
       end
       @extent = Project.geometry_bounds(@project_type.id, current_user.id, attribute_filters = '', filtered_form_ids = '', from_date = '', to_date = '', intersect_width_layers = 'false', active_layers = '', filters_layers = {} ,timeslider_layers = {})
+    
+      @status_project  = ProjectStatus.where(project_type_id: @project_type.id)
     end
   end
 

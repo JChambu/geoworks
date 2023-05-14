@@ -93,12 +93,19 @@ class ProjectData
 
   def coordinates
     return point_coordinates if geometry['type'] == "Point"
+    return line_coordinates if geometry['type'] == "LineString"
     polygon_coordinates
   end
 
   def point_coordinates
     latitude, longitude = geometry['coordinates']
     "POINT(#{latitude} #{longitude})"
+  end
+
+  def line_coordinates
+    raw_coordinates = geometry['coordinates']
+    coordinates = raw_coordinates.map { |latitude, longitude| "#{latitude} #{longitude}" }
+    "LINESTRING(#{coordinates.join(', ')})"
   end
 
   def polygon_coordinates

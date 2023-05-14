@@ -275,6 +275,7 @@ Navarra.dashboards.action_show = function(){
         $(".table_data_container").css("top", $("#nav_bar").innerHeight());
         $(".leaflet-right").css("display", "none");
         $(".leaflet-left").css("display", "none");
+        $(".status_panel").addClass("d-none");
         adjust_table_height();
         verify_height_table();
         if($('#sidebar_all').hasClass('charts-container') || $('#sidebar_all').hasClass('timeslider-container') || $('#sidebar_all').hasClass('filter-container') ){
@@ -289,6 +290,7 @@ Navarra.dashboards.action_show = function(){
           $("#collapse_data").css("transition-delay", "0.6s");
           $("#collapse_data").css("border", "1px solid rgba(0,0,0,0.6)");
           $(".leaflet-control-scale-line").css("display", "none");
+          $(".status_panel").css("max-height", "32vh");
           init_data_dashboard(false);
         }
     });
@@ -304,7 +306,9 @@ Navarra.dashboards.action_show = function(){
       $("#collapse_data").css("border", "none");
       $(".leaflet-right").css("display", "inline-flex");
       $(".leaflet-left").css("display", "block");
+      $(".status_panel").removeClass("d-none");
       $(".leaflet-control-scale-line").css("display", "block");
+      $(".status_panel").css("max-height", "none");
     });
 
     //Abrir a mitad de pantalla
@@ -354,12 +358,14 @@ open_table_middle = function(only_open){
     verify_height_table();        
     $(".leaflet-right").css("display", "inline-flex");
     $(".leaflet-left").css("display", "block");
+    $(".status_panel").removeClass("d-none");
     if(status_view_condensed){
       $("#collapse_data").css("max-height", "100vh");
       $("#collapse_data").css("transition", "2s");
       $("#collapse_data").css("transition-delay", "0.6s");
       $("#collapse_data").css("border", "1px solid rgba(0,0,0,0.6)");
       $(".leaflet-control-scale-line").css("display", "none");
+      $(".status_panel").css("max-height", "32vh");
       if(!only_open){
         init_data_dashboard(false);
       }
