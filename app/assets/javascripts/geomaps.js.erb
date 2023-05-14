@@ -2830,6 +2830,14 @@ function intersect_layers(){
   wms_filter(true);
 }
 
+function open_iot_monitoring(app_id_popup){
+  console.log(app_id_popup);
+  let iframeHtml = '<iframe src="https://iot.geoworks.com.ar/" ';
+  iframeHtml+=' class="popup_iot"></iframe>'
+  $(document.body).append(iframeHtml);
+  //window.open('http://localhost:4200/'+app_id_popup+'/'+user_id);
+}
+
   return {
     init: init,
     wms_filter: wms_filter,
