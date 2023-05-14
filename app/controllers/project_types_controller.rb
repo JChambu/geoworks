@@ -288,7 +288,7 @@ class ProjectTypesController < ApplicationController
     end
   end
 
-  def get_filtered_form_ids 
+  def get_filtered_form_ids
     filtered_form_ids_text = params[:filtered_form_ids_text]
     project_type_id = params[:project_type_id]
     from_date_subform = params[:from_date_subform]
@@ -567,7 +567,7 @@ class ProjectTypesController < ApplicationController
                 text = "(properties ->> '"+filter_parts[0]+"')::numeric "+filter_parts[1]+"'"+filter_parts[2]+"' AND properties ->> '"+filter_parts[0]+"' IS NOT NULL";
               elsif (filter_parts[3] == '3' and filter_parts[2]!='null')
                 text = "to_date(project_data_children.properties ->> '"+filter_parts[0]+"', 'DD/MM/YYYY') "+filter_parts[1]+" to_date('"+filter_parts[2]+"','DD/MM/YYYY') AND properties ->> '"+filter_parts[0]+"' IS NOT NULL";
-              else  
+              else
                 text = "properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+"'"+filter_parts[2]+"'";
               end
               text = text.gsub("!='null'"," IS NOT NULL ")
@@ -774,7 +774,7 @@ class ProjectTypesController < ApplicationController
     render json: data
   end
 
-  def search_data_dashboard 
+  def search_data_dashboard
     # parámetros para utilizar este método en la búsqueda de interpolación
     is_interpolate = params[:is_interpolate]
     interpolate_field = params[:interpolate_field]
@@ -812,18 +812,18 @@ class ProjectTypesController < ApplicationController
 
     data = ProjectTypesController.set_map_filter data,type_box, size_box
     project_filter = ProjectFilter.where(project_type_id: project_type_id.to_i).where(user_id: current_user.id).first
-    data = ProjectTypesController.set_project_filter data,project_filter, current_user.id    
+    data = ProjectTypesController.set_project_filter data,project_filter, current_user.id
     data = ProjectTypesController.set_time_slider data, from_date, to_date
     data = ProjectTypesController.set_filters_on_the_fly data, data_conditions
     data = ProjectTypesController.set_filtered_form_ids data, filtered_form_ids
     data = ProjectTypesController.set_intersect_width_layers data, intersect_width_layers, active_layers, filters_layers, timeslider_layers
 
     if is_interpolate
-    
+
       render json: {"data": data}
 
     else
-    
+
       # Aplica búsqueda del usuario desde la tabla
       if !filter_by_column.blank? && !filter_value.blank?
         data = data.where("TRANSLATE(main.properties ->> '#{filter_by_column}','ÁÉÍÓÚáéíóú','AEIOUaeiou') ilike translate('%#{filter_value}%','ÁÉÍÓÚáéíóú','AEIOUaeiou')")
@@ -1079,7 +1079,7 @@ class ProjectTypesController < ApplicationController
       end
     end
 
-  data 
+  data
   end
 
   def self.set_filtered_form_ids data, filtered_form_ids
@@ -1112,7 +1112,7 @@ class ProjectTypesController < ApplicationController
           active_layer_id = ProjectType.where(name_layer: active_layer).pluck(:id).first
           data = data.joins("INNER JOIN #{current_tenant}.projects intersect_"+active_layer+" ON ST_Intersects(main.the_geom, intersect_"+active_layer+".the_geom)")
           data = data.where("intersect_"+active_layer+".project_type_id = #{active_layer_id} AND intersect_"+active_layer+".row_active = true AND intersect_"+active_layer+".current_season = true")
-          
+
           # Aplica filtros de la capa
           if !filters_layers.nil?
             filters_layer = filters_layers[active_layer]
@@ -1126,12 +1126,12 @@ class ProjectTypesController < ApplicationController
                   text = "(intersect_"+active_layer+".properties->>'#{field}')::numeric #{operator}'#{value}' AND intersect_"+active_layer+".properties->>'#{field}' IS NOT NULL"
                 elsif (type == '3' and value!='null')
                   text = "to_date(intersect_"+active_layer+".properties ->> '#{field}', 'DD/MM/YYYY') #{operator} to_date('#{value}','DD/MM/YYYY') AND intersect_"+active_layer+".properties->>'#{field}' IS NOT NULL"
-                else  
+                else
                   text = "intersect_"+active_layer+".properties ->> '#{field}' #{operator}'#{value}'"
                 end
                 text = text.gsub("!='null'"," IS NOT NULL ")
                 text = text.gsub("='null'"," IS NULL ")
-                data = data.where(text) 
+                data = data.where(text)
               end
             end
           end
@@ -1357,7 +1357,7 @@ class ProjectTypesController < ApplicationController
     hidden_field = ["1","1","1","0"]
     popup_field = ["0","0","0","1"]
     project_fields_attributes = []
-    
+
     fields_interpolation.each_with_index do |f,i|
       new_field = {}
       new_field[:field_type_id] = field_type_id[i]
@@ -1379,7 +1379,7 @@ class ProjectTypesController < ApplicationController
     end
 
     interpolation_params[:project_fields_attributes] = project_fields_attributes
-   
+
     @project_type = ProjectType.new(interpolation_params)
     @project_id_created = nil
 
@@ -1412,7 +1412,7 @@ class ProjectTypesController < ApplicationController
   def project_type_params
     params.require(:project_type).permit(
       :name, :type_file, :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color, :notification_email,
-      :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition, :enable_period, :level,
+      :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition, :enable_period, :level, :iot,
       project_fields_attributes: [
         :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
         :choice_list_id, :hidden, :read_only, :popup, :data_table, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,

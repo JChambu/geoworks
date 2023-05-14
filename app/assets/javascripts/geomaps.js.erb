@@ -1438,6 +1438,12 @@ function getCQLFilter_layer(dat){
                     new_p.setAttribute("onclick",'show_item_info('+app_id_popup+',true)');
                     new_p.className="fas fa-info-circle info_icon";
                     div_popup_icon.appendChild(new_p);
+                    if(Navarra.dashboards.config.current_tenement == "fepedi" || Navarra.dashboards.config.current_tenement == "amandes"  ){// si es proyecto iot por ahora hardcode para fepedi
+                      var new_p = document.createElement('I');
+                      new_p.setAttribute("onclick",'Navarra.geomaps.open_iot_monitoring('+app_id_popup+')');
+                      new_p.className="fas fa-chart-line info_icon";
+                      div_popup_icon.appendChild(new_p);
+                    }
                     div_popup.appendChild(div_popup_icon);
                   }
 
@@ -2629,6 +2635,14 @@ function intersect_layers(){
   wms_filter(true);
 }
 
+function open_iot_monitoring(app_id_popup){
+  console.log(app_id_popup);
+  let iframeHtml = '<iframe src="https://iot.geoworks.com.ar/" ';
+  iframeHtml+=' class="popup_iot"></iframe>'
+  $(document.body).append(iframeHtml);
+  //window.open('http://localhost:4200/'+app_id_popup+'/'+user_id);
+}
+
   return {
     init: init,
     wms_filter: wms_filter,
@@ -2660,6 +2674,7 @@ function intersect_layers(){
     interpolate: interpolate,
     continue_iterpolation:continue_iterpolation,
     continue_isobands: continue_isobands,
-    intersect_layers: intersect_layers
+    intersect_layers: intersect_layers,
+    open_iot_monitoring: open_iot_monitoring
   }
 }();

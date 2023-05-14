@@ -7,7 +7,8 @@ class CustomersController < ApplicationController
       name: @customer.name,
       logo: @customer.logo,
       cover: cover,
-      username: current_user.name
+      username: current_user.name,
+      user_id: current_user.id
     }
     render json: data
   end

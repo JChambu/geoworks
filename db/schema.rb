@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20221007164606) do
+ActiveRecord::Schema.define(version: 20230320193839) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -357,6 +357,7 @@ ActiveRecord::Schema.define(version: 20221007164606) do
     t.integer "level", default: 1
     t.string "enable_period", default: "Nunca"
     t.string "notification_email"
+    t.boolean "iot", default: false
     t.index ["user_id"], name: "index_project_types_on_user_id"
   end
 
