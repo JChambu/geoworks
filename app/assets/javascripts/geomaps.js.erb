@@ -2831,6 +2831,7 @@ function intersect_layers(){
 }
 
 function open_iot_monitoring(app_id_popup){
+  console.log(app_id_popup);
   let iframeHtml = '<iframe src="https://iot.geoworks.com.ar/" ';
   iframeHtml+=' class="popup_iot"></iframe>'
   $(document.body).append(iframeHtml);
@@ -2872,5 +2873,6 @@ function open_iot_monitoring(app_id_popup){
     color_by_attribute_function: color_by_attribute_function,
     open_iot_monitoring: open_iot_monitoring,
     cancel_color_attr: cancel_color_attr
+    open_iot_monitoring: open_iot_monitoring
   }
 }();
