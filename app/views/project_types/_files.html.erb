@@ -43,6 +43,12 @@
       <div class="row">
         <%= f.select :type_geometry, options_for_select(['Point', 'Polygon' , 'LineString'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
       </div>
+      <div class="row">
+          <%= f.label :type_geometry, 'Tipo:', class:'col-form-label-sm mb-0 p-0' %>
+        </div>
+        <div class="row">
+          <%= f.select :type_geometry, options_for_select(['Point', 'Polygon' , 'LineString'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
+        </div>
     </div>
     <div class="col mx-2">
       <div class="row">
