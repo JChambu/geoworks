@@ -40,12 +40,12 @@ class ProjectsController < ApplicationController
                   text = "(sec.properties->>'#{field}')::numeric #{operator}'#{value}' AND sec.properties->>'#{field}' IS NOT NULL"
                 elsif (type == '3' and value!='null')
                   text = "to_date(sec.properties ->> '#{field}', 'DD/MM/YYYY') #{operator} to_date('#{value}','DD/MM/YYYY') AND sec.properties->>'#{field}' IS NOT NULL"
-                else  
+                else
                   text = "sec.properties ->> '#{field}' #{operator}'#{value}'"
                 end
                 text = text.gsub("!='null'"," IS NOT NULL ")
                 text = text.gsub("='null'"," IS NULL ")
-                data = data.where(text) 
+                data = data.where(text)
               end
             end
           end
@@ -71,6 +71,14 @@ class ProjectsController < ApplicationController
       projects << data
     end
     render json: projects
+  end
+
+  def get_coordinates
+    app_id_polygon = params[:app_id_popup].to_i
+    coordinates = Project.select("ST_AsText(ST_Transform(the_geom, 3857))").find(app_id_polygon).st_astext
+    sentinel_link = "https://services.sentinel-hub.com/ogc/wms/87f4e120-6a3f-4862-800b-cd46f0005c94?geometry=#{coordinates}"
+
+    render json: { sentinel_link: sentinel_link }
   end
 
   # Elimina un registro (row_active = false)
@@ -111,7 +119,7 @@ class ProjectsController < ApplicationController
   end
 
   # Crea un nuevo registro
-  def create_form 
+  def create_form
     count_sucess=0
     count_errors=0
     created_ids=[]
@@ -206,7 +214,7 @@ class ProjectsController < ApplicationController
         render json: {status: 'Nuevos registros:'+count_sucess.to_s+'. Errores:'+count_errors.to_s, id: created_ids}
       else
         render json: {status: 'Nuevos registros:'+count_sucess.to_s, id: created_ids}
-      end      
+      end
     end
 
   end
@@ -376,7 +384,7 @@ def split_geometry
                   value = field['value_calculated'][i-1]
                   remove_location = field['remove_location']
                   loaded_value = @project.properties[key]
-        
+
                   if loaded_value != value
                     @project.properties[key] = value
                     # Elimina la localidad si se modifican provincia o departamento
@@ -428,7 +436,7 @@ def split_geometry
             c.destroy
           end
           render json: {status: count_sucess.to_s + ' nuevos segmentos'}
-        end 
+        end
     end
   end
 
