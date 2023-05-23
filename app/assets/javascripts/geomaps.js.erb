@@ -4,6 +4,8 @@ var xhr_layer_external = null;
 var xhr_popup = null;
 var xhr_field_type = null;
 var project_type_layers = [];
+var wmsLayer;
+var div_popup_icon;
 
 Navarra.namespace("geomaps");
 var first_layer=false;
@@ -1378,6 +1380,130 @@ function getCQLFilter_layer(dat){
     })
   }
 
+  function hide_ndvi(){
+    console.log("dentro de function HIDE NDVI---------------------");
+    button_display = document.getElementById('display_ndvi');
+    button_hide = document.getElementById('hide_ndvi');
+
+    var encontrado = false;
+    obj = Object.keys(wmsLayer);
+    console.log("obj");
+    console.log(obj);
+    var app_id_convert = app_id_popup.toString();
+    console.log("app_convert");
+    console.log(app_id_convert);
+    for (var i = 0; i < obj.length; i++) {
+      if (obj[i] === app_id_convert) {
+        encontrado = true;
+        break;
+      }
+    }
+
+    console.log("mymap.... ANTES DE IF DE HIDE_NDVI FUNCTION");
+    console.log(mymap.hasLayer(wmsLayer[app_id_popup]));
+
+    if (!encontrado) {
+      console.log("dentro de IF");
+      console.log("mymap.... DENTRO DE IF DE HIDE_NDVI FUNCTION");
+      console.log(mymap.hasLayer(wmsLayer[app_id_popup]));
+
+
+      var new_p = document.createElement('I');
+      new_p.setAttribute("id", "display_ndvi");
+      new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +')');
+      new_p.className="fas fa-layer-group info_icon";
+      console.log("new_p");
+      console.log(new_p);
+      div_popup_icon.appendChild(new_p);
+      console.log("div_popup_icon después de crear el botón de AGREGAR ndvi-------------------");
+      console.log(div_popup_icon);
+
+    } else {
+      console.log("El número no coincide con app_id_popup");
+
+      console.log("mymap.... DENTRO DE ELSE DE HIDE_NDVI FUNCTION");
+      console.log(mymap.hasLayer(wmsLayer[app_id_popup]));
+
+      console.log("dentro de ELSE IF ");
+      var show_button = document.getElementById('display_ndvi');
+      if (show_button !== null) {
+        show_button.hidden = true;
+
+        var new_p = document.createElement('I');
+        new_p.setAttribute("id", "hide_ndvi");
+        new_p.setAttribute("onclick",'Navarra.geomaps.hide_ndvi_button('+ app_id_popup +')');
+        new_p.className = "fa fa-trash info_icon";
+        console.log("new_p");
+        console.log(new_p);
+        div_popup_icon.appendChild(new_p);
+        console.log("div_popup_icon después de crear el botón de OCULTAR ndvi-------------------");
+        console.log(div_popup_icon);
+      };
+
+
+      if (mymap.hasLayer(wmsLayer[app_id_popup]) === true) {
+        var new_p = document.createElement('I');
+        new_p.setAttribute("id", "hide_ndvi");
+        new_p.setAttribute("onclick",'Navarra.geomaps.hide_ndvi_button('+ app_id_popup +')');
+        new_p.className = "fa fa-trash info_icon";
+        console.log("new_p");
+        console.log(new_p);
+        div_popup_icon.appendChild(new_p);
+        console.log("div_popup_icon después de crear el botón de OCULTAR ndvi-------------------");
+        console.log(div_popup_icon);
+      }
+
+      if (mymap.hasLayer(wmsLayer[app_id_popup]) === false) {
+        var new_p = document.createElement('I');
+        new_p.setAttribute("id", "display_ndvi");
+        new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +')');
+        new_p.className="fas fa-layer-group info_icon";
+        console.log("new_p");
+        console.log(new_p);
+        div_popup_icon.appendChild(new_p);
+      }
+    }
+  };
+
+  function hide_ndvi_button(app_id_popup){
+    var hideButton = document.getElementById('hide_ndvi');
+    if (hideButton !== null) {
+      if (wmsLayer) {
+        wmsLayer[app_id_popup].remove();
+        console.log("mymap.... DENTRO FUNCION DESPUES DE REMOVER LAYER");
+        console.log(mymap.hasLayer(wmsLayer[app_id_popup]));
+      };
+    };
+  };
+
+
+  wmsLayer = {};
+  function show_ndvi(app_id_popup){
+    console.log("mymap.... ANTES DE APRETAR BÓTON");
+    console.log(mymap.hasLayer(wmsLayer[app_id_popup]));
+
+    $.ajax({
+      url: '/projects/get_coordinates',
+      method: 'GET',
+      datatype: 'json',
+      data: { app_id_popup: app_id_popup },
+      success: function(response) {
+        wmsLayerValue = L.tileLayer.wms(response.sentinel_link, {
+          layers: 'NDVI',
+          format: 'image/png',
+          transparent: true,
+        }).addTo(mymap);
+        wmsLayer[app_id_popup] = wmsLayerValue;
+        console.log("mymap....");
+        console.log(mymap.hasLayer(wmsLayer[app_id_popup]));
+        console.log("antes de llamar función en ajax");
+        hide_ndvi();
+        console.log("después de llamar función en ajax");
+      },
+    });
+
+  }
+
   function popup() {
     MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
@@ -1399,7 +1525,6 @@ function getCQLFilter_layer(dat){
             project_name_feature = cc['features'][0]['id'];
             project_name = project_name_feature.split('.fid')[0];
             var count = 1;
-
             xhr_popup = $.ajax({
                 type: 'GET',
                 url: '/project_fields/field_popup.json',
@@ -1433,16 +1558,22 @@ function getCQLFilter_layer(dat){
                   });
                   app_id_popup=prop["app_id"];
                   if(Navarra.dashboards.config.name_project==data["project_name"]){
-                    var div_popup_icon = document.createElement('DIV');
+                    div_popup_icon = document.createElement('DIV');
                     div_popup_icon.style.textAlign = 'right';
-                    var new_p = document.createElement('I');
-                    new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +')');
-                    new_p.className="fas fa-layer-group info_icon";
-                    div_popup_icon.appendChild(new_p);
+                    div_popup_icon.setAttribute('id', 'icons_popup');
+
+                    console.log("creo div_popup_icon");
+                    console.log(div_popup_icon);
+                    console.log("llamo función hide_ndvi dentro de popup");
+                    hide_ndvi();
+                    console.log("después de llamar función hide_ndvi dentro de popup");
+
+
                     var new_p = document.createElement('I');
                     new_p.setAttribute("onclick",'Navarra.photos.open_photos('+app_id_popup+',false)');
                     new_p.className="fas fa-image info_icon";
                     div_popup_icon.appendChild(new_p);
+
                     var new_p = document.createElement('I');
                     new_p.setAttribute("onclick",'show_item_info('+app_id_popup+',true)');
                     new_p.className="fas fa-info-circle info_icon";
@@ -2834,22 +2965,6 @@ function intersect_layers(){
   wms_filter(true);
 }
 
-function show_ndvi(app_id_popup){
-  $.ajax({
-    url: '/projects/get_coordinates',
-    method: 'GET',
-    datatype: 'json',
-    data: { app_id_popup: app_id_popup },
-    success: function(response) {
-      var wmsLayer = L.tileLayer.wms(response.sentinel_link, {
-        layers: 'NDVI',
-        format: 'image/png',
-        transparent: true
-      }).addTo(mymap);
-    },
-  });
-}
-
 function open_iot_monitoring(app_id_popup){
   let iframeHtml = '<iframe src="https://iot.geoworks.com.ar/" ';
   iframeHtml+=' class="popup_iot"></iframe>'
@@ -2891,6 +3006,7 @@ function open_iot_monitoring(app_id_popup){
     intersect_layers: intersect_layers,
     color_by_attribute_function: color_by_attribute_function,
     show_ndvi: show_ndvi,
+    hide_ndvi_button: hide_ndvi_button,
     open_iot_monitoring: open_iot_monitoring,
     cancel_color_attr: cancel_color_attr
   }
