@@ -1381,88 +1381,61 @@ function getCQLFilter_layer(dat){
   }
 
   function hide_ndvi(){
-    console.log("dentro de function HIDE NDVI---------------------");
     button_display = document.getElementById('display_ndvi');
     button_hide = document.getElementById('hide_ndvi');
 
     var encontrado = false;
     obj = Object.keys(wmsLayer);
-    console.log("obj");
-    console.log(obj);
     var app_id_convert = app_id_popup.toString();
-    console.log("app_convert");
-    console.log(app_id_convert);
+
     for (var i = 0; i < obj.length; i++) {
       if (obj[i] === app_id_convert) {
         encontrado = true;
         break;
       }
-    }
-
-    console.log("mymap.... ANTES DE IF DE HIDE_NDVI FUNCTION");
-    console.log(mymap.hasLayer(wmsLayer[app_id_popup]));
+    };
 
     if (!encontrado) {
-      console.log("dentro de IF");
-      console.log("mymap.... DENTRO DE IF DE HIDE_NDVI FUNCTION");
-      console.log(mymap.hasLayer(wmsLayer[app_id_popup]));
-
-
       var new_p = document.createElement('I');
       new_p.setAttribute("id", "display_ndvi");
       new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +')');
       new_p.className="fas fa-layer-group info_icon";
-      console.log("new_p");
-      console.log(new_p);
       div_popup_icon.appendChild(new_p);
-      console.log("div_popup_icon después de crear el botón de AGREGAR ndvi-------------------");
-      console.log(div_popup_icon);
 
     } else {
-      console.log("El número no coincide con app_id_popup");
 
-      console.log("mymap.... DENTRO DE ELSE DE HIDE_NDVI FUNCTION");
-      console.log(mymap.hasLayer(wmsLayer[app_id_popup]));
-
-      console.log("dentro de ELSE IF ");
-      var show_button = document.getElementById('display_ndvi');
-      if (show_button !== null) {
-        show_button.hidden = true;
-
-        var new_p = document.createElement('I');
-        new_p.setAttribute("id", "hide_ndvi");
-        new_p.setAttribute("onclick",'Navarra.geomaps.hide_ndvi_button('+ app_id_popup +')');
-        new_p.className = "fa fa-trash info_icon";
-        console.log("new_p");
-        console.log(new_p);
-        div_popup_icon.appendChild(new_p);
-        console.log("div_popup_icon después de crear el botón de OCULTAR ndvi-------------------");
-        console.log(div_popup_icon);
+      if (button_display !== null) {
+        button_display.hidden = true;
+        if (button_hide !== null && button_hide.hidden) {
+          button_hide.hidden = false;
+        }
       };
 
-
-      if (mymap.hasLayer(wmsLayer[app_id_popup]) === true) {
+      if (mymap.hasLayer(wmsLayer[app_id_popup]) === true && button_hide == null) {
+        var popup_icons = document.getElementById('icons_popup');
         var new_p = document.createElement('I');
         new_p.setAttribute("id", "hide_ndvi");
         new_p.setAttribute("onclick",'Navarra.geomaps.hide_ndvi_button('+ app_id_popup +')');
-        new_p.className = "fa fa-trash info_icon";
-        console.log("new_p");
-        console.log(new_p);
-        div_popup_icon.appendChild(new_p);
-        console.log("div_popup_icon después de crear el botón de OCULTAR ndvi-------------------");
-        console.log(div_popup_icon);
-      }
+        new_p.className = "fa fa-times info_icon";
+        popup_icons.appendChild(new_p);
+      };
 
       if (mymap.hasLayer(wmsLayer[app_id_popup]) === false) {
-        var new_p = document.createElement('I');
-        new_p.setAttribute("id", "display_ndvi");
-        new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +')');
-        new_p.className="fas fa-layer-group info_icon";
-        console.log("new_p");
-        console.log(new_p);
-        div_popup_icon.appendChild(new_p);
-      }
-    }
+        if (button_display == null) {
+          var new_p = document.createElement('I');
+          new_p.setAttribute("id", "display_ndvi");
+          new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +')');
+          new_p.className="fas fa-layer-group info_icon";
+          div_popup_icon.appendChild(new_p);
+        };
+
+        if (button_display !== null && button_display.hidden) {
+          button_display.hidden = false;
+          button_hide.hidden = true;
+        };
+
+      };
+    };
   };
 
   function hide_ndvi_button(app_id_popup){
@@ -1470,8 +1443,7 @@ function getCQLFilter_layer(dat){
     if (hideButton !== null) {
       if (wmsLayer) {
         wmsLayer[app_id_popup].remove();
-        console.log("mymap.... DENTRO FUNCION DESPUES DE REMOVER LAYER");
-        console.log(mymap.hasLayer(wmsLayer[app_id_popup]));
+        hide_ndvi();
       };
     };
   };
@@ -1479,9 +1451,6 @@ function getCQLFilter_layer(dat){
 
   wmsLayer = {};
   function show_ndvi(app_id_popup){
-    console.log("mymap.... ANTES DE APRETAR BÓTON");
-    console.log(mymap.hasLayer(wmsLayer[app_id_popup]));
-
     $.ajax({
       url: '/projects/get_coordinates',
       method: 'GET',
@@ -1494,14 +1463,9 @@ function getCQLFilter_layer(dat){
           transparent: true,
         }).addTo(mymap);
         wmsLayer[app_id_popup] = wmsLayerValue;
-        console.log("mymap....");
-        console.log(mymap.hasLayer(wmsLayer[app_id_popup]));
-        console.log("antes de llamar función en ajax");
         hide_ndvi();
-        console.log("después de llamar función en ajax");
       },
     });
-
   }
 
   function popup() {
@@ -1562,13 +1526,6 @@ function getCQLFilter_layer(dat){
                     div_popup_icon.style.textAlign = 'right';
                     div_popup_icon.setAttribute('id', 'icons_popup');
 
-                    console.log("creo div_popup_icon");
-                    console.log(div_popup_icon);
-                    console.log("llamo función hide_ndvi dentro de popup");
-                    hide_ndvi();
-                    console.log("después de llamar función hide_ndvi dentro de popup");
-
-
                     var new_p = document.createElement('I');
                     new_p.setAttribute("onclick",'Navarra.photos.open_photos('+app_id_popup+',false)');
                     new_p.className="fas fa-image info_icon";
@@ -1578,6 +1535,7 @@ function getCQLFilter_layer(dat){
                     new_p.setAttribute("onclick",'show_item_info('+app_id_popup+',true)');
                     new_p.className="fas fa-info-circle info_icon";
                     div_popup_icon.appendChild(new_p);
+
                     if(Navarra.dashboards.config.current_tenement == "fepedi" || Navarra.dashboards.config.current_tenement == "amandes"  ){// si es proyecto iot por ahora hardcode para fepedi
                       var new_p = document.createElement('I');
                       new_p.setAttribute("onclick",'Navarra.geomaps.open_iot_monitoring('+app_id_popup+')');
@@ -1586,17 +1544,19 @@ function getCQLFilter_layer(dat){
                     }
                     div_popup.appendChild(div_popup_icon);
                   }
+                  document.getElementById("popup_created").appendChild(div_popup);
 
-                  var isdifferent=true;
-                  //verifica que si se está haciendo click en el mismo punto
-                  $(".div_popup").each(function(){
-                    if(div_popup.innerHTML==$(this).html()){
-                      isdifferent=false;
-                    }
-                  });
-                  if(isdifferent){
-                    document.getElementById("popup_created").appendChild(div_popup);
-                  }
+                  hide_ndvi();
+                  // var isdifferent=true;
+                  // //verifica que si se está haciendo click en el mismo punto
+                  // $(".div_popup").each(function(){
+                  //   if(div_popup.innerHTML==$(this).html()){
+                  //     isdifferent=false;
+                  //   }
+                  // });
+                  // if(isdifferent){
+                  //   document.getElementById("popup_created").appendChild(div_popup);
+                  // }
 
                   inn = document.getElementById("popup_created").innerHTML;
                   checked = $('#select').hasClass('active');
