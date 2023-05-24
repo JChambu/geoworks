@@ -76,7 +76,7 @@ class ProjectsController < ApplicationController
   def get_coordinates
     app_id_polygon = params[:app_id_popup].to_i
     coordinates = Project.select("ST_AsText(ST_Transform(the_geom, 3857))").find(app_id_polygon).st_astext
-    sentinel_link = "https://services.sentinel-hub.com/ogc/wms/87f4e120-6a3f-4862-800b-cd46f0005c94?geometry=#{coordinates}"
+    sentinel_link = "https://services.sentinel-hub.com/ogc/wms/93c606e3-c818-4834-9518-a1d02f6f92f7?geometry=#{coordinates}"
 
     render json: { sentinel_link: sentinel_link }
   end
