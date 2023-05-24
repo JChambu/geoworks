@@ -418,52 +418,6 @@ Navarra.geomaps = function() {
 
           var new_div = L.DomUtil.create('DIV');
           new_div.className = "confirmation_geometry d-none"
-          
-          if(type_geometry == 'LineString') {
-            var new_div_split = L.DomUtil.create('DIV');
-            new_div_split.id = "div_split_line"
-            var new_p = L.DomUtil.create('DIV');
-            new_p.className = "custom-control custom-checkbox"
-            var new_p1 = L.DomUtil.create('INPUT');
-            new_p1.className = "custom-control-input";
-            new_p1.type = "checkbox";
-            new_p1.id = "checkbox_split_line";
-            new_p.appendChild(new_p1);
-            var new_p1 = L.DomUtil.create('LABEL');
-            new_p1.className = "string optional control-label custom-control-label";
-            new_p1.setAttribute("for","checkbox_split_line");
-            new_p.appendChild(new_p1);
-            new_div_split.appendChild(new_p);
-            var new_p = L.DomUtil.create('P');
-            new_p.innerHTML = "Separar Segmentos";
-            new_p.className = "d-inline m-0"
-            new_p.style.whiteSpace='nowrap';
-            new_div_split.appendChild(new_p);
-            new_div.appendChild(new_div_split);
-          }
-
-          if(type_geometry == 'LineString') {
-            var new_div_split = L.DomUtil.create('DIV');
-            new_div_split.id = "div_split_line"
-            var new_p = L.DomUtil.create('DIV');
-            new_p.className = "custom-control custom-checkbox"
-            var new_p1 = L.DomUtil.create('INPUT');
-            new_p1.className = "custom-control-input";
-            new_p1.type = "checkbox";
-            new_p1.id = "checkbox_split_line";
-            new_p.appendChild(new_p1);
-            var new_p1 = L.DomUtil.create('LABEL');
-            new_p1.className = "string optional control-label custom-control-label";
-            new_p1.setAttribute("for","checkbox_split_line");
-            new_p.appendChild(new_p1);
-            new_div_split.appendChild(new_p);
-            var new_p = L.DomUtil.create('P');
-            new_p.innerHTML = "Separar Segmentos";
-            new_p.className = "d-inline m-0"
-            new_p.style.whiteSpace='nowrap';
-            new_div_split.appendChild(new_p);
-            new_div.appendChild(new_div_split);
-          }
 
           if(type_geometry == 'LineString') {
             var new_div_split = L.DomUtil.create('DIV');
