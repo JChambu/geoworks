@@ -32,6 +32,7 @@
 //= require leaflet/leaflet.wms.js
 //= require leaflet/spin.js
 //= require leaflet/leaflet.spin.js
+//= require leaflet/leaflet-measure.js
 //= require jquery-ui/widgets/sortable
 //= require rails_sortable
 //= require_tree
