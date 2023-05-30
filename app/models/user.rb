@@ -22,7 +22,7 @@ class User < ApplicationRecord
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
-  validates :email, :email_format => {:message => I18n.t("activerecord.errors.messages.invalid_email")}
+  validates :email, :email_format => {:message => "Formato de mail inválido. Formato válido: some@mail.com"}
   validates :password, length: { minimum: 6 }, unless: -> { !:password.blank? }
   validates :password, confirmation: {case_sensitive: true}
   validates_presence_of :user_customers, message: "No se puede almacenar un usuario sin una corporación"
