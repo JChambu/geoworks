@@ -43,14 +43,15 @@ ActiveRecord::Base.transaction do
   Event.where(name: 'export').first_or_create!
   Event.where(name: 'disable').first_or_create!
 
-  FieldType.where(name: 'Texto' ).first_or_create!
-  FieldType.where(name: 'Listado (opción única)' ).first_or_create!
-  FieldType.where(name: 'Fecha' ).first_or_create!
-  FieldType.where(name: 'Boleano' ).first_or_create!
-  FieldType.where(name: 'Numérico' ).first_or_create!
-  FieldType.where(name: 'Sub-formulario' ).first_or_create!
-  FieldType.where(name: 'Listado (opción multiple)' ).first_or_create!
-  FieldType.where(name: 'Subtítulo' ).first_or_create!
+  FieldType.where(name: 'Texto').first_or_create!
+  FieldType.where(name: 'Listado (opción única)').first_or_create!
+  FieldType.where(name: 'Fecha').first_or_create!
+  FieldType.where(name: 'Boleano').first_or_create!
+  FieldType.where(name: 'Numérico').first_or_create!
+  FieldType.where(name: 'Sub-formulario').first_or_create!
+  FieldType.where(name: 'Listado (opción multiple)').first_or_create!
+  FieldType.where(name: 'Subtítulo').first_or_create!
+  FieldType.where(name: 'Hipervínculo').first_or_create!
 
   ModelType.where(name: 'project_types').first_or_create!
   ModelType.where(name: 'indicators').first_or_create!

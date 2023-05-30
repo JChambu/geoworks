@@ -1415,7 +1415,8 @@ function getCQLFilter_layer(dat){
                 success: function(data) {
                   //evita abrir popups si está en modo edición de polígono
                   if(polygon_edit_vertexs.length>0){return}
-                  var fields_popup=data["fields_popup"];
+                  var fields_popup = data["fields_popup"];
+                  var fields_ids = data["fields_ids"];
                   var div_popup = document.createElement('DIV');
                   div_popup.className="div_popup";
                   var new_p = document.createElement('P');
@@ -1425,6 +1426,7 @@ function getCQLFilter_layer(dat){
 
                   Object.keys(fields_popup).forEach(function(value) {
                     label = data["fields_popup"][value];
+                    field_type_id = data["fields_ids"][value];
                     var val = prop[value]
                     // Valida si el valor no es nulo
                     if (val != null && val != 'null') {
@@ -1434,6 +1436,17 @@ function getCQLFilter_layer(dat){
                       new_p.className="p_popup"
                       new_p.innerHTML=label + ': ' + val;
                       div_popup.appendChild(new_p);
+
+                      if (field_type_id == 12) {
+                        var hyperlink;
+                        if (val.indexOf("http://") === 0 || val.indexOf("https://") === 0) {
+                          hyperlink = "<a href='" + val + "' target='_blank' onclick='return confirm(\"¿Estás seguro de que deseas salir de Geoworks?\");'>" + val + "</a>";
+                        } else {
+                          hyperlink = "<a href='https://" + val + "' target='_blank' onclick='return confirm(\"¿Estás seguro de que deseas salir de Geoworks?\");'>" + val + "</a>";
+                        }
+                        new_p.innerHTML=label + ': ' + hyperlink;
+                      }
+
                     }
                   });
                   app_id_popup=prop["app_id"];

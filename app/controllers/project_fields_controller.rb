@@ -147,9 +147,16 @@ class ProjectFieldsController < ApplicationController
     @fields.each do |field|
       fields_json[field.key] = field.name
     end
+
+    fields_ids_json = {}
+    @fields.each do |field|
+      fields_ids_json[field.key] = field.field_type_id
+    end
+
     data = {}
     data['project_name'] = @name
     data['fields_popup'] = fields_json
+    data['fields_ids'] = fields_ids_json
 
     render json: data
   end
