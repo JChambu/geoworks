@@ -24,8 +24,6 @@ class RegistrationsController < Devise::RegistrationsController
   private
 
   def sign_up_params
-    byebug
-
     rol_id            = Role.find_by(name: 'Público')&.id
     project_types_ids = ProjectType.pluck(:id)
     project_type_id   = ProjectType.find_by(name: 'Demo Público')&.id
