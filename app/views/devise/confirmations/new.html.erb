@@ -1,31 +1,27 @@
 <div class="row w-100 align-items-center m-0" >
-  <div class="col-md-6 align-middle form-sinin-img vh-100" style="overflow:hidden;" >
-
-  </div>
+  <div class="col-md-6 align-middle form-sinin-img vh-100" style="overflow:hidden;"></div>
   <div class="col-md-6 align-middle text-center p-0">
-  	<div class="simple_form form-signin pl-5 pr-5">
+	   <div class="simple_form form-signin pl-6 pr-6">
 			<center>
-				<h2 style="line-height: 30px">Confirmar Usuario</h2>
 				<%=image_tag ENV['VERTICAL_LOGO'], class:'mb-2', width:"252"%>
 			</center>
-
-			<br />
+			<br/>
 			<%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
 				<div style="color: red">
 	  			<%= devise_error_messages! %>
 				</div>
-
 				<div class="field">
   				<%= f.email_field :email, autofocus: true, value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email), class: "form-control", placeholder: "Ingrese su correo registrado" %>
 				</div>
-				<br />
+				<br/>
 				<div>
-  				<%= f.submit "Enviar instrucciones" , class: 'btn btn-lg btn-primary btn-block mb-2'%>
+  				<%= f.submit "Reenviar e-mail de confirmación" , class: 'btn btn-lg btn-primary btn-block mb-2'%>
 				</div>
 			<% end %>
 			<br/>
-			<div class="text-right">
+			<div class="text-center">
 				<%= render "devise/shared/links" %>
 			</div>
+    </div>
+  </div>
 </div>
-

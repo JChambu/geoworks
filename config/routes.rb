@@ -161,7 +161,10 @@ Rails.application.routes.draw do
   end
 
 
-    devise_for :users, :controllers => {:passwords => "passwords"}
+    devise_for :users, controllers: {
+      registrations: 'registrations',
+      passwords: 'passwords'
+    }
     resources :users
 
 
