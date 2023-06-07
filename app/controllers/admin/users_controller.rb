@@ -51,14 +51,14 @@ class Admin::UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    begin
-      @user.save!
+    if @user.valid?
+      @user.save
       respond_to do |format|
         format.html { redirect_to admin_users_path() }
         format.json { render action: 'show', status: :created, location: @user }
       end
-    rescue ActiveRecord::RecordNotUnique => e
-      flash.now[:notice] = "No se puede almacenar usuarios con corporaciones iguales"
+    else
+      flash.now[:error] = @user.errors.full_messages.join(', ')
       render 'new'
     end
   end

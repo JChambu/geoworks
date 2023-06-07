@@ -5,9 +5,7 @@ class ApplicationController < ActionController::Base
   helper_method :flashman
   layout :layout_by_resource
   def layout_by_resource
-    if devise_controller? and
-        resource_name == :user and
-        action_name == 'new'
+    if devise_controller? && resource_name == :user && action_name == 'new' || action_name == 'create'
       "login"
     else
       "application"
