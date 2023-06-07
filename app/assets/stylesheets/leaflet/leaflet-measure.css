@@ -10,10 +10,10 @@
 .leaflet-measure-contents {
     padding: 18px;
     display: none;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    padding-right: 42px;
-    padding-left: 18px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 40px;
+    padding-left: 14px;
 }
 .leaflet-control-measure h5 {
     margin: 0;
