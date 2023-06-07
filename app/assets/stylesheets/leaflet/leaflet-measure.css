@@ -10,11 +10,15 @@
 .leaflet-measure-contents {
     padding: 18px;
     display: none;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-right: 42px;
+    padding-left: 18px;
 }
-.leaflet-control-measure h3 {
+.leaflet-control-measure h5 {
     margin: 0;
     color: #FFFFFF;
-    padding-bottom: 5px;
+    padding-bottom: 3px;
     border-bottom: 1px solid #ddd;
 }
 .leaflet-measure-actions {
