@@ -1553,19 +1553,10 @@ function getCQLFilter_layer(dat){
                     new_p.setAttribute("onclick",'show_item_info('+app_id_popup+',true)');
                     new_p.className="fas fa-info-circle info_icon";
                     div_popup_icon.appendChild(new_p);
-                    
-                    if(Navarra.dashboards.config.current_tenement == "fepedi" || Navarra.dashboards.config.current_tenement == "amandes"  ){// si es proyecto iot por ahora hardcode para fepedi
-                      var new_p = document.createElement('I');
-                      new_p.setAttribute("onclick",'Navarra.iot.open_iot_monitoring('+app_id_popup+')');
-                      new_p.className="fas fa-chart-line info_icon";
-                      div_popup_icon.appendChild(new_p);
-                    }
-                    div_popup.appendChild(div_popup_icon);
-                  }
 
                     if(Navarra.dashboards.config.current_tenement == "fepedi" || Navarra.dashboards.config.current_tenement == "amandes"  ){// si es proyecto iot por ahora hardcode para fepedi
                       var new_p = document.createElement('I');
-                      new_p.setAttribute("onclick",'Navarra.geomaps.open_iot_monitoring('+app_id_popup+')');
+                      new_p.setAttribute("onclick",'Navarra.iot.open_iot_monitoring('+app_id_popup+')');
                       new_p.className="fas fa-chart-line info_icon";
                       div_popup_icon.appendChild(new_p);
                     }
