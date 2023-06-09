@@ -16,7 +16,7 @@ Navarra.layer_filters = function() {
             '<div class="pl-4 d-none div_filter" style="width:33vw" id="div_filter_'+layer+'">'+
             	'<div class="custom-control custom-switch">'+
             		'<input type="checkbox" id="switch_'+layer+'" class="custom-control-input layer_filter_switch" onchange="switch_filtered_layer()">'+
-            		'<label id="switchlabel_'+layer+'" class="custom-control-label custom-role-colour" for="switch_'+layer+'">Intersect al Proyecto Activo</label>'+
+            		'<label id="switchlabel_'+layer+'" class="custom-control-label custom-role-colour" for="switch_'+layer+'">Interceptar a la Capa Activa</label>'+
             	'</div>'+
             	'<div class="pt-2">'+
             		'<p class="m-0">Filtros</p>'+
@@ -56,7 +56,7 @@ Navarra.layer_filters = function() {
       					'</div>'+
 		            '</div>'+
     			'</div>'+
-            '</div>'+            
+            '</div>'+
             '</a>'+
             '</div>';
         return new_item;
@@ -142,7 +142,7 @@ Navarra.layer_filters = function() {
 			create_layers_table();
 		}
 	}
-	
+
 	function remove_timeslider_layer(e){
 		var namelayer = $(event.target).attr("namelayer");
 		$('#fromdate_layer_'+namelayer).val("");
@@ -171,7 +171,7 @@ Navarra.layer_filters = function() {
       					'</div>'
 		$('#active_filter_container_'+namelayer).append(new_active_filter);
 		$('#active_filter_container_'+namelayer).addClass('mb-2');
-		
+
 		//setea la variable global
 		if(Navarra.project_types.config.filters_layers[namelayer]==undefined){
 			Navarra.project_types.config.filters_layers[namelayer] = [];
@@ -271,7 +271,7 @@ Navarra.layer_filters = function() {
 
 	function change_filter_value(e){
 		var namelayer = $(event.target).attr("namelayer");
-		var value_selected = $(event.target).val(); 
+		var value_selected = $(event.target).val();
 		$('#filter_value_layer_'+namelayer).val(value_selected);
 	}
 
