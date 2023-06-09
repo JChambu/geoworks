@@ -277,7 +277,7 @@ function open_panel(id_panel,id_table){
               <i class="fas fa-search-location align-middle" style="font-size: 24px"></i>
             </a>
             <div class="dropdown-menu custom-menu all_filters" aria-labelledby="gis_dropdown" style="min-width: auto">
-                <%= link_to project_type_quick_filters_path(@project_type.id), class: 'dropdown-item custom-item', id: "filter_status",:remote => true do %> <i class="fas fa-bell" title="Filtrar por Estados" style="font-size: 20px"></i> <% end %>
+                <%= link_to project_type_quick_filters_path(@project_type.id), class: 'dropdown-item custom-item', id: "filter_status",:remote => true do %> <i class="fas fa-bell" title="Filtrar por Estado" style="font-size: 20px"></i> <% end %>
 
                 <%= link_to project_type_quick_filters_users_path(@project_type.id), class: 'dropdown-item custom-item', id: "filter",:remote => true do %> <i class="fas fa-user-alt" title="Filtrar por Usuario" style="font-size: 20px"></i> <% end %>
 
