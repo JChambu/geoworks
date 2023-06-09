@@ -173,7 +173,7 @@ function set_layer_modal() {
     $('#custom_layer_control').on('hidden.bs.dropdown', function () {
       if(!$('#status-view').hasClass('status-view-expanded')){
         $('.status_panel').removeClass('d-none');
-      } 
+      }
     });
   };
 
@@ -183,7 +183,7 @@ function select_layer(layer){
   } else{
     layer_selected = event.target.id.substring(9);
   }
-  
+
   check_layers = document.querySelectorAll('input.leaflet-control-layers-selector');
   for (l = 0; l < check_layers.length; l++) {
       var name_layer_project = $(check_layers[l]).next().html().substring(1);
@@ -203,7 +203,7 @@ function open_layer_container(){
     $('#'+id_title).removeClass('d-none');
   } else{
     $('#'+id_title).addClass('d-none');
-  } 
+  }
 }
 
 function switch_filtered_layer(){
@@ -223,7 +223,7 @@ function switch_filtered_layer(){
   if($('#'+texto).prop("checked")){
     select_layer(id_switch);
     select_layer(texto.substring(9));
-  } 
+  }
 }
 // terminan funciones para modal de capas
 
@@ -370,29 +370,21 @@ function pdf_chart(){
 
 <%= render :partial =>'project_data_info' %>
 
-
-
 <div class="nav-item dropdown" id="custom_layer_control" style="position: absolute;z-index: 3000;">
-      <a class="nav-link dropdown-toggle nocaret" href="#" id="layersDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 30px; height: 30px; margin: 10px">
-      </a>
-      <div class="dropdown-menu custom_dropdown_container" aria-labelledby="layersDropdown" style="z-index: 2000; width: max-content">
-         
-          <a class="dropdown-item" href="#" id="basemaps_container-title" onclick="open_layer_container()">Mapas Base</a>
-          <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="basemaps_container">
-          </div>
+  <a class="nav-link dropdown-toggle nocaret" href="#" id="layersDropdown" title= "Administrador de Capas" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 30px; height: 30px; margin: 10px"></a>
+  <div class="dropdown-menu custom_dropdown_container" aria-labelledby="layersDropdown" style="z-index: 2000; width: max-content">
+    <a class="dropdown-item" href="#" id="basemaps_container-title" onclick="open_layer_container()">Mapas Base</a>
+    <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="basemaps_container"></div>
 
-          <a class="dropdown-item" href="#" id="activeproject_container-title" onclick="open_layer_container()">Proyecto Activo</a>
-          <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="activeproject_container">
-          </div>
+    <a class="dropdown-item" href="#" id="activeproject_container-title" onclick="open_layer_container()">Capa Activa</a>
+    <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="activeproject_container"></div>
 
-           <a class="dropdown-item" href="#" id="projects_container-title" onclick="open_layer_container()">Otros Proyectos</a>
-          <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="projects_container">
-          </div>
+    <a class="dropdown-item" href="#" id="projects_container-title" onclick="open_layer_container()">Otras Capas</a>
+    <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="projects_container"></div>
 
-           <a class="dropdown-item" href="#" id="externallayers_container-title" onclick="open_layer_container()">Capas Externas</a>
-          <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="externallayers_container">
-          </div>          
-      </div>
+    <a class="dropdown-item" href="#" id="externallayers_container-title" onclick="open_layer_container()">Capas Externas</a>
+    <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="externallayers_container"></div>
+  </div>
 </div>
 <% if can? :data, :edit_geom %>
   <input class="d-none" id="edit_geom_control" value="true">
@@ -519,4 +511,3 @@ function pdf_chart(){
     <button class="btn btn-secondary p-0" data-dismiss="toast" id="decision_no" type="button" style="width: 35px; outline: none;">NO</button>
   </div>
 </div>
-
