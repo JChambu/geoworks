@@ -1386,62 +1386,69 @@ function getCQLFilter_layer(dat){
   }
 
   function hide_ndvi(){
-    button_display = document.getElementById('display_ndvi');
-    button_hide = document.getElementById('hide_ndvi');
+    type_geometry = Navarra.dashboards.config.type_geometry
+    if (type_geometry == 'Polygon'){
+      button_display = document.getElementById('display_ndvi');
+      button_hide = document.getElementById('hide_ndvi');
 
-    var encontrado = false;
-    obj = Object.keys(wmsLayer);
-    var app_id_convert = app_id_popup.toString();
+      var encontrado = false;
+      obj = Object.keys(wmsLayer);
+      var app_id_convert = app_id_popup.toString();
 
-    for (var i = 0; i < obj.length; i++) {
-      if (obj[i] === app_id_convert) {
-        encontrado = true;
-        break;
-      }
-    };
-
-    if (!encontrado) {
-      var new_p = document.createElement('I');
-      new_p.setAttribute("id", "display_ndvi");
-      new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +')');
-      new_p.className="fas fa-layer-group info_icon";
-      div_popup_icon.appendChild(new_p);
-
-    } else {
-
-      if (button_display !== null) {
-        button_display.hidden = true;
-        if (button_hide !== null && button_hide.hidden) {
-          button_hide.hidden = false;
+      for (var i = 0; i < obj.length; i++) {
+        if (obj[i] === app_id_convert) {
+          encontrado = true;
+          break;
         }
       };
 
-      if (mymap.hasLayer(wmsLayer[app_id_popup]) === true && button_hide == null) {
-        var popup_icons = document.getElementById('icons_popup');
-        var new_p = document.createElement('I');
-        new_p.setAttribute("id", "hide_ndvi");
-        new_p.setAttribute("onclick",'Navarra.geomaps.hide_ndvi_button('+ app_id_popup +')');
-        new_p.className = "fa fa-times info_icon";
-        popup_icons.appendChild(new_p);
-      };
-
-      if (mymap.hasLayer(wmsLayer[app_id_popup]) === false) {
-        if (button_display == null) {
+      if (!encontrado) {
+        if (current_layer_name == project_name) {
           var new_p = document.createElement('I');
           new_p.setAttribute("id", "display_ndvi");
           new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +')');
           new_p.className="fas fa-layer-group info_icon";
           div_popup_icon.appendChild(new_p);
+        }
+      } else {
+        if (button_display !== null) {
+          button_display.hidden = true;
+          if (button_hide !== null && button_hide.hidden) {
+            button_hide.hidden = false;
+          }
         };
 
-        if (button_display !== null && button_display.hidden) {
-          button_display.hidden = false;
-          button_hide.hidden = true;
+        if (mymap.hasLayer(wmsLayer[app_id_popup]) === true && button_hide == null) {
+          if (current_layer_name == project_name) {
+            var popup_icons = document.getElementById('icons_popup');
+            var new_p = document.createElement('I');
+            new_p.setAttribute("id", "hide_ndvi");
+            new_p.setAttribute("onclick",'Navarra.geomaps.hide_ndvi_button('+ app_id_popup +')');
+            new_p.className = "fa fa-times info_icon";
+            popup_icons.appendChild(new_p);
+          };
         };
 
-      };
-    };
-  };
+        if (mymap.hasLayer(wmsLayer[app_id_popup]) === false) {
+          if (button_display == null) {
+            if (current_layer_name == project_name) {
+              var new_p = document.createElement('I');
+              new_p.setAttribute("id", "display_ndvi");
+              new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +')');
+              new_p.className="fas fa-layer-group info_icon";
+              div_popup_icon.appendChild(new_p);
+            };
+          };
+
+          if (button_display !== null && button_display.hidden) {
+            button_display.hidden = false;
+            button_hide.hidden = true;
+          };
+
+        };
+      };//cierra else
+    };//cierra if type_geometry
+  };//cierra función hide_ndvi
 
   function hide_ndvi_button(app_id_popup){
     var hideButton = document.getElementById('hide_ndvi');
