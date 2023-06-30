@@ -1473,6 +1473,34 @@ function getCQLFilter_layer(dat){
     });
   }
 
+  function random_points(app_id_popup){
+    $.ajax({
+      url: '/projects/get_random_points',
+      method: 'GET',
+      datatype: 'json',
+      data: { app_id_popup: app_id_popup },
+      success: function(response) {
+
+        geoJsonString = {
+          "type": "MultiPoint",
+          "coordinates": response.geojson_coordinates
+        };
+        var geoJsonData = JSON.parse(JSON.stringify(geoJsonString));
+
+        var pointsLayer = L.geoJSON(geoJsonData, {
+          pointToLayer: function (feature, latlng) {
+            return L.circle(latlng, {
+              interactive: false,
+              fillOpacity: 0.9
+            });
+          }
+        }).addTo(mymap);
+
+      },
+    });
+  }
+
+
   function popup() {
     MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
@@ -1543,6 +1571,11 @@ function getCQLFilter_layer(dat){
                     div_popup_icon = document.createElement('DIV');
                     div_popup_icon.style.textAlign = 'right';
                     div_popup_icon.setAttribute('id', 'icons_popup');
+
+                    var new_p = document.createElement('I');
+                    new_p.setAttribute("onclick",'Navarra.geomaps.random_points('+app_id_popup+')');
+                    new_p.className="fas fa-circle info_icon";
+                    div_popup_icon.appendChild(new_p);
 
                     var new_p = document.createElement('I');
                     new_p.setAttribute("onclick",'Navarra.photos.open_photos('+app_id_popup+',false)');
@@ -2984,6 +3017,7 @@ function open_iot_monitoring(app_id_popup){
     intersect_layers: intersect_layers,
     color_by_attribute_function: color_by_attribute_function,
     show_ndvi: show_ndvi,
+    random_points: random_points,
     hide_ndvi_button: hide_ndvi_button,
     open_iot_monitoring: open_iot_monitoring,
     cancel_color_attr: cancel_color_attr

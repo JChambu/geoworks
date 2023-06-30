@@ -81,6 +81,19 @@ class ProjectsController < ApplicationController
     render json: { sentinel_link: sentinel_link }
   end
 
+  def get_random_points
+    app_id_polygon = params[:app_id_popup].to_i
+    coordinates = Project.select("ST_AsText(ST_GeneratePoints(the_geom, 8))").find(app_id_polygon).st_astext
+
+    clean_coordinates = coordinates.scan(/-?\d+\.\d+/)
+    geojson_coordinates = []
+    clean_coordinates.each_slice(2) do |x, y|
+      geojson_coordinates << [x.to_f, y.to_f]
+    end
+
+    render json: { geojson_coordinates: geojson_coordinates }
+  end
+
   # Elimina un registro (row_active = false)
   def destroy_form
     app_ids = params[:app_ids]
