@@ -1385,93 +1385,42 @@ function getCQLFilter_layer(dat){
     })
   }
 
-  function hide_ndvi(){
-    button_display = document.getElementById('display_ndvi');
-    button_hide = document.getElementById('hide_ndvi');
-
-    var encontrado = false;
-    obj = Object.keys(wmsLayer);
-    var app_id_convert = app_id_popup.toString();
-
-    for (var i = 0; i < obj.length; i++) {
-      if (obj[i] === app_id_convert) {
-        encontrado = true;
-        break;
-      }
-    };
-
-    if (!encontrado) {
-      var new_p = document.createElement('I');
-      new_p.setAttribute("id", "display_ndvi");
-      new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +')');
-      new_p.className="fas fa-layer-group info_icon";
-      div_popup_icon.appendChild(new_p);
-
-    } else {
-
-      if (button_display !== null) {
-        button_display.hidden = true;
-        if (button_hide !== null && button_hide.hidden) {
-          button_hide.hidden = false;
-        }
-      };
-
-      if (mymap.hasLayer(wmsLayer[app_id_popup]) === true && button_hide == null) {
-        var popup_icons = document.getElementById('icons_popup');
-        var new_p = document.createElement('I');
-        new_p.setAttribute("id", "hide_ndvi");
-        new_p.setAttribute("onclick",'Navarra.geomaps.hide_ndvi_button('+ app_id_popup +')');
-        new_p.className = "fa fa-times info_icon";
-        popup_icons.appendChild(new_p);
-      };
-
-      if (mymap.hasLayer(wmsLayer[app_id_popup]) === false) {
-        if (button_display == null) {
-          var new_p = document.createElement('I');
-          new_p.setAttribute("id", "display_ndvi");
-          new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +')');
-          new_p.className="fas fa-layer-group info_icon";
-          div_popup_icon.appendChild(new_p);
-        };
-
-        if (button_display !== null && button_display.hidden) {
-          button_display.hidden = false;
-          button_hide.hidden = true;
-        };
-
-      };
-    };
-  };
-
-  function hide_ndvi_button(app_id_popup){
-    var hideButton = document.getElementById('hide_ndvi');
-    if (hideButton !== null) {
-      if (wmsLayer) {
-        wmsLayer[app_id_popup].remove();
-        hide_ndvi();
-      };
-    };
-  };
-
-
   wmsLayer = {};
-  function show_ndvi(app_id_popup){
-    $.ajax({
-      url: '/projects/get_coordinates',
-      method: 'GET',
-      datatype: 'json',
-      data: { app_id_popup: app_id_popup },
-      success: function(response) {
-        wmsLayerValue = L.tileLayer.wms(response.sentinel_link, {
-          layers: 'NDVI',
-          format: 'image/png',
-          transparent: true,
-        }).addTo(mymap);
-        wmsLayer[app_id_popup] = wmsLayerValue;
-        hide_ndvi();
-      },
-    });
-  }
+  function show_ndvi(app_id_popup, event){
+
+    var ev = event.target
+    if ($(ev).hasClass('fa-layer-group')) {
+      $.ajax({
+        url: '/projects/get_coordinates',
+        method: 'GET',
+        datatype: 'json',
+        data: { app_id_popup: app_id_popup },
+        success: function(response) {
+
+          var ndvi_label = mymap.createPane('ndvi_label');
+          mymap.getPane('ndvi_label').style.zIndex = 650;
+          mymap.getPane('ndvi_label').style.pointerEvents = 'none';
+
+          wmsLayerValue = L.tileLayer.wms(response.sentinel_link, {
+            layers: 'NDVI',
+            format: 'image/png',
+            transparent: true,
+            pane: 'ndvi_label',
+          });
+
+          wmsLayerValue.addTo(mymap);
+          wmsLayer[app_id_popup] = wmsLayerValue;
+        },
+      });
+
+      $(ev).removeClass('fa-layer-group')
+      $(ev).addClass('fa-times')
+    } else {
+      wmsLayer[app_id_popup].remove();
+      $(ev).addClass('fa-layer-group')
+      $(ev).removeClass('fa-times')
+    }
+  }; //Cierra función show_ndvi
 
   function popup() {
     MySource = L.WMS.Source.extend({
@@ -1535,7 +1484,6 @@ function getCQLFilter_layer(dat){
                         }
                         new_p.innerHTML=label + ': ' + hyperlink;
                       }
-
                     }
                   });
                   app_id_popup=prop["app_id"];
@@ -1554,27 +1502,43 @@ function getCQLFilter_layer(dat){
                     new_p.className="fas fa-info-circle info_icon";
                     div_popup_icon.appendChild(new_p);
 
+                    type_geometry = Navarra.dashboards.config.type_geometry
+                    if (type_geometry == 'Polygon' && current_layer_name == project_name) {
+                      if (mymap.hasLayer(wmsLayer[app_id_popup]) === false){
+                        var new_p = document.createElement('I');
+                        new_p.setAttribute("id", "display_ndvi");
+                        new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +', event)');
+                        new_p.className="fas fa-layer-group info_icon";
+                        div_popup_icon.appendChild(new_p);
+                      } else {
+                        var new_p = document.createElement('I');
+                        new_p.setAttribute("id", "hide_ndvi");
+                        new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +', event)');
+                        new_p.className = "fa fa-times info_icon";
+                        div_popup_icon.appendChild(new_p);
+                      }
+                    };
+
                     if(Navarra.dashboards.config.current_tenement == "fepedi" || Navarra.dashboards.config.current_tenement == "amandes"  ){// si es proyecto iot por ahora hardcode para fepedi
                       var new_p = document.createElement('I');
                       new_p.setAttribute("onclick",'Navarra.iot.open_iot_monitoring('+app_id_popup+')');
                       new_p.className="fas fa-chart-line info_icon";
                       div_popup_icon.appendChild(new_p);
                     }
+
                     div_popup.appendChild(div_popup_icon);
                   }
-                  document.getElementById("popup_created").appendChild(div_popup);
 
-                  hide_ndvi();
-                  // var isdifferent=true;
-                  // //verifica que si se está haciendo click en el mismo punto
-                  // $(".div_popup").each(function(){
-                  //   if(div_popup.innerHTML==$(this).html()){
-                  //     isdifferent=false;
-                  //   }
-                  // });
-                  // if(isdifferent){
-                  //   document.getElementById("popup_created").appendChild(div_popup);
-                  // }
+                  var isdifferent=true;
+                  //verifica que si se está haciendo click en el mismo punto
+                  $(".div_popup").each(function(){
+                    if(div_popup.innerHTML==$(this).html()){
+                      isdifferent=false;
+                    }
+                  });
+                  if(isdifferent){
+                    document.getElementById("popup_created").appendChild(div_popup);
+                  }
 
                   inn = document.getElementById("popup_created").innerHTML;
                   checked = $('#select').hasClass('active');
@@ -2984,7 +2948,6 @@ function open_iot_monitoring(app_id_popup){
     intersect_layers: intersect_layers,
     color_by_attribute_function: color_by_attribute_function,
     show_ndvi: show_ndvi,
-    hide_ndvi_button: hide_ndvi_button,
     open_iot_monitoring: open_iot_monitoring,
     cancel_color_attr: cancel_color_attr
   }
