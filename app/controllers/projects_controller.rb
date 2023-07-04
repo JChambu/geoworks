@@ -82,8 +82,11 @@ class ProjectsController < ApplicationController
   end
 
   def get_random_points
+    # byebug
     app_id_polygon = params[:app_id_popup].to_i
-    coordinates = Project.select("ST_AsText(ST_GeneratePoints(the_geom, 8))").find(app_id_polygon).st_astext
+    points_numbers = params[:number_point_value].to_i
+
+    coordinates = Project.select("ST_AsText(ST_GeneratePoints(the_geom, #{points_numbers}))").find(app_id_polygon).st_astext
 
     clean_coordinates = coordinates.scan(/-?\d+\.\d+/)
     geojson_coordinates = []
@@ -133,6 +136,7 @@ class ProjectsController < ApplicationController
 
   # Crea un nuevo registro
   def create_form
+    # byebug
     count_sucess=0
     count_errors=0
     created_ids=[]
@@ -140,6 +144,7 @@ class ProjectsController < ApplicationController
     is_interpolate = params[:is_interpolate]
     @dat = params[:data]
     @dat.each do |i,data|
+      # byebug
       project_type_id = data[:project_type_id]
       project_status_id = data[:project_status_id]
       properties = JSON(data[:properties]) # FIXME: solución temporal a los values como string
@@ -152,6 +157,7 @@ class ProjectsController < ApplicationController
       # Arma la nueva geometría
       if @project_type.type_geometry == 'Point'
         @new_geom = "POINT(#{geom['lng']} #{geom['lat']})"
+        # byebug
       else
         points_array = []
         geom.each do |a,x|
@@ -168,7 +174,7 @@ class ProjectsController < ApplicationController
           @new_geom = "LINESTRING(#{points_array_str})"
         end
       end
-
+      # byebug
       datetime = Time.zone.now
 
       properties['app_id'] = 0
@@ -187,9 +193,9 @@ class ProjectsController < ApplicationController
       if @project.save
         @project['properties'].merge!('app_id': @project.id)
         @project.save!
-
+        # byebug
         if subforms.present?
-
+          # byebug
           subforms_created = []
           subforms.each do |i, sf|
 
@@ -205,6 +211,7 @@ class ProjectsController < ApplicationController
         end
         count_sucess +=1
         created_ids.push(@project.id)
+        # byebug
       else
         count_errors +=1
       end

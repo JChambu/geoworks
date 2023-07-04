@@ -4001,6 +4001,26 @@ function calculate_functions_table(){
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
 
+function asdasd(){
+  console.log("dentro de función asasdasd");
+
+  var modal = document.getElementById('pointsModal');
+  var numberInput = document.getElementById('numberInput');
+
+  modal.style.display = 'block';
+
+  number_point_value = numberInput.value;
+  modal.style.display = 'none';
+
+  console.log(number_point_value);
+
+  console.log("en submitButton antes de entrar");
+  Navarra.geomaps.random_points(app_id_popup);
+  console.log("en submitButton después de entrar");
+
+};
+
+
 function get_active_layers(){
   active_layers = [];
   check_layers = document.querySelectorAll('input:checked.leaflet-control-layers-selector');

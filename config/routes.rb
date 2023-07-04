@@ -46,7 +46,7 @@ Rails.application.routes.draw do
   patch 'projects/disable_form' => 'projects#disable_form'
   patch 'projects/destroy_form' => 'projects#destroy_form'
   get 'projects/get_coordinates' => 'projects#get_coordinates'
-  get 'projects/get_random_points' => 'projects#get_random_points'
+  post 'projects/get_random_points' => 'projects#get_random_points'
   post 'project_statuses/options', as: 'project_statuses_options'
   post 'project_statuses/update_priority', as: 'project_statuses_update_priority'
   get 'choice_lists/export_csv'=> 'choice_lists#export_csv', as: 'export_csv'
