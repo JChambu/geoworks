@@ -23,7 +23,7 @@ class ProjectDataChild < ApplicationRecord
     self.user_id = user_id
     self.gwm_created_at = Time.zone.now
     self.gwm_updated_at = Time.zone.now
-    self.save unless project_id.to_i == ProjectDataChild.last.project_id
+    save!
   end
 
 end
