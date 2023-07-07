@@ -3929,7 +3929,7 @@ function set_nested(event, isparent){
 }
 
 function changeChild(id_child_edited,isnested,event){
-  array_child_edited.push(id_child_edited);
+  array_child_edited.push(parseInt(id_child_edited));
   if(isnested){
     set_nested(event,false)
   }
