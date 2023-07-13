@@ -4001,9 +4001,7 @@ function calculate_functions_table(){
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
 
-function asdasd(){
-  console.log("dentro de función asasdasd");
-
+function do_number_points_modal(){
   var modal = document.getElementById('pointsModal');
   var numberInput = document.getElementById('numberInput');
 
@@ -4012,12 +4010,20 @@ function asdasd(){
   number_point_value = numberInput.value;
   modal.style.display = 'none';
 
-  console.log(number_point_value);
+  Navarra.geomaps.show_random_points(app_id_popup);
+};
 
-  console.log("en submitButton antes de entrar");
-  Navarra.geomaps.random_points(app_id_popup);
-  console.log("en submitButton después de entrar");
+function do_project_to_save_multipoints_modal(){
+  var modal = document.getElementById('savePointsModal');
+  var project_selected = document.getElementById('selected_multipoint_project');
 
+  modal.style.display = 'block';
+
+  project_selected_value = project_selected.value;
+
+  modal.style.display = 'none';
+
+  Navarra.geomaps.save_multipoints(app_id_popup);
 };
 
 

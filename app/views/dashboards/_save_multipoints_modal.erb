@@ -1,18 +1,17 @@
 <div id="savePointsModal" class="modal">
   <div class="save-modal-multipoints-content">
-    <div>
+    <div style="height: 15px;">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close_modal_multipoints">
         <span aria-hidden="true">×</span>
       </button>
     </div>
-    <br>
     <div>
-      <h5>Ingrese la capa donde desea guardar los puntos</h5>
-      <%= select_tag 'selected_multipoint_project', options_for_select(ProjectType.where(type_geometry: 'Point').pluck(:name)), class: 'form-control', :style => 'width: 90%' %>
+      <h5>Capa a guardar los puntos:</h5>
+      <%= select_tag 'selected_multipoint_project', options_for_select(ProjectType.where(type_geometry: 'Point', multipoints: true).pluck(:name)), class: 'form-control', :style => 'width: 90%;max-height:45px;' %>
     </div>
     <br>
     <div>
-      <button type="button" class="btn btn-primary p-0" onclick="desdes()" style="width: 99px">Confirmar</button>
+      <button type="button" class="btn btn-primary p-0" onclick="do_project_to_save_multipoints_modal()" style="width: 99px">Confirmar</button>
     </div>
   </div>
 </div>
