@@ -4006,7 +4006,6 @@ function do_number_points_modal(){
   var numberInput = document.getElementById('numberInput');
 
   modal.style.display = 'block';
-
   number_point_value = numberInput.value;
   modal.style.display = 'none';
 
@@ -4018,9 +4017,7 @@ function do_project_to_save_multipoints_modal(){
   var project_selected = document.getElementById('selected_multipoint_project');
 
   modal.style.display = 'block';
-
   project_selected_value = project_selected.value;
-
   modal.style.display = 'none';
 
   Navarra.geomaps.save_multipoints(app_id_popup);
