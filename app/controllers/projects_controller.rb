@@ -97,6 +97,63 @@ class ProjectsController < ApplicationController
     render json: { geojson_coordinates: geojson_coordinates }
   end
 
+  def save_randoms_multipoints
+    multipoints_coordinates = params[:multipoints_coordinates].permit!.to_h
+    project_to_save = params[:project_selected_value]
+    number_points_save = params[:number_point_value]
+    save_in_project = ProjectType.where(name: project_to_save).pluck(:id)
+    properties_json = {"app_id"=>0, "app_usuario"=>current_user.id, "app_estado"=>0}
+
+    count_sucess=0
+    count_errors=0
+    created_ids=[]
+
+    multipoints_coordinates.map do |key, value|
+      project_type_id = save_in_project[0].to_s
+      project_status_id = ProjectStatus.where(project_type_id: project_type_id, status_type: "Predeterminado").or(ProjectStatus.where(priority: 1)).pluck(:id).first
+      properties = JSON(properties_json)
+      parse_properties = JSON.parse(properties)
+      new_geom = "POINT(#{value[0]} #{value[1]})"
+
+      @project_type = ProjectType.find(project_type_id)
+      @project = Project.new()
+
+      datetime = Time.zone.now
+
+      # Carga los valores
+      @project['properties'] = parse_properties
+      @project['project_type_id'] = project_type_id
+      @project['user_id'] = current_user.id
+      @project['the_geom'] = new_geom
+      @project['project_status_id'] = project_status_id
+      @project['gwm_created_at'] = datetime
+      @project['gwm_updated_at'] = datetime
+
+      if @project.save
+        @project['properties'].merge!('app_id': @project.id)
+        @project['properties'].merge!('app_estado': project_status_id.to_i)
+        @project.save!
+
+        count_sucess +=1
+        created_ids.push(@project.id)
+      else
+        count_errors +=1
+      end
+
+    end
+
+    @project_type.destroy_view
+    @project_type.create_view
+    @project.update_inheritable_statuses
+
+    if count_errors > 0
+      render json: {status: 'Nuevos registros:' + count_sucess.to_s+'. Errores:'+count_errors.to_s, id: created_ids}
+    else
+      render json: {status: 'Nuevos registros:' + count_sucess.to_s, id: created_ids}
+    end
+
+  end
+
   # Elimina un registro (row_active = false)
   def destroy_form
     app_ids = params[:app_ids]
@@ -136,15 +193,14 @@ class ProjectsController < ApplicationController
 
   # Crea un nuevo registro
   def create_form
-    # byebug
     count_sucess=0
     count_errors=0
     created_ids=[]
     project_type_id=0
     is_interpolate = params[:is_interpolate]
     @dat = params[:data]
+
     @dat.each do |i,data|
-      # byebug
       project_type_id = data[:project_type_id]
       project_status_id = data[:project_status_id]
       properties = JSON(data[:properties]) # FIXME: solución temporal a los values como string
@@ -174,7 +230,7 @@ class ProjectsController < ApplicationController
           @new_geom = "LINESTRING(#{points_array_str})"
         end
       end
-      # byebug
+
       datetime = Time.zone.now
 
       properties['app_id'] = 0
@@ -193,9 +249,8 @@ class ProjectsController < ApplicationController
       if @project.save
         @project['properties'].merge!('app_id': @project.id)
         @project.save!
-        # byebug
+
         if subforms.present?
-          # byebug
           subforms_created = []
           subforms.each do |i, sf|
 
@@ -211,7 +266,6 @@ class ProjectsController < ApplicationController
         end
         count_sucess +=1
         created_ids.push(@project.id)
-        # byebug
       else
         count_errors +=1
       end
