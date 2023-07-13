@@ -7,7 +7,7 @@ var project_type_layers = [];
 var wmsLayer;
 var div_popup_icon;
 var number_point_value;
-var pointsLayer;
+var multipoints_coordinates;
 
 Navarra.namespace("geomaps");
 var first_layer=false;
@@ -1485,12 +1485,24 @@ function getCQLFilter_layer(dat){
     });
   };
 
-  function random_points(){
+  function modal_save_multipoints(){
+    var modal = document.getElementById('savePointsModal');
+    modal.style.display = 'block';
+
+    $('#close_modal_multipoints').click(function(){
+      modal.style.display = 'none';
+    });
+  }
+
+  function show_random_points(app_id_popup){
     console.log("Entra a función random points");
-    console.log("antes");
-    console.log(pointsLayer);
 
-
+    var pathElements = document.querySelectorAll('.leaflet-interactive');
+    if (pathElements.length > 0) {
+      pathElements.forEach(function (element) {
+        element.remove();
+      });
+    };
 
     $.ajax({
       url: '/projects/get_random_points',
@@ -1505,37 +1517,50 @@ function getCQLFilter_layer(dat){
           "type": "MultiPoint",
           "coordinates": response.geojson_coordinates
         };
+
+        multipoints_coordinates = response.geojson_coordinates
         var geoJsonData = JSON.parse(JSON.stringify(geoJsonString));
 
         var pointsLayer = L.geoJSON(geoJsonData, {
           pointToLayer: function (feature, latlng) {
-            var mpcircleMarker = L.circleMarker(latlng, {
+            return mpcircleMarker = L.circleMarker(latlng, {
               radius: 6,
               weight: 1,
               opacity: 1,
-              fillOpacity: 0.6
+              fillOpacity: 0.6,
+              className: app_id_popup+'-multipoints'
             });
-
-            var pathElement = document.querySelector('.leaflet-interactive');
-            pathElement.classList.add('nueva-clase-'+ app_id_popup +'');
-
-            console.log("mpcircleMarker");
-            console.log(mpcircleMarker);
-            return mpcircleMarker;
-
-
           }
         }).addTo(mymap);
       },
     });
-
-    console.log("después");
-    console.log(mymap.hasLayer(pointsLayer));
-
-    // close_all_popups();
-    console.log("fin de funcion");
+    mymap.closePopup();
   }
 
+  function save_multipoints(app_id_popup){
+    $.ajax({
+      url: '/projects/save_randoms_multipoints',
+      method: 'POST',
+      datatype: 'json',
+      data: {
+        number_point_value: number_point_value,
+        multipoints_coordinates: multipoints_coordinates,
+        project_selected_value: project_selected_value
+      },
+      success: function(response) {
+
+        $('#text_toast').html(response['status']);
+        $('#toast').toast('show');
+
+        mymap.closePopup();
+
+        var pathElements = document.querySelectorAll('.leaflet-interactive');
+        pathElements.forEach(function (element) {
+          element.remove();
+        });
+      },
+    });
+  };
 
   function popup() {
     MySource = L.WMS.Source.extend({
@@ -1607,6 +1632,19 @@ function getCQLFilter_layer(dat){
                     div_popup_icon = document.createElement('DIV');
                     div_popup_icon.style.textAlign = 'right';
                     div_popup_icon.setAttribute('id', 'icons_popup');
+
+                    element = document.querySelector('[class^="'+app_id_popup+'"]');
+                    if (element != null) {
+                      point_number = element.className.baseVal.split('-')[0]
+
+                      if (app_id_popup == parseInt(point_number)) {
+                        var new_p = document.createElement('I');
+                        new_p.setAttribute("onclick",'Navarra.geomaps.modal_save_multipoints('+app_id_popup+')');
+                        new_p.className="fas fa-check info_icon";
+                        new_p.style.textAlign = 'left';
+                        div_popup_icon.appendChild(new_p);
+                      }
+                    };
 
                     var new_p = document.createElement('I');
                     new_p.setAttribute("onclick",'Navarra.geomaps.modal_points_number('+app_id_popup+')');
@@ -3053,7 +3091,9 @@ function open_iot_monitoring(app_id_popup){
     intersect_layers: intersect_layers,
     color_by_attribute_function: color_by_attribute_function,
     show_ndvi: show_ndvi,
-    random_points: random_points,
+    show_random_points: show_random_points,
+    save_multipoints: save_multipoints,
+    modal_save_multipoints: modal_save_multipoints,
     modal_points_number: modal_points_number,
     hide_ndvi_button: hide_ndvi_button,
     open_iot_monitoring: open_iot_monitoring,
