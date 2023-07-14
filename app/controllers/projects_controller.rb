@@ -109,7 +109,10 @@ class ProjectsController < ApplicationController
 
     multipoints_coordinates.map do |key, value|
       project_type_id = save_in_project[0].to_s
-      project_status_id = ProjectStatus.where(project_type_id: project_type_id, status_type: "Predeterminado").or(ProjectStatus.where(priority: 1)).pluck(:id).first
+      project_status_id = ProjectStatus.where(project_type_id: project_type_id)
+                          .order("CASE WHEN status_type = 'Predeterminado' THEN 0 ELSE 1 END, priority")
+                          .pluck(:id)
+                          .first
       properties = JSON(properties_json)
       parse_properties = JSON.parse(properties)
       new_geom = "POINT(#{value[0]} #{value[1]})"
