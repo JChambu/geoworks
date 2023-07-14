@@ -82,7 +82,6 @@ class ProjectsController < ApplicationController
   end
 
   def get_random_points
-    # byebug
     app_id_polygon = params[:app_id_popup].to_i
     points_numbers = params[:number_point_value].to_i
 
@@ -213,7 +212,7 @@ class ProjectsController < ApplicationController
       # Arma la nueva geometría
       if @project_type.type_geometry == 'Point'
         @new_geom = "POINT(#{geom['lng']} #{geom['lat']})"
-        # byebug
+
       else
         points_array = []
         geom.each do |a,x|
@@ -251,6 +250,7 @@ class ProjectsController < ApplicationController
         @project.save!
 
         if subforms.present?
+
           subforms_created = []
           subforms.each do |i, sf|
 

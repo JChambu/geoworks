@@ -1644,10 +1644,13 @@ function getCQLFilter_layer(dat){
                       }
                     };
 
-                    var new_p = document.createElement('I');
-                    new_p.setAttribute("onclick",'Navarra.geomaps.modal_points_number('+app_id_popup+')');
-                    new_p.className="fas fa-circle info_icon";
-                    div_popup_icon.appendChild(new_p);
+                    type_geometry = Navarra.dashboards.config.type_geometry
+                    if (type_geometry == 'Polygon' && current_layer_name == project_name) {
+                      var new_p = document.createElement('I');
+                      new_p.setAttribute("onclick",'Navarra.geomaps.modal_points_number('+app_id_popup+')');
+                      new_p.className="fas fa-circle info_icon";
+                      div_popup_icon.appendChild(new_p);
+                    }
 
                     var new_p = document.createElement('I');
                     new_p.setAttribute("onclick",'Navarra.photos.open_photos('+app_id_popup+',false)');
@@ -3019,7 +3022,7 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined, field
                   geom: geom
                 }
                 params.push(param)
-              });//ACA SE CREA ZZZZZ
+              });
               $.ajax({
                 type: 'POST',
                 url: '/projects/create_form',
