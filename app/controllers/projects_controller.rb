@@ -201,7 +201,6 @@ class ProjectsController < ApplicationController
     project_type_id=0
     is_interpolate = params[:is_interpolate]
     @dat = params[:data]
-
     @dat.each do |i,data|
       project_type_id = data[:project_type_id]
       project_status_id = data[:project_status_id]
@@ -215,7 +214,6 @@ class ProjectsController < ApplicationController
       # Arma la nueva geometría
       if @project_type.type_geometry == 'Point'
         @new_geom = "POINT(#{geom['lng']} #{geom['lat']})"
-
       else
         points_array = []
         geom.each do |a,x|
