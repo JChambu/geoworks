@@ -7,11 +7,15 @@
     </div>
     <div>
       <h5>Capa a guardar los puntos:</h5>
-      <%= select_tag 'selected_multipoint_project', options_for_select(ProjectType.where(type_geometry: 'Point', multipoints: true).pluck(:name)), class: 'form-control', :style => 'width: 90%;max-height:45px;' %>
-    </div>
-    <br>
-    <div>
-      <button type="button" class="btn btn-primary p-0" onclick="do_project_to_save_multipoints_modal()" style="width: 99px">Confirmar</button>
+      <% if ProjectType.where(type_geometry: 'Point', multipoints: true).pluck(:name).blank? %>
+        <h5><b>No tiene capas validadas para guardar puntos</b></h5>
+      <% else %>
+        <%= select_tag 'selected_multipoint_project', options_for_select(ProjectType.where(type_geometry: 'Point', multipoints: true).pluck(:name)), class: 'form-control', :style => 'width: 90%;max-height:45px;' %>
+        <br>
+        <div>
+          <button type="button" class="btn btn-primary p-0" onclick="do_project_to_save_multipoints_modal()" style="width: 99px">Confirmar</button>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
