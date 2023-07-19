@@ -57,7 +57,7 @@ $('#table_select_all').click(function(){
     $('#checkbox_Etiquetas').prop("disabled",true);
   }
 
-// Habilita botón guardar si la tabla abierta es una tabla ya guardada 
+// Habilita botón guardar si la tabla abierta es una tabla ya guardada
   $("#save_table_button").click(function(){
     if($('#table_id').val()!=""){
       $('#save_table_button_edit').removeClass('d-none');
@@ -93,10 +93,10 @@ function cal_column(key,id_proyect,layer,operator){
     key_jquery = id_proyect+"\\|"+key;
     celd = '.celd'+layer+'_key'+id_proyect+"\\|"+key;
     key = id_proyect+"|"+key;
-  } 
+  }
   if(layer == 'subform'){
     celd = "."+id_proyect+'sub'+key;
-  } 
+  }
   $('.footer_function'+layer+'_key'+key_jquery).removeClass('footer_function_key'+key);
   $('.footer_sum'+layer+'_key'+key_jquery).addClass('footer_function_key'+key);
   var total = 0;
@@ -131,7 +131,7 @@ function cal_column(key,id_proyect,layer,operator){
           if(parseFloat($(column_val).html())<parseFloat(min)){min = parseFloat($(column_val).html())}
         }
       }
-    }      
+    }
   });
   switch(operator) {
     case 'sum':
@@ -145,7 +145,7 @@ function cal_column(key,id_proyect,layer,operator){
     break;
     case 'avg':
       $('.footer'+layer+'_key'+key_jquery).html("Prom: "+Math.round(total*100/count)/100);
-    break;  
+    break;
   }
 }
 
@@ -224,7 +224,7 @@ function show_item(appid_selected){
    $('#row_table_data'+appid_selected).addClass('found');
    var string_filter = get_string_filter();
    if(string_filter==""){
-    string_filter = "app_id = '"+appid_selected+"'"; 
+    string_filter = "app_id = '"+appid_selected+"'";
    } else {
     string_filter += "or app_id = '"+appid_selected+"'";
    }
@@ -324,7 +324,7 @@ function show_subfield(field_ids){
         var new_drop = document.createElement("DIV");
         new_drop.className = "dropdown-menu scroll custom_drop_subforms"
         new_drop.setAttribute("aria-labelledby","dropdown-subfields");
-  
+
         // Agrega subcabecera foto y fecha
         var new_column = document.createElement('TH');
         new_column.style.minWidth = "204px";
@@ -333,7 +333,7 @@ function show_subfield(field_ids){
         new_column.className = 'header_column subfield_column_'+id_field;
         new_column.innerHTML = "Fecha / Usuario"
         $('#tr_subfields').append(new_column);
-      
+
         celd_footer = "<td style = 'min-width:204px; with:204px' class='footersubform_key_date"+id_field+"'></td>"
         father_field.head.forEach(function(child_field){
           if(child_field.hidden==false && child_field.field_type_id!=11 && child_field.can_read == true){
@@ -343,7 +343,7 @@ function show_subfield(field_ids){
             new_option.id = id_field+'_subfield_'+child_field.field_id;
             new_option.setAttribute('onClick','open_subcolumn(event)');
             new_drop.appendChild(new_option);
-    
+
             //Agrega Subcabecera
             var new_column = document.createElement('TH');
             new_column.className = 'header_column d-none '+'subfield_column_'+id_field+" " + id_field+"sub"+child_field.field_id;
@@ -362,7 +362,7 @@ function show_subfield(field_ids){
               var unique_id = false
             }
             new_p.setAttribute('unique_id',unique_id);
-        
+
             new_tr.appendChild(new_p);
             var new_div1 = document.createElement('DIV');
             new_div1.className = 'custom_div_table'
@@ -396,7 +396,7 @@ function show_subfield(field_ids){
         // Agrega footer
           $('#total_table').append(celd_footer);
 
-        new_div1.appendChild(new_drop)  
+        new_div1.appendChild(new_drop)
         var new_icon = document.createElement('I');
         new_icon.className = "fas fa-times icons ml-2";
         new_icon.title = "Cerrar";
@@ -407,7 +407,7 @@ function show_subfield(field_ids){
         new_column_subform.setAttribute('colspan',1);
         $('#tr_visible').append(new_column_subform);
         set_hover();
-        
+
       // valores para la tabla
       var data_child = father_field.body
         //Agrega celdas a toda la tabla
@@ -416,12 +416,12 @@ function show_subfield(field_ids){
             $('#link_dropdown_'+id_field).find('i').attr('title','No hay datos para mostrar');
           }
         $('.row_data').each(function(row){
-          var key_data = $(this).attr("id").substring(14); 
+          var key_data = $(this).attr("id").substring(14);
           var row_table = $(this);
           var new_td = document.createElement('TD');
           new_td.className="custom_row custom_row_child subfield_column_"+id_field;
-          new_td.style.minWidth = '204px';    
-          if(data_child[key_data]!=undefined){            
+          new_td.style.minWidth = '204px';
+          if(data_child[key_data]!=undefined){
             data_child[key_data].forEach(function(column,indexColumn){
               var new_sub_column = document.createElement('TR');
               new_sub_column.style.display = 'flex';
@@ -432,41 +432,57 @@ function show_subfield(field_ids){
                 }
               // agrega icono de foto
               var new_cel_subform = document.createElement('TD');
-                new_cel_subform.style.border='none'; 
-                new_cel_subform.style.padding='5px';   
-                new_cel_subform.style.width='30px';
-                new_cel_subform.style.minWidth='30px';
-                new_cel_subform.className='child_celd just_date';
-                new_cel_subform.setAttribute("id_child",column.id)
-                var new_icon = document.createElement('I');
-                new_icon.className = "fas fa-image icons";
-                new_icon.setAttribute('onClick', 'Navarra.photos.open_photos('+column.id+',true)')
-                new_cel_subform.appendChild(new_icon);
-                new_sub_column.appendChild(new_cel_subform);
-                new_td.appendChild(new_sub_column);
+              new_cel_subform.style.border='none';
+              new_cel_subform.style.padding='5px';
+              new_cel_subform.style.width='30px';
+              new_cel_subform.style.minWidth='30px';
+              new_cel_subform.className='child_celd just_date';
+              new_cel_subform.setAttribute("id_child",column.id)
+              var new_icon = document.createElement('I');
+              new_icon.className = "fas fa-image icons";
+              new_icon.setAttribute('onClick', 'Navarra.photos.open_photos('+column.id+',true)')
+              new_cel_subform.appendChild(new_icon);
+              new_sub_column.appendChild(new_cel_subform);
+              new_td.appendChild(new_sub_column);
+
+              //agrega trash button para establecer subform como row_active=false
+              var new_cel_subform = document.createElement('TD');
+              new_cel_subform.style.border='none';
+              new_cel_subform.style.padding='5px';
+              new_cel_subform.style.width='30px';
+              new_cel_subform.style.minWidth='30px';
+              new_cel_subform.className='child_celd just_date';
+              new_cel_subform.setAttribute("id_child",column.id)
+              var new_icon = document.createElement('I');
+              new_icon.className = "fas fa-trash icons";
+              new_icon.setAttribute('onClick', 'delete_subform('+column.id+')')
+              new_cel_subform.appendChild(new_icon);
+              new_sub_column.appendChild(new_cel_subform);
+              new_td.appendChild(new_sub_column);
 
               // agrega fecha de creación
               var new_cel_subform = document.createElement('TD');
-                new_cel_subform.style.border='none';   
-                new_cel_subform.style.padding='5px'; 
-                new_cel_subform.style.textAlign='left'; 
-                new_cel_subform.style.whiteSpace='nowrap';  
-                new_cel_subform.className='child_celd just_date celdsubform_date_id'+key_data;
-                new_cel_subform.id = id_field+"_childdate_"+column.id;
-                new_cel_subform.setAttribute("id_child",column.id)
-                if(column.gwm_created_at!=null){
-                  var created_date = column.gwm_created_at.split('T')[0];
-                  var created_time = column.gwm_created_at.split('T')[1].substring(0,5)
-                  new_cel_subform.innerHTML = created_date.split('-')[2]+'/'+created_date.split('-')[1]+'/'+created_date.split('-')[0].substring(2)+" "+created_time +" " +column.username;
-                }
-                new_cel_subform.style.width='200px';
-                new_cel_subform.style.minWidth='200px';
-                new_sub_column.appendChild(new_cel_subform);
-                new_td.appendChild(new_sub_column);
-              });
-            }
-            row_table.append(new_td);
-            
+              new_cel_subform.style.border='none';
+              new_cel_subform.style.padding='5px';
+              new_cel_subform.style.textAlign='left';
+              new_cel_subform.style.whiteSpace='nowrap';
+              new_cel_subform.className='child_celd just_date celdsubform_date_id'+key_data;
+              new_cel_subform.id = id_field+"_childdate_"+column.id;
+              new_cel_subform.setAttribute("id_child",column.id)
+              if(column.gwm_created_at!=null){
+                var created_date = column.gwm_created_at.split('T')[0];
+                var created_time = column.gwm_created_at.split('T')[1].substring(0,5)
+                new_cel_subform.innerHTML = created_date.split('-')[2]+'/'+created_date.split('-')[1]+'/'+created_date.split('-')[0].substring(2)+" "+created_time +" " +column.username;
+              }
+              new_cel_subform.style.width='200px';
+              new_cel_subform.style.minWidth='200px';
+              new_sub_column.appendChild(new_cel_subform);
+              new_td.appendChild(new_sub_column);
+
+            });
+          }
+          row_table.append(new_td);
+
 
             //Columnas de subformularios
             var sub_columns_visibles = $('.'+id_field+'subfield');
@@ -477,7 +493,7 @@ function show_subfield(field_ids){
               new_td.className="custom_row d-none custom_row_child subfield_column_"+id_field;
               new_td.style.minWidth = '204px';
               new_td.setAttribute("id_container",id_field+"container"+colname)
-              if(data_child[key_data]!=undefined){ 
+              if(data_child[key_data]!=undefined){
                 data_child[key_data].forEach(function(column,indexColumn){
                   var new_sub_column = document.createElement('TR');
                   new_sub_column.style.display = 'flex';
@@ -491,7 +507,7 @@ function show_subfield(field_ids){
                   }
 
                   var new_cel_subform = document.createElement('TD');
-                  new_cel_subform.style.padding='5px';  
+                  new_cel_subform.style.padding='5px';
                   new_cel_subform.setAttribute("id_child",column.id)
                   new_cel_subform.className = id_field+"sub"+colname + " d-none child_celd celdsubform_id"+key_data;
                   new_cel_subform.id = id_field+"_subceld_"+colname + "_" + column.id ;
@@ -506,7 +522,7 @@ function show_subfield(field_ids){
                 })
               }
               row_table.append(new_td);
-            });        
+            });
         });
         if(Object.keys(data_child).length!=0){
           open_subheaders(id_field);
@@ -530,6 +546,31 @@ function show_subfield(field_ids){
     }//end success
   });//end ajax
 }
+
+function delete_subform(column){
+  subform_id = column
+  var confirmDelete = confirm("¿Está seguro de que deseas eliminar este subformulario?");
+
+  if (confirmDelete) {
+    $.ajax({
+      url: '/project_data_children/delete_subforms',
+      method: 'POST',
+      datatype: 'json',
+      data: {
+        subform_id: subform_id
+      },
+      success: function(response) {
+        id_subform = response.subform_id
+
+        var elementsToHide = document.querySelectorAll('td[id_child="'+id_subform+'"]');
+
+        elementsToHide.forEach(function(element) {
+          element.classList.add('d-none');
+        });
+      },
+    });
+  }
+};
 
 // FUNCIONES PARA TRAER COLUMNAS DE CAPAS SUPERIORES
 function get_layer_data(){
@@ -569,7 +610,7 @@ function get_layer_data(){
               $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).append(html_div);
             }
           })
-        });//end forEach      
+        });//end forEach
       });
       },
     });
@@ -577,7 +618,7 @@ function get_layer_data(){
 
 function show_column_layer(key_layer,id_layer){
   if(top_level_project_type_ids.indexOf(id_layer)<0){
-    top_level_project_type_ids.push(id_layer); 
+    top_level_project_type_ids.push(id_layer);
   }
   get_layer_data();
   $('#columnfake_layer_'+key_layer+"_"+id_layer).removeClass("d-none");
@@ -715,7 +756,7 @@ function save_table(is_new){
     var url = '/table_configurations/create_table';
   } else {
     var table_id = $('#table_id').val();
-    var table_name = $('#table_name').val(); 
+    var table_name = $('#table_name').val();
     var type_method = "PATCH";
     var url = '/table_configurations/edit_table';
   }
@@ -749,7 +790,7 @@ function save_table(is_new){
       cross_layers_fields = [];
     }
       cross_layers_fields.push(this.id.split('|')[1]);
-      cross_layer_id = this.id.split('|')[2];    
+      cross_layer_id = this.id.split('|')[2];
 
       if((index+1)==$('.column_data_layer.d-none').length){
         cross_layer = {
@@ -774,7 +815,7 @@ function save_table(is_new){
       p_field_keys: p_field_keys,
       project_subfields: project_subfields
     },
-    cross_layers: cross_layers, 
+    cross_layers: cross_layers,
     per_page: per_page_value,
     order_by: order_by_column,
     filter_by: {
@@ -799,13 +840,13 @@ function save_table(is_new){
       if(is_new){
         var table_new_id = data.table_id;
         $('#table_id').val(table_new_id);
-        $('#table_name').val($('#table_new_name').val()); 
-        $('#table_name_visible').html($('#table_new_name').val()); 
+        $('#table_name').val($('#table_new_name').val());
+        $('#table_name_visible').html($('#table_new_name').val());
         // agrega nueva tabla al modal de tablas
         var new_a = '<a class="dropdown-item d-flex" onclick="open_panel(\'view-data-middle\','+table_new_id+')" href="#" id="dropdown_table'+table_new_id+'"><h7 class="mr-auto">'+table_name+'</h7><i class="fas fa-trash-alt ml-3 invisible icon_delete_table" title="Eliminar" onclick="remove_table(event ,'+table_new_id+')"></i></a>'
         $('#tables_container').prepend(new_a);
       }
-      $('#table_new_name').val(""); 
+      $('#table_new_name').val("");
     }
   });
 }
@@ -896,7 +937,7 @@ function show_pdf(is_alert){
     return;
   }
   if(is_alert){
-    $("#pdf-modal").modal('show'); 
+    $("#pdf-modal").modal('show');
     $('.table_data_container').addClass('d-none');
     Navarra.pdf.init();
   } else{
@@ -957,7 +998,7 @@ function generate_alerts(){
       <button class="btn btn-secondary p-1 ml-2" data-dismiss="modal" type="button" style="font-size: 0.8em">Cancelar</button>
     </div>
   </div>
-  <div class="d-inline">  
+  <div class="d-inline">
     <a data-toggle="dropdown" id="share_table" href="#" aria-haspopup="true" aria-expanded="false"><i class="fas fa-share-square ml-2" onclick="open_share_table()" title="Compartir Datos" style="cursor: pointer;" ></i>
     </a>
     <div class="dropdown-menu scroll p-2" aria-labelledby="share_table" style="max-height:44vh; overflow-y:auto;">
@@ -1006,7 +1047,7 @@ function generate_alerts(){
               <button class="btn btn-primary p-1 mt-2" style="font-size: 1em" type="button" onclick="show_pdf(false)">Generar</button>
             </div>
         </div>
-      
+
       <% if can? :data, :alert %>
         <a data-toggle="modal" id="show_alert"  onclick="open_alert_modal(event)" style="cursor: pointer;" class="dropdown-item text-left" ><i class="fas fa-bullhorn mr-2" ></i> Notificaciones por mail
         </a>
@@ -1023,8 +1064,8 @@ function generate_alerts(){
             <label class="mt-1 mb-0 w-25">Enviar a:</label>
             <select id="alert_mail" class="form-control form-control-sm w-50 mt-1" style="font-size: 0.8em">
             </select>
-          </div>  
-          <div class="d-flex">  
+          </div>
+          <div class="d-flex">
             <label class="mt-1 mb-0 w-25">Agrupar por:</label>
             <select id="alert_group" class="form-control form-control-sm w-50 mt-1" style="font-size: 0.8em">
             </select>
@@ -1045,7 +1086,7 @@ function generate_alerts(){
         </a>
       <% end %>
     </div>
-   </div> 
+   </div>
   <div class="d-inline">
     <a data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="dropdown-columns">
       <i class="fas fa-plus ml-2" style="font-size: 0.8em; cursor: pointer;" title="Agregar Columna"></i>
@@ -1103,7 +1144,7 @@ function generate_alerts(){
               <ul class="nav nav-list">
                 <li class="nav-header ml-1"><%= field.project_type.name %></li>
               </ul>
-              <% name_layer = field.project_type.name_layer %>  
+              <% name_layer = field.project_type.name_layer %>
             <% end %>
             <% if field.field_type_id != 11 && field.field_type_id != 7  %>
               <a class="dropdown-item column_data_layer" onclick="show_column_layer(<%="'"+field.key+"','"+field.project_type.id.to_s+"'"%>)" id_field_layer = <%="id"+field.id.to_s %> id=<%="addcolumn_layer|"+field.key+"|"+field.project_type.id.to_s %>><%= field.name %></a>
@@ -1117,13 +1158,13 @@ function generate_alerts(){
   <a class="d-none" id="multiple_edit" onclick="show_item_info(0,false,true)">
     <i class="fas fa-edit ml-2" style="font-size: 0.8em; cursor: pointer;" title="Editar Registros"></i>
   </a>
-  
+
   <input id="choose" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0 ml-2" placeholder="Buscar" style="width: 0%; transition:1.5s;"  >
   <input type="text" class="filter_by_column d-none">
   <input type="text" class="order_by_column d-none">
   <input type="text" class="total_files d-none">
   <h6 type="text" class="selected_files_from_total d-inline"></h6>
-  
+
   <div class="view-data-container status-view-condensed" id="status-view">
     <i class="fas fa-window-maximize view-data" id="view-data-middle"></i>
     <i class="fas fa-square view-data" id="view-data-expanded"></i>
@@ -1179,7 +1220,7 @@ function generate_alerts(){
                           <i class="fas fa-times icons" onclick="hide_column_layer(<%="'"+field.key+"','"+field.project_type.id.to_s+"'"%>)"></i>
                           <input type="text" class="d-none field_key_layer" id=<%= "headlayer"+field.project_type.id.to_s+"|"+field.key %> value=<%= field.id %>>
                           <br/>
-                          <% if field.field_type_id == 5 %>                
+                          <% if field.field_type_id == 5 %>
                             <i class="<%="fa fa-plus icons custom_function_icon text-dark footer_sumlayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="cal_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"', 'layer' , 'sum'"%>)" title="Sumar"></i>
                             <i class="<%="fa fa-greater-than icons custom_function_icon text-dark footer_maxlayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="cal_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer' , 'max'"%>)" title="Máximo"></i>
                             <i class="<%="fa fa-less-than icons custom_function_icon text-dark footer_minlayer_key"+field.project_type.id.to_s+"|"+field.key%>"onclick="cal_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer' , 'min'"%>)" title="Mínimo"></i>
@@ -1189,7 +1230,7 @@ function generate_alerts(){
                       </div>
                     </th>
                   <% end %>
-                <% end %>  
+                <% end %>
               <% end %>
             <% end %>
           </div>
@@ -1213,7 +1254,7 @@ function generate_alerts(){
                       <i class="fas fa-times icons text-white" onclick="hide_column(<%="'"+field.key+"'"%>)" title="Cerrar"></i>
                       <input type="text" class="d-none field_key" id=<%= "field_key"+field.key %> value=<%= field.key %>>
                       <br/>
-                      <% if field.field_type_id == 5 %>                
+                      <% if field.field_type_id == 5 %>
                         <i class="<%="fa fa-plus icons custom_function_icon text-dark footer_sum_key"+field.key%>" onclick="cal_column(<%="'"+field.key+"','','', 'sum'"%>)" title="Sumar"></i>
                         <i class="<%="fa fa-greater-than icons custom_function_icon text-dark footer_max_key"+field.key%>" onclick="cal_column(<%="'"+field.key+"','','' , 'max'"%>)" title="Máximo"></i>
                         <i class="<%="fa fa-less-than icons custom_function_icon text-dark footer_min_key"+field.key%>"onclick="cal_column(<%="'"+field.key+"','','' , 'min'"%>)" title="Mínimo"></i>
@@ -1223,7 +1264,7 @@ function generate_alerts(){
                   </div>
                 </th>
               <% else %>
-            <% end %>  
+            <% end %>
           <% end %>
         <% end %>
       <% end %>
@@ -1262,7 +1303,7 @@ function generate_alerts(){
                 <p class="custom_p_header"></p>
               </th>
               <% end %>
-            <% end %>  
+            <% end %>
           <% end %>
         <% end %>
       </tr>
