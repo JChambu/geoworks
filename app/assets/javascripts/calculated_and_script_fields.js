@@ -11,7 +11,7 @@ function Script(data_script, field_type_id , field_id , value, initial, isparent
     } else{
         var texto_campo_id = "#fieldchildid\\|"+id_field.split('|')[0]+"\\|"+id_field.split('|')[1];
     }
-    
+
     if(field_type==4){
         // si el campo tipo booleano tiene un Script y viene con valor nulo, se asigna valor = false por primera vez
        if(value==null && initial && !is_multiple){$(texto_campo_id).val("false")}
@@ -26,7 +26,7 @@ function Script(data_script, field_type_id , field_id , value, initial, isparent
         } catch(e){
             set_error_message("Error en el atributo script del campo ID:"+field_id);
             console.log("Error "+e)
-        } 
+        }
 }
  if((field_type==10 || field_type==2)){
     try{
@@ -171,7 +171,7 @@ var is_multiple = $('#multiple_edit').hasClass("multiple_on");
 
 function Calculate(calculated_field, field_type_id , field_id , value, edition_type, field_key, geom, isparent){
   var is_multiple = $('#multiple_edit').hasClass("multiple_on");
-  try{ 
+  try{
     var CalculateObj = JSON.parse(calculated_field);
     var field_type = field_type_id
     var id_field = field_id;
@@ -209,7 +209,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                         if(val==""){val=0}
                         calculoStringReplace+=val;
                     }
-                } 
+                }
                 if(!is_multiple){
                     var resultado = eval(calculoStringReplace);
                     //redondea a dos decimales
@@ -225,7 +225,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                     } else{
                         var texto_campo_id_semanadesde = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
                         var val_from = $(texto_campo_id_semanadesde).val();
-                    }                    
+                    }
                     if(val_from!=""){
                         var dateObject = changeformatDate(val_from, 'day');
                         number_of_week = getWeekNumber(dateObject)[1]
@@ -245,11 +245,11 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                     if(isparent){
                         var texto_campo_id_new = "#field_id_"+id_field;
                         var val_from = $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).val();
-                    } else{                    
+                    } else{
                         var texto_campo_id_new = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
                         var val_from = $(texto_campo_id_new).val();
-                    } 
-                    if(val_from!=""){ 
+                    }
+                    if(val_from!=""){
                         var mm = val_from.split("/")[1];
                         var year = val_from.split("/")[2];
                         if(mm>=8){
@@ -275,11 +275,11 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                     if(isparent){
                         var texto_campo_id_new = "#field_id_"+id_field;
                         var val_from = $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).val();
-                    } else{                    
+                    } else{
                         var texto_campo_id_new = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
                         var val_from = $(texto_campo_id_new).val();
-                    } 
-                    if(val_from!=""){ 
+                    }
+                    if(val_from!=""){
                         var dateObject = changeformatDate(val_from, 'day');
                         actual_week = getWeekNumber(dateObject)[1];
                         var ago_day = '01/08/'+val_from.split('/')[2]
@@ -354,14 +354,14 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                                             found_option=true;
                                             new_option.selected = true;
                                         }
-                                    }    
+                                    }
                                 document.getElementById(texto_campo_id_js).appendChild(new_option);
                             });
                             if(!found_option){document.getElementById(texto_campo_id_js).selectedIndex = -1;}
                             $(texto_campo_id).multiselect('rebuild');
                             if(document.getElementById(texto_campo_id_js).classList.contains('info_input_disabled')){
                                 $(texto_campo_id).multiselect('disable');
-                            }    
+                            }
                         } else{
                             set_error_message("Error en la Api de Localizaciones");
                         }
@@ -426,7 +426,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                             let geom_split = arr.geometry.coordinates;
                             return $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom_split[1]+'&lon='+geom_split[0], function(data,err) {                       })
                             })
-                       
+
                         // Async function to perform execution of all promise
                         let promiseExecution = async () => {
                             let promise = await Promise.all(array_provincias);
@@ -456,7 +456,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                                 }
                                 Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
                                 save_geometry_after_all_success_ajaxs();
-                            } 
+                            }
                         });
                     }
                 } else{
@@ -468,7 +468,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                     });
                  }
             }
-            
+
             if(CalculateObj_keys[k]=="municipio"){
                 if(edition_type=="geometry_edition"){
                     if($('#checkbox_split_line').is(":checked")){
@@ -477,7 +477,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                             let geom_split = arr.geometry.coordinates;
                             return $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom_split[1]+'&lon='+geom_split[0], function(data,err) {                       })
                             })
-                       
+
                         // Async function to perform execution of all promise
                         let promiseExecution = async () => {
                             let promise = await Promise.all(array_provincias);
@@ -514,10 +514,10 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                     $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom.latLng.lat+'&lon='+geom.latLng.lng, function(data,err) {
                         // JSON result in `data` variable
                         if(err=='success'){
-                            $("#field_id_"+id_field).val(data.ubicacion.municipio.nombre);  
+                            $("#field_id_"+id_field).val(data.ubicacion.municipio.nombre);
                         }
                     });
-                }  
+                }
             }
         }
     }
@@ -525,17 +525,17 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
     // Cálculos permitidos al crear registro
     if(edition_type== "new_file"){
 
-        for(k=0;k<CalculateObj_keys.length;k++){            
+        for(k=0;k<CalculateObj_keys.length;k++){
             if(CalculateObj_keys[k]=="sessionVariable"){
                 // eliminado por utilizarse app_usuario
             }
-            if(CalculateObj_keys[k]=="time"){   
+            if(CalculateObj_keys[k]=="time"){
                 var today=new Date();
                 var dd = String(today. getDate()). padStart(2, '0');
                 var mm = String(today. getMonth() + 1). padStart(2, '0');
-                var yyyy = today. getFullYear();  
+                var yyyy = today. getFullYear();
                 var hh = today.getHours();
-                var min = today.getMinutes();      
+                var min = today.getMinutes();
                 today_time = dd + '/' + mm + '/' + yyyy+' '+hh+':'+min;
                 $(texto_campo_id).val(today_time);
             }
@@ -547,7 +547,7 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                 var hh = String(today. getHours()). padStart(2, '0');
                 var min = String(today. getMinutes()). padStart(2, '0');
                 var ss = String(today. getSeconds()). padStart(2, '0');
-                
+
                 today_id = String(yyyy).substr(2)+mm+dd+ '.' + hh+min+ss;
                 data = {
                     current_tenement: Navarra.dashboards.config.current_tenement,
@@ -562,11 +562,18 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                     $(texto_campo_id).val(id_unique);
                     }
                 });
-            
+
             }
             if(CalculateObj_keys[k]=="semanaTomate"){
                 number_of_week = getWeekNumber(new Date())[1]
                 $(texto_campo_id).val(number_of_week);
+            }
+            if(CalculateObj_keys[k]=="googleMaps"){
+              var lat_marker = (marker.getLatLng().lat).toFixed(6);
+              var long_marker = (marker.getLatLng().lng).toFixed(6);
+
+              gmaps_coordinates = "https://www.google.com/maps?q="+lat_marker+","+long_marker
+              $(texto_campo_id).val(gmaps_coordinates)
             }
             //Iscamen
             if(CalculateObj_keys[k]=="codigo_fenologia"){
@@ -586,14 +593,14 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
                     console.log("Error buscando el id del padre " )
                 }
             }
-            
-        }    
+
+        }
     }
   } catch(e){
     set_error_message("Error en el atributo calculado del campo ID:"+field_id);
     console.log("Error "+e)
-  }  
-}   
+  }
+}
 
 function camelCase(str) {
         var lcStr = str.toLowerCase();
@@ -611,10 +618,10 @@ function save_geometry_after_all_success_ajaxs(){
         Navarra.dashboards.config.field_geometric_calculated_count=0;
         Navarra.dashboards.config.field_geometric_calculated=[];
         if(Navarra.dashboards.config.field_geometric_calculated_count_all==Navarra.dashboards.config.field_geometric_calculated_length_all){
-            Navarra.geomaps.save_geometry_width_calculated_fields(); 
+            Navarra.geomaps.save_geometry_width_calculated_fields();
         }
     }
-}   
+}
 
 async function getArrayProvincias(geom){
     return await $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom.latLng.lat+'&lon='+geom.latLng.lng, function(data,err) {
