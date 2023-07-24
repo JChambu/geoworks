@@ -575,6 +575,13 @@ function Calculate(calculated_field, field_type_id , field_id , value, edition_t
               gmaps_coordinates = "https://www.google.com/maps?q="+lat_marker+","+long_marker
               $(texto_campo_id).val(gmaps_coordinates)
             }
+            if(CalculateObj_keys[k]=="LatLong"){
+              var lat = (marker.getLatLng().lat).toFixed(6);
+              var long = (marker.getLatLng().lng).toFixed(6);
+
+              latlong = lat+","+long
+              $(texto_campo_id).val(latlong)
+            }
             //Iscamen
             if(CalculateObj_keys[k]=="codigo_fenologia"){
                 // es campo para hijo. Se desarrollará a continuación
