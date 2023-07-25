@@ -42,6 +42,7 @@ ActiveRecord::Base.transaction do
   Event.where(name: 'share').first_or_create!
   Event.where(name: 'export').first_or_create!
   Event.where(name: 'disable').first_or_create!
+  Event.where(name: 'delete_subforms').first_or_create!
 
   FieldType.where(name: 'Texto').first_or_create!
   FieldType.where(name: 'Listado (opción única)').first_or_create!

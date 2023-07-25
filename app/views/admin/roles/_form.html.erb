@@ -58,7 +58,7 @@
               <% end %>
 
               <!-- Módulo Datos -->
-              <% if (mt.name == 'data' && (e.name == 'visualizer' || e.name == 'edit' || e.name == 'edit_subforms' || e.name == 'edit_geom' || e.name == 'edit_owner' || e.name == 'edit_status' || e.name == 'disable' || e.name == 'destroy' || e.name == 'new' || e.name == 'new_subform' || e.name == 'export' || e.name == 'alert')) %>
+              <% if (mt.name == 'data' && (e.name == 'visualizer' || e.name == 'edit' || e.name == 'edit_subforms' || e.name == 'edit_geom' || e.name == 'edit_owner' || e.name == 'edit_status' || e.name == 'disable' || e.name == 'destroy' || e.name == 'new' || e.name == 'new_subform' || e.name == 'export' || e.name == 'alert' || e.name == 'delete_subforms')) %>
                 <div class="form-group">
                   <div class="custom-control custom-switch">
                     <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>

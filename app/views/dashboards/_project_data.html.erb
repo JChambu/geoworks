@@ -446,20 +446,21 @@ function show_subfield(field_ids){
               new_td.appendChild(new_sub_column);
 
               //agrega trash button para establecer subform como row_active=false
-              var new_cel_subform = document.createElement('TD');
-              new_cel_subform.style.border='none';
-              new_cel_subform.style.padding='5px';
-              new_cel_subform.style.width='30px';
-              new_cel_subform.style.minWidth='30px';
-              new_cel_subform.className='child_celd just_date';
-              new_cel_subform.setAttribute("id_child",column.id)
-              var new_icon = document.createElement('I');
-              new_icon.className = "fas fa-trash icons";
-              new_icon.setAttribute('onClick', 'delete_subform('+column.id+')')
-              new_cel_subform.appendChild(new_icon);
-              new_sub_column.appendChild(new_cel_subform);
-              new_td.appendChild(new_sub_column);
-
+              <% if can? :data, :delete_subforms %>
+                var new_cel_subform = document.createElement('TD');
+                new_cel_subform.style.border='none';
+                new_cel_subform.style.padding='5px';
+                new_cel_subform.style.width='30px';
+                new_cel_subform.style.minWidth='30px';
+                new_cel_subform.className='child_celd just_date';
+                new_cel_subform.setAttribute("id_child",column.id)
+                var new_icon = document.createElement('I');
+                new_icon.className = "fas fa-trash icons";
+                new_icon.setAttribute('onClick', 'delete_subform('+column.id+')')
+                new_cel_subform.appendChild(new_icon);
+                new_sub_column.appendChild(new_cel_subform);
+                new_td.appendChild(new_sub_column);
+              <% end %>
               // agrega fecha de creación
               var new_cel_subform = document.createElement('TD');
               new_cel_subform.style.border='none';
