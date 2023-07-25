@@ -1679,7 +1679,7 @@ function show_labels(setbbox){
         label_fields.each(function(){
           key_label = $(this).val();
           if(feature.properties[key_label]!=null){
-            popupContent1 += '<p>'+feature.properties[key_label]+'</p>';
+            popupContent1 += '<p style="text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white">'+feature.properties[key_label]+'</p>';
           }
         });
         var popup_new = new L.Popup({closeButton:false, closeOnClick:false, className: 'custom_label', autoPan:false});
