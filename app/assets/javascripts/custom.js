@@ -2972,6 +2972,8 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
 }
 
 function create_new_row_child_date(element_child){
+  console.log("Entra en SET_SCRIPT_ALL");
+
   var new_row1 = document.createElement('DIV');
   new_row1.className = "form-row";
   var new_celd = document.createElement('DIV');
@@ -2995,6 +2997,8 @@ function create_new_row_child_date(element_child){
 }
 
 function create_new_row_child(element_child, element_field_id, element_name, is_multiple, is_new){
+  console.log("Entra en CREATE_NEW_ROW_CHILD");
+
   //campos de los hijos
   children_fields = element_child.children_fields;
   if(children_fields_all[element_field_id]==undefined){children_fields_all[element_field_id]=new Object}
@@ -3814,6 +3818,7 @@ function update_all(){
 }
 
 function set_script(data_script,field_type_id,field_id,value,isnested,event, isparent,id_field_father){
+  console.log("Entra en SET_SCRIPT");
   // Script de campos padres
   if(isparent){
     filechange = true;
@@ -3834,6 +3839,7 @@ function set_script(data_script,field_type_id,field_id,value,isnested,event, isp
 }
 
 function set_script_all(){
+  console.log("Entra en SET_SCRIPT_ALL");
   //Ejecuta Script de campos padres
     father_fields.forEach(function(element) {
       if(element.data_script!=""){
@@ -3862,7 +3868,8 @@ function calculate_all(first_time, isparent, id_child_calculate , id_field_child
     if(!first_time){filechange = true;}
       father_fields.forEach(function(element) {
         if(element.calculated_field!="" && element.field_type_id!=11){
-          if((element.calculated_field=='{"provincia":""}' || element.calculated_field=='{"municipio":""}') && is_new_file){
+          if((element.calculated_field=='{"provincia":""}' || element.calculated_field=='{"municipio":""}' || element.calculated_field=='{"googleMaps":""}') && is_new_file){
+            console.log("entra acá en custom.js");
             if(Navarra.dashboards.config.type_geometry == "Polygon" || Navarra.dashboards.config.type_geometry == "LineString"){
               var geom = Navarra.geomaps.get_geom_to_calculate();
             } else{
