@@ -18,6 +18,14 @@ Navarra.layer_filters = function() {
             		'<input type="checkbox" id="switch_'+layer+'" class="custom-control-input layer_filter_switch" onchange="switch_filtered_layer()">'+
             		'<label id="switchlabel_'+layer+'" class="custom-control-label custom-role-colour" for="switch_'+layer+'">Interceptar a la Capa Activa</label>'+
             	'</div>'+
+
+							'<a class="dropdown-item" href="#" ">'+
+							'<div class="custom-control custom-checkbox" >'+
+	              '<input class="custom-control-input" onchange="Navarra.geomaps.show_labels_in_others_layers(true, event)" id="checkbox_etiquetas_'+layer+'" type="checkbox" name="radio_mapabase">'+
+	              '<label class="string optional control-label custom-control-label" for="checkbox_etiquetas_'+layer+'"> </label>'+
+              '</div>'+
+              '<label for=mapa_base1>Etiquetas</label></a>'+
+
             	'<div class="pt-2">'+
             		'<p class="m-0">Filtros</p>'+
             		'<div style="max-width:500px; white-space:normal" id="active_filter_container_'+layer+'"></div>'+

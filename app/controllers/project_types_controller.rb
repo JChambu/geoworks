@@ -13,6 +13,16 @@ class ProjectTypesController < ApplicationController
     render json: {"data": @project_name}
   end
 
+  def get_added_layer_id
+    name_added_layer = params[:layer_label_new]
+
+    id_added_layer = ProjectType.find_by(name_layer: name_added_layer).id
+    type_geometry_layer = ProjectType.find_by(name_layer: name_added_layer).type_geometry
+    label_field_added_layer = ProjectField.where(project_type_id: id_added_layer, heatmap_field: true).pluck(:key)
+
+    render json: {id_added_layer: id_added_layer, type_geometry_layer: type_geometry_layer, label_field_added_layer: label_field_added_layer}
+  end
+
   def project_type_layers
 
     # Busca todas las capas
@@ -1197,7 +1207,6 @@ class ProjectTypesController < ApplicationController
   end
 
   def filter_heatmap
-
     @data_conditions = params[:conditions]
     if !params[:heatmap_indicator].empty?
       @query_h = ProjectType.indicator_heatmap(params[:project_type_id], params[:heatmap_indicator], params[:size_box], params[:type_box], @data_conditions, current_user.id ,params[:from_date], params[:to_date], params[:from_date_subform],params[:to_date_subform] , params[:filtered_form_ids] , params[:filter_children] , params[:filter_user_children] ,params[:filters_layers], params[:intersect_width_layers], params[:active_layers], params[:timeslider_layers])
