@@ -13,7 +13,7 @@ class ProjectTypesController < ApplicationController
     render json: {"data": @project_name}
   end
 
-  def get_added_layer_id
+  def get_added_layer_data
     name_added_layer = params[:layer_label_new]
 
     id_added_layer = ProjectType.find_by(name_layer: name_added_layer).id
