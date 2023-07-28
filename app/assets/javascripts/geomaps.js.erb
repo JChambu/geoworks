@@ -1679,7 +1679,7 @@ function show_labels(setbbox){
         label_fields.each(function(){
           key_label = $(this).val();
           if(feature.properties[key_label]!=null){
-            popupContent1 += '<p>'+feature.properties[key_label]+'</p>';
+            popupContent1 += '<p style="text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white">'+feature.properties[key_label]+'</p>';
           }
         });
         var popup_new = new L.Popup({closeButton:false, closeOnClick:false, className: 'custom_label', autoPan:false});
@@ -1694,6 +1694,112 @@ function show_labels(setbbox){
   });
   }
 }
+
+
+function show_labels_in_others_layers(setbbox, event){
+
+  label_id = event.target.id
+  startIndex = label_id.indexOf("checkbox_etiquetas");
+  layer_label_new = label_id.slice(startIndex + "checkbox_etiquetas".length);
+
+  if (layer_label_new.startsWith("_")) {
+    layer_label_new = layer_label_new.slice(1);
+  };
+
+  var new_label_class = document.querySelectorAll('.label_'+layer_label_new+'');
+  if (new_label_class.length > 0) {
+    new_label_class.forEach(function (element) {
+      element.remove();
+    });
+  };
+
+  $.ajax({
+    type: 'GET',
+    url: '/project_types/get_added_layer_data',
+    datatype: 'json',
+    data: {
+      layer_label_new: layer_label_new
+    },
+    success: function(data) {
+      id_added_layer = data.id_added_layer
+      type_geometry_layer = data.type_geometry_layer
+      label_field_added_layer = data.label_field_added_layer
+
+      if($('#checkbox_etiquetas_'+layer_label_new+'').prop('checked')==true){
+        if(setbbox){
+          var cql_filter_new = getCQLFilter(true);
+          cql_filter_new = cql_filter_new.replace(/project_type_id = \d+/, "project_type_id = " + id_added_layer);
+        }else{
+          var cql_filter = getCQLFilter(false);
+        }
+
+        $(".fakeLoader").css("display", "block");
+        current_tenement = Navarra.dashboards.config.current_tenement;
+        var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
+        var defaultParameters = {
+          authkey: Navarra.dashboards.config.geo_key,
+          service: 'WFS',
+          version: '1.0.0',
+          crs: L.CRS.EPSG4326,
+          request: 'GetFeature',
+          typeName: Navarra.dashboards.config.current_tenement+':'+layer_label_new,
+          outputFormat: 'application/json',
+          CQL_FILTER: cql_filter_new
+        };
+        var parameters = L.Util.extend(defaultParameters);
+        var URL = owsrootUrl + L.Util.getParamString(parameters);
+        var label_fields = label_field_added_layer
+
+        $.ajax({
+          url: URL,
+          success: function (data) {
+            labels_layer = new L.LayerGroup();
+            var geojson = new L.geoJson(data, {
+              onEachFeature: function(feature, layer){
+                switch (type_geometry_layer) {
+                  case 'Point':
+                    var latlng_new_layer = layer._latlng;
+                  break;
+                  case 'Polygon':
+                    var latlongs_layer = layer._latlngs;
+                    var poligon_new = new L.Polygon(latlongs_layer);
+                    var center_layer = poligon_new.getBounds().getCenter();
+                    var latlng_new_layer = new L.LatLng(center_layer.lat,center_layer.lng)
+                  break;
+                  case 'LineString':
+                    var latlongs_layer = layer._latlngs;
+                    var poligon_new = new L.Polyline(latlongs_layer);
+                    var center_layer = poligon_new.getBounds().getCenter();
+                    var latlng_new_layer = new L.LatLng(center_layer.lat,center_layer.lng)
+                  break;
+                }
+                var popupContent2 = "";
+                label_fields.forEach(function(key_label){
+                  if(feature.properties[key_label] != null){
+                    popupContent2 += '<p style="text-shadow: -1px 0 #78edff, 0 1px #78edff, 1px 0 #78edff, 0 -1px #78edff">'+feature.properties[key_label]+'</p>';
+                  }
+                });
+                var popup_new_layer = new L.Popup({closeButton:false, closeOnClick:false, className: 'custom_label label_'+layer_label_new+'', autoPan:false});
+                popup_new_layer.setLatLng(latlng_new_layer);
+                popup_new_layer.setContent(popupContent2);
+                labels_layer.addLayer(popup_new_layer)
+              }
+            });
+            mymap.addLayer(labels_layer);
+            $(".fakeLoader").css("display", "none");
+          }
+        });
+      }
+      var layer_container = document.querySelectorAll('#projects_container');
+      if (layer_container.length > 0) {
+        layer_container.forEach(function (element) {
+          element.classList.add('d-none');
+        });
+      };
+    }//cierra success
+  });
+};//cierra aca
+
 
 function edit_geometry_in_map(event){
   event.stopPropagation();
@@ -2928,6 +3034,7 @@ function open_iot_monitoring(app_id_popup){
     close_all_popups: close_all_popups,
     get_zoomextent: get_zoomextent,
     show_labels:show_labels,
+    show_labels_in_others_layers:show_labels_in_others_layers,
     edit_geometry_in_map: edit_geometry_in_map,
     cancel_geometry: cancel_geometry,
     delete_markers: delete_markers,

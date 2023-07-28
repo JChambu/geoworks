@@ -38,6 +38,7 @@ Rails.application.routes.draw do
   get 'projects/popup' => 'projects#popup'
   post 'project_types/get_extent' => 'project_types#get_extent'
   get 'project_types/get_kpi_without_graph_ids' => 'project_types#get_kpi_without_graph_ids'
+  get 'project_types/get_added_layer_data' => 'project_types#get_added_layer_data' 
   post 'projects/create_form' => 'projects#create_form'
   patch 'projects/update_form' => 'projects#update_form'
   patch 'projects/update_geom_and_calculated_fields' => 'projects#update_geom_and_calculated_fields'
