@@ -461,6 +461,7 @@ function show_subfield(field_ids){
                 new_sub_column.appendChild(new_cel_subform);
                 new_td.appendChild(new_sub_column);
               <% end %>
+              
               // agrega fecha de creación
               var new_cel_subform = document.createElement('TD');
               new_cel_subform.style.border='none';
@@ -563,9 +564,9 @@ function delete_subform(column){
       success: function(response) {
         id_subform = response.subform_id
 
-        var elementsToHide = document.querySelectorAll('td[id_child="'+id_subform+'"]');
+        var subformsToHide = document.querySelectorAll('td[id_child="'+id_subform+'"]');
 
-        elementsToHide.forEach(function(element) {
+        subformsToHide.forEach(function(element) {
           element.classList.add('d-none');
         });
       },
