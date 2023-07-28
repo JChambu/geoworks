@@ -1776,7 +1776,7 @@ function show_labels_in_others_layers(setbbox, event){
                 var popupContent2 = "";
                 label_fields.forEach(function(key_label){
                   if(feature.properties[key_label] != null){
-                    popupContent2 += '<p style="text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white">'+feature.properties[key_label]+'</p>';
+                    popupContent2 += '<p style="text-shadow: -1px 0 #78edff, 0 1px #78edff, 1px 0 #78edff, 0 -1px #78edff">'+feature.properties[key_label]+'</p>';
                   }
                 });
                 var popup_new_layer = new L.Popup({closeButton:false, closeOnClick:false, className: 'custom_label label_'+layer_label_new+'', autoPan:false});
