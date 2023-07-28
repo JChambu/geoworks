@@ -179,7 +179,7 @@ class ProjectDataChildrenController < ApplicationController
             elsif (filter_parts[3]=='3' and filter_parts[2]!='null')
               text = "to_date(properties ->> '"+filter_parts[0]+"','DD/MM/YYYY') "+filter_parts[1]+" to_date('"+filter_parts[2]+"','DD/MM/YYYY') AND properties ->>'"+filter_parts[0]+"' IS NOT NULL"
             else
-              text = "properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+"'"+filter_parts[2]+"'"           
+              text = "properties ->> '"+filter_parts[0]+"' "+filter_parts[1]+"'"+filter_parts[2]+"'"
             end
             text = text.gsub("!='null'"," IS NOT NULL ")
             text = text.gsub("='null'"," IS NULL ")
@@ -349,6 +349,16 @@ class ProjectDataChildrenController < ApplicationController
   def download_errors
     @project_type = current_user.project_types.find(params[:project_type_id])
     send_file "public/import_data_children_for_#{@project_type.id}_errors.json", type: 'application/json', status: 202
+  end
+
+  def delete_subforms
+    subform_id = params[:subform_id]
+
+    subform_to_delete = ProjectDataChild.find(subform_id)
+    subform_to_delete.update(row_active: false)
+    subform_to_delete.save
+
+    render json: { subform_id: subform_id }
   end
 
   private

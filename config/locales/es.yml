@@ -8,6 +8,7 @@ es:
   import: 'Importar'
   share: 'Compartir'
   edit_subforms: 'Editar Hijos'
+  delete_subforms: 'Eliminar Hijos'
   edit_geom: 'Editar Geometría'
   edit_owner: 'Editar Propietario'
   edit_status: 'Editar Estado'

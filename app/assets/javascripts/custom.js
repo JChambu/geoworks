@@ -2974,10 +2974,14 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
 function create_new_row_child_date(element_child){
   var new_row1 = document.createElement('DIV');
   new_row1.className = "form-row";
+  var linediv = document.createElement('DIV');
+  linediv.className = "col-md-12";
+  linediv.innerHTML = "<hr style='background-color: #8c8c8c;'>"
+  new_row1.appendChild(linediv)
   var new_celd = document.createElement('DIV');
   new_celd.className = "col-md-5 ml-3";
   var new_p = document.createElement('H7');
-  new_p.innerHTML = "<span style='font-size:2em;position:absolute;margin-top:-5px;margin-left:-30px'>&#8594</span> Fecha:";
+  new_p.innerHTML = "Fecha:";
   new_p.style.margin = "0px";
   new_celd.appendChild(new_p);
   new_row1.appendChild(new_celd);
