@@ -165,7 +165,6 @@ Navarra.calculated_and_script_fields = function() {
       }
     } catch(e){
       set_error_message("Error en la configuración del script del campo ID:"+field_id);
-      console.log("Error "+e)
     }
   }
 
@@ -509,13 +508,10 @@ Navarra.calculated_and_script_fields = function() {
                 });
               }
             }else{
-              console.log("municipio else");
               $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom.latLng.lat+'&lon='+geom.latLng.lng, function(data,err) {
                 // JSON result in `data` variable
                 if(err=='success'){
-                  console.log("entra acá también");
                   $("#field_id_"+id_field).val(data.ubicacion.municipio.nombre);
-                  console.log($("#field_id_"+id_field));
                 }
               });
             }
@@ -523,33 +519,44 @@ Navarra.calculated_and_script_fields = function() {
 
           if(CalculateObj_keys[k]=="googleMaps"){
             if(edition_type=="geometry_edition"){
-              console.log("entra acá cuando EDITO una nueva geometría");
+              var new_lat_marker = (marker.getLatLng().lat).toFixed(6);
+              var new_long_marker = (marker.getLatLng().lng).toFixed(6);
 
-              console.log("calculated_field");
-              console.log(calculated_field);
-              console.log("edition_type");
-              console.log(edition_type);
-              console.log("field_key");
-              console.log(field_key);
-              console.log("geom");
-              console.log(geom);
+              new_gmaps_coordinates = "https://www.google.com/maps?q="+new_lat_marker+","+new_long_marker
 
+              var data_calculated = {
+                id: geom.id,
+                field_key: field_key,
+                value_calculated: new_gmaps_coordinates,
+                remove_location:true
+              }
+              Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
+              save_geometry_after_all_success_ajaxs();
 
             } else {
-              console.log("entra acá cuando CREO una nueva geometría");
-
               var lat_marker = (marker.getLatLng().lat).toFixed(6);
               var long_marker = (marker.getLatLng().lng).toFixed(6);
 
               gmaps_coordinates = "https://www.google.com/maps?q="+lat_marker+","+long_marker
-              
-              $("#field_id_"+id_field).val(gmaps_coordinates)
-              console.log($("#field_id_"+id_field));
+              $(texto_campo_id).val(gmaps_coordinates)
             }
           };
 
           if(CalculateObj_keys[k]=="LatLong"){
             if(edition_type=="geometry_edition"){
+              var new_lat = (marker.getLatLng().lat).toFixed(6);
+              var new_long = (marker.getLatLng().lng).toFixed(6);
+
+              new_latlong = new_lat+","+new_long
+
+              var data_calculated = {
+                id: geom.id,
+                field_key: field_key,
+                value_calculated: new_latlong,
+                remove_location:true
+              }
+              Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
+              save_geometry_after_all_success_ajaxs();
 
             } else {
               var lat = (marker.getLatLng().lat).toFixed(6);
