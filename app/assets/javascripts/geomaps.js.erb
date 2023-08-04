@@ -6,6 +6,8 @@ var xhr_field_type = null;
 var project_type_layers = [];
 var wmsLayer;
 var div_popup_icon;
+var number_point_value;
+var multipoints_coordinates;
 
 Navarra.namespace("geomaps");
 var first_layer=false;
@@ -1422,6 +1424,91 @@ function getCQLFilter_layer(dat){
     }
   }; //Cierra función show_ndvi
 
+  function modal_points_number(){
+    var modal = document.getElementById('pointsModal');
+    var numberInput = document.getElementById('numberInput');
+    modal.style.display = 'block';
+
+    $('#close_modal_points').click(function(){
+      modal.style.display = 'none';
+    });
+  };
+
+  function modal_save_multipoints(){
+    var modal = document.getElementById('savePointsModal');
+    modal.style.display = 'block';
+
+    $('#close_modal_multipoints').click(function(){
+      modal.style.display = 'none';
+    });
+  }
+
+  function show_random_points(app_id_popup){
+    var pathElements = document.querySelectorAll('.leaflet-interactive');
+    if (pathElements.length > 0) {
+      pathElements.forEach(function (element) {
+        element.remove();
+      });
+    };
+
+    $.ajax({
+      url: '/projects/get_random_points',
+      method: 'POST',
+      datatype: 'json',
+      data: {
+        app_id_popup: app_id_popup,
+        number_point_value: number_point_value
+      },
+      success: function(response) {
+        geoJsonString = {
+          "type": "MultiPoint",
+          "coordinates": response.geojson_coordinates
+        };
+
+        multipoints_coordinates = response.geojson_coordinates
+        var geoJsonData = JSON.parse(JSON.stringify(geoJsonString));
+
+        var pointsLayer = L.geoJSON(geoJsonData, {
+          pointToLayer: function (feature, latlng) {
+            return mpcircleMarker = L.circleMarker(latlng, {
+              radius: 6,
+              weight: 1,
+              opacity: 1,
+              fillOpacity: 0.6,
+              className: app_id_popup+'-multipoints'
+            });
+          }
+        }).addTo(mymap);
+      },
+    });
+    mymap.closePopup();
+  }
+
+  function save_multipoints(app_id_popup){
+    $.ajax({
+      url: '/projects/save_randoms_multipoints',
+      method: 'POST',
+      datatype: 'json',
+      data: {
+        number_point_value: number_point_value,
+        multipoints_coordinates: multipoints_coordinates,
+        project_selected_value: project_selected_value
+      },
+      success: function(response) {
+
+        $('#text_toast').html(response['status']);
+        $('#toast').toast('show');
+
+        mymap.closePopup();
+
+        var pathElements = document.querySelectorAll('.leaflet-interactive');
+        pathElements.forEach(function (element) {
+          element.remove();
+        });
+      },
+    });
+  };
+
   function popup() {
     MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
@@ -1492,6 +1579,27 @@ function getCQLFilter_layer(dat){
                     div_popup_icon.style.textAlign = 'right';
                     div_popup_icon.setAttribute('id', 'icons_popup');
 
+                    element = document.querySelector('[class^="'+app_id_popup+'"]');
+                    if (element != null) {
+                      point_number = element.className.baseVal.split('-')[0]
+
+                      if (app_id_popup == parseInt(point_number)) {
+                        var new_p = document.createElement('I');
+                        new_p.setAttribute("onclick",'Navarra.geomaps.modal_save_multipoints('+app_id_popup+')');
+                        new_p.className="fas fa-check info_icon";
+                        new_p.style.textAlign = 'left';
+                        div_popup_icon.appendChild(new_p);
+                      }
+                    };
+
+                    type_geometry = Navarra.dashboards.config.type_geometry
+                    if (type_geometry == 'Polygon' && current_layer_name == project_name) {
+                      var new_p = document.createElement('I');
+                      new_p.setAttribute("onclick",'Navarra.geomaps.modal_points_number('+app_id_popup+')');
+                      new_p.className="fas fa-circle info_icon";
+                      div_popup_icon.appendChild(new_p);
+                    }
+
                     var new_p = document.createElement('I');
                     new_p.setAttribute("onclick",'Navarra.photos.open_photos('+app_id_popup+',false)');
                     new_p.className="fas fa-image info_icon";
@@ -1502,7 +1610,6 @@ function getCQLFilter_layer(dat){
                     new_p.className="fas fa-info-circle info_icon";
                     div_popup_icon.appendChild(new_p);
 
-                    type_geometry = Navarra.dashboards.config.type_geometry
                     if (type_geometry == 'Polygon' && current_layer_name == project_name) {
                       if (mymap.hasLayer(wmsLayer[app_id_popup]) === false){
                         var new_p = document.createElement('I');
@@ -3055,6 +3162,10 @@ function open_iot_monitoring(app_id_popup){
     intersect_layers: intersect_layers,
     color_by_attribute_function: color_by_attribute_function,
     show_ndvi: show_ndvi,
+    show_random_points: show_random_points,
+    save_multipoints: save_multipoints,
+    modal_save_multipoints: modal_save_multipoints,
+    modal_points_number: modal_points_number,
     open_iot_monitoring: open_iot_monitoring,
     cancel_color_attr: cancel_color_attr
   }

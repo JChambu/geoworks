@@ -81,6 +81,81 @@ class ProjectsController < ApplicationController
     render json: { sentinel_link: sentinel_link }
   end
 
+  def get_random_points
+    app_id_polygon = params[:app_id_popup].to_i
+    points_numbers = params[:number_point_value].to_i
+
+    coordinates = Project.select("ST_AsText(ST_GeneratePoints(the_geom, #{points_numbers}))").find(app_id_polygon).st_astext
+
+    clean_coordinates = coordinates.scan(/-?\d+\.\d+/)
+    geojson_coordinates = []
+    clean_coordinates.each_slice(2) do |x, y|
+      geojson_coordinates << [x.to_f, y.to_f]
+    end
+
+    render json: { geojson_coordinates: geojson_coordinates }
+  end
+
+  def save_randoms_multipoints
+    multipoints_coordinates = params[:multipoints_coordinates].permit!.to_h
+    project_to_save = params[:project_selected_value]
+    number_points_save = params[:number_point_value]
+    save_in_project = ProjectType.where(name: project_to_save).pluck(:id)
+    properties_json = {"app_id"=>0, "app_usuario"=>current_user.id, "app_estado"=>0}
+
+    count_sucess=0
+    count_errors=0
+    created_ids=[]
+
+    multipoints_coordinates.map do |key, value|
+      project_type_id = save_in_project[0].to_s
+      project_status_id = ProjectStatus.where(project_type_id: project_type_id)
+                          .order("CASE WHEN status_type = 'Predeterminado' THEN 0 ELSE 1 END, priority")
+                          .pluck(:id)
+                          .first
+      properties = JSON(properties_json)
+      parse_properties = JSON.parse(properties)
+      new_geom = "POINT(#{value[0]} #{value[1]})"
+
+      @project_type = ProjectType.find(project_type_id)
+      @project = Project.new()
+
+      datetime = Time.zone.now
+
+      # Carga los valores
+      @project['properties'] = parse_properties
+      @project['project_type_id'] = project_type_id
+      @project['user_id'] = current_user.id
+      @project['the_geom'] = new_geom
+      @project['project_status_id'] = project_status_id
+      @project['gwm_created_at'] = datetime
+      @project['gwm_updated_at'] = datetime
+
+      if @project.save
+        @project['properties'].merge!('app_id': @project.id)
+        @project['properties'].merge!('app_estado': project_status_id.to_i)
+        @project.save!
+
+        count_sucess +=1
+        created_ids.push(@project.id)
+      else
+        count_errors +=1
+      end
+
+    end
+
+    @project_type.destroy_view
+    @project_type.create_view
+    @project.update_inheritable_statuses
+
+    if count_errors > 0
+      render json: {status: 'Nuevos registros:' + count_sucess.to_s+'. Errores:'+count_errors.to_s, id: created_ids}
+    else
+      render json: {status: 'Nuevos registros:' + count_sucess.to_s, id: created_ids}
+    end
+
+  end
+
   # Elimina un registro (row_active = false)
   def destroy_form
     app_ids = params[:app_ids]
