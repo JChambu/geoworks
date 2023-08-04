@@ -1610,7 +1610,6 @@ function getCQLFilter_layer(dat){
                     new_p.className="fas fa-info-circle info_icon";
                     div_popup_icon.appendChild(new_p);
 
-                    type_geometry = Navarra.dashboards.config.type_geometry
                     if (type_geometry == 'Polygon' && current_layer_name == project_name) {
                       if (mymap.hasLayer(wmsLayer[app_id_popup]) === false){
                         var new_p = document.createElement('I');
