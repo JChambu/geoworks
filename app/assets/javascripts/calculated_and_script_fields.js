@@ -188,195 +188,194 @@ Navarra.calculated_and_script_fields = function() {
       if(edition_type=="data_edition" || edition_type== "new_file"){
         for(k=0;k<CalculateObj_keys.length;k++){
           if(CalculateObj_keys[k]=="calculation"){
-              var calculoStringArray = CalculateObj.calculation.split("#");
-              var calculoStringReplace="";
-              for(ll=0;ll<calculoStringArray.length;ll++){
-                  if(ll % 2 == 0){
-                      calculoStringReplace+=calculoStringArray[ll];
-                  } else{
-                      if(isparent){
-                          var val = $('#field_id_'+calculoStringArray[ll]).val();
-                          if(is_multiple){
-                              $('#field_id_'+calculoStringArray[ll]).addClass('readonly_field');
-                          }
-                      } else{
-                          var texto_campo_id_calculation = "#fieldchildid\\|"+calculoStringArray[ll]+"\\|"+id_field.split('|')[1];
-                          var val = $(texto_campo_id_calculation).val();
-                          if(is_multiple){
-                              $(texto_campo_id_calculation).addClass('readonly_field');
-                          }
-                      }
-                      if(val==""){val=0}
-                      calculoStringReplace+=val;
+            var calculoStringArray = CalculateObj.calculation.split("#");
+            var calculoStringReplace="";
+            for(ll=0;ll<calculoStringArray.length;ll++){
+              if(ll % 2 == 0){
+                calculoStringReplace+=calculoStringArray[ll];
+              } else{
+                if(isparent){
+                  var val = $('#field_id_'+calculoStringArray[ll]).val();
+                  if(is_multiple){
+                    $('#field_id_'+calculoStringArray[ll]).addClass('readonly_field');
                   }
+                } else{
+                  var texto_campo_id_calculation = "#fieldchildid\\|"+calculoStringArray[ll]+"\\|"+id_field.split('|')[1];
+                  var val = $(texto_campo_id_calculation).val();
+                  if(is_multiple){
+                    $(texto_campo_id_calculation).addClass('readonly_field');
+                  }
+                }
+                if(val==""){val=0}
+                calculoStringReplace+=val;
               }
-              if(!is_multiple){
-                  var resultado = eval(calculoStringReplace);
-                  //redondea a dos decimales
-                  resultado = Math.round(resultado * 100) / 100;
-                  $(texto_campo_id).val(resultado);
-              }
+            }
+            if(!is_multiple){
+              var resultado = eval(calculoStringReplace);
+              //redondea a dos decimales
+              resultado = Math.round(resultado * 100) / 100;
+              $(texto_campo_id).val(resultado);
+            }
           }
           if(CalculateObj_keys[k]=="semanaDesde"){
-              if(!is_multiple){
-                  if(isparent){
-                      var val_from = $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).val();
-                  } else{
-                      var texto_campo_id_semanadesde = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
-                      var val_from = $(texto_campo_id_semanadesde).val();
-                  }
-                  if(val_from!=""){
-                      var dateObject = changeformatDate(val_from, 'day');
-                      number_of_week = getWeekNumber(dateObject)[1]
-                      $(texto_campo_id).val(number_of_week);
-                  }
+            if(!is_multiple){
+              if(isparent){
+                var val_from = $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).val();
               } else{
-                  if(isparent){
-                      $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).addClass('readonly_field');
-                  } else{
-                      var texto_campo_id_semanadesde = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
-                      var val_from = $(texto_campo_id_semanadesde).addClass('readonly_field');
-                  }
+                var texto_campo_id_semanadesde = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
+                var val_from = $(texto_campo_id_semanadesde).val();
               }
+              if(val_from!=""){
+                var dateObject = changeformatDate(val_from, 'day');
+                number_of_week = getWeekNumber(dateObject)[1]
+                $(texto_campo_id).val(number_of_week);
+              }
+            } else {
+              if(isparent){
+                $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).addClass('readonly_field');
+              } else{
+                var texto_campo_id_semanadesde = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
+                var val_from = $(texto_campo_id_semanadesde).addClass('readonly_field');
+              }
+            }
           }
           if(CalculateObj_keys[k]=="temporada"){
-              if(!is_multiple){
-                  if(isparent){
-                      var texto_campo_id_new = "#field_id_"+id_field;
-                      var val_from = $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).val();
-                  } else{
-                      var texto_campo_id_new = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
-                      var val_from = $(texto_campo_id_new).val();
-                  }
-                  if(val_from!=""){
-                      var mm = val_from.split("/")[1];
-                      var year = val_from.split("/")[2];
-                      if(mm>=8){
-                          var next = parseInt(year) + 1;
-                          var temporada = year + "/" + next;
-                      } else{
-                          var temporada = (year - 1) + "/" + year;
-                      }
-                      $(texto_campo_id_new).val(temporada);
-                  }
-              }else {
-                  if(isparent){
-                      $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).addClass('readonly_field');
-                  } else{
-                      var texto_campo_id_semanadesde = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
-                      var val_from = $(texto_campo_id_semanadesde).addClass('readonly_field');
-                  }
+            if(!is_multiple){
+              if(isparent){
+                var texto_campo_id_new = "#field_id_"+id_field;
+                var val_from = $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).val();
+              } else {
+                var texto_campo_id_new = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
+                var val_from = $(texto_campo_id_new).val();
               }
+              if(val_from!=""){
+                var mm = val_from.split("/")[1];
+                var year = val_from.split("/")[2];
+                if(mm>=8){
+                  var next = parseInt(year) + 1;
+                  var temporada = year + "/" + next;
+                } else {
+                  var temporada = (year - 1) + "/" + year;
+                }
+                $(texto_campo_id_new).val(temporada);
+              }
+            } else {
+              if(isparent){
+                $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).addClass('readonly_field');
+              } else {
+                var texto_campo_id_semanadesde = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
+                var val_from = $(texto_campo_id_semanadesde).addClass('readonly_field');
+              }
+            }
           }
           if(CalculateObj_keys[k]=="semana"){
-              // se refiere a la semana de Iscamen que comienza a medio año
-              if(!is_multiple){
-                  if(isparent){
-                      var texto_campo_id_new = "#field_id_"+id_field;
-                      var val_from = $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).val();
-                  } else{
-                      var texto_campo_id_new = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
-                      var val_from = $(texto_campo_id_new).val();
-                  }
-                  if(val_from!=""){
-                      var dateObject = changeformatDate(val_from, 'day');
-                      actual_week = getWeekNumber(dateObject)[1];
-                      var ago_day = '01/08/'+val_from.split('/')[2]
-                      var dateObject = changeformatDate(ago_day, 'day');
-                      var ago_week = getWeekNumber(dateObject)[1];
-                      var ago_day_lastyear = '01/08/'+(val_from.split('/')[2]-1);
-                      var dateObject = changeformatDate(ago_day_lastyear, 'day');
-                      var ago_week_lastyear = getWeekNumber(dateObject)[1];
-                      //última semana del año anterior
-                      var last_week_lastyear = 0;
-                      for(lw=25;lw<31;lw++){
-                          var last_day_lastyear = lw+'/12/'+(val_from.split('/')[2]-1);
-                          var dateObject = changeformatDate(last_day_lastyear, 'day');
-                          var last_week_lastyear_test = getWeekNumber(dateObject)[1];
-                          if(last_week_lastyear_test>last_week_lastyear){last_week_lastyear=last_week_lastyear_test}
-                      }
-                      if(actual_week>=ago_week){
-                          var weekCalculated = actual_week - ago_week + 1;
-                      } else{
-                          var weekCalculated = parseInt(actual_week) + parseInt(last_week_lastyear - ago_week_lastyear) + 1;
-                      }
-                      $(texto_campo_id).val(weekCalculated);
-                  }
-              }else {
-                  if(isparent){
-                      $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).addClass('readonly_field');
-                  } else{
-                      var texto_campo_id_semanadesde = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
-                      var val_from = $(texto_campo_id_semanadesde).addClass('readonly_field');
-                  }
+            // se refiere a la semana de Iscamen que comienza a medio año
+            if(!is_multiple){
+              if(isparent){
+                var texto_campo_id_new = "#field_id_"+id_field;
+                var val_from = $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).val();
+              } else {
+                var texto_campo_id_new = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
+                var val_from = $(texto_campo_id_new).val();
               }
-
+              if(val_from!=""){
+                var dateObject = changeformatDate(val_from, 'day');
+                actual_week = getWeekNumber(dateObject)[1];
+                var ago_day = '01/08/'+val_from.split('/')[2]
+                var dateObject = changeformatDate(ago_day, 'day');
+                var ago_week = getWeekNumber(dateObject)[1];
+                var ago_day_lastyear = '01/08/'+(val_from.split('/')[2]-1);
+                var dateObject = changeformatDate(ago_day_lastyear, 'day');
+                var ago_week_lastyear = getWeekNumber(dateObject)[1];
+                //última semana del año anterior
+                var last_week_lastyear = 0;
+                for(lw=25;lw<31;lw++){
+                  var last_day_lastyear = lw+'/12/'+(val_from.split('/')[2]-1);
+                  var dateObject = changeformatDate(last_day_lastyear, 'day');
+                  var last_week_lastyear_test = getWeekNumber(dateObject)[1];
+                  if(last_week_lastyear_test>last_week_lastyear){last_week_lastyear=last_week_lastyear_test}
+                }
+                if(actual_week>=ago_week){
+                  var weekCalculated = actual_week - ago_week + 1;
+                } else {
+                  var weekCalculated = parseInt(actual_week) + parseInt(last_week_lastyear - ago_week_lastyear) + 1;
+                }
+                $(texto_campo_id).val(weekCalculated);
+              }
+            } else {
+              if(isparent){
+                $('#field_id_'+CalculateObj[CalculateObj_keys[k]]).addClass('readonly_field');
+              } else{
+                var texto_campo_id_semanadesde = "#fieldchildid\\|"+CalculateObj[CalculateObj_keys[k]]+"\\|"+id_field.split('|')[1];
+                var val_from = $(texto_campo_id_semanadesde).addClass('readonly_field');
+              }
+            }
           }
           if(CalculateObj_keys[k]=="localidad"){
-                var id_Provincia = CalculateObj.localidad.split(',')[0];
-                var id_Departamento = CalculateObj.localidad.split(',')[1];
-                if(!is_multiple){
-                    //Solución temporal para obtener las localidades cuando es registro nuevo
-                    //necesita que los datos de provincia y departamento hayan completado los ajax con success
-                    if(edition_type=="new_file"){
-                        var timeout_localidad = 3000;
-                    } else{
-                        var timeout_localidad = 1;
-                    }
-                    setTimeout(function(){
-                        if(isparent){
-                            var provincia = $("#field_id_"+id_Provincia).val();
-                            var departamento = $("#field_id_"+id_Departamento).val();
-                        } else{
-                            var texto_campo_id_provincia = "#fieldchildid\\|"+id_Provincia+"\\|"+id_field.split('|')[1];
-                            var texto_campo_id_departamento = "#fieldchildid\\|"+id_Departamento+"\\|"+id_field.split('|')[1];
-                            var provincia = $(texto_campo_id_provincia).val();
-                            var departamento = $(texto_campo_id_departamento).val();
-                        }
-                        $.getJSON('https://apis.datos.gob.ar/georef/api/localidades?provincia=%22'+provincia+'%22&departamento=%22'+departamento+'%22&orden=nombre&aplanar=true&campos=estandar&max=5000', function(data,err) {
-                        // JSON result in `data` variable
-                        if(err=='success'){
-                            $(texto_campo_id).empty();
-                            var found_option=false;
-                            data.localidades.forEach(function(element) {
-                                var new_option = document.createElement('OPTION');
-                                  new_option.text=camelCase(element.nombre);
-                                  new_option.value=camelCase(element.nombre);
-                                  if(valueObj==null && value!=null){
-                                    value_selected=value[0];
-                                    }else{
-                                        value_selected=valueObj;
-                                    }
-                                    if(value_selected!=null){
-                                        if(value_selected.toUpperCase()==element.nombre.toUpperCase()){
-                                            found_option=true;
-                                            new_option.selected = true;
-                                        }
-                                    }
-                                document.getElementById(texto_campo_id_js).appendChild(new_option);
-                            });
-                            if(!found_option){document.getElementById(texto_campo_id_js).selectedIndex = -1;}
-                            $(texto_campo_id).multiselect('rebuild');
-                            if(document.getElementById(texto_campo_id_js).classList.contains('info_input_disabled')){
-                                $(texto_campo_id).multiselect('disable');
-                            }
-                        } else{
-                            set_error_message("Error en la Api de Localizaciones");
-                        }
-                    });
-                    }, timeout_localidad);
-                } else {
-                    if(isparent){
-                        $("#field_id_"+id_Provincia).addClass('readonly_field');
-                        $("#field_id_"+id_Departamento).addClass('readonly_field');
-                    } else{
-                        var texto_campo_id_provincia = "#fieldchildid\\|"+id_Provincia+"\\|"+id_field.split('|')[1];
-                        var texto_campo_id_departamento = "#fieldchildid\\|"+id_Departamento+"\\|"+id_field.split('|')[1];
-                        $(texto_campo_id_provincia).addClass('readonly_field');
-                        $(texto_campo_id_departamento).addClass('readonly_field');
-                    }
+            var id_Provincia = CalculateObj.localidad.split(',')[0];
+            var id_Departamento = CalculateObj.localidad.split(',')[1];
+            if(!is_multiple){
+              //Solución temporal para obtener las localidades cuando es registro nuevo
+              //necesita que los datos de provincia y departamento hayan completado los ajax con success
+              if(edition_type=="new_file"){
+                var timeout_localidad = 3000;
+              } else{
+                var timeout_localidad = 1;
+              }
+              setTimeout(function(){
+                if(isparent){
+                    var provincia = $("#field_id_"+id_Provincia).val();
+                    var departamento = $("#field_id_"+id_Departamento).val();
+                } else{
+                    var texto_campo_id_provincia = "#fieldchildid\\|"+id_Provincia+"\\|"+id_field.split('|')[1];
+                    var texto_campo_id_departamento = "#fieldchildid\\|"+id_Departamento+"\\|"+id_field.split('|')[1];
+                    var provincia = $(texto_campo_id_provincia).val();
+                    var departamento = $(texto_campo_id_departamento).val();
                 }
+                $.getJSON('https://apis.datos.gob.ar/georef/api/localidades?provincia=%22'+provincia+'%22&departamento=%22'+departamento+'%22&orden=nombre&aplanar=true&campos=estandar&max=5000', function(data,err) {
+                  // JSON result in `data` variable
+                  if(err=='success'){
+                    $(texto_campo_id).empty();
+                    var found_option=false;
+                    data.localidades.forEach(function(element) {
+                      var new_option = document.createElement('OPTION');
+                      new_option.text=camelCase(element.nombre);
+                      new_option.value=camelCase(element.nombre);
+                      if(valueObj==null && value!=null){
+                        value_selected=value[0];
+                      } else {
+                        value_selected=valueObj;
+                      }
+                      if(value_selected!=null){
+                        if(value_selected.toUpperCase()==element.nombre.toUpperCase()){
+                          found_option=true;
+                          new_option.selected = true;
+                        }
+                      }
+                      document.getElementById(texto_campo_id_js).appendChild(new_option);
+                    });
+                    if(!found_option){document.getElementById(texto_campo_id_js).selectedIndex = -1;}
+                    $(texto_campo_id).multiselect('rebuild');
+                    if(document.getElementById(texto_campo_id_js).classList.contains('info_input_disabled')){
+                        $(texto_campo_id).multiselect('disable');
+                    }
+                  } else {
+                    set_error_message("Error en la Api de Localizaciones");
+                  }
+                });
+              }, timeout_localidad);
+            } else {
+              if(isparent){
+                $("#field_id_"+id_Provincia).addClass('readonly_field');
+                $("#field_id_"+id_Departamento).addClass('readonly_field');
+              } else{
+                var texto_campo_id_provincia = "#fieldchildid\\|"+id_Provincia+"\\|"+id_field.split('|')[1];
+                var texto_campo_id_departamento = "#fieldchildid\\|"+id_Departamento+"\\|"+id_field.split('|')[1];
+                $(texto_campo_id_provincia).addClass('readonly_field');
+                $(texto_campo_id_departamento).addClass('readonly_field');
+              }
             }
+          }
         }
       };
 
@@ -400,14 +399,14 @@ Navarra.calculated_and_script_fields = function() {
           if(CalculateObj_keys[k]=="longitud"){
             if(edition_type=="geometry_edition"){
               if($('#checkbox_split_line').is(":checked")){
-                  long_calculated = Navarra.geomaps.get_length_split();
+                long_calculated = Navarra.geomaps.get_length_split();
               } else {
-                  long_calculated = Math.round(Navarra.geomaps.get_length()*1000*100)/100;
+                long_calculated = Math.round(Navarra.geomaps.get_length()*1000*100)/100;
               }
               var data_calculated = {
-                  id: geom.id,
-                  field_key: field_key,
-                  value_calculated: long_calculated
+                id: geom.id,
+                field_key: field_key,
+                value_calculated: long_calculated
               }
               Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
               save_geometry_after_all_success_ajaxs();
@@ -430,13 +429,13 @@ Navarra.calculated_and_script_fields = function() {
                   let promise = await Promise.all(array_provincias);
                   let result = [];
                   promise.forEach(p => {
-                      result.push(p.ubicacion.provincia.nombre);
+                    result.push(p.ubicacion.provincia.nombre);
                   })
                   var data_calculated = {
-                      id: geom.id,
-                      field_key: field_key,
-                      value_calculated: result,
-                      remove_location:true
+                    id: geom.id,
+                    field_key: field_key,
+                    value_calculated: result,
+                    remove_location:true
                   }
                   Navarra.dashboards.config.field_geometric_calculated.push(data_calculated);
                   save_geometry_after_all_success_ajaxs();
@@ -480,7 +479,7 @@ Navarra.calculated_and_script_fields = function() {
                   let promise = await Promise.all(array_provincias);
                   let result = [];
                   promise.forEach(p => {
-                      result.push(p.ubicacion.municipio.nombre);
+                    result.push(p.ubicacion.municipio.nombre);
                   })
                   var data_calculated = {
                     id: geom.id,
@@ -507,7 +506,7 @@ Navarra.calculated_and_script_fields = function() {
                   }
                 });
               }
-            }else{
+            } else {
               $.getJSON('https://apis.datos.gob.ar/georef/api/ubicacion?lat='+geom.latLng.lat+'&lon='+geom.latLng.lng, function(data,err) {
                 // JSON result in `data` variable
                 if(err=='success'){
@@ -516,7 +515,6 @@ Navarra.calculated_and_script_fields = function() {
               });
             }
           }
-
           if(CalculateObj_keys[k]=="googleMaps"){
             if(edition_type=="geometry_edition"){
               var new_lat_marker = (marker.getLatLng().lat).toFixed(6);
@@ -541,7 +539,6 @@ Navarra.calculated_and_script_fields = function() {
               $(texto_campo_id).val(gmaps_coordinates)
             }
           };
-
           if(CalculateObj_keys[k]=="LatLong"){
             if(edition_type=="geometry_edition"){
               var new_lat = (marker.getLatLng().lat).toFixed(6);
@@ -566,7 +563,6 @@ Navarra.calculated_and_script_fields = function() {
               $(texto_campo_id).val(latlong)
             }
           }
-
         }
       };
 
@@ -574,77 +570,73 @@ Navarra.calculated_and_script_fields = function() {
       if(edition_type== "new_file"){
         for(k=0;k<CalculateObj_keys.length;k++){
           if(CalculateObj_keys[k]=="sessionVariable"){
-              // eliminado por utilizarse app_usuario
+            // eliminado por utilizarse app_usuario
           }
           if(CalculateObj_keys[k]=="time"){
-              var today=new Date();
-              var dd = String(today. getDate()). padStart(2, '0');
-              var mm = String(today. getMonth() + 1). padStart(2, '0');
-              var yyyy = today. getFullYear();
-              var hh = today.getHours();
-              var min = today.getMinutes();
-              today_time = dd + '/' + mm + '/' + yyyy+' '+hh+':'+min;
-              $(texto_campo_id).val(today_time);
+            var today=new Date();
+            var dd = String(today. getDate()). padStart(2, '0');
+            var mm = String(today. getMonth() + 1). padStart(2, '0');
+            var yyyy = today. getFullYear();
+            var hh = today.getHours();
+            var min = today.getMinutes();
+            today_time = dd + '/' + mm + '/' + yyyy+' '+hh+':'+min;
+            $(texto_campo_id).val(today_time);
           }
           if(CalculateObj_keys[k]=="ID"){
-              var today=new Date();
-              var dd = String(today. getDate()). padStart(2, '0');
-              var mm = String(today. getMonth() + 1). padStart(2, '0');
-              var yyyy = today. getFullYear();
-              var hh = String(today. getHours()). padStart(2, '0');
-              var min = String(today. getMinutes()). padStart(2, '0');
-              var ss = String(today. getSeconds()). padStart(2, '0');
+            var today=new Date();
+            var dd = String(today. getDate()). padStart(2, '0');
+            var mm = String(today. getMonth() + 1). padStart(2, '0');
+            var yyyy = today. getFullYear();
+            var hh = String(today. getHours()). padStart(2, '0');
+            var min = String(today. getMinutes()). padStart(2, '0');
+            var ss = String(today. getSeconds()). padStart(2, '0');
 
-              today_id = String(yyyy).substr(2)+mm+dd+ '.' + hh+min+ss;
-              data = {
-                  current_tenement: Navarra.dashboards.config.current_tenement,
+            today_id = String(yyyy).substr(2)+mm+dd+ '.' + hh+min+ss;
+            data = {
+              current_tenement: Navarra.dashboards.config.current_tenement,
+            }
+            $.ajax({
+              type: 'GET',
+              url: '/users/get_user_id_and_customer_id',
+              datatype: 'JSON',
+              data: data,
+              success: function(data) {
+              var id_unique = data.customer_id + "."+data.user_id+"-"+today_id
+              $(texto_campo_id).val(id_unique);
               }
-              $.ajax({
-                  type: 'GET',
-                  url: '/users/get_user_id_and_customer_id',
-                  datatype: 'JSON',
-                  data: data,
-                  success: function(data) {
-                  var id_unique = data.customer_id + "."+data.user_id+"-"+today_id
-                  $(texto_campo_id).val(id_unique);
-                  }
-              });
-
+            });
           }
           if(CalculateObj_keys[k]=="semanaTomate"){
-              number_of_week = getWeekNumber(new Date())[1]
-              $(texto_campo_id).val(number_of_week);
+            number_of_week = getWeekNumber(new Date())[1]
+            $(texto_campo_id).val(number_of_week);
           }
           //Iscamen
           if(CalculateObj_keys[k]=="codigo_fenologia"){
-              // es campo para hijo. Se desarrollará a continuación
+            // es campo para hijo. Se desarrollará a continuación
           }
-
           if(CalculateObj_keys[k]=="datos_padre"){
-                try{
-                    var id_field_father = CalculateObj.datos_padre.field_id;
-                    var value_father = $('#field_id_'+id_field_father).val();
-                    $(texto_campo_id).val(value_father);
-                    if($(texto_campo_id).hasClass('multiselect_field')){
-                        $(texto_campo_id).multiselect('rebuild');
-                    }
+            try{
+              var id_field_father = CalculateObj.datos_padre.field_id;
+              var value_father = $('#field_id_'+id_field_father).val();
+              $(texto_campo_id).val(value_father);
+              if($(texto_campo_id).hasClass('multiselect_field')){
+                $(texto_campo_id).multiselect('rebuild');
+              }
+            } catch(e) {
 
-                } catch(e) {
-                    console.log("Error buscando el id del padre " )
-                }
             }
+          }
         }
       }
     } catch(e){
       set_error_message("Error en el atributo calculado del campo ID:"+field_id);
-      console.log("Error "+e)
     }
   }
 
   function camelCase(str) {
     var lcStr = str.toLowerCase();
     return lcStr.replace(/(?:^|\s)\w/g, function(match) {
-        return match.toUpperCase();
+      return match.toUpperCase();
     });
   }
 
@@ -653,12 +645,12 @@ Navarra.calculated_and_script_fields = function() {
     Navarra.dashboards.config.field_geometric_calculated_count ++;
     Navarra.dashboards.config.field_geometric_calculated_count_all ++;
     if(Navarra.dashboards.config.field_geometric_calculated_count==Navarra.dashboards.config.field_geometric_calculated_length){
-        Navarra.dashboards.config.field_geometric_calculated_all.push(Navarra.dashboards.config.field_geometric_calculated);
-        Navarra.dashboards.config.field_geometric_calculated_count=0;
-        Navarra.dashboards.config.field_geometric_calculated=[];
-        if(Navarra.dashboards.config.field_geometric_calculated_count_all==Navarra.dashboards.config.field_geometric_calculated_length_all){
-            Navarra.geomaps.save_geometry_width_calculated_fields();
-        }
+      Navarra.dashboards.config.field_geometric_calculated_all.push(Navarra.dashboards.config.field_geometric_calculated);
+      Navarra.dashboards.config.field_geometric_calculated_count=0;
+      Navarra.dashboards.config.field_geometric_calculated=[];
+      if(Navarra.dashboards.config.field_geometric_calculated_count_all==Navarra.dashboards.config.field_geometric_calculated_length_all){
+          Navarra.geomaps.save_geometry_width_calculated_fields();
+      }
     }
   }
 
