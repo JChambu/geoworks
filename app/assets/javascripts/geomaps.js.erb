@@ -2349,14 +2349,14 @@ function search_geometric_calculation_fields(){
       Navarra.dashboards.config.field_geometric_calculated_all = [];
       Navarra.dashboards.config.field_geometric_calculated = [];
       data.father_fields.forEach(function(field){
-        if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}' || field.calculated_field=='{"longitud":""}'){
+        if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}' || field.calculated_field=='{"longitud":""}' || field.calculated_field=='{"googleMaps":""}' || field.calculated_field=='{"LatLong":""}'){
           Navarra.dashboards.config.field_geometric_calculated_length ++;
         }
       });
       if(type_geometry=="Polygon" || type_geometry=="LineString"){
         var geom = get_geom_to_calculate();
         data.father_fields.forEach(function(field){
-          if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}' || field.calculated_field=='{"longitud":""}'){
+          if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}' || field.calculated_field=='{"longitud":""}' || field.calculated_field=='{"googleMaps":""}' || field.calculated_field=='{"LatLong":""}'){
             var calculated_field = field.calculated_field;
             Navarra.dashboards.config.field_geometric_calculated_length_all = Navarra.dashboards.config.field_geometric_calculated_length;
             Navarra.calculated_and_script_fields.Calculate(calculated_field,"", "","", "geometry_edition",field.key,geom);
@@ -2366,7 +2366,7 @@ function search_geometric_calculation_fields(){
       else {
         geometries_to_edit.forEach(function(geom){
          data.father_fields.forEach(function(field){
-          if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}' || field.calculated_field=='{"longitud":""}'){
+          if(field.calculated_field=='{"provincia":""}' || field.calculated_field=='{"municipio":""}' || field.calculated_field=='{"superficie":""}' || field.calculated_field=='{"longitud":""}' || field.calculated_field=='{"googleMaps":""}' || field.calculated_field=='{"LatLong":""}'){
             var calculated_field = field.calculated_field;
             Navarra.dashboards.config.field_geometric_calculated_length_all = Navarra.dashboards.config.field_geometric_calculated_length * geometries_to_edit.length;
             Navarra.calculated_and_script_fields.Calculate(calculated_field,"", "","", "geometry_edition",field.key,geom);

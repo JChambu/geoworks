@@ -3866,7 +3866,7 @@ function calculate_all(first_time, isparent, id_child_calculate , id_field_child
     if(!first_time){filechange = true;}
       father_fields.forEach(function(element) {
         if(element.calculated_field!="" && element.field_type_id!=11){
-          if((element.calculated_field=='{"provincia":""}' || element.calculated_field=='{"municipio":""}') && is_new_file){
+          if((element.calculated_field=='{"provincia":""}' || element.calculated_field=='{"municipio":""}' || element.calculated_field=='{"googleMaps":""}' || element.calculated_field=='{"LatLong":""}') && is_new_file){
             if(Navarra.dashboards.config.type_geometry == "Polygon" || Navarra.dashboards.config.type_geometry == "LineString"){
               var geom = Navarra.geomaps.get_geom_to_calculate();
             } else{
