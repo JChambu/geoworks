@@ -208,6 +208,7 @@ function show_column(key){
 
 //mostrar dato en el mapa
 function show_item(appid_selected){
+  console.log("entra a show item");
  if(event.target.id.substring(0,13)=="check_select_"){return;}
  if($('#row_table_data'+appid_selected).hasClass('found')){
   $('#row_table_data'+appid_selected).removeClass('found');
@@ -461,7 +462,7 @@ function show_subfield(field_ids){
                 new_sub_column.appendChild(new_cel_subform);
                 new_td.appendChild(new_sub_column);
               <% end %>
-              
+
               // agrega fecha de creación
               var new_cel_subform = document.createElement('TD');
               new_cel_subform.style.border='none';
@@ -943,6 +944,9 @@ function show_pdf(is_alert){
     $('.table_data_container').addClass('d-none');
     Navarra.pdf.init();
   } else{
+    // console.log("this acá");
+    // console.log(this);
+    // Navarra.geomaps.current_layer();
     Navarra.pdf.init_report_api();
   }
 }

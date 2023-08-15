@@ -80,6 +80,8 @@ function init_report_api(){
                 pdf_values_all.push(pdf_values);
             }
     });
+    Navarra.geomaps.asdasd();
+
     //Agrega footer
     c=0
     $('.footer_key').not('.d-none').each(function(){
@@ -94,20 +96,25 @@ function init_report_api(){
         is_grouped = true;
     }
     //agrega mapa
+    Navarra.geomaps.asdasd();
     if(($('#set_map').is(':checked'))){
-        var mapContainer = document.getElementById('map');
-        $('.leaflet-top').addClass('d-none');
-        html2canvas(mapContainer, {
-            useCORS: true,
-        }).then(function(canvas) {
-             imgData_pdf = canvas.toDataURL(
-                    'image/png');
-            $('.leaflet-top').removeClass('d-none');
-            search_data_pdf();
-        });
-    } else {
-        imgData_pdf = ""
+      console.log("entra a SET MAP");
+      var mapContainer = document.getElementById('map');
+      $('.leaflet-top').addClass('d-none');
+      html2canvas(mapContainer, {
+        useCORS: true,
+      }).then(function(canvas) {
+        console.log("CANVAS");
+        console.log(canvas);
+        console.log("Entra a condición THEN");
+        imgData_pdf = canvas.toDataURL('image/png');
+        $('.leaflet-top').removeClass('d-none');
         search_data_pdf();
+      });
+
+    } else {
+      imgData_pdf = ""
+      search_data_pdf();
     }
 }
 
@@ -137,7 +144,7 @@ function search_data_pdf(is_chart){
         } else {
             sarch_photos_report();
         }
-        
+
     },
     error: function( jqXHR, textStatus, errorThrown ) {
     }
@@ -159,14 +166,14 @@ function sarch_photos_report(){
                         ids.push(Object.keys(fathers));
                     }
                 });
-                
+
             });
         } else {
             pdf_values_all.forEach(function(pdf_object){
                 ids.push(pdf_object['id']);
             });
         }
-        
+
         $.ajax({
             type: 'GET',
             url: '/photos/get_photos',
@@ -205,7 +212,7 @@ function sarch_photos_report(){
                                     ob["photos"].push(p[k]);
                                 }
                             });
-                        }  
+                        }
                     });
                 });
                 });
@@ -229,7 +236,7 @@ function sarch_photos_report(){
                         })
                     });
                 }
-                
+
                 $.ajax({
                     type: 'GET',
                     url: '/photos_children/get_photos_children',
@@ -271,20 +278,20 @@ function sarch_photos_report(){
                                             }
                                         ob["children"][i]["photos"].push(p[k]);
                                         }
-                                    });  
+                                    });
                                 });
                                 }
-                                
+
                             });
                         });
-                    });        
-                    save_pdf(pdf_values_all, is_grouped);     
+                    });
+                    save_pdf(pdf_values_all, is_grouped);
                 } // termina success fotos hijos
             }); // termina ajax fotos hijos
         }// termina success fotos padres
         });//termina ajax fotos padres
     } else {
-        save_pdf(pdf_values_all,is_grouped); 
+        save_pdf(pdf_values_all,is_grouped);
     }
 }
 
@@ -319,7 +326,7 @@ function order_pdf(){
         });
     });
     pdf_values_all_sorted_array.push(pdf_values_all_sorted)
-    return pdf_values_all_sorted_array; 
+    return pdf_values_all_sorted_array;
 }
 
 
@@ -470,12 +477,12 @@ function create_alert_view(){
             Object.keys(pdf_values_all_sorted[key_unique]).forEach(function(id_field_father, index_father_field){
                 var pdf_content = "";
                 if(index>0){text_dnone=' invisible '}
-                pdf_content += "<div class='mt-3 "+text_dnone+" alert_mail_conteiner alert_mail_conteiner"+index+"'>"; 
+                pdf_content += "<div class='mt-3 "+text_dnone+" alert_mail_conteiner alert_mail_conteiner"+index+"'>";
                 grouped_mail = [];
                 pdf_content += "<div class = 'div_pdf div_pdf_child"+index+"_"+index_father_field+"' "+class_div+">";
                 pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' "+class_title+">"+pdf_values_all_sorted[key_unique][id_field_father]['child']['name_field']+"</p>";
                 if(pdf_values_all_sorted[key_unique][id_field_father]['unique_id']!=undefined){
-                    pdf_content += "<p class='title_pdf mt-1 mb-0 element_pdf' "+class_title+">"+pdf_values_all_sorted[key_unique][id_field_father]['unique_id']+"</p>";    
+                    pdf_content += "<p class='title_pdf mt-1 mb-0 element_pdf' "+class_title+">"+pdf_values_all_sorted[key_unique][id_field_father]['unique_id']+"</p>";
                 }
                 pdf_content += "<p class='title_pdf mt-1 mb-1 element_pdf' "+class_title+">"+pdf_values_all_sorted[key_unique][id_field_father]['child']['date']+"</p>";
                 Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['child']['properties']).forEach(function(key) {
@@ -564,7 +571,7 @@ function create_htm_pdf(pdf_object,index_pdf){
     var class_title_child = "style='font-size:1.1vh'";
     var class_p_child = "style='font-size:1.1vh'";
     if(index_pdf>0){text_dnone=' invisible '}
-    pdf_content += "<div class='mt-3 "+text_dnone+" alert_mail_conteiner alert_mail_conteiner"+index_pdf+"'>";   
+    pdf_content += "<div class='mt-3 "+text_dnone+" alert_mail_conteiner alert_mail_conteiner"+index_pdf+"'>";
     class_div = "style='width:100%;display:block'";
     class_title = "style='font-size: 14px; font-weight:bold;line-height:16px;color:#666; margin: 30px 0px 10px 0px'";
     class_p = "style='font-size:12px;margin:0px;line-height:14px;color:#666'";
@@ -697,8 +704,8 @@ function get_logo(){
                 $('.logo_coorp_pdf_src').removeClass('element_pdf');
                 logo_corp = '';
             }
-            
-            var currentdate = new Date(); 
+
+            var currentdate = new Date();
             var today = currentdate.getDate() + "/" + (currentdate.getMonth()+1)  + "/"  + currentdate.getFullYear() ;
             $('.pdf_created').html(data.username+" - "+today);
         },
@@ -763,7 +770,7 @@ function save_pdf(pdf_values_all, is_grouped){
             type: 'POST',
             url: '/reports/save_data_report',
             datatype: 'application/json',
-            data: data, 
+            data: data,
             success: function(response) {
                 new_report_id = response.report_id;
                 console.log("Reporte id "+new_report_id);
@@ -791,7 +798,7 @@ function save_pdf(pdf_values_all, is_grouped){
         });
     } else {
         final_pdf(data);
-    }  
+    }
 }
 
 function final_pdf(data){
