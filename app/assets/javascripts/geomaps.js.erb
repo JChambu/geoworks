@@ -1130,9 +1130,7 @@ Navarra.geomaps = function() {
       sortLayers: false
     });
 
-
-     // agrega registros seleccionados en la tabla
-
+    // agrega registros seleccionados en la tabla
     let style_selected = Navarra.geomap_tools.get_style_geoserver_selected(type_geometry);
     current_tenement = Navarra.dashboards.config.current_tenement;
     layerProjectsSelected = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?authkey="+Navarra.dashboards.config.geo_key+"", {
@@ -3117,137 +3115,6 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined, field
   isobands_layer.addTo(mymap);
 }
 
-function asdasd(){
-  console.log("appid_selected");
-  console.log(appid_selected);
-  show_item(appid_selected);
-  $('#check_select_'+appid_selected).prop('checked', false);
-  changeSelected();
-  // if(event.target.id.substring(0,13)=="check_select_"){return;}
-  // if($('#row_table_data'+appid_selected).hasClass('found')){
-  //  $('#row_table_data'+appid_selected).removeClass('found');
-  //  var string_filter = get_string_filter();
-  //  var text_to_replace = "or app_id = '"+appid_selected+"'";
-  //  var text_to_replace1 = "app_id = '"+appid_selected+"' or";
-  //  var text_to_replace2 = "app_id = '"+appid_selected+"'";
-  //  string_filter = string_filter.replace(text_to_replace,"").replace(text_to_replace1,"").replace(text_to_replace2,"");
-  //  Navarra.project_types.config.data_dashboard=string_filter;
-  //  Navarra.project_types.config.item_selected="";
-  //  $("#info-modal").modal('hide');
-  // }else{
-  //   $('table tbody tr').not('.tr_checked').removeClass('found');
-  //   $('#row_table_data'+appid_selected).addClass('found');
-  //   var string_filter = get_string_filter();
-  //   if(string_filter==""){
-  //    string_filter = "app_id = '"+appid_selected+"'";
-  //   } else {
-  //    string_filter += "or app_id = '"+appid_selected+"'";
-  //   }
-  //   Navarra.project_types.config.data_dashboard=string_filter;
-  //   Navarra.project_types.config.item_selected= appid_selected;
-  // }
-
-  // console.log("entra a ASDASD");
-  // name_layer = Navarra.dashboards.config.name_layer;
-  // var labelLayer = Navarra.dashboards.config.name_layer;
-  // workspace = Navarra.dashboards.config.current_tenement;
-  // var cql_filter = getCQLFilter(false);
-  //
-  // // Asigna todos los filtros a una variable global
-  // Navarra.project_types.config.current_layer_filters = cql_filter;
-  //
-  // // Aplica filtro de elementos seleccionados en la tabla
-  // var cql_filter_data_not_selected = "";
-  // var cql_filter_data_selected = " and 1 = 2";
-  // var data_from_navarra = Navarra.project_types.config.data_dashboard;
-  // if (data_from_navarra != "") {
-  //   cql_filter_data_not_selected = " and NOT (" + data_from_navarra + " )";
-  //   cql_filter_data_selected = " and (" + data_from_navarra + " )";
-  //   var geometry_draw_array = Navarra.dashboards.config.size_polygon;
-  //
-  //   if (geometry_draw_array.length > 0) {
-  //     geometry_draw = Navarra.geomap_tools.get_geometry_draw(geometry_draw_array);
-  //     cql_filter_data_selected += " and WITHIN(the_geom, " + geometry_draw + ")";
-  //     cql_filter_data_not_selected = " and (NOT (" + data_from_navarra + " ) or NOT( WITHIN(the_geom, " + geometry_draw + ")))";
-  //   }
-  //
-  // }
-  //
-  // cql_filter_not_selected = cql_filter + cql_filter_data_not_selected;
-  // cql_filter_selected = cql_filter + cql_filter_data_selected;
-  //
-  // //elimina los puntos dibujados de la capa
-  // if (first_layer) {
-  //   mymap.removeLayer(project_current_selected);
-  //   layerControl.removeLayer(project_current_selected);
-  // }
-  // first_layer = true;
-  //
-  // current_layer = workspace + ":" + name_layer;
-  //
-  // // Aplica estilo según tipo de geometría
-  // let style = Navarra.geomap_tools.get_style_geoserver(type_geometry);
-  //
-  // // agrega registros NO seleccionados en la tabla
-  // current_tenement = Navarra.dashboards.config.current_tenement;
-  // var randint = Math.floor( Math.random() * 200000 ) + 1;
-  // layerProjects = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?authkey="+Navarra.dashboards.config.geo_key+"&random=" + randint, {
-  //   layers: current_layer, //nombre de la capa (ver get capabilities)
-  //   format: 'image/png',
-  //   crs: L.CRS.EPSG4326,
-  //   transparent: 'true',
-  //   opacity: 1,
-  //   version: '1.0.0', //wms version (ver get capabilities)
-  //   tiled: true,
-  //   maxZoom: 20,
-  //   styles: style,
-  //   INFO_FORMAT: 'application/json',
-  //   format_options: 'callback:getJson',
-  //   CQL_FILTER: cql_filter_not_selected,
-  // })
-  // console.log("layerProjects");
-  // console.log(layerProjects);
-  //
-  // project_current = layerProjects.getLayer(current_layer).addTo(mymap);
-  // layerControl.addOverlay(project_current, labelLayer, null, {
-  //   sortLayers: false
-  // });
-  // console.log("project_current layer");
-  // console.log(project_current);
-  //
-  // layerProjectsSelected = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?authkey="+Navarra.dashboards.config.geo_key+"", {
-  //   layers: current_layer, //nombre de la capa (ver get capabilities)
-  //   format: 'image/png',
-  //   transparent: 'true',
-  //   opacity: 1,
-  //   version: '1.0.0', //wms version (ver get capabilities)
-  //   tiled: true,
-  //   maxZoom: 20,
-  //   styles: style,
-  //   INFO_FORMAT: 'application/json',
-  //   format_options: 'callback:getJson',
-  //   CQL_FILTER: cql_filter_selected,
-  // })
-  // console.log("layerProjectsSelected");
-  // console.log(layerProjectsSelected);
-  //
-  // project_current_selected = layerProjectsSelected.getLayer(current_layer).addTo(mymap);
-  // if(data_from_navarra!=""){
-  //   layerControl.addOverlay(project_current_selected, labelLayer, null, {
-  //     sortLayers: false
-  //   });
-  //   $('#checkbox_div_Seleccionados').removeClass('d-none');
-  //   $('#checkbox_Seleccionados').prop("checked",true);
-  // } else{
-  //   $('#checkbox_div_Seleccionados').addClass('d-none');
-  //   $('#checkbox_Seleccionados').prop("checked",false);
-  // }
-  //
-  // console.log("project_current_selected");
-  // console.log(project_current_selected);
-  // console.log("Termina ASDASD");
-}
-
 function intersect_layers(){
   get_zoomextent();
   wms_filter(true);
@@ -3300,7 +3167,6 @@ function open_iot_monitoring(app_id_popup){
     modal_save_multipoints: modal_save_multipoints,
     modal_points_number: modal_points_number,
     open_iot_monitoring: open_iot_monitoring,
-    asdasd: asdasd,
     cancel_color_attr: cancel_color_attr
   }
 }();

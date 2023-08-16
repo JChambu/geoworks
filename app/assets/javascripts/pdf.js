@@ -80,7 +80,6 @@ function init_report_api(){
                 pdf_values_all.push(pdf_values);
             }
     });
-    Navarra.geomaps.asdasd();
 
     //Agrega footer
     c=0
@@ -96,26 +95,30 @@ function init_report_api(){
         is_grouped = true;
     }
     //agrega mapa
-    Navarra.geomaps.asdasd();
-    if(($('#set_map').is(':checked'))){
-      console.log("entra a SET MAP");
-      var mapContainer = document.getElementById('map');
-      $('.leaflet-top').addClass('d-none');
-      html2canvas(mapContainer, {
-        useCORS: true,
-      }).then(function(canvas) {
-        console.log("CANVAS");
-        console.log(canvas);
-        console.log("Entra a condición THEN");
-        imgData_pdf = canvas.toDataURL('image/png');
-        $('.leaflet-top').removeClass('d-none');
-        search_data_pdf();
-      });
+    Navarra.project_types.config.data_dashboard = '';
+    Navarra.geomaps.current_layer();
 
-    } else {
-      imgData_pdf = ""
-      search_data_pdf();
-    }
+    setTimeout(function(){
+      if(($('#set_map').is(':checked'))){
+        console.log("entra a SET MAP");
+        var mapContainer = document.getElementById('map');
+        $('.leaflet-top').addClass('d-none');
+
+        html2canvas(mapContainer, {
+          useCORS: true,
+        }).then(function(canvas) {
+          console.log("CANVAS");
+          console.log(canvas);
+          console.log("Entra a condición THEN");
+          imgData_pdf = canvas.toDataURL('image/png');
+          $('.leaflet-top').removeClass('d-none');
+          search_data_pdf();
+        });
+      } else {
+        imgData_pdf = ""
+        search_data_pdf();
+      }
+    }, 3000)
 }
 
 function search_data_pdf(is_chart){
