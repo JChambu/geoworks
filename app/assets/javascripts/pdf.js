@@ -32,14 +32,14 @@ function init_report_api(){
             pdf_values['properties'][column_key.value]= new Object;
             // revisa si es capa y le elimina
             if ($(this).find('div').length>0){
-                var multi_celd = "";
-                $(this).find('div').each(function(i){
-                    if(i != 0){
-                        multi_celd += " - ";
-                    }
-                    multi_celd += $(this).html();
-                });
-                pdf_values['properties'][column_key.value]['value'] = multi_celd;
+              var multi_celd = "";
+              $(this).find('div').each(function(i){
+                if(i != 0){
+                  multi_celd += " - ";
+                }
+                multi_celd += $(this).html();
+              });
+              pdf_values['properties'][column_key.value]['value'] = multi_celd;
             } else {
               pdf_values['properties'][column_key.value]['value'] = this.innerHTML;
             }
@@ -51,31 +51,31 @@ function init_report_api(){
 
       row_selected_child_date = $('.celdsubform_date_id'+pdf_values['id']);
       row_selected_child_date.each(function(index_child){
-              id_child_json =this.id.split('_')[2];
-              id_father_json =this.id.split('_')[0];
-              pdf_values['children'][id_child_json] =  new Object;
-              pdf_values['children'][id_child_json]['date'] =  this.innerHTML;
-              pdf_values['children'][id_child_json]['id_field'] = id_father_json;
-              pdf_values['children'][id_child_json]['name_field'] = $('#header_columntext_'+id_father_json).html();
-              pdf_values['children'][id_child_json]['properties'] =  new Object;
+        id_child_json =this.id.split('_')[2];
+        id_father_json =this.id.split('_')[0];
+        pdf_values['children'][id_child_json] =  new Object;
+        pdf_values['children'][id_child_json]['date'] =  this.innerHTML;
+        pdf_values['children'][id_child_json]['id_field'] = id_father_json;
+        pdf_values['children'][id_child_json]['name_field'] = $('#header_columntext_'+id_father_json).html();
+        pdf_values['children'][id_child_json]['properties'] =  new Object;
       });
       let ind = 0;
       Object.keys(pdf_values.children).forEach(function(key){
-          var row_selected_child = $("[id_child="+key+"]").not('.d-none').not('.just_date');
-          row_selected_child.each(function(index_child){
-              if(this.innerHTML!="" || $('#set_subfield_table').is(':checked')){
-                  var id_father_field_json = this.id.split('_')[2];
-                  id_father_json = pdf_values.children[key].id_field;
-                  var column_child_name = $('#'+id_father_json+'_subheader_'+id_father_field_json ).html();
-                  var column_child_unique_id = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr('unique_id');
-                  pdf_values['children'][key]['properties'][id_father_field_json] =  new Object;
-                  pdf_values['children'][key]['properties'][id_father_field_json]['value'] = this.innerHTML;
-                  pdf_values['children'][key]['properties'][id_father_field_json]['name'] = column_child_name;
-                  pdf_values['children'][key]['properties'][id_father_field_json]['unique_id'] = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr("unique_id");
-                  pdf_values['children'][key]['properties'][id_father_field_json]['order'] = ind;
-                  ind++;
-              }
-          });
+        var row_selected_child = $("[id_child="+key+"]").not('.d-none').not('.just_date');
+        row_selected_child.each(function(index_child){
+          if(this.innerHTML!="" || $('#set_subfield_table').is(':checked')){
+            var id_father_field_json = this.id.split('_')[2];
+            id_father_json = pdf_values.children[key].id_field;
+            var column_child_name = $('#'+id_father_json+'_subheader_'+id_father_field_json ).html();
+            var column_child_unique_id = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr('unique_id');
+            pdf_values['children'][key]['properties'][id_father_field_json] =  new Object;
+            pdf_values['children'][key]['properties'][id_father_field_json]['value'] = this.innerHTML;
+            pdf_values['children'][key]['properties'][id_father_field_json]['name'] = column_child_name;
+            pdf_values['children'][key]['properties'][id_father_field_json]['unique_id'] = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr("unique_id");
+            pdf_values['children'][key]['properties'][id_father_field_json]['order'] = ind;
+            ind++;
+          }
+        });
       });
       pdf_values_all.push(pdf_values);
     }
