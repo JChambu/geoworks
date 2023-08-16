@@ -11,377 +11,378 @@ var is_grouped = false;
 let new_report_id;
 
 function init_report_api(){
-    is_grouped = false;
-    // Obtiene todos los valores de la tabla
-    pdf_values_all = [];
-    var table_check = $('#table_hidden .custom-control-input').not('#table_select_all');
-    table_check.each(function(index){
-        index=index+1;
-            if(this.checked){
-                var pdf_values = new Object;
-                pdf_values['id'] = this.id.split("check_select_")[1];
-                pdf_values['properties'] = new Object;
-                pdf_values['children'] = new Object;
-                var row_selected = $('#table_hidden tr:nth-child('+index+') td').not('.custom_row_child').not('.child_celd').not('.footer_key');
-                row_selected.each(function(index_column){
-                    if(index_column>2 && (this.innerHTML!='' || ( $('#set_subfield_table').is(':checked') && $('#set_subfield_grouped').is(':checked') ) ) && !this.classList.contains('d-none') ){
-                        var head_c = $('#tr_visible th:nth-child('+(index_column+1)+')').not('.subheader_column');
-                        if(head_c.length>0){
-                            var column_name = $('#tr_visible th:nth-child('+(index_column+1)+')').not('.subheader_column')[0].childNodes[1].childNodes[1];
-                            var column_key = $('#tr_visible th:nth-child('+(index_column+1)+') input')[0];
-                            pdf_values['properties'][column_key.value]= new Object;
-                            // revisa si es capa y le elimina
-                            if ($(this).find('div').length>0){
-                                var multi_celd = "";
-                                $(this).find('div').each(function(i){
-                                    if(i != 0){
-                                        multi_celd += " - ";
-                                    }
-                                    multi_celd += $(this).html();
-                                });
-                                pdf_values['properties'][column_key.value]['value'] = multi_celd;
-                            } else {
-                                pdf_values['properties'][column_key.value]['value'] = this.innerHTML;
-                            }
-                            pdf_values['properties'][column_key.value]['name'] = column_name.innerHTML;
-                            pdf_values['properties'][column_key.value]['order'] = index_column;
-                        }
-                    }
-                    });
-
-                row_selected_child_date = $('.celdsubform_date_id'+pdf_values['id']);
-                row_selected_child_date.each(function(index_child){
-                        id_child_json =this.id.split('_')[2];
-                        id_father_json =this.id.split('_')[0];
-                        pdf_values['children'][id_child_json] =  new Object;
-                        pdf_values['children'][id_child_json]['date'] =  this.innerHTML;
-                        pdf_values['children'][id_child_json]['id_field'] = id_father_json;
-                        pdf_values['children'][id_child_json]['name_field'] = $('#header_columntext_'+id_father_json).html();
-                        pdf_values['children'][id_child_json]['properties'] =  new Object;
-                });
-                let ind = 0;
-                Object.keys(pdf_values.children).forEach(function(key){
-                    var row_selected_child = $("[id_child="+key+"]").not('.d-none').not('.just_date');
-                    row_selected_child.each(function(index_child){
-                        if(this.innerHTML!="" || $('#set_subfield_table').is(':checked')){
-                            var id_father_field_json = this.id.split('_')[2];
-                            id_father_json = pdf_values.children[key].id_field;
-                            var column_child_name = $('#'+id_father_json+'_subheader_'+id_father_field_json ).html();
-                            var column_child_unique_id = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr('unique_id');
-                            pdf_values['children'][key]['properties'][id_father_field_json] =  new Object;
-                            pdf_values['children'][key]['properties'][id_father_field_json]['value'] = this.innerHTML;
-                            pdf_values['children'][key]['properties'][id_father_field_json]['name'] = column_child_name;
-                            pdf_values['children'][key]['properties'][id_father_field_json]['unique_id'] = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr("unique_id");
-                            pdf_values['children'][key]['properties'][id_father_field_json]['order'] = ind;
-                            ind++;
-                        }
-                    });
-                });
-                pdf_values_all.push(pdf_values);
+  is_grouped = false;
+  // Obtiene todos los valores de la tabla
+  pdf_values_all = [];
+  var table_check = $('#table_hidden .custom-control-input').not('#table_select_all');
+  table_check.each(function(index){
+    index=index+1;
+    if(this.checked){
+      var pdf_values = new Object;
+      pdf_values['id'] = this.id.split("check_select_")[1];
+      pdf_values['properties'] = new Object;
+      pdf_values['children'] = new Object;
+      var row_selected = $('#table_hidden tr:nth-child('+index+') td').not('.custom_row_child').not('.child_celd').not('.footer_key');
+      row_selected.each(function(index_column){
+        if(index_column>2 && (this.innerHTML!='' || ( $('#set_subfield_table').is(':checked') && $('#set_subfield_grouped').is(':checked') ) ) && !this.classList.contains('d-none') ){
+          var head_c = $('#tr_visible th:nth-child('+(index_column+1)+')').not('.subheader_column');
+          if(head_c.length>0){
+            var column_name = $('#tr_visible th:nth-child('+(index_column+1)+')').not('.subheader_column')[0].childNodes[1].childNodes[1];
+            var column_key = $('#tr_visible th:nth-child('+(index_column+1)+') input')[0];
+            pdf_values['properties'][column_key.value]= new Object;
+            // revisa si es capa y le elimina
+            if ($(this).find('div').length>0){
+              var multi_celd = "";
+              $(this).find('div').each(function(i){
+                if(i != 0){
+                  multi_celd += " - ";
+                }
+                multi_celd += $(this).html();
+              });
+              pdf_values['properties'][column_key.value]['value'] = multi_celd;
+            } else {
+              pdf_values['properties'][column_key.value]['value'] = this.innerHTML;
             }
-    });
-    //Agrega footer
-    c=0
-    $('.footer_key').not('.d-none').each(function(){
-        if($(this).html()!=''){
-            if(c>0){footer+=" - "}
-            footer += $(this).attr('name_function')+" "+$(this).html();
-            c++;
+            pdf_values['properties'][column_key.value]['name'] = column_name.innerHTML;
+            pdf_values['properties'][column_key.value]['order'] = index_column;
+          }
         }
-    });
-    if(($('#set_subfield_grouped').is(':checked'))){
-        pdf_values_all = order_pdf();
-        is_grouped = true;
-    }
-    //agrega mapa
-    if(($('#set_map').is(':checked'))){
-        var mapContainer = document.getElementById('map');
-        $('.leaflet-top').addClass('d-none');
-        html2canvas(mapContainer, {
-            useCORS: true,
-        }).then(function(canvas) {
-             imgData_pdf = canvas.toDataURL(
-                    'image/png');
-            $('.leaflet-top').removeClass('d-none');
-            search_data_pdf();
+      });
+
+      row_selected_child_date = $('.celdsubform_date_id'+pdf_values['id']);
+      row_selected_child_date.each(function(index_child){
+        id_child_json =this.id.split('_')[2];
+        id_father_json =this.id.split('_')[0];
+        pdf_values['children'][id_child_json] =  new Object;
+        pdf_values['children'][id_child_json]['date'] =  this.innerHTML;
+        pdf_values['children'][id_child_json]['id_field'] = id_father_json;
+        pdf_values['children'][id_child_json]['name_field'] = $('#header_columntext_'+id_father_json).html();
+        pdf_values['children'][id_child_json]['properties'] =  new Object;
+      });
+      let ind = 0;
+      Object.keys(pdf_values.children).forEach(function(key){
+        var row_selected_child = $("[id_child="+key+"]").not('.d-none').not('.just_date');
+        row_selected_child.each(function(index_child){
+          if(this.innerHTML!="" || $('#set_subfield_table').is(':checked')){
+            var id_father_field_json = this.id.split('_')[2];
+            id_father_json = pdf_values.children[key].id_field;
+            var column_child_name = $('#'+id_father_json+'_subheader_'+id_father_field_json ).html();
+            var column_child_unique_id = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr('unique_id');
+            pdf_values['children'][key]['properties'][id_father_field_json] =  new Object;
+            pdf_values['children'][key]['properties'][id_father_field_json]['value'] = this.innerHTML;
+            pdf_values['children'][key]['properties'][id_father_field_json]['name'] = column_child_name;
+            pdf_values['children'][key]['properties'][id_father_field_json]['unique_id'] = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr("unique_id");
+            pdf_values['children'][key]['properties'][id_father_field_json]['order'] = ind;
+            ind++;
+          }
         });
-    } else {
-        imgData_pdf = ""
-        search_data_pdf();
+      });
+      pdf_values_all.push(pdf_values);
     }
+  });
+
+  //Agrega footer
+  c=0
+  $('.footer_key').not('.d-none').each(function(){
+    if($(this).html()!=''){
+      if(c>0){footer+=" - "}
+      footer += $(this).attr('name_function')+" "+$(this).html();
+      c++;
+    }
+  });
+  if(($('#set_subfield_grouped').is(':checked'))){
+    pdf_values_all = order_pdf();
+    is_grouped = true;
+  }
+  //agrega mapa
+  Navarra.project_types.config.data_dashboard = '';
+  Navarra.geomaps.current_layer();
+
+  setTimeout(function(){
+    if(($('#set_map').is(':checked'))){
+      var mapContainer = document.getElementById('map');
+      $('.leaflet-top').addClass('d-none');
+
+      html2canvas(mapContainer, {
+        useCORS: true,
+      }).then(function(canvas) {
+        imgData_pdf = canvas.toDataURL('image/png');
+        $('.leaflet-top').removeClass('d-none');
+        search_data_pdf();
+      });
+    } else {
+      imgData_pdf = ""
+      search_data_pdf();
+    }
+  }, 2000)
 }
 
 function search_data_pdf(is_chart){
-    $.ajax({
+  $.ajax({
     type: 'GET',
     url: '/customers/search_customer',
     datatype: 'JSON',
     data: {
-        current_tenement: Navarra.dashboards.config.current_tenement,
-        project_type_id: Navarra.dashboards.config.project_type_id
+      current_tenement: Navarra.dashboards.config.current_tenement,
+      project_type_id: Navarra.dashboards.config.project_type_id
     },
     success: function(data) {
-        if(data.logo!=null){
-            logo_corp = data.logo;
-        } else{
-            logo_corp = '';
-        }
-        if(data.cover!=null){
-            cover_corp = data.cover;
-        } else{
-            cover_corp = '';
-        }
-        user_name = data.username;
-        if (is_chart){
-            save_pdf_charts();
-        } else {
-            sarch_photos_report();
-        }
-        
+      if(data.logo!=null){
+        logo_corp = data.logo;
+      } else{
+        logo_corp = '';
+      }
+      if(data.cover!=null){
+        cover_corp = data.cover;
+      } else{
+        cover_corp = '';
+      }
+      user_name = data.username;
+      if (is_chart){
+        save_pdf_charts();
+      } else {
+        sarch_photos_report();
+      }
     },
     error: function( jqXHR, textStatus, errorThrown ) {
     }
-    });
+  });
 }
 
 function sarch_photos_report(){
-    if(($('#set_photos').is(':checked'))){
-        // busca fotos padres
+  if(($('#set_photos').is(':checked'))){
+    // busca fotos padres
+    var ids = [];
+    if(is_grouped){
+      pdf_values_all.forEach(function(pdf_object){
+        key = Object.keys(pdf_object);
+        key.forEach(function(k){
+          obj = pdf_object[k];
+          keyb = Object.keys(obj);
+          if(keyb != undefined){
+            var fathers = obj[keyb]["fathers"];
+            ids.push(Object.keys(fathers));
+          }
+        });
+      });
+    } else {
+      pdf_values_all.forEach(function(pdf_object){
+        ids.push(pdf_object['id']);
+      });
+    }
+
+    $.ajax({
+      type: 'GET',
+      url: '/photos/get_photos',
+      datatype: 'json',
+      data: {
+          ids: ids
+      },
+      success: function(data) {
+        data.forEach(function(data_photos){
+          data_photos.forEach(function(p){
+            Object.keys(p).forEach(function(k){
+              if(is_grouped){
+                pdf_values_all.forEach(function(pdf_object){
+                  key = Object.keys(pdf_object);
+                  obj = pdf_object[key];
+                  if(obj != undefined){
+                    keyb = Object.keys(obj);
+                    var fathers = obj[keyb]["fathers"];
+                    ids = Object.keys(fathers);
+                    ids.forEach(function(id){
+                      if(id == k){
+                        if(obj[keyb]["fathers"][id]["photos"] ==  undefined){
+                          obj[keyb]["fathers"][id]["photos"] = [];
+                        }
+                        obj[keyb]["fathers"][id]["photos"].push(p[k]);
+                      }
+                    });
+                  }
+                });
+              } else {
+                pdf_values_all.forEach(function(ob){
+                  if(ob["id"] == k){
+                    if(ob["photos"] ==  undefined){
+                      ob["photos"] = [];
+                    }
+                    ob["photos"].push(p[k]);
+                  }
+                });
+              }
+            });
+          });
+        });
+        // Busca fotos de los hijos
         var ids = [];
         if(is_grouped){
-            pdf_values_all.forEach(function(pdf_object){
-                key = Object.keys(pdf_object);
-                key.forEach(function(k){
-                    obj = pdf_object[k];
-                    keyb = Object.keys(obj);
-                    if(keyb != undefined){
-                        var fathers = obj[keyb]["fathers"];
-                        ids.push(Object.keys(fathers));
-                    }
-                });
-                
+          pdf_values_all.forEach(function(pdf_object){
+            key = Object.keys(pdf_object);
+            key.forEach(function(k){
+              obj = pdf_object[k];
+              keyb = Object.keys(obj);
+              ids = obj[keyb]["ids"];
             });
+            ids = ids.unique();
+          });
         } else {
-            pdf_values_all.forEach(function(pdf_object){
-                ids.push(pdf_object['id']);
-            });
+          pdf_values_all.forEach(function(pdf_object){
+            Object.keys(pdf_object['children']).forEach(function(i){
+              ids.push(i);
+            })
+          });
         }
-        
+
         $.ajax({
-            type: 'GET',
-            url: '/photos/get_photos',
-            datatype: 'json',
-            data: {
-                ids: ids
-            },
-            success: function(data) {
-                data.forEach(function(data_photos){
-                data_photos.forEach(function(p){
-                    Object.keys(p).forEach(function(k){
-                        if(is_grouped){
-                            pdf_values_all.forEach(function(pdf_object){
-                                key = Object.keys(pdf_object);
-                                obj = pdf_object[key];
-                                if(obj != undefined){
-                                    keyb = Object.keys(obj);
-                                    var fathers = obj[keyb]["fathers"];
-                                    ids = Object.keys(fathers);
-                                    ids.forEach(function(id){
-                                        if(id == k){
-                                        if(obj[keyb]["fathers"][id]["photos"] ==  undefined){
-                                            obj[keyb]["fathers"][id]["photos"] = [];
-                                        }
-                                        obj[keyb]["fathers"][id]["photos"].push(p[k]);
-                                    }
-                                    });
-                                }
-                            });
-                        } else {
-                            pdf_values_all.forEach(function(ob){
-                                if(ob["id"] == k){
-                                    if(ob["photos"] ==  undefined){
-                                        ob["photos"] = [];
-                                    }
-                                    ob["photos"].push(p[k]);
-                                }
-                            });
-                        }  
-                    });
-                });
-                });
-                // Busca fotos de los hijos
-                var ids = [];
-                if(is_grouped){
+          type: 'GET',
+          url: '/photos_children/get_photos_children',
+          datatype: 'json',
+          data: {
+            ids: ids
+          },
+          success: function(data) {
+            var unique_photos = [];
+            data.forEach(function(data_photos){
+              data_photos.forEach(function(p){
+                Object.keys(p).forEach(function(k){
+                  if(is_grouped) {
                     pdf_values_all.forEach(function(pdf_object){
-                        key = Object.keys(pdf_object);
-                        key.forEach(function(k){
-                            obj = pdf_object[k];
-                            keyb = Object.keys(obj);
-                            ids = obj[keyb]["ids"];
-                        });
-                        ids = ids.unique();
+                      key = Object.keys(pdf_object);
+                      obj = pdf_object[key];
+                      keyb = Object.keys(obj);
+                      ids_child = obj[keyb]["ids"];
+                      ids_child = ids_child.unique();
+                      ids_child.forEach(function(id){
+                        if(id == k){
+                          if(obj[keyb]["child"]["photos"] ==  undefined){
+                            obj[keyb]["child"]["photos"] = [];
+                          }
+                          if(unique_photos.indexOf(p[k])<0){
+                            obj[keyb]["child"]["photos"].push(p[k]);
+                            unique_photos.push(p[k]);
+                          }
+                        }
+                      });
                     });
-
-                } else {
-                    pdf_values_all.forEach(function(pdf_object){
-                        Object.keys(pdf_object['children']).forEach(function(i){
-                            ids.push(i);
-                        })
+                  } else {
+                    pdf_values_all.forEach(function(ob){
+                      Object.keys(ob['children']).forEach(function(i){
+                        if(i == k){
+                          if(ob["children"][i]["photos"] ==  undefined){
+                            ob["children"][i]["photos"] = [];
+                          }
+                          ob["children"][i]["photos"].push(p[k]);
+                        }
+                      });
                     });
-                }
-                
-                $.ajax({
-                    type: 'GET',
-                    url: '/photos_children/get_photos_children',
-                    datatype: 'json',
-                    data: {
-                        ids: ids
-                    },
-                    success: function(data) {
-                        var unique_photos = [];
-                        data.forEach(function(data_photos){
-                        data_photos.forEach(function(p){
-                            Object.keys(p).forEach(function(k){
-                                if(is_grouped) {
-                                    pdf_values_all.forEach(function(pdf_object){
-                                        key = Object.keys(pdf_object);
-                                        obj = pdf_object[key];
-                                        keyb = Object.keys(obj);
-                                        ids_child = obj[keyb]["ids"];
-                                        ids_child = ids_child.unique();
-                                        ids_child.forEach(function(id){
-                                            if(id == k){
-                                                if(obj[keyb]["child"]["photos"] ==  undefined){
-                                                    obj[keyb]["child"]["photos"] = [];
-                                                }
-                                                if(unique_photos.indexOf(p[k])<0){
-                                                    obj[keyb]["child"]["photos"].push(p[k]);
-                                                    unique_photos.push(p[k]);
-                                                }
-                                            }
-                                        });
-                                    });
-
-                                } else {
-                                    pdf_values_all.forEach(function(ob){
-                                        Object.keys(ob['children']).forEach(function(i){
-                                        if(i == k){
-                                            if(ob["children"][i]["photos"] ==  undefined){
-                                                ob["children"][i]["photos"] = [];
-                                            }
-                                        ob["children"][i]["photos"].push(p[k]);
-                                        }
-                                    });  
-                                });
-                                }
-                                
-                            });
-                        });
-                    });        
-                    save_pdf(pdf_values_all, is_grouped);     
-                } // termina success fotos hijos
-            }); // termina ajax fotos hijos
-        }// termina success fotos padres
-        });//termina ajax fotos padres
-    } else {
-        save_pdf(pdf_values_all,is_grouped); 
-    }
+                  }
+                });
+              });
+            });
+          save_pdf(pdf_values_all, is_grouped);
+          } // termina success fotos hijos
+        }); // termina ajax fotos hijos
+      }// termina success fotos padres
+    });//termina ajax fotos padres
+  } else {
+    save_pdf(pdf_values_all,is_grouped);
+  }
 }
 
 function order_pdf(){
-    //Ordenado por json único de hijos
-    //Crea objeto ordenado
-    pdf_values_all_sorted_array = [];
-    var pdf_values_all_sorted = new Object;
-    pdf_values_all.forEach(function(pdf_object){
-        Object.keys(pdf_object['children']).forEach(function(child_key){
-            Object.keys(pdf_object['children'][child_key]['properties']).forEach(function(key_c) {
-                var unique_id = pdf_object['children'][child_key]['properties'][key_c]['unique_id'];
-                var unique_id_value = JSON.stringify(pdf_object['children'][child_key]['properties']);
-                var id_field_father = pdf_object['children'][child_key]['id_field'];
-                if(pdf_values_all_sorted[unique_id_value] ==  undefined){
-                    pdf_values_all_sorted[unique_id_value] = new Object;
-                }
-                if(pdf_values_all_sorted[unique_id_value][id_field_father] ==  undefined){
-                    pdf_values_all_sorted[unique_id_value][id_field_father] = new Object;
-                    pdf_values_all_sorted[unique_id_value][id_field_father]['fathers'] = new Object;
-                    pdf_values_all_sorted[unique_id_value][id_field_father]['ids'] = [];
-                }
-                if(unique_id=="true"){
-                    var unique_id_number = pdf_object['children'][child_key]['properties'][key_c]['value'];
-                    pdf_values_all_sorted[unique_id_value][id_field_father]['unique_id'] = unique_id_number;
-                }
-                pdf_values_all_sorted[unique_id_value][id_field_father]['child'] = pdf_object['children'][child_key];
-                pdf_values_all_sorted[unique_id_value][id_field_father]['ids'].push(child_key);
-                pdf_values_all_sorted[unique_id_value][id_field_father]['fathers'][pdf_object['id']] = new Object;
-                pdf_values_all_sorted[unique_id_value][id_field_father]['fathers'][pdf_object['id']]["props"] = pdf_object['properties'];
-            });
-        });
+  //Ordenado por json único de hijos
+  //Crea objeto ordenado
+  pdf_values_all_sorted_array = [];
+  var pdf_values_all_sorted = new Object;
+  pdf_values_all.forEach(function(pdf_object){
+    Object.keys(pdf_object['children']).forEach(function(child_key){
+      Object.keys(pdf_object['children'][child_key]['properties']).forEach(function(key_c) {
+        var unique_id = pdf_object['children'][child_key]['properties'][key_c]['unique_id'];
+        var unique_id_value = JSON.stringify(pdf_object['children'][child_key]['properties']);
+        var id_field_father = pdf_object['children'][child_key]['id_field'];
+        if(pdf_values_all_sorted[unique_id_value] ==  undefined){
+          pdf_values_all_sorted[unique_id_value] = new Object;
+        }
+        if(pdf_values_all_sorted[unique_id_value][id_field_father] ==  undefined){
+          pdf_values_all_sorted[unique_id_value][id_field_father] = new Object;
+          pdf_values_all_sorted[unique_id_value][id_field_father]['fathers'] = new Object;
+          pdf_values_all_sorted[unique_id_value][id_field_father]['ids'] = [];
+        }
+        if(unique_id=="true"){
+          var unique_id_number = pdf_object['children'][child_key]['properties'][key_c]['value'];
+          pdf_values_all_sorted[unique_id_value][id_field_father]['unique_id'] = unique_id_number;
+        }
+        pdf_values_all_sorted[unique_id_value][id_field_father]['child'] = pdf_object['children'][child_key];
+        pdf_values_all_sorted[unique_id_value][id_field_father]['ids'].push(child_key);
+        pdf_values_all_sorted[unique_id_value][id_field_father]['fathers'][pdf_object['id']] = new Object;
+        pdf_values_all_sorted[unique_id_value][id_field_father]['fathers'][pdf_object['id']]["props"] = pdf_object['properties'];
+      });
     });
-    pdf_values_all_sorted_array.push(pdf_values_all_sorted)
-    return pdf_values_all_sorted_array; 
+  });
+  pdf_values_all_sorted_array.push(pdf_values_all_sorted)
+  return pdf_values_all_sorted_array;
 }
 
 
 function init() {
-    $('#mails_alert_button').removeClass('d-none');
-    $('#send_alerts_button').removeClass('d-none');
-    $('#save_pdf_button').addClass('d-none');
-    $('#edit_pdf_button').addClass('d-none');
-    $('.alert_header').removeClass('d-none');
-    $('#message_type').html($('#alert_type').val());
+  $('#mails_alert_button').removeClass('d-none');
+  $('#send_alerts_button').removeClass('d-none');
+  $('#save_pdf_button').addClass('d-none');
+  $('#edit_pdf_button').addClass('d-none');
+  $('.alert_header').removeClass('d-none');
+  $('#message_type').html($('#alert_type').val());
 
-    pdf_values_all = [];
-    var table_check = $('#table_hidden .custom-control-input').not('#table_select_all');
-    table_check.each(function(index){
-        index=index+1;
-            if(this.checked){
-                var pdf_values = new Object;
-                pdf_values['id'] = this.id.split("check_select_")[1];
-                pdf_values['properties'] = new Object;
-                pdf_values['children'] = new Object;
-                var row_selected = $('#table_hidden tr:nth-child('+index+') td').not('.custom_row_child').not('.child_celd').not('.footer_key');
-                row_selected.each(function(index_column){
-                    if(index_column>2 && this.innerHTML!='' && !this.classList.contains('d-none')){
-                        var column_name = $('#tr_visible th:nth-child('+(index_column+1)+')')[0].childNodes[1].childNodes[1];
-                        var column_key = $('#tr_visible th:nth-child('+(index_column+1)+') input')[0];
-                        pdf_values['properties'][column_key.value]= new Object;
-                        pdf_values['properties'][column_key.value]['value'] = this.innerHTML;
-                        pdf_values['properties'][column_key.value]['name'] = column_name.innerHTML;
-                    }
-                    });
+  pdf_values_all = [];
+  var table_check = $('#table_hidden .custom-control-input').not('#table_select_all');
+  table_check.each(function(index){
+    index=index+1;
+    if(this.checked){
+      var pdf_values = new Object;
+      pdf_values['id'] = this.id.split("check_select_")[1];
+      pdf_values['properties'] = new Object;
+      pdf_values['children'] = new Object;
+      var row_selected = $('#table_hidden tr:nth-child('+index+') td').not('.custom_row_child').not('.child_celd').not('.footer_key');
+      row_selected.each(function(index_column){
+        if(index_column>2 && this.innerHTML!='' && !this.classList.contains('d-none')){
+          var column_name = $('#tr_visible th:nth-child('+(index_column+1)+')')[0].childNodes[1].childNodes[1];
+          var column_key = $('#tr_visible th:nth-child('+(index_column+1)+') input')[0];
+          pdf_values['properties'][column_key.value]= new Object;
+          pdf_values['properties'][column_key.value]['value'] = this.innerHTML;
+          pdf_values['properties'][column_key.value]['name'] = column_name.innerHTML;
+        }
+      });
 
-                // selecciona hijos
-                row_selected_child_date = $('.celdsubform_date_id'+pdf_values['id']);
-                row_selected_child_date.each(function(index_child){
-                        id_child_json =this.id.split('_')[2];
-                        id_father_json =this.id.split('_')[0];
-                        pdf_values['children'][id_child_json] =  new Object;
-                        pdf_values['children'][id_child_json]['date'] =  this.innerHTML;
-                        pdf_values['children'][id_child_json]['id_field'] = id_father_json;
-                        pdf_values['children'][id_child_json]['name_field'] = $('#header_columntext_'+id_father_json).html();
-                        pdf_values['children'][id_child_json]['properties'] =  new Object;
-                });
-                Object.keys(pdf_values.children).forEach(function(key){
-                    var row_selected_child = $("[id_child="+key+"]").not('.d-none').not('.just_date');
-                    row_selected_child.each(function(index_child){
-                        if(this.innerHTML!=""){
-                            var id_father_field_json = this.id.split('_')[2];
-                            id_father_json = pdf_values.children[key].id_field;
-                            var column_child_name = $('#'+id_father_json+'_subheader_'+id_father_field_json ).html();
-                            var column_child_unique_id = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr('unique_id');
-                            pdf_values['children'][key]['properties'][id_father_field_json] =  new Object;
-                            pdf_values['children'][key]['properties'][id_father_field_json]['value'] = this.innerHTML;
-                            pdf_values['children'][key]['properties'][id_father_field_json]['name'] = column_child_name;
-                            pdf_values['children'][key]['properties'][id_father_field_json]['unique_id'] = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr("unique_id");
-                        }
-                    });
-                });
-                pdf_values_all.push(pdf_values);
-            }
-    });
-    $('#dropdown_alert_mails').empty();
-    create_alert_view();
+      // selecciona hijos
+      row_selected_child_date = $('.celdsubform_date_id'+pdf_values['id']);
+      row_selected_child_date.each(function(index_child){
+        id_child_json =this.id.split('_')[2];
+        id_father_json =this.id.split('_')[0];
+        pdf_values['children'][id_child_json] =  new Object;
+        pdf_values['children'][id_child_json]['date'] =  this.innerHTML;
+        pdf_values['children'][id_child_json]['id_field'] = id_father_json;
+        pdf_values['children'][id_child_json]['name_field'] = $('#header_columntext_'+id_father_json).html();
+        pdf_values['children'][id_child_json]['properties'] =  new Object;
+      });
+      Object.keys(pdf_values.children).forEach(function(key){
+        var row_selected_child = $("[id_child="+key+"]").not('.d-none').not('.just_date');
+        row_selected_child.each(function(index_child){
+          if(this.innerHTML!=""){
+            var id_father_field_json = this.id.split('_')[2];
+            id_father_json = pdf_values.children[key].id_field;
+            var column_child_name = $('#'+id_father_json+'_subheader_'+id_father_field_json ).html();
+            var column_child_unique_id = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr('unique_id');
+            pdf_values['children'][key]['properties'][id_father_field_json] =  new Object;
+            pdf_values['children'][key]['properties'][id_father_field_json]['value'] = this.innerHTML;
+            pdf_values['children'][key]['properties'][id_father_field_json]['name'] = column_child_name;
+            pdf_values['children'][key]['properties'][id_father_field_json]['unique_id'] = $('#'+id_father_json+'_subheader_'+id_father_field_json ).attr("unique_id");
+          }
+        });
+      });
+      pdf_values_all.push(pdf_values);
+    }
+  });
+  $('#dropdown_alert_mails').empty();
+  create_alert_view();
 }
 
 function create_alert_view(){
@@ -470,12 +471,12 @@ function create_alert_view(){
             Object.keys(pdf_values_all_sorted[key_unique]).forEach(function(id_field_father, index_father_field){
                 var pdf_content = "";
                 if(index>0){text_dnone=' invisible '}
-                pdf_content += "<div class='mt-3 "+text_dnone+" alert_mail_conteiner alert_mail_conteiner"+index+"'>"; 
+                pdf_content += "<div class='mt-3 "+text_dnone+" alert_mail_conteiner alert_mail_conteiner"+index+"'>";
                 grouped_mail = [];
                 pdf_content += "<div class = 'div_pdf div_pdf_child"+index+"_"+index_father_field+"' "+class_div+">";
                 pdf_content += "<p class='title_pdf mt-3 mb-0 element_pdf' "+class_title+">"+pdf_values_all_sorted[key_unique][id_field_father]['child']['name_field']+"</p>";
                 if(pdf_values_all_sorted[key_unique][id_field_father]['unique_id']!=undefined){
-                    pdf_content += "<p class='title_pdf mt-1 mb-0 element_pdf' "+class_title+">"+pdf_values_all_sorted[key_unique][id_field_father]['unique_id']+"</p>";    
+                    pdf_content += "<p class='title_pdf mt-1 mb-0 element_pdf' "+class_title+">"+pdf_values_all_sorted[key_unique][id_field_father]['unique_id']+"</p>";
                 }
                 pdf_content += "<p class='title_pdf mt-1 mb-1 element_pdf' "+class_title+">"+pdf_values_all_sorted[key_unique][id_field_father]['child']['date']+"</p>";
                 Object.keys(pdf_values_all_sorted[key_unique][id_field_father]['child']['properties']).forEach(function(key) {
@@ -564,7 +565,7 @@ function create_htm_pdf(pdf_object,index_pdf){
     var class_title_child = "style='font-size:1.1vh'";
     var class_p_child = "style='font-size:1.1vh'";
     if(index_pdf>0){text_dnone=' invisible '}
-    pdf_content += "<div class='mt-3 "+text_dnone+" alert_mail_conteiner alert_mail_conteiner"+index_pdf+"'>";   
+    pdf_content += "<div class='mt-3 "+text_dnone+" alert_mail_conteiner alert_mail_conteiner"+index_pdf+"'>";
     class_div = "style='width:100%;display:block'";
     class_title = "style='font-size: 14px; font-weight:bold;line-height:16px;color:#666; margin: 30px 0px 10px 0px'";
     class_p = "style='font-size:12px;margin:0px;line-height:14px;color:#666'";
@@ -697,8 +698,8 @@ function get_logo(){
                 $('.logo_coorp_pdf_src').removeClass('element_pdf');
                 logo_corp = '';
             }
-            
-            var currentdate = new Date(); 
+
+            var currentdate = new Date();
             var today = currentdate.getDate() + "/" + (currentdate.getMonth()+1)  + "/"  + currentdate.getFullYear() ;
             $('.pdf_created').html(data.username+" - "+today);
         },
@@ -754,19 +755,15 @@ function save_pdf(pdf_values_all, is_grouped){
     data["data"] = data_report;
     data["file"] = "reporte.pdf";
 
-    console.log("Data")
-    console.log(data)
-
     if(($('#set_qr').is(':checked'))){
         //guarda datos si se solicita QR
         $.ajax({
             type: 'POST',
             url: '/reports/save_data_report',
             datatype: 'application/json',
-            data: data, 
+            data: data,
             success: function(response) {
                 new_report_id = response.report_id;
-                console.log("Reporte id "+new_report_id);
                 const rdm1 = Math.floor(1000 + Math.random() * 9000);
                 const rdm2 = Math.floor(1000 + Math.random() * 9000);
                 const protocol = window.location.protocol;
@@ -785,13 +782,11 @@ function save_pdf(pdf_values_all, is_grouped){
                 $('#qr-modal').modal('show');
                 data["data"]["qr"] = $('#barcode canvas:nth-child(1)')[0].toDataURL();
                 final_pdf(data);
-                console.log("Data final")
-                console.log(data);
             }
         });
     } else {
         final_pdf(data);
-    }  
+    }
 }
 
 function final_pdf(data){

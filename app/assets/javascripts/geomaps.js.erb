@@ -1129,9 +1129,7 @@ Navarra.geomaps = function() {
       sortLayers: false
     });
 
-
-     // agrega registros seleccionados en la tabla
-
+    // agrega registros seleccionados en la tabla
     let style_selected = Navarra.geomap_tools.get_style_geoserver_selected(type_geometry);
     current_tenement = Navarra.dashboards.config.current_tenement;
     layerProjectsSelected = new MySource(protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wms?authkey="+Navarra.dashboards.config.geo_key+"", {
