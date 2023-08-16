@@ -3966,7 +3966,6 @@ function set_error_message(message){
 }
 
 function changeSelected(){
-  console.log("Entra a changeSelected");
   if(event.target.checked){
     var id_checked = event.target.id.split('_')[2];
     $('#row_table_data'+id_checked).addClass('tr_checked');

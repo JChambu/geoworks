@@ -100,16 +100,12 @@ function init_report_api(){
 
     setTimeout(function(){
       if(($('#set_map').is(':checked'))){
-        console.log("entra a SET MAP");
         var mapContainer = document.getElementById('map');
         $('.leaflet-top').addClass('d-none');
 
         html2canvas(mapContainer, {
           useCORS: true,
         }).then(function(canvas) {
-          console.log("CANVAS");
-          console.log(canvas);
-          console.log("Entra a condición THEN");
           imgData_pdf = canvas.toDataURL('image/png');
           $('.leaflet-top').removeClass('d-none');
           search_data_pdf();
@@ -764,9 +760,6 @@ function save_pdf(pdf_values_all, is_grouped){
     data["data"] = data_report;
     data["file"] = "reporte.pdf";
 
-    console.log("Data")
-    console.log(data)
-
     if(($('#set_qr').is(':checked'))){
         //guarda datos si se solicita QR
         $.ajax({
@@ -776,7 +769,6 @@ function save_pdf(pdf_values_all, is_grouped){
             data: data,
             success: function(response) {
                 new_report_id = response.report_id;
-                console.log("Reporte id "+new_report_id);
                 const rdm1 = Math.floor(1000 + Math.random() * 9000);
                 const rdm2 = Math.floor(1000 + Math.random() * 9000);
                 const protocol = window.location.protocol;
@@ -795,8 +787,6 @@ function save_pdf(pdf_values_all, is_grouped){
                 $('#qr-modal').modal('show');
                 data["data"]["qr"] = $('#barcode canvas:nth-child(1)')[0].toDataURL();
                 final_pdf(data);
-                console.log("Data final")
-                console.log(data);
             }
         });
     } else {
