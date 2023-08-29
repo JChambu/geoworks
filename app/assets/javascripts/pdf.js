@@ -91,6 +91,7 @@ function init_report_api(){
     }
   });
   if(($('#set_subfield_grouped').is(':checked'))){
+    // fathers_values = pdf_values_all
     pdf_values_all = order_pdf();
     is_grouped = true;
   }
@@ -153,6 +154,7 @@ function sarch_photos_report(){
   if(($('#set_photos').is(':checked'))){
     // busca fotos padres
     var ids = [];
+    // var ids_father = [];
     if(is_grouped){
       pdf_values_all.forEach(function(pdf_object){
         key = Object.keys(pdf_object);
@@ -165,6 +167,11 @@ function sarch_photos_report(){
           }
         });
       });
+      // if (is_grouped && $('#set_subfield_table').is(':checked')) {
+      //   fathers_values.forEach(function(pdf_object_father){
+      //     ids_father.push(pdf_object_father['id']);
+      //   });
+      // }
     } else {
       pdf_values_all.forEach(function(pdf_object){
         ids.push(pdf_object['id']);
@@ -176,7 +183,8 @@ function sarch_photos_report(){
       url: '/photos/get_photos',
       datatype: 'json',
       data: {
-          ids: ids
+          ids: ids,
+          // ids_father: ids_father
       },
       success: function(data) {
         data.forEach(function(data_photos){
@@ -200,6 +208,17 @@ function sarch_photos_report(){
                     });
                   }
                 });
+
+                // if (is_grouped && $('#set_subfield_table').is(':checked')) {
+                //   fathers_values.forEach(function(ob){
+                //     if(ob["id"] == k){
+                //       if(ob["photos"] ==  undefined){
+                //         ob["photos"] = [];
+                //       }
+                //       ob["photos"].push(p[k]);
+                //     }
+                //   });
+                // }
               } else {
                 pdf_values_all.forEach(function(ob){
                   if(ob["id"] == k){
@@ -210,6 +229,8 @@ function sarch_photos_report(){
                   }
                 });
               }
+              console.log("pdf_values_all");
+              console.log(pdf_values_all);
             });
           });
         });
@@ -726,6 +747,7 @@ function save_pdf(pdf_values_all, is_grouped){
     template_type = $('#pdf_type').val();
     data_report ={}
     data_report["data"] = pdf_values_all;
+    // data_report["father_photos_grouped"] = fathers_values;
     data_report["name"] = Navarra.dashboards.config.name_project;
     data_report["user"] = user_name;
     data_report["map"] = imgData_pdf;
@@ -753,6 +775,7 @@ function save_pdf(pdf_values_all, is_grouped){
     var data = {}
     data["template"] = hash_pdf;
     data["data"] = data_report;
+    console.log(data);
     data["file"] = "reporte.pdf";
 
     if(($('#set_qr').is(':checked'))){
