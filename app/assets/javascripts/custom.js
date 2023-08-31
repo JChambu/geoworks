@@ -2443,6 +2443,7 @@ function export_to_excel(table, name, filename) {
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
 function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
+  console.log("ENTRA ACÁ");
   children_fields_all = new Object;
   if(!is_new_file){
     $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
@@ -2925,6 +2926,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             child_elements = element.value;
             verify_count_elements_childs = 0;
             if(!is_new_file && !is_multiple){
+              console.log("acá que onda");
               child_elements.forEach(function(element_child) {
                 var new_row1 = create_new_row_child_date(element_child);
                 new_row.appendChild(new_row1);
@@ -2972,6 +2974,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
 }
 
 function create_new_row_child_date(element_child){
+  console.log("entra a create_new_row_child_date");
   var new_row1 = document.createElement('DIV');
   new_row1.className = "form-row";
   var linediv = document.createElement('DIV');
@@ -2999,6 +3002,7 @@ function create_new_row_child_date(element_child){
 }
 
 function create_new_row_child(element_child, element_field_id, element_name, is_multiple, is_new){
+  console.log("ENTRA ACÁ CUANDO EDITO");
   //campos de los hijos
   children_fields = element_child.children_fields;
   if(children_fields_all[element_field_id]==undefined){children_fields_all[element_field_id]=new Object}
@@ -3080,6 +3084,77 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
           new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
         }
       }
+
+      if (element_child_field.field_type_id == 12) {
+        var new_p = document.createElement('TEXTAREA');
+        new_p.className = "form-control form-control-sm "+classname_field+" textarea_input is_child_field";
+        new_p.style.minHeight = '22px';
+        if(!is_multiple){
+          new_p.setAttribute("onChange","calculate_all(false,false,"+element_child.children_id+","+element_field_id+")");
+        } else{
+          new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
+        }
+        // var newButton = document.createElement('BUTTON');
+        // newButton.style.width = '9px';
+        // newButton.style.height = '9px';
+        // newButton.target = "_blank";
+        // newButton.onclick = function() {
+        //   var url = element_child_field.value
+        //   window.location.href = url;
+        // };
+        // new_row1.appendChild(newButton)
+
+        var new_pp = document.createElement('A');
+        new_pp.href = element_child_field.value
+        new_pp.target = "_blank";
+        new_pp.textContent = element_child_field.value
+        new_pp.className = "form-control form-control-sm "+classname_field+" textarea_input is_child_field";
+        new_pp.onclick = function() {
+          return confirm("¿Estás seguro de que deseas salir de esta página?");
+        };
+        new_p.appendChild(new_pp)
+
+        // if (classname_field == "info_input") {
+        //   var new_p = document.createElement('TEXTAREA');
+        //   new_p.className = "form-control form-control-sm "+classname_field+" textarea_input is_child_field";
+        //   new_p.style.minHeight = '22px';
+        //   if(!is_multiple){
+        //     new_p.setAttribute("onChange","calculate_all(false,false,"+element_child.children_id+","+element_field_id+")");
+        //   } else{
+        //     new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
+        //   }
+        // }
+        // if (element.classList.contains("info_input_disabled")) {
+        //   console.log("ENTRA A TRUE INFO INPUT DISABLED");
+        //
+        // } else {
+        //   console.log("ENTRA A FALSE INFO INPUT DISABLED");
+        //   var new_p = document.createElement('TEXTAREA');
+        //   new_p.className = "form-control form-control-sm "+classname_field+" textarea_input is_child_field";
+        //   new_p.style.minHeight = '22px';
+        //   if(!is_multiple){
+        //     new_p.setAttribute("onChange","calculate_all(false,false,"+element_child.children_id+","+element_field_id+")");
+        //   } else{
+        //     new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
+        //   }
+        // }
+
+
+        // console.log("element_child_field.field_id");
+        // console.log(element_child_field.field_id);
+        // console.log("element_child.children_id");
+        // console.log(element_child.children_id);
+        // console.log("ENTRA EN LA VALIDACION");
+        console.log("new_row1");
+        console.log(new_row1);
+        console.log("new_p");
+        console.log(new_p);
+        console.log("element_child_field");
+        console.log(element_child_field);
+
+
+      }
+
       var found_nested = false;
       if (element_child_field.field_type_id == 2 || element_child_field.field_type_id == 10) {
         var new_p = document.createElement('SELECT');
