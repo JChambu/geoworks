@@ -32,6 +32,10 @@ es:
   layers: 'Capas Externas'
   graphics: 'Gráficos'
   statuses: 'Estados'
+  funcionalities: 'Funcionalidades'
+  heatmap: 'Mapa de Calor'
+  interpolation: 'Interpolación'
+  color_attribute: 'Pintar por Atributo'
   regexp: 'Expresiones Regulares'
   exception_handler:
     not_found: "Página no encontrada"

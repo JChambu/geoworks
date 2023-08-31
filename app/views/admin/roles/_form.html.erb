@@ -36,7 +36,7 @@
               <% if mt.name != 'data' && mt.name != 'reports' && mt.name != 'choice_lists' %>
 
                 <!-- Eventos ABMC -->
-                <% if e.name == 'new' || e.name == 'destroy' || e.name == 'edit' || e.name == 'visualizer' %>
+                <% if (mt.name != 'funcionalities' && (e.name == 'new' || e.name == 'destroy' || e.name == 'edit' || e.name == 'visualizer')) %>
                   <div class="form-group">
                     <div class="custom-control custom-switch">
                       <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
@@ -89,6 +89,15 @@
 
               <!-- Módulo Atributos -->
               <% if (mt.name == 'attributes' && (e.name == 'add_logic' )) %>
+                <div class="form-group">
+                  <div class="custom-control custom-switch">
+                    <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
+                    <label class="custom-control-label custom-role-colour" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
+                  </div>
+                </div>
+              <% end %>
+
+              <% if (mt.name == 'funcionalities' && (e.name == 'heatmap' || e.name == 'interpolation' || e.name == 'color_attribute')) %>
                 <div class="form-group">
                   <div class="custom-control custom-switch">
                     <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
