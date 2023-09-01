@@ -35,7 +35,9 @@ es:
   funcionalities: 'Funcionalidades'
   heatmap: 'Mapa de Calor'
   interpolation: 'Interpolación'
+  new_project_interpolation: 'Nuevo proyecto en Interpolación'
   color_attribute: 'Pintar por Atributo'
+  user_filter: 'Filtro por Usuario'
   regexp: 'Expresiones Regulares'
   exception_handler:
     not_found: "Página no encontrada"
