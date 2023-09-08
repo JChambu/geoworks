@@ -97,7 +97,7 @@
                 </div>
               <% end %>
 
-              <% if (mt.name == 'funcionalities' && (e.name == 'heatmap' || e.name == 'interpolation' || e.name == 'color_attribute' || e.name == 'new_project_interpolation' || e.name == 'user_filter')) %>
+              <% if (mt.name == 'funcionalities' && (e.name == 'heatmap' || e.name == 'interpolation' || e.name == 'color_attribute' || e.name == 'new_project_interpolation' || e.name == 'user_filter' || e.name == 'ndvi' || e.name == 'multipoints')) %>
                 <div class="form-group">
                   <div class="custom-control custom-switch">
                     <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>

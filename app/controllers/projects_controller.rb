@@ -73,6 +73,18 @@ class ProjectsController < ApplicationController
     render json: projects
   end
 
+  def has_ndvi_and_multipoints_role
+    user_role_id = UserCustomer.where(user_id: current_user.id).pluck(:role_id).first
+    funcionalities_id = ModelType.where(name: 'funcionalities').pluck(:id).first
+    ndvi_event_id = Event.where(name: 'ndvi').pluck(:id).first
+    multipoints_event_id = Event.where(name: 'multipoints').pluck(:id).first
+
+    find_ndvi_permission = Permission.where(role_id: user_role_id, event_id: ndvi_event_id, model_type_id: funcionalities_id)
+    find_multipoints_permission = Permission.where(role_id: user_role_id, event_id: multipoints_event_id, model_type_id: funcionalities_id)
+
+    render json: { find_ndvi_permission: find_ndvi_permission, find_multipoints_permission: find_multipoints_permission }
+  end
+
   def get_coordinates
     app_id_polygon = params[:app_id_popup].to_i
     coordinates = Project.select("ST_AsText(ST_Transform(the_geom, 3857))").find(app_id_polygon).st_astext
