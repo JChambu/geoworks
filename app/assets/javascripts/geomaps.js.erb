@@ -1510,13 +1510,13 @@ function getCQLFilter_layer(dat){
   };
 
   function buttons_roles(){
-    user_name = Navarra.dashboards.config.user_name
+    current_tenant = Navarra.dashboards.config.current_tenant
     $.ajax({
       url: '/projects/has_ndvi_and_multipoints_role',
       method: 'POST',
       datatype: 'json',
       data: {
-        user_name: user_name
+        current_tenant: current_tenant
       },
       success: function(data) {
         console.log(data);
