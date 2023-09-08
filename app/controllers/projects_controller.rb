@@ -74,7 +74,7 @@ class ProjectsController < ApplicationController
   end
 
   def has_ndvi_and_multipoints_role
-    user_role_id = UserCustomer.where(user_id: current_user.id).pluck(:role_id).first
+    user_role_id = UserCustomer.where(user_id: current_user.id, customer_id: current_tenant.id).pluck(:role_id).first
     funcionalities_id = ModelType.where(name: 'funcionalities').pluck(:id).first
     ndvi_event_id = Event.where(name: 'ndvi').pluck(:id).first
     multipoints_event_id = Event.where(name: 'multipoints').pluck(:id).first
