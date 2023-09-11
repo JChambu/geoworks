@@ -32,6 +32,7 @@ es:
   layers: 'Capas Externas'
   graphics: 'Gráficos'
   statuses: 'Estados'
+  admin_projects: 'Administrar Proyectos'
   regexp: 'Expresiones Regulares'
   exception_handler:
     not_found: "Página no encontrada"
