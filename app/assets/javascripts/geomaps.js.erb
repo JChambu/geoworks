@@ -8,6 +8,8 @@ var wmsLayer;
 var div_popup_icon;
 var number_point_value;
 var multipoints_coordinates;
+var ndvi_event;
+var multipoints_event;
 
 Navarra.namespace("geomaps");
 var first_layer=false;
@@ -1507,7 +1509,25 @@ function getCQLFilter_layer(dat){
     });
   };
 
+  function buttons_roles(){
+    current_tenant = Navarra.dashboards.config.current_tenant
+    $.ajax({
+      url: '/projects/has_ndvi_and_multipoints_role',
+      method: 'POST',
+      datatype: 'json',
+      data: {
+        current_tenant: current_tenant
+      },
+      success: function(data) {
+        console.log(data);
+        ndvi_event = data.find_ndvi_permission
+        multipoints_event = data.find_multipoints_permission
+      }
+    });
+  }
+
   function popup() {
+    buttons_roles();
     MySource = L.WMS.Source.extend({
       'showFeatureInfo': function(latlng, info) {
         if(latlng["lat"]!=last_lat || latlng["lng"]!=last_long){
@@ -1590,13 +1610,15 @@ function getCQLFilter_layer(dat){
                       }
                     };
 
-                    type_geometry = Navarra.dashboards.config.type_geometry
-                    if (type_geometry == 'Polygon' && current_layer_name == project_name) {
-                      var new_p = document.createElement('I');
-                      new_p.setAttribute("onclick",'Navarra.geomaps.modal_points_number('+app_id_popup+')');
-                      new_p.className="fas fa-circle info_icon";
-                      div_popup_icon.appendChild(new_p);
-                    }
+                    if (multipoints_event.length !== 0) {
+                      type_geometry = Navarra.dashboards.config.type_geometry
+                      if (type_geometry == 'Polygon' && current_layer_name == project_name) {
+                        var new_p = document.createElement('I');
+                        new_p.setAttribute("onclick",'Navarra.geomaps.modal_points_number('+app_id_popup+')');
+                        new_p.className="fas fa-circle info_icon";
+                        div_popup_icon.appendChild(new_p);
+                      }
+                    };
 
                     var new_p = document.createElement('I');
                     new_p.setAttribute("onclick",'Navarra.photos.open_photos('+app_id_popup+',false)');
@@ -1608,20 +1630,22 @@ function getCQLFilter_layer(dat){
                     new_p.className="fas fa-info-circle info_icon";
                     div_popup_icon.appendChild(new_p);
 
-                    if (type_geometry == 'Polygon' && current_layer_name == project_name) {
-                      if (mymap.hasLayer(wmsLayer[app_id_popup]) === false){
-                        var new_p = document.createElement('I');
-                        new_p.setAttribute("id", "display_ndvi");
-                        new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +', event)');
-                        new_p.className="fas fa-layer-group info_icon";
-                        div_popup_icon.appendChild(new_p);
-                      } else {
-                        var new_p = document.createElement('I');
-                        new_p.setAttribute("id", "hide_ndvi");
-                        new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +', event)');
-                        new_p.className = "fa fa-times info_icon";
-                        div_popup_icon.appendChild(new_p);
-                      }
+                    if (ndvi_event.length !== 0) {
+                      if (type_geometry == 'Polygon' && current_layer_name == project_name) {
+                        if (mymap.hasLayer(wmsLayer[app_id_popup]) === false){
+                          var new_p = document.createElement('I');
+                          new_p.setAttribute("id", "display_ndvi");
+                          new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +', event)');
+                          new_p.className="fas fa-layer-group info_icon";
+                          div_popup_icon.appendChild(new_p);
+                        } else {
+                          var new_p = document.createElement('I');
+                          new_p.setAttribute("id", "hide_ndvi");
+                          new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +', event)');
+                          new_p.className = "fa fa-times info_icon";
+                          div_popup_icon.appendChild(new_p);
+                        }
+                      };
                     };
 
                     if(Navarra.dashboards.config.current_tenement == "fepedi" || Navarra.dashboards.config.current_tenement == "amandes"  ){// si es proyecto iot por ahora hardcode para fepedi
@@ -3165,6 +3189,7 @@ function open_iot_monitoring(app_id_popup){
     modal_save_multipoints: modal_save_multipoints,
     modal_points_number: modal_points_number,
     open_iot_monitoring: open_iot_monitoring,
-    cancel_color_attr: cancel_color_attr
+    cancel_color_attr: cancel_color_attr,
+    buttons_roles: buttons_roles
   }
 }();

@@ -277,18 +277,22 @@ function open_panel(id_panel,id_table){
               <i class="fas fa-search-location align-middle" style="font-size: 24px"></i>
             </a>
             <div class="dropdown-menu custom-menu all_filters" aria-labelledby="gis_dropdown" style="min-width: auto">
-                <%= link_to project_type_quick_filters_path(@project_type.id), class: 'dropdown-item custom-item', id: "filter_status",:remote => true do %> <i class="fas fa-bell" title="Filtrar por Estado" style="font-size: 20px"></i> <% end %>
-
+              <%= link_to project_type_quick_filters_path(@project_type.id), class: 'dropdown-item custom-item', id: "filter_status",:remote => true do %> <i class="fas fa-bell" title="Filtrar por Estado" style="font-size: 20px"></i> <% end %>
+              <% if can? :funcionalities, :user_filter %>
                 <%= link_to project_type_quick_filters_users_path(@project_type.id), class: 'dropdown-item custom-item', id: "filter",:remote => true do %> <i class="fas fa-user-alt" title="Filtrar por Usuario" style="font-size: 20px"></i> <% end %>
-
-                <div class="modal-content quick_filters_container " style="top: 0px; left:105%; width:max-content; position: absolute;">
-                 </div>
-
+              <% end %>
+              <div class="modal-content quick_filters_container " style="top: 0px; left:105%; width:max-content; position: absolute;"></div>
               <%= link_to project_type_filters_path(@project_type.id), class: 'dropdown-item custom-item', id: "filter",:remote => true do %> <i class="fas fa-filter align-middle" title="Filtrar" style="font-size: 20px"></i> <% end %>
               <div class="dropdown-divider"></div>
-              <%= link_to project_type_heatmap_path(@project_type.id), class: 'dropdown-item custom-item', id: "heatmap", :remote=> true do %> <i class="fas fa-fire align-middle" title="Mapa de Calor" style="font-size: 20px"></i> <% end %>
-              <%= link_to project_type_interpolation_path(@project_type.id), class: 'dropdown-item custom-item', id: "interpolation", :remote=> true do %> <i class="fas fa-grip-horizontal align-middle" title="Interpolar" style="font-size: 20px"></i> <% end %>
-              <%= link_to project_type_color_by_attribute_path(@project_type.id), class: 'dropdown-item custom-item', id: "color_attribute", :remote=> true do %> <i class="fas fa-paint-brush align-middle" title="Pintar por atributo" style="font-size: 20px"></i> <% end %>
+              <% if can? :funcionalities, :heatmap %>
+                <%= link_to project_type_heatmap_path(@project_type.id), class: 'dropdown-item custom-item', id: "heatmap", :remote=> true do %> <i class="fas fa-fire align-middle" title="Mapa de Calor" style="font-size: 20px"></i> <% end %>
+              <% end %>
+              <% if can? :funcionalities, :interpolation %>
+                <%= link_to project_type_interpolation_path(@project_type.id), class: 'dropdown-item custom-item', id: "interpolation", :remote=> true do %> <i class="fas fa-grip-horizontal align-middle" title="Interpolar" style="font-size: 20px"></i> <% end %>
+              <% end %>
+              <% if can? :funcionalities, :color_attribute %>
+                <%= link_to project_type_color_by_attribute_path(@project_type.id), class: 'dropdown-item custom-item', id: "color_attribute", :remote=> true do %> <i class="fas fa-paint-brush align-middle" title="Pintar por atributo" style="font-size: 20px"></i> <% end %>
+              <% end %>
               <!--<%= link_to project_type_point_colors_path(@project_type.id), class: 'dropdown-item custom-item', id: "point_colors", :remote=> true do %> <i class="fas fa-spinner align-middle" title="Colorear Puntos" style="font-size: 20px"></i> <% end %>-->
             </div>
           </li>
