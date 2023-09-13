@@ -38,7 +38,7 @@ Rails.application.routes.draw do
   get 'projects/popup' => 'projects#popup'
   post 'project_types/get_extent' => 'project_types#get_extent'
   get 'project_types/get_kpi_without_graph_ids' => 'project_types#get_kpi_without_graph_ids'
-  get 'project_types/get_added_layer_data' => 'project_types#get_added_layer_data' 
+  get 'project_types/get_added_layer_data' => 'project_types#get_added_layer_data'
   post 'projects/create_form' => 'projects#create_form'
   patch 'projects/update_form' => 'projects#update_form'
   patch 'projects/update_geom_and_calculated_fields' => 'projects#update_geom_and_calculated_fields'
@@ -67,6 +67,7 @@ Rails.application.routes.draw do
   get 'reports/get_data_report' => 'reports#get_data_report', as: :get_data_report
   post 'reports/save_data_report' => 'reports#save_data_report', as: :save_data_report
   post 'reports/save_form_report' => 'reports#save_form_report', as: :save_form_report
+  post 'projects/has_ndvi_and_multipoints_role'
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
     post 'project_fields/create'
