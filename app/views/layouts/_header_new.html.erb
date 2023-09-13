@@ -403,6 +403,9 @@ function open_panel(id_panel,id_table){
           <% if current_user.name == 'superadmin' %>
             <%= link_to 'Administración', admin_root_path, class: "dropdown-item" %>
           <% end %>
+          <% if can? :project_types, :admin_projects%>
+            <%= link_to "Administrar Proyectos", project_types_path, class: "dropdown-item" %>
+          <% end %>
           <%= link_to "Editar Usuario", edit_user_path(current_user.id), class: "dropdown-item" %>
           <%= link_to 'Cerrar Sesión', destroy_user_session_path, class: "dropdown-item", method: :delete %>
         <% end %>
