@@ -48,7 +48,7 @@ class RegistrationsController < Devise::RegistrationsController
       role_id         = Role.where(name: role_selected).pluck(:id).first
       current_tenant  = Apartment::Tenant.current
       customer_id     = Customer.find_by(subdomain: current_tenant)&.id
-      project_type_ids = [3, 4, 5]
+      project_type_ids = [12, 16, 17]
 
       if role_selected == 'Comprador'
         params.require(:user)
@@ -56,8 +56,8 @@ class RegistrationsController < Devise::RegistrationsController
         .merge(
           active: true,
           user_customers_attributes: [customer_id: customer_id, role_id: role_id],
-          has_project_types_attributes: [project_type_id: 4],
-          project_filters_attributes:[project_type_id: 4, owner: true]
+          has_project_types_attributes: [project_type_id: 16],
+          project_filters_attributes:[project_type_id: 16, owner: true]
         )
       else
         params.require(:user)
