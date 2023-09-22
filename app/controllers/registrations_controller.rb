@@ -56,8 +56,7 @@ class RegistrationsController < Devise::RegistrationsController
         .merge(
           active: true,
           user_customers_attributes: [customer_id: customer_id, role_id: role_id],
-          has_project_types_attributes: [project_type_id: 16],
-          project_filters_attributes:[project_type_id: 16, owner: true]
+          has_project_types_attributes: [project_type_id: 16]
         )
       else
         params.require(:user)
