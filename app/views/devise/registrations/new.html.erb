@@ -1,38 +1,58 @@
-<div class="row w-100 align-items-center m-0" >
-  <div class="col-md-6 align-middle form-sinin-img vh-100" style="overflow:hidden;"></div>
-  <div class="col-md-6 align-middle text-center p-0">
-    <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: {class: 'form-signin pl-6 pr-6'}) do |f| %>
-      <div class="form-group">
-        <center><%=image_tag ENV['VERTICAL_LOGO'], class:'mb-2', width:"252"%></center>
-        <div class="row mb-3">
-          <div class="col-md-12">
-            <%= f.input :name, label: "Nombre", input_html: {class: "form-control"} %>
+<% if Apartment::Tenant.current == 'agricultura' || Apartment::Tenant.current == 'aws' %>
+  <div class="row w-100 align-items-center m-0" >
+    <div class="<%= Apartment::Tenant.current == 'aws' ? 'col-md-6 align-middle form-singnin-aws-img vh-100' : 'col-md-6 align-middle form-sinin-img vh-100' %>" style="overflow:hidden;"></div>
+    <div class="col-md-6 align-middle text-center p-0">
+      <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: {class: 'form-signin pl-6 pr-6'}) do |f| %>
+        <div class="form-group">
+          <% if Apartment::Tenant.current == 'aws' %>
+            <center><%=image_tag('logo-aws.png', class:'mb-2', width:"252")%></center>
+          <% else %>
+            <center><%=image_tag ENV['VERTICAL_LOGO'], class:'mb-2', width:"252"%></center>
+          <% end %>
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <%= f.input :name, label: "Nombre", input_html: {class: "form-control"} %>
+            </div>
           </div>
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <%= f.input :email, label: "E-mail", placeholder: "some@mail.com", autofocus: true, input_html: {class: "form-control"} %>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <%= f.input :country_code, as: :string, autocomplete: "off", label: "Cód. País", placeholder: "54", input_html: {class: "form-control"} %>
+            </div>
+            <div class="col-md-4">
+              <%= f.input :area_code, autocomplete: "off", label: "Cód. Área", placeholder: "261", input_html: {class: "form-control"} %>
+            </div>
+            <div class="col-md-4">
+              <%= f.input :phone, autocomplete: "off", label: "Teléfono", placeholder: "1234567", input_html: {class: "form-control"} %>
+            </div>
+          </div>
+          <% if Apartment::Tenant.current == 'aws' %>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <%= f.label "Rol" %>
+                <%= f.select :role, options_for_select(['Comprador', 'Vendedor']), {:include_blank => false}, {class: 'form-control form-control-sm'} %>
+              </div>
+            </div>
+          <% end %>
         </div>
-        <div class="row mb-3">
-          <div class="col-md-12">
-            <%= f.input :email, label: "E-mail", placeholder: "some@mail.com", autofocus: true, input_html: {class: "form-control"} %>
-          </div>
+        <%= f.submit 'Registrarse', class: 'btn btn-lg btn-primary btn-block mb-2' %>
+        <div class="text-center">
+          <%= render "devise/shared/links" %>
         </div>
-        <div class="row mb-3">
-          <div class="col-md-4">
-            <%= f.input :country_code, as: :string, autocomplete: "off", label: "Cód. País", placeholder: "54", input_html: {class: "form-control"} %>
-          </div>
-          <div class="col-md-4">
-            <%= f.input :area_code, autocomplete: "off", label: "Cód. Área", placeholder: "261", input_html: {class: "form-control"} %>
-          </div>
-          <div class="col-md-4">
-            <%= f.input :phone, autocomplete: "off", label: "Teléfono", placeholder: "1234567", input_html: {class: "form-control"} %>
-          </div>
+        <div class="text-left">
+          <%= render "devise/shared/success_messages", resource: resource %>
         </div>
-      </div>
-      <%= f.submit 'Registrarse', class: 'btn btn-lg btn-primary btn-block mb-2' %>
-      <div class="text-center">
-        <%= render "devise/shared/links" %>
-      </div>
-      <div class="text-left">
-        <%= render "devise/shared/success_messages", resource: resource %>
-      </div>
-    <% end %>
+      <% end %>
+      <% if Apartment::Tenant.current == 'aws' %>
+        <div style="margin-top: 60px;">
+          <p style="margin-bottom: 2px;">Powered by</p>
+          <center><%=image_tag('logo_gw_hor_2.png', class:'mb-2', width:"140")%></center>
+        </div>
+      <% end %>
+    </div>
   </div>
-</div>
+<% end %>

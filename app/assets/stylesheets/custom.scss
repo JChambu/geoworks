@@ -51,6 +51,11 @@ body {
   background-position: 50% 50%;
   background-repeat: no-repeat;
 }
+.form-singnin-aws-img{
+  background-image: url(asset_path("vertical-login-aws.jpg"));
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
 .form-signin {
   width: 100%;
   max-width: 350px;
