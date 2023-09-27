@@ -1,7 +1,6 @@
 class RegistrationsController < Devise::RegistrationsController
 
   def create
-    byebug
     build_resource(sign_up_params)
 
     resource.save
@@ -22,11 +21,10 @@ class RegistrationsController < Devise::RegistrationsController
     end
   end
 
-  protected
+  private
 
-  if Apartment::Tenant.current == 'agricultura'
-    byebug
-    def sign_up_params
+  def sign_up_params
+    if Apartment::Tenant.current == 'agricultura'
       rol_id            = Role.find_by(name: 'Público')&.id
       project_types_ids = ProjectType.pluck(:id)
       project_type_id   = ProjectType.find_by(name: 'Demo Público')&.id
@@ -41,28 +39,22 @@ class RegistrationsController < Devise::RegistrationsController
         has_project_types_attributes: project_types_ids.map { |id| { project_type_id: id } },
         project_filters_attributes:[project_type_id: project_type_id, owner: true]
       )
-    end
-  else
-    byebug
-    def sign_up_params
-      byebug
-      role_selected   = params[:user][:role]
-      role_id         = Role.where(name: role_selected).pluck(:id).first
-      current_tenant  = Apartment::Tenant.current
-      customer_id     = Customer.find_by(subdomain: current_tenant)&.id
-      project_type_ids = [3, 4, 5]
+    else
+      role_selected    = params[:user][:role]
+      role_id          = Role.where(name: role_selected).pluck(:id).first
+      current_tenant   = Apartment::Tenant.current
+      customer_id      = Customer.find_by(subdomain: current_tenant)&.id
+      project_type_ids = [12, 16, 17]
 
       if role_selected == 'Comprador'
-        byebug
         params.require(:user)
         .permit(:email, :name, :password, :password_confirmation, :country_code, :area_code, :phone)
         .merge(
           active: true,
           user_customers_attributes: [customer_id: customer_id, role_id: role_id],
-          has_project_types_attributes: [project_type_id: 4]
+          has_project_types_attributes: [project_type_id: 16]
         )
       else
-        byebug
         params.require(:user)
         .permit(:email, :name, :password, :password_confirmation, :country_code, :area_code, :phone)
         .merge(
@@ -74,38 +66,5 @@ class RegistrationsController < Devise::RegistrationsController
       end
     end
   end
-
-  # if Apartment::Tenant.current == 'aws'
-  #   byebug
-  #   def sign_up_params
-  #     byebug
-  #     role_selected   = params[:user][:role]
-  #     role_id         = Role.where(name: role_selected).pluck(:id).first
-  #     current_tenant  = Apartment::Tenant.current
-  #     customer_id     = Customer.find_by(subdomain: current_tenant)&.id
-  #     project_type_ids = [3, 4, 5]
-  #
-  #     if role_selected == 'Comprador'
-  #       byebug
-  #       params.require(:user)
-  #       .permit(:email, :name, :password, :password_confirmation, :country_code, :area_code, :phone)
-  #       .merge(
-  #         active: true,
-  #         user_customers_attributes: [customer_id: customer_id, role_id: role_id],
-  #         has_project_types_attributes: [project_type_id: 4]
-  #       )
-  #     else
-  #       byebug
-  #       params.require(:user)
-  #       .permit(:email, :name, :password, :password_confirmation, :country_code, :area_code, :phone)
-  #       .merge(
-  #         active: true,
-  #         user_customers_attributes: [customer_id: customer_id, role_id: role_id],
-  #         has_project_types_attributes: project_type_ids.map { |id| { project_type_id: id } },
-  #         project_filters_attributes: project_type_ids.map { |id| { project_type_id: id, owner: true } }
-  #       )
-  #     end
-  #   end
-  # end
 
 end
