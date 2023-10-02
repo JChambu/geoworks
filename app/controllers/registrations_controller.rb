@@ -23,8 +23,8 @@ class RegistrationsController < Devise::RegistrationsController
 
   private
 
-  if Apartment::Tenant.current == 'agricultura'
-    def sign_up_params
+  def sign_up_params
+    if Apartment::Tenant.current == 'agricultura'
       rol_id            = Role.find_by(name: 'Público')&.id
       project_types_ids = ProjectType.pluck(:id)
       project_type_id   = ProjectType.find_by(name: 'Demo Público')&.id
@@ -39,15 +39,11 @@ class RegistrationsController < Devise::RegistrationsController
         has_project_types_attributes: project_types_ids.map { |id| { project_type_id: id } },
         project_filters_attributes:[project_type_id: project_type_id, owner: true]
       )
-    end
-  end
-
-  if Apartment::Tenant.current == 'aws'
-    def sign_up_params
-      role_selected   = params[:user][:role]
-      role_id         = Role.where(name: role_selected).pluck(:id).first
-      current_tenant  = Apartment::Tenant.current
-      customer_id     = Customer.find_by(subdomain: current_tenant)&.id
+    else
+      role_selected    = params[:user][:role]
+      role_id          = Role.where(name: role_selected).pluck(:id).first
+      current_tenant   = Apartment::Tenant.current
+      customer_id      = Customer.find_by(subdomain: current_tenant)&.id
       project_type_ids = [12, 16, 17]
 
       if role_selected == 'Comprador'
@@ -65,7 +61,7 @@ class RegistrationsController < Devise::RegistrationsController
           active: true,
           user_customers_attributes: [customer_id: customer_id, role_id: role_id],
           has_project_types_attributes: project_type_ids.map { |id| { project_type_id: id } },
-          project_filters_attributes: project_type_ids.map { |id| { project_type_id: id, owner: true } }
+          project_filters_attributes:[project_type_id: 17, owner: true]
         )
       end
     end
