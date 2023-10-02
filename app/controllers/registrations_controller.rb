@@ -61,7 +61,7 @@ class RegistrationsController < Devise::RegistrationsController
           active: true,
           user_customers_attributes: [customer_id: customer_id, role_id: role_id],
           has_project_types_attributes: project_type_ids.map { |id| { project_type_id: id } },
-          project_filters_attributes: project_type_ids.map { |id| { project_type_id: id, owner: true } }
+          project_filters_attributes:[project_type_id: 17, owner: true]
         )
       end
     end
