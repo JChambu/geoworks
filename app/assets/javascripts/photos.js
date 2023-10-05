@@ -98,11 +98,37 @@ function drop(ev) {
     $('.custom_modal_photos').css('left',Xfinal);
 }
 
+function papa(appid_info){
+  console.log("Entra a función");
+  console.log(appid_info);
+  document.getElementById('imageInput').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function() {
+      const base64Image = reader.result;
+      $.ajax({
+        url: 'photos/save_photos',
+        type: 'POST',
+        data: {
+          image: base64Image,
+          project_id: appid_info
+        },
+        success: function(response) {
+          console.log("Entra a success");
+        },
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 return {
     open_photos: open_photos,
     open_photo_mini: open_photo_mini,
     drag_photos:drag_photos,
     allowDrop:allowDrop,
-    drop:drop
+    drop:drop,
+    papa: papa
 }
 }();

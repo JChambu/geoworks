@@ -58,6 +58,7 @@ Rails.application.routes.draw do
   get 'photos/get_photos' => 'photos#get_photos'
   get 'photos_children/show_photos_children' => 'photos_children#show_photos_children'
   get 'photos_children/get_photos_children' => 'photos_children#get_photos_children'
+  post 'photos/save_photos' => 'photos#save_photos'
   post 'project_data_children/show_children' => 'project_data_children#show_children', as: :show_children
   post 'project_data_children/delete_subforms' => 'project_data_children#delete_subforms'
   get 'users/get_user_id_and_customer_id' => 'users#get_user_id_and_customer_id'
