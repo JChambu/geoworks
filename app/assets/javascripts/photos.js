@@ -98,28 +98,34 @@ Navarra.photos = function() {
     $('.custom_modal_photos').css('left',Xfinal);
   }
 
-  function newImage(appid_info){
+  function newImage(appid_info, photoName){
     const file = event.target.files[0];
     const reader = new FileReader();
-    if (file.size <= 27000) {
-      reader.onload = function() {
-        const base64Image = reader.result;
-        $.ajax({
-          url: '/photos/save_photos',
-          type: 'POST',
-          data: {
-            image: base64Image,
-            project_id: appid_info
-          },
-          success: function(response) {
-            alert("La imagen se cargó correctamente")
-            show_item_info(app_id_popup, true)
-          },
-        });
-      };
-      reader.readAsDataURL(file);
+    
+    if (file.type == "image/jpeg" || file.type == "image/jpg" || file.type == "image/png") {
+      if (file.size <= 300000) {
+        reader.onload = function() {
+          const base64Image = reader.result;
+          $.ajax({
+            url: '/photos/save_photos',
+            type: 'POST',
+            data: {
+              image: base64Image,
+              project_id: appid_info,
+              photoName: photoName
+            },
+            success: function(response) {
+              alert("La imagen se cargó correctamente")
+              show_item_info(app_id_popup, true)
+            },
+          });
+        };
+        reader.readAsDataURL(file);
+      } else {
+      alert("La imagen tiene que ser menor a 300kb")
+      }
     } else {
-      alert("La imagen tiene que ser menor a 27kb")
+      alert("Formato inválido. Los formatos válidos son: imágenes jpeg, jpg o png")
     }
   };
 

@@ -49,8 +49,9 @@ class PhotosController < ApplicationController
   def save_photos
     base64_photo = params[:image]
     project_id = params[:project_id]
+    photo_name = params[:photoName]
     base64_decode_photo = base64_photo.sub(/^data:image\/[a-z]+;base64,/, '')
-    new_photo = Photo.new(image: base64_decode_photo, project_id: project_id, row_active: true)
+    new_photo = Photo.new(name: photo_name, image: base64_decode_photo, project_id: project_id, row_active: true)
     new_photo.save
   end
 

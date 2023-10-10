@@ -2633,7 +2633,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
         labelElement.setAttribute('for', 'imageInput');
 
         var iconElement = document.createElement('i');
-        iconElement.classList.add('fas', 'fa-plus', 'icons');
+        iconElement.classList.add('fas', 'fa-camera', 'icons');
         iconElement.setAttribute('title', 'Agregar Foto');
 
         var inputElement = document.createElement('input');
@@ -2647,7 +2647,8 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
         document.getElementById('info_body').appendChild(labelElement);
 
         $('#imageInput').on('change', function() {
-          Navarra.photos.newImage(appid_info);
+          const photoName = prompt("Ingrese un nombre para la foto:");
+          Navarra.photos.newImage(appid_info, photoName);
         });
       };
 
