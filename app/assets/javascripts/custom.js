@@ -1555,8 +1555,6 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
           "<input type='checkbox' class='custom-control-input' id='check_select_"+appid_info+"' onchange='changeSelected()'>"+
           "<label class='string optional control-label custom-control-label' for='check_select_"+appid_info+"'></label>"+
           "</div>"+
-          // "<label for='imageInput'><i class='fas fa-plus icons' title='Agregar Foto' onClick='Navarra.photos.papa("+appid_info+")'></i></label>"+
-          // "<input id='imageInput' type='file' name='photo' style='display: none;'>"+
           "<i class='fas fa-image icons' title='Fotos' onClick='Navarra.photos.open_photos("+appid_info+")'></i>"+
           "</div>"
     array_datos.push(new_dom);
@@ -2445,7 +2443,6 @@ function export_to_excel(table, name, filename) {
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
 function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
-  console.log("entra acá cuando creo geometría");
   children_fields_all = new Object;
   if(!is_new_file){
     $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
@@ -2630,6 +2627,29 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       }
       // Si es nuevo puede guardar sin hacer cambios en los campos
       if(is_new_file){changeFile()}
+
+      if (appid_info != 0){
+        var labelElement = document.createElement('label');
+        labelElement.setAttribute('for', 'imageInput');
+
+        var iconElement = document.createElement('i');
+        iconElement.classList.add('fas', 'fa-plus', 'icons');
+        iconElement.setAttribute('title', 'Agregar Foto');
+
+        var inputElement = document.createElement('input');
+        inputElement.id = 'imageInput';
+        inputElement.className = 'new_photo'
+        inputElement.type = 'file';
+        inputElement.name = 'photo';
+
+        labelElement.appendChild(iconElement);
+        labelElement.appendChild(inputElement);
+        document.getElementById('info_body').appendChild(labelElement);
+
+        $('#imageInput').on('change', function() {
+          Navarra.photos.newImage(appid_info);
+        });
+      };
 
       //campos del registro
       father_fields = data.father_fields;
@@ -2892,7 +2912,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
               });
             }
           }
-          console.log("termina padre");
           } //termina campo padre
           else {
           // Dibuja campos hijos
@@ -2943,10 +2962,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
           }
         verify_count_elements ++;
       }); // termina for Each de padres
-      console.log("aca fin fin fin fin");
-      var new_p = document.createElement('label');
-      // <label for="imageInput"><i class="fas fa-plus icons" title="Agregar Foto" onClick="Navarra.photos.papa("+appid_info+")"></i></label>
-      // <input id="imageInput" type="file" name="photo" style="display: none;">
 
       if(verify_count_elements!= father_fields.length){
         set_error_message("Error: no se pudieron traer todos los campos");

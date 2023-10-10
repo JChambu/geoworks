@@ -47,16 +47,11 @@ class PhotosController < ApplicationController
   end
 
   def save_photos
-    byebug
     base64_photo = params[:image]
     project_id = params[:project_id]
     base64_decode_photo = base64_photo.sub(/^data:image\/[a-z]+;base64,/, '')
-    # image_data = Base64.decode64(base64_image)
     new_photo = Photo.new(image: base64_decode_photo, project_id: project_id, row_active: true)
-    # byebug
-    if new_photo.save
-      render json: { message: 'Imagen guardada exitosamente' }
-    end
+    new_photo.save
   end
 
   private

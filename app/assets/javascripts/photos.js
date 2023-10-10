@@ -98,30 +98,30 @@ function drop(ev) {
     $('.custom_modal_photos').css('left',Xfinal);
 }
 
-function papa(appid_info){
-  console.log("Entra a función");
-  console.log(appid_info);
-  document.getElementById('imageInput').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
+function newImage(appid_info){
+  const file = event.target.files[0];
+  const reader = new FileReader();
+  if (file.size <= 27000) {
     reader.onload = function() {
       const base64Image = reader.result;
       $.ajax({
-        url: 'photos/save_photos',
+        url: '/photos/save_photos',
         type: 'POST',
         data: {
           image: base64Image,
           project_id: appid_info
         },
         success: function(response) {
-          console.log("Entra a success");
+          alert("La imagen se cargó correctamente")
+          show_item_info(app_id_popup, true)
         },
       });
     };
     reader.readAsDataURL(file);
-  });
-}
+  } else {
+    alert("La imagen tiene que ser menor a 27kb")
+  }
+};
 
 return {
     open_photos: open_photos,
@@ -129,6 +129,6 @@ return {
     drag_photos:drag_photos,
     allowDrop:allowDrop,
     drop:drop,
-    papa: papa
+    newImage: newImage
 }
 }();

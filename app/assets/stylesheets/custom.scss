@@ -1094,3 +1094,11 @@ div.custom-menu.show {
   padding-right: 10px;
   padding-left: 13px;
 }
+
+.new_photo{
+  width: 23px;
+  position: relative;
+  z-index: 3000;
+  left: -19px;
+  visibility: hidden;
+}
