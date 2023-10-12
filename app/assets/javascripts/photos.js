@@ -98,12 +98,13 @@ Navarra.photos = function() {
     $('.custom_modal_photos').css('left',Xfinal);
   }
 
-  function newImage(appid_info, photoName){
+  function newFatherImage(appid_info){
     const file = event.target.files[0];
     const reader = new FileReader();
     
     if (file.type == "image/jpeg" || file.type == "image/jpg" || file.type == "image/png") {
       if (file.size <= 300000) {
+        const photoName = prompt("Ingrese un nombre para la foto:");
         reader.onload = function() {
           const base64Image = reader.result;
           $.ajax({
@@ -129,12 +130,45 @@ Navarra.photos = function() {
     }
   };
 
+  function newChildImage(child_id){
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    if (file.type == "image/jpeg" || file.type == "image/jpg" || file.type == "image/png") {
+      if (file.size <= 300000) {
+        const photoChildName = prompt("Ingrese un nombre para la foto:");
+        reader.onload = function() {
+          const base64Image = reader.result;
+          $.ajax({
+            url: '/photos_children/save_child_photo',
+            type: 'POST',
+            data: {
+              image: base64Image,
+              project_data_child_id: child_id,
+              photoChildName: photoChildName
+            },
+            success: function(response) {
+              alert("La imagen se cargó correctamente")
+              show_item_info(app_id_popup, true)
+            },
+          });
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert("La imagen tiene que ser menor a 300kb")
+      }
+    } else {
+      alert("Formato inválido. Los formatos válidos son: imágenes jpeg, jpg o png")
+    }
+  };
+
   return {
     open_photos: open_photos,
     open_photo_mini: open_photo_mini,
-    drag_photos:drag_photos,
-    allowDrop:allowDrop,
-    drop:drop,
-    newImage: newImage
+    drag_photos: drag_photos,
+    allowDrop: allowDrop,
+    drop: drop,
+    newFatherImage: newFatherImage,
+    newChildImage: newChildImage
   }
 }();

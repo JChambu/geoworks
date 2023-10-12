@@ -2647,8 +2647,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
         document.getElementById('info_body').appendChild(labelElement);
 
         $('#imageInput').on('change', function() {
-          const photoName = prompt("Ingrese un nombre para la foto:");
-          Navarra.photos.newImage(appid_info, photoName);
+          Navarra.photos.newFatherImage(appid_info);
         });
       };
 
@@ -3002,6 +3001,33 @@ function create_new_row_child_date(element_child){
   linediv.className = "col-md-12";
   linediv.innerHTML = "<hr style='background-color: #8c8c8c;'>"
   new_row1.appendChild(linediv)
+
+  var photo_div = document.createElement('DIV');
+  photo_div.className = "col-md-12";
+
+  var labelChildElement = document.createElement('label');
+  labelChildElement.setAttribute('for', 'imageChildInput');
+
+  var iconChildElement = document.createElement('i');
+  iconChildElement.classList.add('fas', 'fa-camera', 'icons');
+  iconChildElement.setAttribute('title', 'Agregar Foto');
+
+  var inputChildElement = document.createElement('input');
+  inputChildElement.id = 'imageChildInput';
+  inputChildElement.className = 'new_photo'
+  inputChildElement.type = 'file';
+  inputChildElement.name = 'photo';
+
+  labelChildElement.appendChild(iconChildElement);
+  labelChildElement.appendChild(inputChildElement);
+  photo_div.appendChild(labelChildElement)
+  new_row1.appendChild(photo_div);
+
+  inputChildElement.onchange = function() {
+    var child_id = element_child.children_id
+    Navarra.photos.newChildImage(child_id);
+  };
+
   var new_celd = document.createElement('DIV');
   new_celd.className = "col-md-5 ml-3";
   var new_p = document.createElement('H7');
@@ -3170,7 +3196,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
                 set_error_message("Error en subformulario, listados: "+element_child_field.name);
               }
             }
-          }
+          }inner
           new_p.appendChild(new_option);
           if(!found_option){new_p.selectedIndex = -1;}
           //Comienza Anidados opciones
