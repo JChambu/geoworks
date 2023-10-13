@@ -3199,7 +3199,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
                 set_error_message("Error en subformulario, listados: "+element_child_field.name);
               }
             }
-          }inner
+          }
           new_p.appendChild(new_option);
           if(!found_option){new_p.selectedIndex = -1;}
           //Comienza Anidados opciones
