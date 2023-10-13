@@ -2995,6 +2995,8 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
 }
 
 function create_new_row_child_date(element_child){
+  var child_id = element_child.children_id
+
   var new_row1 = document.createElement('DIV');
   new_row1.className = "form-row";
   var linediv = document.createElement('DIV');
@@ -3006,14 +3008,14 @@ function create_new_row_child_date(element_child){
   photo_div.className = "col-md-12";
 
   var labelChildElement = document.createElement('label');
-  labelChildElement.setAttribute('for', 'imageChildInput');
+  labelChildElement.setAttribute('for', 'imageChildInput' + child_id);
 
   var iconChildElement = document.createElement('i');
   iconChildElement.classList.add('fas', 'fa-camera', 'icons');
   iconChildElement.setAttribute('title', 'Agregar Foto');
 
   var inputChildElement = document.createElement('input');
-  inputChildElement.id = 'imageChildInput';
+  inputChildElement.id = 'imageChildInput' + child_id;
   inputChildElement.className = 'new_photo'
   inputChildElement.type = 'file';
   inputChildElement.name = 'photo';
@@ -3023,9 +3025,10 @@ function create_new_row_child_date(element_child){
   photo_div.appendChild(labelChildElement)
   new_row1.appendChild(photo_div);
 
+  var photo_div_id = inputChildElement.id.replace("imageChildInput", "")
+
   inputChildElement.onchange = function() {
-    var child_id = element_child.children_id
-    Navarra.photos.newChildImage(child_id);
+    Navarra.photos.newChildImage(photo_div_id);
   };
 
   var new_celd = document.createElement('DIV');

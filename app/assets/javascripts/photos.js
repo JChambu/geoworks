@@ -130,7 +130,7 @@ Navarra.photos = function() {
     }
   };
 
-  function newChildImage(child_id){
+  function newChildImage(photo_div_id){
     const file = event.target.files[0];
     const reader = new FileReader();
 
@@ -144,7 +144,7 @@ Navarra.photos = function() {
             type: 'POST',
             data: {
               image: base64Image,
-              project_data_child_id: child_id,
+              project_data_child_id: photo_div_id,
               photoChildName: photoChildName
             },
             success: function(response) {
