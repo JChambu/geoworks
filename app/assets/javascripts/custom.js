@@ -2628,6 +2628,34 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       // Si es nuevo puede guardar sin hacer cambios en los campos
       if(is_new_file){changeFile()}
 
+      var labelElement = document.createElement('label');
+      labelElement.setAttribute('for', 'imageInput');
+      labelElement.id = 'photo_label'
+
+      if (!is_new_file && !is_multiple) {
+        labelElement.className = 'd-none'
+      }
+
+      if (appid_info != 0){
+        var iconElement = document.createElement('i');
+        iconElement.classList.add('fas', 'fa-camera', 'icons');
+        iconElement.setAttribute('title', 'Agregar Foto');
+
+        var inputElement = document.createElement('input');
+        inputElement.id = 'imageInput';
+        inputElement.className = 'new_photo'
+        inputElement.type = 'file';
+        inputElement.name = 'photo';
+
+        labelElement.appendChild(iconElement);
+        labelElement.appendChild(inputElement);
+        document.getElementById('info_body').appendChild(labelElement);
+
+        $('#imageInput').on('change', function() {
+          Navarra.photos.newFatherImage(appid_info);
+        });
+      };
+
       //campos del registro
       father_fields = data.father_fields;
       subtitles_all = [];
@@ -2684,7 +2712,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             }
             new_celd.appendChild(new_p);
             new_row.appendChild(new_celd);
-
 
             if (element.field_type_id != 11) {
               var new_celd = document.createElement('DIV');
@@ -2892,33 +2919,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
           } //termina campo padre
           else {
             // Dibuja campos hijos
-            var labelElement = document.createElement('label');
-            labelElement.setAttribute('for', 'imageInput');
-            labelElement.id = 'photo_label'
-
-            if (!is_new_file && !is_multiple) {
-              labelElement.className = 'd-none'
-            }
-
-            if (appid_info != 0){
-              var iconElement = document.createElement('i');
-              iconElement.classList.add('fas', 'fa-camera', 'icons');
-              iconElement.setAttribute('title', 'Agregar Foto');
-
-              var inputElement = document.createElement('input');
-              inputElement.id = 'imageInput';
-              inputElement.className = 'new_photo'
-              inputElement.type = 'file';
-              inputElement.name = 'photo';
-
-              labelElement.appendChild(iconElement);
-              labelElement.appendChild(inputElement);
-              document.getElementById('info_body').appendChild(labelElement);
-
-              $('#imageInput').on('change', function() {
-                Navarra.photos.newFatherImage(appid_info);
-              });
-            };
 
             var new_row = document.createElement('DIV');
             if (element.hidden) {
