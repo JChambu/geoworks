@@ -2628,29 +2628,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       // Si es nuevo puede guardar sin hacer cambios en los campos
       if(is_new_file){changeFile()}
 
-      if (appid_info != 0){
-        var labelElement = document.createElement('label');
-        labelElement.setAttribute('for', 'imageInput');
-
-        var iconElement = document.createElement('i');
-        iconElement.classList.add('fas', 'fa-camera', 'icons');
-        iconElement.setAttribute('title', 'Agregar Foto');
-
-        var inputElement = document.createElement('input');
-        inputElement.id = 'imageInput';
-        inputElement.className = 'new_photo'
-        inputElement.type = 'file';
-        inputElement.name = 'photo';
-
-        labelElement.appendChild(iconElement);
-        labelElement.appendChild(inputElement);
-        document.getElementById('info_body').appendChild(labelElement);
-
-        $('#imageInput').on('change', function() {
-          Navarra.photos.newFatherImage(appid_info);
-        });
-      };
-
       //campos del registro
       father_fields = data.father_fields;
       subtitles_all = [];
@@ -2914,7 +2891,35 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
           }
           } //termina campo padre
           else {
-          // Dibuja campos hijos
+            // Dibuja campos hijos
+            var labelElement = document.createElement('label');
+            labelElement.setAttribute('for', 'imageInput');
+            labelElement.id = 'photo_label'
+
+            if (!is_new_file && !is_multiple) {
+              labelElement.className = 'd-none'
+            }
+
+            if (appid_info != 0){
+              var iconElement = document.createElement('i');
+              iconElement.classList.add('fas', 'fa-camera', 'icons');
+              iconElement.setAttribute('title', 'Agregar Foto');
+
+              var inputElement = document.createElement('input');
+              inputElement.id = 'imageInput';
+              inputElement.className = 'new_photo'
+              inputElement.type = 'file';
+              inputElement.name = 'photo';
+
+              labelElement.appendChild(iconElement);
+              labelElement.appendChild(inputElement);
+              document.getElementById('info_body').appendChild(labelElement);
+
+              $('#imageInput').on('change', function() {
+                Navarra.photos.newFatherImage(appid_info);
+              });
+            };
+
             var new_row = document.createElement('DIV');
             if (element.hidden) {
               new_row.className = "d-none hidden_field";
