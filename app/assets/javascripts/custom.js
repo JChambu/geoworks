@@ -2628,6 +2628,34 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       // Si es nuevo puede guardar sin hacer cambios en los campos
       if(is_new_file){changeFile()}
 
+      var labelElement = document.createElement('label');
+      labelElement.setAttribute('for', 'imageInput');
+      labelElement.id = 'photo_label'
+
+      if (!is_new_file && !is_multiple) {
+        labelElement.className = 'd-none'
+      }
+
+      if (appid_info != 0){
+        var iconElement = document.createElement('i');
+        iconElement.classList.add('fas', 'fa-camera', 'icons');
+        iconElement.setAttribute('title', 'Agregar Foto');
+
+        var inputElement = document.createElement('input');
+        inputElement.id = 'imageInput';
+        inputElement.className = 'new_photo'
+        inputElement.type = 'file';
+        inputElement.name = 'photo';
+
+        labelElement.appendChild(iconElement);
+        labelElement.appendChild(inputElement);
+        document.getElementById('info_body').appendChild(labelElement);
+
+        $('#imageInput').on('change', function() {
+          Navarra.photos.newFatherImage(appid_info);
+        });
+      };
+
       //campos del registro
       father_fields = data.father_fields;
       subtitles_all = [];
@@ -2684,7 +2712,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             }
             new_celd.appendChild(new_p);
             new_row.appendChild(new_celd);
-
 
             if (element.field_type_id != 11) {
               var new_celd = document.createElement('DIV');
@@ -2891,7 +2918,8 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
           }
           } //termina campo padre
           else {
-          // Dibuja campos hijos
+            // Dibuja campos hijos
+
             var new_row = document.createElement('DIV');
             if (element.hidden) {
               new_row.className = "d-none hidden_field";
@@ -2972,12 +3000,47 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
 }
 
 function create_new_row_child_date(element_child){
+  var child_id = element_child.children_id
+
   var new_row1 = document.createElement('DIV');
   new_row1.className = "form-row";
   var linediv = document.createElement('DIV');
   linediv.className = "col-md-12";
   linediv.innerHTML = "<hr style='background-color: #8c8c8c;'>"
   new_row1.appendChild(linediv)
+
+  var photo_div = document.createElement('DIV');
+  photo_div.className = "col-md-12";
+
+  var labelChildElement = document.createElement('label');
+  labelChildElement.setAttribute('for', 'imageChildInput' + child_id);
+  labelChildElement.id = 'photo_child_label'
+
+  if ($("#photo_label").hasClass('d-none')) {
+    labelChildElement.className = 'd-none'
+  }
+
+  var iconChildElement = document.createElement('i');
+  iconChildElement.classList.add('fas', 'fa-camera', 'icons');
+  iconChildElement.setAttribute('title', 'Agregar Foto');
+
+  var inputChildElement = document.createElement('input');
+  inputChildElement.id = 'imageChildInput' + child_id;
+  inputChildElement.className = 'new_photo'
+  inputChildElement.type = 'file';
+  inputChildElement.name = 'photo';
+
+  labelChildElement.appendChild(iconChildElement);
+  labelChildElement.appendChild(inputChildElement);
+  photo_div.appendChild(labelChildElement)
+  new_row1.appendChild(photo_div);
+
+  var photo_div_id = inputChildElement.id.replace("imageChildInput", "")
+
+  inputChildElement.onchange = function() {
+    Navarra.photos.newChildImage(photo_div_id);
+  };
+
   var new_celd = document.createElement('DIV');
   new_celd.className = "col-md-5 ml-3";
   var new_p = document.createElement('H7');
