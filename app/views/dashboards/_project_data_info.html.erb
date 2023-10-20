@@ -56,6 +56,12 @@ var can_edit_status_yes;
       $('#'+div_confirmation).addClass("d-inline");
       $('#'+div_confirmation).removeClass("d-none");
       $('#photo_label').removeClass("d-none");
+
+      var photos_child = document.querySelectorAll('#photo_child_label');
+      photos_child.forEach(function (element) {
+        element.classList.remove("d-none");
+      });
+
       if(div_confirmation=='edit_confirmation'){
         can_edit_yes = $('#can_edit_yes').val();
         can_edit_subforms_yes = $('#can_edit_subforms_yes').val();

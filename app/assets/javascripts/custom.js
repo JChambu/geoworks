@@ -3014,6 +3014,11 @@ function create_new_row_child_date(element_child){
 
   var labelChildElement = document.createElement('label');
   labelChildElement.setAttribute('for', 'imageChildInput' + child_id);
+  labelChildElement.id = 'photo_child_label'
+
+  if ($("#photo_label").hasClass('d-none')) {
+    labelChildElement.className = 'd-none'
+  }
 
   var iconChildElement = document.createElement('i');
   iconChildElement.classList.add('fas', 'fa-camera', 'icons');
