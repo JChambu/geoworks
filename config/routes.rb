@@ -68,6 +68,8 @@ Rails.application.routes.draw do
   post 'reports/save_data_report' => 'reports#save_data_report', as: :save_data_report
   post 'reports/save_form_report' => 'reports#save_form_report', as: :save_form_report
 
+
+
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
     post 'project_fields/create'
     post 'analytics_dashboards/create'
@@ -76,6 +78,14 @@ Rails.application.routes.draw do
     get 'project_types/:id/dashboard' => 'project_types#dashboard',  :as => :project_types_dashboard
     get 'project_types/import_file' => 'project_types#import_file', as: :import_file
     get 'dashboards/show' => 'dashboards#show'
+    get 'project_types/:id/api_connection', to: 'api_connections#api_connection', as: :api_connection
+    post 'project_types/:id/api_connection', to: 'api_connections#create', as: :create_api_connection
+    get 'project_types/:id/api_connection_mapping', to: 'api_connections#api_connection_mapping', as: :api_connection_mapping
+    post 'project_types/:id/api_connection_mapping', to: 'api_connections#create_mapping', as: :create_api_connection_mapping
+    get 'project_types/:id/api_connection_subform', to: 'api_connections#api_connection_subform', as: :api_connection_subform
+    post 'project_types/:id/api_connection_subform', to: 'api_connections#create_subform', as: :create_api_connection_subform
+    get 'project_types/:id/api_connections/sync_subform', to: 'api_connections#sync_subform'
+    get 'project_types/:id/api_connections/sync_subform_confirm', to: 'api_connections#sync_subform_confirm'
 
     resources :field_types
     resources :layers

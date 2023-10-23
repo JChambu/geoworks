@@ -26,4 +26,22 @@ class ProjectDataChild < ApplicationRecord
     save!
   end
 
+  def update_subform_sync properties, gwm_updated_at
+    attributes = {
+      properties: properties,
+      gwm_updated_at: gwm_updated_at
+    }
+    self.update_attributes(attributes)
+  end
+
+  def create_subform_sync properties, project_id, project_field_id, user_id, gwm_created_at, gwm_updated_at
+    self.properties = properties
+    self.project_id = project_id
+    self.project_field_id = project_field_id
+    self.user_id = user_id
+    self.gwm_created_at = gwm_created_at
+    self.gwm_updated_at = gwm_updated_at
+    save!
+  end
+
 end

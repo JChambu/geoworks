@@ -1,0 +1,95 @@
+<script type="text/javascript">
+  $(document).ready(function() {
+
+    $('.subifield-select').change(function() {
+      if ($('.subifield-select').val() == "") {
+        $('#sync_button').prop('disabled', true);
+        $('#envi').prop('disabled', true);
+      } else {
+        $('#sync_button').prop('disabled', false);
+        $('#envi').prop('disabled', false);
+      }
+    });
+
+    $('#sync_button').click(function() {
+      $('.custom_sync_toast').css('top','20vh');
+      var subform_id = $('#subfield_id').val();
+      $.ajax({
+        type: 'GET',
+        url: 'api_connections/sync_subform',
+        datatype: 'json',
+        data: {
+          subfield_id: subform_id
+        },
+        success: function(data) {
+          if (data.success) {
+            $('#text_sync_toast').html("Usted está por sincronizar " + data.result + " subformularios. Desea Continuar ?");
+            $('#sync_ok').hide();
+            $('#sync_yes').show();
+            $('#sync_no').show();
+          } else {
+            $('#text_sync_toast').html(data.result);
+            $('#sync_yes').hide();
+            $('#sync_no').hide();
+            $('#sync_ok').show();
+          }
+          $('#toast_sync').toast('show');
+        }
+      });
+    });
+
+    $('#sync_yes').click(function() {
+      $('#toast_sync').toast('hide');
+      $('.custom_sync_toast').css('top','-30vh');
+      var subform_id = $('#subfield_id').val();
+      $.ajax({
+        type: 'GET',
+        url: 'api_connections/sync_subform_confirm',
+        datatype: 'json',
+        data: {
+          subfield_id: subform_id
+        },
+        success: function(data) {
+          $('#text_sync_toast').html(data.result.replace(/\. /g, "<br/>"));
+          $('#sync_yes').hide();
+          $('#sync_no').hide();
+          $('#sync_ok').show();
+          $('#toast_sync').toast('show');
+        }
+      });
+    });
+
+  });
+
+</script>
+
+
+<% if notice %>
+  <div class="notice pl-3">
+    <p><%= notice %></p>
+  </div>
+<% end %>
+<% if alert %>
+  <div class="d-flex justify-content-center">
+    <p class="notice text-danger"><%= alert %></p>
+  </div>
+<% end %>
+
+<%= simple_form_for @api_connection, url: api_connection_path(@project_type_id), method: :post do |f| %>
+<div class="row my-1 mt-4">
+  <div class="col-md-6 text-right">
+      <label class="text-right col-form-label">Seleccione el subformulario</label>
+  </div>
+  <div class="col-md-6 text-left">
+    <%= select_tag 'subfield_id', options_for_select(@project_fields.pluck(:name, :id)), prompt: "", class: "subifield-select select col-md-4 form-control form-control-sm d-inline" %>
+  </div>
+</div>
+<div class="row justify-content-center mt-4 pb-4">
+      <%= link_to t('.cancel', :default => t("helpers.links.cancel")), root_path, :class => 'btn btn-secondary mr-1' %>
+      
+      <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Configurar", disabled: true %>
+
+      <button type="button" disabled id="sync_button" class="enviar btn btn-primary">Sincronizar</button>
+
+    </div>
+<% end %>

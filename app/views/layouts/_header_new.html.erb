@@ -7,6 +7,7 @@ $(document).ready(function(){
     $("#info-modal").modal("hide");
     $('.custom_dropdown_panels').hide();
     $('.custom_dropdown_panels_import').hide();
+    $('.custom_dropdown_panels_sync').hide();
     $(".table_data_container").addClass("width_table");
   });
   $('#navbarDropdown_container').on('hide.bs.dropdown', function () {
@@ -40,11 +41,22 @@ $(document).ready(function(){
     var top = ($(this).offset().top -50)+ 'px';
     $('.custom_dropdown_panels_import').css('top',top)
     $('.custom_dropdown_panels').hide();
+    $('.custom_dropdown_panels_sync').hide();
+  });
+  $('#panelSync').on('click', function (e) {
+    e.stopPropagation();
+    $('.custom_dropdown_panels_sync').toggle();
+    $('.custom_dropdown_panels_sync').css('right','101%');
+    var top = ($(this).offset().top -50)+ 'px';
+    $('.custom_dropdown_panels_sync').css('top',top)
+    $('.custom_dropdown_panels').hide();
+    $('.custom_dropdown_panels_import').hide();
   });
   $('#panelAdmin').on('click', function (e) {
     e.stopPropagation();
     $('.custom_dropdown_panels').toggle();
     $('.custom_dropdown_panels_import').hide();
+    $('.custom_dropdown_panels_sync').hide();
   });
 });
 function open_panel(id_panel,id_table){
@@ -384,6 +396,21 @@ function open_panel(id_panel,id_table){
             </div>
           <% end %>
           </div>
+
+          <div>
+            <% if can? :data, :new_subform || :data, :new %>
+              <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelSync" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sincronizar</a>
+              <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels_sync" aria-labelledby="panelSync">
+                <% if can? :data, :new %>
+                  <!-- here the link to sync forms -->
+                <% end %>
+                <% if can? :data, :new_subform %>
+                  <%= link_to 'Subformularios', api_connection_path(@project_type.id), class: "dropdown-item" %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+
           <% if can? :project_types, :destroy%>
             <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, id: 'project_del_button', class: "dropdown-item" %>
           <% end %>

@@ -1,0 +1,231 @@
+<script type="text/javascript">
+  $(document).ready(function() {
+    
+    // function for mapping select
+    $('.key-select').change(function() {
+    var selectedOption = $(this).val();
+
+    // Disable selected option in other select elements
+    let unSelectedOptions = [];
+    $('.key-select').first().find('option').each(function() {
+      unSelectedOptions.push($(this).val());
+    });
+
+    $('.key-select').each(function() {
+      $(this).find('option').each(function() {
+        if ($(this).val() === selectedOption && selectedOption != "") {
+          $(this).prop('disabled', true);
+        }
+        if($(this).is(':selected')) {
+          let indexToDelete = unSelectedOptions.indexOf($(this).val());
+          console.log("indexToDelete " +indexToDelete);
+          if (indexToDelete >= 0) {
+            unSelectedOptions.splice(indexToDelete,1);
+          }
+        }
+      });
+    });
+
+
+    unSelectedOptions.forEach(function(o){
+      $('.key-select').each(function() {
+        $(this).find('option').each(function() {
+          if ($(this).val() === o) {
+            $(this).prop('disabled', false);
+          }
+        });
+      })
+    });
+
+    var result = new Object();
+    if ($('#updated_at').find(":selected").text() == "" 
+      || $('#parent_id').find(":selected").text() == "" 
+      || $('#unique_field').find(":selected").text() == ""){
+      $('#envi').prop("disabled", true);
+    } else {
+
+      $('#envi').prop("disabled", false);
+      if ($('#created_at').find(":selected").text() == "") {
+        result.created_at = $('#updated_at').find(":selected").text();
+      } else {
+        result.created_at = $('#created_at').find(":selected").text();
+      }
+
+      result.updated_at = $('#updated_at').find(":selected").text();
+      result.date_format = $('#date_format').find(":selected").val();
+      result.user_id = $('#user_id').find(":selected").text();
+      result.parent_id = $('#parent_id').find(":selected").text();
+      result.unique_field = $('#unique_field').find(":selected").text();
+
+      var mapping = new Object();
+      var key_mapping = $('.key_mapping');
+      var key_mapping_project = $('.key_mapping_project');
+      for (x = 0 ; x < key_mapping_project.length ; x ++) {
+        if ($(key_mapping[x]).find(":selected").text() != "") {
+          var key = $(key_mapping_project[x]).attr("subfield_id");
+          mapping[key] = $(key_mapping[x]).find(":selected").text();
+        }
+      }
+      result.mapping = mapping;
+      $('.key-result').val(JSON.stringify(result));
+    }
+  
+  });
+
+
+    // function for fill fields 
+
+    mapping_saved = JSON.stringify(<%= raw @api_connection.mapped_fields.to_json %>)
+
+    console.log("Mappeing saved")
+    console.log(mapping_saved);
+
+    var mapping_saved_object = JSON.parse(mapping_saved);
+    console.log("Mappeing object")
+    console.log(mapping_saved_object);
+    if (mapping_saved_object["created_at"] != mapping_saved_object["updated_at"]) {
+        $('#created_at').val(mapping_saved_object["created_at"]).trigger('change');
+    }
+    $('#updated_at').val(mapping_saved_object["updated_at"]).trigger('change');
+    $('#date_format').val(mapping_saved_object["date_format"]);
+    $('#user_id').val(mapping_saved_object["user_id"]).trigger('change');
+    $('#parent_id').val(mapping_saved_object["parent_id"]).trigger('change');
+    $('#unique_field').val(mapping_saved_object["unique_field"]).trigger('change');
+
+    if(mapping_saved_object["mapping"] != undefined ) {
+      var key_mapping = $('.key_mapping');
+      var key_mapping_project = $('.key_mapping_project');
+        for (x = 0 ; x < key_mapping_project.length ; x ++) {
+          if (mapping_saved_object["mapping"][$(key_mapping_project[x]).attr("subfield_id")] != undefined ) {
+            $(key_mapping[x]).val(mapping_saved_object["mapping"][$(key_mapping_project[x]).attr("subfield_id")])
+          }
+        }
+      }
+      $('.key_mapping').each(function(){
+        $(this).trigger('change');
+      });
+  });
+
+
+</script>
+
+<% if notice %>
+  <div class="notice pl-3">
+    <p><%= notice %></p>
+  </div>
+<% end %>
+<% if alert %>
+  <div class="d-flex justify-content-center">
+    <p class="notice text-danger"><%= alert %></p>
+  </div>
+<% end %>
+<%= form_for @api_connection, url: api_connection_mapping_path(@project_type), method: :post do |f| %>
+  <div class="d-block container-fluid justify-content-around"> 
+  
+    <div class="d-block container-fluid justify-content-around"> 
+      <%= f.text_field :mapped_fields, class:"key-result", readonly: :true, hidden: true %>
+      <%= f.text_field :project_type_id, value: @project_type.id , readonly: :true, hidden: true %>
+      <%= f.text_field :subfield_id, value: @subfield_id , readonly: :true, hidden: true %>
+
+      <div class="row my-2 mt-4">
+        <div class="col-md-6 text-right">
+          <h4 class="">Datos API</h4>
+        </div>
+        <div class="col-md-6 text-left">
+          <h4 class=""><%= "Datos de " + @project_field.name %></h4>
+        </div>
+      </div>
+
+      <div class="row my-1">
+        <div class="col-md-6 text-right">
+
+          <%= select_tag "gwm_created_at", options_for_select(@keys), prompt: "", class: "key-select select col-md-4 form-control form-control-sm d-inline", id: "created_at" %>
+        </div>
+          <div class="col-md-6 text-left pl-0">
+          <label class="col-md-12 text-left col-form-label py-0">Fecha de creación<i class="fas fa-exclamation-circle ml-4"></i> En blanco para tomar misma fecha de actualización</label>
+        </div>
+      </div>
+
+      <div class="row my-1">
+        <div class="col-md-6 text-right">
+          <%= select_tag "gwm_updated_at", options_for_select(@keys), prompt: "", class: "key-select select col-md-4 form-control form-control-sm d-inline", id: "updated_at"%>
+        </div>
+          <div class="col-md-6 text-left pl-0">
+          <label class="col-md-12 text-left col-form-label py-0">Fecha de actualización</label>
+        </div>
+      </div>
+
+      <div class="row my-1">
+        <div class="col-md-6 text-right">
+          <select class=" select col-md-4 form-control form-control-sm d-inline", id="date_format">
+            <option value="%Y-%m-%d">YYYY-MM-DD</option>
+            <option value="%d-%m-%Y">DD-MM-YYYY</option>
+            <option value="%m-%d-%Y">MM-DD-YYYY</option>
+          </select>
+        </div>
+        <div class="col-md-6 text-left pl-0">
+          <label class="col-md-12 text-left col-form-label py-0">Formato Fecha</label>
+        </div>
+      </div>
+
+      <div class="row my-1">
+        <div class="col-md-6 text-right">
+          <%= select_tag 'key_select', options_for_select(@keys), prompt: "", class: "key-select select col-md-4 form-control form-control-sm d-inline", id: "user_id" %>
+        </div>
+        <div class="col-md-6 text-left pl-0">
+          <label class="col-md-12 text-left col-form-label py-0">Id Usuario<i class="fas fa-exclamation-circle ml-4"></i> En blanco para tomar usuario logueado</label>
+        </div>
+      </div>
+
+      <div class="row my-1">
+        <div class="col-md-6 text-right">
+          <%= select_tag 'key_select', options_for_select(@keys), prompt: "", class: "key-select select col-md-4 form-control form-control-sm d-inline", id: "parent_id" %>
+        </div>
+        <div class="col-md-6 text-left pl-0">
+          <label class="col-md-12 text-left col-form-label py-0">Id Formulario</label>
+        </div>
+      </div>
+
+      <div class="row my-1">
+        <div class="col-md-6 text-right">
+          <%= select_tag 'key_select', options_for_select(@keys), prompt: "", class: "key-select select col-md-4 form-control form-control-sm d-inline", id: "unique_field" %>
+        </div>
+        <div class="col-md-6 text-left pl-0">
+          <label class="col-md-12 text-left col-form-label py-0">Campo de identificación único</label>
+        </div>
+      </div>
+
+      <div class="row my-1 mt-4">
+        <div class="col-md-6 text-right">
+        </div>
+          <label class="col-md-6 col-form-label font-italic py-0"><i class="fas fa-exclamation-circle"></i> Las campos que queden vacíos no se sincronizarán</label>
+      </div>
+    </div>
+
+
+    <div class="d-block container-fluid justify-content-around"> 
+      <div>
+          <% @project_subfields.each do |subfield| %>
+              <div class="row my-1">
+                <div class="col-md-6 text-right">
+                  <%= select_tag 'key_select', options_for_select(@keys), prompt: "", class: "key-select key_mapping select col-md-4 form-control form-control-sm d-inline" %>
+
+                </div>
+                <div class="col-md-6 text-right">
+                  <div class="row">
+                    <label class="ml-4 key_mapping_project" subfield_id=<%= subfield.id %>  ><%= subfield.name %></label>
+                  </div>
+                </div>
+              </div>
+          <% end %>
+      </div>
+
+    </div>
+
+    <div class="row justify-content-center mt-4 pb-4">
+      <%= link_to t('.cancel', :default => t("helpers.links.cancel")), root_path, :class => 'btn btn-secondary mr-1' %>
+      <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Guardar", disabled: true %>
+    </div>
+  </div>
+
+<% end %>
