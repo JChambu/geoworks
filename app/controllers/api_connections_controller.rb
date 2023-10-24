@@ -135,8 +135,6 @@ class ApiConnectionsController < ApplicationController
             @return_data[:result] = "No se encontraron datos para la Key configurada."
             @return_data[:success] = false
           else
-            puts "result lenght"
-            puts results.length
             @return_data[:result] = results.length
             @return_data[:success] = true
           end
@@ -261,7 +259,11 @@ class ApiConnectionsController < ApplicationController
                 @updated_at = r[@updated_at_mapped]
                 @created_at = r[@created_at_mapped]
 
-                @form = Project.where(id: params["subfield_id"]).first
+                #remove this hardcode later
+                @updated_at = Time.zone.now
+                @created_at = Time.zone.now
+
+                @form = Project.where(id: @parent_id).first
 
                 if @form.nil? || @parent_id.nil?
                   @error_count += 1
@@ -269,7 +271,6 @@ class ApiConnectionsController < ApplicationController
                 else
 
                   @project_data_children = ProjectDataChild
-                    .select(:id)
                     .where(:project_field_id => params["subfield_id"])
                     .where("properties->>'"+@unique_field.to_s+"' = '" + @unique_field_mapped.to_s+ "' ")
                     .first
@@ -296,7 +297,7 @@ class ApiConnectionsController < ApplicationController
 
                   else
                     #update record
-                    if @project_data_children.project_id = @parent_id && @project_data_children.project_field_id = params["subfield_id"]
+                    if @project_data_children.project_id == @parent_id.to_i && @project_data_children.project_field_id == params["subfield_id"].to_i
 
                       if @project_data_children.update_subform_sync(properties, @updated_at)
                         @update_count += 1
