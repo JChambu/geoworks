@@ -2845,8 +2845,19 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
             feature.properties[interpolation_field] = new_propertie;
           });
         }
+        let leyend = '<i class="fas fa-times" style="float:right" onclick="Navarra.geomaps.cancel_color_attr()"></i>'
+        leyend += '<p class="mt-2">'+field_name+'</p>';
+        for (b=0;b<breaks.length-1;b++){
+          leyend += '<div class="d-flex mt-1 mb-1">';
+          leyend += '<div class="status_panel_color" style="background:'+colors[b]+'"></div>';
+          leyend += '<h6 class="status_panel_text d-inline">'+breaks[b]+' - '+breaks[b+1]+'</h6>';
+          leyend += '</div>';
+        }
         $('#text_toast').html("Descartando datos inválidos");
         $('#toast').toast('show');
+        $('.status_panel_default').addClass('d-none');
+        $('.status_panel_colored_by_attr').empty();
+        $('.status_panel_colored_by_attr').append(leyend);
         // elimina features que no tienen datos válidos
         points.features = points.features.filter(v => !isNaN(v.properties[interpolation_field]));
         get_layers_clip(points, interpolation_field,breaks,colors,field_name, save_interpolation, interpolation_name);
