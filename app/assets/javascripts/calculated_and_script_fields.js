@@ -578,7 +578,7 @@ Navarra.calculated_and_script_fields = function() {
             var mm = String(today. getMonth() + 1). padStart(2, '0');
             var yyyy = today. getFullYear();
             var hh = today.getHours();
-            var min = today.getMinutes();
+            var min = String(today. getMinutes()). padStart(2, '0');
             today_time = dd + '/' + mm + '/' + yyyy+' '+hh+':'+min;
             $(texto_campo_id).val(today_time);
           }
@@ -605,6 +605,14 @@ Navarra.calculated_and_script_fields = function() {
               $(texto_campo_id).val(id_unique);
               }
             });
+          }
+          if (CalculateObj_keys[k]=="date") {
+            var today = new Date();
+            var dd = String(today. getDate()). padStart(2, '0');
+            var mm = String(today. getMonth() + 1). padStart(2, '0');
+            var yyyy = today. getFullYear();
+            today_date = dd + '/' + mm + '/' + yyyy
+            $(texto_campo_id).val(today_date);
           }
           if(CalculateObj_keys[k]=="semanaTomate"){
             number_of_week = getWeekNumber(new Date())[1]
