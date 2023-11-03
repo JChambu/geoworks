@@ -1330,7 +1330,7 @@ function getCQLFilter_layer(dat){
         var filter_operator = filter.filter_operator;
         var filter_value = filter.filter_value;
         var field_type = filter.field_type;
-        if(field_type==5 && filter_value!='null' && filter_field != 'app_estado' && filter_field != 'app_usuario'){
+        if(field_type==5 && filter_value!='null' && filter_field != 'app_id' && filter_field != 'app_estado' && filter_field != 'app_usuario'){
           //!=null porque a los valores null los considera menores a
           cql_filter += " AND parseDouble("+ filter_field + ") "+ filter_operator + " '" + filter_value + "' and "+filter_field+" is not null";
         }
@@ -2818,18 +2818,36 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
   };
   current_tenement = Navarra.dashboards.config.current_tenement;
   var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
+  console.log("owsrootUrl en INTERPOLATE");
+  console.log(owsrootUrl);
   var parameters = L.Util.extend(defaultParameters);
+  console.log("parameters en INTERPOLATE");
+  console.log(parameters);
   var URL = owsrootUrl + L.Util.getParamString(parameters);
+  console.log("url en INTERPOLATE");
+  console.log(URL);
   $.ajax({
     url: URL,
     success: function (data) {
+      console.log("data en INTERPOLATE");
+      console.log(data);
       var points = data;
+      console.log("points en success function en INTERPOLATE");
+      console.log(points);
       if(get_celd_size){
+        console.log("dentro de if get_celd_size");
         // entra para calcular tamaño de la celda
         var enveloped = turf.envelope(points);
+        console.log("enveloped");
+        console.log(enveloped);
         var area_envelope = turf.area(enveloped)/1000000;
+        console.log("area_envelope");
+        console.log(area_envelope);
         $('#celd_size').val(Math.round(Math.sqrt(area_envelope)/250*100000)/100000);
+        console.log("celd_size");
+        console.log($('#celd_size'));
       } else {
+        console.log("ELSE get_celd_size");
         //si es subformulario, agrega el resultado en el properties del feature
         if(is_subform){
           $('#text_toast').html("Calculando "+field_name+". Por favor espere");
@@ -2859,7 +2877,11 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
         $('.status_panel_colored_by_attr').empty();
         $('.status_panel_colored_by_attr').append(leyend);
         // elimina features que no tienen datos válidos
+        console.log("points antes de points.feature");
+        console.log(points);
         points.features = points.features.filter(v => !isNaN(v.properties[interpolation_field]));
+        console.log("points.features");
+        console.log(points.features);
         get_layers_clip(points, interpolation_field,breaks,colors,field_name, save_interpolation, interpolation_name);
       }
     }
@@ -2868,20 +2890,34 @@ function interpolate(interpolation_field, breaks,colors,celd_size,weight ,get_ce
 
 function get_layers_clip(points, interpolation_field,breaks,colors,field_name, save_interpolation, interpolation_name) {
   // trae capas
+  console.log("points in get_layers_clip");
+  console.log(points);
   var active_internal_layers = get_layers_checked();
+  console.log("active_internal_layers");
+  console.log(active_internal_layers);
   if(active_internal_layers.length>0){
+    console.log("Acá entra siempre?");
     $('#text_toast').html("Extrapolando hacia los límites de la capa. Por favor espere");
     $('#toast').toast('show');
 
     data = project_type_layers;
+    console.log("data");
+    console.log(data);
     var concat_features = null;
     var layers_count = 0;
+    console.log("points");
+    console.log(points);
     $.each(data, function(lay, dat) {
+      console.log("dentro de each data");
       if((active_internal_layers.indexOf(dat.layer)>=0 || active_internal_layers.indexOf(dat.layer+'-filtrados')>=0 )&& dat.type_geometry != 'Point'){
+        console.log("dentro de if largo");
         var cql_filter_layer =  getCQLFilter_layer(dat);
         if(active_internal_layers.indexOf(dat.layer+'-filtrados')>=0){
+          console.log("dentro de if active_internal_layers.indexOf(dat.layer+'-filtrados')>=0");
           //aplica filtro intercapas para mostrar solo aquellos registros que se intersectan con la capa activa
           var current_layer_filters = Navarra.project_types.config.current_layer_filters.replace(/'/g,"''");
+          console.log("current_layer_filters");
+          console.log(current_layer_filters);
           cql_filter_layer += " and INTERSECTS(the_geom, collectGeometries(queryCollection('" + workspace + ':' + name_layer + "', 'the_geom', '" + current_layer_filters + "')))";
         }
         var defaultParameters = {
@@ -2894,29 +2930,65 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name, s
           outputFormat: 'application/json',
           CQL_FILTER: cql_filter_layer
         };
+        console.log("defaultParameters");
+        console.log(defaultParameters);
         current_tenement = Navarra.dashboards.config.current_tenement;
         var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
+        console.log("owsrootUrl");
+        console.log(owsrootUrl);
         var parameters = L.Util.extend(defaultParameters);
+        console.log("parameters");
+        console.log(parameters);
         var URL = owsrootUrl + L.Util.getParamString(parameters);
+        console.log("url antes de ajax");
+        console.log(URL);
         $.ajax({
           url: URL,
           success: function (data) {
+            console.log("data success");
             if(concat_features == null) {
+              console.log("dentro de concat_features == null");
               concat_features = data;
+              console.log(concat_features);
             } else {
+              console.log("else concat_features == null");
+              console.log("lo que está dentro de turf.featureCollection");
+              console.log(concat_features.features.concat(data.features));
               concat_features = turf.featureCollection(concat_features.features.concat(data.features));
+              console.log(concat_features);
               }
               layers_count ++;
+              console.log("in success: active_internal_layers");
+              console.log(active_internal_layers);
+              console.log("in success: layers count");
+              console.log(layers_count);
+              console.log("points");
+              console.log(points);
               if(layers_count==active_internal_layers.length){
+                console.log("DENTRO DE IF layers_count==active_internal_layers.length");
               // última capa
+              console.log("antes de var combined = turf.combine(concat_features);");
+              console.log("concat_features");
+              console.log(concat_features);
               var combined = turf.combine(concat_features);
+              console.log("dentro if in success: combined");
+              console.log(combined);
               // var geojson = L.geoJSON(combined).addTo(mymap);
               var bbox = turf.bbox(combined);
+              console.log("dentro de if success: bbox");
+              console.log(bbox);
+              console.log("points");
+              console.log(points);
               //obtiene los valores de muestras más extremos y los clona hacia el borde del bbox para obtener una interpolación completa en la capa
               var max_lat = Math.max.apply(null, points.features.map((v) => v.geometry.coordinates[1]));
               var min_lat = Math.min.apply(null, points.features.map((v) => v.geometry.coordinates[1]));
               var max_lng = Math.max.apply(null, points.features.map((v) => v.geometry.coordinates[0]));
               var min_lng = Math.min.apply(null, points.features.map((v) => v.geometry.coordinates[0]));
+              console.log("max_lat, min_lat, max_lng, min_lng");
+              console.log(max_lat);
+              console.log(min_lat);
+              console.log(max_lng);
+              console.log(min_lng);
               $.each(points.features, function(i, v) {
               if (v.geometry.coordinates[1] == max_lat) {
                 v1 = turf.clone(v);
@@ -2943,16 +3015,27 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name, s
               return;
               }
               });
+              console.log("points cuando active layer TRUE");
+              console.log(points);
               if(points.features.length>4000){
+                console.log("dentro de IF points.features.length>4000 cuando active layer TRUE");
                 if(points.features.length>10000){
+                  console.log("dentro de if points.features.length>10000 cuando active layer TRUE");
                   $('#text_alert_decision').html("Usted está por interpolar "+ points.features.length +" puntos. Este proceso tomar demasiado tiempo. Se aconseja reducir el área a interpolar. Desea Continuar de todos modos ?");
                 } else {
+                  console.log("dentro de else points.features.length>10000 cuando active layer TRUE");
+                  console.log(points);
                   $('#text_alert_decision').html("Usted está por interpolar "+ points.features.length +" puntos. Este proceso puede tardar varios minutos. Desea Continuar ?");
                 }
                 $('#decision_yes').attr('onclick','Navarra.geomaps.continue_iterpolation('+JSON.stringify(points)+', "'+interpolation_field +'" ,'+JSON.stringify(breaks)+','+JSON.stringify(colors)+', "'+field_name +'", '+JSON.stringify(combined)+')');
                 $('#toast_decision').toast('show');
               } else{
-                continue_iterpolation(points, interpolation_field,breaks,colors,field_name, combined , save_interpolation,interpolation_name );
+                console.log("en ELSE points.features.length>4000 cuando active layer TRUE");
+                console.log("points");
+                console.log(points);
+                console.log("interpolation_field");
+                console.log(interpolation_field);
+                continue_iterpolation(points, interpolation_field, breaks, colors, field_name, combined, save_interpolation, interpolation_name);
               }
               }
           }
@@ -2960,6 +3043,7 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name, s
       }
     });
   } else {
+    console.log("else active_internal_layers cuando active layers FALSE");
     if(points.features.length>4000){
       if(points.features.length>10000){
         $('#text_alert_decision').html("Usted está por interpolar "+ points.features.length +" puntos. Este proceso puede tomar demasiado tiempo. Se aconseja reducir el área a interpolar. Desea Continuar de todos modos ?");
@@ -2974,28 +3058,44 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name, s
   }
 }
 
-function continue_iterpolation(points, interpolation_field,breaks,colors,field_name,combined, save_interpolation, interpolation_name){
+function continue_iterpolation(points, interpolation_field, breaks, colors, field_name, combined, save_interpolation, interpolation_name){
+  console.log("points en continue_iterpolation function");
+  console.log(points);
+  console.log("interpolation_field en continue_iterpolation function");
+  console.log(interpolation_field);
   $('#toast_decision').toast("hide");
   $('#text_toast').html("Iterpolando ...");
   $('#toast').toast('show');
   var options = {gridType: 'points', property: interpolation_field, units: 'kilometers', weight: parseFloat(weight)};
+  console.log("options");
+  console.log(options);
   setTimeout(function(){ // delay para que cierre el toast_decision.
      var grid = turf.interpolate(points,parseFloat(celd_size), options);
+     console.log("grid cuando declara variable nueva");
+     console.log(grid);
      if(grid.features.length>400000){
+       console.log("dentro de IF grid.features.length>400000 en continue_iterpolation");
       if(points.features.length>1000000){
+        console.log("dentro de IF points.features.length>1000000 en continue_iterpolation");
         $('#text_alert_decision').html("La interpolación ha generado una grilla de "+ grid.features.length +" puntos. Este proceso puede tomar demasiado tiempo. Se aconseja aumentar el tamaño de la celda y/o reducir el área a interpolar. Desea Continuar de todos modos ?");
       } else {
+        console.log("dentro de ELSE points.features.length>1000000 en continue_iterpolation");
         $('#text_alert_decision').html("La interpolación ha generado una grilla de "+ grid.features.length +" puntos. Este proceso puede tardar varios minutos. Desea Continuar ?");
       }
       $('#decision_yes').attr('onclick','Navarra.geomaps.continue_isobands('+JSON.stringify(grid)+', "'+interpolation_field +'" ,'+JSON.stringify(breaks)+','+JSON.stringify(colors)+', '+JSON.stringify(combined)+', "'+field_name +'")');
+      console.log("$('#decision_yes')");
+      console.log($('#decision_yes'));
       $('#toast_decision').toast('show');
     } else{
+      console.log("dentro de ELSE grid.features.length>400000 en continue_iterpolation");
       continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name, save_interpolation, interpolation_name);
     }
   },200);
 }
 
 function continue_isobands(grid, interpolation_field,breaks,colors,combined,field_name, save_interpolation, interpolation_name){
+  console.log("grid en continue isobands");
+  console.log(grid);
   $('#toast_decision').toast("hide");
   $('#text_toast').html("Creando isopolígonos ...");
   $('#toast').toast('show');
@@ -3015,6 +3115,8 @@ function continue_isobands(grid, interpolation_field,breaks,colors,combined,fiel
 
 function get_isobands(grid, interpolation_field, breaks, colors, combined, field_name,save_interpolation, interpolation_name){
   pointGrid = grid
+  console.log("pointGrid = grid EN FUNCTION get_isobands");
+  console.log(pointGrid);
   if(isobands_layer!=undefined){
     mymap.removeLayer(isobands_layer);
   }
