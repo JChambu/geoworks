@@ -12,26 +12,43 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
  			create_palette();
   });
 	$('#interpolation_field').on('change', function() {
+    console.log("ENTRRRRRRRRRRRRRRA");
 		var type_box = 'polygon';
   	var size_box = Navarra.dashboards.config.size_polygon;
+    console.log("size_box");
+    console.log(size_box);
   	if (size_box.length == 0) {
     	var size_box = [];
     	type_box = 'extent';
     	size_ext = Navarra.dashboards.config.size_box;
+      console.log("size_ext");
+      console.log(size_ext);
     	size_box[0] = size_ext['_southWest']['lng'];
+      console.log(size_box[0]);
     	size_box[1] = size_ext['_southWest']['lat'];
+      console.log(size_box[1]);
     	size_box[2] = size_ext['_northEast']['lng'];
+      console.log(size_box[2]);
     	size_box[3] = size_ext['_northEast']['lat'];
+      console.log(size_box[3]);
   	}
   	var attribute_filters = Navarra.project_types.config.attribute_filters;
+    console.log("attribute_filters", attribute_filters);
   	var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+    console.log("filtered_form_ids", filtered_form_ids);
 		var project_type_id = Navarra.dashboards.config.project_type_id;
+    console.log("project_type_id", project_type_id);
   	var from_date = Navarra.project_types.config.from_date;
+    console.log("from_date", from_date);
   	var to_date = Navarra.project_types.config.to_date;
   	var interpolate_field = $(this).val();
+    console.log("interpolate_field", interpolate_field);
   	var active_layers = get_active_layers();
+    console.log("active_layers", active_layers);
   	var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+    console.log("intersect_width_layers", intersect_width_layers);
 	  var filters_layers = Navarra.project_types.config.filters_layers;
+    console.log("filters_layers", filters_layers);
   	var timeslider_layers = Navarra.project_types.config.timeslider_layers;
   	if(!isNaN(interpolate_field)){
   		// es un campo hijo
@@ -59,8 +76,12 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
 		      timeslider_layers: timeslider_layers
     		},
       		success: function(data) {
+            console.log("DATA IN INTERPOLATION.JS.ERB");
+            console.log(data);
       			data_to_set_interval = data.data;
+            console.log("data_to_set_interval", data_to_set_interval);
       			if(isNaN(interpolate_field)){
+              console.log("ANTES DE ENTRAR A FUNCIÓN set_interval_interpolation");
       				set_interval_interpolation(data_to_set_interval);
       			} else{
       				// es campo hijo
@@ -98,7 +119,7 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
     							set_subform_values(data_subform);
     						}
       			});
-      			
+
       		}
       		}
       	});
@@ -135,7 +156,7 @@ var palettes = [];
 	palettes.push(['#141414', '#1d1d1d', '#272727', '#313131', '#3c3c3c', '#464646', '#515151', '#5d5d5d', '#686868', '#747474', '#808080', '#8c8c8c', '#999999', '#a5a5a5', '#b2b2b2', '#bfbfbf', '#cccccc', '#d9d9d9', '#e7e7e7', '#f4f4f4']);
 	palettes.push(['#ff0000', '#ff4729', '#ff6644', '#ff7e5d', '#ff9475', '#ffa78c', '#ffbaa3', '#ffccba', '#ffddd1', '#ffeee8', '#dfdfdf', '#c9c9c9', '#b4b4b4', '#9f9f9f', '#8b8b8b', '#777777', '#646464', '#515151', '#404040', '#2e2e2e']);
 
-var data_to_set_interval; 
+var data_to_set_interval;
 var data_subform;
 function set_interpolation_ranges(){
 	$('#interpolation_range').empty();
@@ -175,7 +196,7 @@ function create_palette(){
 		}
 		pal.forEach(function(col,index){
 			pallete_new += '<div style="width:10px;height:20px;margin:0px;display:inline-block;background:'+col+'"></div>'
-			
+
 		});
 		pallete_new += '</div>';
 		$('#palette_selector_dropdown').append(pallete_new);
@@ -203,7 +224,7 @@ function set_interval_interpolation(data){
   value_range = intermin;
   var extra_position = 0;
   if(intermax>10){round=1}else{round=100}
-  for(var i=0;i<num_ranges;i++){  	
+  for(var i=0;i<num_ranges;i++){
 		if(i==0){
 			value_range = data_ordered[0];
 			val = Math.floor(value_range*round)/round;
@@ -255,7 +276,7 @@ function set_subform_values(data_subform){
    if($('#sub_interpolation_operator').val() == "min"){
     var interpolate_field_filtered = data_subform[key].filter(f => !isNaN(f.interpolate_field))
 	   var interpolate_field_result = Math.min.apply(null, interpolate_field_filtered.map((v) => v.interpolate_field));
-   }   								
+   }
    new_obj = {
     id: key,
     interpolate_field: interpolate_field_result
