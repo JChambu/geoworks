@@ -36,7 +36,7 @@
               <% if mt.name != 'data' && mt.name != 'reports' && mt.name != 'choice_lists' %>
 
                 <!-- Eventos ABMC -->
-                <% if e.name == 'new' || e.name == 'destroy' || e.name == 'edit' || e.name == 'visualizer' %>
+                <% if (mt.name != 'funcionalities' && (e.name == 'new' || e.name == 'destroy' || e.name == 'edit' || e.name == 'visualizer')) %>
                   <div class="form-group">
                     <div class="custom-control custom-switch">
                       <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
@@ -46,7 +46,7 @@
                 <% end %>
 
                 <!-- En el módulo Proyectos agrega el evento Compartir -->
-                <% if (mt.name == 'project_types' && e.name == 'share') %>
+                <% if (mt.name == 'project_types' && (e.name == 'share' || e.name == 'admin_projects')) %>
                   <div class="form-group">
                     <div class="custom-control custom-switch">
                       <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
@@ -58,7 +58,7 @@
               <% end %>
 
               <!-- Módulo Datos -->
-              <% if (mt.name == 'data' && (e.name == 'visualizer' || e.name == 'edit' || e.name == 'edit_subforms' || e.name == 'edit_geom' || e.name == 'edit_owner' || e.name == 'edit_status' || e.name == 'disable' || e.name == 'destroy' || e.name == 'new' || e.name == 'new_subform' || e.name == 'export' || e.name == 'alert')) %>
+              <% if (mt.name == 'data' && (e.name == 'visualizer' || e.name == 'edit' || e.name == 'edit_subforms' || e.name == 'edit_geom' || e.name == 'edit_owner' || e.name == 'edit_status' || e.name == 'disable' || e.name == 'destroy' || e.name == 'new' || e.name == 'new_subform' || e.name == 'export' || e.name == 'alert' || e.name == 'delete_subforms')) %>
                 <div class="form-group">
                   <div class="custom-control custom-switch">
                     <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
@@ -69,6 +69,35 @@
 
               <!-- Módulo Listados -->
               <% if (mt.name == 'choice_lists' && (e.name == 'new' || e.name == 'destroy' || e.name == 'edit' || e.name == 'visualizer' || e.name == 'export')) %>
+                <div class="form-group">
+                  <div class="custom-control custom-switch">
+                    <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
+                    <label class="custom-control-label custom-role-colour" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
+                  </div>
+                </div>
+              <% end %>
+
+              <!-- Módulo Indicadores -->
+              <% if (mt.name == 'indicators' && (e.name == 'new_advanced' || e.name == 'new_trigger' || e.name == 'edit_advanced' || e.name == 'edit_trigger' )) %>
+                <div class="form-group">
+                  <div class="custom-control custom-switch">
+                    <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
+                    <label class="custom-control-label custom-role-colour" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
+                  </div>
+                </div>
+              <% end %>
+
+              <!-- Módulo Atributos -->
+              <% if (mt.name == 'attributes' && (e.name == 'add_logic' )) %>
+                <div class="form-group">
+                  <div class="custom-control custom-switch">
+                    <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>
+                    <label class="custom-control-label custom-role-colour" for="<%="chk#{mt.name}#{e.name}"%>"><%= t(e.name) %></label>
+                  </div>
+                </div>
+              <% end %>
+
+              <% if (mt.name == 'funcionalities' && (e.name == 'heatmap' || e.name == 'interpolation' || e.name == 'color_attribute' || e.name == 'new_project_interpolation' || e.name == 'user_filter' || e.name == 'ndvi' || e.name == 'multipoints')) %>
                 <div class="form-group">
                   <div class="custom-control custom-switch">
                     <%= check_box_tag "permissions[#{mt.id}][#{e.id}]", e.id, checked, class: 'custom-control-input', id: "chk#{mt.name}#{e.name}" %>

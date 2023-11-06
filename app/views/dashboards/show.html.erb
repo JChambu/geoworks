@@ -156,7 +156,7 @@
     }
 
 //Funciones para modal de capas
-$(document).ready(function () {
+function set_layer_modal() {
     $(".custom_dropdown_container").click(function (e) {
       e.stopPropagation();
     });
@@ -165,7 +165,17 @@ $(document).ready(function () {
     var left_position = (leaflet_layer_position.left-10)+"px";
     $('#custom_layer_control').css("top",top_position);
     $('#custom_layer_control').css("left",left_position);
-  });
+
+    $('#custom_layer_control').on('shown.bs.dropdown', function () {
+      $('.custom_dropdown_map').addClass('d-none');
+      $('.status_panel').addClass('d-none');
+    });
+    $('#custom_layer_control').on('hidden.bs.dropdown', function () {
+      if(!$('#status-view').hasClass('status-view-expanded')){
+        $('.status_panel').removeClass('d-none');
+      }
+    });
+  };
 
 function select_layer(layer){
   if(layer!=undefined){
@@ -173,7 +183,7 @@ function select_layer(layer){
   } else{
     layer_selected = event.target.id.substring(9);
   }
-  
+
   check_layers = document.querySelectorAll('input.leaflet-control-layers-selector');
   for (l = 0; l < check_layers.length; l++) {
       var name_layer_project = $(check_layers[l]).next().html().substring(1);
@@ -185,12 +195,15 @@ function select_layer(layer){
 }
 
 function open_layer_container(){
+  $('.layer_div').removeClass('d-none');
+  $('.div_filter').addClass('d-none');
   var id_title = event.target.id.split('-')[0];
+  $('.custom_dropdown_map').not('#'+id_title).addClass('d-none')
   if($('#'+id_title).hasClass('d-none')){
     $('#'+id_title).removeClass('d-none');
   } else{
     $('#'+id_title).addClass('d-none');
-  } 
+  }
 }
 
 function switch_filtered_layer(){
@@ -210,7 +223,7 @@ function switch_filtered_layer(){
   if($('#'+texto).prop("checked")){
     select_layer(id_switch);
     select_layer(texto.substring(9));
-  } 
+  }
 }
 // terminan funciones para modal de capas
 
@@ -224,11 +237,30 @@ function min_photo(){
   $('.custom_modal_photos').removeClass('custom_modal_photos_max');
 }
 
+//funciones para crear pdf_chart
+function pdf_chart(){
+  Navarra.pdf.init_pdf_charts();
+}
+
 </script>
 
 <% end %>
 
 <div class="fakeLoader"></div>
+
+<% if !@project_type.nil? %>
+  <div class="status_panel" style="display: flex; flex-direction: column;">
+    <div class="status_panel_default">
+      <% @status_project.each do |status|  %>
+        <div class="d-flex mt-1 mb-1">
+          <div class="status_panel_color" style = <%= "background:"+status.color %> ></div>
+          <h6 class="status_panel_text d-inline"><%= status.name %></h6>
+        </div>
+      <% end %>
+    </div>
+    <div class="status_panel_colored_by_attr"></div>
+</div>
+<% end %>
 
 <div class="modal fade" id="modal-window" tabindex="-1" role="dialog" aria-labelledby="chartModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
@@ -310,6 +342,7 @@ function min_photo(){
     <div class="card text-light chart-bg-transparent pb-0 pt-0">
         <div class="card-header chart-header-bg-transparent py-1 px-2">
           <div class="view-data-container status-view-middle" id="status-view-sidebar" >
+            <i class="fas fa-file-pdf view-data" id="pdf-charts" onclick="pdf_chart()"></i>
             <i class="fas fa-window-maximize view-data" id="view-charts" onclick="show_sidebar('charts-container')"></i>
             <i class="fas fa-square view-data" onclick="expand_sidebar('charts-container')"></i>
             <i class="fas fa-times view-data" onclick="hidde_sidebar('charts-container')"></i>
@@ -337,29 +370,25 @@ function min_photo(){
 
 <%= render :partial =>'project_data_info' %>
 
+<%= render :partial =>'points_number_modal' %>
 
+<%= render :partial =>'save_multipoints_modal' %>
 
 <div class="nav-item dropdown" id="custom_layer_control" style="position: absolute;z-index: 3000;">
-      <a class="nav-link dropdown-toggle nocaret" href="#" id="layersDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 30px; height: 30px; margin: 10px">
-      </a>
-      <div class="dropdown-menu custom_dropdown_container" aria-labelledby="layersDropdown" style="z-index: 2000; width: max-content">
-         
-          <a class="dropdown-item" href="#" id="basemaps_container-title" onclick="open_layer_container()">Mapas Base</a>
-          <div class="modal-content custom_dropdown d-none" id="basemaps_container">
-          </div>
+  <a class="nav-link dropdown-toggle nocaret" href="#" id="layersDropdown" title= "Administrador de Capas" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 30px; height: 30px; margin: 10px"></a>
+  <div class="dropdown-menu custom_dropdown_container" aria-labelledby="layersDropdown" style="z-index: 2000; width: max-content">
+    <a class="dropdown-item" href="#" id="basemaps_container-title" onclick="open_layer_container()">Mapas Base</a>
+    <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="basemaps_container"></div>
 
-          <a class="dropdown-item" href="#" id="activeproject_container-title" onclick="open_layer_container()">Proyecto Activo</a>
-          <div class="modal-content custom_dropdown d-none" id="activeproject_container">
-          </div>
+    <a class="dropdown-item" href="#" id="activeproject_container-title" onclick="open_layer_container()">Capa Activa</a>
+    <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="activeproject_container"></div>
 
-           <a class="dropdown-item" href="#" id="projects_container-title" onclick="open_layer_container()">Otros Proyectos</a>
-          <div class="modal-content custom_dropdown d-none" id="projects_container">
-          </div>
+    <a class="dropdown-item" href="#" id="projects_container-title" onclick="open_layer_container()">Otras Capas</a>
+    <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="projects_container"></div>
 
-           <a class="dropdown-item" href="#" id="externallayers_container-title" onclick="open_layer_container()">Capas Externas</a>
-          <div class="modal-content custom_dropdown d-none" id="externallayers_container">
-          </div>          
-      </div>
+    <a class="dropdown-item" href="#" id="externallayers_container-title" onclick="open_layer_container()">Capas Externas</a>
+    <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="externallayers_container"></div>
+  </div>
 </div>
 <% if can? :data, :edit_geom %>
   <input class="d-none" id="edit_geom_control" value="true">
@@ -385,7 +414,7 @@ function min_photo(){
 
 <div id="photos-modal" class="modal fade card text-light chart-bg-transparent pb-0 pt-0 custom_modal_photos" data-backdrop="false" draggable=true ondragstart="Navarra.photos.drag_photos(event)">
   <div class="modal-dialog m-0 mw-100">
-    <div class="modal-content" style="background: rgba(81, 89, 96, 0.5);">
+    <div class="modal-content" style="background:rgba(39, 43, 48, 0.8)">
       <div class="card-header chart-header-bg-transparent py-1 px-2">
         <p id="photo_title" class="m-1 d-inline"></p>
         <div class="view-data-container" >
@@ -405,6 +434,27 @@ function min_photo(){
   </div>
 </div>
 
+<div id="qr-modal" class="modal fade card text-light pb-0 pt-0 custom_modal_qr" data-backdrop="false">
+  <div class="modal-dialog m-0 mw-100">
+    <div class="modal-content">
+      <div class="card-header chart-header-bg-transparent py-1 px-2">
+        <p class="m-1 d-inline">QR Generado</p>
+        <div class="view-data-container" >
+            <i class="fas fa-times view-data" type="button" class="close" data-dismiss="modal" aria-label="Close"></i>
+        </div>
+      </div>
+      <div class="modal-body p-4 text-center" style="background:white" id="qr_modal_body">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="actions text-right">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      <button type="button" class="btn btn-primary" onclick="Navarra.pdf.download_qr()">Descargar</button>
+    </div>
+  </div>
+</div>
+
 <div id="pdf-modal" class="modal fade card text-light chart-bg-transparent pb-0 pt-0 custom_modal_pdf" data-backdrop="false">
   <div class="modal-dialog m-0 mw-100">
     <div class="modal-content white_transparent" style="min-height:89.5vh">
@@ -416,30 +466,16 @@ function min_photo(){
           <div class="dropdown-menu scroll p-2" id="dropdown_alert_mails" aria-labelledby="mails_alert_button" style="max-height: 80vh; max-width: 80%;overflow-y: auto; position: absolute;">
           </div>
             <i class="fas fa-envelope view-data d-none" id="send_alerts_button" title="Enviar" onclick="Navarra.pdf.send_alerts()" ></i>
-            <i class="fas fa-save view-data d-none" id="save_pdf_button" title="Guardar Reporte" onclick="Navarra.pdf.save_pdf()" ></i>
-            <i class="fas fa-edit view-data d-none" id="edit_pdf_button" title="Elimine imágnes y ajuste problemas de superposición" onclick="Navarra.pdf.edit_pdf()"></i>
             <i class="fas fa-times view-data" type="button" class="close" onclick="Navarra.pdf.close_pdf()" aria-label="Close"></i>
           </div>
       </div>
-      <div class="modal-body p-1 pl-4 pr-4 pt-2" style="position: relative;">
-        <div class="pdf_header">
-          <img class="logo_coorp_pdf logo_coorp_pdf_src element_pdf">
-          <div class="w-100 text-center" style = "line-height: 1;">
-            <p class="pdf_title element_pdf" id="report_alert_title" style="font-size:1.5vh">REPORTE</p>
-            <br/>
-            <p class="element_pdf pdf_title pdf_created" style="font-size:1.3vh"></p>
-          </div>
-          <div class="div_powered">
-            <p class="pdf_powered">powered by</p>
-            <%= image_tag "logo_gw_hor_2.png", class: 'logo_pdf' %>
-          </div>
-        </div>
+      <div class="modal-body p-1 pl-4 pr-4 pt-2" style="position: relative; background: white">
          <div class="alert_header text-center p-4">
           <img class="logo_coorp_pdf_src" style="max-width:35%">
           <div style = "margin-top: 30px;" id="header_alert_text">
             <p class="pdf_title" id="message_type" style="display: inline-block; font-size: 28px;margin: 0px; color: red; font-weight: bold;"></p>
             <br/>
-            <p class="pdf_created" style="font-size:0.8em; display: inline-block; margin: 0px"></p>
+            <p class="pdf_created" style="font-size:0.8em; display: inline-block; margin: 0px; color: rgb(16,16,16)"></p>
           </div>
           <div style="width: 100%; margin-top: 10px; display: inline-block;">
             <a href="http://www.gisworking.com/" target="_blank" style="text-decoration: none;">
@@ -457,7 +493,7 @@ function min_photo(){
 <!-- Toast-->
 <div class="toast custom_toast" id="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
   <div class="toast-header">
-    <%= image_tag "logo_gw_hor_2.png", class: 'mr-auto', height:"30" %>
+    <%= image_tag ENV['HORIZONTAL_LOGO'], class: 'mr-auto', height:"30" %>
     <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -470,7 +506,7 @@ function min_photo(){
 <!-- Alert Decision-->
 <div class="toast custom_toast" id="toast_decision" role="alert" data-autohide="false" aria-live="assertive" aria-atomic="true">
   <div class="toast-header">
-    <%= image_tag "logo_gw_hor_2.png", class: 'mr-auto', height:"30" %>
+    <%= image_tag ENV['HORIZONTAL_LOGO'], class: 'mr-auto', height:"30" %>
   </div>
   <div class="toast-body">
     <h7 id="text_alert_decision"></h7>
@@ -479,4 +515,3 @@ function min_photo(){
     <button class="btn btn-secondary p-0" data-dismiss="toast" id="decision_no" type="button" style="width: 35px; outline: none;">NO</button>
   </div>
 </div>
-

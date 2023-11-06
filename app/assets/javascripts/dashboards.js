@@ -2,6 +2,7 @@ var height_time_slider;
 var height_filters;
 var height_charts;
 var open_table_middle;
+var xhr_filter = null;
 
 $(document).ready(function () {
     $.fakeLoader({
@@ -12,29 +13,31 @@ $(document).ready(function () {
 
 // Establece alto de mapa y sidebar al redimensionar
 $(window).on('resize', function() {
-  var height_browser = window.innerHeight
-  var height_dashboard = height_browser - $('#nav_bar').innerHeight();
-  $("#map").css("height", height_dashboard);
-  var height_card=$(".card_data").innerHeight()
-  var height_table = height_browser/2 - height_card -50
-  resize_graphics();
-  //altura de tabla
-  if(!$('#status-view').hasClass('status-view-condensed')){
-    if($('#status-view').hasClass('status-view-expanded')){
-      $(".table_data_container").css("top", $("#nav_bar").innerHeight());
-      var height_table = height_browser - $("#nav_bar").innerHeight() - height_card - 50;
-      $(".table_scroll").css("height", height_table);
-    } else {
+  if($(".table_data_container").offset() != undefined){
+    var height_browser = window.innerHeight
+    var height_dashboard = height_browser - $('#nav_bar').innerHeight();
+    $("#map").css("height", height_dashboard);
+    var height_card=$(".card_data").innerHeight()
+    var height_table = height_browser/2 - height_card -50
+    resize_graphics();
+    //altura de tabla
+    if(!$('#status-view').hasClass('status-view-condensed')){
+      if($('#status-view').hasClass('status-view-expanded')){
+        $(".table_data_container").css("top", $("#nav_bar").innerHeight());
+        var height_table = height_browser - $("#nav_bar").innerHeight() - height_card - 50;
+        $("#table_visible_container").css("height", height_table);
+      } else {
         var height_table = height_browser*.5 - height_card - 50;
-        $(".table_scroll").css("height", height_table);
-    }
-    setTimeout(function(){
-      var height_browser = window.innerHeight;
-      if($(".table_data_container").innerHeight() + $(".table_data_container").offset().top>height_browser){
-        var new_height = (parseInt($('#div_table_data').css('height')) - 30 ) + 'px';
-        $('#div_table_data').css('height',new_height);
+        $("#table_visible_container").css("height", height_table);
       }
-    },2000)
+      setTimeout(function(){
+        var height_browser = window.innerHeight;
+        if($(".table_data_container").innerHeight() + $(".table_data_container").offset().top>height_browser){
+          var new_height = (parseInt($('#table_visible_container').css('height')) - 30 ) + 'px';
+          $('#table_visible_container').css('height',new_height);
+        }
+      },2000);
+    }
   }
 });
 
@@ -90,7 +93,8 @@ Navarra.dashboards.config = {
   field_geometric_calculated_length_all: 0,
   field_geometric_calculated_count: 0,
   field_geometric_calculated_count_all: 0,
-  app_ids_table: []
+  app_ids_table: [],
+  geo_key: ''
 };
 
 resize_graphics = function(){
@@ -134,6 +138,41 @@ remove_layer_filter = function(){
     }
   })
 }
+
+var search_filtered_form_ids = function() {
+  if (xhr_filter && xhr_filter.readyState != 4) {
+    xhr_filter.abort();
+  }
+  xhr_filter = $.ajax({
+    type: 'GET',
+    url: '/project_types/get_filtered_form_ids',
+    datatype: 'json',
+    data: {
+      project_type_id: Navarra.dashboards.config.project_type_id,
+      filtered_form_ids_text: Navarra.project_types.config.attribute_filters_subforms
+    },
+    success: function(data) {
+      Navarra.project_types.config.filtered_form_ids = data.data;
+      init_filters();
+    }
+  });
+}
+
+var init_filters = function(){
+  var point_color = Navarra.project_types.config.field_point_colors;
+  if (point_color == '') {
+    Navarra.geomaps.get_zoomextent();
+    Navarra.geomaps.wms_filter();
+  } else {
+    Navarra.geomaps.get_zoomextent();
+    Navarra.geomaps.point_colors_data();
+  }
+  var heatmap_actived = Navarra.project_types.config.heatmap_field;
+    if (heatmap_actived != '') {
+      Navarra.geomaps.heatmap_data();
+  }
+}
+
 
 Navarra.dashboards.action_show = function(){
 
@@ -190,14 +229,21 @@ Navarra.dashboards.action_show = function(){
           return value != filter_to_remove;
         })
         Navarra.project_types.config.attribute_filters = updated_filters;
+        init_filters();
       } else {
-        // revisar con backend. Que ocurriría si hay dos filtros que traen los mismos ids de padres. Se estarían borrando ambos filtros
-        current_filters = Navarra.project_types.config.filtered_form_ids;
+        current_filters = Navarra.project_types.config.attribute_filters_subforms;
         filter_to_remove = $(this).attr('value');
-        updated_filters = $.grep(current_filters, function(value) {
-          return value != filter_to_remove;
+        current_filters.forEach(function(f,index){
+          var key = Object.keys(f)[0];
+          var value = f[key];
+          if(value == filter_to_remove){
+            current_filters.splice(index,1);
+            return;
+          }
         })
-        Navarra.project_types.config.filtered_form_ids = updated_filters;
+        
+        Navarra.project_types.config.attribute_filters_subforms = current_filters;
+        search_filtered_form_ids();
       }
       $(this).remove();
       if($(".filter_container").length==0){
@@ -206,18 +252,7 @@ Navarra.dashboards.action_show = function(){
         remove_layer_filter();
       } else{
         $(".fa-search-location").css("color", "#d3d800");
-      }
-      Navarra.geomaps.get_zoomextent();
-      Navarra.geomaps.wms_filter();
-
-      // TODO: Esto se debería revisar cuando se actualice la herramienta de colorear puntos
-      // Navarra.project_types.config.field_point_colors = '';
-      // Navarra.geomaps.point_colors_data();
-
-      var heatmap_actived = Navarra.project_types.config.heatmap_field;
-      if (heatmap_actived != '') {
-        Navarra.geomaps.heatmap_data();
-      }
+      }      
       resize_filters();
       resize_graphics();
     });
@@ -233,13 +268,14 @@ Navarra.dashboards.action_show = function(){
     //Expandir toda la pantalla
     $("#view-data-expanded").on("click", function() {
       $('#status-view').addClass('status-view-expanded');
-      $(".table_data_container").css("background", "rgba(0, 0, 0, 0.2)");
+      $(".table_data_container").css("background", "rgba(39, 43, 48, 0.8)");
       var status_view_condensed = $('#status-view').hasClass('status-view-condensed');
         $('#status-view').removeClass('status-view-condensed');
         $(".table_data_container").css("transition-delay", "0s");
         $(".table_data_container").css("top", $("#nav_bar").innerHeight());
         $(".leaflet-right").css("display", "none");
         $(".leaflet-left").css("display", "none");
+        $(".status_panel").addClass("d-none");
         adjust_table_height();
         verify_height_table();
         if($('#sidebar_all').hasClass('charts-container') || $('#sidebar_all').hasClass('timeslider-container') || $('#sidebar_all').hasClass('filter-container') ){
@@ -254,9 +290,9 @@ Navarra.dashboards.action_show = function(){
           $("#collapse_data").css("transition-delay", "0.6s");
           $("#collapse_data").css("border", "1px solid rgba(0,0,0,0.6)");
           $(".leaflet-control-scale-line").css("display", "none");
+          $(".status_panel").css("max-height", "32vh");
           init_data_dashboard(false);
         }
-        verify_scroll_table();
     });
     //Minimizar la pantalla
     $("#view-data-hidden").on("click", function() {
@@ -270,7 +306,9 @@ Navarra.dashboards.action_show = function(){
       $("#collapse_data").css("border", "none");
       $(".leaflet-right").css("display", "inline-flex");
       $(".leaflet-left").css("display", "block");
+      $(".status_panel").removeClass("d-none");
       $(".leaflet-control-scale-line").css("display", "block");
+      $(".status_panel").css("max-height", "none");
     });
 
     //Abrir a mitad de pantalla
@@ -286,7 +324,16 @@ Navarra.dashboards.action_show = function(){
           graphic_id = value_graph.split('canvas');
           $.getScript("/project_types/"+ project_type_id+"/dashboards/"+dashboard_id+"/graphics/"+graphic_id[1]+"/edit");
         });
-    Navarra.geomaps.init();
+    $.ajax({
+      type: 'GET',
+      url: '/project_types/get_geo_key',
+      datatype: 'json',
+      success: function(data) {
+        Navarra.dashboards.config.geo_key = data.data;
+        Navarra.geomaps.init();
+        set_layer_modal();
+      }
+    });
   }
 
 
@@ -301,7 +348,7 @@ function verify_height_table(){
 }
 
 open_table_middle = function(only_open){
-  $(".table_data_container").css("background", "rgba(0, 0, 0, 0.2)");
+  $(".table_data_container").css("background", "rgba(39, 43, 48, 0.8)");
     var status_view_condensed = $('#status-view').hasClass('status-view-condensed');
     $('#status-view').removeClass('status-view-condensed');
     $('#status-view').removeClass('status-view-expanded');
@@ -311,12 +358,14 @@ open_table_middle = function(only_open){
     verify_height_table();        
     $(".leaflet-right").css("display", "inline-flex");
     $(".leaflet-left").css("display", "block");
+    $(".status_panel").removeClass("d-none");
     if(status_view_condensed){
       $("#collapse_data").css("max-height", "100vh");
       $("#collapse_data").css("transition", "2s");
       $("#collapse_data").css("transition-delay", "0.6s");
       $("#collapse_data").css("border", "1px solid rgba(0,0,0,0.6)");
       $(".leaflet-control-scale-line").css("display", "none");
+      $(".status_panel").css("max-height", "32vh");
       if(!only_open){
         init_data_dashboard(false);
       }
@@ -327,7 +376,6 @@ open_table_middle = function(only_open){
     if(!$('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded') ){
       $(".table_data_container").css("width", "100%");
     } 
-    verify_scroll_table();
 }  
 
   return {
@@ -338,6 +386,8 @@ open_table_middle = function(only_open){
     height_charts: height_charts,
     set_layer_filter: set_layer_filter,
     remove_layer_filter: remove_layer_filter,
-    open_table_middle: open_table_middle
+    open_table_middle: open_table_middle,
+    init_filters: init_filters,
+    search_filtered_form_ids: search_filtered_form_ids
   }
 }();

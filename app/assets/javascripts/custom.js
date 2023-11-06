@@ -1,8 +1,9 @@
 //peticiones Ajax
 var xhr_kpi = [];
-var xhr_chart = null;
-for(x=0;x<100;x++){
+var xhr_chart = [];
+for(x=0;x<1000;x++){
   xhr_kpi.push(null);
+  xhr_chart.push(null)
 }
 var xhr_table = null;
 var xhr_geojson = null;
@@ -55,7 +56,7 @@ function init_kpi(size_box = null) {
     size_box[2] = size_ext['_northEast']['lng'];
     size_box[3] = size_ext['_northEast']['lat'];
   }
-  
+
   var data_id = Navarra.dashboards.config.project_type_id;
   var dashboard_id = Navarra.dashboards.config.dashboard_id;
   var attribute_filters = Navarra.project_types.config.attribute_filters;
@@ -66,6 +67,8 @@ function init_kpi(size_box = null) {
   var to_date_subforms = Navarra.project_types.config.to_date_subforms;
   var filter_children = [];
   var filter_user_children = [];
+  var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+  var active_layers = get_active_layers();
   $('.subform_filter').each(function(){
     if(!isNaN($(this).attr('id').split('|')[0])){
       filter_children.push($(this).attr('id'));
@@ -90,15 +93,15 @@ function init_kpi(size_box = null) {
       indicators_id.forEach(function(indicator_id){
           html += '<div class="text-center tile_stats_count invisible" id="indicator_container'+indicator_id+'"></div>'
       });
-      $('.tile_count').append(html); 
+      $('.tile_count').append(html);
       xhr_kpi.forEach(function(xhr_k){
         if(xhr_k && xhr_k.readyState != 4) {
           xhr_k.abort();
         }
-      })   
+      })
       // indicadores por default
       xhr_kpi[0] = $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: '/project_types/kpi.json',
         datatype: 'json',
         data: {
@@ -115,7 +118,11 @@ function init_kpi(size_box = null) {
           to_date_subform: to_date_subforms,
           filter_children:filter_children,
           filter_user_children:filter_user_children,
-          indicator_id: 0
+          indicator_id: 0,
+          timeslider_layers: Navarra.project_types.config.timeslider_layers,
+          filters_layers: Navarra.project_types.config.filters_layers,
+          intersect_width_layers: intersect_width_layers,
+          active_layers: active_layers
         },
         dashboard_id: dashboard_id,
           success: function(data) {
@@ -124,9 +131,9 @@ function init_kpi(size_box = null) {
             }); // Cierra forEach
             $('#div_pagination').css("visibility","visible");
             // indicadores generados por el usuario
-            indicators_id.forEach(function(indicator_id,index_kpi){   
+            indicators_id.forEach(function(indicator_id,index_kpi){
               xhr_kpi[index_kpi+1] = $.ajax({
-                type: 'GET',
+                type: 'POST',
                 url: '/project_types/kpi.json',
                 datatype: 'json',
                 data: {
@@ -143,7 +150,11 @@ function init_kpi(size_box = null) {
                   to_date_subform: to_date_subforms,
                   filter_children:filter_children,
                   filter_user_children:filter_user_children,
-                  indicator_id: indicator_id
+                  indicator_id: indicator_id,
+                  timeslider_layers: Navarra.project_types.config.timeslider_layers,
+                  filters_layers: Navarra.project_types.config.filters_layers,
+                  intersect_width_layers: intersect_width_layers,
+                  active_layers: active_layers
                 },
                 dashboard_id: dashboard_id,
                 success: function(data) {
@@ -172,11 +183,21 @@ function set_kpi_navbar(element,is_default, indicator_id){
     }
     $('.total_files').val(element['data'][0]['count']);
   }
-  if (Number(count_element) != parseInt(Number(count_element))) {
-    data_cont = (Number(count_element)).format(2, 3, '.', ',');
+  var count_element_number = parseFloat(count_element);
+  if(count_element!=null){
+    var count_element_text = count_element.toString().split(count_element_number)[1];
+    if (count_element_text == undefined ){count_element_text = ''}
+    if (Number(count_element_number) != parseInt(Number(count_element_number))) {
+      data_cont = (Number(count_element_number)).format(2, 3, '.', ',')+count_element_text;
+    } else {
+      data_cont = (Number(count_element_number)).format(0, 3, '.', ',')+count_element_text;
+    }
   } else {
-    data_cont = (Number(count_element)).format(0, 3, '.', ',');
+    data_cont = '';
   }
+
+
+
     if(element['title'].split(' ').length>=2){
       var split_element = Math.ceil(element['title'].split(' ').length/2);
       var title_up = "";
@@ -265,6 +286,8 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
     var to_date_subforms = Navarra.project_types.config.to_date_subforms;
     var filter_children = [];
     var filter_user_children = [];
+    var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+    var active_layers = get_active_layers();
     $('.subform_filter').each(function(){
     if(!isNaN($(this).attr('id').split('|')[0])){
       filter_children.push($(this).attr('id'));
@@ -272,35 +295,69 @@ function init_chart_doughnut(size_box = null, create_time_s = true) {
         filter_user_children.push($(this).attr('id').split('|')[2])
       }
     });
+    xhr_chart.forEach(function(xhr_c){
+        if(xhr_c && xhr_c.readyState != 4) {
+          xhr_c.abort();
+        }
+      })
 
-    if (xhr_chart && xhr_chart.readyState != 4) {
-      xhr_chart.abort();
-    }
-    xhr_chart = $.ajax({
-      type: 'GET',
-      url: '/project_types/kpi.json',
-      datatype: 'json',
-      data: {
-        data_id: data_id,
-        size_box: size_box,
-        graph: true,
-        type_box: type_box,
-        dashboard_id: dashboard_id,
-        data_conditions: attribute_filters,
-        filtered_form_ids: filtered_form_ids,
-        from_date: from_date,
-        to_date: to_date,
-        from_date_subform: from_date_subforms,
-        to_date_subform: to_date_subforms,
-        filter_children:filter_children,
-        filter_user_children:filter_user_children
-      },
-      success: function(data) {
-        data_charts = data;
-        draw_charts();
+    // Busca id de gráficos
+      xhr_chart[0] = $.ajax({
+        type: 'GET',
+        url: '/project_types/get_kpi_without_graph_ids.json',
+        datatype: 'json',
+        data: {
+          project_type_id: Navarra.dashboards.config.project_type_id,
+          is_graph: true
+        },
+        success: function(data) {
+          data_gx_all = [];
+          var graph_ids = data.data;
+          //creamos los divs ordenados
+          $(".chart_container").remove();
+          graph_ids.forEach(function(id_graph){
+            $('.graphics').append(
+              $('<div>', {
+                'class': 'card text-light p-0 mt-1 chart-bg-none chart_container',
+                'id': 'chart_container' + id_graph
+              })
+            )
+          });
+          // cicla los gráficos uno por uno
+          graph_ids.forEach(function(id_graph, index_graph){
+            xhr_chart[index_graph] = $.ajax({
+              type: 'POST',
+              url: '/project_types/kpi.json',
+              datatype: 'json',
+              data: {
+                graph_id: id_graph,
+                data_id: data_id,
+                size_box: size_box,
+                graph: true,
+                type_box: type_box,
+                dashboard_id: dashboard_id,
+                data_conditions: attribute_filters,
+                filtered_form_ids: filtered_form_ids,
+                from_date: from_date,
+                to_date: to_date,
+                from_date_subform: from_date_subforms,
+                to_date_subform: to_date_subforms,
+                filter_children:filter_children,
+                filter_user_children:filter_user_children,
+                timeslider_layers: Navarra.project_types.config.timeslider_layers,
+                filters_layers: Navarra.project_types.config.filters_layers,
+                intersect_width_layers: intersect_width_layers,
+                active_layers: active_layers
+              },
+              success: function(data) {
+                data_charts = data;
+                draw_charts(data);
 
-      } //cierra function data
-    }) //cierra ajax
+              } //cierra function data
+            }) //cierra ajax
+          })
+        }
+      });
   } //cierra if graphics
   $('.modal-backdrop').remove();
 
@@ -384,11 +441,9 @@ var dragAndDrop = {
   }
 }
 
+
 // función para graficar los charts
-function draw_charts() {
-  $(".chart_container").remove();
-  var data = data_charts;
-  data_gx_all = [];
+function draw_charts(data) {
 
   // Ordenamos las series por chart
   for (var i = 0; i < data.length; i++) {
@@ -418,6 +473,7 @@ function draw_charts() {
     var bubble_dataset_x = [];
     var bubble_dataset_y = [];
     var scale;
+    var data_decimals=1;
 
     // Agrupamos los labels y los datos para luego poder ajustar las series con los mismos valores en el eje x
     var lab_all = []; //variable que agrupa los labels de cada serie
@@ -468,66 +524,6 @@ function draw_charts() {
             } else {
 
               $.each(vax, function(i, v) {
-
-                // Verifica si el dato es un fecha
-                var date_regexp = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/g;
-                var string = v['name'];
-                var isdate = date_regexp.test(string)
-
-                // Si es fecha le da el formato correcto
-                if (isdate == true) {
-                  // Agrega los ceros faltantes a los días y meses
-                  var no_zero_day_regexp = /^(\d{1})\/(\d{1,2})\/(\d{4})/g;
-                  var no_zero_month_regexp = /^(\d{1,2})\/(\d{1})\/(\d{4})/g;
-
-                  var day_zero_fail = no_zero_day_regexp.test(string)
-                  var month_zero_fail = no_zero_month_regexp.test(string)
-
-                  if (day_zero_fail == true) {
-                    var string = string.split('/')
-                    string[0] = '0' + string[0]
-                    string = string.join('/')
-                  };
-
-                  if (month_zero_fail == true) {
-                    var string = string.split('/')
-                    string[1] = '0' + string[1]
-                    string = string.join('/')
-                  };
-
-                  // Invierte el orden de la fecha y lo separa con guiones
-                  var stringdate = string.split('/').reverse().join('-');
-
-                  // Armamos los arrays de label y count
-                  lab.push(stringdate);
-                  da.push(v['count']);
-
-                  // Unimos el label con el count
-                  var row_array = [];
-                  for (var i = 0; i < lab.length; i++) {
-                    var row = lab[i] + '|' + da[i]
-                    row_array.push(row)
-                  }
-
-                  // Ordenamos las fechas (label unido a count)
-                  row_array.sort();
-
-                  var labb = [];
-                  var daa = [];
-
-                  // Separamos el label del count y armamos los arrays nuevamente
-                  for (var i = 0; i < row_array.length; i++) {
-                    var abierto = row_array[i].split("|")
-                    labb.push(abierto[0]);
-                    daa.push(abierto[1]);
-                  }
-
-                  da = daa;
-                  lab = labb;
-                  lab_acumulado = lab;
-
-                } else {
-
                   // Elimina los corchetes del name
                   lab_final = v['name']
                   if (lab_final != null) {
@@ -536,14 +532,11 @@ function draw_charts() {
                   lab.push(lab_final);
                   lab_acumulado.push(lab_final);
                   da.push(v['count']);
-                }
               })
             }
             lab_all.push(lab);
             da_all.push(da);
-
           }); //cierra each data_general
-
         } //cierra if data
       }) //cierra each b
     }) //cierra each reg
@@ -608,10 +601,11 @@ function draw_charts() {
         for (var a = 0; a < lab_acumulado.length; a++) {
           if (lab_all[l][a] != lab_acumulado[a]) {
             lab_all[l].splice(a, 0, lab_acumulado[a]); // si no encuentra el label lo agrega en el eje x
-            da_all[l].splice(a, 0, 0); //y agrega valor 0 para el eje y
+            da_all[l].splice(a, 0, null); //y agrega valor null para el eje y
           }
         }
       }
+
     // fin de unificación de labels en el eje x para varias series y orden numérico
 
     // Arranca armando series
@@ -655,8 +649,14 @@ function draw_charts() {
           data_labelling = value['data_labelling'];
           scale = value['scale'];
           tick_min_left = value['tick_x_min'];
+          if (tick_min_left == null) {
+            tick_min_left = 0;
+          }
           tick_max_left = value['tick_x_max'];
           tick_min_right = value['tick_y_min'];
+          if (tick_min_right == null) {
+            tick_min_right = 0;
+          }
           tick_max_right = value['tick_y_max'];
           tick_step_left = value['step_x'];
           if (tick_step_left == null) {
@@ -799,71 +799,23 @@ function draw_charts() {
       }) //cierra each b
     }) //cierra each reg
 
+    var html_new_graph = "<div class='w-100'>"
+    html_new_graph += "<div class='py-1 px-2' id='header"+graphic_id+"'>"
+    html_new_graph += "<text id='text_chart"+graphic_id+"'>"+title+"</text>"
+    html_new_graph += "<span class='fas fa-expand-arrows-alt' style='float: right; cursor: pointer' onclick='maximize_chart(event)'></span>"
+    html_new_graph += "<span class='fas fa-table mr-2' id='show_data_chart"+graphic_id+"' style='float: right; cursor: pointer' title='Mostrar Datos' onclick='show_data_chart("+graphic_id+")'></span>"
+    html_new_graph += "<span class='fas fa-eye-slash mr-2' id='hide_chart"+graphic_id+"' style='float: right; cursor: pointer' title='Ocultar Gráfico' onclick='hide_chart("+graphic_id+")'></span>"
+    html_new_graph += "</div>"
+    html_new_graph += "<div class='collapse show' id='collapse_"+graphic_id+"'>"
+    html_new_graph += "<div class='d-none card-body px-1 pb-0 chart_body_custom' style='overflow-x: auto' id='body_graph_table"+graphic_id+"'>"
+    html_new_graph += "</div>"
+    html_new_graph += "<div class='card-body px-1 pb-0 chart_body_custom' id='body"+graphic_id+"'>"
+    html_new_graph += "<canvas class='canvas"+graphic_id+"' id='canvas"+graphic_id+"'></canvas>"
+    html_new_graph += "</div>"
+    html_new_graph += "</div>"
+    html_new_graph += "</div>"
 
-    $('.graphics').append(
-      $('<div>', {
-        'class': 'card text-light p-0 mt-1 chart-bg-none chart_container',
-        'id': 'chart_container' + graphic_id
-      }).append(
-        $('<div>', {
-          'class': 'w-100',
-        }).append(
-        $('<div>', {
-          'class': 'py-1 px-2',
-          'id': 'header' + graphic_id
-        }).append(
-          $('<text>', {
-            'text': title
-          }),
-          $('<span>', { // handle
-             'class': 'fas fa-expand-arrows-alt',
-             'style': 'float: right; cursor: pointer',
-             'onclick': 'maximize_chart(event)'
-           }),
-           $('<span>', { // handle
-             'class': 'fas fa-table mr-2',
-             'id': 'show_data_chart'+graphic_id,
-             'style': 'float: right; cursor: pointer',
-             'title': 'Mostrar Datos',
-             'onclick': 'show_data_chart('+graphic_id+')'
-           }),
-          /* Oculta minimizado hasta solucionar el tema de row
-          $('<button>', { // boton minimizar
-            'class': 'close',
-            'type': 'button',
-            'data-toggle': 'collapse',
-            'data-target': '#collapse_' + graphic_id,
-            'aria-expanded': "true",
-            'aria-controls': 'collapse_' + graphic_id,
-          }).append(
-            $('<i>', { // icono minimizar
-              'class': 'fas fa-window-minimize'
-            })
-          )
-          */
-        ),
-        $('<div>', { // collapse
-          'class': 'collapse show',
-          'id': 'collapse_' + graphic_id
-        }).append(
-          $('<div>', {
-            'class': 'd-none card-body px-1 pb-0 chart_body_custom',
-            'style': 'overflow-x: auto',
-            'id': 'body_graph_table' + graphic_id
-          }),
-          $('<div>', {
-            'class': 'card-body px-1 pb-0 chart_body_custom',
-            'id': 'body' + graphic_id
-          }).append(
-            $('<canvas>', {
-              'class': 'canvas' + graphic_id,
-              'id': 'canvas' + graphic_id
-            })
-          )
-        )
-      )
-    )
-  )
+    $('#chart_container'+graphic_id).append(html_new_graph);
 
 
     //Chequeamos el estado de view
@@ -897,7 +849,6 @@ function draw_charts() {
       $('#chart_container' + graphic_id).addClass('col-md-' + width);
       //legend_display = false;
     }
-
     // BAR options
     if (type_chart == 'bar' || type_chart == 'line' || type_chart == 'area' || type_chart == 'point') {
       var option_legend = {
@@ -945,13 +896,15 @@ function draw_charts() {
             display: 'true',
             type: 'linear',
             ticks: {
-              stepSize: parseInt(tick_step_left),
-              callback: function(label, index, labels) {
-                label = label.toLocaleString('es-ES')
-                return label;
-              },
+              min: parseFloat(tick_min_left),
+             stepSize: parseFloat(tick_step_left),
+                callback: function(label, index, labels) {
+                  label = label.toLocaleString('es-ES')
+                  return label;
+                },
               fontColor: '#FDFEFE'
             },
+            /*
             beforeBuildTicks: function(scale) {
               // Aplica ticks custom si se ingresan valores
               if (tick_min_left == null) {
@@ -964,6 +917,7 @@ function draw_charts() {
               }
               return;
             },
+            */
             stacked: stacked,
             scaleLabel: {
               display: true,
@@ -980,13 +934,15 @@ function draw_charts() {
             display: display_right_y_axis,
             type: 'linear',
             ticks: {
-              stepSize: parseInt(tick_step_left),
+              min: parseFloat(tick_min_right),
+              stepSize: parseFloat(tick_step_left),
               callback: function(label, index, labels) {
                 label = label.toLocaleString('es-ES')
                 return label;
               },
               fontColor: '#FDFEFE',
             },
+            /*
             beforeBuildTicks: function(scale) {
               // Aplica ticks custom si se ingresan valores
               if (tick_min_right == null) {
@@ -999,6 +955,7 @@ function draw_charts() {
               }
               return;
             },
+            */
             stacked: stacked,
             scaleLabel: {
               display: true,
@@ -1026,9 +983,23 @@ function draw_charts() {
             anchor: 'end',
             align: 'end',
             offset: -5,
-            formatter: Math.round
+            formatter: function(value, context) {
+              var datasets_context = context.dataset.data;
+              var max = Math.max.apply(null, datasets_context);
+              var min = Math.min.apply(null, datasets_context);
+              if(max-min<=50){data_decimals=10}
+              if(max-min<=10){data_decimals=100}
+              if(max-min<=5){data_decimals=1000}
+              return Math.round(value*data_decimals)/data_decimals;
+            }
           }
         },
+      }
+      if (tick_max_left != null) {
+        option_legend.scales.yAxes[0].ticks.max = parseFloat(tick_max_left);
+      }
+      if (tick_max_right != null) {
+        option_legend.scales.yAxes[1].ticks.max = parseFloat(tick_max_right);
       }
       var chart_settings = {
         type: 'bar',
@@ -1056,13 +1027,15 @@ function draw_charts() {
           xAxes: [{
             display: true,
             ticks: {
-              stepSize: parseInt(tick_step_left),
+              min: parseFloat(tick_min_left),
+              stepSize: parseFloat(tick_step_left),
               callback: function(label, index, labels) {
                 label = label.toLocaleString('es-ES')
                 return label;
               },
               fontColor: '#FDFEFE'
             },
+            /*
             beforeBuildTicks: function(scale) {
               // Aplica ticks custom si se ingresan valores
               if (tick_min_left == null) {
@@ -1075,6 +1048,7 @@ function draw_charts() {
               }
               return;
             },
+            */
             stacked: stacked,
             scaleLabel: {
               display: true,
@@ -1117,9 +1091,20 @@ function draw_charts() {
             textShadowBlur: 5,
             anchor: 'end',
             align: 'end',
-            formatter: Math.round
+            formatter: function(value, context) {
+              var datasets_context = context.dataset.data;
+              var max = Math.max.apply(null, datasets_context);
+              var min = Math.min.apply(null, datasets_context);
+              if(max-min<=50){data_decimals=10}
+              if(max-min<=10){data_decimals=100}
+              if(max-min<=5){data_decimals=1000}
+              return Math.round(value*data_decimals)/data_decimals;
+            }
           }
         },
+      }
+      if (tick_max_left != null) {
+        option_legend.scales.yAxes[0].ticks.max = parseFloat(tick_max_left);
       }
       var chart_settings = {
         type: 'horizontalBar',
@@ -1247,7 +1232,15 @@ function draw_charts() {
             textShadowBlur: 5,
             anchor: 'end',
             align: 'end',
-            formatter: Math.round
+            formatter: function(value, context) {
+              var datasets_context = context.dataset.data;
+              var max = Math.max.apply(null, datasets_context);
+              var min = Math.min.apply(null, datasets_context);
+              if(max-min<=50){data_decimals=10}
+              if(max-min<=10){data_decimals=100}
+              if(max-min<=5){data_decimals=1000}
+              return Math.round(value*data_decimals)/data_decimals;
+            }
           }
         },
       }
@@ -1288,6 +1281,9 @@ function maximize_chart(e){
   }
 }
 
+function hide_chart(id_chart){
+  $('#chart_container'+id_chart).addClass('d-none');
+}
 function hide_data_chart(id_chart){
   $('#show_data_chart'+id_chart).addClass('fa-table');
   $('#show_data_chart'+id_chart).removeClass('fa-chart-bar');
@@ -1314,7 +1310,7 @@ function show_data_chart(id_chart){
       table_html += '<thead><tr>';
       table_html += "<th></td>";
       chart.data_gx.datasets.forEach(function(set){
-            table_html += "<th class='p-2 text-center'>"+set.label+"</td>";         
+            table_html += "<th class='p-2 text-center'>"+set.label+"</td>";
         });
       table_html += '</tr></thead>';
 
@@ -1349,7 +1345,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
   //cierra modal de información del registro
   if(close_info){$("#info-modal").modal("hide");}
   // descliquea checkbox select_all
-  $('#table_select_all_hidden').prop('checked', false);
   $('#table_select_all').prop('checked', false);
   $(".fakeLoader").css("display", "block");
   var type_box = 'polygon';
@@ -1383,12 +1378,16 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
   var order_by_column = $(".order_by_column").val();
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
+  var active_layers = get_active_layers();
+  var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+  var filters_layers = Navarra.project_types.config.filters_layers;
+  var timeslider_layers = Navarra.project_types.config.timeslider_layers;
 
   if (xhr_table && xhr_table.readyState != 4) {
     xhr_table.abort();
   }
   xhr_table = $.ajax({
-    type: 'GET',
+    type: 'POST',
     url: '/project_types/search_data_dashboard',
     datatype: 'json',
     data: {
@@ -1404,6 +1403,10 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
       filtered_form_ids: filtered_form_ids,
       from_date: from_date,
       to_date: to_date,
+      active_layers: active_layers,
+      intersect_width_layers: intersect_width_layers,
+      filters_layers: filters_layers,
+      timeslider_layers: timeslider_layers
     },
 
     success: function(data) {
@@ -1413,8 +1416,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
         // Verifica si tiene que crear tabla de subformularios
         create_subforms_table(subfield_ids_saved);
         // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
-        verify_scroll_table();
-        adjust_colum_width();
         return;
       }
       data_dashboard = data.data
@@ -1422,7 +1423,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
       // borramos los datos anteriores
       $("#tbody_visible").empty();
       $("#total_table").empty();
-      $(".width_only").html("");
       Navarra.dashboards.app_ids_table=[];
 
       // verificamos columnas ocultas
@@ -1463,7 +1463,7 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
         // comienza llenado de la tabla
           var column_to_fill =  document.querySelectorAll('._columnname');
           column_to_fill.forEach(function(col,index_data){
-            col.innerHTML = array_datos[index_data].toString();
+            col.innerHTML = array_datos[index_data].toString().replace(/[{}[\]"]/g,"");
           });
         // termina llenado de la tabla
 
@@ -1473,9 +1473,6 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
       create_subforms_table(subfield_ids_saved);
       // Verifica si tiene que crear tabla de capas
       create_layers_table();
-      // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
-      verify_scroll_table();
-      adjust_colum_width();
     }
   });
 
@@ -1494,7 +1491,7 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
         xhr_table_search.abort();
       }
       xhr_table_search = $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: '/project_types/search_data_dashboard',
         datatype: 'json',
         data: {
@@ -1509,7 +1506,11 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
           data_conditions: attribute_filters,
           filtered_form_ids: filtered_form_ids,
           from_date: from_date,
-          to_date: to_date
+          to_date: to_date,
+          active_layers: active_layers,
+          intersect_width_layers: intersect_width_layers,
+          filters_layers: filters_layers,
+          timeslider_layers: timeslider_layers
         },
 
         success: function(data) {
@@ -1537,7 +1538,7 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
       }
     }
   }
- 
+
 }
 
 function create_celd_table(column, indexColumn, data_properties, per_page_value, active_page, index,is_new_file, status_color, user_name){
@@ -1561,10 +1562,8 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   if (column.value == "#") {
     if (isNaN(per_page_value)) {
         array_datos.push(index+1);
-      document.getElementById('columnfake_datacount').innerHTML=(index + 1);
     } else {
         array_datos.push((index + 1) + (active_page - 1) * per_page_value);
-      document.getElementById('columnfake_datacount').innerHTML=(index + 1) + (active_page - 1) * per_page_value;
     }
     $('.field_key_layer').each(function(key_layer){
       array_datos.push("");
@@ -1602,35 +1601,33 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   if(is_new_file && (data_properties[column_name]!=undefined || column_name=="#_action" || column_name == "#_select")){
     if(column_name=="#"){
       new_celd_create = new_celd_create = "<td class='_columnname custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
-      //Verificar si hace falta
-      /*
-      $('.field_key_layer').each(function(index,key_layer){
-        new_celd_create += "<td style='background:red' class='_columnname custom_row d-none celdlayer_id"+appid_selected+" celdlayer_key"+key_layer.id.substring(9)+"' onclick='show_item("+appid_selected+")'></td>"
-      });
-      */
     } else{
       if(data_properties[column_name]!=undefined){
         new_celd_create = "<td class='_columnname custom_row celd_id"+appid_selected+" celd_key"+column_name+" "+text_hidden+"' onclick='show_item("+appid_selected+")'>"+data_properties[column_name]+"</td>"
       }
       if(column_name=="#_action" || column_name == "#_select"){
-        new_celd_create = "<td class='_columnname custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'>"+new_dom+"</td>"
+        new_celd_create = "<td class='_columnname action_celd custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'>"+new_dom+"</td>"
       }
     }
   } else{
     if(column_name=="#"){
       new_celd_create = new_celd_create = "<td class='_columnname custom_row "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
       $('.field_key_layer').each(function(index_layer,key_layer){
-        new_celd_create += "<td class='_columnname custom_row d-none celdlayer_id"+appid_selected+" celdlayer_key"+key_layer.id.substring(9)+"' onclick='show_item("+appid_selected+")'></td>"
+        new_celd_create += "<td class='_columnname custom_row d-none celdlayer celdlayer_id"+appid_selected+" celdlayer_key"+key_layer.id.substring(9)+"' onclick='show_item("+appid_selected+")'></td>"
         if(index==0){
           var field_name = $('#columnfake_layer_'+key_layer.id.substring(9).split('|')[1]+'_'+key_layer.id.substring(9).split('|')[0] +' p').html();
           $('#total_table').append("<td name_function='"+field_name+"' class='d-none footer_key footerlayer_key"+key_layer.id.substring(9)+"'></td>")
         }
       });
     } else{
-      new_celd_create = "<td class='_columnname custom_row celd_id"+appid_selected+" celd_key"+column_name+" "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
+      if(column_name=="#_action" || column_name == "#_select"){
+        new_celd_create = "<td class='_columnname action_celd custom_row celd_id"+appid_selected+" celd_key"+column_name+" "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
+      } else{
+        new_celd_create = "<td class='_columnname custom_row celd_id"+appid_selected+" celd_key"+column_name+" "+text_hidden+"' onclick='show_item("+appid_selected+")'></td>"
+      }
     }
   }
-  
+
   return new_celd_create;
 }
 
@@ -1716,6 +1713,8 @@ function create_subforms_table(subfield_ids_saved){
     });
     field_ids.push(id);
     $('.subfield_column_'+id).remove();
+    $('.footer_field_'+id).remove();
+    $('.footersubform_key_date'+id).remove();
   });
   if(subfield_ids_saved!=undefined){
     subheader_open = subfield_ids_saved;
@@ -1738,23 +1737,6 @@ function open_subheaders_no_data(id_field){
     if(subheader.id_field ==  id_field){
       $('#'+id_field+'_subfield_'+subheader.id_subfield).addClass('d-none');
     }
-  });
-}
-
-function verify_scroll_table(){
-  if(document.getElementById('table_visible').scrollHeight>parseInt(document.getElementById('div_table_data').style.height)){
-    $('#thead_table_visible').addClass('scroll_false');
-  } else{
-    $('#thead_table_visible').removeClass('scroll_false');
-  }
-}
-
-function adjust_colum_width(){
-  $('.width_only').each(function(index){
-    var index_col = index+1;
-    var cel_width = $('#tbody_visible tr:nth-child(1) td:nth-child('+index_col+')');
-    max_width = cel_width.outerWidth() + 'px';
-    this.style.minWidth = max_width;
   });
 }
 
@@ -1858,7 +1840,7 @@ function set_time_slider_filter() {
     }
     from_forms += ' 00:00';
   }
-  
+
   if(to_forms!=""){
     if (step_date_forms == 'day') {
       to_forms = to_forms.split('/')[2] + '-' + to_forms.split('/')[1] + '-' + to_forms.split('/')[0];
@@ -1933,6 +1915,7 @@ function set_time_slider_filter() {
   Navarra.geomaps.get_zoomextent();
   // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
   Navarra.geomaps.current_layer();
+  Navarra.geomaps.wms_filter();
   // Fuerza el rearmado de la tabla
     data_dashboard = "";
     init_data_dashboard(false,false);
@@ -1944,7 +1927,7 @@ function clear_time_slider_filter(refresh_data) {
     Navarra.project_types.config.from_date_subforms = "";
     Navarra.project_types.config.to_date_subforms = "";
     Navarra.project_types.config.from_date = "";
-    Navarra.project_types.config.to_date = "";  
+    Navarra.project_types.config.to_date = "";
     $('#time_slider_from_forms').val("");
     $('#time_slider_to_forms').val("");
     $('#time_slider_from_subforms').val("");
@@ -1953,6 +1936,7 @@ function clear_time_slider_filter(refresh_data) {
     Navarra.geomaps.get_zoomextent(true);
     // actualiza datos y mapa init_data y show_kpi los ejecuta solo si elo mapa no se mueve
     Navarra.geomaps.current_layer();
+    Navarra.geomaps.wms_filter();
     // Fuerza el rearmado de la tabla
     data_dashboard = "";
     init_data_dashboard(false,false);
@@ -2050,22 +2034,14 @@ function init_report() {
   var order_by_column = $(".order_by_column").val();
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
+  var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+  var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+  var filters_layers = Navarra.project_types.config.filters_layers;
+  var timeslider_layers = Navarra.project_types.config.timeslider_layers;
 
   //capas activas
-  active_layers = [];
-  check_layers = document.querySelectorAll('input:checked.leaflet-control-layers-selector');
-  for (l = 0; l < check_layers.length; l++) {
-    if (check_layers[l].type == 'checkbox') {
-      var name_layer_project = $(check_layers[l]).next().html().substring(1).split("-filtrados")[0];
-      active_layers.push(name_layer_project);
-    }
-  }
-  // quita elementos repetidos de las capas
-  for (var i = active_layers.length - 1; i >= 0; i--) {
-    if (active_layers.indexOf(active_layers[i]) !== i) {
-      active_layers.splice(i, 1)
-    }
-  }
+  active_layers = get_active_layers();
+
   if (xhr_report && xhr_report.readyState != 4) {
     xhr_report.abort();
   }
@@ -2083,7 +2059,12 @@ function init_report() {
       data_conditions: attribute_filters,
       from_date: from_date,
       to_date: to_date,
-      active_layers: active_layers
+      active_layers: active_layers,
+      filtered_form_ids: filtered_form_ids,
+      active_layers: active_layers,
+      intersect_width_layers: intersect_width_layers,
+      filters_layers: filters_layers,
+      timeslider_layers: timeslider_layers
     },
     success: function(data) {
 
@@ -2273,11 +2254,6 @@ function init_report() {
       var fields = document.getElementById('thead_report_visible').querySelectorAll(".field_key_report");
       // borramos los datos anteriores
       document.getElementById("tbody_visible_report").remove();
-      document.getElementById("tbody_hidden_report").remove();
-      var new_body = document.createElement("TBODY");
-      new_body.style.visibility = "hidden";
-      new_body.id = "tbody_hidden_report";
-      document.getElementById("table_hidden_report").appendChild(new_body);
       var new_body = document.createElement("TBODY");
       new_body.style.className = "project_data_div";
       new_body.id = "tbody_visible_report";
@@ -2303,8 +2279,7 @@ function init_report() {
           }
           new_row.appendChild(new_celd);
         });
-        document.getElementById("tbody_visible_report").appendChild(new_row.cloneNode(true));
-        document.getElementById("tbody_hidden_report").appendChild(new_row);
+        document.getElementById("tbody_visible_report").appendChild(new_row);
       });
 
       $('#modal-report').modal('show');
@@ -2435,77 +2410,6 @@ function report_to_excel() {
   export_to_excel('clone_table', 'geoworks', 'reporte.xls')
 }
 
-// exportar tabla a excel
-function table_to_excel() {
-  var clone_table =  document.createElement("TABLE");
-  clone_table.id = "clone_table";
-  clone_table.style.display = "none";
-  var origin_head = document.getElementById('thead_table_visible');
-  var clone_head = origin_head.cloneNode(true);
-  clone_table.appendChild(clone_head);
-  var origin_body = document.getElementById('tbody_visible');
-  var clone_body = origin_body.cloneNode(true);
-  clone_table.appendChild(clone_body);
-  
-  $('body').append(clone_table);
-  //remueve divs de la cabecera
-  document.querySelectorAll('#clone_table .custom_onclick').forEach(e => e.parentNode.removeChild(e));
-  //elimina primeras columnas y columnas ocultas de la cabecera
-  var th_clone = document.querySelectorAll('#clone_table th');
-  th_clone.forEach(function(e) {
-    if (e.classList.contains('d-none') || e.classList.contains('head_key#_action') || e.classList.contains('head_key#_select') ) {
-      e.parentNode.removeChild(e);
-    } 
-  });
-  // limpia la fila de subcabeceras
-  var tr_th =  document.querySelectorAll('#clone_table th tr');
-  tr_th.forEach(function(e){
-    new_p = document.createElement('P');
-    new_p.innerHTML = e.firstChild.innerHTML;
-    e.parentNode.appendChild(new_p);
-    e.parentNode.removeChild(e);
-  });
-  
-  // elimina divs de seleccion en cabecera e inputs
-  document.querySelectorAll('#clone_table .custom_div_table').forEach(e => e.parentNode.removeChild(e));
-  document.querySelectorAll('#clone_table input').forEach(e => e.parentNode.removeChild(e));
-  
-  //elimina primeras columnas y columnas ocultas del cuerpo
-  var td_clone = document.querySelectorAll('#clone_table td');
-  td_clone.forEach(function(e) {
-    if (e.classList.contains('d-none') || e.classList.contains('celd_key#_action') || e.classList.contains('celd_key#_select') ) {
-      e.parentNode.removeChild(e);
-    } 
-  });
-
-  var column_count = $('.column_data.d-none').length + $('.column_data_layer.d-none').length 
-  subcolumn_count = 0;
-  // acomoda las columnas de hijos
-  var td_th = document.querySelectorAll('#clone_table td tr');
-  var id_subcolumn_before = 0;
-  var subcolumn_open_count_before = 0;
-  td_th.forEach(function(e,index){
-    //resta la celda del icono imagen
-    var subcolumn_open_count = $(e).find('td').length-1;
-    var id_subcolumn = $(e).find('td').eq(1).attr('id').split('_')[0];
-    if(index==0){first_subcolumn_id = id_subcolumn}
-    if(id_subcolumn_before!=0 && id_subcolumn_before!=id_subcolumn){
-      subcolumn_count+=subcolumn_open_count_before;
-    }
-    id_subcolumn_before = id_subcolumn;
-    subcolumn_open_count_before = subcolumn_open_count;
-    if(id_subcolumn==first_subcolumn_id){
-      subcolumn_count = 0;
-    }
-    column_count_total = column_count + subcolumn_count;
-    for(c=0;c<column_count_total;c++){
-      var new_celd =  document.createElement("TD");
-      e.prepend(new_celd);
-    }
-  });
-
-  export_to_excel('clone_table', 'geoworks', 'tabla.xls')
-}
 
 function export_to_excel(table, name, filename) {
   let uri = 'data:application/vnd.ms-excel;base64,',
@@ -2547,11 +2451,11 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
   }
   if(is_multiple){
     $('#multiple_edit').addClass("multiple_on");
-    var total_files_to_edit = $('#table_visible .custom-control-input:checked').not('.just_header').length;
+    var total_files_to_edit = $('#table_hidden .custom-control-input:checked').not('#table_select_all').length;
     $('#info_title').html(total_files_to_edit + " registros seleccionados ");
   } else{
       $('#multiple_edit').removeClass("multiple_on");
-      if( $('#table_visible .custom-control-input:checked').length>0){
+      if( $('#table_hidden .custom-control-input:checked').length>0){
         // si se llamó a edición simple pero hay multiple registros seleccionados, se limpia la selección
         $('#table_select_all').prop('checked',false);
         $('#multiple_edit').addClass("d-none");
@@ -2720,9 +2624,37 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
         if(verify_count_elements_photos!= father_photos.length){
           set_error_message("Error: no se pudieron traer todas las fotos del registro");
         }
-      } 
+      }
       // Si es nuevo puede guardar sin hacer cambios en los campos
       if(is_new_file){changeFile()}
+
+      var labelElement = document.createElement('label');
+      labelElement.setAttribute('for', 'imageInput');
+      labelElement.id = 'photo_label'
+
+      if (!is_new_file && !is_multiple) {
+        labelElement.className = 'd-none'
+      }
+
+      if (appid_info != 0){
+        var iconElement = document.createElement('i');
+        iconElement.classList.add('fas', 'fa-camera', 'icons');
+        iconElement.setAttribute('title', 'Agregar Foto');
+
+        var inputElement = document.createElement('input');
+        inputElement.id = 'imageInput';
+        inputElement.className = 'new_photo'
+        inputElement.type = 'file';
+        inputElement.name = 'photo';
+
+        labelElement.appendChild(iconElement);
+        labelElement.appendChild(inputElement);
+        document.getElementById('info_body').appendChild(labelElement);
+
+        $('#imageInput').on('change', function() {
+          Navarra.photos.newFatherImage(appid_info);
+        });
+      };
 
       //campos del registro
       father_fields = data.father_fields;
@@ -2762,7 +2694,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             }
             var new_p = document.createElement('H7');
             if (element.field_type_id == 11) {
-              new_p.className = "bg-primary pl-1";
+              new_p.className = "btn btn-primary p-0 pl-1 pr-1 text-left custom_button";
               new_p.setAttribute("onClick", "open_subtitle(" + element.calculated_field + ",'')");
               if (element.calculated_field != "") {
                 try{
@@ -2781,14 +2713,13 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             new_celd.appendChild(new_p);
             new_row.appendChild(new_celd);
 
-
             if (element.field_type_id != 11) {
               var new_celd = document.createElement('DIV');
-              new_celd.className = "col-md-7 field_div";
+              new_celd.className = "col-md-7 field_div static_datetimepicker";
               if(element.field_type_id == 10){new_celd.classList.add("ok_button")}
 
               // Adapta el código a los diferentes tipos de campos
-              if (element.field_type_id == 1) {
+              if (element.field_type_id == 1 || element.field_type_id == 12) {
                 var new_p = document.createElement('TEXTAREA');
                 new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
                 if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
@@ -2987,7 +2918,8 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
           }
           } //termina campo padre
           else {
-          // Dibuja campos hijos
+            // Dibuja campos hijos
+
             var new_row = document.createElement('DIV');
             if (element.hidden) {
               new_row.className = "d-none hidden_field";
@@ -3008,7 +2940,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             // si tiene autorización para nuevos hijos
             if($('#new_subform_control').val()=="true"){
               var new_p = document.createElement('I');
-              new_p.className = "fas fa-plus icon_add d-none add_subforms";
+              new_p.className = "fas fa-plus icon_add d-none add_subforms btn btn-primary custom_button p-1";
               new_p.setAttribute('onclick','open_new_child('+element.field_id+',"'+element.name+'","'+element.key+'",'+is_multiple+')');
               new_celd.appendChild(new_p);
             }
@@ -3044,7 +2976,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       set_date_style(is_multiple);
 
       // selectores y multiselectores en hijos
-          set_multiselect_style_childs();  
+          set_multiselect_style_childs();
 
       //Muestra el punto en el mapa y elimina el seleccionado en la tabla
       if (from_map) {
@@ -3068,12 +3000,51 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
 }
 
 function create_new_row_child_date(element_child){
+  var child_id = element_child.children_id
+
   var new_row1 = document.createElement('DIV');
   new_row1.className = "form-row";
+  var linediv = document.createElement('DIV');
+  linediv.className = "col-md-12";
+  linediv.innerHTML = "<hr style='background-color: #8c8c8c;'>"
+  new_row1.appendChild(linediv)
+
+  var photo_div = document.createElement('DIV');
+  photo_div.className = "col-md-12";
+
+  var labelChildElement = document.createElement('label');
+  labelChildElement.setAttribute('for', 'imageChildInput' + child_id);
+  labelChildElement.id = 'photo_child_label'
+
+  if ($("#photo_label").hasClass('d-none')) {
+    labelChildElement.className = 'd-none'
+  }
+
+  var iconChildElement = document.createElement('i');
+  iconChildElement.classList.add('fas', 'fa-camera', 'icons');
+  iconChildElement.setAttribute('title', 'Agregar Foto');
+
+  var inputChildElement = document.createElement('input');
+  inputChildElement.id = 'imageChildInput' + child_id;
+  inputChildElement.className = 'new_photo'
+  inputChildElement.type = 'file';
+  inputChildElement.name = 'photo';
+
+  labelChildElement.appendChild(iconChildElement);
+  labelChildElement.appendChild(inputChildElement);
+  photo_div.appendChild(labelChildElement)
+  new_row1.appendChild(photo_div);
+
+  var photo_div_id = inputChildElement.id.replace("imageChildInput", "")
+
+  inputChildElement.onchange = function() {
+    Navarra.photos.newChildImage(photo_div_id);
+  };
+
   var new_celd = document.createElement('DIV');
   new_celd.className = "col-md-5 ml-3";
   var new_p = document.createElement('H7');
-  new_p.innerHTML = "<span style='font-size:2em;position:absolute;margin-top:-5px;margin-left:-30px'>&#8594</span> Fecha:";
+  new_p.innerHTML = "Fecha:";
   new_p.style.margin = "0px";
   new_celd.appendChild(new_p);
   new_row1.appendChild(new_celd);
@@ -3089,7 +3060,7 @@ function create_new_row_child_date(element_child){
   new_row1.appendChild(new_celd);
   return new_row1;
 }
-  
+
 function create_new_row_child(element_child, element_field_id, element_name, is_multiple, is_new){
   //campos de los hijos
   children_fields = element_child.children_fields;
@@ -3105,9 +3076,9 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
     }
     var new_row1 = document.createElement('DIV');
     if (element_child_field.hidden) {
-      new_row1.className = "form-row d-none hidden_field row_field";
+      new_row1.className = "form-row d-none hidden_field row_field static_datetimepicker" ;
     } else {
-      new_row1.className = "form-row row_field";
+      new_row1.className = "form-row row_field static_datetimepicker";
     }
     if(element_child_field.can_read==false){
         new_row1.classList.add('canot_read');
@@ -3133,10 +3104,10 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
     } else {
       new_celd.className = "col-md-5 ml-3";
     }
-    
+
     var new_p = document.createElement('H7');
     if (element_child_field.field_type_id == 11) {
-      new_p.className = "bg-primary pl-1";
+      new_p.className = "btn btn-primary p-0 pl-1 pr-1 text-left custom_button";
       new_p.style.cursor = "pointer";
       new_p.setAttribute("onClick", "open_subtitle(" + element_child_field.calculated_field + ",'_child')");
       if (element_child_field.calculated_field != "") {
@@ -3265,7 +3236,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
         var id_child = element_child.children_id;
         arraymultiselect.push(id_field);
         arraymultiselectChild.push(id_child);
-                    
+
         new_p.setAttribute('onChange','changeChild('+element_child.children_id+',' +found_nested +',event)');
 
         // Script en hijos
@@ -3273,13 +3244,13 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
           if(!is_multiple){
             if(element_child_field.value==null){isnull_value=null}else{isnull_value="\""+element_child_field.value+"\""}
               var id_child_toScript = element_child_field.field_id+"|"+element_child.children_id;
-              new_p.setAttribute('onChange', 'set_script('+element_child_field.data_script+ ',' +element_child_field.field_type_id+ ', "' +id_child_toScript +'",' +isnull_value+',' +found_nested +',event , false)');
+              new_p.setAttribute('onChange', 'set_script('+element_child_field.data_script+ ',' +element_child_field.field_type_id+ ', "' +id_child_toScript +'",' +isnull_value+',' +found_nested +',event , false, '+element_field_id +')');
           } else{
             new_p.setAttribute('onChange','changeChild('+element_child.children_id+',' +found_nested +',event)');
           }
         }
       //
-          
+
       }
       if (element_child_field.field_type_id == 3) {
         var new_p = document.createElement('INPUT');
@@ -3306,7 +3277,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
           if(!is_multiple){
             if(element_child_field.value==null){isnull_value=null}else{isnull_value="\""+element_child_field.value+"\""}
               var id_child_toScript = element_child_field.field_id+"|"+element_child.children_id;
-              new_p.setAttribute('onChange', 'set_script('+element_child_field.data_script+ ',' +element_child_field.field_type_id+ ', "' +id_child_toScript +'",' +isnull_value+',' +false +',event , false)');
+              new_p.setAttribute('onChange', 'set_script('+element_child_field.data_script+ ',' +element_child_field.field_type_id+ ', "' +id_child_toScript +'",' +isnull_value+',' +false +',event , false, '+element_field_id +')');
           } else{
             new_p.setAttribute('onChange','changeChild('+element_child.children_id+')');
           }
@@ -3450,7 +3421,7 @@ function open_new_child(element_field_id, element_name, element_key,is_multiple)
         children_fields: data,
         children_id: 0,
         children_photos: []
-      } 
+      }
       var new_row1 = create_new_row_child(child_elements_new, element_field_id,element_name,is_multiple,true);
       document.getElementById('child_container_'+element_key).appendChild(new_row1);
       textarea_adjust_height();
@@ -3676,12 +3647,17 @@ function edit_file(edit_parent, edit_child, edit_status){
   if(is_new_file){
     var type_ajax = 'POST';
     var url_post = '/projects/create_form';
-    var data_to_save = {
+    var data_array = [];
+    var data_to_save_file = {
       project_type_id: Navarra.dashboards.config.project_type_id,
       properties: JSON.stringify(properties_to_save),
       subforms: child_edited_all,
       project_status_id: status_id,
       geom: Navarra.geomaps.get_geometries_to_save()
+    }
+    data_array.push(data_to_save_file);
+    data_to_save = {
+      data: data_array
     }
 
   } else {
@@ -3714,11 +3690,11 @@ function edit_file(edit_parent, edit_child, edit_status){
       $('#toast').toast('show');
       Navarra.project_types.config.item_selected="";
       Navarra.project_types.config.data_dashboard = "";
-      
+
        //Ajustar valor en la tabla si está visible
-      if(!$('#status-view').hasClass('status-view-condensed')){ 
+      if(!$('#status-view').hasClass('status-view-condensed')){
         if(is_new_file){
-          var id_new = data['id'];
+          var id_new = data['id'][0];
           var new_row = document.createElement("TR");
           new_row.id="row_table_data"+id_new;
           new_row.style.cursor = "pointer";
@@ -3768,16 +3744,13 @@ function edit_file(edit_parent, edit_child, edit_status){
         create_subforms_table();
         // Verifica si tiene que crear tabla de capas
         create_layers_table();
-        // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
-        verify_scroll_table();
-        adjust_colum_width();
       }
 
 
       update_all();
     }
   });
-}  
+}
 
 function change_owner(){
   $(".fakeLoader").css("display", "block");
@@ -3887,7 +3860,7 @@ function delete_file(){
 function getapp_ids(){
   var app_ids = [];
   if($('#multiple_edit').hasClass("multiple_on")){
-    $('#table_visible .custom-control-input:checked').not('.just_header').each(function(){
+    $('#table_hidden').find('.custom-control-input:checked').not('#table_select_all').each(function(){
       app_ids.push($(this).attr('id').split('_')[2]);
     });
   } else{
@@ -3907,7 +3880,7 @@ function update_all(){
   Navarra.geomaps.delete_markers();
 }
 
-function set_script(data_script,field_type_id,field_id,value,isnested,event, isparent){
+function set_script(data_script,field_type_id,field_id,value,isnested,event, isparent,id_field_father){
   // Script de campos padres
   if(isparent){
     filechange = true;
@@ -3922,6 +3895,8 @@ function set_script(data_script,field_type_id,field_id,value,isnested,event, isp
   }
   if(isparent){
     calculate_all(false,true);
+  } else {
+    calculate_all(false,false,field_id.split('|')[1],id_field_father);
   }
 }
 
@@ -3954,8 +3929,8 @@ function calculate_all(first_time, isparent, id_child_calculate , id_field_child
     if(!first_time){filechange = true;}
       father_fields.forEach(function(element) {
         if(element.calculated_field!="" && element.field_type_id!=11){
-          if((element.calculated_field=='{"provincia":""}' || element.calculated_field=='{"municipio":""}') && is_new_file){
-            if(Navarra.dashboards.config.type_geometry == "Polygon"){
+          if((element.calculated_field=='{"provincia":""}' || element.calculated_field=='{"municipio":""}' || element.calculated_field=='{"googleMaps":""}' || element.calculated_field=='{"LatLong":""}') && is_new_file){
+            if(Navarra.dashboards.config.type_geometry == "Polygon" || Navarra.dashboards.config.type_geometry == "LineString"){
               var geom = Navarra.geomaps.get_geom_to_calculate();
             } else{
               var geom1 = Navarra.geomaps.get_geometries_to_save();
@@ -4021,7 +3996,7 @@ function set_nested(event, isparent){
 }
 
 function changeChild(id_child_edited,isnested,event){
-  array_child_edited.push(id_child_edited);
+  array_child_edited.push(parseInt(id_child_edited));
   if(isnested){
     set_nested(event,false)
   }
@@ -4060,12 +4035,12 @@ function changeSelected(){
   } else{
     $('#row_table_data'+id_checked).removeClass('tr_checked');
   }
-  if($('#table_visible .custom-control-input:checked').not('.just_header').length>=2){
+  if($('#table_hidden .custom-control-input:checked').not('#table_select_all').length>=2){
     $('#multiple_edit').removeClass('d-none');
   } else{
     $('#multiple_edit').addClass('d-none');
   }
-  if($('#table_visible .custom-control-input:checked').not('.just_header').length==0){
+  if($('#table_hidden .custom-control-input:checked').not('#table_select_all').length==0){
     $('#table_select_all').prop('checked',false);
   }
   calculate_functions_table();
@@ -4093,6 +4068,48 @@ function calculate_functions_table(){
 
 //****** TERMINAN FUNCIONES PARA EDICION DE REGISTROS *****
 
+function do_number_points_modal(){
+  var modal = document.getElementById('pointsModal');
+  var numberInput = document.getElementById('numberInput');
+
+  modal.style.display = 'block';
+  number_point_value = numberInput.value;
+  modal.style.display = 'none';
+
+  Navarra.geomaps.show_random_points(app_id_popup);
+};
+
+function do_project_to_save_multipoints_modal(){
+  var modal = document.getElementById('savePointsModal');
+  var project_selected = document.getElementById('selected_multipoint_project');
+
+  modal.style.display = 'block';
+  project_selected_value = project_selected.value;
+  modal.style.display = 'none';
+
+  Navarra.geomaps.save_multipoints(app_id_popup);
+};
+
+
+function get_active_layers(){
+  active_layers = [];
+  check_layers = document.querySelectorAll('input:checked.leaflet-control-layers-selector');
+  for (l = 0; l < check_layers.length; l++) {
+    if (check_layers[l].type == 'checkbox') {
+      var name_layer_project = $(check_layers[l]).next().html().substring(1).split("-filtrados")[0];
+      if (name_layer_project != Navarra.dashboards.config.name_layer && name_layer_project.toLowerCase()!="seleccionados" ){
+        active_layers.push(name_layer_project);
+      }
+    }
+  }
+  // quita elementos repetidos de las capas
+  for (var i = active_layers.length - 1; i >= 0; i--) {
+    if (active_layers.indexOf(active_layers[i]) !== i) {
+      active_layers.splice(i, 1)
+    }
+  }
+  return active_layers;
+}
 
 //****** FUNCIONES PARA EXPORTAR GEOJSON*****
 
@@ -4111,7 +4128,9 @@ function download_geojson() {
   }
   var column_visibles = [];
   $('.header_column').not('.d-none').find(':input').each(function(){
-    column_visibles.push($(this).val());
+    if (isNaN($(this).val())){
+      column_visibles.push($(this).val());
+    }
   })
 
   var attribute_filters = Navarra.project_types.config.attribute_filters;
@@ -4123,20 +4142,43 @@ function download_geojson() {
   var order_by_column = $(".order_by_column").val();
   var from_date = Navarra.project_types.config.from_date;
   var to_date = Navarra.project_types.config.to_date;
+  var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+  var active_layers = get_active_layers();
+  var timeslider_layers = Navarra.project_types.config.timeslider_layers;
+  var filters_layers = Navarra.project_types.config.filters_layers;
 
-  url = "/project_types/export_geojson.json?filter_value=" + filter_value
-  + "&filter_by_column=" + filter_by_column
-  + "&order_by_column=" + order_by_column
-  + "&project_type_id=" + project_type_id
-  + "&name_project=" + name_project
-  + "&type_box=" + type_box
-  + "&size_box=" + JSON.stringify(size_box)
-  + "&attribute_filters=" + JSON.stringify(attribute_filters)
-  + "&filtered_form_ids=" + JSON.stringify(filtered_form_ids)
-  + "&from_date=" + from_date
-  + "&to_date=" + to_date
-  + "&fields=" + JSON.stringify(column_visibles)
-
-  window.open(url, '_blank');
+  $.ajax({
+    type: 'GET',
+    url: '/project_types/export_geojson.json',
+    datatype: 'JSON',
+    data: {
+      filter_value: filter_value,
+      filter_by_column: filter_by_column,
+      order_by_column: order_by_column,
+      project_type_id: project_type_id,
+      name_project: name_project,
+      type_box: type_box,
+      size_box: size_box,
+      attribute_filters: attribute_filters,
+      filtered_form_ids: filtered_form_ids,
+      from_date: from_date,
+      to_date: to_date,
+      fields: column_visibles,
+      intersect_width_layers: intersect_width_layers,
+      active_layers: active_layers,
+      timeslider_layers: timeslider_layers,
+      filters_layers: filters_layers,
+    },
+    success: function(data) {
+      var jsonObj = JSON.parse(data);
+      var data_pretty = encodeURIComponent(JSON.stringify(jsonObj,null,2));
+      $("<a />", {
+        "download": Navarra.dashboards.config.name_project+".geojson",
+        "href" : "data:application/json," + data_pretty
+      }).appendTo("body").click(function() {
+        $(this).remove()
+      })[0].click()
+    }
+  });
 
 }

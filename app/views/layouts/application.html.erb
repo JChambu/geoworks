@@ -2,14 +2,30 @@
 <html lang="en">
   <head>
     <%= render :partial => 'common/head' %>
+    <script src='https://unpkg.com/react@16.7.0-alpha.0/umd/react.production.min.js'></script>
+    <script src='https://unpkg.com/react-dom@16.7.0-alpha.0/umd/react-dom.production.min.js'></script>
+    <script src='https://unpkg.com/babel-standalone@6.26.0/babel.js'></script>
   </head>
-  <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
-  	<body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action] %>" class="nav-sm  dashboard" style="overflow-y: hidden;">
-      <%= render partial: 'layouts/header_new' %>
+  <% if params[:controller] == 'reports' %>
+    <body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action  ] %>" class="" style="background: white;">
+      <%= yield %>
     </body>
   <% else %>
-    <body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action] %>" class="nav-sm  dashboard">
-      <%= render partial: 'layouts/header_new' %>
-    </body>
+    <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
+  	<body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action  ] %>" class="nav-sm  dashboard over-map" style="overflow: hidden;">
+        <%= render partial: 'layouts/header_new' %>
+      </body>
+    <% else %>
+    <body data-controller="<%= params[:controller] %>" data-action="<%= safe_action_name params[:action ] %>" class="nav-sm  dashboard">
+        <%= render partial: 'layouts/header_new' %>
+        <%= yield :javascript %>
+      </body>
+    <% end %>
   <% end %>
 </html>
+<style type="text/css">
+  :root{
+    --primary-color:<%= ENV['PRIMARY_COLOR'] || '#d3d800' %>;
+    --primary-color-transparent:<%= ENV['PRIMARY_COLOR_TRANSPARENT'] || '#d3d80080' %>;
+  }
+</style>

@@ -52,26 +52,9 @@ if(value_child!="Sin Filtro"){
   var filter = 'gw_usario_subform' + '|' + operator + '|' + status_value_id;
   var filter_view = "Usuario Subform" + operator + " " + value_child;
 
-  // busca los padres que cumplen con la condición de tener subformularios que cumplan la condición
-
-  $.ajax({
-    type: 'GET',
-    url: '/project_types/create_quick_filters_users_subform',
-    datatype: 'json',
-    data: {
-      subform_value: status_value_id,
-      project_type_id: Navarra.dashboards.config.project_type_id
-    },
-    success: function(data) {
-      if(data.length==0){data.push(-1)}
-      filtered_form_ids = data;
-      filtered_form_ids_s = JSON.stringify(data);
-      Navarra.project_types.config.filtered_form_ids.push(filtered_form_ids_s);
-      document.getElementById(filter).setAttribute("value", filtered_form_ids_s);
-      set_geomaps();
-      }
-    });
-      // Vuelve a agregar el item al card Filtros Activos
+  filtered_form_ids_text = {}
+  filtered_form_ids_text["user_subform"] = filter;
+  // Vuelve a agregar el item al card Filtros Activos
       $('#filter-body').append(
         $('<div>', { // item
           'class': 'message text-light chart-bg-transparent px-2 mb-1 py-1 rounded border border-dark shadow subform_filter filter_container',
@@ -88,10 +71,14 @@ if(value_child!="Sin Filtro"){
           })
         )
       )
-      $(".fa-search-location").css("color", "#d3d800");
+    $(".fa-search-location").css("color", "#d3d800");
+
+  document.getElementById(filter).setAttribute("value", filter);
+  Navarra.project_types.config.attribute_filters_subforms.push(filtered_form_ids_text);
+  search_filtered_form_ids()
    
 } else{
-  set_geomaps();
+  init_filters();
 }
 
 if($(".filter_container").length==0){
@@ -101,17 +88,6 @@ if($(".filter_container").length==0){
 resize_filters();
 resize_graphics();
 set_layer_filter();
-
-function set_geomaps(){
-  var point_color = Navarra.project_types.config.field_point_colors;
-  if(point_color == ''){
-    Navarra.geomaps.get_zoomextent();
-    Navarra.geomaps.wms_filter();
-  }else{
-    Navarra.geomaps.get_zoomextent();
-    Navarra.geomaps.point_colors_data();
-  }
-}
 
 function remove_user_filters(){
   var ar= Navarra.project_types.config.attribute_filters
@@ -124,22 +100,22 @@ function remove_user_filters(){
 
   })
   Navarra.project_types.config.attribute_filters = b;
-  var ar= Navarra.project_types.config.filtered_form_ids;
-  var br = ''
-  $('.subform_filter').each(function(){
-    if(isNaN($(this).attr('id').split('|')[0])){
-      br= $(this).attr('value')
+  current_filters = Navarra.project_types.config.attribute_filters_subforms;
+  filter_to_remove = $(this).attr('value');
+  current_filters.forEach(function(f,index){
+    var key = Object.keys(f)[0];
+    var value = f[key];
+    if(value == filter_to_remove){
+      current_filters.splice(index,1);
+      return;
     }
-  });
-  b = jQuery.grep(ar, function(value){
-    if(value == br){
-      return null;
-    }else{
-      return value;
-    }
-
   })
-  Navarra.project_types.config.filtered_form_ids = b;
+        
+  Navarra.project_types.config.attribute_filters_subforms = current_filters;
+  search_filtered_form_ids();
+  
+  var ar= Navarra.project_types.config.filtered_form_ids;
+  
    $(".message[id*="+'app_usuario '+"]").remove();
    $(".message[id*="+'gw_usario_subform '+"]").remove();
 }

@@ -1,22 +1,30 @@
-<%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-  <%= link_to "Sign up", new_registration_path(resource_name) %><br />
+<%- if devise_mapping.registerable? && controller_name != 'registrations' && controller_name != 'confirmations' %>
+  <% if Apartment::Tenant.current == 'agricultura' || Apartment::Tenant.current == 'aws' %>
+    <%= link_to "Registrarse", new_registration_path(resource_name), class: 'btn btn-lg btn-primary btn-block mb-2' %><br/>
+  <% end %>
 <% end -%>
 
-<%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-  <%= link_to "¿Olvidó su contraseña?", new_password_path(resource_name), class:"text-right" %>
-<% end -%>
+<div>
+  <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+    <%= link_to "¿Olvidó su contraseña?", new_password_path(resource_name), class:"text-dark" %>
+  <% end -%>
+</div>
 
-<%- if devise_mapping.confirmable? && controller_name != 'confirmations' && controller_name != 'passwords' && controller_name != 'sessions' %>
-  <%= link_to "¿Aún no confirmó su cuenta?", new_confirmation_path(resource_name) , class:"text-right"%>
-<% end -%>
+<div>
+  <%- if devise_mapping.confirmable? && controller_name != 'confirmations' && controller_name != 'passwords' %>
+    <%= link_to "Reenviar e-mail de confirmación", new_confirmation_path(resource_name) , class:"text-dark"%>
+  <% end -%>
+</div>
 
-<%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' && controller_name != 'passwords' && controller_name != 'sessions' %>
-  <%= link_to "¿Bloqueó su cuenta?", new_unlock_path(resource_name) , class:"text-right" %>
-<% end -%>
+<div>
+  <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' && controller_name != 'passwords' && controller_name != 'sessions' && controller_name != 'confirmations' && controller_name != 'registrations' %>
+    <%= link_to "¿Bloqueó su cuenta?", new_unlock_path(resource_name) , class:"text-dark" %>
+  <% end -%>
+</div>
 
 <%- if controller_name != 'sessions' %>
 <br/>
-	<%= link_to '<i class="fas fa-arrow-left" style="font-size:30px"></i>'.html_safe, new_session_path(resource_name)  %>
+	<%= link_to "Inicio de Sesión", new_session_path(resource_name), class:"text-dark"  %>
 <% end -%>
 
 <%- if devise_mapping.omniauthable? %>

@@ -1,0 +1,412 @@
+$('<%= j render "color_by_attribute", title: "Color by attribute" %>').on('hidden.bs.modal', function (e) {
+  // Cuando se termina de ocultar el modal lo elimina para evitar que se quede pegado el tab
+  $(this).remove();
+  $('.modal-backdrop').remove();
+}).on('shown.bs.modal', function (e) {
+	create_palette();
+	let is_value = false;
+	$("#invert_palettes").click(function (e) {
+ 			e.stopPropagation();
+ 			palettes.forEach(function(palette){
+ 				palette.reverse();
+ 			});
+ 			create_palette();
+  });
+  $('#show_color_attr_options').on('click', function(){
+  	if($('#color_by_attribute-settings').hasClass('d-none')){
+  		$('#color_by_attribute-settings').removeClass('d-none');
+  		$('#show_color_attr_options_icon').removeClass('fa-chevron-down');
+  		$('#show_color_attr_options_icon').addClass('fa-chevron-up');
+  	} else {
+  		$('#color_by_attribute-settings').addClass('d-none');
+  		$('#show_color_attr_options_icon').addClass('fa-chevron-down');
+  		$('#show_color_attr_options_icon').removeClass('fa-chevron-up');
+  	}
+  });
+  $('#radio_rango , #radio_valor').on('change', function() {
+  	if($('#radio_rango').prop('checked')){
+  		is_value = false;
+  		$('#color_by_attributte_field').removeClass('d-none');
+  		$('#color_by_attributte_field_value').addClass('d-none');
+  		$('#color_by_attributte_field_value').val("");
+  		data_to_set_interval = undefined;
+  		data_to_set_value = undefined;
+  		set_interpolation_ranges(false);
+  		set_interval_interpolation([]);
+  		$('.intermax').css("background","white");
+  	} else {
+  		is_value = true;
+  		$('#color_by_attributte_field_value').removeClass('d-none');
+  		$('#color_by_attributte_field').addClass('d-none');
+  		$('#color_by_attributte_field').val("");
+  		set_interval_interpolation([]);
+  		data_to_set_interval = undefined;
+  		data_to_set_value = undefined;
+  		set_interpolation_ranges(true);
+  		$('.intermax').addClass('d-none');
+  		$('#sub_interpolation_operator').addClass('d-none');
+  	}
+  });
+	$('#color_by_attributte_field').on('change', function() {
+		var type_box = 'polygon';
+  	var size_box = Navarra.dashboards.config.size_polygon;
+  	if (size_box.length == 0) {
+    	var size_box = [];
+    	type_box = 'extent';
+    	size_ext = Navarra.dashboards.config.size_box;
+    	size_box[0] = size_ext['_southWest']['lng'];
+    	size_box[1] = size_ext['_southWest']['lat'];
+    	size_box[2] = size_ext['_northEast']['lng'];
+    	size_box[3] = size_ext['_northEast']['lat'];
+  	}
+  	var attribute_filters = Navarra.project_types.config.attribute_filters;
+  	var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+		var project_type_id = Navarra.dashboards.config.project_type_id;
+  	var from_date = Navarra.project_types.config.from_date;
+  	var to_date = Navarra.project_types.config.to_date;
+  	var interpolate_field = $(this).val();
+  	var active_layers = get_active_layers();
+  	var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+	  var filters_layers = Navarra.project_types.config.filters_layers;
+  	var timeslider_layers = Navarra.project_types.config.timeslider_layers;
+  	if(!isNaN(interpolate_field)){
+  		// es un campo hijo
+  		$('#sub_interpolation_operator').removeClass('d-none');
+  	} else {
+  		$('#sub_interpolation_operator').addClass('d-none');
+  	}
+  		$.ajax({
+    		type: 'POST',
+    		url: '/project_types/search_data_dashboard',
+    		datatype: 'json',
+    		data: {
+    			is_interpolate:true,
+    			interpolate_field: interpolate_field,
+      		project_type_id: project_type_id,
+      		type_box: type_box,
+      		size_box: size_box,
+      		data_conditions: attribute_filters,
+      		filtered_form_ids: filtered_form_ids,
+      		from_date: from_date,
+      		to_date: to_date,
+      		active_layers: active_layers,
+      		intersect_width_layers: intersect_width_layers,
+          filters_layers: filters_layers,
+		      timeslider_layers: timeslider_layers
+    		},
+      		success: function(data) {
+      			data_to_set_interval = data.data;
+      			if(isNaN(interpolate_field)){
+      				set_interval_interpolation(data_to_set_interval);
+      			} else{
+      				// es campo hijo
+      				var app_ids_in_map = [];
+      				data.data.map( function(v) {
+ 								app_ids_in_map.push(v.id);
+							});
+  						var from_date_subforms = Navarra.project_types.config.from_date_subforms;
+  						var to_date_subforms = Navarra.project_types.config.to_date_subforms;
+  						var filter_children = [];
+  						var filter_user_children = [];
+  						$('.subform_filter').each(function(){
+    						if(!isNaN($(this).attr('id').split('|')[0])){
+      						filter_children.push($(this).attr('id'));
+    						} else {
+      						filter_user_children.push($(this).attr('id').split('|')[2])
+    						}
+  						});
+      				$.ajax({
+    						type: 'POST',
+    						url: '/project_data_children/show_children',
+    						datatype: 'json',
+    						data: {
+    							is_interpolate:true,
+    							interpolate_field: interpolate_field,
+      						project_ids: app_ids_in_map,
+      						project_field_ids: [1],
+      						from_date_subforms: from_date_subforms,
+      						to_date_subforms: to_date_subforms,
+      						filter_children: filter_children,
+      						filter_user_children: filter_user_children
+    						},
+    						success: function(data_sub) {
+    							data_subform = data_sub;
+    							set_subform_values(data_subform);
+    						}
+      			});
+      			
+      		}
+      		}
+      	});
+		});
+
+		$('#color_by_attributte_field_value').on('change', function() {
+		var type_box = 'polygon';
+  	var size_box = Navarra.dashboards.config.size_polygon;
+  	if (size_box.length == 0) {
+    	var size_box = [];
+    	type_box = 'extent';
+    	size_ext = Navarra.dashboards.config.size_box;
+    	size_box[0] = size_ext['_southWest']['lng'];
+    	size_box[1] = size_ext['_southWest']['lat'];
+    	size_box[2] = size_ext['_northEast']['lng'];
+    	size_box[3] = size_ext['_northEast']['lat'];
+  	}
+  	var attribute_filters = Navarra.project_types.config.attribute_filters;
+  	var filtered_form_ids = Navarra.project_types.config.filtered_form_ids;
+		var project_type_id = Navarra.dashboards.config.project_type_id;
+  	var from_date = Navarra.project_types.config.from_date;
+  	var to_date = Navarra.project_types.config.to_date;
+  	var interpolate_field = $(this).val();
+  	var active_layers = get_active_layers();
+  	var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+	  var filters_layers = Navarra.project_types.config.filters_layers;
+  	var timeslider_layers = Navarra.project_types.config.timeslider_layers;
+  		$.ajax({
+    		type: 'POST',
+    		url: '/project_types/search_data_dashboard',
+    		datatype: 'json',
+    		data: {
+    			is_interpolate:true,
+    			interpolate_field: interpolate_field,
+      		project_type_id: project_type_id,
+      		type_box: type_box,
+      		size_box: size_box,
+      		data_conditions: attribute_filters,
+      		filtered_form_ids: filtered_form_ids,
+      		from_date: from_date,
+      		to_date: to_date,
+      		active_layers: active_layers,
+      		intersect_width_layers: intersect_width_layers,
+          filters_layers: filters_layers,
+		      timeslider_layers: timeslider_layers
+    		},
+      		success: function(data) {
+      			let data_ordered = [];
+      			data.data.forEach((a) => {
+      				let data_index = data_ordered.findIndex((b) => b.interpolate_field == a.interpolate_field);
+      				if (data_index >= 0) {
+      					data_ordered[data_index].count ++; 
+      				} else {
+      					let new_data = {'count':1, 'interpolate_field': a.interpolate_field }
+      					data_ordered.push(new_data);
+      				}
+      			});
+      			data_orderd = data_ordered.sort((a, b) => {
+      				return (b.count - a.count);
+      			})  
+      			data_to_set_value = data_ordered;
+     				set_value_interpolation(data_to_set_value);
+      		}
+      	});
+		});
+
+		$('#range_number').on('change', function() {
+			if($('#radio_rango').prop('checked')){
+  			is_value = false;
+  		} else {
+  			is_value = true
+  		}
+			if($(this).val()<2){$(this).val(2)}
+				if($(this).val()>20){$(this).val(20)}
+			set_interpolation_ranges(is_value);
+			if(data_to_set_interval!=undefined){
+				if($('#radio_rango').prop('checked')){
+	  			set_interval_interpolation(data_to_set_interval);
+  			} 
+  		}
+  		if(data_to_set_value!=undefined){
+				if($('#radio_valor').prop('checked')){
+  				set_value_interpolation(data_to_set_value);
+  			}
+			}
+		});
+
+		$('#sub_interpolation_operator').on('change', function() {
+			if(data_subform!=undefined){
+				set_subform_values(data_subform)
+			}
+		});
+
+		set_interpolation_ranges(is_value);
+//		Navarra.geomaps.interpolate(null,null,null,null,null,true,null,null,null,null,null)
+	}).modal();
+
+// Cierra dropdown
+$('#gis_dropdown').dropdown('toggle');
+
+var palettes = [];
+	palettes.push(['#ff0000', '#ff4500', '#ff6400', '#ff7d00', '#ff9200', '#ffa600', '#ffb900', '#ffcb00', '#ffdd00', '#ffee00', '#a8f2a8', '#15eb15', '#00d400', '#00be00', '#00a700', '#009100', '#007c00', '#006700', '#005300', '#004000']);
+	palettes.push(['#ff6e85', '#ff807f', '#ff9179', '#ffa072', '#ffaf6b', '#ffbd62', '#ffcb59', '#ffd84e', '#ffe540', '#fff22c', '#ade8a1', '#abd2ae', '#a7bcba', '#a1a6c5', '#988fd0', '#8d79da', '#7e62e4', '#6a4aed', '#4d2ff6', '#0000ff']);
+	palettes.push(['#8f4300', '#9c5512', '#a86622', '#b47831', '#bf8a40', '#ca9c4f', '#d6ae5f', '#e0c16e', '#ebd47e', '#f5e78f', '#a8f0a0', '#a3e0ad', '#9dd1b8', '#96c2c3', '#8cb3ce', '#81a5d8', '#7396e2', '#6088ec', '#467af6', '#006cff']);
+	palettes.push(['#ff0000', '#ff4500', '#ff6400', '#ff7d00', '#ff9200', '#ffa600', '#ffb900', '#ffcb00', '#ffdd00', '#ffee00', '#eedaf8', '#e7bffb', '#dfa3fe', '#ce8bff', '#b476ff', '#9961ff', '#7c4aff', '#5c35f8', '#3720eb', '#0000d8']);
+	palettes.push(['#ffa500', '#ffaf00', '#ffb800', '#ffc100', '#ffca00', '#ffd300', '#ffdc00', '#ffe500', '#ffee00', '#fff600', '#eedaf8', '#e7bffb', '#dfa3fe', '#ce8bff', '#b476ff', '#9961ff', '#7c4aff', '#5c35f8', '#3720eb', '#0000d8']);
+	palettes.push(['#141414', '#1d1d1d', '#272727', '#313131', '#3c3c3c', '#464646', '#515151', '#5d5d5d', '#686868', '#747474', '#808080', '#8c8c8c', '#999999', '#a5a5a5', '#b2b2b2', '#bfbfbf', '#cccccc', '#d9d9d9', '#e7e7e7', '#f4f4f4']);
+	palettes.push(['#ff0000', '#ff4729', '#ff6644', '#ff7e5d', '#ff9475', '#ffa78c', '#ffbaa3', '#ffccba', '#ffddd1', '#ffeee8', '#dfdfdf', '#c9c9c9', '#b4b4b4', '#9f9f9f', '#8b8b8b', '#777777', '#646464', '#515151', '#404040', '#2e2e2e']);
+
+var data_to_set_interval; 
+var data_to_set_value; 
+var data_subform;
+
+function set_interpolation_ranges(is_value){
+	console.log("Is value? "+is_value);
+	$('#interpolation_range').empty();
+	var num_ranges = $('#range_number').val();
+	for(var i=0;i<num_ranges;i++){
+		var color_index = Math.round(20*i/(num_ranges-1));
+		var range_disabled = "";
+		if(i!=0){
+			color_index = color_index -1;
+			range_disabled = "disabled = true";
+		}
+		var onchange_range = "";
+		if(i!=num_ranges-1){
+			onchange_range='onchange = "change_max_range('+i+')"';
+		}
+		var select_palette_option = $('.palette_selected').attr('id').split('palette_id')[1];
+		var html_ranges = '<div class="d-flex">';
+		if (is_value) {
+			html_ranges+= '<input type="text" disabled=true '+range_disabled+' name="" id="intermin_'+i+'" step="any" class = "intermin mt-3 form-control form-control-sm w-50 mr-3" style="background:white" >';
+		} else {
+			html_ranges+= '<input type="number" '+range_disabled+' name="" id="intermin_'+i+'" step="any" class = "intermin mt-3 form-control form-control-sm w-50 mr-3" style="background:white" >';
+			html_ranges+= '<input type="number" '+ onchange_range +' name="" id="intermax_'+i+'" step="any" class = "intermax mt-3 form-control form-control-sm w-50 mr-3" >';
+		} 
+    	html_ranges+= '<input value="'+palettes[select_palette_option][color_index]+'"  type="color" name="" id="intercolor_'+i+'" class = "intercolor mt-3 mr-2 form-control form-control-sm" style="width:30px; padding:1px" ';
+    	html_ranges+='</div>'
+    $('#interpolation_range').append(html_ranges);
+	}
+}
+
+function change_max_range(i){
+	$("#intermin_"+(i+1)).val($("#intermax_"+i).val());
+}
+
+function create_palette(){
+	$('#palette_selector_dropdown').empty();
+	palettes.forEach(function(pal,index){
+		if(index == 0){
+			var pallete_new = '<div id="palette_id'+index+'" class="palette_option custom_cursor; palette_selected" onclick="select_palette(event)">';
+		} else {
+			var pallete_new = '<div id="palette_id'+index+'" class="palette_option custom_cursor" onclick="select_palette(event)">';
+		}
+		pal.forEach(function(col,index){
+			pallete_new += '<div style="width:10px;height:20px;margin:0px;display:inline-block;background:'+col+'"></div>'
+			
+		});
+		pallete_new += '</div>';
+		$('#palette_selector_dropdown').append(pallete_new);
+	})
+}
+
+function select_palette(e){
+	console.log("inside select palet option")
+	$('.palette_option').removeClass('palette_selected');
+	var id_palette = e.target.parentNode.id;
+	$('#'+id_palette).addClass('palette_selected');
+	console.log($('#radio_valor'))
+	if($('#radio_valor').prop('checked')){
+		console.log("Is VALUE !!!!")
+  	set_interpolation_ranges(true);
+  } else {
+  	console.log("Is NOT VALUE !!!!")
+  	set_interpolation_ranges(false);
+  }
+	
+	if(data_to_set_interval!=undefined){
+		if($('#radio_rango').prop('checked')){
+	  	set_interval_interpolation(data_to_set_interval);
+  	} 
+  }
+  if(data_to_set_value!=undefined){
+		if($('#radio_valor').prop('checked')){
+  		set_value_interpolation(data_to_set_value);
+  	}
+	}
+}
+
+function set_interval_interpolation(data){
+	var data_ordered = data.map((v) => v.interpolate_field).filter(function(n) { return !isNaN(n); }).sort(function(a, b){return a-b});
+	var lenght_data = data_ordered.length;
+ 	var num_ranges = $('#range_number').val();
+	var range_length = Math.round(lenght_data/num_ranges);
+	var intermin = data_ordered[0];
+	var intermax = data_ordered[lenght_data-1];
+//  var interrange = (intermax - intermin)/$('#range_number').val();
+  value_range = intermin;
+  var extra_position = 0;
+  if(intermax>10){round=1}else{round=100}
+  for(var i=0;i<num_ranges;i++){  	
+		if(i==0){
+			value_range = data_ordered[0];
+			val = Math.floor(value_range*round)/round;
+		} else {
+			value_range = $('#intermax_'+(i-1)).val();
+			val = Math.round(value_range*round)/round;
+		}
+	$('#intermin_'+i).val(val);
+	if(i==num_ranges-1){
+		value_range = data_ordered[lenght_data-1];
+		val = Math.ceil(value_range*round)/round;
+	} else {
+		value_range = data_ordered[(i+1)*range_length+extra_position];
+		val = Math.round(value_range*round)/round;
+		//si es igual al valor inicial del rango, sigue buscando
+		var count_equal_values = 0;
+		while (val <= $('#intermin_'+i).val()) {
+			count_equal_values ++;
+			value_range = data_ordered[(i+1)*range_length+count_equal_values+extra_position];
+			val = Math.round(value_range*round)/round;
+			//cambia el rango y lo ajusta a los valores restantes
+			range_length = Math.round((lenght_data - ((i+1)*range_length+count_equal_values+extra_position))/(num_ranges-(i+1)));
+		}
+		extra_position +=count_equal_values;
+	}
+	if(isNaN(val)){
+		val = data_ordered[lenght_data-1];
+		$('#intermax_'+i).css("background","red");
+	}
+	$('#intermax_'+i).val(val);
+}
+}
+
+function set_value_interpolation(data){
+	var lenght_data = data,length;
+ 	var num_ranges = $('#range_number').val();
+//  var interrange = (intermax - intermin)/$('#range_number').val();
+  for(var i=0;i<num_ranges;i++){
+  	if(i==num_ranges-1){
+			$('#intermin_'+i).val("Otros");
+		} else {
+			$('#intermin_'+i).val(data[i].interpolate_field);
+		} 	
+	}
+}
+
+function set_subform_values(data_subform){
+	data_to_set_interval = [];
+  Object.keys(data_subform).forEach(function(key){
+   if($('#sub_interpolation_operator').val() == "sum"){
+    var interpolate_field_result = data_subform[key].reduce((sum, value) => (!isNaN(parseFloat(value.interpolate_field)) ? sum + parseFloat(value.interpolate_field) : sum), 0);
+   }
+   if($('#sub_interpolation_operator').val() == "pro"){
+    var interpolate_field_sum = data_subform[key].reduce((sum, value) => (!isNaN(parseFloat(value.interpolate_field)) ? sum + parseFloat(value.interpolate_field) : sum), 0);
+    var interpolate_field_count = data_subform[key].reduce((count, value) => (!isNaN(parseFloat(value.interpolate_field)) ? count +1 : count), 0);
+    interpolate_field_count == 0 ? interpolate_field_result= 0 : interpolate_field_result = interpolate_field_sum/interpolate_field_count;
+   }
+   if($('#sub_interpolation_operator').val() == "max"){
+    var interpolate_field_filtered = data_subform[key].filter(f => !isNaN(f.interpolate_field))
+	   var interpolate_field_result = Math.max.apply(null, interpolate_field_filtered.map((v) => v.interpolate_field));
+   }
+   if($('#sub_interpolation_operator').val() == "min"){
+    var interpolate_field_filtered = data_subform[key].filter(f => !isNaN(f.interpolate_field))
+	   var interpolate_field_result = Math.min.apply(null, interpolate_field_filtered.map((v) => v.interpolate_field));
+   }   								
+   new_obj = {
+    id: key,
+    interpolate_field: interpolate_field_result
+   }
+    data_to_set_interval.push(new_obj);
+  });
+  $('#sub_interpolation_operator').attr('sub_values',JSON.stringify(data_to_set_interval));
+  set_interval_interpolation(data_to_set_interval);
+}

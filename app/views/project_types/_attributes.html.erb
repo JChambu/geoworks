@@ -14,7 +14,7 @@
       } else {
         $("#layer_color").hide();
       }
-    });   
+    });
   });
 
   // Open and close header with project data
@@ -37,7 +37,7 @@
     $(".plus_icon_project_fields").removeClass("d-none");
     $(".plus_icon_project_subfields").removeClass("d-none");
   });
-  
+
   $(document).ready( function(){
     <% if @project_type.errors.any? %>
       $('.custom_toast').toast('show');
@@ -47,7 +47,7 @@
   var loadFile = function(event) {
     var fileInput = document.getElementById('file-input');
     var filePath = fileInput.value;
-    var allowedExtensions = /(.jpg|.jpeg|.png|.gif) $/i;
+    var allowedExtensions = /(.jpg|.jpeg|.png|.gif)$/i;
     if(!allowedExtensions.exec(filePath)){
         document.getElementById('error_text').innerHTML='Extensión no permitida';
         document.getElementById('error_text').classList.remove('text-secondary');
@@ -72,17 +72,6 @@
 </script>
 
 <%= simple_form_for @project_type, html: {multipart: true}  do |f| %>
-  <div class="toast custom_toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="8000">
-    <div class="toast-header">
-      <%= image_tag "logo_gw_hor_2.png", class: 'mr-auto', height:"30" %>
-      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="toast-body">
-      <ul class="panel-body"><% @project_type.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %></ul>
-    </div>
-  </div>
   <div class="d-flex justify-content-end mb-1" style="float: right; margin-top: -12px">
     <i class="fas fa-minus"  id="toggler_header"></i>
   </div>
@@ -101,7 +90,7 @@
           <%= f.label :type_geometry, 'Tipo:', class:'col-form-label-sm mb-0 p-0' %>
         </div>
         <div class="row">
-          <%= f.select :type_geometry, options_for_select(['Point', 'Polygon'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
+          <%= f.select :type_geometry, options_for_select(['Point', 'Polygon' ,'LineString'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
         </div>
       </div>
       <div class="col mx-2">
@@ -120,12 +109,12 @@
           <%= f.label :enabled_as_layer, "Capa", class:'col-form-label-sm mb-0 p-0' %>
         </div>
         <div class="row">
-            <div class="custom-control custom-checkbox mb-2">
-              <%= f.check_box :enabled_as_layer , class:'custom-control-input', id:'customCheck2'%>
-              <label class="custom-control-label mr-1" for="customCheck2"></label>
-            </div>
-              <%= f.color_field :layer_color, class: 'form-control form-control-sm mb-2', style:'width:30px; padding:1px' %>
-            </div>
+          <div class="custom-control custom-checkbox mb-2">
+            <%= f.check_box :enabled_as_layer , class:'custom-control-input', id:'customCheck2'%>
+            <label class="custom-control-label mr-1" for="customCheck2"></label>
+          </div>
+          <%= f.color_field :layer_color, class: 'form-control form-control-sm mb-2', style:'width:30px; padding:1px' %>
+        </div>
       </div>
       <div class="col-md-2 ">
         <div class="row">
@@ -158,6 +147,30 @@
       </div>
       <div class="col mx-2">
         <div class="row">
+          <%= f.label :iot, "IoT?", class:'col-form-label-sm mb-0 p-0' %>
+        </div>
+        <div class="row">
+          <div class="custom-control custom-checkbox mb-2">
+            <%= f.check_box :iot , class:'custom-control-input', id:'customCheck4'%>
+            <label class="custom-control-label" for="customCheck4"></label>
+          </div>
+        </div>
+      </div>
+      <% if @project_type.type_geometry == 'Point' %>
+        <div class="col mx-2">
+          <div class="row">
+            <%= f.label :multipoints, "Multipuntos", class:'col-form-label-sm mb-0 p-0' %>
+          </div>
+          <div class="row">
+            <div class="custom-control custom-checkbox mb-2">
+              <%= f.check_box :multipoints , class:'custom-control-input', id:'customCheck5'%>
+              <label class="custom-control-label" for="customCheck5"></label>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <div class="col mx-2">
+        <div class="row">
           <%= f.label :multiple_edition, "Edición Multiple", class:'col-form-label-sm mb-0 p-0' %>
         </div>
         <div class="row">
@@ -180,12 +193,12 @@
           <%= f.label :notification_email, 'Mail notif. :', class:'col-form-label-sm mb-0 p-0' %>
         </div>
         <div class="row">
-          <%= f.text_field :notification_email, class: 'form-control form-control-sm' %> 
+          <%= f.text_field :notification_email, class: 'form-control form-control-sm' %>
         </div>
       </div>
     </div>
-  </div> 
-  
+  </div>
+
   <% if can? :attributes, :edit %>
     <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
       <div class="table-responsive">
@@ -220,27 +233,29 @@
               <th  class="text-center px-0" style="width: 4vw">
                 <div class="container">
                   <div class="dropdown">
-                    <button type="button" class="btn btn-primary dropdown-toggle p-1" data-toggle="dropdown">  
+                    <button type="button" class="btn btn-primary dropdown-toggle p-1" data-toggle="dropdown">
                         Más
-                    </button>  
+                    </button>
                     <div class="dropdown-menu">
-                      <a class="dropdown-item dropdown_attributes d-none"> Atributos </a>  
-                      <a class="dropdown-item dropdown_logic"> Lógica </a>  
-                      <a class="dropdown-item dropdown_permissions"> Autorizaciones </a>  
+                      <a class="dropdown-item dropdown_attributes d-none"> Atributos </a>
+                      <% if can? :attributes, :add_logic %>
+                        <a class="dropdown-item dropdown_logic"> Lógica </a>
+                      <% end %>
+                      <a class="dropdown-item dropdown_permissions"> Autorizaciones </a>
                     </div>
                   </div>
                 </div>
               </th>
-              <th></th>  
+              <th></th>
             </tr>
           </thead>
-           
+
           <tbody class="sortable">
             <%= f.fields_for :project_fields, @project_fields do |a| %>
               <%= render 'project_field_fields', f: a %>
             <% end %>
           </tbody>
-        </table>        
+        </table>
       </div>
     </div>
   <% end %>

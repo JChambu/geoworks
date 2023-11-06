@@ -29,6 +29,10 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
   	var from_date = Navarra.project_types.config.from_date;
   	var to_date = Navarra.project_types.config.to_date;
   	var interpolate_field = $(this).val();
+  	var active_layers = get_active_layers();
+  	var intersect_width_layers = $('#switch_intersect_layers').is(":checked");
+	  var filters_layers = Navarra.project_types.config.filters_layers;
+  	var timeslider_layers = Navarra.project_types.config.timeslider_layers;
   	if(!isNaN(interpolate_field)){
   		// es un campo hijo
   		$('#sub_interpolation_operator').removeClass('d-none');
@@ -36,7 +40,7 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
   		$('#sub_interpolation_operator').addClass('d-none');
   	}
   		$.ajax({
-    		type: 'GET',
+    		type: 'POST',
     		url: '/project_types/search_data_dashboard',
     		datatype: 'json',
     		data: {
@@ -49,6 +53,10 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
       		filtered_form_ids: filtered_form_ids,
       		from_date: from_date,
       		to_date: to_date,
+      		active_layers: active_layers,
+      		intersect_width_layers: intersect_width_layers,
+          filters_layers: filters_layers,
+		      timeslider_layers: timeslider_layers
     		},
       		success: function(data) {
       			data_to_set_interval = data.data;
@@ -112,7 +120,7 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
 		});
 
 		set_interpolation_ranges();
-		Navarra.geomaps.interpolate(null,null,null,null,null,true,null)
+		Navarra.geomaps.interpolate(null,null,null,null,null,true,null,null,null,null,null)
 	}).modal();
 
 // Cierra dropdown

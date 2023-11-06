@@ -2,7 +2,7 @@
     <% if resource.errors.any? %>
     <ul class="list-unstyled text-danger mb-0">
       <% resource.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+        <li class="text-danger"><%= message %></li>
       <% end %>
     </ul>
     <% end %>

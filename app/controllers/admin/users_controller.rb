@@ -177,14 +177,14 @@ class Admin::UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    begin
-      @user.save!
+    if @user.valid?
+      @user.save
       respond_to do |format|
         format.html { redirect_to admin_users_path() }
         format.json { render action: 'show', status: :created, location: @user }
       end
-    rescue ActiveRecord::RecordNotUnique => e
-      flash.now[:notice] = "No se puede almacenar usuarios con corporaciones iguales"
+    else
+      flash.now[:error] = @user.errors.full_messages.join(', ')
       render 'new'
     end
   end
@@ -234,8 +234,9 @@ class Admin::UsersController < ApplicationController
   def user_params
     params.require(:user).permit(:name, :email, :country_code, :area_code, :phone, :password, :password_confirmation, :active,
       user_customers_attributes: [:id, :user_id, :customer_id, :role_id, :_destroy,
-      project_filters_attributes: [:id, :user_id, :project_type_id, :owner, :_destroy]
-      ]
+      project_filters_attributes: [:id, :user_id, :project_type_id, :owner, :_destroy]]
+      has_project_types_attributes: [:id, :project_type_id, :user_id, :owner, :properties, :_destroy],
+      user_customers_attributes: [:id, :user_id, :customer_id, :role_id, :_destroy]
     )
   end
 end

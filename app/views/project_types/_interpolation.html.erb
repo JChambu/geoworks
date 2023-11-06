@@ -9,7 +9,7 @@
 
       <%= form_tag project_type_create_interpolation_path, :remote => true, :method => :get   do |f| %>
 
-        <div class="modal-body">          
+        <div class="modal-body">
             <div id="interpolacion_formularios">
               <div class="d-flex">
                 <label class="col-form-label-sm text-left mr-3 mb-0 w-75">Campo a Interpolar</label>
@@ -27,7 +27,7 @@
                 <label class="col-form-label-sm text-left mr-3 mb-0 w-25">Coeficiente P</label>
                 <label class="col-form-label-sm text-left mr-3 mb-0 w-25">Tamaño celda</label>
                 <label class="col-form-label-sm text-left mr-3 mb-0 w-25">Nº Rangos</label>
-                <label class="col-form-label-sm text-left mr-3 mb-0 w-10">Paleta</label>   
+                <label class="col-form-label-sm text-left mr-3 mb-0 w-10">Paleta</label>
               </div>
               <div class="d-flex">
                 <input type="number" class="form-control form-control-sm w-25 mr-3" id="p_coefficient" step="any" value="10">
@@ -46,11 +46,19 @@
                 </div>
 
               </div>
-              <div id="interpolation_range" style="max-height: 40vh; overflow-y:auto"></div>
+              <div id="interpolation_range" style="max-height: 35vh; overflow-y:auto"></div>
             </div>
           </div>
-
-
+          <% if can? :funcionalities, :new_project_interpolation %>
+            <div class="m-2 ml-3">
+              <div class="custom-control custom-checkbox">
+                <input class="custom-control-input" id="save_interpolation" type="checkbox" name="save_interpolation">
+                <label id="save_interpolation_check" class="string optional control-label custom-control-label" for="save_interpolation">
+                </label>
+              </div>
+              <input type="text" class="form-control form-control-sm w-50 mr-3 d-inline" placeholder="Nuevo Proyecto" id="interpolation_name">
+            </div>
+          <% end %>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
           <%= submit_tag :enviar, id: "filtro", class: "envf btn btn-primary text-right", value: 'Guardar' %>
@@ -61,5 +69,3 @@
     </div>
   </div>
 </div>
-
-

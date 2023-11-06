@@ -11,8 +11,7 @@ class Project < ApplicationRecord
 
   #validate :validate_properties
 
-  def self.geometry_bounds project_type_id, user_id, attribute_filters, filtered_form_ids, from_date, to_date
-
+  def self.geometry_bounds project_type_id, user_id, attribute_filters, filtered_form_ids, from_date, to_date,intersect_width_layers,active_layers,filters_layers,timeslider_layers
     @bounds = Project
       .select("
         shared_extensions.st_Xmin(shared_extensions.st_collect(main.the_geom)) as minx,
@@ -27,101 +26,13 @@ class Project < ApplicationRecord
       .where('main.row_active = ?', true)
       .where('main.current_season = ?', true)
 
+
     @project_filter = ProjectFilter.where(project_type_id: project_type_id.to_i).where(user_id: user_id).first
-
-    if !@project_filter.nil?
-
-      # Aplica filtro owner
-      if @project_filter.owner == true
-        @bounds = @bounds.where('main.user_id = ?', user_id)
-      end
-
-      # Aplica filtro por atributo a la capa principal
-      if !@project_filter.properties.nil?
-        @project_filter.properties.to_a.each do |prop|
-          @bounds = @bounds.where("main.properties ->> '#{prop[0]}' = '#{prop[1]}'")
-        end
-      end
-
-      # Aplica filtro intercapa
-      if !@project_filter.cross_layer_filter_id.nil?
-
-        @cross_layer_filter = ProjectFilter.where(id: @project_filter.cross_layer_filter_id).where(user_id: user_id).first
-
-        # Cruza la capa principal con la capa secunadaria
-        @bounds = @bounds
-          .except(:from).from('projects main CROSS JOIN projects sec')
-          .where('shared_extensions.ST_Intersects(main.the_geom, sec.the_geom)')
-          .where('sec.project_type_id = ?', @cross_layer_filter.project_type_id)
-          .where('sec.row_active = ?', true)
-          .where('sec.current_season = ?', true)
-
-        # Aplica filtro por owner a la capa secundaria
-        if @cross_layer_filter.owner == true
-          @bounds = @bounds.where('sec.user_id = ?', user_id)
-        end
-
-        # Aplica filtro por atributo a la capa secundaria
-        if !@cross_layer_filter.properties.nil?
-          @cross_layer_filter.properties.to_a.each do |prop|
-            @bounds = @bounds.where("sec.properties->>'#{prop[0]}' = '#{prop[1]}'")
-          end
-        end
-      end
-    end
-
-    # Aplica filtro de time_slider
-    if !from_date.blank? || !to_date.blank?
-      @bounds = @bounds.where("main.gwm_created_at BETWEEN '#{from_date}' AND '#{to_date}'")
-    else
-      @bounds = @bounds.where('main.row_enabled = ?', true)
-    end
-
-    # Aplica filtros de hijos
-    if !filtered_form_ids.blank?
-
-      final_array = []
-      filtered_form_ids.each do |ids_array|
-        ids_array = JSON.parse(ids_array)
-        if !final_array.blank?
-          final_array = final_array & ids_array
-        else
-          final_array = ids_array
-        end
-      end
-      if final_array.blank?
-        final_array.push(-1)
-      end
-      final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')')
-      @bounds = @bounds.where("main.id IN #{final_array}")
-    end
-
-    # Aplica filtros generados por el usuario
-    if !attribute_filters.blank?
-
-      attribute_filters.each do |key|
-
-        @s = key.split('|')
-        @field = @s[0]
-        @filter = @s[1]
-        @value = @s[2]
-
-        # Aplica filtro por campo usuario
-        if @field == 'app_usuario'
-          @bounds = @bounds.where("users.name " + @filter + " '#{@value}'")
-        end
-
-        # Aplica filtro por campo estado
-        if @field == 'app_estado'
-          @bounds = @bounds.where("project_statuses.name " + @filter + " '#{@value}' ")
-        end
-
-        # Aplica filtro por otro campo
-        if @field != 'app_usuario' && @field != 'app_estado'
-          @bounds = @bounds.where("main.properties->>'" + @field + "'" + @filter + "'#{@value}'")
-        end
-      end
-    end
+    @bounds = ProjectTypesController.set_project_filter @bounds, @project_filter, user_id
+    @bounds = ProjectTypesController.set_time_slider @bounds, from_date, to_date
+    @bounds = ProjectTypesController.set_filtered_form_ids @bounds, filtered_form_ids
+    @bounds = ProjectTypesController.set_filters_on_the_fly @bounds, attribute_filters
+    @bounds = ProjectTypesController.set_intersect_width_layers @bounds, intersect_width_layers, active_layers, filters_layers, timeslider_layers
 
     @bounds
   end
@@ -162,13 +73,6 @@ class Project < ApplicationRecord
         csv << @at.map { |attr|  product.send(attr) }
       end
     end
-  end
-
-  def self.properties_field
-
-    @fields = ProjectField.where(project_type_id: 31)
-    @properties = Project.where(project_type_id: 32).select("properties->>'form_values'")
-
   end
 
   def update_sequence_projects
