@@ -273,7 +273,7 @@ ActiveRecord::Schema.define(version: 20230705045131) do
     t.integer "field_type_id"
     t.boolean "hidden", default: false
     t.integer "sort"
-    t.boolean "readonly", default: false
+    t.boolean "read_only", default: false
     t.boolean "popup", default: false
     t.string "calculated_field", default: ""
     t.string "roles_read"
@@ -301,7 +301,8 @@ ActiveRecord::Schema.define(version: 20230705045131) do
 
   create_table "project_statuses", force: :cascade do |t|
     t.string "name"
-    t.bigint "project_status_id"
+    t.bigint "project_type_id"
+    t.string "color"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status_type"
@@ -309,7 +310,7 @@ ActiveRecord::Schema.define(version: 20230705045131) do
     t.string "timer"
     t.integer "inherit_project_type_id"
     t.integer "inherit_status_id"
-    t.index ["project_status_id"], name: "index_project_statuses_on_project_status_id"
+    t.index ["project_type_id"], name: "index_project_statuses_on_project_type_id"
   end
 
   create_table "project_subfields", force: :cascade do |t|
@@ -426,6 +427,7 @@ ActiveRecord::Schema.define(version: 20230705045131) do
   create_table "user_customers", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "customer_id"
+    t.integer "role_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "customer_id"], name: "index_user_customers_on_user_id_and_customer_id", unique: true
@@ -442,13 +444,13 @@ ActiveRecord::Schema.define(version: 20230705045131) do
     t.datetime "last_sign_in_at"
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
+    t.string "authentication_token"
+    t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
-    t.string "token"
-    t.string "authentication_token", limit: 30
     t.string "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
@@ -484,7 +486,7 @@ ActiveRecord::Schema.define(version: 20230705045131) do
   add_foreign_key "photo_children", "project_data_children"
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_filters", "project_types"
-  add_foreign_key "project_statuses", "project_statuses"
+  add_foreign_key "project_statuses", "project_types"
   add_foreign_key "projects", "project_statuses"
   add_foreign_key "projects", "project_types"
 end
