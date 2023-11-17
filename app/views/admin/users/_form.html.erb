@@ -11,6 +11,7 @@
       <br>
         <div class="form-group">
           <div class="row justify-content-center">
+            <p id="user_selected_id" class="d-none"> <%= @user.id %> </p>
             <%= f.label :name, class:'col-md-2 text-right col-form-label' %>
             <div class="col-md-4">
               <%= f.input :name, label: false, input_html: {class: 'form-control form-control-sm'} %>
@@ -69,9 +70,49 @@
 
         <div class="row justify-content-center">
           <%= link_to t('.cancel', :default => t("helpers.links.cancel")), admin_users_path, :class => 'btn btn-secondary mr-1' %>
-          <%= f.submit  :class => 'btn btn-primary', value: 'Guardar' %>
+          <%= f.submit :class => 'btn btn-primary', value: 'Guardar' %>
         </div>
       <% end %>
+    </div>
+  </div>
+</div>
+
+<div id="modal_filter_user" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"> Filtros </h5>
+        <button type="button" class="close" data-dismiss="modal">x</button>
+      </div>
+      <div class="modal-body">
+        <div class="filters_select">
+          <strong><label>Proyecto:</label></strong> <select id="projects_for_filters" onchange="search_filters_for_project()" class="form-control-sm">
+            <option></option>
+          </select>
+        </div>
+        <br>
+        <div id="filters_project_container">
+          <div class="row mb-12">
+            <div class="col-md-5 col-form-label"><strong><label>Filtro Owner: </label></strong></div>
+            <div class="col-md-7 col-form-label" id="checkbox_owner"></div>
+          </div>
+          <br>
+          <div class="row mb-12">
+            <div class="col-md-5 col-form-label"><strong><label>Filtros por atributos: </label></strong></div>
+            <div class="col-md-7 col-form-label" id="attr_filter_container"></div>
+          </div>
+          <br>
+          <div class="row mb-12">
+            <div class="col-md-5 col-form-label"><strong><label>Filtros Intercapas: </label></strong></div>
+            <div class="col-md-7 col-form-label" id="attr_cross_layer_container"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <%= link_to t('.cancel', :default => t("helpers.links.cancel")), edit_admin_user_path(@user), :class => 'btn btn-secondary mr-1' %>
+        <%= button_tag 'Guardar', :id => 'save_filters', :class => 'btn btn-primary', value: 'Guardar', onclick: 'save_filter()' %>
+      </div>
     </div>
   </div>
 </div>
@@ -79,15 +120,195 @@
 <script type="text/javascript">
   function change_customer(e){
     var customer_id_selected = $(e.target).val();
-    // $(e.target).attr('id','user_customers_customer_id_'+customer_id_selected)
+    if (customer_id_selected != '') {
+      $.ajax({
+        url:  "<%= admin_users_search_roles_path %>",
+        type: "GET",
+        data: { customer_id: customer_id_selected },
+        success: function(data) {
+          $(e.target).closest('.customer_container').find('.icon_filter').attr('data-filter_corp_id', customer_id_selected)
+          $(e.target).closest('.customer_container').find('.roles_container').html(roles);
+        }
+      });
+    }
+    else {
+      $(e.target).closest('.customer_container').find('.roles_container').empty();
+    }
+    //Vamos a buscar los proyectos cuando se abra el modal para saber que corporación se está editando
+  }
+
+  function add_filter(e) {
+    var customer_id_selected = $(e.target).closest('.customer_container').find('.customer_java').val();
+    set_project_filters(customer_id_selected, e, true);
+  }
+
+  //Funciones para modal
+  $(".icon_filter").on('click', function(e) {
+    $('#modal_filter_user').modal('show', $(this));
+  });
+
+  $("#modal_filter_user").on('shown.bs.modal', function (e) {
+    $('#attr_filter_container').empty()
+    $('#attr_cross_layer_container').empty()
+    $('#checkbox_owner').empty()
+
+    var button = $(e.relatedTarget)
+    id_corporacion = button.data('filter_corp_id')
+
+    //Busca los proyectos de esa corporación
+    if (id_corporacion != '') {
+      $.ajax({
+        url:  "<%= admin_users_search_projects_path %>",
+        type: "GET",
+        data: { customer_id: id_corporacion },
+        success: function(data) {
+          $('#projects_for_filters').empty()
+          $('#projects_for_filters').append('<option> </option>')
+
+          data.data.forEach(function(item){
+            var new_option = '<option value='+ item.id + '>' + item.name + '</option>'
+            $('#projects_for_filters').append(new_option)
+          })
+        }
+      });
+    }
+  })
+
+  var id_corporacion;
+
+  function save_filter() {
+    var project_id = $('#projects_for_filters').val();
+    user_selected_id = $('#user_selected_id').html()
+    var filter_owner = $('#owner_filter').prop('checked');
+    var attrs_filter = [];
+
+    var id_filter = $('.attribute_id_key').attr('id').split('attribute_id_key_')[1];
+    var interlayer_filters = []
+    var interlayer_filters_new = []
+
+    $('.cross_layer_from_' + id_filter).each(function(){
+      var interlayer_filter = { 'id': $(this).attr('id').split('cross_layer_check_')[1], 'checked': $(this).is(":checked")  }
+      interlayer_filters.push(interlayer_filter)
+    })
+
+    $('.cross_layer_new_' + id_filter).each(function(){
+      if ($(this).is(":checked")) {
+        var cross_layer_new_check_ = { 'id_project': $(this).attr('id').split('cross_layer_new_')[1], 'cross_layer_id': $(this).attr('cross_layer_id') }
+        interlayer_filters_new.push(cross_layer_new_check_)
+      }
+    })
+
+    if($('.attribute_id_value').val() !== "" && $('.attribute_id_key').val() !== ""){
+      new_object = {};
+      new_object_key = $('.attribute_id_key').val()
+      new_object_value = $('.attribute_id_value').val()
+
+      try {
+        new_object[new_object_key] = JSON.parse(new_object_value)
+      } catch {
+        alert("Objeto no válido")
+        return;
+      }
+
+      filter_object = {
+        'id': id_filter,
+        'filter': new_object,
+        'cross_layer': interlayer_filters,
+        'interlayer_filters_new': interlayer_filters_new
+      }
+      attrs_filter.push(filter_object)
+    }else {
+      if ($('.attribute_id_value').val() === "" && $('.attribute_id_key').val() === "") {
+
+        filter_object = {
+          'id': id_filter,
+          'filter': null,
+          'cross_layer': interlayer_filters,
+          'interlayer_filters_new': interlayer_filters_new
+        }
+        attrs_filter.push(filter_object);
+      }else{
+        alert("Objeto no válido");
+        return;
+      }
+    }
+
     $.ajax({
-      url:  "<%= admin_users_search_roles_path %>",
-      type: "GET",
-      data: { customer_id: customer_id_selected },
+      url:  "<%= admin_users_create_filters_path %>",
+      type: "POST",
+      data: {
+        'id_corporacion': id_corporacion,
+        'user_selected_id': user_selected_id,
+        'project_id': project_id,
+        'filter_owner': filter_owner,
+        'attrs_filter': attrs_filter
+      },
       success: function(data) {
-        $(e.target).closest('.customer_container').find('.roles_container').html(roles);
-        // $(e.target).closest('.customer_container').find('.roles_container_select').attr('id','role_id_id_'+customer_id_selected);
-        console.log($(e.target).closest('.customer_container').find('.roles_container').html(roles));
+        location.reload();
+      }
+    });
+  }
+
+  //Funcion onchange search_projects.js.erb
+  function search_filters_for_project(){
+    var project_id = $('#projects_for_filters').val();
+    user_selected_id = $('#user_selected_id').html()
+
+    $.ajax({
+      url:  "<%= admin_users_search_filters_path %>",
+      type: "GET",
+      datatype: "json",
+      data: {
+        id_corporacion: id_corporacion,
+        user_selected_id: user_selected_id,
+        project_id: project_id },
+
+      success: function(data) {
+        $('#checkbox_owner').empty()
+        if (data.owner == null){
+          var owner_check = '<input type="checkbox" filter_id="'+ data.owner +'" id="owner_filter"></input>'
+          $('#checkbox_owner').append(owner_check)
+        }else {
+          var owner_check = '<input type="checkbox" checked filter_id="'+ data.owner +'" id="owner_filter"></input>'
+          $('#checkbox_owner').append(owner_check)
+        }
+
+        if (data.attributes.length > 0){
+          data.attributes.forEach(function(a){
+            $('#attr_filter_container').empty()
+            $('#attr_cross_layer_container').empty()
+            var aname = a['name']
+            var aname_key = Object.keys(aname)[0]
+            var aname_value = aname[aname_key]
+
+            var new_filter = '<label>Key</label><input class="w-100 attribute_id_key attribute_id mb-3" id="attribute_id_key_'+ a['id'] +'" value="'+ aname_key +'"> </input>'
+            new_filter += '<label>Value</label><textarea class="attribute_id_value attribute_id" rows="1" id="attribute_id_value_'+ a['id'] +'"> '+ JSON.stringify(aname_value, undefined, 0) +' </textarea><span style="font-size:0.8em;display:block"><strong>(Agregar comillas. Y en listados corchetes)</strong></span>'
+
+            $('#attr_filter_container').append(new_filter)
+
+            var cross_layer_filter = a['cross_layer_filter'];
+
+            if (cross_layer_filter.length > 0) {
+              cross_layer_filter.forEach(function(c){
+                var new_filter = '<div style= "display: flex; align-items: baseline"> <p> '+ c['name'] +' </p> <input type= "checkbox" checked class="ml-2 cross_layer_from_'+ a['id'] +'" id= "cross_layer_check_' + c['id_cross_layer'] + '"> </input></div>'
+                $('#attr_cross_layer_container').append(new_filter)
+              })
+            }
+
+            var all_project_types = a['all_project_types'];
+            all_project_types.forEach(function(apt){
+              var new_filter = '<div style="display: flex; align-items: baseline"> <p> '+ apt['name'] +' </p> <input type= "checkbox" class="ml-2 cross_layer_new_'+ a['id'] +'" cross_layer_id= "'+ a['id'] +'" id= "cross_layer_new_' + apt['id_project_type'] + '">  </input></div>'
+              $('#attr_cross_layer_container').append(new_filter)
+            })
+          })
+        }else{
+          $('#attr_filter_container').empty()
+          $('#attr_cross_layer_container').empty()
+
+          var new_filter = '<label>Key</label><input class="w-100 attribute_id_key attribute_id mb-3" id="attribute_id_key_0"> </input>'
+          new_filter += '<label>Value</label><input class="attribute_id_value attribute_id" id="attribute_id_value_0"> </input><span style="font-size:0.8em;display:block"><strong>(Agregar comillas. Y en listados corchetes)</strong></span>'
+          $('#attr_filter_container').append(new_filter)
+        }
       }
     });
   }

@@ -100,6 +100,9 @@ Rails.application.routes.draw do
       get 'users/search_projects'
       get 'users/search_roles'
       get 'users/search_fields'
+      get 'users/projects'
+      get 'users/search_filters'
+      post 'users/create_filters'
       resources :users
       resources :roles
       resources :customers

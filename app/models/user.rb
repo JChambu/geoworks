@@ -2,6 +2,8 @@ class User < ApplicationRecord
 
   include Users::Scopes
 
+  require 'json'
+
   has_many :has_project_types
   has_many :project_types, through: :has_project_types
   has_many :user_customers

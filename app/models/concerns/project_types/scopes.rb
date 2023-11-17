@@ -6,12 +6,13 @@ module ProjectTypes::Scopes
   end
 
   module ClassMethods
-    def search_projects_for_tenant params
+    def search_projects_for_tenant customer_id
       @p = []
-      Apartment::Tenant.switch params['customer_name'] do
+      customer_name = Customer.where(id: customer_id).pluck(:subdomain).first
+      Apartment::Tenant.switch customer_name do
         projects = ProjectType.all
-        projects.each do |project|
-          @p.push(project)
+        projects.each do |project_type|
+          @p.push(project_type)
         end
       end
       @p
@@ -19,7 +20,6 @@ module ProjectTypes::Scopes
 
     def update_projects_for_tenante params
       Apartment::Tenant.switch params['customer_name'] do
-
       end
     end
   end
