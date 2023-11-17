@@ -86,7 +86,7 @@
       </div>
       <div class="modal-body">
         <div class="filters_select">
-          <strong><label>Proyecto:</label></strong> <select id="projects_for_filters" onchange="search_filters_for_project()">
+          <strong><label>Proyecto:</label></strong> <select id="projects_for_filters" onchange="search_filters_for_project()" class="form-control-sm">
             <option></option>
           </select>
         </div>
@@ -110,7 +110,7 @@
       </div>
 
       <div class="modal-footer">
-        <%= link_to t('.cancel', :default => t("helpers.links.cancel")), admin_users_path, :class => 'btn btn-secondary mr-1' %>
+        <%= link_to t('.cancel', :default => t("helpers.links.cancel")), edit_admin_user_path(@user), :class => 'btn btn-secondary mr-1' %>
         <%= button_tag 'Guardar', :id => 'save_filters', :class => 'btn btn-primary', value: 'Guardar', onclick: 'save_filter()' %>
       </div>
     </div>
