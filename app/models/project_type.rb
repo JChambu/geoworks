@@ -20,10 +20,10 @@ class ProjectType < ApplicationRecord
   has_many :project_fields, dependent: :destroy
   has_many :projects, dependent: :destroy
   has_many :dashboards, dependent: :destroy
-  has_many :has_project_types, dependent: :destroy
   has_many :users, through: :has_project_types
+  has_many :has_project_types, dependent: :destroy
   has_many :project_statuses, dependent: :destroy
-  has_many :project_filters, through: :user, dependent: :destroy
+  has_many :project_filters, dependent: :destroy
   has_many :analytics_dashboard, dependent: :destroy
   accepts_nested_attributes_for :project_fields, allow_destroy: true
   accepts_nested_attributes_for :projects, allow_destroy: true

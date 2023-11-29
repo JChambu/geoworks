@@ -1340,6 +1340,7 @@ class ProjectTypesController < ApplicationController
   def destroy
     authorize! :project_types, :destroy
     respond_to do |format|
+      @project_type.project_filters.destroy_all
       if @project_type.destroy
         ProjectType.destroy_layer_geoserver @project_type.name_layer
         format.html { redirect_to root_path(), notice: 'El proyecto se eliminó correctamente.' }
