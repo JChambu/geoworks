@@ -314,7 +314,6 @@ class ProjectDataChildrenController < ApplicationController
         mapping = params[:mapping]
 
         data_child = params[:mapping][:data_child]
-        byebug
         data_child_list = []
         data_child.each do |key, value|
           if ProjectSubfield.find(value.to_i).field_type_id == 2
@@ -322,18 +321,19 @@ class ProjectDataChildrenController < ApplicationController
           end
         end
 
-        data_child_list = ProjectSubfield.where(id: data_child_list.join(", ").to_i).pluck(:name)
-        data_child_list_parsed = data_child_list.join(", ")
-        byebug
         data_hash = lines.map do |values|
           Hash[keys.zip(values)]
         end
-        byebug
-        data_hash.each do |element|
-          element.keys.each do |key|
-            if data_child_list_parsed == key
-              element[key] = element[key].split
-              byebug
+
+        data_child_list.each do |dcl|
+          dcl = ProjectSubfield.where(id: dcl).pluck(:name)
+          data_child_list_parsed = dcl.join(", ")
+
+          data_hash.each do |element|
+            element.keys.each do |key|
+              if data_child_list_parsed == key
+                element[key] = element[key].split
+              end
             end
           end
         end
