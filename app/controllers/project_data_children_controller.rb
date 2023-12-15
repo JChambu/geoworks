@@ -332,7 +332,13 @@ class ProjectDataChildrenController < ApplicationController
           data_hash.each do |element|
             element.keys.each do |key|
               if data_child_list_parsed == key
-                element[key] = element[key].split
+                if element[key].include?(", ")
+                  element[key] = element[key].split(", ")
+                elsif element[key].include?(",")
+                  element[key] = element[key].split(",")
+                else
+                  element[key] = [element[key]]
+                end
               end
             end
           end
