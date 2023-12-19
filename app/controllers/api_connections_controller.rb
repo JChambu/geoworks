@@ -15,9 +15,12 @@ class ApiConnectionsController < ApplicationController
     require 'net/http'
     require 'uri'
     require 'json'
-    #uri = URI.parse('https://www.cultura.gob.ar/api/v2.0/tramites/')
+    #uri = URI.parse('https://portal.sgi-gestion.com/GW/LotesMuestra?fecha=18-12-2023')
     uri = URI.parse(api_connection_params["url"])
     request = Net::HTTP::Get.new(uri)
+    request['accept'] = 'text/plain'
+    request['Content-Type'] = 'application/json'
+    request['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImpjaEBnaXN3b3JraW5nLmNvbSIsIlNlY3VyaXR5SWQiOiI4N2E4NWE2MS1hZTcxLTQ2NzYtOTQxOC02MjAwYWUwYzk1OGMiLCJob3N0IjoicG9ydGFsLnNnaS1nZXN0aW9uLmNvbSIsIm1vZHVsbyI6Imd3IiwibmJmIjoxNzAyNDI2OTg2LCJleHAiOjE3MzQwNDkzODYsImlhdCI6MTcwMjQyNjk4NiwiaXNzIjoiaHR0cDovL3NnaS1nZXN0aW9uLmNvbSIsImF1ZCI6IioifQ.aNYXRhrAPCx5_JOnGa2Ldryppn45HAHUQXrNxHWsqRc'
 
     response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
       http.request(request)
@@ -26,7 +29,7 @@ class ApiConnectionsController < ApplicationController
     if response.is_a?(Net::HTTPSuccess)
       # If the response is successful (status code 2xx)
       response_data = JSON.parse(response.body)
-      #first_result = response_data['results'].first
+      # first_result = response_data['Data'].first
       first_result = response_data[api_connection_params["key_api"]].first
       @keys = first_result.keys
 
@@ -42,7 +45,7 @@ class ApiConnectionsController < ApplicationController
             format.html { redirect_to api_connection_path, notice: 'Api Conection failed' }
             format.json { render json: @api_connection.errors.full_messages, status: :unprocessable_entity }
           end
-        end        
+        end
       else
 
         respond_to do |format|
@@ -55,7 +58,7 @@ class ApiConnectionsController < ApplicationController
           end
         end
       end
-      
+
     else
       # If the response is not successful
       puts "Request failed with status code: #{response.code}"
@@ -108,7 +111,7 @@ class ApiConnectionsController < ApplicationController
     if @api_connection_to_sync.nil?
       @return_data[:result] = "No existe una configuración para sincronizar este formulario."
       @return_data[:success] = false
-    else 
+    else
       @url = @api_connection_to_sync.url
       @key_api = @api_connection_to_sync.key_api
 
@@ -123,11 +126,11 @@ class ApiConnectionsController < ApplicationController
         # y ese valor es el que se tiene que enviar en la url para traer sólo aquellos registros no sincronizados
         uri = URI.parse(@url)
         request = Net::HTTP::Get.new(uri)
-    
+                
         response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
           http.request(request)
         end
-    
+
         if response.is_a?(Net::HTTPSuccess)
           response_data = JSON.parse(response.body)
           results = response_data[@api_connection_to_sync.key_api]
@@ -161,17 +164,17 @@ class ApiConnectionsController < ApplicationController
     # o modificados desde esa fecha.
     uri = URI.parse(@url)
     request = Net::HTTP::Get.new(uri)
-   
+
     response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
       http.request(request)
     end
-    
+
     if response.is_a?(Net::HTTPSuccess)
       response_data = JSON.parse(response.body)
       results = response_data[@api_connection_to_sync.key_api]
-      
+
       @unique_field = ProjectSubfield
-        .select(:id)          
+        .select(:id)
         .where(:project_field_id => params["subfield_id"])
         .where(:name => "app_unique_key")
         .pluck(:id)
@@ -206,7 +209,7 @@ class ApiConnectionsController < ApplicationController
           if @mapping_from_api.nil?
             @return_data[:result] ="El mapeo de campos está vacío"
           else
-          
+
             results.each do |r|
               @unique_field_mapped = r[@unique_field_from_api]
               @parent_id_mapped = r[@parent_id_from_api]
@@ -215,7 +218,7 @@ class ApiConnectionsController < ApplicationController
 
               if @user_is_mapped
                 @user_id_mapped = r[@user_id_from_api]
-              else 
+              else
                 @user_id_mapped = current_user.id
               end
 
@@ -226,29 +229,29 @@ class ApiConnectionsController < ApplicationController
                 @not_saved_array.push(r)
 
               elsif @parent_id_mapped.nil?
-    
+
                 #el registro a sincronizar no contiene un id del padre
                 @error_count += 1
                 @not_saved_array.push(r)
 
               elsif @updated_at_mapped.nil?
-    
+
                 #el registro a sincronizar no contiene updated_at
                 @error_count += 1
                 @not_saved_array.push(r)
 
               elsif @created_at_mapped.nil?
-    
+
                 #el registro a sincronizar no contiene created_at
                 @error_count += 1
                 @not_saved_array.push(r)
-              
+
               elsif @user_id_mapped.nil?
-    
+
                 #el registro a sincronizar no contiene un id de usuario
                 @error_count += 1
                 @not_saved_array.push(r)
-    
+
               else
 
                 # check if parent_id exist
@@ -274,7 +277,7 @@ class ApiConnectionsController < ApplicationController
                     .where(:project_field_id => params["subfield_id"])
                     .where("properties->>'"+@unique_field.to_s+"' = '" + @unique_field_mapped.to_s+ "' ")
                     .first
-        
+
                   properties = {}
                   @mapping_from_api.keys().each do |m|
                     @mapping_mapped = @mapping_from_api[m]
