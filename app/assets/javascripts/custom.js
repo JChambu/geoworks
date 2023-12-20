@@ -2443,6 +2443,8 @@ function export_to_excel(table, name, filename) {
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
 function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
+  console.log("Entra acá cuando abro el coso");
+
   children_fields_all = new Object;
   if(!is_new_file){
     $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
@@ -3407,7 +3409,7 @@ function set_multiselect_style_childs(){
 }
 
 function open_new_child(element_field_id, element_name, element_key,is_multiple){
-  event.target.style.visibility = "hidden";
+  // event.target.style.visibility = "hidden";
   $.ajax({
     type: 'GET',
     url: '/project_subfields/show_subfields',
@@ -3461,6 +3463,8 @@ function show_hidden_fields() {
 }
 
 function open_subtitle(fields, ischild) {
+  console.log("fields");
+  console.log(fields);
   var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   if (fields != "") {
     fields.forEach(function(field_id) {
@@ -3597,6 +3601,8 @@ function edit_file(edit_parent, edit_child, edit_status){
           }
         }
       });
+      console.log("array_field_id_father_grouped");
+      console.log(array_field_id_father_grouped);
       array_field_id_father_grouped = array_field_id_father_grouped.unique();
       for (zz=0; zz<array_field_id_father_grouped.length; zz++){
         var properties_child_to_save = new Object();
@@ -3629,11 +3635,17 @@ function edit_file(edit_parent, edit_child, edit_status){
               }
             }
           });
+          console.log("properties_child_to_save[id_field_child_properties]");
+          console.log(properties_child_to_save);
+          console.log("array_field_id_father_grouped");
+          console.log(array_field_id_father_grouped);
           var child_data = new Object();
           child_data.IdFather = app_ids;
           child_data.field_id = parseInt(array_field_id_father_grouped[zz]);
           child_data.child_id = array_child_edited[z];
           child_data.properties = properties_child_to_save;
+          console.log("child_data");
+          console.log(child_data);
           child_edited_all.push(child_data);
       }
     }
@@ -3724,6 +3736,8 @@ function edit_file(edit_parent, edit_child, edit_status){
           // fin color del estado
           if(properties_to_save!=null){// si se modificó el padre
             var fields = document.querySelectorAll(".field_key");
+            console.log("fields");
+            console.log(fields);
             fields.forEach(function(column, indexColumn) {
               if(properties_to_save[column.value]!=undefined){
                 var indexval=indexColumn+1;
@@ -3748,6 +3762,12 @@ function edit_file(edit_parent, edit_child, edit_status){
       update_all();
       app_id_int = parseInt(app_ids[0], 10);
       show_item_info(app_id_int,true)
+      idSubform = data.id_subform
+      idSubformParsed = parseInt(idSubform)
+      setTimeout(function() {
+        show_confirmation('edit_confirmation');
+        open_subtitle([idSubformParsed], '');
+      }, 1000);
     }
   });
 }

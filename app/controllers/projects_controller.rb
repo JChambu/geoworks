@@ -310,10 +310,12 @@ class ProjectsController < ApplicationController
 
   # Actualiza registros padre
   def update_form
+    byebug
     app_ids = params[:app_ids]
     properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
     subforms = params[:subforms] # FIXME: los paremetros llegan como string
     project_status_id = params[:project_status_id]
+    # id_subform = params[:subforms]["0"][:field_id]
 
     if app_ids.present?
 
