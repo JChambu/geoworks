@@ -5,7 +5,6 @@ class ApiConnectionsController < ApplicationController
   def create
     @subfield_id = params["subfield_id"]
     redirect_to api_connection_subform_path(@project_type_id, subfield_id: @subfield_id)
-
   end
 
   def create_subform
@@ -15,13 +14,10 @@ class ApiConnectionsController < ApplicationController
     require 'net/http'
     require 'uri'
     require 'json'
-    #uri = URI.parse('https://portal.sgi-gestion.com/GW/LotesMuestra?fecha=18-12-2023')
     uri = URI.parse(api_connection_params["url"])
     request = Net::HTTP::Get.new(uri)
-    request['accept'] = 'text/plain'
-    request['Content-Type'] = 'application/json'
-    request['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImpjaEBnaXN3b3JraW5nLmNvbSIsIlNlY3VyaXR5SWQiOiI4N2E4NWE2MS1hZTcxLTQ2NzYtOTQxOC02MjAwYWUwYzk1OGMiLCJob3N0IjoicG9ydGFsLnNnaS1nZXN0aW9uLmNvbSIsIm1vZHVsbyI6Imd3IiwibmJmIjoxNzAyNDI2OTg2LCJleHAiOjE3MzQwNDkzODYsImlhdCI6MTcwMjQyNjk4NiwiaXNzIjoiaHR0cDovL3NnaS1nZXN0aW9uLmNvbSIsImF1ZCI6IioifQ.aNYXRhrAPCx5_JOnGa2Ldryppn45HAHUQXrNxHWsqRc'
-
+    request['Content-Type'] = params[:api_connection][:content_type]
+    request['Authorization'] = params[:api_connection][:authorization]
     response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
       http.request(request)
     end
@@ -29,7 +25,6 @@ class ApiConnectionsController < ApplicationController
     if response.is_a?(Net::HTTPSuccess)
       # If the response is successful (status code 2xx)
       response_data = JSON.parse(response.body)
-      # first_result = response_data['Data'].first
       first_result = response_data[api_connection_params["key_api"]].first
       @keys = first_result.keys
 
@@ -39,7 +34,7 @@ class ApiConnectionsController < ApplicationController
         respond_to do |format|
           @api_connection = ApiConnection.new(api_connection_params)
           if @api_connection.save
-            format.html { redirect_to api_connection_mapping_path(subfield_id: api_connection_params["subfield_id"], keys: @keys), notice: 'Api Conection was successfully created.' }
+            format.html { redirect_to api_connection_mapping_path(subfield_id: api_connection_params["subfield_id"], keys: @keys), notice: 'La conexión a la api fue creada exitosamente.' }
             #format.json { render action: 'show', status: :created, location: @api_connection }
           else
             format.html { redirect_to api_connection_path, notice: 'Api Conection failed' }
@@ -50,21 +45,20 @@ class ApiConnectionsController < ApplicationController
 
         respond_to do |format|
           if @api_connection_to_save.update(api_connection_params)
-            format.html { redirect_to api_connection_mapping_path(subfield_id: api_connection_params["subfield_id"], keys: @keys), notice: 'Api Conection was successfully updated.' }
+            format.html { redirect_to api_connection_mapping_path(subfield_id: api_connection_params["subfield_id"], keys: @keys), notice: 'La conexión a la api fue actualizada exitosamente.' }
             #format.json { render action: 'show', status: :created, location: @api_connection }
           else
-            format.html { redirect_to api_connection_path, notice: 'Api Conection failed' }
+            format.html { redirect_to api_connection_path, notice: 'Falló la conexión a la api' }
             format.json { render json: @api_connection.errors.full_messages, status: :unprocessable_entity }
           end
         end
       end
 
     else
-      # If the response is not successful
       puts "Request failed with status code: #{response.code}"
 
       respond_to do |format|
-        format.html { redirect_to api_connection_path, notice: 'Api Conection failed' }
+        format.html { redirect_to api_connection_path, notice: 'Falló la conexión a la api' }
         format.json { render json: @api_connection.errors.full_messages, status: :unprocessable_entity }
       end
     end
@@ -82,7 +76,7 @@ class ApiConnectionsController < ApplicationController
           end
         else
           respond_to do |format|
-            format.html { redirect_to api_connection_path, notice: 'Api Conection failed' }
+            format.html { redirect_to api_connection_path, notice: 'Falló la conexión a la api' }
             format.json { render json: @api_connection.errors.full_messages, status: :unprocessable_entity }
           end
         end
@@ -104,7 +98,6 @@ class ApiConnectionsController < ApplicationController
   end
 
   def sync_subform
-
     @api_connection_to_sync = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: params["subfield_id"]).first
     @return_data = {}
 
@@ -126,7 +119,8 @@ class ApiConnectionsController < ApplicationController
         # y ese valor es el que se tiene que enviar en la url para traer sólo aquellos registros no sincronizados
         uri = URI.parse(@url)
         request = Net::HTTP::Get.new(uri)
-                
+        request['Content-Type'] = @api_connection_to_sync.content_type
+        request['Authorization'] = @api_connection_to_sync.authorization
         response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
           http.request(request)
         end
@@ -143,7 +137,7 @@ class ApiConnectionsController < ApplicationController
           end
         else
           # If the response is not successful
-          @return_data[:result] ="La conexión falló con el siguiente error: #{response.code}"
+          @return_data[:result] = "La conexión falló con el siguiente error: #{response.code}"
           @return_data[:success] = false
         end
       end
@@ -152,7 +146,6 @@ class ApiConnectionsController < ApplicationController
   end
 
   def sync_subform_confirm
-
     @api_connection_to_sync = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: params["subfield_id"]).first
     @return_data = {}
     @url = @api_connection_to_sync.url
@@ -164,7 +157,8 @@ class ApiConnectionsController < ApplicationController
     # o modificados desde esa fecha.
     uri = URI.parse(@url)
     request = Net::HTTP::Get.new(uri)
-
+    request['Content-Type'] = @api_connection_to_sync.content_type
+    request['Authorization'] = @api_connection_to_sync.authorization
     response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
       http.request(request)
     end
@@ -172,32 +166,29 @@ class ApiConnectionsController < ApplicationController
     if response.is_a?(Net::HTTPSuccess)
       response_data = JSON.parse(response.body)
       results = response_data[@api_connection_to_sync.key_api]
-
       @unique_field = ProjectSubfield
         .select(:id)
         .where(:project_field_id => params["subfield_id"])
         .where(:name => "app_unique_key")
         .pluck(:id)
         .first
-
       @error_count = 0
       @not_saved_array = []
       @new_count = 0
       @update_count = 0
 
       if @unique_field.nil?
-        @return_data[:result] ="No se pudo encontrar un campo único en el modelo de datos (app_unique_key)."
+        @return_data[:result] = "No se pudo encontrar un campo único en el modelo de datos (app_unique_key)."
       else
         # iterate over results to determinite if is update or create
         @mapped_fields = @api_connection_to_sync.mapped_fields
         if @mapped_fields.nil?
-          @return_data[:result] ="No hay guardado ningún mapeo de campos."
+          @return_data[:result] = "No hay guardado ningún mapeo de campos."
         else
           @unique_field_from_api = @mapped_fields["unique_field"]
           @parent_id_from_api = @mapped_fields["parent_id"]
           @updated_at_from_api = @mapped_fields["updated_at"]
           @created_at_from_api = @mapped_fields["created_at"]
-
           if @mapped_fields["user_id"].nil? || @mapped_fields["user_id"] == ""
             @user_is_mapped = false
           else
@@ -207,9 +198,8 @@ class ApiConnectionsController < ApplicationController
 
           @mapping_from_api = @mapped_fields["mapping"]
           if @mapping_from_api.nil?
-            @return_data[:result] ="El mapeo de campos está vacío"
+            @return_data[:result] = "El mapeo de campos está vacío"
           else
-
             results.each do |r|
               @unique_field_mapped = r[@unique_field_from_api]
               @parent_id_mapped = r[@parent_id_from_api]
@@ -223,61 +213,41 @@ class ApiConnectionsController < ApplicationController
               end
 
               if @unique_field_mapped.nil?
-
                 #el registro a sincronizar no contiene un campo de identificación único
                 @error_count += 1
                 @not_saved_array.push(r)
-
               elsif @parent_id_mapped.nil?
-
                 #el registro a sincronizar no contiene un id del padre
                 @error_count += 1
                 @not_saved_array.push(r)
-
               elsif @updated_at_mapped.nil?
-
                 #el registro a sincronizar no contiene updated_at
                 @error_count += 1
                 @not_saved_array.push(r)
-
               elsif @created_at_mapped.nil?
-
                 #el registro a sincronizar no contiene created_at
                 @error_count += 1
                 @not_saved_array.push(r)
-
               elsif @user_id_mapped.nil?
-
                 #el registro a sincronizar no contiene un id de usuario
                 @error_count += 1
                 @not_saved_array.push(r)
-
               else
-
                 # check if parent_id exist
                 @parent_id = r[@parent_id_mapped]
-                #hardcode to test
-                @parent_id = 2934 #remove this later
 
                 @updated_at = r[@updated_at_mapped]
                 @created_at = r[@created_at_mapped]
 
-                #remove this hardcode later
-                @updated_at = Time.zone.now
-                @created_at = Time.zone.now
-
                 @form = Project.where(id: @parent_id).first
-
                 if @form.nil? || @parent_id.nil?
                   @error_count += 1
                   @not_saved_array.push(r)
                 else
-
                   @project_data_children = ProjectDataChild
                     .where(:project_field_id => params["subfield_id"])
                     .where("properties->>'"+@unique_field.to_s+"' = '" + @unique_field_mapped.to_s+ "' ")
                     .first
-
                   properties = {}
                   @mapping_from_api.keys().each do |m|
                     @mapping_mapped = @mapping_from_api[m]
@@ -357,7 +327,7 @@ class ApiConnectionsController < ApplicationController
   end
 
   def api_connection_params
-    params.require(:api_connection).permit(:project_type_id, :url, :interval, :automatic, :token, :key_api, :subfield_id, :mapped_fields)
+    params.require(:api_connection).permit(:project_type_id, :url, :interval, :automatic, :token, :key_api, :subfield_id, :mapped_fields, :content_type, :authorization)
   end
 
 end

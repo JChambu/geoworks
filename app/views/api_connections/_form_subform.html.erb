@@ -69,6 +69,25 @@
       </div>
     </div>
 
+    <div class="row my-1 mt-2">
+      <div class="col-md-6 text-right">
+        <%= f.label :content_type, 'Content Type:', class:'text-right col-form-label' %>
+      </div>
+      <div class="col-md-6">
+        <%= f.text_field :content_type, class: 'form-control form-control-sm col-md-6' %>
+      </div>
+    </div>
+
+    <div class="row my-1 mt-2">
+      <div class="col-md-6 text-right">
+        <%= f.label :authorization, 'Authorization:', class:'text-right col-form-label' %>
+      </div>
+      <div class="col-md-6">
+        <%= f.text_field :authorization, class: 'form-control form-control-sm col-md-6' %>
+        <p class="mb-0"><i class="fas fa-exclamation-circle"></i> Ingrese token con tipo de token. Ej: Bearer sutoken</p>
+      </div>
+    </div>
+
     <div class="row justify-content-center mt-4 pb-4">
       <%= link_to t('.cancel', :default => t("helpers.links.cancel")), root_path, :class => 'btn btn-secondary mr-1' %>
       <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Guardar" %>
