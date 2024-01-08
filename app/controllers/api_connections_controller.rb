@@ -30,7 +30,6 @@ class ApiConnectionsController < ApplicationController
 
       @api_connection_to_save = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: api_connection_params["subfield_id"]).first
       if @api_connection_to_save.nil?
-
         respond_to do |format|
           @api_connection = ApiConnection.new(api_connection_params)
           if @api_connection.save
@@ -42,7 +41,6 @@ class ApiConnectionsController < ApplicationController
           end
         end
       else
-
         respond_to do |format|
           if @api_connection_to_save.update(api_connection_params)
             format.html { redirect_to api_connection_mapping_path(subfield_id: api_connection_params["subfield_id"], keys: @keys), notice: 'La conexión a la api fue actualizada exitosamente.' }
@@ -68,19 +66,19 @@ class ApiConnectionsController < ApplicationController
   def create_mapping
     @mapped_fields = JSON.parse(api_connection_params["mapped_fields"])
     @api_connection_to_save = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: api_connection_params["subfield_id"]).first
-      unless @api_connection_to_save.nil?
-        if @api_connection_to_save.update_attribute(:mapped_fields, @mapped_fields)
-          respond_to do |format|
-            format.html { redirect_to api_connection_path, notice: 'El mapeo de campos se guardó correctamente'}
-            #format.json { render action: 'show', status: :created, location: @api_connection }
-          end
-        else
-          respond_to do |format|
-            format.html { redirect_to api_connection_path, notice: 'Falló la conexión a la api' }
-            format.json { render json: @api_connection.errors.full_messages, status: :unprocessable_entity }
-          end
+    unless @api_connection_to_save.nil?
+      if @api_connection_to_save.update_attribute(:mapped_fields, @mapped_fields)
+        respond_to do |format|
+          format.html { redirect_to api_connection_path, notice: 'El mapeo de campos se guardó correctamente'}
+          #format.json { render action: 'show', status: :created, location: @api_connection }
+        end
+      else
+        respond_to do |format|
+          format.html { redirect_to api_connection_path, notice: 'Falló la conexión a la api' }
+          format.json { render json: @api_connection.errors.full_messages, status: :unprocessable_entity }
         end
       end
+    end
   end
 
 
@@ -234,10 +232,9 @@ class ApiConnectionsController < ApplicationController
                 @not_saved_array.push(r)
               else
                 # check if parent_id exist
-                @parent_id = r[@parent_id_mapped]
-
-                @updated_at = r[@updated_at_mapped]
-                @created_at = r[@created_at_mapped]
+                @parent_id = @parent_id_mapped
+                @updated_at = @updated_at_mapped
+                @created_at = @created_at_mapped
 
                 @form = Project.where(id: @parent_id).first
                 if @form.nil? || @parent_id.nil?
@@ -258,7 +255,6 @@ class ApiConnectionsController < ApplicationController
                   if @project_data_children.nil?
                     #is a new record
                     @project_data_children = ProjectDataChild.new
-
                     if @project_data_children.create_subform_sync(properties, @parent_id, params["subfield_id"], @user_id_mapped, @created_at, @updated_at)
                       @new_count += 1
                       #TODO: verificar el updated_at del registro guardado y compararlo con el que está guardado en la tabla
@@ -267,11 +263,11 @@ class ApiConnectionsController < ApplicationController
                       @error_count += 1
                       @not_saved_array.push(r)
                     end
-
+                    @api_connection_last_sync = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: params["subfield_id"]).first
+                    @api_connection_last_sync.update(last_sync: Time.zone.now)
                   else
                     #update record
                     if @project_data_children.project_id == @parent_id.to_i && @project_data_children.project_field_id == params["subfield_id"].to_i
-
                       if @project_data_children.update_subform_sync(properties, @updated_at)
                         @update_count += 1
                         #TODO: verificar el updated_at del registro guardado y compararlo con el que está guardado en la tabla
@@ -285,11 +281,10 @@ class ApiConnectionsController < ApplicationController
                       @error_count += 1
                       @not_saved_array.push(r)
                     end
-
+                    @api_connection_last_sync = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: params["subfield_id"]).first
+                    @api_connection_last_sync.update(last_sync: Time.zone.now)
                   end
-
                 end
-
               end
             end
             @return_data[:result] ="Nuevos subformularios: #{@new_count}. Subformularios editados: #{@update_count}. Subformularios sin guardar: #{@error_count}."
@@ -327,7 +322,7 @@ class ApiConnectionsController < ApplicationController
   end
 
   def api_connection_params
-    params.require(:api_connection).permit(:project_type_id, :url, :interval, :automatic, :token, :key_api, :subfield_id, :mapped_fields, :content_type, :authorization)
+    params.require(:api_connection).permit(:project_type_id, :url, :interval, :automatic, :token, :key_api, :subfield_id, :mapped_fields, :content_type, :authorization, :last_sync)
   end
 
 end

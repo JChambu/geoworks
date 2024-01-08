@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20231227205807) do
+ActiveRecord::Schema.define(version: 20240106005740) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(version: 20231227205807) do
     t.jsonb "mapped_fields"
     t.string "content_type"
     t.string "authorization"
+    t.datetime "last_sync"
     t.index ["project_type_id"], name: "index_api_connections_on_project_type_id"
   end
 
