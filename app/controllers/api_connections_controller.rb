@@ -9,12 +9,10 @@ class ApiConnectionsController < ApplicationController
 
   def create_subform
     @project_type = ProjectType.find(params[:id])
-
-    #check the url and token
     require 'net/http'
     require 'uri'
     require 'json'
-    uri = URI.parse(api_connection_params["url"])
+    uri = URI.parse(api_connection_params["url"] + "?fecha=01-01-1800")
     request = Net::HTTP::Get.new(uri)
     request['Content-Type'] = params[:api_connection][:content_type]
     request['Authorization'] = params[:api_connection][:authorization]
@@ -27,7 +25,6 @@ class ApiConnectionsController < ApplicationController
       response_data = JSON.parse(response.body)
       first_result = response_data[api_connection_params["key_api"]].first
       @keys = first_result.keys
-
       @api_connection_to_save = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: api_connection_params["subfield_id"]).first
       if @api_connection_to_save.nil?
         respond_to do |format|
@@ -53,7 +50,7 @@ class ApiConnectionsController < ApplicationController
       end
 
     else
-      puts "Request failed with status code: #{response.code}"
+      puts "La solicitud falló con el código de estado: #{response.code}"
 
       respond_to do |format|
         format.html { redirect_to api_connection_path, notice: 'Falló la conexión a la api' }
@@ -85,9 +82,7 @@ class ApiConnectionsController < ApplicationController
   def api_connection_mapping
     @keys = params[:keys]
     @subfield_id = params[:subfield_id]
-
     @project_field = ProjectField.where(id: @subfield_id).first
-
     @project_subfields = ProjectSubfield
     .where(project_field_id: @subfield_id)
     .where.not(field_type_id: 11)
@@ -113,9 +108,12 @@ class ApiConnectionsController < ApplicationController
         require 'net/http'
         require 'uri'
         require 'json'
-        #TODO: Hay que crear una nueva columna que guarde el último update cuando se sincronizar
-        # y ese valor es el que se tiene que enviar en la url para traer sólo aquellos registros no sincronizados
-        uri = URI.parse(@url)
+        
+        @last_sync = ApiConnection.where(project_type_id: @project_type.id, subfield_id: params["subfield_id"]).pluck(:last_sync).first
+        if @last_sync.nil?
+          @last_sync = "01-01-1800"
+        end
+        uri = URI.parse(@url + "?fecha=#{@last_sync}")
         request = Net::HTTP::Get.new(uri)
         request['Content-Type'] = @api_connection_to_sync.content_type
         request['Authorization'] = @api_connection_to_sync.authorization
@@ -148,12 +146,17 @@ class ApiConnectionsController < ApplicationController
     @return_data = {}
     @url = @api_connection_to_sync.url
     @key_api = @api_connection_to_sync.key_api
+
     require 'net/http'
     require 'uri'
     require 'json'
-    # Obtner el ultimo updated_at guardado en api_connections y enviarlo para obtener solo los registros creados
-    # o modificados desde esa fecha.
-    uri = URI.parse(@url)
+
+    @last_sync = ApiConnection.where(project_type_id: @project_type.id, subfield_id: params["subfield_id"]).pluck(:last_sync).first
+    if @last_sync.nil?
+      @last_sync = "01-01-1800"
+    end
+
+    uri = URI.parse(@url + "?fecha=#{@last_sync}")
     request = Net::HTTP::Get.new(uri)
     request['Content-Type'] = @api_connection_to_sync.content_type
     request['Authorization'] = @api_connection_to_sync.authorization
@@ -253,25 +256,19 @@ class ApiConnectionsController < ApplicationController
                   properties[@unique_field] = @unique_field_mapped
 
                   if @project_data_children.nil?
-                    #is a new record
+                    # is a new record
                     @project_data_children = ProjectDataChild.new
                     if @project_data_children.create_subform_sync(properties, @parent_id, params["subfield_id"], @user_id_mapped, @created_at, @updated_at)
                       @new_count += 1
-                      #TODO: verificar el updated_at del registro guardado y compararlo con el que está guardado en la tabla
-                      # api_connections. Si es mayor actualizarlo.
                     else
                       @error_count += 1
                       @not_saved_array.push(r)
                     end
-                    @api_connection_last_sync = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: params["subfield_id"]).first
-                    @api_connection_last_sync.update(last_sync: Time.zone.now)
                   else
-                    #update record
+                    # update record
                     if @project_data_children.project_id == @parent_id.to_i && @project_data_children.project_field_id == params["subfield_id"].to_i
                       if @project_data_children.update_subform_sync(properties, @updated_at)
                         @update_count += 1
-                        #TODO: verificar el updated_at del registro guardado y compararlo con el que está guardado en la tabla
-                        # api_connections. Si es mayor actualizarlo.
                       else
                         @error_count += 1
                         @not_saved_array.push(r)
@@ -281,11 +278,13 @@ class ApiConnectionsController < ApplicationController
                       @error_count += 1
                       @not_saved_array.push(r)
                     end
-                    @api_connection_last_sync = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: params["subfield_id"]).first
-                    @api_connection_last_sync.update(last_sync: Time.zone.now)
                   end
                 end
               end
+            end
+            if @new_count != 0 || @update_count != 0
+              @api_connection_last_sync = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: params["subfield_id"]).first
+              @api_connection_last_sync.update(last_sync: Time.zone.now)
             end
             @return_data[:result] ="Nuevos subformularios: #{@new_count}. Subformularios editados: #{@update_count}. Subformularios sin guardar: #{@error_count}."
           end
