@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20230705045131) do
+ActiveRecord::Schema.define(version: 20240106005740) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,6 +56,23 @@ ActiveRecord::Schema.define(version: 20230705045131) do
     t.index ["analysis_type_id"], name: "index_analytics_dashboards_on_analysis_type_id"
     t.index ["chart_id"], name: "index_analytics_dashboards_on_chart_id"
     t.index ["project_type_id"], name: "index_analytics_dashboards_on_project_type_id"
+  end
+
+  create_table "api_connections", force: :cascade do |t|
+    t.bigint "project_type_id"
+    t.string "url"
+    t.integer "interval"
+    t.boolean "automatic"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "token"
+    t.string "key_api"
+    t.bigint "subfield_id"
+    t.jsonb "mapped_fields"
+    t.string "content_type"
+    t.string "authorization"
+    t.datetime "last_sync"
+    t.index ["project_type_id"], name: "index_api_connections_on_project_type_id"
   end
 
   create_table "charts", id: :serial, force: :cascade do |t|

@@ -1,0 +1,25 @@
+<div class="card m-2 shadow">
+  <div class="card-body">
+    <div class="row justify-content-center">
+      <h2 class="m-0">Sincronizar subformularios desde una API</h2>
+    </div>
+  </div>
+</div>
+
+<%= render 'form' %>
+
+<!-- Sync Decision-->
+<div class="toast custom_sync_toast" id="toast_sync" role="alert" data-autohide="false" aria-live="assertive" aria-atomic="true">
+  <div class="toast-header">
+    <%= image_tag ENV['HORIZONTAL_LOGO'], class: 'mr-auto', height:"30" %>
+  </div>
+  <div class="toast-body">
+    <p id="text_sync_toast"></p>
+    <p id="errors_details"></p>
+    <p id="sample_point_ids"></p>
+    <br>
+    <button class="btn btn-secondary p-0 m-1" id="sync_yes" type="button" style="width: 35px; outline: none;">SI</button>
+    <button class="btn btn-secondary p-0" data-dismiss="toast" id="sync_no" type="button" style="width: 35px; outline: none;">NO</button>
+    <button class="btn btn-secondary p-0" data-dismiss="toast" id="sync_ok" type="button" style="width: 35px; outline: none;">OK</button>
+  </div>
+</div>

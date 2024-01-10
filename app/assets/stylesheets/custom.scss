@@ -934,6 +934,16 @@ div.custom-menu.show {
   width: 30%;
 }
 
+.custom_sync_toast {
+  position: absolute;
+  top: -30vh;
+  left: 37%;
+  background: rgb(39, 43, 48);
+  z-index: 4000;
+  color: white;
+  width: 30%;
+}
+
 .custom_danger{
   color:red;
   font-weight:bold;
