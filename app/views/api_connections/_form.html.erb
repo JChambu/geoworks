@@ -51,7 +51,7 @@
         },
         success: function(data) {
           $('#text_sync_toast').html(data.result.replace(/\. /g, "<br/>"));
-          if (data.track_errors =! undefined && data.sample_point_ids =! undefined) {
+          if (data.track_errors !== undefined && data.sample_point_ids !== undefined) {
             $('#errors_details').html(data.track_errors.replace(/\. /g, "<br/>"));
             $('#sample_point_ids').html(data.sample_point_ids.replace(/\. /g, "<br/>"));
           }
