@@ -51,6 +51,8 @@
         },
         success: function(data) {
           $('#text_sync_toast').html(data.result.replace(/\. /g, "<br/>"));
+          $('#errors_details').html(data.track_errors.replace(/\. /g, "<br/>"));
+          $('#sample_point_ids').html(data.sample_point_ids.replace(/\. /g, "<br/>"));
           $('#sync_yes').hide();
           $('#sync_no').hide();
           $('#sync_ok').show();
@@ -58,9 +60,7 @@
         }
       });
     });
-
   });
-
 </script>
 
 
@@ -85,11 +85,8 @@
   </div>
 </div>
 <div class="row justify-content-center mt-4 pb-4">
-      <%= link_to t('.cancel', :default => t("helpers.links.cancel")), root_path, :class => 'btn btn-secondary mr-1' %>
-      
-      <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Configurar", disabled: true %>
-
-      <button type="button" disabled id="sync_button" class="enviar btn btn-primary">Sincronizar</button>
-
-    </div>
+  <%= link_to t('.cancel', :default => t("helpers.links.cancel")), root_path, :class => 'btn btn-secondary mr-1' %>
+  <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Configurar", disabled: true %>
+  <button type="button" disabled id="sync_button" class="enviar btn btn-primary">Sincronizar</button>
+</div>
 <% end %>

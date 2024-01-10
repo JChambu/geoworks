@@ -108,11 +108,12 @@ class ApiConnectionsController < ApplicationController
         require 'net/http'
         require 'uri'
         require 'json'
-        
+
         @last_sync = ApiConnection.where(project_type_id: @project_type.id, subfield_id: params["subfield_id"]).pluck(:last_sync).first
         if @last_sync.nil?
           @last_sync = "01-01-1800"
         end
+
         uri = URI.parse(@url + "?fecha=#{@last_sync}")
         request = Net::HTTP::Get.new(uri)
         request['Content-Type'] = @api_connection_to_sync.content_type
@@ -125,7 +126,7 @@ class ApiConnectionsController < ApplicationController
           response_data = JSON.parse(response.body)
           results = response_data[@api_connection_to_sync.key_api]
           if results.nil?
-            @return_data[:result] = "No se encontraron datos para la Key configurada."
+            @return_data[:result] = "No se encontraron datos para sincronizar para la Key configurada."
             @return_data[:success] = false
           else
             @return_data[:result] = results.length
@@ -177,6 +178,13 @@ class ApiConnectionsController < ApplicationController
       @not_saved_array = []
       @new_count = 0
       @update_count = 0
+      @unique_field_mapped_nil = 0
+      @parent_id_mapped_nil = 0
+      @updated_at_mapped_nil = 0
+      @created_at_mapped_nil = 0
+      @user_id_mapped_nil = 0
+      @no_project_id_project_field_id = 0
+      @sample_point_id = []
 
       if @unique_field.nil?
         @return_data[:result] = "No se pudo encontrar un campo único en el modelo de datos (app_unique_key)."
@@ -201,6 +209,7 @@ class ApiConnectionsController < ApplicationController
           if @mapping_from_api.nil?
             @return_data[:result] = "El mapeo de campos está vacío"
           else
+            @last_error_count = 0
             results.each do |r|
               @unique_field_mapped = r[@unique_field_from_api]
               @parent_id_mapped = r[@parent_id_from_api]
@@ -216,6 +225,7 @@ class ApiConnectionsController < ApplicationController
               if @unique_field_mapped.nil?
                 #el registro a sincronizar no contiene un campo de identificación único
                 @error_count += 1
+                @unique_field_mapped_nil += 1
                 @not_saved_array.push(r)
               elsif @parent_id_mapped.nil?
                 #el registro a sincronizar no contiene un id del padre
@@ -224,14 +234,17 @@ class ApiConnectionsController < ApplicationController
               elsif @updated_at_mapped.nil?
                 #el registro a sincronizar no contiene updated_at
                 @error_count += 1
+                @updated_at_mapped_nil += 1
                 @not_saved_array.push(r)
               elsif @created_at_mapped.nil?
                 #el registro a sincronizar no contiene created_at
                 @error_count += 1
+                @created_at_mapped_nil += 1
                 @not_saved_array.push(r)
               elsif @user_id_mapped.nil?
                 #el registro a sincronizar no contiene un id de usuario
                 @error_count += 1
+                @user_id_mapped_nil += 1
                 @not_saved_array.push(r)
               else
                 # check if parent_id exist
@@ -242,6 +255,7 @@ class ApiConnectionsController < ApplicationController
                 @form = Project.where(id: @parent_id).first
                 if @form.nil? || @parent_id.nil?
                   @error_count += 1
+                  @parent_id_mapped_nil += 1
                   @not_saved_array.push(r)
                 else
                   @project_data_children = ProjectDataChild
@@ -275,18 +289,25 @@ class ApiConnectionsController < ApplicationController
                       end
                     else
                       #The project_data_children to update do not belong to project_id and/or to project_field_id
+                      @no_project_id_project_field_id += 1
                       @error_count += 1
                       @not_saved_array.push(r)
                     end
                   end
                 end
               end
+              if @error_count > @last_error_count
+                @sample_point_id.push(r["PuntoMuestreal"])
+              end
+              @last_error_count = @error_count
             end
-            if @new_count != 0 || @update_count != 0
+            if @error_count == 0
               @api_connection_last_sync = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: params["subfield_id"]).first
               @api_connection_last_sync.update(last_sync: Time.zone.now)
             end
             @return_data[:result] ="Nuevos subformularios: #{@new_count}. Subformularios editados: #{@update_count}. Subformularios sin guardar: #{@error_count}."
+            @return_data[:track_errors] = "-Registros sin campo de identificación único: #{@unique_field_mapped_nil}. -Registros sin ID del padre: #{@parent_id_mapped_nil}. -Registros sin campo update_at: #{@updated_at_mapped_nil}. -Registros sin campo created_at: #{@created_at_mapped_nil}. -Registros sin ID de usuario: #{@user_id_mapped_nil}. -No pertenecen a project_id y/o project_field_id: #{@no_project_id_project_field_id}"
+            @return_data[:sample_point_ids] = "Puntos Muestreales con errores: #{@sample_point_id.join(', ')}"
           end
         end
       end

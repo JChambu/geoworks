@@ -1,6 +1,6 @@
 <script type="text/javascript">
   $(document).ready(function() {
-    
+
     // function for mapping select
     $('.key-select').change(function() {
     var selectedOption = $(this).val();
@@ -18,14 +18,12 @@
         }
         if($(this).is(':selected')) {
           let indexToDelete = unSelectedOptions.indexOf($(this).val());
-          console.log("indexToDelete " +indexToDelete);
           if (indexToDelete >= 0) {
             unSelectedOptions.splice(indexToDelete,1);
           }
         }
       });
     });
-
 
     unSelectedOptions.forEach(function(o){
       $('.key-select').each(function() {
@@ -38,12 +36,11 @@
     });
 
     var result = new Object();
-    if ($('#updated_at').find(":selected").text() == "" 
-      || $('#parent_id').find(":selected").text() == "" 
+    if ($('#updated_at').find(":selected").text() == ""
+      || $('#parent_id').find(":selected").text() == ""
       || $('#unique_field').find(":selected").text() == ""){
       $('#envi').prop("disabled", true);
     } else {
-
       $('#envi').prop("disabled", false);
       if ($('#created_at').find(":selected").text() == "") {
         result.created_at = $('#updated_at').find(":selected").text();
@@ -69,20 +66,11 @@
       result.mapping = mapping;
       $('.key-result').val(JSON.stringify(result));
     }
-  
   });
 
-
-    // function for fill fields 
-
+    // function for fill fields
     mapping_saved = JSON.stringify(<%= raw @api_connection.mapped_fields.to_json %>)
-
-    console.log("Mappeing saved")
-    console.log(mapping_saved);
-
     var mapping_saved_object = JSON.parse(mapping_saved);
-    console.log("Mappeing object")
-    console.log(mapping_saved_object);
     if (mapping_saved_object["created_at"] != mapping_saved_object["updated_at"]) {
         $('#created_at').val(mapping_saved_object["created_at"]).trigger('change');
     }
@@ -95,18 +83,16 @@
     if(mapping_saved_object["mapping"] != undefined ) {
       var key_mapping = $('.key_mapping');
       var key_mapping_project = $('.key_mapping_project');
-        for (x = 0 ; x < key_mapping_project.length ; x ++) {
-          if (mapping_saved_object["mapping"][$(key_mapping_project[x]).attr("subfield_id")] != undefined ) {
-            $(key_mapping[x]).val(mapping_saved_object["mapping"][$(key_mapping_project[x]).attr("subfield_id")])
-          }
+      for (x = 0 ; x < key_mapping_project.length ; x ++) {
+        if (mapping_saved_object["mapping"][$(key_mapping_project[x]).attr("subfield_id")] != undefined ) {
+          $(key_mapping[x]).val(mapping_saved_object["mapping"][$(key_mapping_project[x]).attr("subfield_id")])
         }
       }
-      $('.key_mapping').each(function(){
-        $(this).trigger('change');
-      });
+    }
+    $('.key_mapping').each(function(){
+      $(this).trigger('change');
+    });
   });
-
-
 </script>
 
 <% if notice %>
@@ -120,13 +106,11 @@
   </div>
 <% end %>
 <%= form_for @api_connection, url: api_connection_mapping_path(@project_type), method: :post do |f| %>
-  <div class="d-block container-fluid justify-content-around"> 
-  
-    <div class="d-block container-fluid justify-content-around"> 
+  <div class="d-block container-fluid justify-content-around">
+    <div class="d-block container-fluid justify-content-around">
       <%= f.text_field :mapped_fields, class:"key-result", readonly: :true, hidden: true %>
       <%= f.text_field :project_type_id, value: @project_type.id , readonly: :true, hidden: true %>
       <%= f.text_field :subfield_id, value: @subfield_id , readonly: :true, hidden: true %>
-
       <div class="row my-2 mt-4">
         <div class="col-md-6 text-right">
           <h4 class="">Datos API</h4>
@@ -202,24 +186,21 @@
       </div>
     </div>
 
-
-    <div class="d-block container-fluid justify-content-around"> 
+    <div class="d-block container-fluid justify-content-around">
       <div>
-          <% @project_subfields.each do |subfield| %>
-              <div class="row my-1">
-                <div class="col-md-6 text-right">
-                  <%= select_tag 'key_select', options_for_select(@keys), prompt: "", class: "key-select key_mapping select col-md-4 form-control form-control-sm d-inline" %>
-
-                </div>
-                <div class="col-md-6 text-right">
-                  <div class="row">
-                    <label class="ml-4 key_mapping_project" subfield_id=<%= subfield.id %>  ><%= subfield.name %></label>
-                  </div>
-                </div>
+        <% @project_subfields.each do |subfield| %>
+          <div class="row my-1">
+            <div class="col-md-6 text-right">
+              <%= select_tag 'key_select', options_for_select(@keys), prompt: "", class: "key-select key_mapping select col-md-4 form-control form-control-sm d-inline" %>
+            </div>
+            <div class="col-md-6 text-right">
+              <div class="row">
+                <label class="ml-4 key_mapping_project" subfield_id=<%= subfield.id %>  ><%= subfield.name %></label>
               </div>
-          <% end %>
+            </div>
+          </div>
+        <% end %>
       </div>
-
     </div>
 
     <div class="row justify-content-center mt-4 pb-4">
@@ -227,5 +208,4 @@
       <%= f.submit id: :envi, class: 'enviar btn btn-primary', value: "Guardar", disabled: true %>
     </div>
   </div>
-
 <% end %>
