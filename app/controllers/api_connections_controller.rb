@@ -307,7 +307,7 @@ class ApiConnectionsController < ApplicationController
             end
             @return_data[:result] ="Nuevos subformularios: #{@new_count}. Subformularios editados: #{@update_count}. Subformularios sin guardar: #{@error_count}."
             @return_data[:track_errors] = "-Registros sin campo de identificación único: #{@unique_field_mapped_nil}. -Registros sin ID del padre: #{@parent_id_mapped_nil}. -Registros sin campo update_at: #{@updated_at_mapped_nil}. -Registros sin campo created_at: #{@created_at_mapped_nil}. -Registros sin ID de usuario: #{@user_id_mapped_nil}. -No pertenecen a project_id y/o project_field_id: #{@no_project_id_project_field_id}"
-            @return_data[:sample_point_ids] = "Puntos Muestreales con errores: #{@sample_point_id.join(', ')}"
+            @return_data[:sample_point_ids] = "IDs de Puntos Muestreales con errores: #{@sample_point_id.join(', ')}"
           end
         end
       end

@@ -51,8 +51,10 @@
         },
         success: function(data) {
           $('#text_sync_toast').html(data.result.replace(/\. /g, "<br/>"));
-          $('#errors_details').html(data.track_errors.replace(/\. /g, "<br/>"));
-          $('#sample_point_ids').html(data.sample_point_ids.replace(/\. /g, "<br/>"));
+          if (data.track_errors =! undefined && data.sample_point_ids =! undefined) {
+            $('#errors_details').html(data.track_errors.replace(/\. /g, "<br/>"));
+            $('#sample_point_ids').html(data.sample_point_ids.replace(/\. /g, "<br/>"));
+          }
           $('#sync_yes').hide();
           $('#sync_no').hide();
           $('#sync_ok').show();
