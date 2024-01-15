@@ -23,8 +23,8 @@ class ApiConnectionsController < ApplicationController
     if response.is_a?(Net::HTTPSuccess)
       # If the response is successful (status code 2xx)
       response_data = JSON.parse(response.body)
-      first_result = response_data[api_connection_params["key_api"]].first
-      @keys = first_result.keys
+      first_result = response_data[api_connection_params["key_api"]]
+      @keys = first_result.flat_map(&:keys).uniq
       @api_connection_to_save = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: api_connection_params["subfield_id"]).first
       if @api_connection_to_save.nil?
         respond_to do |format|
