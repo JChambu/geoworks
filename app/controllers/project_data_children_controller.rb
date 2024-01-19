@@ -316,8 +316,10 @@ class ProjectDataChildrenController < ApplicationController
         data_child = params[:mapping][:data_child]
         data_child_list = []
         data_child.each do |key, value|
-          if ProjectSubfield.find(value.to_i).field_type_id == 2
-            data_child_list << value
+          if !value.empty?
+            if ProjectSubfield.find(value.to_i).field_type_id == 2
+              data_child_list << value
+            end
           end
         end
 
