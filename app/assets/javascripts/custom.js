@@ -3749,8 +3749,13 @@ function edit_file(edit_parent, edit_child, edit_status){
         // Verifica si tiene que crear tabla de capas
         create_layers_table();
       }
+      console.log("DATA");
+      console.log(data);
+      console.log("ANTES DE UPDATE_ALL()");
       update_all();
+      console.log("DESPUÉS DE UPDATE_ALL Y ANTES DE IF");
       if (app_ids.length == 1) {
+        console.log("DENTRO DE IF");
         app_id_int = parseInt(app_ids[0], 10);
         show_item_info(app_id_int,true)
         setTimeout(function() {
