@@ -76,16 +76,10 @@ class ProjectDataChildren
           has_right_format = /\d{2}\/\d{2}\/\d{4}/.match? value
           date = Date.parse(value) rescue false if has_right_format
           errors.add("#{project_subfield.id}", "Fecha invalida") if !has_right_format && !date
-        when FieldType::NUMERIC
-          is_numeric = Float(value) != nil rescue false
-          errors.add("#{project_subfield.id}", "No es númerico") if !is_numeric
         when FieldType::BOOLEAN
           is_true = value.to_s.downcase == 'true'
           is_false = value.to_s.downcase == 'false'
           errors.add("#{project_subfield.id}", "No es booleano") if !is_true && !is_false
-        when FieldType::SINGLE_LIST
-          wrong_subfield = value.is_a?(Array) ? value.length != 1 : true
-          errors.add("#{project_subfield.id}", "No es un arreglo de un item") if wrong_subfield
         when FieldType::MULT_LIST
           wrong_subfield = value.is_a?(Array) ? value.length < 1 : true
           errors.add("#{project_subfield.id}", "No es un arreglo con mas de un item") if wrong_subfield

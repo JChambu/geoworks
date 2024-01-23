@@ -313,8 +313,37 @@ class ProjectDataChildrenController < ApplicationController
 
         mapping = params[:mapping]
 
+        data_child = params[:mapping][:data_child]
+        data_child_list = []
+        data_child.each do |key, value|
+          if !value.empty?
+            if ProjectSubfield.find(value.to_i).field_type_id == 2
+              data_child_list << value
+            end
+          end
+        end
+
         data_hash = lines.map do |values|
           Hash[keys.zip(values)]
+        end
+
+        data_child_list.each do |dcl|
+          dcl = ProjectSubfield.where(id: dcl).pluck(:name)
+          data_child_list_parsed = dcl.join(", ")
+
+          data_hash.each do |element|
+            element.keys.each do |key|
+              if data_child_list_parsed == key
+                if element[key].include?(", ")
+                  element[key] = element[key].split(", ")
+                elsif element[key].include?(",")
+                  element[key] = element[key].split(",")
+                else
+                  element[key] = [element[key]]
+                end
+              end
+            end
+          end
         end
 
         File.delete(path_to_temp_file)
