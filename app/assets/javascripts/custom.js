@@ -3407,7 +3407,7 @@ function set_multiselect_style_childs(){
 }
 
 function open_new_child(element_field_id, element_name, element_key,is_multiple){
-  // event.target.style.visibility = "hidden";
+  event.target.style.visibility = "hidden";
   $.ajax({
     type: 'GET',
     url: '/project_subfields/show_subfields',
@@ -3761,7 +3761,7 @@ function edit_file(edit_parent, edit_child, edit_status){
         setTimeout(function() {
           show_confirmation('edit_confirmation');
           open_subtitle(data.subtitles_ids_array, '');
-        }, 1000);
+        }, 1500);
       }
     }
   });
