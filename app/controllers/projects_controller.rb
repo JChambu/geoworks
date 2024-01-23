@@ -317,9 +317,8 @@ class ProjectsController < ApplicationController
 
     field_ids = params[:subforms]&.values&.map { |subform| subform["field_id"].to_i }
     subtitles_ids_array = []
-    byebug
+
     if !field_ids.nil?
-      byebug
       field_ids.each do |fi|
         subtitles_ids_array << fi
         result = ProjectField.where("calculated_field ILIKE ?", "%#{fi}%")

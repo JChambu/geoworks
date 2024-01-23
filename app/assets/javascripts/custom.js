@@ -3462,8 +3462,6 @@ function show_hidden_fields() {
 }
 
 function open_subtitle(fields, ischild) {
-  console.log("fields APENAS ENTRA A OPEN_SUBTITLE");
-  console.log(fields);
   var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   if (fields != "") {
     fields.forEach(function(field_id) {
@@ -3749,19 +3747,14 @@ function edit_file(edit_parent, edit_child, edit_status){
         // Verifica si tiene que crear tabla de capas
         create_layers_table();
       }
-      console.log("DATA");
-      console.log(data);
-      console.log("ANTES DE UPDATE_ALL()");
       update_all();
-      console.log("DESPUÉS DE UPDATE_ALL Y ANTES DE IF");
       if (app_ids.length == 1) {
-        console.log("DENTRO DE IF");
         app_id_int = parseInt(app_ids[0], 10);
         show_item_info(app_id_int,true)
         setTimeout(function() {
           show_confirmation('edit_confirmation');
           open_subtitle(data.subtitles_ids_array, '');
-        }, 1500);
+        }, 1100);
       }
     }
   });
