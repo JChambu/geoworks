@@ -2443,8 +2443,6 @@ function export_to_excel(table, name, filename) {
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
 function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
-  console.log("Entra acá cuando abro el coso");
-
   children_fields_all = new Object;
   if(!is_new_file){
     $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
@@ -3065,8 +3063,6 @@ function create_new_row_child_date(element_child){
 
 function create_new_row_child(element_child, element_field_id, element_name, is_multiple, is_new){
   //campos de los hijos
-  console.log("element_child");
-  console.log(element_child);
   children_fields = element_child.children_fields;
   if(children_fields_all[element_field_id]==undefined){children_fields_all[element_field_id]=new Object}
   children_fields_all[element_field_id] = children_fields;
@@ -3125,8 +3121,6 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
     } else {
       new_p.innerHTML = element_child_field.name + ":";
       new_p.classList.add("field_key_child_json");
-      console.log("element child cuando crea el div");
-      console.log(element_child);
       new_p.id=element_field_id+"|child|"+element_child.children_id+"|"+element_child_field.field_type_id+"|"+element_child_field.field_id;
     }
     new_p.style.margin = "0px";
@@ -3428,7 +3422,7 @@ function open_new_child(element_field_id, element_name, element_key,is_multiple)
         children_id: 0,
         children_photos: []
       }
-      console.log("zzz");
+
       var new_row1 = create_new_row_child(child_elements_new, element_field_id,element_name,is_multiple,true);
       document.getElementById('child_container_'+element_key).appendChild(new_row1);
       textarea_adjust_height();
@@ -3505,13 +3499,7 @@ function textarea_adjust_height() {
 //****** FUNCIONES PARA EDICION DE REGISTROS *****
 
 function edit_file(edit_parent, edit_child, edit_status){
-  console.log("edit_parent");
-  console.log(edit_parent);
-  console.log("edit_child");
-  console.log(edit_child);
   var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
-  console.log("is_new_file");
-  console.log(is_new_file);
   textarea_adjust_height()
   //verifica requeridos si no es edición múltiple
 
@@ -3559,21 +3547,13 @@ function edit_file(edit_parent, edit_child, edit_status){
 
   $(".fakeLoader").css("display", "block");
   var app_ids = getapp_ids();
-  console.log("app_ids");
-  console.log(app_ids);
   // Arma Json properties padres
   if(filechange){
     var properties_to_save = new Object();
     $('.field_key_json').each(function() {
       var key_field_properties = this.id.split('|')[2];
-      console.log("key_field_properties");
-      console.log(key_field_properties);
       var id_field_properties = this.id.split('|')[0];
-      console.log("id_field_properties");
-      console.log(id_field_properties);
       var fiel_type_properties = this.id.split('|')[3];
-      console.log("fiel_type_properties");
-      console.log(fiel_type_properties);
       if($('#field_id_'+id_field_properties).val()!="" && $('#field_id_'+id_field_properties).val()!=null ){
         if(fiel_type_properties==2){
           var array_val = [];
@@ -3593,8 +3573,6 @@ function edit_file(edit_parent, edit_child, edit_status){
             }
           }
         }
-        console.log("value_field_properties");
-        console.log(value_field_properties);
         properties_to_save[key_field_properties] = value_field_properties;
       }
     });
@@ -3607,32 +3585,18 @@ function edit_file(edit_parent, edit_child, edit_status){
   var child_edited_all = [];
   if(array_child_edited.length>0){
     // array_child_edited es un array que contiene los id de los hijos modificados. 0 para nuevos hijos
-    console.log("array_child_edited");
-    console.log(array_child_edited);
     array_child_edited = array_child_edited.unique();
     for(z=0;z<array_child_edited.length;z++){
       var id_field_father_properties;
       // crea array único de ids de campos padres
       var array_field_id_father_grouped = [];
       $('.field_key_child_json').each(function() {
-        console.log("THIS");
-        console.log(this);
         var id_child_properties = this.id.split('|')[2];
-        console.log("id_child_properties");
-        console.log(id_child_properties);
         var id_field_child_properties = this.id.split('|')[4];
-        console.log("id_field_child_properties");
-        console.log(id_field_child_properties);
         if(id_child_properties==array_child_edited[z]){
           id_field_father_properties = this.id.split('|')[0];
-          console.log("id_field_father_properties");
-          console.log(id_field_father_properties);
           if($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!="" && $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!=null ){
-            console.log("array_field_id_father_grouped ANTES DE PUSH");
-            console.log(array_field_id_father_grouped);
             array_field_id_father_grouped.push(id_field_father_properties);
-            console.log("array_field_id_father_grouped DESPUES DE PUSH");
-            console.log(array_field_id_father_grouped);
           }
         }
       });
@@ -3640,31 +3604,20 @@ function edit_file(edit_parent, edit_child, edit_status){
       for (zz=0; zz<array_field_id_father_grouped.length; zz++){
         var properties_child_to_save = new Object();
         $('.field_key_child_json').each(function() {
-          console.log("THIS MAS ABAJO");
-          console.log(this);
           var id_child_properties = this.id.split('|')[2];
-          console.log("id_child_properties");
-          console.log(id_child_properties);
           var fiel_type_properties = this.id.split('|')[3];
-          console.log("fiel_type_properties");
-          console.log(fiel_type_properties);
           var id_field_child_properties = this.id.split('|')[4];
-          console.log("id_field_child_properties");
-          console.log(id_field_child_properties);
           id_field_father_properties = this.id.split('|')[0];
           if(id_child_properties==array_child_edited[z] && id_field_father_properties==array_field_id_father_grouped[zz]){
             if($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!="" && $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val()!=null ){
               if(fiel_type_properties==2){
                 var array_val = [];
                 array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
-                console.log("array_val");
-                console.log(array_val);
+
                 if(document.getElementById('fieldchildid|'+id_field_child_properties+'|'+id_child_properties).classList.contains('nested')){
                   array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties+'_nested').val());
                 }
                 var value_field_properties = array_val;
-                console.log("value_field_properties");
-                console.log(value_field_properties);
               }else{
                 if( fiel_type_properties == 4){
                 var value_field_properties = $('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val().toLowerCase() == 'true' ? true : false;;
@@ -3680,17 +3633,11 @@ function edit_file(edit_parent, edit_child, edit_status){
               }
             }
           });
-          console.log("properties_child_to_save[id_field_child_properties]");
-          console.log(properties_child_to_save);
-          console.log("array_field_id_father_grouped");
-          console.log(array_field_id_father_grouped);
           var child_data = new Object();
           child_data.IdFather = app_ids;
           child_data.field_id = parseInt(array_field_id_father_grouped[zz]);
           child_data.child_id = array_child_edited[z];
           child_data.properties = properties_child_to_save;
-          console.log("child_data");
-          console.log(child_data);
           child_edited_all.push(child_data);
       }
     }
@@ -3781,8 +3728,6 @@ function edit_file(edit_parent, edit_child, edit_status){
           // fin color del estado
           if(properties_to_save!=null){// si se modificó el padre
             var fields = document.querySelectorAll(".field_key");
-            console.log("fields");
-            console.log(fields);
             fields.forEach(function(column, indexColumn) {
               if(properties_to_save[column.value]!=undefined){
                 var indexval=indexColumn+1;
@@ -3805,14 +3750,14 @@ function edit_file(edit_parent, edit_child, edit_status){
         create_layers_table();
       }
       update_all();
-      app_id_int = parseInt(app_ids[0], 10);
-      show_item_info(app_id_int,true)
-      idSubform = data.id_subform
-      idSubformParsed = parseInt(idSubform)
-      setTimeout(function() {
-        show_confirmation('edit_confirmation');
-        open_subtitle([idSubformParsed], '');
-      }, 1000);
+      if (app_ids.length == 1) {
+        app_id_int = parseInt(app_ids[0], 10);
+        show_item_info(app_id_int,true)
+        setTimeout(function() {
+          show_confirmation('edit_confirmation');
+          open_subtitle(data.subtitles_ids_array, '');
+        }, 1000);
+      }
     }
   });
 }
