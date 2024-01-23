@@ -3422,6 +3422,7 @@ function open_new_child(element_field_id, element_name, element_key,is_multiple)
         children_id: 0,
         children_photos: []
       }
+
       var new_row1 = create_new_row_child(child_elements_new, element_field_id,element_name,is_multiple,true);
       document.getElementById('child_container_'+element_key).appendChild(new_row1);
       textarea_adjust_height();
@@ -3610,6 +3611,7 @@ function edit_file(edit_parent, edit_child, edit_status){
               if(fiel_type_properties==2){
                 var array_val = [];
                 array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties).val());
+
                 if(document.getElementById('fieldchildid|'+id_field_child_properties+'|'+id_child_properties).classList.contains('nested')){
                   array_val.push($('#fieldchildid\\|'+id_field_child_properties+'\\|'+id_child_properties+'_nested').val());
                 }
@@ -3745,9 +3747,15 @@ function edit_file(edit_parent, edit_child, edit_status){
         // Verifica si tiene que crear tabla de capas
         create_layers_table();
       }
-
-
       update_all();
+      if (app_ids.length == 1) {
+        app_id_int = parseInt(app_ids[0], 10);
+        show_item_info(app_id_int,true)
+        setTimeout(function() {
+          show_confirmation('edit_confirmation');
+          open_subtitle(data.subtitles_ids_array, '');
+        }, 1100);
+      }
     }
   });
 }
