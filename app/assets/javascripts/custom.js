@@ -3748,14 +3748,18 @@ function edit_file(edit_parent, edit_child, edit_status){
         create_layers_table();
       }
       update_all();
-      // if (app_ids.length == 1) {
-      //   app_id_int = parseInt(app_ids[0], 10);
-      //   show_item_info(app_id_int,true)
-      //   setTimeout(function() {
-      //     show_confirmation('edit_confirmation');
-      //     open_subtitle(data.subtitles_ids_array, '');
-      //   }, 1100);
-      // }
+      if (app_ids.length == 1) {
+        console.log("Dejo los logs a propósito");
+        console.log("DENTRO DE IF");
+        console.log("DATA");
+        console.log(data);
+        app_id_int = parseInt(app_ids[0], 10);
+        show_item_info(app_id_int,true)
+        setTimeout(function() {
+          show_confirmation('edit_confirmation');
+          open_subtitle(data.subtitles_ids_array, '');
+        }, 1100);
+      }
     }
   });
 }

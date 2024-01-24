@@ -314,25 +314,23 @@ class ProjectsController < ApplicationController
     properties = JSON(params[:properties]) # FIXME: solución temporal a los values como string
     subforms = params[:subforms] # FIXME: los paremetros llegan como string
     project_status_id = params[:project_status_id]
+    field_ids = params[:subforms]&.values&.map { |subform| subform["field_id"].to_i }
+    subtitles_ids_array = []
 
-    # field_ids = params[:subforms]&.values&.map { |subform| subform["field_id"].to_i }
-    # subtitles_ids_array = []
-    #
-    # if !field_ids.nil?
-    #   field_ids.each do |fi|
-    #     subtitles_ids_array << fi
-    #     result = ProjectField.where("calculated_field ILIKE ?", "%#{fi}%")
-    #
-    #     while result.any?
-    #       current_id = result.first.id
-    #       subtitle_id = result.first.calculated_field.scan(/\d+/).map(&:to_i)
-    #       subtitles_ids_array.concat(subtitle_id)
-    #       result = ProjectField.where("calculated_field ILIKE ?", "%#{current_id}%")
-    #     end
-    #   end
-    #   subtitles_ids_array.uniq!
-    #   subtitles_ids_array.sort!
-    # end
+    if !field_ids.nil?
+      field_ids.each do |fi|
+        result = ProjectField.where("calculated_field ILIKE ? AND field_type_id = ?", "%#{fi}%", 11)
+
+        while result.any?
+          current_id = result.first.id
+          subtitle_id = result.first.calculated_field.scan(/\d+/).map(&:to_i)
+          subtitles_ids_array.concat(subtitle_id)
+          result = ProjectField.where("calculated_field LIKE ? OR calculated_field ILIKE ? OR calculated_field ILIKE ? OR calculated_field ILIKE ? AND field_type_id = ?", "%,#{current_id}]%", "%,#{current_id},%", "%[#{current_id},%", "%[#{current_id}]%", 11)
+        end
+      end
+      subtitles_ids_array.uniq!
+      subtitles_ids_array.sort!
+    end
 
     if app_ids.present?
       app_ids.each do |app_id|
@@ -359,7 +357,7 @@ class ProjectsController < ApplicationController
           end
         end
       end
-      render json: {status: 'Actualización completada.', subforms_created: @subforms_created}
+      render json: {status: 'Actualización completada.', subforms_created: @subforms_created, subtitles_ids_array: subtitles_ids_array}
     else
       render json: {status: 'Faltan parámetros para completar la acción.'}
     end
