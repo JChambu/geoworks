@@ -2689,6 +2689,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             var new_celd = document.createElement('DIV');
             if (element.field_type_id == 11) {
               new_celd.className = "col-md-12 info_subtitle";
+              new_celd.id = "subtitleid_" + element.field_id;
             } else {
               new_celd.className = "col-md-5";
             }
