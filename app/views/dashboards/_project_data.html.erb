@@ -336,7 +336,7 @@ function show_subfield(field_ids){
 
         celd_footer = "<td style = 'min-width:204px; with:204px' class='footersubform_key_date"+id_field+"'></td>"
         father_field.head.forEach(function(child_field){
-          if(child_field.hidden==false && child_field.field_type_id!=11 && child_field.can_read == true){
+          if(child_field.field_type_id!=11 && child_field.can_read == true){
             var new_option = document.createElement("A");
             new_option.className ="dropdown-item "+id_field+'subfield dropsub'
             new_option.innerHTML = child_field.name;
