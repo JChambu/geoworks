@@ -53,6 +53,8 @@
       result.user_id = $('#user_id').find(":selected").text();
       result.parent_id = $('#parent_id').find(":selected").text();
       result.unique_field = $('#unique_field').find(":selected").text();
+      result.analysis_type_name = $('#analysis_type_name').find(":selected").text();
+      result.analysis_type_id_field = document.getElementById('analysis_type_id_field').value
 
       var mapping = new Object();
       var key_mapping = $('.key_mapping');
@@ -71,14 +73,18 @@
     // function for fill fields
     mapping_saved = JSON.stringify(<%= raw @api_connection.mapped_fields.to_json %>)
     var mapping_saved_object = JSON.parse(mapping_saved);
+
     if (mapping_saved_object["created_at"] != mapping_saved_object["updated_at"]) {
         $('#created_at').val(mapping_saved_object["created_at"]).trigger('change');
     }
+
     $('#updated_at').val(mapping_saved_object["updated_at"]).trigger('change');
     $('#date_format').val(mapping_saved_object["date_format"]);
     $('#user_id').val(mapping_saved_object["user_id"]).trigger('change');
     $('#parent_id').val(mapping_saved_object["parent_id"]).trigger('change');
     $('#unique_field').val(mapping_saved_object["unique_field"]).trigger('change');
+    $('#analysis_type_name').val(mapping_saved_object["analysis_type_name"]).trigger('change');
+    $('#analysis_type_id_field').val(mapping_saved_object["analysis_type_id_field"]).trigger('change');
 
     if(mapping_saved_object["mapping"] != undefined ) {
       var key_mapping = $('.key_mapping');
@@ -93,6 +99,10 @@
       $(this).trigger('change');
     });
   });
+
+  function getValue() {
+    var value = document.getElementById('analysis_type_id_field').value;
+  }
 </script>
 
 <% if notice %>
@@ -122,7 +132,6 @@
 
       <div class="row my-1">
         <div class="col-md-6 text-right">
-
           <%= select_tag "gwm_created_at", options_for_select(@keys), prompt: "", class: "key-select select col-md-4 form-control form-control-sm d-inline", id: "created_at" %>
         </div>
           <div class="col-md-6 text-left pl-0">
@@ -176,6 +185,15 @@
         </div>
         <div class="col-md-6 text-left pl-0">
           <label class="col-md-12 text-left col-form-label py-0">Campo de identificación único</label>
+        </div>
+      </div>
+
+      <div class="row my-1">
+        <div class="col-md-6 text-right">
+          <%= select_tag 'key_select', options_for_select(@keys), prompt: "", class: "key-select select col-md-4 form-control form-control-sm d-inline", id: "analysis_type_name" %>
+        </div>
+        <div class="col-md-2 text-right pl-0">
+          <%= text_field_tag 'analysis_type_id', nil, class: 'key-select form-control form-control-sm', style:'width: 50px', id: 'analysis_type_id_field', onchange: 'getValue()' %>
         </div>
       </div>
 
