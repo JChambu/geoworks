@@ -192,8 +192,11 @@
         <div class="col-md-6 text-right">
           <%= select_tag 'key_select', options_for_select(@keys), prompt: "", class: "key-select select col-md-4 form-control form-control-sm d-inline", id: "analysis_type_name" %>
         </div>
-        <div class="col-md-2 text-right pl-0">
+        <div class="col-md-0 text-right">
           <%= text_field_tag 'analysis_type_id', nil, class: 'key-select form-control form-control-sm', style:'width: 50px', id: 'analysis_type_id_field', onchange: 'getValue()' %>
+        </div>
+        <div class="col md-1 text-left">
+          <label>Filtro por key y value <i class="fas fa-exclamation-circle ml-4"></i> Se sincronizará solo lo que coincida con el key y el value configurado </label>
         </div>
       </div>
 
