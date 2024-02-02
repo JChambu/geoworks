@@ -73,6 +73,13 @@ Navarra.calculated_and_script_fields = function() {
       if(!is_multiple){
         for(x=0;x<hiddenTrue.length;x++){
           if(isparent){
+            hiddenTrue.forEach(function(elemento) {
+              search_subtitle = $('#subtitleid_' + elemento);
+              if (search_subtitle.length==1) {
+                $('#subtitleid_' + elemento).addClass("d-none");
+                $('#subtitleid_' + elemento).addClass("hidden_field");
+              }
+            });
             var texto_campo_id_script = "#field_id_"+hiddenTrue[x];
           } else{
             var texto_campo_id_script = "#fieldchildid\\|"+hiddenTrue[x]+"\\|"+field_id.split('|')[1];
