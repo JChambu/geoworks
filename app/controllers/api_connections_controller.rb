@@ -12,7 +12,14 @@ class ApiConnectionsController < ApplicationController
     require 'net/http'
     require 'uri'
     require 'json'
-    uri = URI.parse(api_connection_params["url"] + "?fecha=01-01-1800")
+
+    url_params = params[:api_connection][:url].scan(/\?/).count
+    if url_params == 0
+      uri = URI.parse(api_connection_params["url"] + "?fecha=01-01-1800")
+    elsif url_params == 1
+      uri = URI.parse(api_connection_params["url"])
+    end
+
     request = Net::HTTP::Get.new(uri)
     request['Content-Type'] = params[:api_connection][:content_type]
     request['Authorization'] = params[:api_connection][:authorization]
@@ -24,40 +31,44 @@ class ApiConnectionsController < ApplicationController
       # If the response is successful (status code 2xx)
       response_data = JSON.parse(response.body)
       first_result = response_data[api_connection_params["key_api"]]
-      @keys = first_result.flat_map(&:keys).uniq
-      @api_connection_to_save = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: api_connection_params["subfield_id"]).first
-      if @api_connection_to_save.nil?
+      @subfield_id = params[:api_connection]["subfield_id"]
+      if first_result.nil?
         respond_to do |format|
-          @api_connection = ApiConnection.new(api_connection_params)
-          if @api_connection.save
-            format.html { redirect_to api_connection_mapping_path(subfield_id: api_connection_params["subfield_id"], keys: @keys), notice: 'La conexión a la api fue creada exitosamente.' }
-            #format.json { render action: 'show', status: :created, location: @api_connection }
-          else
-            format.html { redirect_to api_connection_path, notice: 'Api Conection failed' }
-            format.json { render json: @api_connection.errors.full_messages, status: :unprocessable_entity }
-          end
+          format.html { redirect_to api_connection_subform_path(@project_type_id, subfield_id: @subfield_id), notice: 'No se encontraron datos para sincronizar con la fecha configurada' }
         end
       else
-        respond_to do |format|
-          if @api_connection_to_save.update(api_connection_params)
-            format.html { redirect_to api_connection_mapping_path(subfield_id: api_connection_params["subfield_id"], keys: @keys), notice: 'La conexión a la api fue actualizada exitosamente.' }
-            #format.json { render action: 'show', status: :created, location: @api_connection }
-          else
-            format.html { redirect_to api_connection_path, notice: 'Falló la conexión a la api' }
-            format.json { render json: @api_connection.errors.full_messages, status: :unprocessable_entity }
+        @keys = first_result.flat_map(&:keys).uniq
+        @api_connection_to_save = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: api_connection_params["subfield_id"]).first
+        if @api_connection_to_save.nil?
+          respond_to do |format|
+            @api_connection = ApiConnection.new(api_connection_params)
+            if @api_connection.save
+              format.html { redirect_to api_connection_mapping_path(subfield_id: api_connection_params["subfield_id"], keys: @keys), notice: 'La conexión a la api fue creada exitosamente.' }
+              #format.json { render action: 'show', status: :created, location: @api_connection }
+            else
+              format.html { redirect_to api_connection_path, notice: 'Api Conection failed' }
+              format.json { render json: @api_connection.errors.full_messages, status: :unprocessable_entity }
+            end
+          end
+        else
+          respond_to do |format|
+            if @api_connection_to_save.update(api_connection_params)
+              format.html { redirect_to api_connection_mapping_path(subfield_id: api_connection_params["subfield_id"], keys: @keys), notice: 'La conexión a la api fue actualizada exitosamente.' }
+              #format.json { render action: 'show', status: :created, location: @api_connection }
+            else
+              format.html { redirect_to api_connection_path, notice: 'Falló la conexión a la api' }
+              format.json { render json: @api_connection.errors.full_messages, status: :unprocessable_entity }
+            end
           end
         end
       end
-
     else
       puts "La solicitud falló con el código de estado: #{response.code}"
-
       respond_to do |format|
         format.html { redirect_to api_connection_path, notice: 'Falló la conexión a la api' }
         format.json { render json: @api_connection.errors.full_messages, status: :unprocessable_entity }
       end
     end
-
   end
 
   def create_mapping
@@ -109,12 +120,13 @@ class ApiConnectionsController < ApplicationController
         require 'uri'
         require 'json'
 
-        @last_sync = ApiConnection.where(project_type_id: @project_type.id, subfield_id: params["subfield_id"]).pluck(:last_sync).first
-        if @last_sync.nil?
-          @last_sync = "01-01-1800"
+        url_params = @url.scan(/\?/).count
+        if url_params == 0
+          uri = URI.parse(@url + "?fecha=01-01-1800")
+        elsif url_params == 1
+          uri = URI.parse(@url)
         end
 
-        uri = URI.parse(@url + "?fecha=#{@last_sync}")
         request = Net::HTTP::Get.new(uri)
         request['Content-Type'] = @api_connection_to_sync.content_type
         request['Authorization'] = @api_connection_to_sync.authorization
@@ -124,7 +136,17 @@ class ApiConnectionsController < ApplicationController
 
         if response.is_a?(Net::HTTPSuccess)
           response_data = JSON.parse(response.body)
-          results = response_data[@api_connection_to_sync.key_api]
+          analysis_type = @api_connection_to_sync.mapped_fields["analysis_type_name"]
+          analysis_type_id = @api_connection_to_sync.mapped_fields["analysis_type_id_field"].to_i
+
+          if !@api_connection_to_sync.mapped_fields["analysis_type_name"].empty? && !@api_connection_to_sync.mapped_fields["analysis_type_id_field"].empty?
+            results = response_data[@api_connection_to_sync.key_api]
+            filtered_results = results.select { |result| result["#{analysis_type}"] == analysis_type_id }
+            results = filtered_results
+          else
+            results = response_data[@api_connection_to_sync.key_api]
+          end
+
           if results.nil?
             @return_data[:result] = "No se encontraron datos para sincronizar para la Key configurada."
             @return_data[:success] = false
@@ -152,12 +174,13 @@ class ApiConnectionsController < ApplicationController
     require 'uri'
     require 'json'
 
-    @last_sync = ApiConnection.where(project_type_id: @project_type.id, subfield_id: params["subfield_id"]).pluck(:last_sync).first
-    if @last_sync.nil?
-      @last_sync = "01-01-1800"
+    url_params = @url.scan(/\?/).count
+    if url_params == 0
+      uri = URI.parse(@url + "?fecha=01-01-1800")
+    elsif url_params == 1
+      uri = URI.parse(@url)
     end
 
-    uri = URI.parse(@url + "?fecha=#{@last_sync}")
     request = Net::HTTP::Get.new(uri)
     request['Content-Type'] = @api_connection_to_sync.content_type
     request['Authorization'] = @api_connection_to_sync.authorization
@@ -300,10 +323,6 @@ class ApiConnectionsController < ApplicationController
                 @sample_point_id.push(r["PuntoMuestreal"])
               end
               @last_error_count = @error_count
-            end
-            if @error_count == 0
-              @api_connection_last_sync = ApiConnection.where(project_type_id: @project_type.id).where(subfield_id: params["subfield_id"]).first
-              @api_connection_last_sync.update(last_sync: Time.zone.now)
             end
             @return_data[:result] ="Nuevos subformularios: #{@new_count}. Subformularios editados: #{@update_count}. Subformularios sin guardar: #{@error_count}."
             @return_data[:track_errors] = "-Registros sin campo de identificación único: #{@unique_field_mapped_nil}. -Registros sin ID del padre: #{@parent_id_mapped_nil}. -Registros sin campo update_at: #{@updated_at_mapped_nil}. -Registros sin campo created_at: #{@created_at_mapped_nil}. -Registros sin ID de usuario: #{@user_id_mapped_nil}. -No pertenecen a project_id y/o project_field_id: #{@no_project_id_project_field_id}"
