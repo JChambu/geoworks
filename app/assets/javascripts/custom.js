@@ -3749,10 +3749,6 @@ function edit_file(edit_parent, edit_child, edit_status){
       }
       update_all();
       if (app_ids.length == 1) {
-        console.log("Dejo los logs a propósito");
-        console.log("DENTRO DE IF");
-        console.log("DATA");
-        console.log(data);
         app_id_int = parseInt(app_ids[0], 10);
         show_item_info(app_id_int,true)
         setTimeout(function() {
