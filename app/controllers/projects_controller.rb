@@ -325,7 +325,8 @@ class ProjectsController < ApplicationController
           current_id = result.first.id
           subtitle_id = result.first.calculated_field.scan(/\d+/).map(&:to_i)
           subtitles_ids_array.concat(subtitle_id)
-          result = ProjectField.where("calculated_field LIKE ? OR calculated_field ILIKE ? OR calculated_field ILIKE ? OR calculated_field ILIKE ? AND field_type_id = ?", "%,#{current_id}]%", "%,#{current_id},%", "%[#{current_id},%", "%[#{current_id}]%", 11)
+          result = ProjectField.where("calculated_field LIKE ? OR calculated_field ILIKE ? OR calculated_field ILIKE ? OR calculated_field ILIKE ?", "%,#{current_id}]%", "%,#{current_id},%", "%[#{current_id},%", "%[#{current_id}]%")
+                               .where(field_type_id: 11)
         end
       end
       subtitles_ids_array.uniq!
