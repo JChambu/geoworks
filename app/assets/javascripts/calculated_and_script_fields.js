@@ -410,6 +410,97 @@ Navarra.calculated_and_script_fields = function() {
               }
             }
           }
+
+          if(CalculateObj_keys[k]=="datos_capa_hijo"){
+            var field_id_calculated = field_id
+            var project_selected = Navarra.project_types.config.item_selected
+            var project_id = CalculateObj.datos_capa_hijo.project_id
+            var field_id =  CalculateObj.datos_capa_hijo.field_id
+            var subfield_ids = JSON.parse(CalculateObj.datos_capa_hijo.subfield_id)
+            var campos_asociar = CalculateObj.datos_capa_hijo.campos_asociar
+
+            $.ajax({
+              type: 'GET',
+              url: '/project_fields/get_other_layer_data',
+              datatype: 'JSON',
+              data: {
+                project_selected: project_selected,
+                current_field_type_id: field_type_id,
+                project_id: project_id,
+                field_id: field_id,
+                subfield_ids: subfield_ids,
+                campos_asociar: campos_asociar
+              },
+              success: function(data) {
+                query_data_children = data.query_data_children
+
+                let arrayListDatosCapa = [];
+                let newScript = "";
+
+                for (let den = 0; den < query_data_children.length; den++) {
+                  let data_new = "";
+                  for (let yy = 0; yy < subfield_ids.length; yy++) {
+                    let subfield_id = subfield_ids[yy];
+                    data_new += query_data_children[den][subfield_id] + " ";
+                  }
+
+                  arrayListDatosCapa.push(data_new);
+
+                  if (den === 0) {
+                    newScript += "{";
+                  }
+
+                  newScript += "\"" + data_new + "\":{\"true\":{\"hiddenTrue\":\"[]\",\"hiddenFalse\":\"[]\",\"requiredTrue\":\"[]\",\"requiredFalse\":\"[]\",\"readOnlyTrue\":\"[]\",\"readOnlyFalse\":\"[]\",\"setValue\":{";
+
+                  let campos_data = Object.keys(campos_asociar);
+                  let first_element = 0;
+
+                  for (let i = 0; i < campos_data.length; i++) {
+                    let keyD = campos_data[i];
+                    let campo_to = campos_asociar[keyD];
+                    let campo_from = query_data_children[den][keyD] || "";
+
+                    if (first_element !== 0) {
+                      newScript += ",";
+                    }
+
+                    newScript += "\"" + campo_to + "\":\"" + campo_from + "\"";
+                    first_element++;
+                  }
+
+                  newScript += "}}, \"false\":{\"hiddenTrue\":\"[]\",\"hiddenFalse\":\"[]\",\"requiredTrue\":\"[]\",\"requiredFalse\":\"[]\",\"readOnlyTrue\":\"[]\",\"readOnlyFalse\":\"[]\",\"setValue\":{}}}";
+
+                  if (den < query_data_children.length - 1) {
+                    newScript += ",";
+                  } else {
+                    newScript += "}";
+                  }
+                  var data_script = newScript
+                }
+
+                var field_id = field_id_calculated
+                texto_campo_id = "#fieldchildid\\|"+field_id.split('|')[0]+"\\|"+field_id.split('|')[1];
+                var ulElement = $(texto_campo_id).next('.btn-group').find('ul.multiselect-container');
+
+                var existingLiElements = ulElement.find('li');
+                if (existingLiElements.length === 0) {
+                  arrayListDatosCapa.forEach(function(nombre) {
+                    var option = $('<option>', {
+                      value: nombre,
+                      text: nombre
+                    });
+                    $(texto_campo_id).append(option);
+                    var liElement = $('<li>').appendTo(ulElement);
+                    $('<a>', { tabindex: '0' }).appendTo(liElement).append('<label class="radio" title="' + nombre + '"><input type="radio" value="' + nombre + '"> ' + nombre + '</label>');
+                  });
+                }
+
+                $(texto_campo_id).on('change', function() {
+                  Script(data_script, field_type_id, field_id, true, false, false);
+                });
+              }
+            });
+          }
         }
       };
 

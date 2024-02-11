@@ -70,7 +70,7 @@ Rails.application.routes.draw do
   post 'reports/save_data_report' => 'reports#save_data_report', as: :save_data_report
   post 'reports/save_form_report' => 'reports#save_form_report', as: :save_form_report
   post 'projects/has_ndvi_and_multipoints_role'
-
+  get 'project_fields/get_other_layer_data' => 'project_fields#get_other_layer_data'
 
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
