@@ -495,6 +495,27 @@ Navarra.calculated_and_script_fields = function() {
                   });
                 }
 
+                if (existingLiElements.length > 1) {
+                  selected_option = $(texto_campo_id).closest('.multiselect-native-select').find('.multiselect-selected-text').text();
+                  if (arrayListDatosCapa.includes(selected_option)) {
+                    var index = arrayListDatosCapa.indexOf(selected_option);
+                    if (index !== -1) {
+                        arrayListDatosCapa.splice(index, 1);
+                    }
+                  }
+
+                  ulElement.empty();
+                  arrayListDatosCapa.forEach(function(nombre) {
+                    var option = $('<option>', {
+                      value: nombre,
+                      text: nombre
+                    });
+                    $(texto_campo_id).append(option);
+                    var liElement = $('<li>').appendTo(ulElement);
+                    $('<a>', { tabindex: '0' }).appendTo(liElement).append('<label class="radio" title="' + nombre + '"><input type="radio" value="' + nombre + '"> ' + nombre + '</label>');
+                  });
+                }
+
                 $(texto_campo_id).on('change', function() {
                   Script(data_script, field_type_id, field_id, true, false, false);
                 });

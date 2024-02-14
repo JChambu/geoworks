@@ -3192,46 +3192,56 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
         }
 
         var found_option = false;
-        items_field.forEach(function(item) {
+
+        if (element_child_field.calculated_field.startsWith('{"datos_capa_hijo"') && element_child_field.hasOwnProperty("value")) {
           var new_option = document.createElement('OPTION');
-          new_option.text=item.name;
-          new_option.value=item.name;
-          if(!found_nested){
-            if(values!=null){
-              if(Array.isArray(values)){
-                values_array = values;
-                for (v=0;v<values_array.length;v++){
-                if(values_array[v]==item.name){
-                  found_option=true;
-                  new_option.selected = true;
+          new_option.text=element_child_field.value;
+          new_option.value=element_child_field.value;
+          new_option.selected = true;
+          new_p.appendChild(new_option);
+        } else {
+          items_field.forEach(function(item) {
+            var new_option = document.createElement('OPTION');
+            new_option.text=item.name;
+            new_option.value=item.name;
+            if(!found_nested){
+              if(values!=null){
+                if(Array.isArray(values)){
+                  values_array = values;
+                  for (v=0;v<values_array.length;v++){
+                  if(values_array[v]==item.name){
+                    found_option=true;
+                    new_option.selected = true;
+                  }
+                  }
+                } else{
+                  set_error_message("Error en subformulario, listados: "+element_child_field.name);
                 }
-                }
-              } else{
-                set_error_message("Error en subformulario, listados: "+element_child_field.name);
               }
             }
-          }
-          new_p.appendChild(new_option);
-          if(!found_option){new_p.selectedIndex = -1;}
-          //Comienza Anidados opciones
-          if(item.nested_items!=null){
-            new_option.setAttribute('data-type',item.name);
-            var items_field_nested = item.nested_items;
-            var found_option_nested = false;
-            items_field_nested.forEach(function(item_nested) {
-            var new_option_nested = document.createElement('OPTION');
-            new_option_nested.text=item_nested.name;
-            new_option_nested.value=item_nested.name;
-            if(item.name != values){
-              new_option_nested.className = "d-none";
+            new_p.appendChild(new_option);
+            if(!found_option){new_p.selectedIndex = -1;}
+            //Comienza Anidados opciones
+            if(item.nested_items!=null){
+              new_option.setAttribute('data-type',item.name);
+              var items_field_nested = item.nested_items;
+              var found_option_nested = false;
+              items_field_nested.forEach(function(item_nested) {
+              var new_option_nested = document.createElement('OPTION');
+              new_option_nested.text=item_nested.name;
+              new_option_nested.value=item_nested.name;
+              if(item.name != values){
+                new_option_nested.className = "d-none";
+              }
+              new_option_nested.setAttribute('data-type',item.name);
+              new_p_nested.appendChild(new_option_nested);
+              });
+              new_p_nested.value=values_nested;
             }
-            new_option_nested.setAttribute('data-type',item.name);
-            new_p_nested.appendChild(new_option_nested);
-            });
-            new_p_nested.value=values_nested;
-          }
-          //termina anidados opciones
-        });
+            //termina anidados opciones
+          });
+        }
+
         if(found_nested){new_p.value=values;}
         var id_field = element_child_field.field_id;
         var id_child = element_child.children_id;
