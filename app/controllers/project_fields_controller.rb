@@ -205,7 +205,7 @@ class ProjectFieldsController < ApplicationController
     campos_asociar = params[:campos_asociar]
     current_field_type_id = params[:current_field_type_id].to_i
     project_selected = params[:project_selected].to_i
-
+    byebug
     sec_layer_id = Project.select('DISTINCT ON (main.id) sec.id')
                     .from('projects main')
                     .joins("INNER JOIN projects AS sec ON ST_Intersects(sec.the_geom, main.the_geom)")
@@ -213,12 +213,12 @@ class ProjectFieldsController < ApplicationController
                     .pluck('sec.id')
 
     sec_layer_id = sec_layer_id.first.to_i
-
+    byebug
     query_data_children = ProjectDataChild
             .select('project_data_children.properties')
             .where('project_data_children.project_id = ? AND project_data_children.project_field_id = ?', sec_layer_id, field_id)
             .pluck('project_data_children.properties')
-
+    byebug        
     render json: { query_data_children: query_data_children }
   end
 end
