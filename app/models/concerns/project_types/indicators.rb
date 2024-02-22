@@ -46,18 +46,18 @@ module ProjectTypes::Indicators
           field_group = "users.name"
         end
         if chart.group_field.key != 'app_usuario' && chart.group_field.key !='app_estado'
-          field_group = validate_type_field(chart.group_field, 'group')  
+          field_group = validate_type_field(chart.group_field, 'group')
         end
       end
 
       #Genera query básico
       query_full = initial_query chart.analysis_type.name, field_select,condition_where,field_group,project_type_id , is_heatmap
-    
+
       query_full
     end
 
     def initial_query (type, field, condition_where, group_by , project_type_id , is_heatmap)
-      #Genera un query completo con el formato de los avanzados. Esto es así para poder tomar un DISTINC ON 
+      #Genera un query completo con el formato de los avanzados. Esto es así para poder tomar un DISTINC ON
       #DISTINCT es necesario por los INNERJOIN que pueden generar duplicados
       #DISTINCT ON (main.id) es para tomar como distinto sólo los ids
       add_group_by = ""
@@ -69,7 +69,7 @@ module ProjectTypes::Indicators
         order_group_by = "GROUP BY name_row ORDER BY name_row"
       end
       select_heat_map = ""
-      if is_heatmap 
+      if is_heatmap
         type = ""
         order_group_by = ""
         select_heat_map = " , st_x(main.the_geom) as lng, st_y(main.the_geom) as lat ,  main.the_geom"
@@ -87,7 +87,7 @@ module ProjectTypes::Indicators
       data_query += " FROM tabla #{order_group_by}"
 
       data_query
-    end 
+    end
 
     def query_extent size_box, project_type_id, children=false, data_query
       # Aplica ST_Contains por extent
@@ -115,7 +115,7 @@ module ProjectTypes::Indicators
         arr1.push([z])
       end
       data_query = data_query.gsub('where_clause', "where_clause shared_extensions.ST_Contains(ST_SetSRID(ST_GeomFromGeoJSON('{\"type\":\"Multipolygon\", \"coordinates\":#{arr1}}'), 4326), main.#{:the_geom}) AND ")
-      
+
       data_query
     end
 
@@ -128,7 +128,7 @@ module ProjectTypes::Indicators
       end
 
       #Aplica time_slider de hijos
-      if !from_date_subform.blank? || !to_date_subform.blank? 
+      if !from_date_subform.blank? || !to_date_subform.blank?
         data = data.gsub('where_subform_clause', "where_subform_clause (sub.gwm_created_at BETWEEN '#{from_date_subform}' AND '#{to_date_subform}') AND ")
       else
         data = data.gsub('where_subform_clause', "where_subform_clause sub.row_enabled = true AND ")
@@ -185,7 +185,7 @@ module ProjectTypes::Indicators
           cross_layer_filter = ProjectFilter.where(user_id: user_id).where(id: project_filter.cross_layer_filter_id).first
 
           # Cruza la capa del principal que contiene los hijos con la capa secunadaria
-          data = data.gsub('from_clause', "INNER JOIN projects sec_filter ON ST_Intersects(main.the_geom, sec_filter.the_geom)")
+          data = data.gsub('from_clause', "INNER JOIN projects sec_filter ON ST_Intersects(main.the_geom, sec_filter.the_geom) from_clause")
           data = data.gsub('where_clause', "where_clause sec_filter.project_type_id = #{cross_layer_filter.project_type_id}
             AND sec_filter.row_active = true
             AND sec_filter.current_season = true
@@ -207,7 +207,6 @@ module ProjectTypes::Indicators
 
       end
       data_query = data
-
       data_query
     end
 
@@ -254,7 +253,6 @@ module ProjectTypes::Indicators
             text = text.gsub("='null'"," IS NULL ")
               data = data.gsub('where_clause', "where_clause (#{text}) AND ")
           end
-
         end
       end
 
@@ -287,21 +285,21 @@ module ProjectTypes::Indicators
               text = "(sub.properties->>'#{field}')::numeric #{operator}'#{value}' AND sub.properties->>'#{field}' IS NOT NULL"
             elsif (type == '3' and value!='null')
               text = "to_date(sub.properties ->> '#{field}', 'DD/MM/YYYY') #{operator} to_date('#{value}','DD/MM/YYYY') AND sub.properties->>'#{field}' IS NOT NULL"
-            else  
+            else
               text = "sub.properties ->> '#{field}' #{operator}'#{value}'"
             end
             text = text.gsub("!='null'"," IS NOT NULL ")
             text = text.gsub("='null'"," IS NULL ")
 
             data = data.gsub('where_subform_clause', "where_subform_clause ("+text+") AND ")
-          end    
+          end
         end
         # Aplica filtros de usuario de hijos
         if !filter_user_children.blank?
           filter_user_children.each do |filter_child|
             @value = filter_child
             data = data.gsub('where_subform_clause', "where_subform_clause (sub.user_id = '#{@value}') AND ")
-          end    
+          end
         end
       end
 
@@ -320,7 +318,7 @@ module ProjectTypes::Indicators
                 text = "(sec.properties->>'#{field}')::numeric #{operator}'#{value}' AND sec.properties->>'#{field}' IS NOT NULL"
               elsif (type == '3' and value!='null')
                 text = "to_date(sec.properties ->> '#{field}', 'DD/MM/YYYY') #{operator} to_date('#{value}','DD/MM/YYYY') AND sec.properties->>'#{field}' IS NOT NULL"
-              else  
+              else
                 text = "sec.properties ->> '#{field}' #{operator}'#{value}'"
               end
               text = text.gsub("!='null'"," IS NOT NULL ")
@@ -351,11 +349,11 @@ module ProjectTypes::Indicators
 
       # Aplica filtro de capas secundarias on the fly para el proyecto activo (INTERSECT DEL PROYECTO ACTIVO)
       if(intersect_width_layers=='true')
-      current_tenant = Apartment::Tenant.current
+        current_tenant = Apartment::Tenant.current
         if !active_layers.nil?
           active_layers.each do |active_layer|
             active_layer_id = ProjectType.where(name_layer: active_layer).pluck(:id).first
-            data = data.gsub('from_clause', "from_clause INNER JOIN #{current_tenant}.projects intersect_"+active_layer+" ON ST_Intersects(main.the_geom, intersect_"+active_layer+".the_geom)")         
+            data = data.gsub('from_clause', "from_clause INNER JOIN #{current_tenant}.projects intersect_"+active_layer+" ON ST_Intersects(main.the_geom, intersect_"+active_layer+".the_geom)")
             data = data.gsub('where_clause', "where_clause intersect_"+active_layer+".project_type_id = #{active_layer_id} AND intersect_"+active_layer+".row_active = true AND intersect_"+active_layer+".current_season = true AND ")
             # Aplica filtros de la capa
             if !filters_layers.nil?
@@ -370,12 +368,12 @@ module ProjectTypes::Indicators
                     text = "(intersect_"+active_layer+".properties->>'#{field}')::numeric #{operator}'#{value}' AND intersect_"+active_layer+".properties->>'#{field}' IS NOT NULL"
                   elsif (type == '3' and value!='null')
                     text = "to_date(intersect_"+active_layer+".properties ->> '#{field}', 'DD/MM/YYYY') #{operator} to_date('#{value}','DD/MM/YYYY') AND intersect_"+active_layer+".properties->>'#{field}' IS NOT NULL"
-                  else  
+                  else
                     text = "intersect_"+active_layer+".properties ->> '#{field}' #{operator}'#{value}'"
                   end
                   text = text.gsub("!='null'"," IS NOT NULL ")
                   text = text.gsub("='null'"," IS NULL ")
-                  data = data.gsub('where_clause', "where_clause ("+text+") AND ") 
+                  data = data.gsub('where_clause', "where_clause ("+text+") AND ")
                 end
               end
             end
@@ -399,9 +397,8 @@ module ProjectTypes::Indicators
           end
         end
       end
-      
-      data_query = data
 
+      data_query = data
       data_query
     end
 
@@ -417,7 +414,7 @@ module ProjectTypes::Indicators
     end
 
     def kpi_new(graph_id,project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform , timeslider_layers, filters_layers,intersect_width_layers, active_layers)
-      
+
       querys=[]
 
       @ct = Apartment::Tenant.current
@@ -431,7 +428,7 @@ module ProjectTypes::Indicators
             items = {}
 
             if chart.sql_full.blank?
-              data_query = data_for_initial_query chart, project_type_id , false       
+              data_query = data_for_initial_query chart, project_type_id , false
             else
               data_query = chart.sql_full
             end
@@ -471,7 +468,7 @@ module ProjectTypes::Indicators
       querys
     end
 
-    
+
     def kpi_without_graph_one_by_one(kpi_default,project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform, indicator_id, timeslider_layers, filters_layers,intersect_width_layers, active_layers)
 
       querys = []
@@ -484,15 +481,15 @@ module ProjectTypes::Indicators
         sql_full = chart.sql_full
         if sql_full.blank?
           query_full = data_for_initial_query chart, project_type_id, false
-        else 
+        else
           #Trae query avanzado
           query_full = chart.sql_full
         end
-      else  
-        #Genera query para Seleccionados           
+      else
+        #Genera query para Seleccionados
         query_full = initial_query "count", "main.id","","",project_type_id , false
       end
-      
+
 
       if type_box == 'extent'
         query_full = query_extent size_box, project_type_id, false, query_full
@@ -506,7 +503,7 @@ module ProjectTypes::Indicators
         total += " FROM #{current_tenant}.projects main from_clause"
         total += " WHERE where_clause main.project_type_id = #{project_type_id}"
         total += " AND main.row_active = true AND main.current_season = true"
-  
+
         # Aplica filtros owner, atributo e intercapa (para total también)
         total = conditions_for_attributes_and_owner total, user_id, project_type_id
 
@@ -522,7 +519,7 @@ module ProjectTypes::Indicators
       # Aplica filtros owner, atributo e intercapa (para total también)
       query_full = conditions_for_attributes_and_owner query_full, user_id, project_type_id
 
-      # Aplica filtro time_slider 
+      # Aplica filtro time_slider
       query_full = apply_time_slider_filter query_full, from_date, to_date, from_date_subform, to_date_subform , timeslider_layers
 
       # Aplica filtros generados por el usuario y condición row_active y current_season (momentáneamente)
@@ -544,11 +541,9 @@ module ProjectTypes::Indicators
         querys << { "title": 'Total', "description": 'Total', "data": [{ "count": total_row }], "id": 1000 }
         querys << { "title": 'Seleccionado', "description": 'select', "data": [{ "count": row_selected }], "id": 1001 }
         querys << { "title": '% del Total', "description": 'AVG', "data": avg_selected, "id": 1002 }
-
         querys
       else
         querys << { "title": "#{chart.title}", "description": "kpi_sin grafico", "data": query_full, "id": chart.id }
-
         querys
       end
 
@@ -561,7 +556,7 @@ module ProjectTypes::Indicators
 
       items = {}
       if chart.sql_full.blank?
-        data_query = data_for_initial_query chart, project_type_id , true     
+        data_query = data_for_initial_query chart, project_type_id , true
       else
         data_query = chart.sql_full
       end
@@ -588,11 +583,9 @@ module ProjectTypes::Indicators
       data_query = data_query.gsub('where_subform_clause', "")
       data_query = data_query.gsub('from_clause', "")
       data_query = ActiveRecord::Base.connection.execute(data_query)
-      
+
       #querys = data_query.select("st_x(main.the_geom) as lng, st_y(main.the_geom) as lat").group('main.the_geom')
       data_query
     end
-
-
   end
 end
