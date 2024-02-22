@@ -418,6 +418,7 @@ Navarra.calculated_and_script_fields = function() {
             var field_id =  CalculateObj.datos_capa_hijo.field_id
             var subfield_ids = JSON.parse(CalculateObj.datos_capa_hijo.subfield_id)
             var campos_asociar = CalculateObj.datos_capa_hijo.campos_asociar
+            var current_field_type_id = Navarra.dashboards.config.project_type_id
 
             $.ajax({
               type: 'GET',
@@ -425,7 +426,7 @@ Navarra.calculated_and_script_fields = function() {
               datatype: 'JSON',
               data: {
                 project_selected: project_selected,
-                current_field_type_id: field_type_id,
+                current_field_type_id: current_field_type_id,
                 project_id: project_id,
                 field_id: field_id,
                 subfield_ids: subfield_ids,
