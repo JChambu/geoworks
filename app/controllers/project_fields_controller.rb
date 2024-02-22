@@ -212,13 +212,18 @@ class ProjectFieldsController < ApplicationController
                     .where('main.project_type_id = ? AND sec.project_type_id = ? AND main.id = ?', current_field_type_id, project_id, project_selected)
                     .pluck('sec.id')
 
+    sec_layer_id_prueba = Project.joins("INNER JOIN projects AS sec ON ST_Intersects(sec.the_geom, projects.the_geom)")
+                    .where('projects.project_type_id = ? AND sec.project_type_id = ? AND projects.id = ?', current_field_type_id, project_id, project_selected)
+                    .distinct
+                    .pluck('sec.id')
+
     sec_layer_id = sec_layer_id.first.to_i
     byebug
     query_data_children = ProjectDataChild
             .select('project_data_children.properties')
             .where('project_data_children.project_id = ? AND project_data_children.project_field_id = ?', sec_layer_id, field_id)
             .pluck('project_data_children.properties')
-    byebug        
+    byebug
     render json: { query_data_children: query_data_children }
   end
 end
