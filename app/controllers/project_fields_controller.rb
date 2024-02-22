@@ -218,7 +218,7 @@ class ProjectFieldsController < ApplicationController
             .select('project_data_children.properties')
             .where('project_data_children.project_id = ? AND project_data_children.project_field_id = ?', sec_layer_id, field_id)
             .pluck('project_data_children.properties')
-    byebug
+
     render json: { query_data_children: query_data_children }
   end
 end
