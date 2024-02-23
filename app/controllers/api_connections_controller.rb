@@ -190,7 +190,17 @@ class ApiConnectionsController < ApplicationController
 
     if response.is_a?(Net::HTTPSuccess)
       response_data = JSON.parse(response.body)
-      results = response_data[@api_connection_to_sync.key_api]
+
+      analysis_type = @api_connection_to_sync.mapped_fields["analysis_type_name"]
+      analysis_type_id = @api_connection_to_sync.mapped_fields["analysis_type_id_field"].to_i
+
+      if !@api_connection_to_sync.mapped_fields["analysis_type_name"].empty? && !@api_connection_to_sync.mapped_fields["analysis_type_id_field"].empty?
+        results = response_data[@api_connection_to_sync.key_api]
+        @filtered_results = results.select { |result| result["#{analysis_type}"] == analysis_type_id }
+        results = @filtered_results
+      else
+        results = response_data[@api_connection_to_sync.key_api]
+      end
       @unique_field = ProjectSubfield
         .select(:id)
         .where(:project_field_id => params["subfield_id"])
