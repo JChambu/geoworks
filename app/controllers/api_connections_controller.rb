@@ -313,6 +313,9 @@ class ApiConnectionsController < ApplicationController
                     end
                   else
                     # update record
+                    project_data_children_properties = @project_data_children.properties
+                    properties = project_data_children_properties.merge(properties)
+
                     if @project_data_children.project_id == @parent_id.to_i && @project_data_children.project_field_id == params["subfield_id"].to_i
                       if @project_data_children.update_subform_sync(properties, @updated_at)
                         @update_count += 1
