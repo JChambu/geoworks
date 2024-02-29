@@ -216,7 +216,7 @@ class ProjectFieldsController < ApplicationController
 
     query_data_children = ProjectDataChild
             .select('project_data_children.properties')
-            .where('project_data_children.project_id = ? AND project_data_children.project_field_id = ?', sec_layer_id, field_id)
+            .where('project_data_children.project_id = ? AND project_data_children.project_field_id = ? AND project_data_children.row_enabled = ? AND project_data_children.row_active = ?', sec_layer_id, field_id, true, true)
             .pluck('project_data_children.properties')
 
     render json: { query_data_children: query_data_children }

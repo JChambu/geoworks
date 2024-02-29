@@ -121,4 +121,15 @@ class ProjectSubfieldsController < ApplicationController
     render json: child_fields_array
 
   end
+
+  def get_calculated_data_from_script
+    subfield_id = params[:subfield_id].to_i
+
+    id_field_child_calculate = ProjectSubfield.where(id: subfield_id).pluck(:project_field_id).first
+
+    ids_with_calculated_field = ProjectSubfield.where('project_field_id = ? AND calculated_field ILIKE ?', id_field_child_calculate, '%{"bold":"","calculation"%').pluck(:id).first
+
+    render json: { ids_with_calculated_field: ids_with_calculated_field }
+  end
+
 end

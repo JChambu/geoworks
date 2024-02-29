@@ -308,14 +308,6 @@ Navarra.calculated_and_script_fields = function() {
                 }
 
                 if (existingLiElements.length > 1) {
-                  selected_option = $(texto_campo_id).closest('.multiselect-native-select').find('.multiselect-selected-text').text();
-                  if (arrayListDatosCapa.includes(selected_option)) {
-                    var index = arrayListDatosCapa.indexOf(selected_option);
-                    if (index !== -1) {
-                        arrayListDatosCapa.splice(index, 1);
-                    }
-                  }
-
                   ulElement.empty();
                   arrayListDatosCapa.forEach(function(nombre) {
                     var option = $('<option>', {
@@ -330,7 +322,24 @@ Navarra.calculated_and_script_fields = function() {
 
                 $(texto_campo_id).on('change', function() {
                   Script(data_script, field_type_id, field_id, true, false, false);
+                  var subfield_id = parseInt(texto_campo_id.match(/(\d+)/g)[0]);
+                  var id_child_calculate = parseInt(texto_campo_id.match(/(\d+)/g)[1]);
+
+                  $.ajax({
+                    type: 'GET',
+                    url: '/project_subfields/get_calculated_data_from_script',
+                    datatype: 'JSON',
+                    data: {
+                      subfield_id: subfield_id
+                    },
+                    success: function(data) {
+                      ids_with_calculated_field = data.ids_with_calculated_field
+                      input_to_blank = document.getElementById("fieldchildid|"+ids_with_calculated_field + "|"+ id_child_calculate).value = null;
+                      input_tab = document.getElementById("fieldchildid|"+ids_with_calculated_field + "|"+ id_child_calculate).dispatchEvent(new Event('change'));
+                    }
+                  });
                 });
+
               }
             });
           }
