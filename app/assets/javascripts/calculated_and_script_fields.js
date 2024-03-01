@@ -368,7 +368,7 @@ Navarra.calculated_and_script_fields = function() {
               }
             }
             if(!is_multiple){
-              var resultado = eval(calculoStringReplace).toFixed(4).replace(/\.?0*$/, '');;
+              var resultado = eval(calculoStringReplace).toFixed(6).replace(/\.?0*$/, '');;
               // //redondea a dos decimales
               // resultado = Math.round(resultado * 100) / 100;
               $(texto_campo_id).val(resultado);
