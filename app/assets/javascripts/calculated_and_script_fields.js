@@ -221,6 +221,129 @@ Navarra.calculated_and_script_fields = function() {
       //Cálculos permitidos al crear y editar datos
       if(edition_type=="data_edition" || edition_type== "new_file"){
         for(k=0;k<CalculateObj_keys.length;k++){
+
+          if(CalculateObj_keys[k]=="datos_capa_hijo"){
+            var field_id_calculated = field_id
+            var project_selected = Navarra.project_types.config.item_selected
+            var project_id = CalculateObj.datos_capa_hijo.project_id
+            var field_id =  CalculateObj.datos_capa_hijo.field_id
+            var subfield_ids = JSON.parse(CalculateObj.datos_capa_hijo.subfield_id)
+            var campos_asociar = CalculateObj.datos_capa_hijo.campos_asociar
+            var current_field_type_id = Navarra.dashboards.config.project_type_id
+
+            $.ajax({
+              type: 'GET',
+              url: '/project_fields/get_other_layer_data',
+              datatype: 'JSON',
+              data: {
+                project_selected: project_selected,
+                current_field_type_id: current_field_type_id,
+                project_id: project_id,
+                field_id: field_id,
+                subfield_ids: subfield_ids,
+                campos_asociar: campos_asociar
+              },
+              success: function(data) {
+                query_data_children = data.query_data_children
+
+                let arrayListDatosCapa = [];
+                let newScript = "";
+
+                for (let den = 0; den < query_data_children.length; den++) {
+                  let data_new = "";
+                  for (let yy = 0; yy < subfield_ids.length; yy++) {
+                    let subfield_id = subfield_ids[yy];
+                    data_new += query_data_children[den][subfield_id] + " ";
+                  }
+
+                  arrayListDatosCapa.push(data_new);
+
+                  if (den === 0) {
+                    newScript += "{";
+                  }
+
+                  newScript += "\"" + data_new + "\":{\"true\":{\"hiddenTrue\":\"[]\",\"hiddenFalse\":\"[]\",\"requiredTrue\":\"[]\",\"requiredFalse\":\"[]\",\"readOnlyTrue\":\"[]\",\"readOnlyFalse\":\"[]\",\"setValue\":{";
+
+                  let campos_data = Object.keys(campos_asociar);
+                  let first_element = 0;
+
+                  for (let i = 0; i < campos_data.length; i++) {
+                    let keyD = campos_data[i];
+                    let campo_to = campos_asociar[keyD];
+                    let campo_from = query_data_children[den][keyD] || "";
+
+                    if (first_element !== 0) {
+                      newScript += ",";
+                    }
+
+                    newScript += "\"" + campo_to + "\":\"" + campo_from + "\"";
+                    first_element++;
+                  }
+
+                  newScript += "}}, \"false\":{\"hiddenTrue\":\"[]\",\"hiddenFalse\":\"[]\",\"requiredTrue\":\"[]\",\"requiredFalse\":\"[]\",\"readOnlyTrue\":\"[]\",\"readOnlyFalse\":\"[]\",\"setValue\":{}}}";
+
+                  if (den < query_data_children.length - 1) {
+                    newScript += ",";
+                  } else {
+                    newScript += "}";
+                  }
+                  var data_script = newScript
+                }
+
+                var field_id = field_id_calculated
+                texto_campo_id = "#fieldchildid\\|"+field_id.split('|')[0]+"\\|"+field_id.split('|')[1];
+                var ulElement = $(texto_campo_id).next('.btn-group').find('ul.multiselect-container');
+
+                var existingLiElements = ulElement.find('li');
+                if (existingLiElements.length === 0) {
+                  arrayListDatosCapa.forEach(function(nombre) {
+                    var option = $('<option>', {
+                      value: nombre,
+                      text: nombre
+                    });
+                    $(texto_campo_id).append(option);
+                    var liElement = $('<li>').appendTo(ulElement);
+                    $('<a>', { tabindex: '0' }).appendTo(liElement).append('<label class="radio" title="' + nombre + '"><input type="radio" value="' + nombre + '"> ' + nombre + '</label>');
+                  });
+                }
+
+                if (existingLiElements.length > 1) {
+                  ulElement.empty();
+                  arrayListDatosCapa.forEach(function(nombre) {
+                    var option = $('<option>', {
+                      value: nombre,
+                      text: nombre
+                    });
+                    $(texto_campo_id).append(option);
+                    var liElement = $('<li>').appendTo(ulElement);
+                    $('<a>', { tabindex: '0' }).appendTo(liElement).append('<label class="radio" title="' + nombre + '"><input type="radio" value="' + nombre + '"> ' + nombre + '</label>');
+                  });
+                }
+
+                $(texto_campo_id).on('change', function() {
+                  Script(data_script, field_type_id, field_id, true, false, false);
+                  var subfield_id = parseInt(texto_campo_id.match(/(\d+)/g)[0]);
+                  var id_child_calculate = parseInt(texto_campo_id.match(/(\d+)/g)[1]);
+
+                  $.ajax({
+                    type: 'GET',
+                    url: '/project_subfields/get_calculated_data_from_script',
+                    datatype: 'JSON',
+                    data: {
+                      subfield_id: subfield_id
+                    },
+                    success: function(data) {
+                      ids_with_calculated_field = data.ids_with_calculated_field
+                      input_to_blank = document.getElementById("fieldchildid|"+ids_with_calculated_field + "|"+ id_child_calculate).value = null;
+                      input_tab = document.getElementById("fieldchildid|"+ids_with_calculated_field + "|"+ id_child_calculate).dispatchEvent(new Event('change'));
+                    }
+                  });
+                });
+
+              }
+            });
+          }
+
           if(CalculateObj_keys[k]=="calculation"){
             var calculoStringArray = CalculateObj.calculation.split("#");
             var calculoStringReplace="";
@@ -245,9 +368,9 @@ Navarra.calculated_and_script_fields = function() {
               }
             }
             if(!is_multiple){
-              var resultado = eval(calculoStringReplace);
-              //redondea a dos decimales
-              resultado = Math.round(resultado * 100) / 100;
+              var resultado = eval(calculoStringReplace).toFixed(6).replace(/\.?0*$/, '');;
+              // //redondea a dos decimales
+              // resultado = Math.round(resultado * 100) / 100;
               $(texto_campo_id).val(resultado);
             }
           }

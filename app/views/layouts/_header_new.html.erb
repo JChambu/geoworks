@@ -361,7 +361,7 @@ function open_panel(id_panel,id_table){
                 </a>
                 <div class="ml-3" id="tables_container" style="font-size:0.8em; max-height: 40vh; overflow-y:auto;">
                   <% if !@table_configuration.nil? %>
-                    <% @table_configuration.each do |table| %>
+                    <% @table_configuration.sort_by(&:name).each do |table| %>
                       <a class="dropdown-item d-flex" onclick="open_panel(<%= "'view-data-middle',"+table.id.to_s%>)" href="#" id=<%= "dropdown_table"+table.id.to_s%>>
                         <h7 class="mr-auto" ><%=table.name %></h7>
                         <i class="fas fa-trash-alt ml-3 invisible icon_delete_table" title="Eliminar" onclick="remove_table(<%= 'event ,'+table.id.to_s%>)"></i>

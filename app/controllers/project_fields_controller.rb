@@ -198,5 +198,27 @@ class ProjectFieldsController < ApplicationController
     params.require(:project_field).permit(:id,  project_subfields_attributes: [:id, :field_type_id, :name, :required, :cleasing_data, :georeferenced, :regexp_type_id, :sort])
   end
 
+  def get_other_layer_data
+    project_id = params[:project_id]
+    field_id = params[:field_id]
+    subfield_id = params[:subfield_ids]
+    campos_asociar = params[:campos_asociar]
+    current_field_type_id = params[:current_field_type_id].to_i
+    project_selected = params[:project_selected].to_i
 
+    sec_layer_id = Project.select('DISTINCT ON (main.id) sec.id')
+                    .from('projects main')
+                    .joins("INNER JOIN projects AS sec ON ST_Intersects(sec.the_geom, main.the_geom)")
+                    .where('main.project_type_id = ? AND sec.project_type_id = ? AND main.id = ?', current_field_type_id, project_id, project_selected)
+                    .pluck('sec.id')
+
+    sec_layer_id = sec_layer_id.first.to_i
+
+    query_data_children = ProjectDataChild
+            .select('project_data_children.properties')
+            .where('project_data_children.project_id = ? AND project_data_children.project_field_id = ? AND project_data_children.row_enabled = ? AND project_data_children.row_active = ?', sec_layer_id, field_id, true, true)
+            .pluck('project_data_children.properties')
+
+    render json: { query_data_children: query_data_children }
+  end
 end
