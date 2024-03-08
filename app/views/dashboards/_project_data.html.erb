@@ -174,11 +174,16 @@ function order_column(key){
 function search_column(key, name){
   $('#choose').val('');
   var texto_buscar=$('#field_key'+key).val();
- $('#choose').attr("placeholder", "Buscar "+name);
- $('.filter_by_column').val(texto_buscar);
- $('#choose').css("width","13%");
- $('#choose').removeClass("p-0");
- $('#choose').focus();
+  $('#choose').attr("placeholder", "Buscar "+name);
+
+  if($('#subform_search')[0].classList.length == 6){
+   $('#subform_search').css("margin-left", "45%");
+  };
+
+  $('.filter_by_column').val(texto_buscar);
+  $('#choose').css("width","13%");
+  $('#choose').removeClass("p-0");
+  $('#choose').focus();
 }
 
 
@@ -701,6 +706,13 @@ function search_input(id_field, id_subfield, name) {
   $('#subform_search').val('');
   $('#subform_search').attr("id_field", id_field);
   $('#subform_search').attr("id_subfield", id_subfield);
+
+  if($('#choose')[0].classList.length == 8){
+    $('#subform_search').css("margin-left", "65%");
+  } else {
+    $('#subform_search').css("margin-left", "45%");
+  };
+
   $('#subform_search').attr("placeholder", "Buscar en subformulario: " + name);
   $('#subform_search').css("width","13%");
   $('#subform_search').removeClass("p-0");
@@ -1214,7 +1226,7 @@ function generate_alerts(){
 
   <input id="choose" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0 ml-2" placeholder="Buscar" style="width: 0%; transition:1.5s;"  >
   <h6 type="text" class="selected_files_from_total d-inline"></h6>
-  <input id="subform_search" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0" style="width: 0%; transition:1.5s; margin-left: 49%;" onchange="search_subform()" >
+  <input id="subform_search" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0" style="width: 0%; transition:1.5s;" onchange="search_subform()" >
   <input type="text" class="filter_by_column d-none">
   <input type="text" class="order_by_column d-none">
   <input type="text" class="total_files d-none">
