@@ -2729,6 +2729,11 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
                 } else{
                   new_p.setAttribute('onChange', 'changeFile()');
                 }
+
+                new_p.addEventListener('input', function() {
+                  textarea_adjust_height();
+                });
+
               }
               var found_nested = false;
               if (element.field_type_id == 2 || element.field_type_id == 10) {
