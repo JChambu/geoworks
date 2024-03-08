@@ -31,7 +31,6 @@ class ProjectDataChildrenController < ApplicationController
   end
 
   def show_children
-
     # parámetros para utilizar este método en la búsqueda de interpolación
     is_interpolate = params[:is_interpolate]
     interpolate_field = params[:interpolate_field]
@@ -43,6 +42,8 @@ class ProjectDataChildrenController < ApplicationController
     to_date_subforms = params[:to_date_subforms]
     filter_children = params[:filter_children]
     filter_user_children = params[:filter_user_children]
+    filter_value = params[:filter_value]
+    id_subfield = params[:id_subfield]
 
     # Busca el rol del usuario
     customer_name = Apartment::Tenant.current
@@ -56,16 +57,12 @@ class ProjectDataChildrenController < ApplicationController
     end
 
     project_field_ids.each do |pfid|
-
       if is_interpolate
 
       else
-
         father_field = ProjectField.where(id: pfid).pluck(:name).first
 
-
-        # head
-        # # # # # # # # # # # # # #
+        # # # # # # # head # # # # # # # #
 
         child_fields = ProjectSubfield.where(project_field_id: pfid).order(:sort)
         child_fields_array = []
@@ -89,7 +86,6 @@ class ProjectDataChildrenController < ApplicationController
           end
 
           if c_field.field_type_id == 10 || c_field.field_type_id == 2
-
             id = c_field.choice_list_id
 
             other_possible_values = []
@@ -99,10 +95,8 @@ class ProjectDataChildrenController < ApplicationController
 
             # Arma el objeto
             sorted_choice_list_items.each do |row|
-
               # Si tiene listados anidados, los agrega
               if !row.nested_list_id.nil?
-
                 @nested_items = []
                 nested_choice_list = ChoiceList.find(row.nested_list_id)
                 nested_choice_list_item  = ChoiceListItem.where(choice_list_id: nested_choice_list.id)
@@ -114,9 +108,7 @@ class ProjectDataChildrenController < ApplicationController
               else
                 other_possible_values << { "id": row.id, "name": row.name }
               end
-
             end
-
           end
 
           c_data_hash = {}
@@ -133,13 +125,10 @@ class ProjectDataChildrenController < ApplicationController
           c_data_hash['calculated_field'] = c_field.calculated_field
 
           child_fields_array.push(c_data_hash)
-
         end
-
       end
 
-      # body
-      # # # # # # # # # # # # # #
+      # # # # # # # body # # # # # # # #
 
       if(is_interpolate)
         data = ProjectDataChild
@@ -158,6 +147,18 @@ class ProjectDataChildrenController < ApplicationController
           .where(row_active: true)
           .where(current_season: true)
           .order(created_at: :desc)
+      end
+
+      data_search = data
+
+      if !id_subfield.blank? && !filter_value.blank?
+        data_search = data.where("properties ->> '#{id_subfield}' ilike '%#{filter_value}%'")
+      end
+
+      if data_search.blank?
+        data
+      else
+        data = data_search
       end
 
       # Aplica time_slider para hijos
@@ -210,11 +211,8 @@ class ProjectDataChildrenController < ApplicationController
 
         @respuesta_array << respuesta_hash
       end
-
     end
-
     render json: @respuesta_array
-
   end
 
   # POST /project_data_children

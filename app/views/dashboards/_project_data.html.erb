@@ -171,14 +171,19 @@ function order_column(key){
 }
 
 //abre buscar x  columna
-function search_column(key){
+function search_column(key, name){
   $('#choose').val('');
   var texto_buscar=$('#field_key'+key).val();
- $('#choose').attr("placeholder", "Buscar "+texto_buscar);
- $('.filter_by_column').val(texto_buscar);
- $('#choose').css("width","25%");
- $('#choose').removeClass("p-0");
- $('#choose').focus();
+  $('#choose').attr("placeholder", "Buscar "+name);
+
+  if($('#subform_search')[0].classList.length == 6){
+   $('#subform_search').css("margin-left", "45%");
+  };
+
+  $('.filter_by_column').val(texto_buscar);
+  $('#choose').css("width","13%");
+  $('#choose').removeClass("p-0");
+  $('#choose').focus();
 }
 
 
@@ -273,6 +278,9 @@ function show_subfield(field_ids){
   var to_date_subforms = Navarra.project_types.config.to_date_subforms;
   var filter_children = [];
   var filter_user_children = [];
+  var filter_value = $("#subform_search").val();
+  var id_subfield = $('#subform_search').attr('id_subfield')
+
   $('.subform_filter').each(function(){
     if(!isNaN($(this).attr('id').split('|')[0])){
       filter_children.push($(this).attr('id'));
@@ -290,7 +298,9 @@ function show_subfield(field_ids){
       from_date_subforms: from_date_subforms,
       to_date_subforms: to_date_subforms,
       filter_children: filter_children,
-      filter_user_children: filter_user_children
+      filter_user_children: filter_user_children,
+      filter_value: filter_value,
+      id_subfield: id_subfield
     },
     success: function(data) {
       data.forEach(function(father_field){
@@ -371,6 +381,12 @@ function show_subfield(field_ids){
             new_icon.title = "Cerrar";
             new_icon.setAttribute("onClick","remove_subcolumn("+id_field+","+child_field.field_id+")");
             new_div1.appendChild(new_icon);
+            var new_icon = document.createElement('I');
+            new_icon.className = "fas fa-search icons";
+            new_icon.title = "Buscar";
+            new_icon.setAttribute("onClick","search_input("+id_field+", "+child_field.field_id+", '"+child_field.name+"')");
+            new_div1.appendChild(new_icon);
+
             // agrega funciones suma, max, min y promedio si es campo numérico.
             if(child_field.field_type_id==5){
               var icons_function = ["plus","greater-than","less-than","divide"];
@@ -518,6 +534,7 @@ function show_subfield(field_ids){
                   new_cel_subform
                   if(column.properties[colname]!=undefined){
                     new_cel_subform.innerHTML = column.properties[colname];
+                    new_cel_subform.setAttribute("id_search", column.properties[colname][0].trim());
                   }
                   new_sub_column.appendChild(new_cel_subform);
                   new_td.appendChild(new_sub_column);
@@ -683,6 +700,52 @@ function remove_subcolumn(id_field,id_subfield){
     $('#body_only_width_subform_'+id_field).attr('colspan',new_colsapan);
   verify_close_subheader();
   adjust_height_rows();
+}
+
+function search_input(id_field, id_subfield, name) {
+  $('#subform_search').val('');
+  $('#subform_search').attr("id_field", id_field);
+  $('#subform_search').attr("id_subfield", id_subfield);
+
+  if($('#choose')[0].classList.length == 8){
+    $('#subform_search').css("margin-left", "63%");
+  } else {
+    $('#subform_search').css("margin-left", "45%");
+  };
+
+  $('#subform_search').attr("placeholder", "Buscar en subformulario: " + name);
+  $('#subform_search').css("width","13%");
+  $('#subform_search').removeClass("p-0");
+  $('#subform_search').focus();
+}
+
+function search_subform(){
+  filtered_value = $('#subform_search').val();
+  id_field = $('#subform_search').attr('id_field');
+  id_subfield = $('#subform_search').attr('id_subfield');
+  array = []
+  subfield_ids_saved = []
+
+  visible_columns = document.querySelectorAll('th.header_column.subfield_column_'+id_field+':not(.d-none)');
+
+  visible_columns.forEach(function(column) {
+    if (column.classList[2] != undefined && column.classList[2].startsWith(id_field+'sub')){
+      array.push(column.classList[2]);
+    }
+  });
+
+  array.forEach(function(item) {
+    var element_split = item.split("sub");
+    var id_field = element_split[0];
+    var id_subfield = element_split[1];
+    var element = {
+      "id_field": id_field,
+      "id_subfield": id_subfield
+    };
+    subfield_ids_saved.push(element);
+  });
+
+  create_subforms_table(subfield_ids_saved);
 }
 
 function adjust_height_rows(){
@@ -1162,10 +1225,11 @@ function generate_alerts(){
   </a>
 
   <input id="choose" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0 ml-2" placeholder="Buscar" style="width: 0%; transition:1.5s;"  >
+  <h6 type="text" class="selected_files_from_total d-inline"></h6>
+  <input id="subform_search" type="text" class="string optional form-control form-control-sm d-inline p-0 border-0" style="width: 0%; transition:1.5s;" onchange="search_subform()" >
   <input type="text" class="filter_by_column d-none">
   <input type="text" class="order_by_column d-none">
   <input type="text" class="total_files d-none">
-  <h6 type="text" class="selected_files_from_total d-inline"></h6>
 
   <div class="view-data-container status-view-condensed" id="status-view">
     <i class="fas fa-window-maximize view-data" id="view-data-middle"></i>
@@ -1252,7 +1316,7 @@ function generate_alerts(){
                     <p class="custom_p_header"><%= field.name %></p>
                     <div class="custom_div_table">
                       <i class="fas fa-sort-alpha-down icons text-white" onclick="order_column(<%="'"+field.key+"'"%>)" title="Ordenar"></i>
-                      <i class="fas fa-search icons text-white" onclick="search_column(<%="'"+field.key+"'"%>)" title="Buscar"></i>
+                      <i class="fas fa-search icons text-white" onclick="search_column(<%="'"+field.key+"'"%>, <%="'"+field.name+"'"%>)" title="Buscar"></i>
                       <i class="fas fa-times icons text-white" onclick="hide_column(<%="'"+field.key+"'"%>)" title="Cerrar"></i>
                       <input type="text" class="d-none field_key" id=<%= "field_key"+field.key %> value=<%= field.key %>>
                       <br/>
