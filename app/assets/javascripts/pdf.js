@@ -323,7 +323,6 @@ function order_pdf(){
   return pdf_values_all_sorted_array;
 }
 
-
 function init() {
   $('#mails_alert_button').removeClass('d-none');
   $('#send_alerts_button').removeClass('d-none');
@@ -677,7 +676,6 @@ function get_photo(app_id, ischild, id_container,is_grouped, is_alert){
     });
 }
 
-
 function get_logo(){
     var logo_src = document.getElementById('img_logo_gw');
     const dataUrl = getDataUrl(logo_src);
@@ -717,7 +715,6 @@ function change_alert_mail(index){
     $('.div_pdf_child_container'+index).removeClass('d-none');
     $('.alert_mail_conteiner'+index).removeClass('d-none');
 }
-
 
 function save_pdf(pdf_values_all, is_grouped){
     $('#qr_modal_body').empty();
@@ -820,6 +817,7 @@ function init_pdf_charts(){
 function save_pdf_charts(){
     $('#text_toast').html("Generando PDF. En breve se descargará su archivo.");
     $('#toast').toast('show');
+    user_title = $('#titleInput').val();
     charts_for_pdf = [];
     $('.chart_container').each(function(){
         if(!$(this).hasClass('d-none')){
@@ -837,11 +835,14 @@ function save_pdf_charts(){
     data_report ={}
     data_report["data"] = charts_for_pdf;
     data_report["name"] = Navarra.dashboards.config.name_project;
+    if (!user_title == '') {
+      data_report["user_title"] = user_title
+    }
     data_report["user"] = user_name;
     data_report["map"] = imgData_pdf;
     data_report["logo"] = logo_corp;
     if($('#sidebar_all').hasClass('charts-container_expanded')){
-        data_report["expanded"] = true;
+      data_report["expanded"] = true;
     }
     data_report[template_type] = true;
     var d = new Date();
@@ -859,8 +860,8 @@ function save_pdf_charts(){
       type: 'POST',
       url: '/dashboards/send_report',
       xhrFields: {
-            responseType: 'blob'
-        },
+        responseType: 'blob'
+      },
       datatype: 'application/json',
       data: data,
       success: function(data) {
@@ -877,7 +878,6 @@ function save_pdf_charts(){
       }
   });
 }
-
 
 function send_alerts(){
     $('.alert_to').each(function(){

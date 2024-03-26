@@ -898,7 +898,7 @@ function draw_charts(data) {
             type: 'linear',
             ticks: {
               min: parseFloat(tick_min_left),
-             stepSize: parseFloat(tick_step_left),
+              stepSize: parseFloat(tick_step_left),
                 callback: function(label, index, labels) {
                   label = label.toLocaleString('es-ES')
                   return label;
@@ -973,7 +973,7 @@ function draw_charts(data) {
           datalabels: {
             display: data_labelling,
             font: {
-              size: 16,
+              size: 15,
               weight: 'bold'
             },
             color: 'white',
@@ -983,7 +983,7 @@ function draw_charts(data) {
             textShadowBlur: 5,
             anchor: 'end',
             align: 'end',
-            offset: -5,
+            offset: -15,
             formatter: function(value, context) {
               var datasets_context = context.dataset.data;
               var max = Math.max.apply(null, datasets_context);
@@ -1262,6 +1262,10 @@ function draw_charts(data) {
     $('.graphics').scrollTop(scroll);
   }
   dragAndDrop.init();
+}
+
+function openTitleInput() {
+  $('#user_title_pdf').replaceWith('<input type="text" id="titleInput" class="form-control" style="width: 218px;height: 31px;" placeholder="Ingrese el título del PDF">');
 }
 
 function maximize_chart(e){
