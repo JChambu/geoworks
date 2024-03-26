@@ -875,6 +875,7 @@ function save_pdf_charts(){
         $("body").append(a);
         a[0].click();
         $("body").remove(a);
+        $('#titleInput').replaceWith('<i class="fas fa-pencil-square-o view-data" id="user_title_pdf" title="Agregar Título a PDF" onclick="openTitleInput()">');
       }
   });
 }
