@@ -499,7 +499,6 @@ function draw_charts(data) {
             // Burbuja
             //Cuidado no está corregido para agrupar las series y chequear que los valores de y coincidan para todas la series
             if (type_chart == 'bubble') {
-              //
               $.each(vax, function(i, v) {
                 if (count_series == 0) {
                   bubble_dataset_x.push(v['count']);
@@ -519,19 +518,21 @@ function draw_charts(data) {
                 }
               }
               count_series = 1;
-
               // Resto de los gráficos
             } else {
-
               $.each(vax, function(i, v) {
-                  // Elimina los corchetes del name
-                  lab_final = v['name']
-                  if (lab_final != null) {
+                // Elimina los corchetes del name
+                lab_final = v['name']
+                if (lab_final != null) {
+                  if (typeof(lab_final) == 'number') {
+                    lab_final = lab_final.toString().replace(/[\[\]\"]/g, "");
+                  } else {
                     lab_final = lab_final.replace(/[\[\]\"]/g, "")
                   }
-                  lab.push(lab_final);
-                  lab_acumulado.push(lab_final);
-                  da.push(v['count']);
+                }
+                lab.push(lab_final);
+                lab_acumulado.push(lab_final);
+                da.push(v['count']);
               })
             }
             lab_all.push(lab);
