@@ -4,13 +4,13 @@
       <%= f.input :label_datasets, input_html: {class: 'form-control form-control-sm'}, label: "Nombre" %>
     </div>
     <div class="form-group mb-0 col-md-2">
-      <%= f.input :chart_id, input_html: {class: 'form-control form-control-sm chart_serie_type', onchange:"change_type()"}, collection: chart_types_for_select, label: "Tipo de Gráfico" %>
+      <%= f.input :chart_id, input_html: {class: 'form-control form-control-sm chart_serie_type', onchange:"change_type()"}, collection: chart_types_for_select, label: "Gráfico" %>
     </div>
     <div class="form-group mb-0 col-md-3">
       <%= f.input :analytics_dashboard_id, label: "Indicador", input_html: {class: 'form-control form-control-sm'},collection: kpi_for_select, include_blank: true %>
     </div>
-    <div class="form-group mb-0 hide-div bar col-md-2">
-      <%= f.input :point_type, input_html: {class: 'form-control form-control-sm'}, collection: point_types, label: "Tipo de Puntos" %>
+    <div class="form-group mb-0 hide-div bar col-md-1">
+      <%= f.input :point_type, input_html: {class: 'form-control form-control-sm'}, collection: point_types, label: "Puntos" %>
     </div>
 
     <div class="form-group mb-0 col-md-1">
@@ -23,18 +23,28 @@
     <div class="form-group mb-0 hide-div bar col-md-1">
       <%= f.label :left_y_axis, "Derecha" %>
       <div class="custom-control custom-checkbox mb-2">
-          <%= f.check_box :left_y_axis, class:'custom-control-input', id:'left_y_axis_id'.concat(f.label :form_property.to_s)  %>
-           <%= f.label:" ", class:'custom-control-label', for:'left_y_axis_id'.concat(f.label :form_property.to_s)%>
+        <%= f.check_box :left_y_axis, class:'custom-control-input', id:'left_y_axis_id'.concat(f.label :form_property.to_s)  %>
+        <%= f.label:" ", class:'custom-control-label', for:'left_y_axis_id'.concat(f.label :form_property.to_s)%>
+      </div>
+    </div>
+
+    <div class="form-group mb-0 hide-div bar col-md-1">
+      <%= f.label :value, "Valores" %>
+      <br>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :value, class:'custom-control-input', id:'value_id'.concat(f.label :form_property.to_s)  %>
+        <%= f.label:" ", class:'custom-control-label', for:'value_id'.concat(f.label :form_property.to_s) %>
       </div>
     </div>
 
     <% if f.options[:child_index] != 0  %>
-      <div class="form-group mb-0 col-md-1">
+      <div class="form-group mb-0 hide-div bar col-md-1">
         <br>
-        <%= f.hidden_field :_destroy %>
-        <%= link_to '#', class: "remove" do %><i class="fas fa-trash-alt" title="Eliminar Serie" style="font-size: 1.5em"></i><% end %>
+        <div class="custom-control custom-checkbox mb-1">
+          <%= f.hidden_field :_destroy %>
+          <%= link_to '#', class: "remove" do %><i class="fas fa-trash-alt" title="Eliminar Serie" style="font-size: 1.5em"></i><% end %>
+        </div>
       </div>
     <% end %>
-
   </div>
 </fieldset>

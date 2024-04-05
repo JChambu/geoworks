@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20240106005740) do
+ActiveRecord::Schema.define(version: 20240402202343) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -197,6 +197,7 @@ ActiveRecord::Schema.define(version: 20240106005740) do
     t.string "label_datasets"
     t.boolean "left_y_axis"
     t.string "point_type"
+    t.boolean "value", default: false
     t.index ["chart_id"], name: "index_graphics_properties_on_chart_id"
   end
 

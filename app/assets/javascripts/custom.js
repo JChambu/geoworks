@@ -625,7 +625,7 @@ function draw_charts(data) {
           options = value;
           graphic_id = value['graphic_id'];
           color = value['color'];
-
+          properties_value = value['value'];
           label_datasets = value['label_datasets'];
           // el campo está mal cargado en la db ARREGLAR
           right_y_axis = value['left_y_axis'];
@@ -688,7 +688,8 @@ function draw_charts(data) {
                 hoverBackgroundColor: color,
                 hoverBorderColor: color,
                 hoverBorderWidth: 2,
-                type: type_chart
+                type: type_chart,
+                properties_value: properties_value
               });
             }
 
@@ -905,20 +906,6 @@ function draw_charts(data) {
                 },
               fontColor: '#FDFEFE'
             },
-            /*
-            beforeBuildTicks: function(scale) {
-              // Aplica ticks custom si se ingresan valores
-              if (tick_min_left == null) {
-                scale.min = 0
-              } else {
-                scale.min = parseInt(tick_min_left)
-              }
-              if (tick_max_left != null) {
-                scale.max = parseInt(tick_max_left)
-              }
-              return;
-            },
-            */
             stacked: stacked,
             scaleLabel: {
               display: true,
@@ -943,20 +930,6 @@ function draw_charts(data) {
               },
               fontColor: '#FDFEFE',
             },
-            /*
-            beforeBuildTicks: function(scale) {
-              // Aplica ticks custom si se ingresan valores
-              if (tick_min_right == null) {
-                scale.min = 0
-              } else {
-                scale.min = parseInt(tick_min_right)
-              }
-              if (tick_max_right != null) {
-                scale.max = parseInt(tick_max_right)
-              }
-              return;
-            },
-            */
             stacked: stacked,
             scaleLabel: {
               display: true,
@@ -971,7 +944,7 @@ function draw_charts(data) {
         },
         plugins: {
           datalabels: {
-            display: data_labelling,
+            // display: properties_value,
             font: {
               size: 15,
               weight: 'bold'
@@ -985,6 +958,12 @@ function draw_charts(data) {
             align: 'end',
             offset: -15,
             formatter: function(value, context) {
+              if (context.dataset.properties_value === true) {
+                return value;
+              } else {
+                return '';
+              }
+
               var datasets_context = context.dataset.data;
               var max = Math.max.apply(null, datasets_context);
               var min = Math.min.apply(null, datasets_context);
@@ -1036,20 +1015,6 @@ function draw_charts(data) {
               },
               fontColor: '#FDFEFE'
             },
-            /*
-            beforeBuildTicks: function(scale) {
-              // Aplica ticks custom si se ingresan valores
-              if (tick_min_left == null) {
-                scale.min = 0
-              } else {
-                scale.min = parseInt(tick_min_left)
-              }
-              if (tick_max_left != null) {
-                scale.max = parseInt(tick_max_left)
-              }
-              return;
-            },
-            */
             stacked: stacked,
             scaleLabel: {
               display: true,
