@@ -446,782 +446,783 @@ var dragAndDrop = {
 function draw_charts(data) {
 
   // Ordenamos las series por chart
-  for (var i = 0; i < data.length; i++) {
-    var reg = data[i];
-    var type_chart = "";
-    var title = "";
-    var canvas_id;
-    var graphic_id;
-    var datasets = [];
-    var width;
-    var aspectR;
-    var legend_display;
-    var label_x_axis;
-    var label_y_axis_left;
-    var label_y_axis_right;
-    var label_datasets;
-    var position_y_axis;
-    var right_y_axis;
-    var display_right_y_axis = false;
-    var tick_min_left
-    var tick_max_left
-    var tick_step_left
-    var tick_min_right
-    var tick_max_right
-    var count_series = 0;
-    var bubble_dataset = [];
-    var bubble_dataset_x = [];
-    var bubble_dataset_y = [];
-    var scale;
-    var data_decimals=1;
+  if (data != undefined){
+    for (var i = 0; i < data.length; i++) {
+      var reg = data[i];
+      var type_chart = "";
+      var title = "";
+      var canvas_id;
+      var graphic_id;
+      var datasets = [];
+      var width;
+      var aspectR;
+      var legend_display;
+      var label_x_axis;
+      var label_y_axis_left;
+      var label_y_axis_right;
+      var label_datasets;
+      var position_y_axis;
+      var right_y_axis;
+      var display_right_y_axis = false;
+      var tick_min_left
+      var tick_max_left
+      var tick_step_left
+      var tick_min_right
+      var tick_max_right
+      var count_series = 0;
+      var bubble_dataset = [];
+      var bubble_dataset_x = [];
+      var bubble_dataset_y = [];
+      var scale;
+      var data_decimals=1;
 
-    // Agrupamos los labels y los datos para luego poder ajustar las series con los mismos valores en el eje x
-    var lab_all = []; //variable que agrupa los labels de cada serie
-    var da_all = []; //Variable que agrupa los datos de cada serie
-    var lab_acumulado = []; //variable que acumula todos los labels de todas las series
+      // Agrupamos los labels y los datos para luego poder ajustar las series con los mismos valores en el eje x
+      var lab_all = []; //variable que agrupa los labels de cada serie
+      var da_all = []; //Variable que agrupa los datos de cada serie
+      var lab_acumulado = []; //variable que acumula todos los labels de todas las series
 
-    // Separamos las series
-    $.each(reg, function(a, b) {
-      // Extraemos los datos de cada serie
-      $.each(b, function(index, value) {
-        // Extraemos tipo de gráfico
-        if (index == 'chart_type') {
-          type_chart = value;
-        }
-        // Extraemos el array con los datos de la serie
-        if (index == 'data') {
-          data_general = value;
-          var lab = [];
-          var da = [];
+      // Separamos las series
+      $.each(reg, function(a, b) {
+        // Extraemos los datos de cada serie
+        $.each(b, function(index, value) {
+          // Extraemos tipo de gráfico
+          if (index == 'chart_type') {
+            type_chart = value;
+          }
+          // Extraemos el array con los datos de la serie
+          if (index == 'data') {
+            data_general = value;
+            var lab = [];
+            var da = [];
 
-          // Extraemos los datos del array de la serie
-          $.each(data_general, function(idx, vax) {
-            // Burbuja
-            //Cuidado no está corregido para agrupar las series y chequear que los valores de y coincidan para todas la series
-            if (type_chart == 'bubble') {
-              $.each(vax, function(i, v) {
-                if (count_series == 0) {
-                  bubble_dataset_x.push(v['count']);
-                } else {
-                  bubble_dataset_y.push(v['count']);
-                }
-              })
-
-              if (count_series == 1) {
-                for (var b = 0; b < vax.length; b++) {
-                  r = (parseFloat(bubble_dataset_y[b]) * parseFloat(bubble_dataset_x)) * scale;
-                  bubble_dataset.push({
-                    "x": bubble_dataset_x[b],
-                    "y": bubble_dataset_y[b],
-                    "r": r
-                  });
-                }
-              }
-              count_series = 1;
-              // Resto de los gráficos
-            } else {
-              $.each(vax, function(i, v) {
-                // Elimina los corchetes del name
-                lab_final = v['name']
-                if (lab_final != null) {
-                  if (typeof(lab_final) == 'number') {
-                    lab_final = lab_final.toString().replace(/[\[\]\"]/g, "");
+            // Extraemos los datos del array de la serie
+            $.each(data_general, function(idx, vax) {
+              // Burbuja
+              //Cuidado no está corregido para agrupar las series y chequear que los valores de y coincidan para todas la series
+              if (type_chart == 'bubble') {
+                $.each(vax, function(i, v) {
+                  if (count_series == 0) {
+                    bubble_dataset_x.push(v['count']);
                   } else {
-                    lab_final = lab_final.replace(/[\[\]\"]/g, "")
+                    bubble_dataset_y.push(v['count']);
+                  }
+                })
+
+                if (count_series == 1) {
+                  for (var b = 0; b < vax.length; b++) {
+                    r = (parseFloat(bubble_dataset_y[b]) * parseFloat(bubble_dataset_x)) * scale;
+                    bubble_dataset.push({
+                      "x": bubble_dataset_x[b],
+                      "y": bubble_dataset_y[b],
+                      "r": r
+                    });
                   }
                 }
-                lab.push(lab_final);
-                lab_acumulado.push(lab_final);
-                da.push(v['count']);
-              })
-            }
-            lab_all.push(lab);
-            da_all.push(da);
-          }); //cierra each data_general
-        } //cierra if data
-      }) //cierra each b
-    }) //cierra each reg
+                count_series = 1;
+                // Resto de los gráficos
+              } else {
+                $.each(vax, function(i, v) {
+                  // Elimina los corchetes del name
+                  lab_final = v['name']
+                  if (lab_final != null) {
+                    if (typeof(lab_final) == 'number') {
+                      lab_final = lab_final.toString().replace(/[\[\]\"]/g, "");
+                    } else {
+                      lab_final = lab_final.replace(/[\[\]\"]/g, "")
+                    }
+                  }
+                  lab.push(lab_final);
+                  lab_acumulado.push(lab_final);
+                  da.push(v['count']);
+                })
+              }
+              lab_all.push(lab);
+              da_all.push(da);
+            }); //cierra each data_general
+          } //cierra if data
+        }) //cierra each b
+      }) //cierra each reg
 
-    //Verifica valores del label en el eje x para unificar si hay varias series
-    // también se verifica el orden de los valores numéricos
-      Array.prototype.unique = function(a) {
-        return function() {
-          return this.filter(a)
-        }
-      }(function(a, b, c) {
-        return c.indexOf(a, b + 1) < 0
-      });
+      //Verifica valores del label en el eje x para unificar si hay varias series
+      // también se verifica el orden de los valores numéricos
+        Array.prototype.unique = function(a) {
+          return function() {
+            return this.filter(a)
+          }
+        }(function(a, b, c) {
+          return c.indexOf(a, b + 1) < 0
+        });
 
-      lab_acumulado = lab_acumulado.unique(); //elimina valores duplicados
-      lab_acumulado = lab_acumulado.sort(); //ordena con sort, lo que coloca los null al final
-      lab_acumulado = lab_acumulado.sort(function(a, b) {
-        if (a != null) {
-          if(isNaN(a)){
-            return a.localeCompare(b);
-            } else{
-              return a-b;
-            }
-        }
-      }); //lo ordena en español para colocar la ñ en su lugar. sort() la coloca al final
-      var indexnull = lab_acumulado.indexOf(null);
-      if (indexnull >= 0) {
-        lab_acumulado[indexnull] = 'sin datos'
-      }
-      for (var l = 0; l < lab_all.length; l++) { //búsqueda para todas las series
-        //Ordenamos el array traído de la base de datos
-        var lab_temporal_ordenado = lab_all[l].slice().sort();
-        var lab_temporal_ordenado = lab_temporal_ordenado.sort(function(a, b) {
+        lab_acumulado = lab_acumulado.unique(); //elimina valores duplicados
+        lab_acumulado = lab_acumulado.sort(); //ordena con sort, lo que coloca los null al final
+        lab_acumulado = lab_acumulado.sort(function(a, b) {
           if (a != null) {
             if(isNaN(a)){
               return a.localeCompare(b);
-            } else{
-              return a-b;
-            }
+              } else{
+                return a-b;
+              }
           }
-        }); //lo ordena en español
-        var indexnull = lab_temporal_ordenado.indexOf(null);
+        }); //lo ordena en español para colocar la ñ en su lugar. sort() la coloca al final
+        var indexnull = lab_acumulado.indexOf(null);
         if (indexnull >= 0) {
-          lab_temporal_ordenado[indexnull] = 'sin datos'
+          lab_acumulado[indexnull] = 'sin datos'
         }
-        var indexnull = lab_all[l].indexOf(null);
-        if (indexnull >= 0) {
-          lab_all[l][indexnull] = 'sin datos'
-        }
-        var lab_temporal = [];
-        var da_temporal = [];
-        for (var t = 0; t < lab_temporal_ordenado.length; t++) {
-          for (var tt = 0; tt < lab_all[l].length; tt++) {
-            if (lab_temporal_ordenado[t] == lab_all[l][tt]) {
-              lab_temporal.push(lab_all[l][tt]);
-              da_temporal.push(da_all[l][tt]);
+        for (var l = 0; l < lab_all.length; l++) { //búsqueda para todas las series
+          //Ordenamos el array traído de la base de datos
+          var lab_temporal_ordenado = lab_all[l].slice().sort();
+          var lab_temporal_ordenado = lab_temporal_ordenado.sort(function(a, b) {
+            if (a != null) {
+              if(isNaN(a)){
+                return a.localeCompare(b);
+              } else{
+                return a-b;
+              }
+            }
+          }); //lo ordena en español
+          var indexnull = lab_temporal_ordenado.indexOf(null);
+          if (indexnull >= 0) {
+            lab_temporal_ordenado[indexnull] = 'sin datos'
+          }
+          var indexnull = lab_all[l].indexOf(null);
+          if (indexnull >= 0) {
+            lab_all[l][indexnull] = 'sin datos'
+          }
+          var lab_temporal = [];
+          var da_temporal = [];
+          for (var t = 0; t < lab_temporal_ordenado.length; t++) {
+            for (var tt = 0; tt < lab_all[l].length; tt++) {
+              if (lab_temporal_ordenado[t] == lab_all[l][tt]) {
+                lab_temporal.push(lab_all[l][tt]);
+                da_temporal.push(da_all[l][tt]);
+              }
+            }
+          }
+          lab_all[l] = lab_temporal.slice();
+          da_all[l] = da_temporal.slice();
+          for (var a = 0; a < lab_acumulado.length; a++) {
+            if (lab_all[l][a] != lab_acumulado[a]) {
+              lab_all[l].splice(a, 0, lab_acumulado[a]); // si no encuentra el label lo agrega en el eje x
+              da_all[l].splice(a, 0, null); //y agrega valor null para el eje y
             }
           }
         }
-        lab_all[l] = lab_temporal.slice();
-        da_all[l] = da_temporal.slice();
-        for (var a = 0; a < lab_acumulado.length; a++) {
-          if (lab_all[l][a] != lab_acumulado[a]) {
-            lab_all[l].splice(a, 0, lab_acumulado[a]); // si no encuentra el label lo agrega en el eje x
-            da_all[l].splice(a, 0, null); //y agrega valor null para el eje y
+
+      // fin de unificación de labels en el eje x para varias series y orden numérico
+
+      // Arranca armando series
+      $.each(reg, function(a, b) {
+
+        // Extraemos los datos de cada serie
+        $.each(b, function(index, value) {
+
+          // Extraemos tipo de gráfico
+          if (index == 'chart_type') {
+            type_chart = value;
           }
+
+          // Extraemos propiedades del gráfico
+          if (index == 'chart_properties') {
+            options = value;
+            graphic_id = value['graphic_id'];
+            color = value['color'];
+            properties_value = value['value'];
+            label_datasets = value['label_datasets'];
+            // el campo está mal cargado en la db ARREGLAR
+            right_y_axis = value['left_y_axis'];
+            if (right_y_axis == true) {
+              display_right_y_axis = true;
+              position_y_axis = 'right-y-axis';
+            } else {
+              position_y_axis = 'left-y-axis';
+            };
+            point_style = value['point_type']
+          }
+
+          // Extraemos las opciones del gráfico
+          if (index == 'graphics_options') {
+            title = value['title'];
+            width = value['width'];
+            legend_display = value['legend_display'];
+            label_x_axis = value['label_x_axis'];
+            label_y_axis_left = value['label_y_axis_left'];
+            label_y_axis_right = value['label_y_axis_right'];
+            stacked = value['stack'];
+            data_labelling = value['data_labelling'];
+            scale = value['scale'];
+            tick_min_left = value['tick_x_min'];
+            if (tick_min_left == null) {
+              tick_min_left = 0;
+            }
+            tick_max_left = value['tick_x_max'];
+            tick_min_right = value['tick_y_min'];
+            if (tick_min_right == null) {
+              tick_min_right = 0;
+            }
+            tick_max_right = value['tick_y_max'];
+            tick_step_left = value['step_x'];
+            if (tick_step_left == null) {
+              tick_step_left = 0;
+            }
+          }
+
+          if (index == 'data') {
+            data_general = value;
+
+            // Extraemos los datos del array de la serie
+            $.each(data_general, function(idx, vax) {
+              var idx_index = idx.substring(5)
+
+              // BAR & LINE datasets
+              if (type_chart == 'bar' || type_chart == 'line') {
+                datasets.push({
+                  label: label_datasets,
+                  data: da_all[idx_index],
+                  yAxisID: position_y_axis,
+                  fill: false,
+                  lineTension: 0,
+                  pointRadius: 0,
+                  pointStyle: point_style,
+                  backgroundColor: color,
+                  borderColor: color,
+                  borderWidth: 4,
+                  hoverBackgroundColor: color,
+                  hoverBorderColor: color,
+                  hoverBorderWidth: 2,
+                  type: type_chart,
+                  properties_value: properties_value
+                });
+              }
+
+              //AREA datasets
+              if (type_chart == 'area') {
+                datasets.push({
+                  label: label_datasets,
+                  data: da_all[idx_index],
+                  yAxisID: position_y_axis,
+                  fill: true,
+                  lineTension: 0,
+                  pointStyle: point_style,
+                  pointRadius: 0,
+                  backgroundColor: color,
+                  borderColor: color,
+                  borderWidth: 3,
+                  hoverBackgroundColor: color,
+                  hoverBorderColor: color,
+                  hoverBorderWidth: 2,
+                  type: 'line'
+                });
+              }
+
+              // POINT datasets
+              if (type_chart == 'point') {
+                datasets.push({
+                  label: label_datasets,
+                  data: da_all[idx_index],
+                  yAxisID: position_y_axis,
+                  fill: true,
+                  pointStyle: point_style,
+                  backgroundColor: color,
+                  borderColor: color,
+                  borderWidth: 3,
+                  hoverBackgroundColor: color,
+                  hoverBorderColor: color,
+                  hoverBorderWidth: 2,
+                  pointRadius: 8,
+                  pointHoverRadius: 10,
+                  showLine: false,
+                  type: 'line'
+                });
+              }
+
+              // HORIZONTAL BAR datasets
+              if (type_chart == 'horizontalBar') {
+                datasets.push({
+                  label: label_datasets,
+                  data: da_all[idx_index],
+                  fill: false,
+                  backgroundColor: color,
+                  borderColor: color,
+                  borderWidth: 3,
+                  hoverBackgroundColor: color,
+                  hoverBorderColor: color,
+                  hoverBorderWidth: 2,
+                  type: type_chart
+                });
+              }
+
+              // DOUGHNUT datasets
+              if (type_chart == 'doughnut') {
+                cantidad = da_all[idx_index].length;
+                rancolor = randomColor({
+                  count: cantidad,
+                  hue: color,
+                  format: 'rgb',
+                  seed: 1,
+                })
+                datasets.push({
+                  label: label_datasets,
+                  data: da_all[idx_index],
+                  backgroundColor: rancolor,
+                  borderColor: 'white',
+                  borderWidth: 2,
+                  type: type_chart
+                });
+              }
+
+              // BUBBLE datasets
+              if (type_chart == 'bubble' && count_series == 1) {
+
+                datasets.push({
+                  label: label_datasets,
+                  data: bubble_dataset,
+                  fill: false,
+                  backgroundColor: 'transparent',
+                  borderColor: color,
+                  borderWidth: 3,
+                  hoverBackgroundColor: color,
+                  hoverBorderColor: color,
+                  hoverBorderWidth: 2,
+                  type: type_chart
+                });
+              }
+
+            }); //cierra each data_general
+
+            data_gx = {
+              labels: lab_acumulado,
+              datasets: datasets
+            }
+            data_gx_all.push({
+              id_graph: graphic_id,
+              data_gx: data_gx
+            });
+
+          } //cierra if data
+        }) //cierra each b
+      }) //cierra each reg
+
+      var html_new_graph = "<div class='w-100'>"
+      html_new_graph += "<div class='py-1 px-2' id='header"+graphic_id+"'>"
+      html_new_graph += "<text id='text_chart"+graphic_id+"'>"+title+"</text>"
+      html_new_graph += "<span class='fas fa-expand-arrows-alt' style='float: right; cursor: pointer' onclick='maximize_chart(event)'></span>"
+      html_new_graph += "<span class='fas fa-table mr-2' id='show_data_chart"+graphic_id+"' style='float: right; cursor: pointer' title='Mostrar Datos' onclick='show_data_chart("+graphic_id+")'></span>"
+      html_new_graph += "<span class='fas fa-eye-slash mr-2' id='hide_chart"+graphic_id+"' style='float: right; cursor: pointer' title='Ocultar Gráfico' onclick='hide_chart("+graphic_id+")'></span>"
+      html_new_graph += "</div>"
+      html_new_graph += "<div class='collapse show' id='collapse_"+graphic_id+"'>"
+      html_new_graph += "<div class='d-none card-body px-1 pb-0 chart_body_custom' style='overflow-x: auto' id='body_graph_table"+graphic_id+"'>"
+      html_new_graph += "</div>"
+      html_new_graph += "<div class='card-body px-1 pb-0 chart_body_custom' id='body"+graphic_id+"'>"
+      html_new_graph += "<canvas class='canvas"+graphic_id+"' id='canvas"+graphic_id+"'></canvas>"
+      html_new_graph += "</div>"
+      html_new_graph += "</div>"
+      html_new_graph += "</div>"
+
+      $('#chart_container'+graphic_id).append(html_new_graph);
+
+
+      //Chequeamos el estado de view
+      var status_view_chart = $('#sidebar_all').hasClass('charts-container');
+      var status_view_expanded_chart = $('#sidebar_all').hasClass('charts-container_expanded');
+      if (status_view_chart) { // Default
+        if (width == 3) {
+          width = 6;
+          aspectR = "1";
+        } else if (width == 6) {
+          aspectR = "1";
+        } else if (width == 9) {
+          width = 12;
+          aspectR = "2";
+        } else if (width == 12) {
+          aspectR = "2";
         }
+        $('#chart_container' + graphic_id).addClass('col-md-' + width);
+        //legend_display = false;
       }
-
-    // fin de unificación de labels en el eje x para varias series y orden numérico
-
-    // Arranca armando series
-    $.each(reg, function(a, b) {
-
-      // Extraemos los datos de cada serie
-      $.each(b, function(index, value) {
-
-        // Extraemos tipo de gráfico
-        if (index == 'chart_type') {
-          type_chart = value;
+      if (status_view_expanded_chart) { // Expanded
+        if (width == 3) {
+          aspectR = "1";
+        } else if (width == 6) {
+          aspectR = "2";
+        } else if (width == 9) {
+          aspectR = "3";
+        } else if (width == 12) {
+          aspectR = "4";
         }
-
-        // Extraemos propiedades del gráfico
-        if (index == 'chart_properties') {
-          options = value;
-          graphic_id = value['graphic_id'];
-          color = value['color'];
-          properties_value = value['value'];
-          label_datasets = value['label_datasets'];
-          // el campo está mal cargado en la db ARREGLAR
-          right_y_axis = value['left_y_axis'];
-          if (right_y_axis == true) {
-            display_right_y_axis = true;
-            position_y_axis = 'right-y-axis';
-          } else {
-            position_y_axis = 'left-y-axis';
-          };
-          point_style = value['point_type']
-        }
-
-        // Extraemos las opciones del gráfico
-        if (index == 'graphics_options') {
-          title = value['title'];
-          width = value['width'];
-          legend_display = value['legend_display'];
-          label_x_axis = value['label_x_axis'];
-          label_y_axis_left = value['label_y_axis_left'];
-          label_y_axis_right = value['label_y_axis_right'];
-          stacked = value['stack'];
-          data_labelling = value['data_labelling'];
-          scale = value['scale'];
-          tick_min_left = value['tick_x_min'];
-          if (tick_min_left == null) {
-            tick_min_left = 0;
-          }
-          tick_max_left = value['tick_x_max'];
-          tick_min_right = value['tick_y_min'];
-          if (tick_min_right == null) {
-            tick_min_right = 0;
-          }
-          tick_max_right = value['tick_y_max'];
-          tick_step_left = value['step_x'];
-          if (tick_step_left == null) {
-            tick_step_left = 0;
-          }
-        }
-
-        if (index == 'data') {
-          data_general = value;
-
-          // Extraemos los datos del array de la serie
-          $.each(data_general, function(idx, vax) {
-            var idx_index = idx.substring(5)
-
-            // BAR & LINE datasets
-            if (type_chart == 'bar' || type_chart == 'line') {
-              datasets.push({
-                label: label_datasets,
-                data: da_all[idx_index],
-                yAxisID: position_y_axis,
-                fill: false,
-                lineTension: 0,
-                pointRadius: 0,
-                pointStyle: point_style,
-                backgroundColor: color,
-                borderColor: color,
-                borderWidth: 4,
-                hoverBackgroundColor: color,
-                hoverBorderColor: color,
-                hoverBorderWidth: 2,
-                type: type_chart,
-                properties_value: properties_value
-              });
-            }
-
-            //AREA datasets
-            if (type_chart == 'area') {
-              datasets.push({
-                label: label_datasets,
-                data: da_all[idx_index],
-                yAxisID: position_y_axis,
-                fill: true,
-                lineTension: 0,
-                pointStyle: point_style,
-                pointRadius: 0,
-                backgroundColor: color,
-                borderColor: color,
-                borderWidth: 3,
-                hoverBackgroundColor: color,
-                hoverBorderColor: color,
-                hoverBorderWidth: 2,
-                type: 'line'
-              });
-            }
-
-            // POINT datasets
-            if (type_chart == 'point') {
-              datasets.push({
-                label: label_datasets,
-                data: da_all[idx_index],
-                yAxisID: position_y_axis,
-                fill: true,
-                pointStyle: point_style,
-                backgroundColor: color,
-                borderColor: color,
-                borderWidth: 3,
-                hoverBackgroundColor: color,
-                hoverBorderColor: color,
-                hoverBorderWidth: 2,
-                pointRadius: 8,
-                pointHoverRadius: 10,
-                showLine: false,
-                type: 'line'
-              });
-            }
-
-            // HORIZONTAL BAR datasets
-            if (type_chart == 'horizontalBar') {
-              datasets.push({
-                label: label_datasets,
-                data: da_all[idx_index],
-                fill: false,
-                backgroundColor: color,
-                borderColor: color,
-                borderWidth: 3,
-                hoverBackgroundColor: color,
-                hoverBorderColor: color,
-                hoverBorderWidth: 2,
-                type: type_chart
-              });
-            }
-
-            // DOUGHNUT datasets
-            if (type_chart == 'doughnut') {
-              cantidad = da_all[idx_index].length;
-              rancolor = randomColor({
-                count: cantidad,
-                hue: color,
-                format: 'rgb',
-                seed: 1,
-              })
-              datasets.push({
-                label: label_datasets,
-                data: da_all[idx_index],
-                backgroundColor: rancolor,
-                borderColor: 'white',
-                borderWidth: 2,
-                type: type_chart
-              });
-            }
-
-            // BUBBLE datasets
-            if (type_chart == 'bubble' && count_series == 1) {
-
-              datasets.push({
-                label: label_datasets,
-                data: bubble_dataset,
-                fill: false,
-                backgroundColor: 'transparent',
-                borderColor: color,
-                borderWidth: 3,
-                hoverBackgroundColor: color,
-                hoverBorderColor: color,
-                hoverBorderWidth: 2,
-                type: type_chart
-              });
-            }
-
-          }); //cierra each data_general
-
-          data_gx = {
-            labels: lab_acumulado,
-            datasets: datasets
-          }
-          data_gx_all.push({
-            id_graph: graphic_id,
-            data_gx: data_gx
-          });
-
-        } //cierra if data
-      }) //cierra each b
-    }) //cierra each reg
-
-    var html_new_graph = "<div class='w-100'>"
-    html_new_graph += "<div class='py-1 px-2' id='header"+graphic_id+"'>"
-    html_new_graph += "<text id='text_chart"+graphic_id+"'>"+title+"</text>"
-    html_new_graph += "<span class='fas fa-expand-arrows-alt' style='float: right; cursor: pointer' onclick='maximize_chart(event)'></span>"
-    html_new_graph += "<span class='fas fa-table mr-2' id='show_data_chart"+graphic_id+"' style='float: right; cursor: pointer' title='Mostrar Datos' onclick='show_data_chart("+graphic_id+")'></span>"
-    html_new_graph += "<span class='fas fa-eye-slash mr-2' id='hide_chart"+graphic_id+"' style='float: right; cursor: pointer' title='Ocultar Gráfico' onclick='hide_chart("+graphic_id+")'></span>"
-    html_new_graph += "</div>"
-    html_new_graph += "<div class='collapse show' id='collapse_"+graphic_id+"'>"
-    html_new_graph += "<div class='d-none card-body px-1 pb-0 chart_body_custom' style='overflow-x: auto' id='body_graph_table"+graphic_id+"'>"
-    html_new_graph += "</div>"
-    html_new_graph += "<div class='card-body px-1 pb-0 chart_body_custom' id='body"+graphic_id+"'>"
-    html_new_graph += "<canvas class='canvas"+graphic_id+"' id='canvas"+graphic_id+"'></canvas>"
-    html_new_graph += "</div>"
-    html_new_graph += "</div>"
-    html_new_graph += "</div>"
-
-    $('#chart_container'+graphic_id).append(html_new_graph);
-
-
-    //Chequeamos el estado de view
-    var status_view_chart = $('#sidebar_all').hasClass('charts-container');
-    var status_view_expanded_chart = $('#sidebar_all').hasClass('charts-container_expanded');
-    if (status_view_chart) { // Default
-      if (width == 3) {
-        width = 6;
-        aspectR = "1";
-      } else if (width == 6) {
-        aspectR = "1";
-      } else if (width == 9) {
-        width = 12;
-        aspectR = "2";
-      } else if (width == 12) {
-        aspectR = "2";
+        $('#chart_container' + graphic_id).addClass('col-md-' + width);
+        //legend_display = false;
       }
-      $('#chart_container' + graphic_id).addClass('col-md-' + width);
-      //legend_display = false;
-    }
-    if (status_view_expanded_chart) { // Expanded
-      if (width == 3) {
-        aspectR = "1";
-      } else if (width == 6) {
-        aspectR = "2";
-      } else if (width == 9) {
-        aspectR = "3";
-      } else if (width == 12) {
-        aspectR = "4";
-      }
-      $('#chart_container' + graphic_id).addClass('col-md-' + width);
-      //legend_display = false;
-    }
-    // BAR options
-    if (type_chart == 'bar' || type_chart == 'line' || type_chart == 'area' || type_chart == 'point') {
-      var option_legend = {
-        responsive: true,
-        aspectRatio: aspectR,
-        legend: {
-          display: legend_display,
-          position: 'bottom',
-          labels: {
-            boxWidth: 40,
-            padding: 10,
-            usePointStyle: true,
-            fontColor: '#fff',
-          }
-        },
-        tooltips: {
-          callbacks: {
-            label: function(tooltipItem, data) {
-              var dataset = data.datasets[tooltipItem.datasetIndex];
-              var currentValue = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-              return currentValue.toLocaleString('es-ES');
+      // BAR options
+      if (type_chart == 'bar' || type_chart == 'line' || type_chart == 'area' || type_chart == 'point') {
+        var option_legend = {
+          responsive: true,
+          aspectRatio: aspectR,
+          legend: {
+            display: legend_display,
+            position: 'bottom',
+            labels: {
+              boxWidth: 40,
+              padding: 10,
+              usePointStyle: true,
+              fontColor: '#fff',
             }
-          }
-        },
-        scales: {
-          xAxes: [{
-            stacked: stacked,
-            ticks: {
-              autoSkip: false,
-              fontColor: '#FDFEFE'
-            },
-            gridLines: {
-              color: "#626567"
-            },
-            display: true,
-            scaleLabel: {
+          },
+          tooltips: {
+            callbacks: {
+              label: function(tooltipItem, data) {
+                var dataset = data.datasets[tooltipItem.datasetIndex];
+                var currentValue = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                return currentValue.toLocaleString('es-ES');
+              }
+            }
+          },
+          scales: {
+            xAxes: [{
+              stacked: stacked,
+              ticks: {
+                autoSkip: false,
+                fontColor: '#FDFEFE'
+              },
+              gridLines: {
+                color: "#626567"
+              },
               display: true,
-              labelString: label_x_axis,
-              fontColor: '#e9ecef',
-            }
-          }],
-          yAxes: [{
-            id: 'left-y-axis',
-            position: 'left',
-            display: 'true',
-            type: 'linear',
-            ticks: {
-              min: parseFloat(tick_min_left),
-              stepSize: parseFloat(tick_step_left),
+              scaleLabel: {
+                display: true,
+                labelString: label_x_axis,
+                fontColor: '#e9ecef',
+              }
+            }],
+            yAxes: [{
+              id: 'left-y-axis',
+              position: 'left',
+              display: 'true',
+              type: 'linear',
+              ticks: {
+                min: parseFloat(tick_min_left),
+                stepSize: parseFloat(tick_step_left),
+                  callback: function(label, index, labels) {
+                    label = label.toLocaleString('es-ES')
+                    return label;
+                  },
+                fontColor: '#FDFEFE'
+              },
+              stacked: stacked,
+              scaleLabel: {
+                display: true,
+                labelString: label_y_axis_left,
+                fontColor: '#e9ecef',
+              },
+              gridLines: {
+                color: "#626567",
+                drawOnChartArea: true,
+              },
+            }, {
+              id: 'right-y-axis',
+              position: 'right',
+              display: display_right_y_axis,
+              type: 'linear',
+              ticks: {
+                min: parseFloat(tick_min_right),
+                stepSize: parseFloat(tick_step_left),
                 callback: function(label, index, labels) {
                   label = label.toLocaleString('es-ES')
                   return label;
                 },
-              fontColor: '#FDFEFE'
-            },
-            stacked: stacked,
-            scaleLabel: {
-              display: true,
-              labelString: label_y_axis_left,
-              fontColor: '#e9ecef',
-            },
-            gridLines: {
-              color: "#626567",
-              drawOnChartArea: true,
-            },
-          }, {
-            id: 'right-y-axis',
-            position: 'right',
-            display: display_right_y_axis,
-            type: 'linear',
-            ticks: {
-              min: parseFloat(tick_min_right),
-              stepSize: parseFloat(tick_step_left),
-              callback: function(label, index, labels) {
-                label = label.toLocaleString('es-ES')
-                return label;
+                fontColor: '#FDFEFE',
               },
-              fontColor: '#FDFEFE',
-            },
-            stacked: stacked,
-            scaleLabel: {
-              display: true,
-              labelString: label_y_axis_right,
-              fontColor: '#e9ecef',
-            },
-            gridLines: {
-              color: "#626567",
-              drawOnChartArea: false,
-            },
-          }]
-        },
-        plugins: {
-          datalabels: {
-            // display: properties_value,
-            font: {
-              size: 15,
-              weight: 'bold'
-            },
-            color: 'white',
-            textStrokeColor: '#1B2631',
-            textStrokeWidth: 1,
-            textShadowColor: '#000000',
-            textShadowBlur: 5,
-            anchor: 'end',
-            align: 'end',
-            offset: -15,
-            formatter: function(value, context) {
-              if (context.dataset.properties_value === true) {
-                return value;
-              } else {
-                return '';
-              }
-
-              var datasets_context = context.dataset.data;
-              var max = Math.max.apply(null, datasets_context);
-              var min = Math.min.apply(null, datasets_context);
-              if(max-min<=50){data_decimals=10}
-              if(max-min<=10){data_decimals=100}
-              if(max-min<=5){data_decimals=1000}
-              return Math.round(value*data_decimals)/data_decimals;
-            }
-          }
-        },
-      }
-      if (tick_max_left != null) {
-        option_legend.scales.yAxes[0].ticks.max = parseFloat(tick_max_left);
-      }
-      if (tick_max_right != null) {
-        option_legend.scales.yAxes[1].ticks.max = parseFloat(tick_max_right);
-      }
-      var chart_settings = {
-        type: 'bar',
-        data: data_gx,
-        options: option_legend
-      }
-    }
-
-    // HORIZONTAL BAR datasets
-    if (type_chart == 'horizontalBar') {
-      var option_legend = {
-        responsive: true,
-        aspectRatio: aspectR,
-        legend: {
-          display: legend_display,
-          position: 'bottom',
-          labels: {
-            boxWidth: 40,
-            padding: 10,
-            usePointStyle: true,
-            fontColor: '#fff',
-          }
-        },
-        scales: {
-          xAxes: [{
-            display: true,
-            ticks: {
-              min: parseFloat(tick_min_left),
-              stepSize: parseFloat(tick_step_left),
-              callback: function(label, index, labels) {
-                label = label.toLocaleString('es-ES')
-                return label;
+              stacked: stacked,
+              scaleLabel: {
+                display: true,
+                labelString: label_y_axis_right,
+                fontColor: '#e9ecef',
               },
-              fontColor: '#FDFEFE'
-            },
-            stacked: stacked,
-            scaleLabel: {
-              display: true,
-              labelString: label_y_axis_left, // invertido para horizontalBar
-              fontColor: '#e9ecef',
-            },
-            gridLines: {
-              drawOnChartArea: true,
-              color: "#626567",
-            },
-          }],
-          yAxes: [{
-            display: true,
-            stacked: stacked,
-            scaleLabel: {
-              display: true,
-              labelString: label_x_axis, // invertido para horizontalBar
-              fontColor: '#e9ecef',
-            },
-            ticks: {
-              autoSkip: false,
-              fontColor: '#FDFEFE'
-            },
-            gridLines: {
-              color: "#626567"
-            },
-          }]
-        },
-        plugins: {
-          datalabels: {
-            display: data_labelling,
-            font: {
-              size: 16,
-              weight: 'bold'
-            },
-            color: 'white',
-            textStrokeColor: '#1B2631',
-            textStrokeWidth: 1,
-            textShadowColor: '#000000',
-            textShadowBlur: 5,
-            anchor: 'end',
-            align: 'end',
-            formatter: function(value, context) {
-              var datasets_context = context.dataset.data;
-              var max = Math.max.apply(null, datasets_context);
-              var min = Math.min.apply(null, datasets_context);
-              if(max-min<=50){data_decimals=10}
-              if(max-min<=10){data_decimals=100}
-              if(max-min<=5){data_decimals=1000}
-              return Math.round(value*data_decimals)/data_decimals;
-            }
-          }
-        },
-      }
-      if (tick_max_left != null) {
-        option_legend.scales.yAxes[0].ticks.max = parseFloat(tick_max_left);
-      }
-      var chart_settings = {
-        type: 'horizontalBar',
-        data: data_gx,
-        options: option_legend
-      }
-    }
+              gridLines: {
+                color: "#626567",
+                drawOnChartArea: false,
+              },
+            }]
+          },
+          plugins: {
+            datalabels: {
+              // display: properties_value,
+              font: {
+                size: 15,
+                weight: 'bold'
+              },
+              color: 'white',
+              textStrokeColor: '#1B2631',
+              textStrokeWidth: 1,
+              textShadowColor: '#000000',
+              textShadowBlur: 5,
+              anchor: 'end',
+              align: 'end',
+              offset: -15,
+              formatter: function(value, context) {
+                if (context.dataset.properties_value === true) {
+                  return value;
+                } else {
+                  return '';
+                }
 
-    // DOUGHNUT options
-    if (type_chart == 'doughnut') {
-      var option_legend = {
-        responsive: true,
-        aspectRatio: aspectR,
-        legend: {
-          display: legend_display,
-          position: 'bottom',
-          labels: {
-            fontColor: '#3d4046',
-            fontSize: 12,
-            usePointStyle: true,
-            fontColor: '#fff',
-          }
-        },
-        tooltips: {
-          callbacks: {
-            title: function(tooltipItem, data) {
-              return data.labels[tooltipItem[0].index];
-            },
-            label: function(tooltipItem, data) {
-              // Obtenemos los datos
-              var dataset = data.datasets[tooltipItem.datasetIndex];
-              // Calcula el total
-              var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
-                // Convierte string a float
-                previousValue = parseFloat(previousValue)
-                currentValue = parseFloat(currentValue)
-                return previousValue + currentValue;
-              });
-              // Obtenemos el valor de los elementos actuales
-              var currentValue = dataset.data[tooltipItem.index];
-              // Calculamos el porcentaje
-              var precentage = ((currentValue / total) * 100).toFixed(2)
-              return precentage + "%";
-            }
-          }
-        },
-        plugins: {
-          datalabels: {
-            formatter: (value, ctx) => {
-              // Mustra sólo los labels cuyo valor sea mayor al 4%
-              let sum = 0;
-              var label = ctx.chart.data.labels[ctx.dataIndex]
-              let dataArr = ctx.chart.data.datasets[0].data;
-              dataArr.map(data => {
-                sum += data;
-              });
-              let percentage = (value * 100 / sum).toFixed(2);
-              if (percentage > 4) {
-                return label;
-              } else {
-                return null;
+                var datasets_context = context.dataset.data;
+                var max = Math.max.apply(null, datasets_context);
+                var min = Math.min.apply(null, datasets_context);
+                if(max-min<=50){data_decimals=10}
+                if(max-min<=10){data_decimals=100}
+                if(max-min<=5){data_decimals=1000}
+                return Math.round(value*data_decimals)/data_decimals;
               }
-            },
-            font: {
-              size: 11,
-            },
-            textStrokeColor: '#616A6B',
-            color: '#FDFEFE',
-            textStrokeWidth: 1,
-            textShadowColor: '#000000',
-            textShadowBlur: 2,
-            align: 'center',
-          }
-        },
+            }
+          },
+        }
+        if (tick_max_left != null) {
+          option_legend.scales.yAxes[0].ticks.max = parseFloat(tick_max_left);
+        }
+        if (tick_max_right != null) {
+          option_legend.scales.yAxes[1].ticks.max = parseFloat(tick_max_right);
+        }
+        var chart_settings = {
+          type: 'bar',
+          data: data_gx,
+          options: option_legend
+        }
       }
-      var chart_settings = {
-        type: type_chart,
-        data: data_gx,
-        options: option_legend
-      }
-    }
 
-    // BUBBLE options
-    if (type_chart == 'bubble') {
-      var option_legend = {
-        responsive: true,
-        aspectRatio: aspectR,
-        legend: {
-          display: legend_display,
-          position: 'bottom',
-          labels: {
-            boxWidth: 40,
-            padding: 10,
-            usePointStyle: true,
-            fontColor: '#fff',
-          }
-        },
-        scales: {
-          xAxes: [{
-            display: true,
-            scaleLabel: {
+      // HORIZONTAL BAR datasets
+      if (type_chart == 'horizontalBar') {
+        var option_legend = {
+          responsive: true,
+          aspectRatio: aspectR,
+          legend: {
+            display: legend_display,
+            position: 'bottom',
+            labels: {
+              boxWidth: 40,
+              padding: 10,
+              usePointStyle: true,
+              fontColor: '#fff',
+            }
+          },
+          scales: {
+            xAxes: [{
               display: true,
-              labelString: label_x_axis
-            }
-          }],
-          yAxes: [{
-            display: true,
-            scaleLabel: {
+              ticks: {
+                min: parseFloat(tick_min_left),
+                stepSize: parseFloat(tick_step_left),
+                callback: function(label, index, labels) {
+                  label = label.toLocaleString('es-ES')
+                  return label;
+                },
+                fontColor: '#FDFEFE'
+              },
+              stacked: stacked,
+              scaleLabel: {
+                display: true,
+                labelString: label_y_axis_left, // invertido para horizontalBar
+                fontColor: '#e9ecef',
+              },
+              gridLines: {
+                drawOnChartArea: true,
+                color: "#626567",
+              },
+            }],
+            yAxes: [{
               display: true,
-              labelString: label_y_axis_left
+              stacked: stacked,
+              scaleLabel: {
+                display: true,
+                labelString: label_x_axis, // invertido para horizontalBar
+                fontColor: '#e9ecef',
+              },
+              ticks: {
+                autoSkip: false,
+                fontColor: '#FDFEFE'
+              },
+              gridLines: {
+                color: "#626567"
+              },
+            }]
+          },
+          plugins: {
+            datalabels: {
+              display: data_labelling,
+              font: {
+                size: 16,
+                weight: 'bold'
+              },
+              color: 'white',
+              textStrokeColor: '#1B2631',
+              textStrokeWidth: 1,
+              textShadowColor: '#000000',
+              textShadowBlur: 5,
+              anchor: 'end',
+              align: 'end',
+              formatter: function(value, context) {
+                var datasets_context = context.dataset.data;
+                var max = Math.max.apply(null, datasets_context);
+                var min = Math.min.apply(null, datasets_context);
+                if(max-min<=50){data_decimals=10}
+                if(max-min<=10){data_decimals=100}
+                if(max-min<=5){data_decimals=1000}
+                return Math.round(value*data_decimals)/data_decimals;
+              }
             }
-          }]
-        },
-        plugins: {
-          datalabels: {
-            display: data_labelling,
-            font: {
-              size: 16,
-              weight: 'bold'
-            },
-            color: 'white',
-            textStrokeColor: '#1B2631',
-            textStrokeWidth: 1,
-            textShadowColor: '#000000',
-            textShadowBlur: 5,
-            anchor: 'end',
-            align: 'end',
-            formatter: function(value, context) {
-              var datasets_context = context.dataset.data;
-              var max = Math.max.apply(null, datasets_context);
-              var min = Math.min.apply(null, datasets_context);
-              if(max-min<=50){data_decimals=10}
-              if(max-min<=10){data_decimals=100}
-              if(max-min<=5){data_decimals=1000}
-              return Math.round(value*data_decimals)/data_decimals;
+          },
+        }
+        if (tick_max_left != null) {
+          option_legend.scales.yAxes[0].ticks.max = parseFloat(tick_max_left);
+        }
+        var chart_settings = {
+          type: 'horizontalBar',
+          data: data_gx,
+          options: option_legend
+        }
+      }
+
+      // DOUGHNUT options
+      if (type_chart == 'doughnut') {
+        var option_legend = {
+          responsive: true,
+          aspectRatio: aspectR,
+          legend: {
+            display: legend_display,
+            position: 'bottom',
+            labels: {
+              fontColor: '#3d4046',
+              fontSize: 12,
+              usePointStyle: true,
+              fontColor: '#fff',
             }
-          }
-        },
+          },
+          tooltips: {
+            callbacks: {
+              title: function(tooltipItem, data) {
+                return data.labels[tooltipItem[0].index];
+              },
+              label: function(tooltipItem, data) {
+                // Obtenemos los datos
+                var dataset = data.datasets[tooltipItem.datasetIndex];
+                // Calcula el total
+                var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                  // Convierte string a float
+                  previousValue = parseFloat(previousValue)
+                  currentValue = parseFloat(currentValue)
+                  return previousValue + currentValue;
+                });
+                // Obtenemos el valor de los elementos actuales
+                var currentValue = dataset.data[tooltipItem.index];
+                // Calculamos el porcentaje
+                var precentage = ((currentValue / total) * 100).toFixed(2)
+                return precentage + "%";
+              }
+            }
+          },
+          plugins: {
+            datalabels: {
+              formatter: (value, ctx) => {
+                // Mustra sólo los labels cuyo valor sea mayor al 4%
+                let sum = 0;
+                var label = ctx.chart.data.labels[ctx.dataIndex]
+                let dataArr = ctx.chart.data.datasets[0].data;
+                dataArr.map(data => {
+                  sum += data;
+                });
+                let percentage = (value * 100 / sum).toFixed(2);
+                if (percentage > 4) {
+                  return label;
+                } else {
+                  return null;
+                }
+              },
+              font: {
+                size: 11,
+              },
+              textStrokeColor: '#616A6B',
+              color: '#FDFEFE',
+              textStrokeWidth: 1,
+              textShadowColor: '#000000',
+              textShadowBlur: 2,
+              align: 'center',
+            }
+          },
+        }
+        var chart_settings = {
+          type: type_chart,
+          data: data_gx,
+          options: option_legend
+        }
       }
-      var chart_settings = {
-        type: 'bubble',
-        data: data_gx,
-        options: option_legend
+
+      // BUBBLE options
+      if (type_chart == 'bubble') {
+        var option_legend = {
+          responsive: true,
+          aspectRatio: aspectR,
+          legend: {
+            display: legend_display,
+            position: 'bottom',
+            labels: {
+              boxWidth: 40,
+              padding: 10,
+              usePointStyle: true,
+              fontColor: '#fff',
+            }
+          },
+          scales: {
+            xAxes: [{
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: label_x_axis
+              }
+            }],
+            yAxes: [{
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: label_y_axis_left
+              }
+            }]
+          },
+          plugins: {
+            datalabels: {
+              display: data_labelling,
+              font: {
+                size: 16,
+                weight: 'bold'
+              },
+              color: 'white',
+              textStrokeColor: '#1B2631',
+              textStrokeWidth: 1,
+              textShadowColor: '#000000',
+              textShadowBlur: 5,
+              anchor: 'end',
+              align: 'end',
+              formatter: function(value, context) {
+                var datasets_context = context.dataset.data;
+                var max = Math.max.apply(null, datasets_context);
+                var min = Math.min.apply(null, datasets_context);
+                if(max-min<=50){data_decimals=10}
+                if(max-min<=10){data_decimals=100}
+                if(max-min<=5){data_decimals=1000}
+                return Math.round(value*data_decimals)/data_decimals;
+              }
+            }
+          },
+        }
+        var chart_settings = {
+          type: 'bubble',
+          data: data_gx,
+          options: option_legend
+        }
       }
-    }
 
-    var chart_canvas = document.getElementById('canvas' + graphic_id).getContext('2d');
-    var final_chart = new Chart(chart_canvas, chart_settings);
+      var chart_canvas = document.getElementById('canvas' + graphic_id).getContext('2d');
+      var final_chart = new Chart(chart_canvas, chart_settings);
 
-  } //cierra for data
-
+    } //cierra for data
+  }
   // Aplicamos la posición del scroll
   if (scroll > 0) {
     $('.graphics').scrollTop(scroll);
