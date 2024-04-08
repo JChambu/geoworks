@@ -960,12 +960,16 @@ function draw_charts(data) {
               align: 'end',
               offset: -15,
               formatter: function(value, context) {
-                if (context.dataset.properties_value === true) {
-                  return value;
+                if (data_labelling === true) {
+                  true
                 } else {
-                  return '';
+                  if (context.dataset.properties_value === true) {
+                    return value;
+                  } else {
+                    return '';
+                  }
                 }
-
+                
                 var datasets_context = context.dataset.data;
                 var max = Math.max.apply(null, datasets_context);
                 var min = Math.min.apply(null, datasets_context);
@@ -1053,6 +1057,7 @@ function draw_charts(data) {
                 weight: 'bold'
               },
               color: 'white',
+              offset: -9,
               textStrokeColor: '#1B2631',
               textStrokeWidth: 1,
               textShadowColor: '#000000',
@@ -1121,21 +1126,7 @@ function draw_charts(data) {
           },
           plugins: {
             datalabels: {
-              formatter: (value, ctx) => {
-                // Mustra sólo los labels cuyo valor sea mayor al 4%
-                let sum = 0;
-                var label = ctx.chart.data.labels[ctx.dataIndex]
-                let dataArr = ctx.chart.data.datasets[0].data;
-                dataArr.map(data => {
-                  sum += data;
-                });
-                let percentage = (value * 100 / sum).toFixed(2);
-                if (percentage > 4) {
-                  return label;
-                } else {
-                  return null;
-                }
-              },
+              display: true,
               font: {
                 size: 11,
               },
