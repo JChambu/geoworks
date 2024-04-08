@@ -99,7 +99,7 @@ class GraphicsController < ApplicationController
     params.require(:graphic).permit(:token, :dashboard_id, :title, :width, :legend_display, :label_x_axis, :label_y_axis_left,
       :label_y_axis_right, :stack, :tick_x_min, :tick_x_max, :tick_y_min, :tick_y_max, :step_x, :substep_x, :data_labelling, :scale,
       graphics_properties_attributes: [
-        :id, :color, :chart_id, :analytics_dashboard_id, :graphic_id, :label_datasets, :left_y_axis, :point_type, :_destroy
+        :id, :color, :chart_id, :analytics_dashboard_id, :graphic_id, :label_datasets, :left_y_axis, :value, :point_type, :_destroy
       ]
     )
   end

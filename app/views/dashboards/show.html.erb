@@ -263,7 +263,7 @@ function pdf_chart(){
 <% end %>
 
 <div class="modal fade" id="modal-window" tabindex="-1" role="dialog" aria-labelledby="chartModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content"></div>
   </div>
 </div>
@@ -280,84 +280,88 @@ function pdf_chart(){
   </div>
 
   <div style="position: absolute;width: 30%; left: 70%" id="sidebar_all">
-
-  <div class="sidebar pt-1 px-1 d-none" id="timeslider-container" style="position: relative; z-index: 500">
-    <div class="card text-light chart-bg-transparent pb-0 pt-0" >
-      <div class="card-header chart-header-bg-transparent py-1 px-2">
-        <div class="view-data-container" >
-        <i class="fas fa-window-maximize view-data" id="view-timeslider" onclick="show_sidebar('timeslider-container')"></i>
-        <i class="fas fa-square view-data" onclick="expand_sidebar('timeslider-container')" ></i>
-        <i class="fas fa-times view-data" onclick="hidde_sidebar('timeslider-container')"></i>
-      </div>
-        Rango Temporal
-      </div>
-      <div>
-        <div class="card-body p-1" id="filter-time-body">
-          <i id="time_slider_item-save" class="fas fa-calendar-check" style="font-size: 1.5em ; position: absolute; left: 80%; color: rgba(250,250,250,0.8); cursor:pointer; " onclick="set_time_slider_filter()"></i>
-          <i id="time_slider_item-clear" class="fas fa-calendar-times " style="font-size: 1.5em; color: rgba(250,250,250,0.8); position: absolute; left: 90%; cursor:pointer;" onclick="clear_time_slider_filter()"></i>
+    <div class="sidebar pt-1 px-1 d-none" id="timeslider-container" style="position: relative; z-index: 500">
+      <div class="card text-light chart-bg-transparent pb-0 pt-0" >
+        <div class="card-header chart-header-bg-transparent py-1 px-2">
+          <div class="view-data-container" >
+          <i class="fas fa-window-maximize view-data" id="view-timeslider" onclick="show_sidebar('timeslider-container')"></i>
+          <i class="fas fa-square view-data" onclick="expand_sidebar('timeslider-container')" ></i>
+          <i class="fas fa-times view-data" onclick="hidde_sidebar('timeslider-container')"></i>
+        </div>
+          Rango Temporal
+        </div>
         <div>
-          <p class="m-0 mt-2">Formularios</p>
-            <select class="form-control form-control-sm" id="time_slider_step_forms" onchange="     change_step_time_slider('forms')" style="cursor:pointer; display: inline-block; width: 31%; padding: 1px!important;">
-                <option value="day" label="Día"></option>
-                <option value="week" label="Semana"></option>
-                <option value="month" label="Mes"></option>
-                <option value="year" label="Año"></option>
-              </select>
-            <input class="string optional form-control form-control-sm" type="text" id="time_slider_from_forms" style="cursor:pointer; display: inline-block; width: 31%;">
-              <input class="string optional form-control form-control-sm" type="text" id="time_slider_to_forms" style="cursor: pointer;display: inline-block; width: 31%;">
-          </div>
+          <div class="card-body p-1" id="filter-time-body">
+            <i id="time_slider_item-save" class="fas fa-calendar-check" style="font-size: 1.5em ; position: absolute; left: 80%; color: rgba(250,250,250,0.8); cursor:pointer; " onclick="set_time_slider_filter()"></i>
+            <i id="time_slider_item-clear" class="fas fa-calendar-times " style="font-size: 1.5em; color: rgba(250,250,250,0.8); position: absolute; left: 90%; cursor:pointer;" onclick="clear_time_slider_filter()"></i>
           <div>
-            <p class="m-0">Sub Formularios</p>
-            <select class="form-control form-control-sm" id="time_slider_step_subforms" onchange="     change_step_time_slider('subforms')" style="cursor:pointer; display: inline-block; width: 31%; padding: 1px!important;">
-                <option value="day" label="Día"></option>
-                <option value="week" label="Semana"></option>
-                <option value="month" label="Mes"></option>
-                <option value="year" label="Año"></option>
-              </select>
-            <input class="string optional form-control form-control-sm" type="text" id="time_slider_from_subforms" style="cursor:pointer; display: inline-block; width: 31%;">
-              <input class="string optional form-control form-control-sm" type="text" id="time_slider_to_subforms" style="cursor: pointer;display: inline-block; width: 31%;">
+            <p class="m-0 mt-2">Formularios</p>
+              <select class="form-control form-control-sm" id="time_slider_step_forms" onchange="     change_step_time_slider('forms')" style="cursor:pointer; display: inline-block; width: 31%; padding: 1px!important;">
+                  <option value="day" label="Día"></option>
+                  <option value="week" label="Semana"></option>
+                  <option value="month" label="Mes"></option>
+                  <option value="year" label="Año"></option>
+                </select>
+              <input class="string optional form-control form-control-sm" type="text" id="time_slider_from_forms" style="cursor:pointer; display: inline-block; width: 31%;">
+                <input class="string optional form-control form-control-sm" type="text" id="time_slider_to_forms" style="cursor: pointer;display: inline-block; width: 31%;">
+            </div>
+            <div>
+              <p class="m-0">Sub Formularios</p>
+              <select class="form-control form-control-sm" id="time_slider_step_subforms" onchange="     change_step_time_slider('subforms')" style="cursor:pointer; display: inline-block; width: 31%; padding: 1px!important;">
+                  <option value="day" label="Día"></option>
+                  <option value="week" label="Semana"></option>
+                  <option value="month" label="Mes"></option>
+                  <option value="year" label="Año"></option>
+                </select>
+              <input class="string optional form-control form-control-sm" type="text" id="time_slider_from_subforms" style="cursor:pointer; display: inline-block; width: 31%;">
+                <input class="string optional form-control form-control-sm" type="text" id="time_slider_to_subforms" style="cursor: pointer;display: inline-block; width: 31%;">
+            </div>
           </div>
         </div>
       </div>
     </div>
-    </div>
-  <div class="sidebar pt-1 px-1 d-none" id="filter-container">
-    <div class="card text-light chart-bg-transparent pb-0 pt-0">
-      <div class="card-header chart-header-bg-transparent py-1 px-2">
-        <div class="view-data-container status-view-middle" id="status-view-sidebar" >
-        <i class="fas fa-window-maximize view-data" id="view-filters" onclick="show_sidebar('filter-container')"></i>
-        <i class="fas fa-square view-data" onclick="expand_sidebar('filter-container')"></i>
-        <i class="fas fa-times view-data" onclick="hidde_sidebar('filter-container')"></i>
-      </div>
-        Filtros Activos
-      </div>
-      <div  style="overflow-x: hidden;">
-        <div class="card-body py-1 px-2" id="filter-body">
-        </div>
-      </div>
-    </div>
-  </div>
-    <% if can? :graphics, :visualizer %>
-    <div class="sidebar pt-1 px-1 d-none" id="charts-container">
-    <div class="card text-light chart-bg-transparent pb-0 pt-0">
+    <div class="sidebar pt-1 px-1 d-none" id="filter-container">
+      <div class="card text-light chart-bg-transparent pb-0 pt-0">
         <div class="card-header chart-header-bg-transparent py-1 px-2">
           <div class="view-data-container status-view-middle" id="status-view-sidebar" >
-            <i class="fas fa-file-pdf view-data" id="pdf-charts" onclick="pdf_chart()"></i>
-            <i class="fas fa-window-maximize view-data" id="view-charts" onclick="show_sidebar('charts-container')"></i>
-            <i class="fas fa-square view-data" onclick="expand_sidebar('charts-container')"></i>
-            <i class="fas fa-times view-data" onclick="hidde_sidebar('charts-container')"></i>
-          </div>
-          Indicadores Gráficos
+          <i class="fas fa-window-maximize view-data" id="view-filters" onclick="show_sidebar('filter-container')"></i>
+          <i class="fas fa-square view-data" onclick="expand_sidebar('filter-container')"></i>
+          <i class="fas fa-times view-data" onclick="hidde_sidebar('filter-container')"></i>
         </div>
-        <div class="graphics d-flex align-content-start flex-wrap" id="graph"></div>
+          Filtros Activos
+        </div>
+        <div  style="overflow-x: hidden;">
+          <div class="card-body py-1 px-2" id="filter-body">
+          </div>
+        </div>
+      </div>
+    </div>
+    <% if can? :graphics, :visualizer %>
+      <div class="sidebar pt-1 px-1 d-none" id="charts-container">
+        <div class="card text-light chart-bg-transparent pb-0 pt-0">
+          <div class="card-header chart-header-bg-transparent py-1 px-2">
+            <div class="view-data-container status-view-middle" id="status-view-sidebar" >
+              <i class="fas fa-file-pdf view-data" id="pdf-charts" onclick="pdf_chart()"></i>
+              <i class="fas fa-window-maximize view-data" id="view-charts" onclick="show_sidebar('charts-container')"></i>
+              <i class="fas fa-square view-data" onclick="expand_sidebar('charts-container')"></i>
+              <i class="fas fa-times view-data" onclick="hidde_sidebar('charts-container')"></i>
+            </div>
+            <div style="display: flex;">
+              <div style="margin-right: 6px;">
+                Indicadores Gráficos
+              </div>
+              <div>
+                <i class='fas fa-pencil-square-o view-data' id='user_title_pdf' title='Agregar Título a PDF' onclick='openTitleInput()'></i>
+              </div>
+          </div>
+          </div>
+          <div class="graphics d-flex align-content-start flex-wrap" id="graph"></div>
         </div>
       </div>
     <% end %>
   </div>
-  </div>
 
-
-   <% if can? :data, :visualizer %>
+  <% if can? :data, :visualizer %>
     <div class="pt-1 px-1 table_data_container position-absolute" style="top: 97vh; left: 0%; width: 100%; z-index: 401; transition: 1s; transition-delay: 0.3s">
       <div class="card text-light chart-bg-transparent mb-2" id="collapse_data" style="overflow-y: hidden; max-height: 0vh; transition:0.8s; border: none;">
         <%= render :partial => 'project_data' %>

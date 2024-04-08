@@ -17,7 +17,7 @@
     <% end %>
 
     <div class="form-row">
-      <div class="form-group col-md-6">
+      <div class="form-group col-md-5">
         <%= form.input :title, label: "Título", input_html: {class: 'form-control form-control-sm form-control form-control-sm-sm'} %>
         <%= form.hidden_field :dashboard_id, id: :graphic_dashboard_id %>
       </div>
@@ -26,6 +26,7 @@
       </div>
       <div class="form-group col-md-2">
         <label>Leyenda</label>
+        <br>
         <div class="custom-control custom-checkbox mb-2">
           <%= form.check_box :legend_display, class:'custom-control-input', id:'legend_display_id' %>
           <label class="custom-control-label" for="legend_display_id"></label>
@@ -51,7 +52,7 @@
       </div>
 
       <div class="form-group hide-div bar horizontalBar bubble col-md-2 mb-0">
-        <%= form.label :data_labelling, "Mostrar valores" %>
+        <%= form.label :data_labelling, "Mostrar todos valores" %>
         <br>
         <div class="custom-control custom-checkbox mb-2">
           <%= form.check_box :data_labelling, class:'custom-control-input', id:'data_labelling_id' %>
