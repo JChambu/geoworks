@@ -969,14 +969,14 @@ function draw_charts(data) {
                     return '';
                   }
                 }
-                
-                var datasets_context = context.dataset.data;
-                var max = Math.max.apply(null, datasets_context);
-                var min = Math.min.apply(null, datasets_context);
-                if(max-min<=50){data_decimals=10}
-                if(max-min<=10){data_decimals=100}
-                if(max-min<=5){data_decimals=1000}
-                return Math.round(value*data_decimals)/data_decimals;
+
+                // var datasets_context = context.dataset.data;
+                // var max = Math.max.apply(null, datasets_context);
+                // var min = Math.min.apply(null, datasets_context);
+                // if(max-min<=50){data_decimals=10}
+                // if(max-min<=10){data_decimals=100}
+                // if(max-min<=5){data_decimals=1000}
+                // return Math.round(value*data_decimals)/data_decimals;
               }
             }
           },
