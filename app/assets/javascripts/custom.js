@@ -805,6 +805,7 @@ function draw_charts(data) {
       var html_new_graph = "<div class='w-100'>"
       html_new_graph += "<div class='py-1 px-2' id='header"+graphic_id+"'>"
       html_new_graph += "<text id='text_chart"+graphic_id+"'>"+title+"</text>"
+      html_new_graph += "<text id='type_chart"+graphic_id+"' style='display: none;'>"+type_chart+"</text>"
       html_new_graph += "<span class='fas fa-expand-arrows-alt' style='float: right; cursor: pointer' onclick='maximize_chart(event)'></span>"
       html_new_graph += "<span class='fas fa-table mr-2' id='show_data_chart"+graphic_id+"' style='float: right; cursor: pointer' title='Mostrar Datos' onclick='show_data_chart("+graphic_id+")'></span>"
       html_new_graph += "<span class='fas fa-eye-slash mr-2' id='hide_chart"+graphic_id+"' style='float: right; cursor: pointer' title='Ocultar Gráfico' onclick='hide_chart("+graphic_id+")'></span>"

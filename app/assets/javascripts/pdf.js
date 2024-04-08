@@ -811,72 +811,74 @@ function final_pdf(data){
 }
 
 function init_pdf_charts(){
-    search_data_pdf(true);
+  search_data_pdf(true);
 }
 
 function save_pdf_charts(){
-    $('#text_toast').html("Generando PDF. En breve se descargará su archivo.");
-    $('#toast').toast('show');
-    user_title = $('#titleInput').val();
-    charts_for_pdf = [];
-    $('.chart_container').each(function(){
-        if(!$(this).hasClass('d-none')){
-            var new_chart = {}
-            var id_chart = $(this).attr('id').split('chart_container')[1];
-            var chart_title = $('#text_chart'+id_chart).html();
-            var chart_canvas = document.getElementById('canvas'+id_chart);
-            var pngUrl = chart_canvas.toDataURL();
-            new_chart["chart_title"] = chart_title;
-            new_chart["chart"] = pngUrl;
-            charts_for_pdf.push(new_chart)
-        }
-    });
-    template_type = "charts_report";
-    data_report ={}
-    data_report["data"] = charts_for_pdf;
-    data_report["name"] = Navarra.dashboards.config.name_project;
-    if (!user_title == '') {
-      data_report["user_title"] = user_title
+  $('#text_toast').html("Generando PDF. En breve se descargará su archivo.");
+  $('#toast').toast('show');
+  user_title = $('#titleInput').val();
+  charts_for_pdf = [];
+  $('.chart_container').each(function(){
+    if(!$(this).hasClass('d-none')){
+      var new_chart = {}
+      var id_chart = $(this).attr('id').split('chart_container')[1];
+      var chart_title = $('#text_chart'+id_chart).html();
+      var type_chart = $('#type_chart'+id_chart).html();
+      var chart_canvas = document.getElementById('canvas'+id_chart);
+      var pngUrl = chart_canvas.toDataURL();
+      new_chart["chart_title"] = chart_title;
+      new_chart["type_chart"] = type_chart;
+      new_chart["chart"] = pngUrl;
+      charts_for_pdf.push(new_chart)
     }
-    data_report["user"] = user_name;
-    data_report["map"] = imgData_pdf;
-    data_report["logo"] = logo_corp;
-    if($('#sidebar_all').hasClass('charts-container_expanded')){
-      data_report["expanded"] = true;
+  });
+  template_type = "charts_report";
+  data_report ={}
+  data_report["data"] = charts_for_pdf;
+  data_report["name"] = Navarra.dashboards.config.name_project;
+  if (!user_title == '') {
+    data_report["user_title"] = user_title
+  }
+  data_report["user"] = user_name;
+  data_report["map"] = imgData_pdf;
+  data_report["logo"] = logo_corp;
+  if($('#sidebar_all').hasClass('charts-container_expanded')){
+    data_report["expanded"] = true;
+  }
+  data_report[template_type] = true;
+  var d = new Date();
+  var month = d.getMonth()+1;
+  var day = d.getDate();
+  var actual_date = d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day + " " + (d.getHours() <10 ? '0' : '') + d.getHours() + ":" + (d.getMinutes() <10 ? '0' : '')  +d.getMinutes();
+  data_report["date"] = actual_date
+  var hash_pdf = {}
+  hash_pdf["name"] = "example_report";
+  var data = {}
+  data["template"] = hash_pdf;
+  data["data"] = data_report;
+  data["file"] = "reporte.pdf";
+  $.ajax({
+    type: 'POST',
+    url: '/dashboards/send_report',
+    xhrFields: {
+      responseType: 'blob'
+    },
+    datatype: 'application/json',
+    data: data,
+    success: function(data) {
+      //Convert the Byte Data to BLOB object.
+      var blob = new Blob([data], { type: "application/octetstream" });
+      var url = window.URL || window.webkitURL;
+      link = url.createObjectURL(blob);
+      var a = $("<a />");
+      a.attr("download", "reporte.pdf");
+      a.attr("href", link);
+      $("body").append(a);
+      a[0].click();
+      $("body").remove(a);
+      $('#titleInput').replaceWith('<i class="fas fa-pencil-square-o view-data" id="user_title_pdf" title="Agregar Título a PDF" onclick="openTitleInput()">');
     }
-    data_report[template_type] = true;
-    var d = new Date();
-    var month = d.getMonth()+1;
-    var day = d.getDate();
-    var actual_date = d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day + " " + (d.getHours() <10 ? '0' : '') + d.getHours() + ":" + (d.getMinutes() <10 ? '0' : '')  +d.getMinutes();
-    data_report["date"] = actual_date
-    var hash_pdf = {}
-    hash_pdf["name"] = "example_report";
-    var data = {}
-    data["template"] = hash_pdf;
-    data["data"] = data_report;
-    data["file"] = "reporte.pdf";
-    $.ajax({
-      type: 'POST',
-      url: '/dashboards/send_report',
-      xhrFields: {
-        responseType: 'blob'
-      },
-      datatype: 'application/json',
-      data: data,
-      success: function(data) {
-        //Convert the Byte Data to BLOB object.
-        var blob = new Blob([data], { type: "application/octetstream" });
-        var url = window.URL || window.webkitURL;
-        link = url.createObjectURL(blob);
-        var a = $("<a />");
-        a.attr("download", "reporte.pdf");
-        a.attr("href", link);
-        $("body").append(a);
-        a[0].click();
-        $("body").remove(a);
-        $('#titleInput').replaceWith('<i class="fas fa-pencil-square-o view-data" id="user_title_pdf" title="Agregar Título a PDF" onclick="openTitleInput()">');
-      }
   });
 }
 
