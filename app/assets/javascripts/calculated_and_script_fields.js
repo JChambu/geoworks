@@ -294,6 +294,7 @@ Navarra.calculated_and_script_fields = function() {
                 texto_campo_id = "#fieldchildid\\|"+field_id.split('|')[0]+"\\|"+field_id.split('|')[1];
                 var ulElement = $(texto_campo_id).next('.btn-group').find('ul.multiselect-container');
 
+                arrayListDatosCapa.sort();
                 var existingLiElements = ulElement.find('li');
                 if (existingLiElements.length === 0) {
                   arrayListDatosCapa.forEach(function(nombre) {
