@@ -2920,32 +2920,54 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name, s
               var min_lat = Math.min.apply(null, points.features.map((v) => v.geometry.coordinates[1]));
               var max_lng = Math.max.apply(null, points.features.map((v) => v.geometry.coordinates[0]));
               var min_lng = Math.min.apply(null, points.features.map((v) => v.geometry.coordinates[0]));
+
+              bbox_to_json = points.bbox
+              timestamp_to_json = points.timeStamp
+              crs_to_json = points.crs
+
               $.each(points.features, function(i, v) {
-              if (v.geometry.coordinates[1] == max_lat) {
-                v1 = turf.clone(v);
-                v1.geometry.coordinates[1] = bbox[3];
-                points = turf.featureCollection(points.features.concat(v1));
-              return;
-              }
-              if (v.geometry.coordinates[1] == min_lat) {
-                v1 = turf.clone(v);
-                v1.geometry.coordinates[1] = bbox[1];
-                points = turf.featureCollection(points.features.concat(v1));
-              return;
-              }
-              if (v.geometry.coordinates[0] == max_lng) {
-                v1 = turf.clone(v);
-                v1.geometry.coordinates[0] = bbox[2];
-                points = turf.featureCollection(points.features.concat(v1));
-              return;
-              }
-              if (v.geometry.coordinates[0] == min_lng) {
-                v1 = turf.clone(v);
-                v1.geometry.coordinates[0] = bbox[0];
-                points = turf.featureCollection(points.features.concat(v1));
-              return;
-              }
+                if (v.geometry.coordinates[1] == max_lat) {
+                  v1 = turf.clone(v);
+                  v1.geometry.coordinates[1] = bbox[3];
+                  points = turf.featureCollection(points.features.concat(v1));
+                return;
+                }
+                if (v.geometry.coordinates[1] == min_lat) {
+                  v1 = turf.clone(v);
+                  v1.geometry.coordinates[1] = bbox[1];
+                  points = turf.featureCollection(points.features.concat(v1));
+                return;
+                }
+                if (v.geometry.coordinates[0] == max_lng) {
+                  v1 = turf.clone(v);
+                  v1.geometry.coordinates[0] = bbox[2];
+                  points = turf.featureCollection(points.features.concat(v1));
+                return;
+                }
+                if (v.geometry.coordinates[0] == min_lng) {
+                  v1 = turf.clone(v);
+                  v1.geometry.coordinates[0] = bbox[0];
+                  points = turf.featureCollection(points.features.concat(v1));
+                return;
+                }
               });
+              var additionalData = {
+                "totalFeatures": points.features.length,
+                "numberMatched": points.features.length,
+                "numberReturned": points.features.length,
+                "timeStamp": timestamp_to_json,
+                "crs": crs_to_json,
+                "bbox": bbox_to_json
+              };
+
+              points.bbox = additionalData.bbox;
+              points.crs = additionalData.crs;
+              points.numberMatched = additionalData.numberMatched;
+              points.numberReturned = additionalData.numberReturned;
+              points.timeStamp = additionalData.timeStamp;
+              points.totalFeatures = additionalData.totalFeatures;
+              var combined = null
+
               if(points.features.length>4000){
                 if(points.features.length>10000){
                   $('#text_alert_decision').html("Usted está por interpolar "+ points.features.length +" puntos. Este proceso tomar demasiado tiempo. Se aconseja reducir el área a interpolar. Desea Continuar de todos modos ?");
@@ -2982,9 +3004,23 @@ function continue_iterpolation(points, interpolation_field,breaks,colors,field_n
   $('#text_toast').html("Iterpolando ...");
   $('#toast').toast('show');
   var options = {gridType: 'points', property: interpolation_field, units: 'kilometers', weight: parseFloat(weight)};
+  var bboxValues = points.bbox;
+
+  points.features.forEach(function(feature) {
+    if (feature.geometry && feature.geometry.coordinates && Array.isArray(feature.geometry.coordinates)) {
+      var coordinates = feature.geometry.coordinates;
+      for (var i = 0; i < coordinates.length; i++) {
+        var coordinate = coordinates[i];
+        if (coordinate === null || coordinate === -Infinity || coordinate === Infinity) {
+          coordinates[i] = bboxValues[i];
+        }
+      }
+    }
+  });
+
   setTimeout(function(){ // delay para que cierre el toast_decision.
-     var grid = turf.interpolate(points,parseFloat(celd_size), options);
-     if(grid.features.length>400000){
+    var grid = turf.interpolate(points,parseFloat(celd_size), options);
+    if(grid.features.length>400000){
       if(points.features.length>1000000){
         $('#text_alert_decision').html("La interpolación ha generado una grilla de "+ grid.features.length +" puntos. Este proceso puede tomar demasiado tiempo. Se aconseja aumentar el tamaño de la celda y/o reducir el área a interpolar. Desea Continuar de todos modos ?");
       } else {
