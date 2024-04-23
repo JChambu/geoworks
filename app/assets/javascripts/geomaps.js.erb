@@ -3079,9 +3079,13 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined, field
         var popupContent = '<br/><h7>'+field_name+'</h7>'
         popupContent += '<br/><h7>'+breaks[index_poly]+'</h7>'
         popupContent += '<h7> - '+breaks[index_poly+1]+'</h7>'
+
+        var interpolation_pane = mymap.createPane('interpolation_pane');
+        mymap.getPane('interpolation_pane').style.zIndex = 300;
+
         if(combined==null){
           all_polys.push(lat_lng_polys);
-          var geojson = L.geoJSON(new_poly,{color:colors[count], fillOpacity: 0.6}).on('click',function(e){
+          var geojson = L.geoJSON(new_poly,{color:colors[count], fillOpacity: 0.6, pane: "interpolation_pane"}).on('click',function(e){
             var popup = new L.popup({autoPan:false})
             .setLatLng(new L.latLng([e.latlng.lat,e.latlng.lng]))
             .setContent(popupContent)
