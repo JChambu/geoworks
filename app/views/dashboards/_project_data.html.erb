@@ -534,6 +534,9 @@ function show_subfield(field_ids){
                   new_cel_subform
                   if(column.properties[colname]!=undefined){
                     new_cel_subform.innerHTML = column.properties[colname];
+                    if (typeof column.properties[colname] === 'boolean') {
+                      column.properties[colname] = column.properties[colname] ? "true" : "false";
+                    }
                     new_cel_subform.setAttribute("id_search", column.properties[colname][0].trim());
                   }
                   new_sub_column.appendChild(new_cel_subform);
