@@ -1939,6 +1939,10 @@ function show_labels_in_others_layers(setbbox, event){
 };
 
 function show_labels_subfields(setbbox){
+  if($('#checkbox_etiquetas_subforms').prop('checked')==false){
+    mymap.removeLayer(labels_subfields);
+  }
+
   if($('#checkbox_etiquetas_subforms').prop('checked')==true){
     if(setbbox){
       var cql_filter =  getCQLFilter(true);
