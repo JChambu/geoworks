@@ -8,7 +8,7 @@
   <%# nombre %>
   <td class="pl-0" style="width: 12vw">
       <i class="fas fa-long-arrow-alt-right"; style="width: 10%"></i>
-      <%= f.text_field :name, class: "form-control form-control-sm", style:"width: 86%; display: inline-block" %> 
+      <%= f.text_field :name, class: "form-control form-control-sm", style:"width: 86%; display: inline-block" %>
   </td>
   <%# Tipo de campo %>
   <td style="width: 13vw"><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control form-control-sm' } %></td>
@@ -46,7 +46,12 @@
         <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField4'.concat(f.object.id.to_s)%>
       </div>
     </div>
-    <div class="text-center" style="width: 13%; display:inline-block"><div class="custom-control custom-checkbox"></div></div>
+    <div class="text-center" style="width: 13%; display:inline-block">
+      <div class="custom-control custom-checkbox">
+        <%= f.check_box :heatmap_field, class:'custom-control-input', id: 'customCheckSubField5'.concat(f.object.id.to_s) %>
+        <%= f.label:" ", class:'custom-control-label', for:'customCheckSubField5'.concat(f.object.id.to_s)%>
+      </div>
+    </div>
     <div class="text-center" style="width: 13%; display:inline-block"><div class="custom-control custom-checkbox"></div></div>
   </th>
   <% if can? :attributes, :add_logic %>

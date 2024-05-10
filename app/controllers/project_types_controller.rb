@@ -23,6 +23,44 @@ class ProjectTypesController < ApplicationController
     render json: {id_added_layer: id_added_layer, type_geometry_layer: type_geometry_layer, label_field_added_layer: label_field_added_layer}
   end
 
+  def get_added_layer_subforms_data
+    current_layer_id = params[:current_layer_id].to_i
+    project_ids = params[:project_ids].map(&:to_i)
+
+    # label_field_subform = ProjectSubfield.joins(:project_field)
+    #                           .where(heatmap_field: true)
+    #                           .where(project_fields: { project_type_id: current_layer_id }).pluck(:key)
+    label_field_subform_ids = ProjectSubfield.joins(:project_field)
+                              .where(heatmap_field: true)
+                              .where(project_fields: { project_type_id: current_layer_id }).pluck(:id)
+    label_field_subform_pfid = ProjectSubfield.joins(:project_field)
+                              .where(heatmap_field: true)
+                              .where(project_fields: { project_type_id: current_layer_id }).pluck(:project_field_id)
+
+    show_subforms_labels_by_project = {}
+
+    project_ids.each do |pi|
+      clean_label_field_subform_pfid = label_field_subform_pfid.uniq
+      labels_project_id = []
+
+      clean_label_field_subform_pfid.each do |pfi|
+        subform_label_show = ProjectDataChild.where(project_field_id: pfi, project_id: pi).pluck(:properties)
+        label_field_subform_ids.each do |lfs|
+          subform_label_show.each do |subform_label|
+            labels = label_field_subform_ids.map do |lfs|
+              subform_label[lfs.to_s]
+            end.compact
+
+            labels_project_id.concat(labels)
+          end
+        end
+      end
+      show_subforms_labels_by_project[pi] = labels_project_id.uniq
+    end
+
+    render json: { show_subforms_labels_by_project: show_subforms_labels_by_project }
+  end
+
   def project_type_layers
 
     # Busca todas las capas
@@ -1434,7 +1472,7 @@ class ProjectTypesController < ApplicationController
         :choice_list_id, :hidden, :read_only, :popup, :data_table, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,
         project_subfields_attributes: [
           :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
-          :choice_list_id, :hidden, :read_only, :popup, :filter_field, :calculated_field, :data_script
+          :choice_list_id, :hidden, :read_only, :popup, :filter_field, :calculated_field, :data_script, :heatmap_field
         ]
       ]
     ).merge(user_id: current_user.id)

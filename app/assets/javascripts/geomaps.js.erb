@@ -190,7 +190,13 @@ Navarra.geomaps = function() {
                     '<input class="custom-control-input" onchange="Navarra.geomaps.show_labels(true)" id="checkbox_Etiquetas" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_Etiquetas"> </label>'+
                     '</div>'+
-                    '<label for=mapa_base1>Etiquetas</label></a>';
+                    '<label for=mapa_base1>Etiquetas Formularios</label></a>';
+      $('#activeproject_container').append(new_item);
+      var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_etiquetas_subforms"><div class="custom-control custom-checkbox" >'+
+                    '<input class="custom-control-input" onchange="Navarra.geomaps.show_labels_subfields(true, event)" id="checkbox_etiquetas_subforms" type="checkbox" name="radio_mapabase">'+
+                    '<label class="string optional control-label custom-control-label" for="checkbox_etiquetas_subforms"> </label>'+
+                    '</div>'+
+                    '<label for=mapa_base1>Etiquetas Subformularios</label></a>';
       $('#activeproject_container').append(new_item);
     // termina modal mapa base y proyecto activo
 
@@ -1758,71 +1764,72 @@ function get_zoomextent(){
 
 function show_labels(setbbox){
   if(labels!=undefined){
-      mymap.removeLayer(labels);
-    }
+    mymap.removeLayer(labels);
+  }
+
   if($('#checkbox_Etiquetas').prop('checked')==true){
     if(setbbox){
       var cql_filter =  getCQLFilter(true);
-    }else{
+    } else {
       var cql_filter =  getCQLFilter(false);
     }
 
-  $(".fakeLoader").css("display", "block");
-  current_tenement = Navarra.dashboards.config.current_tenement;
-  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
-  var defaultParameters = {
-    authkey: Navarra.dashboards.config.geo_key,
-    service: 'WFS',
-    version: '1.0.0',
-    crs: L.CRS.EPSG4326,
-    request: 'GetFeature',
-    typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
-    outputFormat: 'application/json',
-    CQL_FILTER: cql_filter
-  };
-  var parameters = L.Util.extend(defaultParameters);
-  var URL = owsrootUrl + L.Util.getParamString(parameters);
-  var label_fields = $('.field_label');
-  $.ajax({
-    url: URL,
-    success: function (data) {
-    labels = new L.LayerGroup();
-    var geojson = new L.geoJson(data, {
-      onEachFeature: function(feature, layer){
-        switch (type_geometry) {
-          case 'Point':
-            var latlng_new = layer._latlng;
-          break;
-          case 'Polygon':
-            var latlongs = layer._latlngs;
-            var poligon_new = new L.Polygon(latlongs);
-            var center = poligon_new.getBounds().getCenter();
-            var latlng_new = new L.LatLng(center.lat,center.lng)
-          break;
-          case 'LineString':
-            var latlongs = layer._latlngs;
-            var poligon_new = new L.Polyline(latlongs);
-            var center = poligon_new.getBounds().getCenter();
-            var latlng_new = new L.LatLng(center.lat,center.lng)
-          break;
-        }
-        var popupContent1 = "";
-        label_fields.each(function(){
-          key_label = $(this).val();
-          if(feature.properties[key_label]!=null){
-            popupContent1 += '<p style="text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white">'+feature.properties[key_label]+'</p>';
+    $(".fakeLoader").css("display", "block");
+    current_tenement = Navarra.dashboards.config.current_tenement;
+    var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
+    var defaultParameters = {
+      authkey: Navarra.dashboards.config.geo_key,
+      service: 'WFS',
+      version: '1.0.0',
+      crs: L.CRS.EPSG4326,
+      request: 'GetFeature',
+      typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
+      outputFormat: 'application/json',
+      CQL_FILTER: cql_filter
+    };
+    var parameters = L.Util.extend(defaultParameters);
+    var URL = owsrootUrl + L.Util.getParamString(parameters);
+    var label_fields = $('.field_label');
+    $.ajax({
+      url: URL,
+      success: function (data) {
+      labels = new L.LayerGroup();
+      var geojson = new L.geoJson(data, {
+        onEachFeature: function(feature, layer){
+          switch (type_geometry) {
+            case 'Point':
+              var latlng_new = layer._latlng;
+            break;
+            case 'Polygon':
+              var latlongs = layer._latlngs;
+              var poligon_new = new L.Polygon(latlongs);
+              var center = poligon_new.getBounds().getCenter();
+              var latlng_new = new L.LatLng(center.lat,center.lng)
+            break;
+            case 'LineString':
+              var latlongs = layer._latlngs;
+              var poligon_new = new L.Polyline(latlongs);
+              var center = poligon_new.getBounds().getCenter();
+              var latlng_new = new L.LatLng(center.lat,center.lng)
+            break;
           }
-        });
-        var popup_new = new L.Popup({closeButton:false, closeOnClick:false, className: 'custom_label', autoPan:false});
-        popup_new.setLatLng(latlng_new);
-        popup_new.setContent(popupContent1);
-        labels.addLayer(popup_new)
+          var popupContent1 = "";
+          label_fields.each(function(){
+            key_label = $(this).val();
+            if(feature.properties[key_label]!=null){
+              popupContent1 += '<p style="text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white">'+feature.properties[key_label]+'</p>';
+            }
+          });
+          var popup_new = new L.Popup({closeButton:false, closeOnClick:false, className: 'custom_label', autoPan:false});
+          popup_new.setLatLng(latlng_new);
+          popup_new.setContent(popupContent1);
+          labels.addLayer(popup_new)
+        }
+      });
+      mymap.addLayer(labels);
+      $(".fakeLoader").css("display", "none");
       }
     });
-    mymap.addLayer(labels);
-    $(".fakeLoader").css("display", "none");
-    }
-  });
   }
 }
 
@@ -1927,10 +1934,98 @@ function show_labels_in_others_layers(setbbox, event){
           element.classList.add('d-none');
         });
       };
-    }//cierra success
+    }
   });
-};//cierra aca
+};
 
+function show_labels_subfields(setbbox){
+  if($('#checkbox_etiquetas_subforms').prop('checked')==true){
+    if(setbbox){
+      var cql_filter =  getCQLFilter(true);
+    } else {
+      var cql_filter =  getCQLFilter(false);
+    }
+
+    $(".fakeLoader").css("display", "block");
+    current_tenement = Navarra.dashboards.config.current_tenement;
+    var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
+    var defaultParameters = {
+      authkey: Navarra.dashboards.config.geo_key,
+      service: 'WFS',
+      version: '1.0.0',
+      crs: L.CRS.EPSG4326,
+      request: 'GetFeature',
+      typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
+      outputFormat: 'application/json',
+      CQL_FILTER: cql_filter
+    };
+    var parameters = L.Util.extend(defaultParameters);
+    var URL = owsrootUrl + L.Util.getParamString(parameters);
+    $.ajax({
+      url: URL,
+      success: function (data) {
+        labels_subfields = new L.LayerGroup();
+
+        var project_ids = [];
+        data.features.forEach(function(feature) {
+          var appId = feature.properties.app_id;
+          project_ids.push(appId);
+        });
+
+        current_layer_id = Navarra.dashboards.config.project_type_id
+        $.ajax({
+          type: 'GET',
+          url: '/project_types/get_added_layer_subforms_data',
+          datatype: 'json',
+          data: {
+            current_layer_id: current_layer_id,
+            project_ids: project_ids
+          },
+          success: function(data_info) {
+            var label_fields = data_info.show_subforms_labels_by_project
+            var geojson = new L.geoJson(data, {
+              onEachFeature: function(feature, layer){
+                switch (type_geometry) {
+                  case 'Point':
+                    var latlng_new = layer._latlng;
+                  break;
+                  case 'Polygon':
+                    var latlongs = layer._latlngs;
+                    var poligon_new = new L.Polygon(latlongs);
+                    var center = poligon_new.getBounds().getCenter();
+                    var latlng_new = new L.LatLng(center.lat,center.lng)
+                  break;
+                  case 'LineString':
+                    var latlongs = layer._latlngs;
+                    var poligon_new = new L.Polyline(latlongs);
+                    var center = poligon_new.getBounds().getCenter();
+                    var latlng_new = new L.LatLng(center.lat,center.lng)
+                  break;
+                }
+                var label_fields = data_info.show_subforms_labels_by_project
+                var popupContent3 = "";
+
+                label_fields = label_fields[feature.properties['app_id']]
+
+                label_fields.forEach(function(key_label){
+                  if(key_label != null){
+                    popupContent3 += '<p style="text-shadow: -1px 0 #FFFF66, 0 1px #FFFF66, 1px 0 #FFFF66, 0 -1px #FFFF66">'+key_label+'</p>';
+                  }
+                });
+                var popup_new = new L.Popup({closeButton:false, closeOnClick:false, className: 'custom_label', autoPan:false});
+                popup_new.setLatLng(latlng_new);
+                popup_new.setContent(popupContent3);
+                labels_subfields.addLayer(popup_new)
+              }
+            });
+            mymap.addLayer(labels_subfields);
+            $(".fakeLoader").css("display", "none");
+          }
+        });
+      }//success info layer
+    });
+  }
+};
 
 function edit_geometry_in_map(event){
   event.stopPropagation();
@@ -3177,6 +3272,7 @@ function open_iot_monitoring(app_id_popup){
     get_zoomextent: get_zoomextent,
     show_labels:show_labels,
     show_labels_in_others_layers:show_labels_in_others_layers,
+    show_labels_subfields:show_labels_subfields,
     edit_geometry_in_map: edit_geometry_in_map,
     cancel_geometry: cancel_geometry,
     delete_markers: delete_markers,
