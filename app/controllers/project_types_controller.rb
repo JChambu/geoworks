@@ -23,35 +23,61 @@ class ProjectTypesController < ApplicationController
     render json: {id_added_layer: id_added_layer, type_geometry_layer: type_geometry_layer, label_field_added_layer: label_field_added_layer}
   end
 
+  def get_prefilters_subforms_labels
+    current_layer_id = params[:current_layer_id].to_i
+    prefilters_labels = ProjectSubfield.where(prefilter_labels_subforms: true).pluck(:key)
+
+    project_field_ids = ProjectSubfield.joins(:project_field)
+                          .where(prefilter_labels_subforms: true)
+                          .where(project_fields: { project_type_id: current_layer_id }).pluck(:project_field_id).uniq
+
+    project_field_names_array = []
+    project_info = {}
+
+    project_field_ids.each do |project_field_id|
+      project_field_name = ProjectField.find(project_field_id).name
+      subfield_names = ProjectSubfield.where(prefilter_labels_subforms: true, project_field_id: project_field_id).pluck(:name)
+      project_info[project_field_name] = subfield_names
+    end
+
+    render json: { project_info: project_info }
+  end
+
   def get_added_layer_subforms_data
     current_layer_id = params[:current_layer_id].to_i
     project_ids = params[:project_ids].map(&:to_i)
+    selected_elements = params[:selectedElements]
 
-    # label_field_subform = ProjectSubfield.joins(:project_field)
-    #                           .where(heatmap_field: true)
-    #                           .where(project_fields: { project_type_id: current_layer_id }).pluck(:key)
-    label_field_subform_ids = ProjectSubfield.joins(:project_field)
-                              .where(heatmap_field: true)
-                              .where(project_fields: { project_type_id: current_layer_id }).pluck(:id)
-    label_field_subform_pfid = ProjectSubfield.joins(:project_field)
-                              .where(heatmap_field: true)
-                              .where(project_fields: { project_type_id: current_layer_id }).pluck(:project_field_id)
+    label_field_subform_ids = []
+    label_field_subform_pfid = []
+
+    selected_elements.each do |se|
+      selected_element_id = ProjectSubfield.joins(:project_field)
+                            .where(name: se)
+                            .where(project_fields: { project_type_id: current_layer_id }).pluck(:id)
+
+      label_field_subform_ids << selected_element_id
+
+      selected_element_project_field_id = ProjectSubfield.joins(:project_field)
+                                .where(name: se)
+                                .where(project_fields: { project_type_id: current_layer_id }).pluck(:project_field_id)
+
+      label_field_subform_pfid << selected_element_project_field_id
+    end
 
     show_subforms_labels_by_project = {}
+    label_field_subform_ids = label_field_subform_ids.flatten
+    label_field_subform_pfid = label_field_subform_pfid.flatten.uniq
 
     project_ids.each do |pi|
-      clean_label_field_subform_pfid = label_field_subform_pfid.uniq
       labels_project_id = []
-
-      clean_label_field_subform_pfid.each do |pfi|
+      label_field_subform_pfid.each do |pfi|
         subform_label_show = ProjectDataChild.where(project_field_id: pfi, project_id: pi).pluck(:properties)
-        label_field_subform_ids.each do |lfs|
-          subform_label_show.each do |subform_label|
-            labels = label_field_subform_ids.map do |lfs|
-              subform_label[lfs.to_s]
-            end.compact
 
-            labels_project_id.concat(labels)
+        subform_label_show.each do |subform_label|
+          label_field_subform_ids.each do |lfs|
+            label_subform_save = subform_label[lfs.to_s]
+            labels_project_id << label_subform_save if label_subform_save
           end
         end
       end
@@ -1472,7 +1498,7 @@ class ProjectTypesController < ApplicationController
         :choice_list_id, :hidden, :read_only, :popup, :data_table, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,
         project_subfields_attributes: [
           :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
-          :choice_list_id, :hidden, :read_only, :popup, :filter_field, :calculated_field, :data_script, :heatmap_field
+          :choice_list_id, :hidden, :read_only, :popup, :filter_field, :calculated_field, :data_script, :heatmap_field, :prefilter_labels_subforms
         ]
       ]
     ).merge(user_id: current_user.id)

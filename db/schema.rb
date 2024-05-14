@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20240507225533) do
+ActiveRecord::Schema.define(version: 20240513153118) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -351,6 +351,7 @@ ActiveRecord::Schema.define(version: 20240507225533) do
     t.string "roles_edit"
     t.boolean "filter_field", default: false
     t.boolean "heatmap_field", default: false
+    t.boolean "prefilter_labels_subforms", default: false
     t.index ["choice_list_id"], name: "index_project_subfields_on_choice_list_id"
     t.index ["field_type_id"], name: "index_project_subfields_on_field_type_id"
     t.index ["project_field_id"], name: "index_project_subfields_on_project_field_id"
