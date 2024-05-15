@@ -2730,18 +2730,20 @@ function show_prefilters_subform_labels() {
         container.append(titleDiv);
       });
 
-      var selectAllButton = $('<i>', { class: 'fa fa-toggle-on mt-3 mb-3 ml-2 fa-lg', title: 'Seleccionar Todas' });
-      selectAllButton.click(select_all_subforms_labels);
+      if (Object.keys(data["project_info"]).length != 0) {
+        var selectAllButton = $('<i>', { class: 'fa fa-toggle-on mt-3 mb-3 ml-2 fa-lg', title: 'Seleccionar Todas' });
+        selectAllButton.click(select_all_subforms_labels);
 
-      var createButton = $('<i>', { class: 'fas fa-check-circle mt-3 mb-3 ml-4 fa-lg', title: 'Crear Etiquetas de Subformularios' });
-      createButton.click(find_prefilters_labels);
+        var createButton = $('<i>', { class: 'fas fa-check-circle mt-3 mb-3 ml-4 fa-lg', title: 'Crear Etiquetas de Subformularios' });
+        createButton.click(find_prefilters_labels);
 
-      var deleteButton = $('<i>', { class: 'fas fa-trash-alt mt-3 mb-3 ml-4 fa-lg', title: 'Eliminar Etiquetas de Subformularios' });
-      deleteButton.click(delete_subforms_labels);
+        var deleteButton = $('<i>', { class: 'fas fa-trash-alt mt-3 mb-3 ml-4 fa-lg', title: 'Eliminar Etiquetas de Subformularios' });
+        deleteButton.click(delete_subforms_labels);
 
-      container.append(selectAllButton);
-      container.append(createButton);
-      container.append(deleteButton);
+        container.append(selectAllButton);
+        container.append(createButton);
+        container.append(deleteButton);
+      }
       container.removeClass('d-none');
     }
   });
