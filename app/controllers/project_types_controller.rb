@@ -72,7 +72,7 @@ class ProjectTypesController < ApplicationController
     project_ids.each do |pi|
       labels_project_id = []
       label_field_subform_pfid.each do |pfi|
-        subform_label_show = ProjectDataChild.where(project_field_id: pfi, project_id: pi).pluck(:properties)
+        subform_label_show = ProjectDataChild.where(project_field_id: pfi, project_id: pi, row_active: true, row_enabled: true).pluck(:properties)
 
         subform_label_show.each do |subform_label|
           label_field_subform_ids.each do |lfs|
