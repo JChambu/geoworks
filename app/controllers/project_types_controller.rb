@@ -81,7 +81,7 @@ class ProjectTypesController < ApplicationController
           end
         end
       end
-      show_subforms_labels_by_project[pi] = labels_project_id.uniq
+      show_subforms_labels_by_project[pi] = labels_project_id
     end
 
     render json: { show_subforms_labels_by_project: show_subforms_labels_by_project }
