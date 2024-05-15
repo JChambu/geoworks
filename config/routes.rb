@@ -39,6 +39,8 @@ Rails.application.routes.draw do
   post 'project_types/get_extent' => 'project_types#get_extent'
   get 'project_types/get_kpi_without_graph_ids' => 'project_types#get_kpi_without_graph_ids'
   get 'project_types/get_added_layer_data' => 'project_types#get_added_layer_data'
+  get 'project_types/get_added_layer_subforms_data' => 'project_types#get_added_layer_subforms_data'
+  get 'project_types/get_prefilters_subforms_labels' => 'project_types#get_prefilters_subforms_labels'
   post 'projects/create_form' => 'projects#create_form'
   patch 'projects/update_form' => 'projects#update_form'
   patch 'projects/update_geom_and_calculated_fields' => 'projects#update_geom_and_calculated_fields'

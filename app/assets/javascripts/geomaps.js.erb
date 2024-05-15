@@ -190,7 +190,16 @@ Navarra.geomaps = function() {
                     '<input class="custom-control-input" onchange="Navarra.geomaps.show_labels(true)" id="checkbox_Etiquetas" type="checkbox" name="radio_mapabase">'+
                     '<label class="string optional control-label custom-control-label" for="checkbox_Etiquetas"> </label>'+
                     '</div>'+
-                    '<label for=mapa_base1>Etiquetas</label></a>';
+                    '<label for=mapa_base1>Etiquetas Formularios</label></a>';
+      $('#activeproject_container').append(new_item);
+      var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_etiquetas_subforms">' +
+                    '<i class="fas fa-chevron-down float-right" style="margin-left:-20px" onclick="Navarra.geomaps.show_prefilters_subform_labels()"></i>' +
+                    '<label for="mapa_base1">Etiquetas Subformularios</label>' +
+                    '</a>' +
+                    '<div class="empty-container pl-4 d-none" style="width:20vw" id="empty_container">' +
+                    	'<div class="custom-control custom-switch" id="prefilters_labels_to_show">'+
+                    	'</div>'+
+                    '</div>';
       $('#activeproject_container').append(new_item);
     // termina modal mapa base y proyecto activo
 
@@ -1758,71 +1767,72 @@ function get_zoomextent(){
 
 function show_labels(setbbox){
   if(labels!=undefined){
-      mymap.removeLayer(labels);
-    }
+    mymap.removeLayer(labels);
+  }
+
   if($('#checkbox_Etiquetas').prop('checked')==true){
     if(setbbox){
       var cql_filter =  getCQLFilter(true);
-    }else{
+    } else {
       var cql_filter =  getCQLFilter(false);
     }
 
-  $(".fakeLoader").css("display", "block");
-  current_tenement = Navarra.dashboards.config.current_tenement;
-  var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
-  var defaultParameters = {
-    authkey: Navarra.dashboards.config.geo_key,
-    service: 'WFS',
-    version: '1.0.0',
-    crs: L.CRS.EPSG4326,
-    request: 'GetFeature',
-    typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
-    outputFormat: 'application/json',
-    CQL_FILTER: cql_filter
-  };
-  var parameters = L.Util.extend(defaultParameters);
-  var URL = owsrootUrl + L.Util.getParamString(parameters);
-  var label_fields = $('.field_label');
-  $.ajax({
-    url: URL,
-    success: function (data) {
-    labels = new L.LayerGroup();
-    var geojson = new L.geoJson(data, {
-      onEachFeature: function(feature, layer){
-        switch (type_geometry) {
-          case 'Point':
-            var latlng_new = layer._latlng;
-          break;
-          case 'Polygon':
-            var latlongs = layer._latlngs;
-            var poligon_new = new L.Polygon(latlongs);
-            var center = poligon_new.getBounds().getCenter();
-            var latlng_new = new L.LatLng(center.lat,center.lng)
-          break;
-          case 'LineString':
-            var latlongs = layer._latlngs;
-            var poligon_new = new L.Polyline(latlongs);
-            var center = poligon_new.getBounds().getCenter();
-            var latlng_new = new L.LatLng(center.lat,center.lng)
-          break;
-        }
-        var popupContent1 = "";
-        label_fields.each(function(){
-          key_label = $(this).val();
-          if(feature.properties[key_label]!=null){
-            popupContent1 += '<p style="text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white">'+feature.properties[key_label]+'</p>';
+    $(".fakeLoader").css("display", "block");
+    current_tenement = Navarra.dashboards.config.current_tenement;
+    var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
+    var defaultParameters = {
+      authkey: Navarra.dashboards.config.geo_key,
+      service: 'WFS',
+      version: '1.0.0',
+      crs: L.CRS.EPSG4326,
+      request: 'GetFeature',
+      typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
+      outputFormat: 'application/json',
+      CQL_FILTER: cql_filter
+    };
+    var parameters = L.Util.extend(defaultParameters);
+    var URL = owsrootUrl + L.Util.getParamString(parameters);
+    var label_fields = $('.field_label');
+    $.ajax({
+      url: URL,
+      success: function (data) {
+      labels = new L.LayerGroup();
+      var geojson = new L.geoJson(data, {
+        onEachFeature: function(feature, layer){
+          switch (type_geometry) {
+            case 'Point':
+              var latlng_new = layer._latlng;
+            break;
+            case 'Polygon':
+              var latlongs = layer._latlngs;
+              var poligon_new = new L.Polygon(latlongs);
+              var center = poligon_new.getBounds().getCenter();
+              var latlng_new = new L.LatLng(center.lat,center.lng)
+            break;
+            case 'LineString':
+              var latlongs = layer._latlngs;
+              var poligon_new = new L.Polyline(latlongs);
+              var center = poligon_new.getBounds().getCenter();
+              var latlng_new = new L.LatLng(center.lat,center.lng)
+            break;
           }
-        });
-        var popup_new = new L.Popup({closeButton:false, closeOnClick:false, className: 'custom_label', autoPan:false});
-        popup_new.setLatLng(latlng_new);
-        popup_new.setContent(popupContent1);
-        labels.addLayer(popup_new)
+          var popupContent1 = "";
+          label_fields.each(function(){
+            key_label = $(this).val();
+            if(feature.properties[key_label]!=null){
+              popupContent1 += '<p style="text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white">'+feature.properties[key_label]+'</p>';
+            }
+          });
+          var popup_new = new L.Popup({closeButton:false, closeOnClick:false, className: 'custom_label', autoPan:false});
+          popup_new.setLatLng(latlng_new);
+          popup_new.setContent(popupContent1);
+          labels.addLayer(popup_new)
+        }
+      });
+      mymap.addLayer(labels);
+      $(".fakeLoader").css("display", "none");
       }
     });
-    mymap.addLayer(labels);
-    $(".fakeLoader").css("display", "none");
-    }
-  });
   }
 }
 
@@ -1927,10 +1937,112 @@ function show_labels_in_others_layers(setbbox, event){
           element.classList.add('d-none');
         });
       };
-    }//cierra success
+    }
   });
-};//cierra aca
+};
 
+function show_labels_subfields(setbbox, selectedElements){
+  if(selectedElements.length >= 1){
+    if(typeof(labels_subfields)!= 'undefined'){
+      mymap.removeLayer(labels_subfields);
+    }
+
+    if(setbbox){
+      var cql_filter =  getCQLFilter(true);
+    } else {
+      var cql_filter =  getCQLFilter(false);
+    }
+
+    $(".fakeLoader").css("display", "block");
+    current_tenement = Navarra.dashboards.config.current_tenement;
+    var owsrootUrl = protocol + "//" + url + ":" + port + "/geoserver/"+current_tenement+"/wfs";
+    var defaultParameters = {
+      authkey: Navarra.dashboards.config.geo_key,
+      service: 'WFS',
+      version: '1.0.0',
+      crs: L.CRS.EPSG4326,
+      request: 'GetFeature',
+      typeName: Navarra.dashboards.config.current_tenement+':'+Navarra.dashboards.config.name_layer,
+      outputFormat: 'application/json',
+      CQL_FILTER: cql_filter
+    };
+    var parameters = L.Util.extend(defaultParameters);
+    var URL = owsrootUrl + L.Util.getParamString(parameters);
+    $.ajax({
+      url: URL,
+      success: function (data) {
+        labels_subfields = new L.LayerGroup();
+
+        var project_ids = [];
+        data.features.forEach(function(feature) {
+          var appId = feature.properties.app_id;
+          project_ids.push(appId);
+        });
+
+        current_layer_id = Navarra.dashboards.config.project_type_id
+        $.ajax({
+          type: 'GET',
+          url: '/project_types/get_added_layer_subforms_data',
+          datatype: 'json',
+          data: {
+            current_layer_id: current_layer_id,
+            project_ids: project_ids,
+            selectedElements: selectedElements
+          },
+          success: function(data_info) {
+            var label_fields = data_info.show_subforms_labels_by_project
+            var geojson = new L.geoJson(data, {
+              onEachFeature: function(feature, layer){
+                switch (type_geometry) {
+                  case 'Point':
+                    var latlng_new = layer._latlng;
+                  break;
+                  case 'Polygon':
+                    var latlongs = layer._latlngs;
+                    var poligon_new = new L.Polygon(latlongs);
+                    var center = poligon_new.getBounds().getCenter();
+                    var latlng_new = new L.LatLng(center.lat,center.lng)
+                  break;
+                  case 'LineString':
+                    var latlongs = layer._latlngs;
+                    var poligon_new = new L.Polyline(latlongs);
+                    var center = poligon_new.getBounds().getCenter();
+                    var latlng_new = new L.LatLng(center.lat,center.lng)
+                  break;
+                }
+                var label_fields = data_info.show_subforms_labels_by_project
+                var popupContent3 = "";
+
+                label_fields = label_fields[feature.properties['app_id']]
+
+                label_fields.forEach(function(key_label){
+                  if(key_label != null){
+                    popupContent3 += '<p style="text-shadow: -1px 0 #FFFF66, 0 1px #FFFF66, 1px 0 #FFFF66, 0 -1px #FFFF66">'+key_label+'</p>';
+                  }
+                });
+
+                var offsetValue;
+                if (label_fields.length >= 1 && label_fields.length <= 100) {
+                  if (type_geometry === 'Point') {
+                    offsetValue = 40 + (label_fields.length * 12);
+                  } else {
+                    offsetValue = 25 + (label_fields.length * 12);
+                  }
+                }
+                var popup_new = new L.Popup({closeButton: false, closeOnClick: false, className: 'custom_label', offset: [0, offsetValue], autoPan: false});
+                popup_new.setLatLng(latlng_new);
+                popup_new.setContent(popupContent3);
+                labels_subfields.addLayer(popup_new)
+              }
+            });
+            mymap.addLayer(labels_subfields);
+            $(".fakeLoader").css("display", "none");
+          }
+        });
+      }//success info layer
+    });
+  }
+};
 
 function edit_geometry_in_map(event){
   event.stopPropagation();
@@ -2594,6 +2706,91 @@ function create_polygon_turf_split(){
     return array_lineString;
 }
 
+function show_prefilters_subform_labels() {
+  current_layer_id = Navarra.dashboards.config.project_type_id
+
+  $.ajax({
+    type: 'GET',
+    url: '/project_types/get_prefilters_subforms_labels',
+    dataType: 'json',
+    data: {
+      current_layer_id: current_layer_id
+    },
+    success: function(data) {
+      var container = $('#prefilters_labels_to_show');
+      container.empty();
+
+      Object.keys(data.project_info).forEach(function(key) {
+        var titleDiv = $('<div>', { text: key });
+        var list = $('<ul>');
+        data.project_info[key].forEach(function(value) {
+          var checkbox = $('<input>', { type: 'checkbox', class: 'custom-control-input', id: value });
+          var labelElement = $('<label>', { class: 'custom-control-label', for: value, text: value });
+          var listItem = $('<li>').append(checkbox, labelElement);
+          list.append(listItem);
+        });
+
+        titleDiv.append(list);
+        container.append(titleDiv);
+      });
+
+      if (Object.keys(data["project_info"]).length != 0) {
+        var selectAllButton = $('<i>', { class: 'fa fa-toggle-on mt-3 mb-3 ml-2 fa-lg', title: 'Seleccionar Todas' });
+        selectAllButton.click(select_all_subforms_labels);
+
+        var createButton = $('<i>', { class: 'fas fa-check-circle mt-3 mb-3 ml-4 fa-lg', title: 'Crear Etiquetas de Subformularios' });
+        createButton.click(find_prefilters_labels);
+
+        var deleteButton = $('<i>', { class: 'fas fa-trash-alt mt-3 mb-3 ml-4 fa-lg', title: 'Eliminar Etiquetas de Subformularios' });
+        deleteButton.click(delete_subforms_labels);
+
+        container.append(selectAllButton);
+        container.append(createButton);
+        container.append(deleteButton);
+      }
+      container.removeClass('d-none');
+    }
+  });
+  var emptyContainer = document.getElementById('empty_container');
+  emptyContainer.classList.toggle('d-none');
+}
+
+function find_prefilters_labels(){
+  var selectedElements = [];
+
+  $('#prefilters_labels_to_show .custom-control-input').each(function() {
+    if ($(this).prop('checked')) {
+      var labelText = $(this).siblings('label').text().trim();
+      if (labelText) {
+        selectedElements.push(labelText);
+      }
+    }
+  });
+
+  show_labels_subfields(true, selectedElements);
+}
+
+function delete_subforms_labels(){
+  if (typeof(labels_subfields) != 'undefined') {
+    mymap.removeLayer(labels_subfields);
+  }
+  $('#prefilters_labels_to_show .custom-control-input').each(function() {
+    if ($(this).prop('checked')) {
+      $(this).prop('checked', false);
+    }
+  });
+}
+
+function select_all_subforms_labels(){
+  $('#prefilters_labels_to_show .custom-control-input').each(function() {
+    if ($(this).prop('checked') == false) {
+      $(this).prop('checked', true);
+    } else {
+      $(this).prop('checked', false);
+    }
+  });
+}
+
 function get_latlng(){
   var coordinates_newpol1=[];
   var coordinates_newpol2=[];
@@ -3177,6 +3374,7 @@ function open_iot_monitoring(app_id_popup){
     get_zoomextent: get_zoomextent,
     show_labels:show_labels,
     show_labels_in_others_layers:show_labels_in_others_layers,
+    show_labels_subfields:show_labels_subfields,
     edit_geometry_in_map: edit_geometry_in_map,
     cancel_geometry: cancel_geometry,
     delete_markers: delete_markers,
@@ -3203,6 +3401,7 @@ function open_iot_monitoring(app_id_popup){
     modal_points_number: modal_points_number,
     open_iot_monitoring: open_iot_monitoring,
     cancel_color_attr: cancel_color_attr,
-    buttons_roles: buttons_roles
+    buttons_roles: buttons_roles,
+    show_prefilters_subform_labels: show_prefilters_subform_labels
   }
 }();
