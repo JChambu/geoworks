@@ -2029,7 +2029,7 @@ function show_labels_subfields(setbbox, selectedElements){
                     offsetValue = 25 + (label_fields.length * 12);
                   }
                 }
-                var popup_new = new L.Popup({closeButton: false, closeOnClick: false, className: 'custom_label_subforms', offset: [0, offsetValue], autoPan: false});
+                var popup_new = new L.Popup({closeButton: false, closeOnClick: false, className: 'custom_label', offset: [0, offsetValue], autoPan: false});
                 popup_new.setLatLng(latlng_new);
                 popup_new.setContent(popupContent3);
                 labels_subfields.addLayer(popup_new)

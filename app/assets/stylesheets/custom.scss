@@ -418,33 +418,6 @@ div.custom-menu.show {
   border:none;
 }
 
-/*Modifica el popup de los Labels subforms */
-.custom_label_subforms .leaflet-popup-content-wrapper{
-  padding:0px!important;
-  background: transparent !important;
-  border: none;
-  box-shadow:none!important;
-}
-.custom_label_subforms .leaflet-popup-content{
-  line-height: 0.2em;
-  background: transparent;
-  color: black!important;
-  text-shadow: none;
-  font-weight: bold;
-  white-space: nowrap;
-  margin-bottom: -5px!important;
-}
-.custom_label_subforms p{
-  cursor:default!important;
-  text-align:center!important;
-  margin: 10px 0 !important;
-}
-.custom_label_subforms .leaflet-popup-tip{
-  background: transparent!important;
-  box-shadow:none!important;
-  border:none;
-}
-
 /* Evita los elementos de leaflet de la derecha se superpongan con el sidebar */
 .leaflet-right {
   margin-right: 0%;
