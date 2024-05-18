@@ -1333,14 +1333,12 @@ function getCQLFilter_layer(dat){
         var filter_operator = filter.filter_operator;
         var filter_value = filter.filter_value;
         var field_type = filter.field_type;
-        if(field_type==5 && filter_value!='null' && filter_field != 'app_estado' && filter_field != 'app_usuario'){
+        if(field_type==5 && filter_value!='null' && filter_field != 'app_id' && filter_field != 'app_estado' && filter_field != 'app_usuario'){
           //!=null porque a los valores null los considera menores a
           cql_filter += " AND parseDouble("+ filter_field + ") "+ filter_operator + " '" + filter_value + "' and "+filter_field+" is not null";
-        }
-        else if(field_type==3 && filter_value!='null'){
+        } else if(field_type==3 && filter_value!='null'){
            cql_filter += " AND dateFormat('yyyy/MM/dd',dateParse('dd/MM/yyyy'," + filter_field + ")) " + filter_operator + " dateFormat('yyyy/MM/dd',dateParse('dd/MM/yyyy','" + filter_value + "')) and " + filter_field + " IS NOT NULL";
-        }
-        else {
+        } else {
           cql_filter += " AND "+ filter_field + " "+ filter_operator + " '" + filter_value + "'";
         }
       });
@@ -3043,12 +3041,9 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined, field
         popupContent += '<br/><h7>'+breaks[index_poly]+'</h7>'
         popupContent += '<h7> - '+breaks[index_poly+1]+'</h7>'
 
-        var interpolation_pane = mymap.createPane('interpolation_pane');
-        mymap.getPane('interpolation_pane').style.zIndex = 300;
-
         if(combined==null){
           all_polys.push(lat_lng_polys);
-          var geojson = L.geoJSON(new_poly,{color:colors[count], fillOpacity: 0.6, pane: "interpolation_pane"}).on('click',function(e){
+          var geojson = L.geoJSON(new_poly,{color:colors[count], fillOpacity: 0.6}).on('click',function(e){
             var popup = new L.popup({autoPan:false})
             .setLatLng(new L.latLng([e.latlng.lat,e.latlng.lng]))
             .setContent(popupContent)
