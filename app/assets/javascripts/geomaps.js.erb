@@ -1342,14 +1342,12 @@ function getCQLFilter_layer(dat){
         var filter_operator = filter.filter_operator;
         var filter_value = filter.filter_value;
         var field_type = filter.field_type;
-        if(field_type==5 && filter_value!='null' && filter_field != 'app_estado' && filter_field != 'app_usuario'){
+        if(field_type==5 && filter_value!='null' && filter_field != 'app_id' && filter_field != 'app_estado' && filter_field != 'app_usuario'){
           //!=null porque a los valores null los considera menores a
           cql_filter += " AND parseDouble("+ filter_field + ") "+ filter_operator + " '" + filter_value + "' and "+filter_field+" is not null";
-        }
-        else if(field_type==3 && filter_value!='null'){
+        } else if(field_type==3 && filter_value!='null'){
            cql_filter += " AND dateFormat('yyyy/MM/dd',dateParse('dd/MM/yyyy'," + filter_field + ")) " + filter_operator + " dateFormat('yyyy/MM/dd',dateParse('dd/MM/yyyy','" + filter_value + "')) and " + filter_field + " IS NOT NULL";
-        }
-        else {
+        } else {
           cql_filter += " AND "+ filter_field + " "+ filter_operator + " '" + filter_value + "'";
         }
       });
@@ -3117,32 +3115,30 @@ function get_layers_clip(points, interpolation_field,breaks,colors,field_name, s
               var min_lat = Math.min.apply(null, points.features.map((v) => v.geometry.coordinates[1]));
               var max_lng = Math.max.apply(null, points.features.map((v) => v.geometry.coordinates[0]));
               var min_lng = Math.min.apply(null, points.features.map((v) => v.geometry.coordinates[0]));
+
               $.each(points.features, function(i, v) {
-              if (v.geometry.coordinates[1] == max_lat) {
-                v1 = turf.clone(v);
-                v1.geometry.coordinates[1] = bbox[3];
-                points = turf.featureCollection(points.features.concat(v1));
-              return;
-              }
-              if (v.geometry.coordinates[1] == min_lat) {
-                v1 = turf.clone(v);
-                v1.geometry.coordinates[1] = bbox[1];
-                points = turf.featureCollection(points.features.concat(v1));
-              return;
-              }
-              if (v.geometry.coordinates[0] == max_lng) {
-                v1 = turf.clone(v);
-                v1.geometry.coordinates[0] = bbox[2];
-                points = turf.featureCollection(points.features.concat(v1));
-              return;
-              }
-              if (v.geometry.coordinates[0] == min_lng) {
-                v1 = turf.clone(v);
-                v1.geometry.coordinates[0] = bbox[0];
-                points = turf.featureCollection(points.features.concat(v1));
-              return;
-              }
+                if (v.geometry.coordinates[1] == max_lat) {
+                  v1 = turf.clone(v);
+                  v1.geometry.coordinates[1] = bbox[3];
+                  points = turf.featureCollection(points.features.concat(v1));
+                }
+                if (v.geometry.coordinates[1] == min_lat) {
+                  v1 = turf.clone(v);
+                  v1.geometry.coordinates[1] = bbox[1];
+                  points = turf.featureCollection(points.features.concat(v1));
+                }
+                if (v.geometry.coordinates[0] == max_lng) {
+                  v1 = turf.clone(v);
+                  v1.geometry.coordinates[0] = bbox[2];
+                  points = turf.featureCollection(points.features.concat(v1));
+                }
+                if (v.geometry.coordinates[0] == min_lng) {
+                  v1 = turf.clone(v);
+                  v1.geometry.coordinates[0] = bbox[0];
+                  points = turf.featureCollection(points.features.concat(v1));
+                }
               });
+
               if(points.features.length>4000){
                 if(points.features.length>10000){
                   $('#text_alert_decision').html("Usted está por interpolar "+ points.features.length +" puntos. Este proceso tomar demasiado tiempo. Se aconseja reducir el área a interpolar. Desea Continuar de todos modos ?");
@@ -3179,9 +3175,10 @@ function continue_iterpolation(points, interpolation_field,breaks,colors,field_n
   $('#text_toast').html("Iterpolando ...");
   $('#toast').toast('show');
   var options = {gridType: 'points', property: interpolation_field, units: 'kilometers', weight: parseFloat(weight)};
+
   setTimeout(function(){ // delay para que cierre el toast_decision.
-     var grid = turf.interpolate(points,parseFloat(celd_size), options);
-     if(grid.features.length>400000){
+    var grid = turf.interpolate(points,parseFloat(celd_size), options);
+    if(grid.features.length>400000){
       if(points.features.length>1000000){
         $('#text_alert_decision').html("La interpolación ha generado una grilla de "+ grid.features.length +" puntos. Este proceso puede tomar demasiado tiempo. Se aconseja aumentar el tamaño de la celda y/o reducir el área a interpolar. Desea Continuar de todos modos ?");
       } else {
@@ -3240,6 +3237,7 @@ function get_isobands(grid, interpolation_field, breaks, colors, combined, field
         var popupContent = '<br/><h7>'+field_name+'</h7>'
         popupContent += '<br/><h7>'+breaks[index_poly]+'</h7>'
         popupContent += '<h7> - '+breaks[index_poly+1]+'</h7>'
+
         if(combined==null){
           all_polys.push(lat_lng_polys);
           var geojson = L.geoJSON(new_poly,{color:colors[count], fillOpacity: 0.6}).on('click',function(e){
