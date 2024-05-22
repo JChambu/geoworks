@@ -390,7 +390,7 @@ class ProjectDataChildrenController < ApplicationController
 
   def change_gwm_created_at
     date_to_change = params[:date_to_change]
-    time_string = "13:33:23"
+    time_string = "03:00:00"
     datetime_string = "#{date_to_change} #{time_string}"
     parsed_date = DateTime.strptime(datetime_string, "%d/%m/%Y %H:%M:%S")
     subform = ProjectDataChild.find(params[:subform_id].to_i)
