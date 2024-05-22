@@ -346,7 +346,6 @@ Navarra.calculated_and_script_fields = function() {
           }
           if(CalculateObj_keys[k]=="gwm_calculate"){
             if (isparent) {
-              console.log("es padreeee");
               date_to_change = $(texto_campo_id).val();
               form_id = Navarra.project_types.config.item_selected
 
