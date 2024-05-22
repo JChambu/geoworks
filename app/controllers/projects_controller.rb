@@ -170,6 +170,19 @@ class ProjectsController < ApplicationController
 
   end
 
+  def change_gwm_created_at
+    date_to_change = params[:date_to_change]
+    time_string = "13:33:23"
+    datetime_string = "#{date_to_change} #{time_string}"
+    parsed_date = DateTime.strptime(datetime_string, "%d/%m/%Y %H:%M:%S")
+    father_form = Project.find(params[:form_id].to_i)
+
+    regex = /^\d{2}\/\d{2}\/\d{4}$/
+    if date_to_change.match?(regex)
+      father_form.update(gwm_created_at: parsed_date)
+    end
+  end
+
   # Elimina un registro (row_active = false)
   def destroy_form
     app_ids = params[:app_ids]
@@ -434,7 +447,7 @@ class ProjectsController < ApplicationController
 
   end
 
-def split_geometry
+  def split_geometry
     count_sucess=0
     count_errors=0
 
