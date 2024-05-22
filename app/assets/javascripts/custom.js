@@ -3461,6 +3461,7 @@ function open_subtitle(fields, ischild) {
           $(".subtile_hidden" + ischild + field_id).not('.empty_field').not('.hidden_field').removeClass("d-none");
         }
         $(".subtile_hidden" + ischild + field_id).addClass("subtile_visible" + ischild + field_id);
+        $(".subtile_hidden" + ischild + field_id).css("margin-bottom", "22px");
         $(".subtile_hidden" + ischild + field_id).removeClass("subtile_hidden" + ischild + field_id);
       } else {
         $(".subtile_visible" + ischild + field_id).addClass("d-none");

@@ -344,7 +344,24 @@ Navarra.calculated_and_script_fields = function() {
               }
             });
           }
+          if(CalculateObj_keys[k]=="gwm_calculate"){
+            date_to_change = $(texto_campo_id).val();
+            subform_id = id_field.split('|')[1]
 
+            if (subform_id != '0') {
+              $.ajax({
+                type: 'POST',
+                url: '/project_data_children/change_gwm_created_at',
+                datatype: 'JSON',
+                data: {
+                  date_to_change: date_to_change,
+                  subform_id : subform_id
+                },
+                success: function(data) {
+                }
+              });
+            }
+          }
           if(CalculateObj_keys[k]=="calculation"){
             var calculoStringArray = CalculateObj.calculation.split("#");
             var calculoStringReplace="";

@@ -388,6 +388,17 @@ class ProjectDataChildrenController < ApplicationController
     render json: { subform_id: subform_id }
   end
 
+  def change_gwm_created_at
+    date_to_change = params[:date_to_change]
+    parsed_date = DateTime.strptime(date_to_change, "%d/%m/%Y")
+    subform = ProjectDataChild.find(params[:subform_id].to_i)
+
+    regex = /^\d{2}\/\d{2}\/\d{4}$/
+    if date_to_change.match?(regex)
+      subform.update(gwm_created_at: parsed_date)
+    end
+  end
+
   private
     def set_project
       @project = Project.find(params[:project_id])
