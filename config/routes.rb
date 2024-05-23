@@ -64,6 +64,7 @@ Rails.application.routes.draw do
   post 'photos/save_photos' => 'photos#save_photos'
   post 'project_data_children/show_children' => 'project_data_children#show_children', as: :show_children
   post 'project_data_children/delete_subforms' => 'project_data_children#delete_subforms'
+  post 'project_data_children/change_gwm_created_at' => 'project_data_children#change_gwm_created_at'
   get 'users/get_user_id_and_customer_id' => 'users#get_user_id_and_customer_id'
   post 'dashboards/send_alerts'
   post 'dashboards/send_report'
@@ -72,6 +73,7 @@ Rails.application.routes.draw do
   post 'reports/save_data_report' => 'reports#save_data_report', as: :save_data_report
   post 'reports/save_form_report' => 'reports#save_form_report', as: :save_form_report
   post 'projects/has_ndvi_and_multipoints_role'
+  post 'projects/change_gwm_created_at'
   get 'project_fields/get_other_layer_data' => 'project_fields#get_other_layer_data'
   get 'project_subfields/get_calculated_data_from_script' => 'project_subfields#get_calculated_data_from_script'
 

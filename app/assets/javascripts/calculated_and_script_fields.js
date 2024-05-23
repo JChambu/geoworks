@@ -344,7 +344,43 @@ Navarra.calculated_and_script_fields = function() {
               }
             });
           }
+          if(CalculateObj_keys[k]=="gwm_calculate"){
+            if (isparent) {
+              date_to_change = $(texto_campo_id).val();
+              form_id = Navarra.project_types.config.item_selected
 
+              if (date_to_change != '') {
+                $.ajax({
+                  type: 'POST',
+                  url: '/projects/change_gwm_created_at',
+                  datatype: 'JSON',
+                  data: {
+                    date_to_change: date_to_change,
+                    form_id : form_id
+                  },
+                  success: function(data) {
+                  }
+                });
+              }
+            } else {
+              date_to_change = $(texto_campo_id).val();
+              subform_id = id_field.split('|')[1]
+
+              if (subform_id != '0') {
+                $.ajax({
+                  type: 'POST',
+                  url: '/project_data_children/change_gwm_created_at',
+                  datatype: 'JSON',
+                  data: {
+                    date_to_change: date_to_change,
+                    subform_id : subform_id
+                  },
+                  success: function(data) {
+                  }
+                });
+              }
+            }
+          }
           if(CalculateObj_keys[k]=="calculation"){
             var calculoStringArray = CalculateObj.calculation.split("#");
             var calculoStringReplace="";
