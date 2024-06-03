@@ -180,10 +180,8 @@ class ProjectsController < ApplicationController
       time_string = "03:00:00"
       datetime_string = "#{date_to_change} #{time_string}"
       parsed_date = DateTime.strptime(datetime_string, "%d/%m/%Y %H:%M:%S")
-      byebug
       regex = /^\d{2}\/\d{2}\/\d{4}$/
       if date_to_change.match(regex)
-        byebug
         father_form.update(gwm_created_at: parsed_date)
       end
     end
