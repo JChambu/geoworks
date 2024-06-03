@@ -171,15 +171,19 @@ class ProjectsController < ApplicationController
   end
 
   def change_gwm_created_at
-    date_to_change = params[:date_to_change]
-    time_string = "03:00:00"
-    datetime_string = "#{date_to_change} #{time_string}"
-    parsed_date = DateTime.strptime(datetime_string, "%d/%m/%Y %H:%M:%S")
     father_form = Project.find(params[:form_id].to_i)
+    created_at_date = father_form.gwm_created_at.to_date
+    date_to_compare = Date.strptime(params[:date_to_change], "%d/%m/%Y")
 
-    regex = /^\d{2}\/\d{2}\/\d{4}$/
-    if date_to_change.match?(regex)
-      father_form.update(gwm_created_at: parsed_date)
+    if date_to_compare != created_at_date
+      date_to_change = params[:date_to_change]
+      time_string = "03:00:00"
+      datetime_string = "#{date_to_change} #{time_string}"
+      parsed_date = DateTime.strptime(datetime_string, "%d/%m/%Y %H:%M:%S")
+      regex = /^\d{2}\/\d{2}\/\d{4}$/
+      if date_to_change.match(regex)
+        father_form.update(gwm_created_at: parsed_date)
+      end
     end
   end
 

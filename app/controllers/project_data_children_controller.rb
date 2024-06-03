@@ -397,7 +397,7 @@ class ProjectDataChildrenController < ApplicationController
       subform = ProjectDataChild.find(params[:subform_id].to_i)
 
       regex = /^\d{2}\/\d{2}\/\d{4}$/
-      if date_to_change.match?(regex)
+      if date_to_change.match(regex)
         subform.update(gwm_created_at: parsed_date)
       end
     end
