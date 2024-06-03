@@ -389,15 +389,17 @@ class ProjectDataChildrenController < ApplicationController
   end
 
   def change_gwm_created_at
-    date_to_change = params[:date_to_change]
-    time_string = "03:00:00"
-    datetime_string = "#{date_to_change} #{time_string}"
-    parsed_date = DateTime.strptime(datetime_string, "%d/%m/%Y %H:%M:%S")
-    subform = ProjectDataChild.find(params[:subform_id].to_i)
+    if params[:date_to_change] != ""
+      date_to_change = params[:date_to_change]
+      time_string = "03:00:00"
+      datetime_string = "#{date_to_change} #{time_string}"
+      parsed_date = DateTime.strptime(datetime_string, "%d/%m/%Y %H:%M:%S")
+      subform = ProjectDataChild.find(params[:subform_id].to_i)
 
-    regex = /^\d{2}\/\d{2}\/\d{4}$/
-    if date_to_change.match?(regex)
-      subform.update(gwm_created_at: parsed_date)
+      regex = /^\d{2}\/\d{2}\/\d{4}$/
+      if date_to_change.match?(regex)
+        subform.update(gwm_created_at: parsed_date)
+      end
     end
   end
 
