@@ -2484,11 +2484,11 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       if(is_multiple){
         $('#archive_icon').css('color','#d3d800');
         $('#enabled_text').html("Activar/Desactivar Registros?");
-      } else{
+      } else {
         if(data.row_enabled){
           $('#archive_icon').css('color','#9b9b9b');
           $('#enabled_text').html("Desactivar Registro?");
-        } else{
+        } else {
           $('#archive_icon').css('color','red');
           $('#enabled_text').html("Activar Registro?");
         }
@@ -2514,65 +2514,65 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       new_div.id="status_container_info";
       document.getElementById('info_body').appendChild(new_div);
       $.ajax({
-      url:  "/projects/search_statuses.json",
-      type: "GET",
-      data: { project_type_id: project_type_id },
-      success: function(data_status) {
-        var new_icon = document.createElement('DIV');
-        new_icon.className = "status_info_icon";
-        if(!is_multiple && !is_new_file){new_icon.style.background = father_status.status_color;}
-        document.getElementById("status_container_info").appendChild(new_icon);
-        var new_p = document.createElement('SELECT');
-        new_p.style.width="90%";
-        new_p.setAttribute("onChange","changeStatus(event)");
-        new_p.id = "input_status";
-        if(!is_new_file){
-          new_p.disabled = true;
-          new_p.className = "multiselect_field form-control form-control-sm multiselect_status input_status info_input_disabled";
-        } else{
-          new_p.className = "multiselect_field form-control form-control-sm multiselect_status input_status info_input";
-        }
-        var status_options = data_status.data;
-        var found_status = false;
-        status_options.forEach(function(status) {
-          var new_option = document.createElement('OPTION');
-          new_option.text=status.name;
-          if(status.status_type=="Heredable"){
-            new_option.disabled = true;
+        url:  "/projects/search_statuses.json",
+        type: "GET",
+        data: { project_type_id: project_type_id },
+        success: function(data_status) {
+          var new_icon = document.createElement('DIV');
+          new_icon.className = "status_info_icon";
+          if(!is_multiple && !is_new_file){new_icon.style.background = father_status.status_color;}
+          document.getElementById("status_container_info").appendChild(new_icon);
+          var new_p = document.createElement('SELECT');
+          new_p.style.width="90%";
+          new_p.setAttribute("onChange","changeStatus(event)");
+          new_p.id = "input_status";
+          if(!is_new_file){
+            new_p.disabled = true;
+            new_p.className = "multiselect_field form-control form-control-sm multiselect_status input_status info_input_disabled";
+          } else{
+            new_p.className = "multiselect_field form-control form-control-sm multiselect_status input_status info_input";
           }
-          new_option.value=status.id+"|"+status.color;
-          if(!is_multiple && !is_new_file){
-            if(father_status.status_id==status.id){
-              found_status=true;
-              new_option.selected = true;
+          var status_options = data_status.data;
+          var found_status = false;
+          status_options.forEach(function(status) {
+            var new_option = document.createElement('OPTION');
+            new_option.text=status.name;
+            if(status.status_type=="Heredable"){
+              new_option.disabled = true;
             }
+            new_option.value=status.id+"|"+status.color;
+            if(!is_multiple && !is_new_file){
+              if(father_status.status_id==status.id){
+                found_status=true;
+                new_option.selected = true;
+              }
+            }
+            new_p.appendChild(new_option);
+          });
+          if(!found_status || is_multiple){new_p.selectedIndex = -1;}
+          document.getElementById("status_container_info").appendChild(new_p);
+          if(is_new_file){
+            var status_style = 'info_input';
+          }else{
+            var status_style = 'info_input_disabled';
           }
-          new_p.appendChild(new_option);
-        });
-        if(!found_status || is_multiple){new_p.selectedIndex = -1;}
-        document.getElementById("status_container_info").appendChild(new_p);
-        if(is_new_file){
-          var status_style = 'info_input';
-        }else{
-          var status_style = 'info_input_disabled';
-        }
           $('.multiselect_status').multiselect({
-                maxHeight: 450,
-                buttonClass: 'text-left mb-1 form-control form-control-sm input_status '+status_style,
-                buttonWidth: '100%',
-                nonSelectedText: 'Seleccionar',
-                selectedClass: 'selected_multiple_item',
-                delimiterText: '\n',
-                numberDisplayed: 0,
-                allSelectedText: false,
-                enableFiltering: true,
-                enableCaseInsensitiveFiltering: true,
-                filterPlaceholder: 'Buscar',
-                includeFilterClearBtn: false,
-                includeSelectAllOption: false,
-                dropRight: true,
-              });
-      }
+            maxHeight: 450,
+            buttonClass: 'text-left mb-1 form-control form-control-sm input_status '+status_style,
+            buttonWidth: '100%',
+            nonSelectedText: 'Seleccionar',
+            selectedClass: 'selected_multiple_item',
+            delimiterText: '\n',
+            numberDisplayed: 0,
+            allSelectedText: false,
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            filterPlaceholder: 'Buscar',
+            includeFilterClearBtn: false,
+            includeSelectAllOption: false,
+            dropRight: true,
+          });
+        }
       });
       if(!is_new_file && !is_multiple){
         //fotos del registro
@@ -2630,320 +2630,316 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       };
 
       //campos del registro
-      father_fields = data.father_fields;
+      var father_fields = data.father_fields;
       subtitles_all = [];
       subtitles_all_child = [];
       var verify_count_elements = 0; // variable para chequear que se dibujan todos los campos sin error
       father_fields.forEach(function(element) {
-          if (element.field_type_id != 7) {
-           //dibuja campo padre
-            var new_row = document.createElement('DIV');
-            if (element.hidden) {
-              new_row.className = "form-row d-none hidden_field row_field";
-            } else {
-              new_row.className = "form-row row_field";
-            }
-            if(element.can_read==false){
-                new_row.classList.add('canot_read');
+        if (element.field_type_id != 7) {
+          //dibuja campo padre
+          var new_row = document.createElement('DIV');
+          if (element.hidden) {
+            new_row.className = "form-row d-none hidden_field row_field";
+          } else {
+            new_row.className = "form-row row_field";
+          }
+          if(element.can_read==false){
+            new_row.classList.add('canot_read');
+          }
+          if(element.value != null){
+            var element_value_string = element.value.toString();
+          } else {
+            var element_value_string = element.value;
+          }
+          if ((element.value == null && element.field_type_id != 11) || (element_value_string == "" && element.field_type_id != 11) || (element_value_string == " " && element.field_type_id != 11)) {
+            new_row.classList.add("d-none");
+            new_row.classList.add("empty_field");
+          }
+          if (subtitles_all.indexOf(element.field_id) >= 0) {
+            new_row.classList.add("d-none");
+            new_row.classList.add("subtile_hidden" + element.field_id);
+          }
+          var new_celd = document.createElement('DIV');
+          if (element.field_type_id == 11) {
+            new_celd.className = "col-md-12 info_subtitle";
+            new_celd.id = "subtitleid_" + element.field_id;
+          } else {
+            new_celd.className = "col-md-5";
+          }
+          var new_p = document.createElement('H7');
+          if (element.field_type_id == 11) {
+            new_p.className = "btn btn-primary p-0 pl-1 pr-1 text-left custom_button";
+            new_p.setAttribute("onClick", "open_subtitle(" + element.calculated_field + ",'')");
+            if (element.calculated_field != "") {
+              try{
+                subtitles_all = subtitles_all.concat(JSON.parse(element.calculated_field));
+              } catch(e){
+                set_error_message("Error de configuración: subtítulo del campo:"+element.name);
               }
-            if(element.value != null){
-              var element_value_string = element.value.toString();
-            } else {
-              var element_value_string = element.value;
+
             }
-            if ((element.value == null && element.field_type_id != 11) || (element_value_string == "" && element.field_type_id != 11) || (element_value_string == " " && element.field_type_id != 11)) {
-              new_row.classList.add("d-none");
-              new_row.classList.add("empty_field");
-            }
-            if (subtitles_all.indexOf(element.field_id) >= 0) {
-              new_row.classList.add("d-none");
-              new_row.classList.add("subtile_hidden" + element.field_id);
-            }
+            new_p.innerHTML = element.name;
+          } else {
+            new_p.innerHTML = element.name + ":";
+            new_p.classList.add("field_key_json");
+            new_p.id=element.field_id+"|key|"+element.key+"|"+element.field_type_id;
+          }
+          new_celd.appendChild(new_p);
+          new_row.appendChild(new_celd);
+
+          if (element.field_type_id != 11) {
             var new_celd = document.createElement('DIV');
-            if (element.field_type_id == 11) {
-              new_celd.className = "col-md-12 info_subtitle";
-              new_celd.id = "subtitleid_" + element.field_id;
-            } else {
-              new_celd.className = "col-md-5";
-            }
-            var new_p = document.createElement('H7');
-            if (element.field_type_id == 11) {
-              new_p.className = "btn btn-primary p-0 pl-1 pr-1 text-left custom_button";
-              new_p.setAttribute("onClick", "open_subtitle(" + element.calculated_field + ",'')");
-              if (element.calculated_field != "") {
-                try{
-                  subtitles_all = subtitles_all.concat(JSON.parse(element.calculated_field));
-                } catch(e){
-                  set_error_message("Error de configuración: subtítulo del campo:"+element.name);
-                }
+            new_celd.className = "col-md-7 field_div static_datetimepicker";
+            if(element.field_type_id == 10){new_celd.classList.add("ok_button")}
 
-              }
-              new_p.innerHTML = element.name;
-            } else {
-              new_p.innerHTML = element.name + ":";
-              new_p.classList.add("field_key_json");
-              new_p.id=element.field_id+"|key|"+element.key+"|"+element.field_type_id;
-            }
-            new_celd.appendChild(new_p);
-            new_row.appendChild(new_celd);
-
-            if (element.field_type_id != 11) {
-              var new_celd = document.createElement('DIV');
-              new_celd.className = "col-md-7 field_div static_datetimepicker";
-              if(element.field_type_id == 10){new_celd.classList.add("ok_button")}
-
-              // Adapta el código a los diferentes tipos de campos
-              if (element.field_type_id == 1 || element.field_type_id == 12) {
-                var new_p = document.createElement('TEXTAREA');
-                new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
-                if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
-                if(!is_multiple){
-                  new_p.setAttribute("onChange","calculate_all(false,true)");
-                } else{
-                  new_p.setAttribute('onChange', 'changeFile()');
-                }
-
-                new_p.addEventListener('input', function() {
-                  textarea_adjust_height();
-                });
-
-              }
-              var found_nested = false;
-              if (element.field_type_id == 2 || element.field_type_id == 10) {
-                var new_p = document.createElement('SELECT');
-                if(element.field_type_id == 10){
-                  new_p.multiple = true;
-                }
-                new_p.className = "multiselect_field form-control form-control-sm info_input_disabled";
-                var items_field = element.other_possible_values;
-                //verifica si tiene anidados
-                items_field.forEach(function(item) {
-                  if(item.nested_items!=null){
-                    found_nested = true;
-                  }
-                });
-                if(found_nested){ new_p.classList.add('nested')}
-                values = element.value;
-                values_nested = element.value;
-                //comienza anidados
-                if(found_nested){
-                  if(element.value!=null){
-                    if(Array.isArray(element.value)){
-                      values = element.value[0];
-                      values_nested = element.value[1];
-                    } else{
-                      set_error_message("Error en listados anidados: "+element.name);
-                    }
-
-                  }
-                  var new_p_nested = document.createElement('SELECT');
-                  new_p_nested.className = "mb-1 multiselect_field form-control form-control-sm info_input_disabled";
-                  new_p_nested.disabled = true;
-                  if(element.required==true){
-                    new_p_nested.classList.add('required_field');
-                  }
-                  //Permite editar readonly si es nuevo registro y no tiene un campo calculado automáticamente, siempre y cuando tenga autorización de edición
-                  if((element.read_only==true && !is_new_file) || (element.read_only==true && is_new_file && element.calculated_field!="") || element.can_edit==false){
-                    new_p_nested.classList.add('readonly_field');
-                  }
-                  var id_field_nested = element.field_id+"_nested";
-                  new_p_nested.id = "field_id_"+id_field_nested;
-                  new_p_nested.setAttribute("onChange","changeFile()")
-                  //termina anidados
-                }
-
-                var found_option = false;
-                items_field.forEach(function(item) {
-                  var new_option = document.createElement('OPTION');
-                  new_option.text=item.name;
-                  new_option.value=item.name;
-                  if(!found_nested){
-                    if(values!=null){
-                      if(Array.isArray(values)){
-                        values_array = values;
-                        for (v=0;v<values_array.length;v++){
-                          if(values_array[v]==item.name){
-                            found_option=true;
-                            new_option.selected = true;
-                          }
-                        }
-                      } else{
-                        set_error_message("Error en listados: "+element.name);
-                      }
-                    }
-                  }
-                  new_p.appendChild(new_option);
-                  if(!found_option || is_multiple){new_p.selectedIndex = -1;}
-                  //Comienza Anidados opciones
-                  if(item.nested_items!=null){
-                    new_option.setAttribute('data-type',item.name);
-                    var items_field_nested = item.nested_items;
-                    items_field_nested.forEach(function(item_nested) {
-                    var new_option_nested = document.createElement('OPTION');
-                    new_option_nested.text=item_nested.name;
-                    new_option_nested.value=item_nested.name;
-                    if(item.name != values){
-                      new_option_nested.className = "d-none";
-                    }
-                    new_option_nested.setAttribute('data-type',item.name);
-                    new_p_nested.appendChild(new_option_nested);
-                    });
-                    if(!is_multiple){
-                      new_p_nested.value=values_nested;
-                    } else{
-                      new_p_nested.selectedIndex=-1;
-                    }
-                  }
-                  //termina anidados opciones
-                });
-                if(found_nested ){new_p.value=values;}
-                new_p.setAttribute('onChange','calculate_all(false,true)');
-                if(found_nested){
-                  new_p.setAttribute('onChange', 'set_nested(event,true)');
-                }
-                if(element.data_script!=""){
-                  if(!is_multiple){
-                    if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
-                    new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +found_nested+',event ,true )');
-                  } else{
-                    new_p.setAttribute('onChange', 'changeFile()');
-                  }
-                }
-              }
-
-              if (element.field_type_id == 3) {
-                var new_p = document.createElement('INPUT');
-                new_p.className = "form-control form-control-sm info_input_disabled date_field";
-              }
-
-              if (element.field_type_id == 4) {
-                var new_p = document.createElement('SELECT');
-                new_p.className = "form-control form-control-sm info_input_disabled";
-                var new_option = document.createElement('OPTION');
-                new_option.text="SI";
-                new_option.value="true";
-                new_p.appendChild(new_option);
-                var new_option = document.createElement('OPTION');
-                new_option.text="NO";
-                new_option.value="false";
-                new_p.appendChild(new_option);
-                new_p.value="";
-                new_p.setAttribute('onChange', 'changeFile()');
-                if(element.data_script!=""){
-                  if(!is_multiple){
-                    if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
-                    new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event ,true)');
-                  } else{
-                    new_p.setAttribute('onChange', 'changeFile()');
-                  }
-                 }
-              }
-              if (element.field_type_id == 5) {
-                var new_p = document.createElement('INPUT');
-                new_p.type = "number";
-                new_p.className = "form-control form-control-sm info_input_disabled";
-                if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
-                if(!is_multiple){
-                  new_p.setAttribute("onChange","calculate_all(false,true)");
-                } else{
-                  new_p.setAttribute('onChange', 'changeFile()');
-                }
-              }
-              new_p.disabled = true;
-              if (element.value != null && element.field_type_id != 10 && element.field_type_id != 2) {
-                if(!is_multiple){
-                  new_p.value = element.value;
-                }
-              }
-              if(element.required==true && !is_multiple){
-                new_p.classList.add('required_field');
-              }
-              if((element.read_only==true && !is_new_file) || (element.read_only==true && is_new_file && element.calculated_field!="") || element.can_edit==false || (is_multiple && element.calculated_field!="") || (is_multiple && element.data_script!="")){
-                new_p.classList.add('readonly_field');
-              }
-
-              var id_field = element.field_id;
-              new_p.id = "field_id_"+id_field;
-              new_celd.appendChild(new_p);
-              //agrega selector anidado si existe
-              if(found_nested){new_celd.appendChild(new_p_nested)}
-              new_row.appendChild(new_celd);
-            }
-            document.getElementById('info_body').appendChild(new_row);
-            if(document.getElementById('field_id_'+id_field)!=null){
-            if(document.getElementById('field_id_'+id_field).classList.contains("multiselect_field")){
-              if(document.getElementById('field_id_'+id_field).classList.contains("readonly_field")){
-                var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled readonly_field';
+            // Adapta el código a los diferentes tipos de campos
+            if (element.field_type_id == 1 || element.field_type_id == 12) {
+              var new_p = document.createElement('TEXTAREA');
+              new_p.className = "form-control form-control-sm info_input_disabled textarea_input";
+              if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
+              if(!is_multiple){
+                new_p.setAttribute("onChange","calculate_all(false,true)");
               } else{
-                var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled';
+                new_p.setAttribute('onChange', 'changeFile()');
               }
-              $('#field_id_'+id_field).multiselect({
-                maxHeight: 450,
-                buttonClass: buttonClass,
-                buttonWidth: '100%',
-                nonSelectedText: 'Seleccionar',
-                selectedClass: 'selected_multiple_item',
-                delimiterText: '\n',
-                numberDisplayed: 0,
-                allSelectedText: false,
-                enableFiltering: true,
-                enableCaseInsensitiveFiltering: true,
-                filterPlaceholder: 'Buscar',
-                includeFilterClearBtn: false,
-                includeSelectAllOption: false,
-                dropRight: true,
+
+              new_p.addEventListener('input', function() {
+                textarea_adjust_height();
               });
             }
-          }
-          } //termina campo padre
-          else {
-            // Dibuja campos hijos
+            var found_nested = false;
+            if (element.field_type_id == 2 || element.field_type_id == 10) {
+              var new_p = document.createElement('SELECT');
+              if(element.field_type_id == 10){
+                new_p.multiple = true;
+              }
+              new_p.className = "multiselect_field form-control form-control-sm info_input_disabled";
+              var items_field = element.other_possible_values;
+              //verifica si tiene anidados
+              items_field.forEach(function(item) {
+                if(item.nested_items!=null){
+                  found_nested = true;
+                }
+              });
+              if(found_nested){ new_p.classList.add('nested')}
+              values = element.value;
+              values_nested = element.value;
+              //comienza anidados
+              if(found_nested){
+                if(element.value!=null){
+                  if(Array.isArray(element.value)){
+                    values = element.value[0];
+                    values_nested = element.value[1];
+                  } else{
+                    set_error_message("Error en listados anidados: "+element.name);
+                  }
 
-            var new_row = document.createElement('DIV');
-            if (element.hidden) {
-              new_row.className = "d-none hidden_field";
-            }
+                }
+                var new_p_nested = document.createElement('SELECT');
+                new_p_nested.className = "mb-1 multiselect_field form-control form-control-sm info_input_disabled";
+                new_p_nested.disabled = true;
+                if(element.required==true){
+                  new_p_nested.classList.add('required_field');
+                }
+                //Permite editar readonly si es nuevo registro y no tiene un campo calculado automáticamente, siempre y cuando tenga autorización de edición
+                if((element.read_only==true && !is_new_file) || (element.read_only==true && is_new_file && element.calculated_field!="") || element.can_edit==false){
+                  new_p_nested.classList.add('readonly_field');
+                }
+                var id_field_nested = element.field_id+"_nested";
+                new_p_nested.id = "field_id_"+id_field_nested;
+                new_p_nested.setAttribute("onChange","changeFile()")
+                //termina anidados
+              }
 
-            if (subtitles_all.indexOf(element.field_id) >= 0) {
-              new_row.classList.add("d-none");
-              new_row.classList.add("subtile_hidden" + element.field_id);
-            }
-            var new_celd = document.createElement('DIV');
-            new_celd.className = 'div_subforms';
-            if(!is_new_file && !is_multiple){
-              if (element.field_type_id == 7 && element.value.length == 0) {
-                new_celd.classList.add('d-none');
+              var found_option = false;
+              items_field.forEach(function(item) {
+                var new_option = document.createElement('OPTION');
+                new_option.text=item.name;
+                new_option.value=item.name;
+                if(!found_nested){
+                  if(values!=null){
+                    if(Array.isArray(values)){
+                      values_array = values;
+                      for (v=0;v<values_array.length;v++){
+                        if(values_array[v]==item.name){
+                          found_option=true;
+                          new_option.selected = true;
+                        }
+                      }
+                    } else{
+                      set_error_message("Error en listados: "+element.name);
+                    }
+                  }
+                }
+                new_p.appendChild(new_option);
+                if(!found_option || is_multiple){new_p.selectedIndex = -1;}
+                //Comienza Anidados opciones
+                if(item.nested_items!=null){
+                  new_option.setAttribute('data-type',item.name);
+                  var items_field_nested = item.nested_items;
+                  items_field_nested.forEach(function(item_nested) {
+                  var new_option_nested = document.createElement('OPTION');
+                  new_option_nested.text=item_nested.name;
+                  new_option_nested.value=item_nested.name;
+                  if(item.name != values){
+                    new_option_nested.className = "d-none";
+                  }
+                  new_option_nested.setAttribute('data-type',item.name);
+                  new_p_nested.appendChild(new_option_nested);
+                  });
+                  if(!is_multiple){
+                    new_p_nested.value=values_nested;
+                  } else{
+                    new_p_nested.selectedIndex=-1;
+                  }
+                }
+              //termina anidados opciones
+              });
+              if(found_nested ){new_p.value=values;}
+              new_p.setAttribute('onChange','calculate_all(false,true)');
+              if(found_nested){
+                new_p.setAttribute('onChange', 'set_nested(event,true)');
+              }
+              if(element.data_script!=""){
+                if(!is_multiple){
+                  if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
+                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +found_nested+',event ,true )');
+                } else{
+                  new_p.setAttribute('onChange', 'changeFile()');
+                }
               }
             }
-            new_celd.id = "child_container_"+element.key;
-            // si tiene autorización para nuevos hijos
-            if($('#new_subform_control').val()=="true"){
-              var new_p = document.createElement('I');
-              new_p.className = "fas fa-plus icon_add d-none add_subforms btn btn-primary custom_button p-1";
-              new_p.setAttribute('onclick','open_new_child('+element.field_id+',"'+element.name+'","'+element.key+'",'+is_multiple+')');
-              new_celd.appendChild(new_p);
+            if (element.field_type_id == 3) {
+              var new_p = document.createElement('INPUT');
+              new_p.className = "form-control form-control-sm info_input_disabled date_field";
             }
-            var new_p = document.createElement('H7');
-            new_p.innerHTML = element.name + ":";
-            new_p.style.borderBottom = "solid 1px";
-            new_p.style.display = "inline-block";
+            if (element.field_type_id == 4) {
+              var new_p = document.createElement('SELECT');
+              new_p.className = "form-control form-control-sm info_input_disabled";
+              var new_option = document.createElement('OPTION');
+              new_option.text="SI";
+              new_option.value="true";
+              new_p.appendChild(new_option);
+              var new_option = document.createElement('OPTION');
+              new_option.text="NO";
+              new_option.value="false";
+              new_p.appendChild(new_option);
+              new_p.value="";
+              new_p.setAttribute('onChange', 'changeFile()');
+              if(element.data_script!=""){
+                if(!is_multiple){
+                  if(element.value==null){isnull_value=null}else{isnull_value="\""+element.value+"\""}
+                  new_p.setAttribute('onChange', 'set_script( '+element.data_script+ ',' +element.field_type_id+ ',' +element.field_id +',' +isnull_value+',' +false +',event ,true)');
+                } else{
+                  new_p.setAttribute('onChange', 'changeFile()');
+                }
+               }
+            }
+            if (element.field_type_id == 5) {
+              var new_p = document.createElement('INPUT');
+              new_p.type = "number";
+              new_p.className = "form-control form-control-sm info_input_disabled";
+              if(element.key=="app_usuario"){new_p.classList.add('app_usuario_value')}
+              if(!is_multiple){
+                new_p.setAttribute("onChange","calculate_all(false,true)");
+              } else{
+                new_p.setAttribute('onChange', 'changeFile()');
+              }
+            }
+            new_p.disabled = true;
+            if (element.value != null && element.field_type_id != 10 && element.field_type_id != 2) {
+              if(!is_multiple){
+                new_p.value = element.value;
+              }
+            }
+            if(element.required==true && !is_multiple){
+              new_p.classList.add('required_field');
+            }
+            if((element.read_only==true && !is_new_file) || (element.read_only==true && is_new_file && element.calculated_field!="") || element.can_edit==false || (is_multiple && element.calculated_field!="") || (is_multiple && element.data_script!="")){
+              new_p.classList.add('readonly_field');
+            }
+
+            var id_field = element.field_id;
+            new_p.id = "field_id_"+id_field;
             new_celd.appendChild(new_p);
+            //agrega selector anidado si existe
+            if(found_nested){new_celd.appendChild(new_p_nested)}
             new_row.appendChild(new_celd);
-            child_elements = element.value;
-            verify_count_elements_childs = 0;
-            if(!is_new_file && !is_multiple){
-              child_elements.forEach(function(element_child) {
-                var new_row1 = create_new_row_child_date(element_child);
-                new_row.appendChild(new_row1);
-                var new_row1 = create_new_row_child(element_child, element.field_id, element.name, is_multiple,false);
-                new_row.appendChild(new_row1);
-              }); //termina for Each childs
-              if(verify_count_elements_childs!= child_elements.length){
-                set_error_message("Error: no se pudieron traer todos los subformularios del campo "+element.name);
+          }
+          document.getElementById('info_body').appendChild(new_row);
+          if(document.getElementById('field_id_'+id_field)!=null){
+              if(document.getElementById('field_id_'+id_field).classList.contains("multiselect_field")){
+                if(document.getElementById('field_id_'+id_field).classList.contains("readonly_field")){
+                  var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled readonly_field';
+                } else{
+                  var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled';
+                }
+                $('#field_id_'+id_field).multiselect({
+                  maxHeight: 450,
+                  buttonClass: buttonClass,
+                  buttonWidth: '100%',
+                  nonSelectedText: 'Seleccionar',
+                  selectedClass: 'selected_multiple_item',
+                  delimiterText: '\n',
+                  numberDisplayed: 0,
+                  allSelectedText: false,
+                  enableFiltering: true,
+                  enableCaseInsensitiveFiltering: true,
+                  filterPlaceholder: 'Buscar',
+                  includeFilterClearBtn: false,
+                  includeSelectAllOption: false,
+                  dropRight: true,
+                });
               }
             }
-            document.getElementById('info_body').appendChild(new_row);
+        } //termina campo padre
+        else {
+          // Dibuja campos hijos
+          var new_row = document.createElement('DIV');
+          if (element.hidden) {
+            new_row.className = "d-none hidden_field";
           }
+
+          if (subtitles_all.indexOf(element.field_id) >= 0) {
+            new_row.classList.add("d-none");
+            new_row.classList.add("subtile_hidden" + element.field_id);
+          }
+          var new_celd = document.createElement('DIV');
+          new_celd.className = 'div_subforms';
+          if(!is_new_file && !is_multiple){
+            if (element.field_type_id == 7 && element.value.length == 0) {
+              new_celd.classList.add('d-none');
+            }
+          }
+          new_celd.id = "child_container_"+element.key;
+          // si tiene autorización para nuevos hijos
+          if($('#new_subform_control').val()=="true"){
+            var new_p = document.createElement('I');
+            new_p.className = "fas fa-plus icon_add d-none add_subforms btn btn-primary custom_button p-1";
+            new_p.setAttribute('onclick','open_new_child('+element.field_id+',"'+element.name+'","'+element.key+'",'+is_multiple+')');
+            new_celd.appendChild(new_p);
+          }
+          var new_p = document.createElement('H7');
+          new_p.innerHTML = element.name + ":";
+          new_p.style.borderBottom = "solid 1px";
+          new_p.style.display = "inline-block";
+          new_celd.appendChild(new_p);
+          new_row.appendChild(new_celd);
+          child_elements = element.value;
+          verify_count_elements_childs = 0;
+          if(!is_new_file && !is_multiple){
+            child_elements.forEach(function(element_child) {
+              var new_row1 = create_new_row_child_date(element_child);
+              new_row.appendChild(new_row1);
+              var new_row1 = create_new_row_child(element_child, element.field_id, element.name, is_multiple,false);
+              new_row.appendChild(new_row1);
+            }); //termina for Each childs
+            if(verify_count_elements_childs!= child_elements.length){
+              set_error_message("Error: no se pudieron traer todos los subformularios del campo "+element.name);
+            }
+          }
+          document.getElementById('info_body').appendChild(new_row);
+        }
         verify_count_elements ++;
       }); // termina for Each de padres
 
@@ -2953,9 +2949,8 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
 
       textarea_adjust_height();
       set_date_style(is_multiple);
-
       // selectores y multiselectores en hijos
-          set_multiselect_style_childs();
+      set_multiselect_style_childs();
 
       //Muestra el punto en el mapa y elimina el seleccionado en la tabla
       if (from_map) {
@@ -2965,15 +2960,22 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
         Navarra.geomaps.current_layer();
       }
       //Ejecuta Script y calculados de campos padres e hijos
-        set_script_all();
-        if(!is_new_file){
-          calculate_all(true,true);
-          calculate_all(true,false);
-        }
-        //si viene de nuevo registro abre edición
-        if($("#confirmation_geometry_button").hasClass('confirmation_geometry_button_new')){
-          show_confirmation('edit_confirmation');
-        }
+      set_script_all();
+      if(!is_new_file){
+        father_fields.forEach(function(element) {
+          if (element.field_type_id == 7) {
+            child_elements = element.value;
+            child_elements.forEach(function(element_child) {
+              calculate_all(true,true);
+              calculate_all(true,false);
+            });
+          }
+        });
+      }
+      //si viene de nuevo registro abre edición
+      if($("#confirmation_geometry_button").hasClass('confirmation_geometry_button_new')){
+        show_confirmation('edit_confirmation');
+      }
     }//end Success
   }); //end ajax
 }
@@ -3924,50 +3926,50 @@ function calculate_all(first_time, isparent, id_child_calculate , id_field_child
   //Ejecuta Calculate de campos padres
   if(isparent){
     if(!first_time){filechange = true;}
-      father_fields.forEach(function(element) {
-        if(element.calculated_field!="" && element.field_type_id!=11){
-          if((element.calculated_field=='{"provincia":""}' || element.calculated_field=='{"municipio":""}' || element.calculated_field=='{"googleMaps":""}' || element.calculated_field=='{"LatLong":""}') && is_new_file){
-            if(Navarra.dashboards.config.type_geometry == "Polygon" || Navarra.dashboards.config.type_geometry == "LineString"){
-              var geom = Navarra.geomaps.get_geom_to_calculate();
-            } else{
-              var geom1 = Navarra.geomaps.get_geometries_to_save();
-              var geom = {
-                latLng: new L.latLng(geom1[0].latLng.lat,geom1[0].latLng.lng)
-              }
+    father_fields.forEach(function(element) {
+      if(element.calculated_field!="" && element.field_type_id!=11){
+        if((element.calculated_field=='{"provincia":""}' || element.calculated_field=='{"municipio":""}' || element.calculated_field=='{"googleMaps":""}' || element.calculated_field=='{"LatLong":""}') && is_new_file){
+          if(Navarra.dashboards.config.type_geometry == "Polygon" || Navarra.dashboards.config.type_geometry == "LineString"){
+            var geom = Navarra.geomaps.get_geom_to_calculate();
+          } else{
+            var geom1 = Navarra.geomaps.get_geometries_to_save();
+            var geom = {
+              latLng: new L.latLng(geom1[0].latLng.lat,geom1[0].latLng.lng)
             }
-          } else{ var geom = null}
-          Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,element.field_id,element.value,type_calculation,null,geom,true);
-        }
-      });
-    } else{
-      if(is_new_child!=undefined){
-        is_new_file = is_new_child;
-        if(is_new_file){var type_calculation = "new_file"} else{ var type_calculation = "data_edition"}
+          }
+        } else{ var geom = null}
+        Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,element.field_id,element.value,type_calculation,null,geom,true);
       }
-      //Ejecuta Calculate de campos hijos
-      if(!first_time){
-        array_child_edited.push(parseInt(id_child_calculate));
-        //ejecuta calculate para el hijo cambiado
-          children_fields_all[id_field_child_calculate].forEach(function(element) {
-            var id_child_toScript = element.field_id+"|"+id_child_calculate;
+    });
+  } else {
+    if(is_new_child!=undefined){
+      is_new_file = is_new_child;
+      if(is_new_file){var type_calculation = "new_file"} else{ var type_calculation = "data_edition"}
+    }
+    //Ejecuta Calculate de campos hijos
+    if(!first_time){
+      array_child_edited.push(parseInt(id_child_calculate));
+      //ejecuta calculate para el hijo cambiado
+        children_fields_all[id_field_child_calculate].forEach(function(element) {
+          var id_child_toScript = element.field_id+"|"+id_child_calculate;
+          if(element.calculated_field!="" && element.field_type_id!=11){
+            Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
+          }
+        });
+    } else {
+      //ejecuta calculate para todos los hijos
+      if(child_elements!==undefined){
+        child_elements.forEach(function(element_child){
+          element_child.children_fields.forEach(function(element) {
+            var id_child_toScript = element.field_id+"|"+element_child.children_id;
             if(element.calculated_field!="" && element.field_type_id!=11){
               Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
             }
           });
-      } else{
-        //ejecuta calculate para todos los hijos
-        if(child_elements!==undefined){
-          child_elements.forEach(function(element_child){
-            children_fields.forEach(function(element) {
-              var id_child_toScript = element.field_id+"|"+element_child.children_id;
-              if(element.calculated_field!="" && element.field_type_id!=11){
-                Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
-              }
-            });
-          });
-        }
+        });
       }
     }
+  }
 }
 
 function set_nested(event, isparent){
