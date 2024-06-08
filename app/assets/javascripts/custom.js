@@ -1295,7 +1295,14 @@ function show_data_chart(id_chart){
   })
 }
 
-
+function export_all_table_to_excel(){
+  var selText = "mostrar todo"
+  $(".select_perpage").html(selText+' <span class="caret"></span>');
+  var total_selected=parseInt($('.kpi_1001').html().replace(".",""));
+  data_pagination(total_selected,1);
+  init_data_dashboard(false);
+  setTimeout(table_to_excel_api, 2200);
+}
 
 //****** FUNCIONES PARA TABLA DE DATOS*****
 // Función para traer todos los datos de los registros contenidos y filtrados

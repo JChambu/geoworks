@@ -1145,6 +1145,9 @@ function generate_alerts(){
         </div>
       <% end %>
       <% if can? :data, :export %>
+        <a onclick="export_all_table_to_excel()" style="cursor: pointer;" class="dropdown-item text-left">
+          <i class="fas fa-file-excel mr-2"></i> Exportar Todo a Excel
+        </a>
         <a onclick="table_to_excel_api()" style="cursor: pointer;" class="dropdown-item text-left">
           <i class="fas fa-download mr-2"></i> Exportar a Excel
         </a>
