@@ -1296,12 +1296,21 @@ function show_data_chart(id_chart){
 }
 
 function export_all_table_to_excel(){
+  $('#text_toast').html("Exportando todos los datos a Excel. Este proceso puede tardar unos minutos");
+  $('#toast').toast('show');
   var selText = "mostrar todo"
   $(".select_perpage").html(selText+' <span class="caret"></span>');
   var total_selected=parseInt($('.kpi_1001').html().replace(".",""));
   data_pagination(total_selected,1);
   init_data_dashboard(false);
   setTimeout(table_to_excel_api, 2200);
+}
+
+function hideToast() {
+  setTimeout(function() {
+    $('#toast').toast('hide');
+    $(".fakeLoader").css("display", "none");
+  }, 2000);
 }
 
 //****** FUNCIONES PARA TABLA DE DATOS*****
@@ -1382,9 +1391,11 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
     success: function(data) {
       var fields = document.querySelectorAll(".field_key");
       if(JSON.stringify(data_dashboard) == JSON.stringify(data.data) && !is_saved){
-        $(".fakeLoader").css("display", "none");
         // Verifica si tiene que crear tabla de subformularios
+        $('#text_toast').html("Cargando subformularios a la tabla");
+        $('#toast').toast('show');
         create_subforms_table(subfield_ids_saved);
+        hideToast();
         // quita el scroll falso de la cabecera si el cuerpo no tiene scroll
         return;
       }
@@ -1430,17 +1441,24 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
 
         $('#row_table_data'+found_id).addClass('found');
       });
-        // comienza llenado de la tabla
-          var column_to_fill =  document.querySelectorAll('._columnname');
-          column_to_fill.forEach(function(col,index_data){
-            col.innerHTML = array_datos[index_data].toString().replace(/[{}[\]"]/g,"");
-          });
-        // termina llenado de la tabla
+      // comienza llenado de la tabla
+      var column_to_fill =  document.querySelectorAll('._columnname');
+      column_to_fill.forEach(function(col,index_data){
+        col.innerHTML = array_datos[index_data].toString().replace(/[{}[\]"]/g,"");
+      });
+      // termina llenado de la tabla
 
-      $(".fakeLoader").css("display", "none");
-
-       // Verifica si tiene que crear tabla de subformularios
-      create_subforms_table(subfield_ids_saved);
+      if (subfield_ids_saved != undefined) {
+        $('#text_toast').html("Cargando subformularios a la tabla");
+        $('#toast').toast('show');
+        create_subforms_table(subfield_ids_saved);
+        hideToast();
+      } else {
+        $('#text_toast').html("Cargando datos de la tabla");
+        $('#toast').toast('show');
+        create_subforms_table(subfield_ids_saved);
+        hideToast();
+      }
       // Verifica si tiene que crear tabla de capas
       create_layers_table();
     }
