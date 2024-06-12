@@ -3787,25 +3787,55 @@ function change_owner(){
   });
 }
 
-function create_pdf_from_popup(id_selected, event){
+function create_pdf_from_popup(id_selected) {
+  open_panel('view-data-middle', 0);
   $(".fakeLoader").css("display", "block");
   $('#text_toast').html("Creando PDF");
   $('#toast').toast('show');
-  open_panel('view-data-middle',0)
-  setTimeout(function() {
+
+  currentPage = 1
+
+  function checkCheckbox() {
     var checkboxElement = document.getElementById(`check_select_${id_selected}`);
-    if (checkboxElement) {
+    if (checkboxElement != null) {
+      $('#toast').toast('hide');
       checkboxElement.checked = true;
       $("#view-data-hidden").click();
       Navarra.pdf.init_report_api();
-    }
-  }, 1500);
+      $(".fakeLoader").css("display", "none");
+      return true;
+    } else {
+      currentPage++;
+      selected = parseInt($('.kpi_1001').html().trim().replace(/[^0-9]/g, ''), 10);
+      data_pagination(selected, currentPage);
+      init_data_dashboard(false);
 
+      setTimeout(function() {
+        $(".fakeLoader").css("display", "block");
+        checkCheckbox();
+      }, 500);
+    }
+  }
   setTimeout(function() {
-    $('#toast').toast('hide');
-    $(".fakeLoader").css("display", "none");
-  }, 2800);
+    checkCheckbox();
+  }, 500);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function disable_file(){
   $(".fakeLoader").css("display", "block");
