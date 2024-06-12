@@ -3788,6 +3788,7 @@ function change_owner(){
 }
 
 function create_pdf_from_popup(id_selected) {
+  Navarra.geomaps.close_all_popups();
   open_panel('view-data-middle', 0);
   $(".fakeLoader").css("display", "block");
   $('#text_toast').html("Creando PDF");
