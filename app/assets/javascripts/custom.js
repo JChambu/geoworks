@@ -3818,7 +3818,7 @@ function create_pdf_from_popup(id_selected) {
   }
   setTimeout(function() {
     checkCheckbox();
-  }, 500);
+  }, 900);
 }
 
 function disable_file(){
