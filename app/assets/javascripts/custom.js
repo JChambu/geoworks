@@ -1295,8 +1295,6 @@ function show_data_chart(id_chart){
   })
 }
 
-
-
 //****** FUNCIONES PARA TABLA DE DATOS*****
 // Función para traer todos los datos de los registros contenidos y filtrados
 function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
@@ -3807,7 +3805,6 @@ function create_pdf_from_popup(id_selected, event){
     $('#toast').toast('hide');
     $(".fakeLoader").css("display", "none");
   }, 2800);
-  console.log("asd");
 }
 
 function disable_file(){
