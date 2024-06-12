@@ -1303,7 +1303,7 @@ function export_all_table_to_excel(){
   var total_selected=parseInt($('.kpi_1001').html().replace(".",""));
   data_pagination(total_selected,1);
   init_data_dashboard(false);
-  setTimeout(table_to_excel_api, 2200);
+  setTimeout(table_to_excel_api, 2800);
 }
 
 function hideToast() {
@@ -1392,7 +1392,7 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
       var fields = document.querySelectorAll(".field_key");
       if(JSON.stringify(data_dashboard) == JSON.stringify(data.data) && !is_saved){
         // Verifica si tiene que crear tabla de subformularios
-        $('#text_toast').html("Cargando subformularios a la tabla");
+        $('#text_toast').html("Cargando datos de la tabla");
         $('#toast').toast('show');
         create_subforms_table(subfield_ids_saved);
         hideToast();
