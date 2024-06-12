@@ -1303,7 +1303,7 @@ function export_all_table_to_excel(){
   var total_selected=parseInt($('.kpi_1001').html().replace(".",""));
   data_pagination(total_selected,1);
   init_data_dashboard(false);
-  setTimeout(table_to_excel_api, 4500);
+  setTimeout(table_to_excel_api, 5200);
 }
 
 function hideToast() {
