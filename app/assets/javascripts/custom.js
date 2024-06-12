@@ -3821,22 +3821,6 @@ function create_pdf_from_popup(id_selected) {
   }, 500);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function disable_file(){
   $(".fakeLoader").css("display", "block");
   var app_ids = getapp_ids();
