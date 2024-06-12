@@ -3789,6 +3789,27 @@ function change_owner(){
   });
 }
 
+function create_pdf_from_popup(id_selected, event){
+  $(".fakeLoader").css("display", "block");
+  $('#text_toast').html("Creando PDF");
+  $('#toast').toast('show');
+  open_panel('view-data-middle',0)
+  setTimeout(function() {
+    var checkboxElement = document.getElementById(`check_select_${id_selected}`);
+    if (checkboxElement) {
+      checkboxElement.checked = true;
+      $("#view-data-hidden").click();
+      Navarra.pdf.init_report_api();
+    }
+  }, 1500);
+
+  setTimeout(function() {
+    $('#toast').toast('hide');
+    $(".fakeLoader").css("display", "none");
+  }, 2800);
+  console.log("asd");
+}
+
 function disable_file(){
   $(".fakeLoader").css("display", "block");
   var app_ids = getapp_ids();

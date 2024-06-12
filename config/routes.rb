@@ -78,7 +78,6 @@ Rails.application.routes.draw do
   get 'project_subfields/get_calculated_data_from_script' => 'project_subfields#get_calculated_data_from_script'
 
 
-
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
     post 'project_fields/create'
     post 'analytics_dashboards/create'
@@ -87,6 +86,7 @@ Rails.application.routes.draw do
     get 'project_types/:id/dashboard' => 'project_types#dashboard',  :as => :project_types_dashboard
     get 'project_types/import_file' => 'project_types#import_file', as: :import_file
     get 'dashboards/show' => 'dashboards#show'
+    get 'special_sessions/special_user_session' => 'special_sessions#special_user_session', as: :special_user_session
     get 'project_types/:id/api_connection', to: 'api_connections#api_connection', as: :api_connection
     post 'project_types/:id/api_connection', to: 'api_connections#create', as: :create_api_connection
     get 'project_types/:id/api_connection_mapping', to: 'api_connections#api_connection_mapping', as: :api_connection_mapping
