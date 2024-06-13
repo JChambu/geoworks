@@ -262,11 +262,6 @@ Navarra.geomaps = function() {
     }
     L.control.ZoomExtend({ position: 'topright' }).addTo(mymap);
 
-    L.control.measure().addTo(mymap);
-    var measureAction = new L.MeasureAction(mymap, {
-        model: "distance",
-    });
-
     editableLayers = new L.FeatureGroup();
     mymap.addLayer(editableLayers);
     var drawControl = new L.Control.Draw({
@@ -384,8 +379,8 @@ Navarra.geomaps = function() {
         }
       }
     };
-
     mymap.addControl(drawControl);
+
     // Cambia los íconos de Leafleat que se ven corridos
     var img_polygon = L.DomUtil.create('I');
     img_polygon.className = 'fas fa-draw-polygon';
@@ -529,6 +524,10 @@ Navarra.geomaps = function() {
       L.control.Edit({ position: 'topright' }).addTo(mymap);
     }
 
+    L.control.measure().addTo(mymap);
+    var measureAction = new L.MeasureAction(mymap, {
+        model: "distance",
+    });
 
     // Agrega la escala al mapa
     L.control.scale({
