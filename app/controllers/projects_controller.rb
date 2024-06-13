@@ -80,11 +80,13 @@ class ProjectsController < ApplicationController
     funcionalities_id = ModelType.where(name: 'funcionalities').pluck(:id).first
     ndvi_event_id = Event.where(name: 'ndvi').pluck(:id).first
     multipoints_event_id = Event.where(name: 'multipoints').pluck(:id).first
+    pdf_event_id = Event.where(name: 'pdf_from_popup').pluck(:id).first
 
     find_ndvi_permission = Permission.where(role_id: user_role_id, event_id: ndvi_event_id, model_type_id: funcionalities_id)
     find_multipoints_permission = Permission.where(role_id: user_role_id, event_id: multipoints_event_id, model_type_id: funcionalities_id)
+    find_pdf_permission = Permission.where(role_id: user_role_id, event_id: pdf_event_id, model_type_id: funcionalities_id)
 
-    render json: { find_ndvi_permission: find_ndvi_permission, find_multipoints_permission: find_multipoints_permission }
+    render json: { find_ndvi_permission: find_ndvi_permission, find_multipoints_permission: find_multipoints_permission, find_pdf_permission: find_pdf_permission }
   end
 
   def get_coordinates

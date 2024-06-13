@@ -10,6 +10,7 @@ var number_point_value;
 var multipoints_coordinates;
 var ndvi_event;
 var multipoints_event;
+var pdf_event;
 
 Navarra.namespace("geomaps");
 var first_layer=false;
@@ -1531,6 +1532,7 @@ function getCQLFilter_layer(dat){
       success: function(data) {
         ndvi_event = data.find_ndvi_permission
         multipoints_event = data.find_multipoints_permission
+        pdf_event = data.find_pdf_permission
       }
     });
   }
@@ -1606,10 +1608,12 @@ function getCQLFilter_layer(dat){
                     div_popup_icon.style.textAlign = 'right';
                     div_popup_icon.setAttribute('id', 'icons_popup');
 
-                    var new_p = document.createElement('I');
-                    new_p.setAttribute("onclick",'create_pdf_from_popup('+app_id_popup+')');
-                    new_p.className="fas fa-file-pdf info_icon";
-                    div_popup_icon.appendChild(new_p);
+                    if (pdf_event.length !== 0) {
+                      var new_p = document.createElement('I');
+                      new_p.setAttribute("onclick",'create_pdf_from_popup('+app_id_popup+')');
+                      new_p.className="fas fa-file-pdf info_icon";
+                      div_popup_icon.appendChild(new_p);
+                    }
 
                     element = document.querySelector('[class^="'+app_id_popup+'"]');
                     if (element != null) {

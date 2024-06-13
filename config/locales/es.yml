@@ -41,6 +41,7 @@ es:
   user_filter: 'Filtro por Usuario'
   multipoints: 'Multipuntos'
   ndvi: 'NDVI'
+  pdf_from_popup: 'Exportar PDF desde popup'
   regexp: 'Expresiones Regulares'
   exception_handler:
     not_found: "Página no encontrada"
