@@ -70,15 +70,14 @@
         project_type_id: <%= params[:project_type_id] %>
       },
       success: function(data) {
-          $('#filter_value_options').empty();
-          $('#filter_value_options').append('<option></option>');
-          $.each(data['data'][0]['values'], function(value, a) {
-            let opt = document.createElement("option");
-            opt.value = `${a.p_name}`.replace(/[\[\]]/g, "").replace(/\", \"/g, " | ").replace(/\"/g, "");
-            opt.text = `${a.p_name}`.replace(/[\[\]]/g, "").replace(/\", \"/g, " | ").replace(/\"/g, "");
-
-            $('#filter_value_options').append(opt);
-          });
+        $('#filter_value_options').empty();
+        $('#filter_value_options').append('<option></option>');
+        $.each(data['data'][0]['values'], function(value, a) {
+          let opt = document.createElement("option");
+          opt.value = `${a.p_name}`.replace(/[\[\]]/g, "").replace(/\", \"/g, " | ").replace(/\"/g, "");
+          opt.text = `${a.p_name}`.replace(/[\[\]]/g, "").replace(/\", \"/g, " | ").replace(/\"/g, "");
+          $('#filter_value_options').append(opt);
+        });
       }
     });
   });

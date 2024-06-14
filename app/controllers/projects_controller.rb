@@ -3,7 +3,8 @@ class ProjectsController < ApplicationController
   before_action :set_project, only: [:show, :edit, :update, :destroy]
 
   def search_data
-    @user = Project.search_value_for_fields params
+    current_user_id = current_user.id
+    @user = Project.search_value_for_fields(params, current_user_id)
     render json: {data: @user}
   end
 
