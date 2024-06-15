@@ -30,29 +30,30 @@ module Projects::Scopes
 
         user_project_filters = ProjectFilter.where(user_id: current_user_id).where.not(properties: nil)
 
-        if user_project_filters.present?
+        if user_project_filters.present? && user_project_filters.first.properties.keys.first == params[:project_field_key]
           filters = []
           user_project_filters.each do |upf|
             user_filter = upf.properties.values.first
             filters << user_filter if !user_filter.nil?
           end
-        end
 
-        query_to_select = []
-        filters_flattened = filters.flatten
-        filters_flattened.each do |fil|
-          query.each do |qu|
-            p_name_json = qu.attributes["p_name"]
-            next if p_name_json.nil? || p_name_json.empty?
-            pname = JSON.parse(p_name_json).first
+          query_to_select = []
+          filters_flattened = filters.flatten
+          filters_flattened.each do |fil|
+            query.each do |qu|
+              p_name_json = qu.attributes["p_name"]
+              next if p_name_json.nil? || p_name_json.empty?
+              pname = JSON.parse(p_name_json).first
 
-            if fil == pname
-              query_to_select << qu
+              if fil == pname
+                query_to_select << qu
+              end
             end
           end
+          query = query_to_select
         end
 
-        data.push({field_type_name: field.field_type.name, values: query_to_select})
+        data.push({field_type_name: field.field_type.name, values: query})
       else
         subfield = ProjectSubfield
           .joins(:project_field)
