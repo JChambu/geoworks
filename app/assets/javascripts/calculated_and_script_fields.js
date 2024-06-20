@@ -335,8 +335,10 @@ Navarra.calculated_and_script_fields = function() {
                     },
                     success: function(data) {
                       ids_with_calculated_field = data.ids_with_calculated_field
-                      input_to_blank = document.getElementById("fieldchildid|"+ids_with_calculated_field + "|"+ id_child_calculate).value = null;
-                      input_tab = document.getElementById("fieldchildid|"+ids_with_calculated_field + "|"+ id_child_calculate).dispatchEvent(new Event('change'));
+                      if (ids_with_calculated_field != null) {
+                        input_to_blank = document.getElementById("fieldchildid|"+ids_with_calculated_field + "|"+ id_child_calculate).value = null;
+                        input_tab = document.getElementById("fieldchildid|"+ids_with_calculated_field + "|"+ id_child_calculate).dispatchEvent(new Event('change'));
+                      }
                     }
                   });
                 });
@@ -366,7 +368,7 @@ Navarra.calculated_and_script_fields = function() {
               date_to_change = $(texto_campo_id).val();
               subform_id = id_field.split('|')[1]
 
-              if (subform_id != '0') {
+              if (date_to_change != undefined && subform_id != '0') {
                 $.ajax({
                   type: 'POST',
                   url: '/project_data_children/change_gwm_created_at',
