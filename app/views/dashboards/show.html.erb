@@ -22,18 +22,10 @@
 
     <% if !@project_filters.nil? %>
       // Carga filtros por atributos y owner
-      <% if !@user_attribute_filter.nil? %>
-        Navarra.project_types.config.attribute_filters.push('<%= raw @user_attribute_filter %>');
+      <% @user_attribute_filters.each do |index, filter| %>
+        Navarra.project_types.config.attribute_filters.push('<%= raw filter %>');
       <% end %>
-      Navarra.project_types.config.owner = <%= @project_filters.owner %>;
-      // Carga filtros intercapa
-      <% if !@project_filters.cross_layer_filter_id.nil? %>
-        <% if !@user_cross_layer_filter.nil? %>
-          Navarra.project_types.config.cross_layer_filter.push('<%= raw @user_cross_layer_filter %>');
-        <% end %>
-        Navarra.project_types.config.cross_layer_owner = <%= @cross_layer_filter.owner %>;
-        Navarra.project_types.config.cross_layer = '<%= @cross_layer %>';
-      <% end %>
+      
     <% end %>
 
     //cerrar paneles laterales

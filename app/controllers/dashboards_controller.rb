@@ -84,27 +84,31 @@ class DashboardsController < ApplicationController
 
       @current_tenant = Apartment::Tenant.current
 
-      @project_filters = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id).first
+      @project_filters = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id).where.not(properties: nil)
 
       if !@project_filters.nil?
 
         # Arma el filtro por atributo
-        if !@project_filters.properties.nil?
-          @project_filters.properties.to_a.each do |prop|
-            @user_attribute_filter = "#{prop[0]}|=|#{prop[1]}"
+        @user_attribute_filters = {}
+        @project_filters.each_with_index do |prop, index|
+          prop[:properties].each do |key, value|
+            user_attribute_filter = "#{key}|=|#{value}"
+            @user_attribute_filters[index] = user_attribute_filter
           end
         end
 
         # Arma los filtros intercapa
-        if !@project_filters.cross_layer_filter_id.nil?
-          @cross_layer_filter = ProjectFilter.where(id: @project_filters.cross_layer_filter_id).where(user_id: current_user.id).first
-          if !@cross_layer_filter.properties.nil?
-            @cross_layer_filter.properties.to_a.each do |prop|
-              @user_cross_layer_filter = "#{prop[0]}|=|#{prop[1]}"
-            end
-          end
-          @cross_layer = ProjectType.where(id: @cross_layer_filter.project_type_id).pluck(:name_layer).first
-        end
+        # if !@project_filters.cross_layer_filter_id.nil?
+        #   @cross_layer_filter = ProjectFilter.where(id: @project_filters.cross_layer_filter_id).where(user_id: current_user.id).first
+        #   if !@cross_layer_filter.properties.nil?
+        #     @cross_layer_filter.properties.to_a.each do |prop|
+        #       byebug
+        #       @user_cross_layer_filter = "#{prop[0]}|=|#{prop[1]}"
+        #       byebug
+        #     end
+        #   end
+        #   @cross_layer = ProjectType.where(id: @cross_layer_filter.project_type_id).pluck(:name_layer).first
+        # end
 
       end
       @extent = Project.geometry_bounds(@project_type.id, current_user.id, attribute_filters = '', filtered_form_ids = '', from_date = '', to_date = '', intersect_width_layers = 'false', active_layers = '', filters_layers = {} ,timeslider_layers = {})
