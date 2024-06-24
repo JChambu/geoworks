@@ -2655,7 +2655,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       };
 
       //campos del registro
-      var father_fields = data.father_fields;
+      father_fields = data.father_fields;
       subtitles_all = [];
       subtitles_all_child = [];
       var verify_count_elements = 0; // variable para chequear que se dibujan todos los campos sin error
@@ -2986,17 +2986,11 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       }
       //Ejecuta Script y calculados de campos padres e hijos
       set_script_all();
-      if(!is_new_file){
-        father_fields.forEach(function(element) {
-          if (element.field_type_id == 7) {
-            child_elements = element.value;
-            child_elements.forEach(function(element_child) {
-              calculate_all(true,true);
-              calculate_all(true,false);
-            });
-          }
-        });
+      if (!is_new_file) {
+        calculate_all(true,true);
+        calculate_all(true,false);
       }
+
       //si viene de nuevo registro abre edición
       if($("#confirmation_geometry_button").hasClass('confirmation_geometry_button_new')){
         show_confirmation('edit_confirmation');
@@ -4020,7 +4014,7 @@ function calculate_all(first_time, isparent, id_child_calculate , id_field_child
       //ejecuta calculate para todos los hijos
       if(child_elements!==undefined){
         child_elements.forEach(function(element_child){
-          element_child.children_fields.forEach(function(element) {
+          children_fields.forEach(function(element) {
             var id_child_toScript = element.field_id+"|"+element_child.children_id;
             if(element.calculated_field!="" && element.field_type_id!=11){
               Navarra.calculated_and_script_fields.Calculate(element.calculated_field,element.field_type_id,id_child_toScript,element.value,type_calculation,null,null,false);
