@@ -196,6 +196,7 @@ Navarra.calculated_and_script_fields = function() {
             $(texto_campo_id_script).addClass('readonly_field');
           }
         }
+        textarea_adjust_height();
       }
     } catch(e){
       set_error_message("Error en la configuración del script del campo ID:"+field_id);
@@ -339,6 +340,7 @@ Navarra.calculated_and_script_fields = function() {
                         input_to_blank = document.getElementById("fieldchildid|"+ids_with_calculated_field + "|"+ id_child_calculate).value = null;
                         input_tab = document.getElementById("fieldchildid|"+ids_with_calculated_field + "|"+ id_child_calculate).dispatchEvent(new Event('change'));
                       }
+                      textarea_adjust_height();
                     }
                   });
                 });
