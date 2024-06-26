@@ -88,7 +88,6 @@ class ProjectTypesController < ApplicationController
   end
 
   def project_type_layers
-
     # Busca todas las capas
     @projects = ProjectType
       .joins(:has_project_types)
@@ -99,55 +98,92 @@ class ProjectTypesController < ApplicationController
 
     layers = {}
 
-    # Cicla las capas y levanta los filtros
     @projects.each do |project|
-
       layer_filters = {}
-      project_filters = ProjectFilter
-        .where(project_type_id: project.id)
-        .where(user_id: current_user.id)
-        .first
+      project_filters = ProjectFilter.where(project_type_id: project.id).where(user_id: current_user.id)
 
       if !project_filters.nil?
-
-        if !project_filters.properties.nil?
-          project_filters.properties.each do |f|
-            layer_filters[:attribute_filter] = "#{f[0]}|=|'#{f[1]}'"
-          end
-        end
-
-        if project_filters.owner == true
-          layer_filters[:owner_filter] = project_filters.owner
-        end
-
-        if !project_filters.cross_layer_filter_id.nil?
-
-          cl_filter = {}
-
-          cross_layer_filter = ProjectFilter
-            .where(id: project_filters.cross_layer_filter_id)
-            .where(user_id: current_user.id)
-            .first
-
-          cl_name = ProjectType.where(id: cross_layer_filter.project_type_id).pluck(:name_layer).first
-          cl_filter[:cl_name] = cl_name
-
-          if !cross_layer_filter.properties.nil?
-            cross_layer_filter.properties.each do |f|
-              cl_filter[:cl_attribute_filter] = "#{f[0]}|=|'#{f[1]}'"
+        project_filters.each do |project_filter|
+          if !project_filter.properties.nil?
+            project_filter.properties.each do |key, value|
+              layer_filters[:attribute_filter] ||= []
+              layer_filters[:attribute_filter] << "#{key}|=|'#{value}'"
             end
           end
 
-          if cross_layer_filter.owner == true
-            cl_filter[:cl_owner_filter] = cross_layer_filter.owner
+          if project_filter.owner == true
+            layer_filters[:owner_filter] = project_filter.owner
           end
 
-          layer_filters[:cl_filter] = cl_filter
+          if project_filter.cross_layer_filter_id.present?
+            cross_layer_filters = ProjectFilter.where(id: project_filter.cross_layer_filter_id).where(user_id: current_user.id)
 
+            layer_filters[:cl_filter] ||= []
+            cross_layer_filters.each do |cross_layer_filter|
+              cl_filter = {}
+              cl_name = ProjectType.where(id: cross_layer_filter.project_type_id).pluck(:name_layer).first
+              existing_cl_filter = layer_filters[:cl_filter].find { |filter| filter[:cl_name] == cl_name }
+
+              if existing_cl_filter.nil?
+                existing_cl_filter = { cl_name: cl_name, cl_attribute_filter: [] }
+                layer_filters[:cl_filter] << existing_cl_filter
+              end
+
+              if cross_layer_filter.properties.present?
+                cross_layer_filter.properties.each do |key, value|
+                  existing_cl_filter[:cl_attribute_filter] << "#{key}|=|'#{value}'"
+                end
+              end
+
+              if cross_layer_filter.owner == true
+                existing_cl_filter[:cl_owner_filter] = cross_layer_filter.owner
+              end
+            end
+          end
         end
-
       end
 
+      # if !project_filters.nil?
+      #   if !project_filters.properties.nil?
+      #     project_filters.properties.each do |f|
+      #       byebug
+      #       layer_filters[:attribute_filter] = "#{f[0]}|=|'#{f[1]}'"
+      #       byebug
+      #     end
+      #   end
+      #
+      #   if project_filters.owner == true
+      #     layer_filters[:owner_filter] = project_filters.owner
+      #   end
+      #
+      #   if !project_filters.cross_layer_filter_id.nil?
+      #     byebug
+      #     cl_filter = {}
+      #
+      #     cross_layer_filter = ProjectFilter
+      #       .where(id: project_filters.cross_layer_filter_id)
+      #       .where(user_id: current_user.id)
+      #       .first
+      #
+      #     cl_name = ProjectType.where(id: cross_layer_filter.project_type_id).pluck(:name_layer).first
+      #     cl_filter[:cl_name] = cl_name
+      #
+      #     if !cross_layer_filter.properties.nil?
+      #       cross_layer_filter.properties.each do |f|
+      #         cl_filter[:cl_attribute_filter] = "#{f[0]}|=|'#{f[1]}'"
+      #         byebug
+      #       end
+      #     end
+      #
+      #     if cross_layer_filter.owner == true
+      #       cl_filter[:cl_owner_filter] = cross_layer_filter.owner
+      #     end
+      #
+      #     layer_filters[:cl_filter] = cl_filter
+      #     byebug
+      #   end
+      #
+      # end
       layers["layer_#{project.name_layer}"] = {
         "name": project.name,
         "layer": project.name_layer,
@@ -155,9 +191,8 @@ class ProjectTypesController < ApplicationController
         "color": project.layer_color,
         "layer_filters": layer_filters
       }
-
     end
-
+    # byebug
     render json: layers
   end
 
