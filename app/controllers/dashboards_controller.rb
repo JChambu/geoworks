@@ -50,7 +50,6 @@ class DashboardsController < ApplicationController
   # GET /dashboards/1
   # GET /dashboards/1.json
   def show
-
     @extent = []
 
     if !@project_type.nil?
@@ -81,6 +80,11 @@ class DashboardsController < ApplicationController
       @table_configuration = TableConfiguration
         .where(project_type_id: @project_type.id)
         .where(user_id: current_user.id)
+
+      @user_tenants = UserCustomer.joins(:customer)
+        .where(user_id: current_user.id)
+        .select('customers.name AS corporation_name, customers.logo AS corporation_logo')
+        .map { |uc| { name: uc.corporation_name, logo: uc.corporation_logo } }
 
       @current_tenant = Apartment::Tenant.current
 

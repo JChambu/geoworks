@@ -92,7 +92,6 @@ end
 
 
 Rails.application.config.middleware.insert_before Warden::Manager, Apartment::Elevators::Subdomain
-Rails.application.config.middleware.use Apartment::Elevators::Subdomain
 #Ok
 #Rails.application.config.middleware.insert_before Warden::Manager, Apartment::Elevators::FirstSubdomain
 #Rails.application.config.middleware.use Apartment::Elevators::FirstSubdomain

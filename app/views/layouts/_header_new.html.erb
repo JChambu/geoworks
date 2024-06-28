@@ -34,6 +34,15 @@ $(document).ready(function(){
       $('.custom_indicator_container').css('left',new_left);
     }
   });
+  $('#panelAdminCorporations').on('click', function (e) {
+    e.stopPropagation();
+    $('.custom_dropdown_panels_tenants').toggle();
+    $('.custom_dropdown_panels_tenants').css('right','101%');
+    var top = ($(this).offset().top -50)+ 'px';
+    $('.custom_dropdown_panels_tenants').css('top',top)
+    $('.custom_dropdown_panels').hide();
+    $('.custom_dropdown_panels_sync').hide();
+  });
   $('#panelImport').on('click', function (e) {
     e.stopPropagation();
     $('.custom_dropdown_panels_import').toggle();
@@ -42,6 +51,7 @@ $(document).ready(function(){
     $('.custom_dropdown_panels_import').css('top',top)
     $('.custom_dropdown_panels').hide();
     $('.custom_dropdown_panels_sync').hide();
+    $('.custom_dropdown_panels_tenants').hide();
   });
   $('#panelSync').on('click', function (e) {
     e.stopPropagation();
@@ -51,12 +61,14 @@ $(document).ready(function(){
     $('.custom_dropdown_panels_sync').css('top',top)
     $('.custom_dropdown_panels').hide();
     $('.custom_dropdown_panels_import').hide();
+    $('.custom_dropdown_panels_tenants').hide();
   });
   $('#panelAdmin').on('click', function (e) {
     e.stopPropagation();
     $('.custom_dropdown_panels').toggle();
     $('.custom_dropdown_panels_import').hide();
     $('.custom_dropdown_panels_sync').hide();
+    $('.custom_dropdown_panels_tenants').hide();
   });
 });
 function open_panel(id_panel,id_table){
@@ -354,91 +366,108 @@ function open_panel(id_panel,id_table){
       <% if !@project_type.nil? && !@project_type.new_record?%>
         <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
           <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelAdmin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Paneles</a>
-            <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels" aria-labelledby="panelAdmin">
-              <% if can? :data, :visualizer %>
-                <a class="dropdown-item" href="#" onclick="open_panel('view-data-middle',0)">Tabla de datos
-                  <i class="fas fa-edit ml-4" style="font-size: 0.8em;" id="show_trash_tables" title="Eliminar Tablas" onclick="show_trash_tables(event)"></i>
-                </a>
-                <div class="ml-3" id="tables_container" style="font-size:0.8em; max-height: 40vh; overflow-y:auto;">
-                  <% if !@table_configuration.nil? %>
-                    <% @table_configuration.sort_by(&:name).each do |table| %>
-                      <a class="dropdown-item d-flex" onclick="open_panel(<%= "'view-data-middle',"+table.id.to_s%>)" href="#" id=<%= "dropdown_table"+table.id.to_s%>>
-                        <h7 class="mr-auto" ><%=table.name %></h7>
-                        <i class="fas fa-trash-alt ml-3 invisible icon_delete_table" title="Eliminar" onclick="remove_table(<%= 'event ,'+table.id.to_s%>)"></i>
-                      </a>
-                    <% end %>
+          <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels" aria-labelledby="panelAdmin">
+            <% if can? :data, :visualizer %>
+              <a class="dropdown-item" href="#" onclick="open_panel('view-data-middle',0)">Tabla de datos
+                <i class="fas fa-edit ml-4" style="font-size: 0.8em;" id="show_trash_tables" title="Eliminar Tablas" onclick="show_trash_tables(event)"></i>
+              </a>
+              <div class="ml-3" id="tables_container" style="font-size:0.8em; max-height: 40vh; overflow-y:auto;">
+                <% if !@table_configuration.nil? %>
+                  <% @table_configuration.sort_by(&:name).each do |table| %>
+                    <a class="dropdown-item d-flex" onclick="open_panel(<%= "'view-data-middle',"+table.id.to_s%>)" href="#" id=<%= "dropdown_table"+table.id.to_s%>>
+                      <h7 class="mr-auto" ><%=table.name %></h7>
+                      <i class="fas fa-trash-alt ml-3 invisible icon_delete_table" title="Eliminar" onclick="remove_table(<%= 'event ,'+table.id.to_s%>)"></i>
+                    </a>
                   <% end %>
+                <% end %>
               </div>
-              <% end %>
-              <% if can? :graphics, :visualizer %>
-                <a class="dropdown-item" href="#" onclick="open_panel('view-charts')">Indicadores Gráficos</a>
-              <% end %>
-              <a class="dropdown-item" href="#" onclick="open_panel('view-filters')">Filtros Activos</a>
-              <a class="dropdown-item" href="#" onclick="open_panel('view-timeslider')">Rango Temporal</a>
-            </div>
-          <% end %>
+            <% end %>
+            <% if can? :graphics, :visualizer %>
+              <a class="dropdown-item" href="#" onclick="open_panel('view-charts')">Indicadores Gráficos</a>
+            <% end %>
+            <a class="dropdown-item" href="#" onclick="open_panel('view-filters')">Filtros Activos</a>
+            <a class="dropdown-item" href="#" onclick="open_panel('view-timeslider')">Rango Temporal</a>
+          </div>
+        <% end %>
 
-          <% if can? :statuses, :visualizer %>
-            <%= link_to 'Estados', project_type_project_statuses_path(@project_type.id), class: "dropdown-item" %>
-           <% end %>
-           <% if can? :project_types, :share%>
-            <%= link_to 'Compartir', project_type_share_path(@project_type.id), remote:true,remote:true, class: "dropdown-item" %>
-          <% end %>
-          <% if can? :project_types, :edit%>
-            <%= link_to 'Editar', edit_project_type_path(@project_type.id), class: "dropdown-item" %>
-          <% end %>
-          <div>
+        <% if can? :funcionalities, :multitenant_user%>
+          <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelAdminCorporations" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Corporaciones Asociadas</a>
+          <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels_tenants" aria-labelledby="panelAdminCorporations">
+            <% if @user_tenants.present? %>
+              <% @user_tenants.each do |tenant| %>
+                <div class="dropdown-item d-flex align-items-center">
+                  <% if tenant[:logo].present? %>
+                    <img src="data:image/png;base64,<%= tenant[:logo] %>" alt="<%= tenant[:name] %> logo" style="width: 20px; height: 20px; margin-right: 10px;">
+                  <% else %>
+                    <div style="width: 20px; height: 20px; margin-right: 10px;"></div>
+                  <% end %>
+                  <a href="<%= switch_multitenant_url(tenant: tenant[:name]) %>" target="_blank"><%= tenant[:name] %></a>
+                </div>
+              <% end %>
+            <% else %>
+              <p class="dropdown-item">No hay otras corporaciones asociadas con este usuario</p>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if can? :statuses, :visualizer %>
+          <%= link_to 'Estados', project_type_project_statuses_path(@project_type.id), class: "dropdown-item" %>
+        <% end %>
+        <% if can? :project_types, :share%>
+          <%= link_to 'Compartir', project_type_share_path(@project_type.id), remote:true,remote:true, class: "dropdown-item" %>
+        <% end %>
+        <% if can? :project_types, :edit%>
+          <%= link_to 'Editar', edit_project_type_path(@project_type.id), class: "dropdown-item" %>
+        <% end %>
+        <div>
           <% if can? :data, :new_subform || :data, :new %>
-             <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelImport" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Importar</a>
+            <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelImport" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Importar</a>
             <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels_import" aria-labelledby="panelImport">
               <% if can? :data, :new %>
                 <%= link_to 'Formularios', new_project_type_projects_import_path(@project_type.id), class: "dropdown-item" %>
               <% end %>
               <% if can? :data, :new_subform %>
-              <%= link_to 'Subformularios', new_project_type_data_children_path(@project_type.id), class: "dropdown-item" %>
+                <%= link_to 'Subformularios', new_project_type_data_children_path(@project_type.id), class: "dropdown-item" %>
               <% end %>
             </div>
           <% end %>
-          </div>
-
-          <div>
-            <% if can? :data, :new_subform || :data, :new %>
-              <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelSync" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sincronizar</a>
-              <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels_sync" aria-labelledby="panelSync">
-                <% if can? :data, :new %>
-                  <!-- here the link to sync forms -->
-                <% end %>
-                <% if can? :data, :new_subform %>
-                  <%= link_to 'Subformularios', api_connection_path(@project_type.id), class: "dropdown-item" %>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
-
-          <% if can? :project_types, :destroy%>
-            <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, id: 'project_del_button', class: "dropdown-item" %>
+        </div>
+        <div>
+          <% if can? :data, :new_subform || :data, :new %>
+            <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelSync" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sincronizar</a>
+            <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels_sync" aria-labelledby="panelSync">
+              <% if can? :data, :new %>
+                <!-- here the link to sync forms -->
+              <% end %>
+              <% if can? :data, :new_subform %>
+                <%= link_to 'Subformularios', api_connection_path(@project_type.id), class: "dropdown-item" %>
+              <% end %>
+            </div>
           <% end %>
+        </div>
+        <% if can? :project_types, :destroy%>
+          <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, id: 'project_del_button', class: "dropdown-item" %>
         <% end %>
+      <% end %>
 
-        <% if can? :choice_lists, :visualizer %>
-          <%= link_to 'Listados', choice_lists_path, class: "dropdown-item" %>
+      <% if can? :choice_lists, :visualizer %>
+        <%= link_to 'Listados', choice_lists_path, class: "dropdown-item" %>
+      <% end %>
+      <% if can? :layers, :visualizer %>
+        <%= link_to 'Capas Externas', layers_path, class: "dropdown-item" %>
+      <% end %>
+      <%- if user_signed_in? %>
+        <% if current_user.name == 'superadmin' %>
+          <%= link_to 'Administración', admin_root_path, class: "dropdown-item" %>
         <% end %>
-        <% if can? :layers, :visualizer %>
-          <%= link_to 'Capas Externas', layers_path, class: "dropdown-item" %>
+        <% if can? :project_types, :admin_projects%>
+          <%= link_to "Administrar Proyectos", project_types_path, class: "dropdown-item" %>
         <% end %>
-        <%- if user_signed_in? %>
-          <% if current_user.name == 'superadmin' %>
-            <%= link_to 'Administración', admin_root_path, class: "dropdown-item" %>
-          <% end %>
-          <% if can? :project_types, :admin_projects%>
-            <%= link_to "Administrar Proyectos", project_types_path, class: "dropdown-item" %>
-          <% end %>
-          <%= link_to "Editar Usuario", edit_user_path(current_user.id), class: "dropdown-item" %>
-          <%= link_to 'Cerrar Sesión', destroy_user_session_path, class: "dropdown-item", method: :delete %>
-        <% end %>
+        <%= link_to "Editar Usuario", edit_user_path(current_user.id), class: "dropdown-item" %>
+        <%= link_to 'Cerrar Sesión', destroy_user_session_path, class: "dropdown-item", method: :delete %>
+      <% end %>
       </div>
     </div>
-
   </div>
 </nav>
 
