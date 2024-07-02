@@ -173,7 +173,7 @@
       var left_position = (leaflet_layer_position.left - 10) + "px";
       $('#custom_layer_control_button').css("top", top_position);
       $('#custom_layer_control_button').css("left", left_position);
-
+      Navarra.geomaps.show_prefilters_subform_labels()
       // Configura eventos de apertura y cierre del modal
       $('#layersDropdown').on('click', function (e) {
         e.preventDefault();
@@ -409,19 +409,19 @@
       </button>
     </div>
     <div class="layer-section">
-      <h6><%= t('layers_manager.basemaps') %>:</h6>
+      <h5><%= t('layers_manager.basemaps') %>:</h5>
       <div id="basemaps_container"></div>
     </div>
     <div class="layer-section">
-      <h6><%= t('layers_manager.active_layer') %>:</h6>
+      <h5><%= t('layers_manager.active_layer') %>:</h5>
       <div id="activeproject_container"></div>
     </div>
     <div class="layer-section">
-      <h6><%= t('layers_manager.other_layers') %>:</h6>
+      <h5><%= t('layers_manager.other_layers') %>:</h5>
       <div id="projects_container"></div>
     </div>
     <div class="layer-section">
-      <h6><%= t('layers_manager.external_layers') %>:</h6>
+      <h5><%= t('layers_manager.external_layers') %>:</h5>
       <div id="externallayers_container"></div>
     </div>
   </div>

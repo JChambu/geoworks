@@ -1124,10 +1124,9 @@ div.custom-menu.show {
   top: 58px;
   left: 0;
   height: calc(100% - 58px);
-  background-color: rgba(39, 43, 48, 0.8);
+  background-color: rgba(39, 43, 48, 0.2);
   z-index: 3000;
   display: none;
-  transition: opacity 1s ease, visibility 1s ease;
   box-shadow: 2px 0 5px rgba(0,0,0,0.5);
   transition: top 0.3s ease;
   overflow-y: auto;
@@ -1135,14 +1134,13 @@ div.custom-menu.show {
 
 .custom_layer_modal.show {
   display: block;
-  transition: opacity 1s ease, visibility 1s ease;
 }
 
 .layer-section {
   margin-bottom: 20px;
 }
 
-.layer-section h6 {
+.layer-section h5 {
   margin: 10px 0 0 2px;
   padding: 0 10px;
 }
