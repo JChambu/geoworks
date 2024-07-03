@@ -77,6 +77,12 @@ $(document).ready(function(){
     $('.status_panel').css('top', '16vh');
   });
 
+  $('#gis_dropdown').on('click', function(e) {
+    if ($('#customLayerModal').hasClass('show')) {
+      $('#customLayerModal').css('z-index', 1000);
+      $('#gis_dropdown_menu').css('z-index', 2000);
+    }
+  });
 });
 function open_panel(id_panel,id_table){
   if(id_panel=='view-data-middle' && id_table!=0){
