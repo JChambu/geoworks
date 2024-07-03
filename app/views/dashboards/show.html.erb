@@ -164,6 +164,7 @@
 
     function toggleLayersModal() {
       $('#customLayerModal').toggleClass('show');
+      $('#custom_layer_control_button').hide();
       var modalWidth = $('#customLayerModal').outerWidth();
       $('.status_panel').css('left', modalWidth);
       $('.status_panel').css('top', '61.3px');
@@ -184,6 +185,7 @@
 
       $('#closeLayerModal').on('click', function () {
         $('#customLayerModal').removeClass('show');
+        $('#custom_layer_control_button').show();
         $('.status_panel').css('left', '10px');
         $('.status_panel').css('top', '16vh');
       });
