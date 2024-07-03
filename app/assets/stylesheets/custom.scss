@@ -1122,13 +1122,13 @@ div.custom-menu.show {
 .custom_layer_modal {
   position: fixed;
   top: 58px;
-  left: 0;
+  left: -2px;
   height: calc(100% - 58px);
   background-color: rgba(39, 43, 48, 0.2);
   z-index: 3000;
   display: none;
   box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-  transition: top 0.3s ease;
+  transition: all 1s ease 0s;
   overflow-y: auto;
 }
 
@@ -1137,11 +1137,11 @@ div.custom-menu.show {
 }
 
 .layer-section {
-  margin-bottom: 20px;
+  margin-bottom: 1px;
 }
 
 .layer-section h5 {
-  margin: 10px 0 0 2px;
+  margin: 7px 0 2px 2px;
   padding: 0 10px;
 }
 
@@ -1150,4 +1150,12 @@ div.custom-menu.show {
   z-index: 3001;
   top: 20px;
   left: 10px;
+}
+
+.modal-header {
+  position: sticky;
+  top: 0;
+  background-color: rgba(39, 43, 48, 0.9);
+  z-index: 10;
+  padding: 10px;
 }

@@ -211,7 +211,7 @@ Navarra.geomaps = function() {
                     '<label for=mapa_base1>Etiquetas Formularios</label></a>';
       $('#activeproject_container').append(new_item);
       var new_item = '<a class="dropdown-item" href="#" id="checkbox_div_etiquetas_subforms">' +
-                    '<i class="fas fa-chevron-down float-right" style="margin-left:-20px" onclick="Navarra.geomaps.show_prefilters_subform_labels()"></i>' +
+                    '<i class="fas fa-chevron-down float-right" id="subforms_labels_dropdown" style="margin-left:-20px" onclick="Navarra.geomaps.show_prefilters_subform_labels()"></i>' +
                     '<label for="mapa_base1">Etiquetas Subformularios</label>' +
                     '</a>' +
                     '<div class="empty-container pl-4 d-none" style="width:20vw" id="empty_container">' +
@@ -2776,6 +2776,12 @@ function show_prefilters_subform_labels() {
   });
   var emptyContainer = document.getElementById('empty_container');
   emptyContainer.classList.toggle('d-none');
+
+  $('#subforms_labels_dropdown').click(function() {
+    var modalWidth = $('#customLayerModal').outerWidth();
+    $('.status_panel').css('left', modalWidth);
+    $('.status_panel').css('top', '61.3px');
+  });
 }
 
 function find_prefilters_labels(){

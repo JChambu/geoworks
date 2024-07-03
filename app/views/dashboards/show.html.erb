@@ -164,12 +164,14 @@
 
     function toggleLayersModal() {
       $('#customLayerModal').toggleClass('show');
+      var modalWidth = $('#customLayerModal').outerWidth();
+      $('.status_panel').css('left', modalWidth);
+      $('.status_panel').css('top', '61.3px');
     }
 
     function set_layer_modal() {
-      // Posiciona el botón de apertura del modal
       var leaflet_layer_position = $('.leaflet-control-layers-toggle').offset();
-      var top_position = (leaflet_layer_position.top - 20) + "px";
+      var top_position = 57.0312 + "px";
       var left_position = (leaflet_layer_position.left - 10) + "px";
       $('#custom_layer_control_button').css("top", top_position);
       $('#custom_layer_control_button').css("left", left_position);
@@ -182,22 +184,12 @@
 
       $('#closeLayerModal').on('click', function () {
         $('#customLayerModal').removeClass('show');
+        $('.status_panel').css('left', '10px');
+        $('.status_panel').css('top', '16vh');
       });
 
-      // Configura el evento click para evitar el cierre del modal al hacer clic dentro de él
       $(".custom_dropdown_container").click(function (e) {
         e.stopPropagation();
-      });
-
-      $('#custom_layer_control').on('shown.bs.dropdown', function () {
-        $('.custom_dropdown_map').addClass('d-none');
-        $('.status_panel').addClass('d-none');
-      });
-
-      $('#custom_layer_control').on('hidden.bs.dropdown', function () {
-        if (!$('#status-view').hasClass('status-view-expanded')) {
-          $('.status_panel').removeClass('d-none');
-        }
       });
     }
 
@@ -411,14 +403,17 @@
     <div class="layer-section">
       <h5><%= t('layers_manager.basemaps') %>:</h5>
       <div id="basemaps_container"></div>
+      <hr style="background-color: white">
     </div>
     <div class="layer-section">
       <h5><%= t('layers_manager.active_layer') %>:</h5>
       <div id="activeproject_container"></div>
+      <hr style="background-color: white">
     </div>
     <div class="layer-section">
       <h5><%= t('layers_manager.other_layers') %>:</h5>
       <div id="projects_container"></div>
+      <hr style="background-color: white">
     </div>
     <div class="layer-section">
       <h5><%= t('layers_manager.external_layers') %>:</h5>
