@@ -1,4 +1,5 @@
 // Levanta los datos
+$('#gis_dropdown').dropdown('toggle');
 var is_value;
 if($('#radio_rango').prop('checked')){
   var color_by_attributte_field = '<%= params[:q][:project_field] %>';
@@ -38,14 +39,13 @@ if($('#radio_rango').prop('checked')){
       rangos_valid = false;
     }
   });
-} 
+}
 
 if(color_by_attributte_field != "" && breaks.length>=2 && rangos_valid ){
   // Elimina el modal
   $("#color_by_attribute-modal").remove();
   $('.modal-backdrop').remove();
-  
-  console.log("Is going to send function")
+
   // Lanza la función
   Navarra.geomaps.color_by_attribute_function(color_by_attributte_field,breaks,colors,field_name,is_subform,sub_values, is_value);
 }

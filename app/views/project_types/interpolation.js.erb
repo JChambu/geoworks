@@ -1,3 +1,4 @@
+$('#gis_dropdown').dropdown('toggle')
 $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal', function (e) {
   // Cuando se termina de ocultar el modal lo elimina para evitar que se quede pegado el tab
   $(this).remove();
@@ -98,7 +99,7 @@ $('<%= j render "interpolation", title: "Interpolacion" %>').on('hidden.bs.modal
     							set_subform_values(data_subform);
     						}
       			});
-      			
+
       		}
       		}
       	});
@@ -135,7 +136,7 @@ var palettes = [];
 	palettes.push(['#141414', '#1d1d1d', '#272727', '#313131', '#3c3c3c', '#464646', '#515151', '#5d5d5d', '#686868', '#747474', '#808080', '#8c8c8c', '#999999', '#a5a5a5', '#b2b2b2', '#bfbfbf', '#cccccc', '#d9d9d9', '#e7e7e7', '#f4f4f4']);
 	palettes.push(['#ff0000', '#ff4729', '#ff6644', '#ff7e5d', '#ff9475', '#ffa78c', '#ffbaa3', '#ffccba', '#ffddd1', '#ffeee8', '#dfdfdf', '#c9c9c9', '#b4b4b4', '#9f9f9f', '#8b8b8b', '#777777', '#646464', '#515151', '#404040', '#2e2e2e']);
 
-var data_to_set_interval; 
+var data_to_set_interval;
 var data_subform;
 function set_interpolation_ranges(){
 	$('#interpolation_range').empty();
@@ -175,7 +176,7 @@ function create_palette(){
 		}
 		pal.forEach(function(col,index){
 			pallete_new += '<div style="width:10px;height:20px;margin:0px;display:inline-block;background:'+col+'"></div>'
-			
+
 		});
 		pallete_new += '</div>';
 		$('#palette_selector_dropdown').append(pallete_new);
@@ -203,7 +204,7 @@ function set_interval_interpolation(data){
   value_range = intermin;
   var extra_position = 0;
   if(intermax>10){round=1}else{round=100}
-  for(var i=0;i<num_ranges;i++){  	
+  for(var i=0;i<num_ranges;i++){
 		if(i==0){
 			value_range = data_ordered[0];
 			val = Math.floor(value_range*round)/round;
@@ -255,7 +256,7 @@ function set_subform_values(data_subform){
    if($('#sub_interpolation_operator').val() == "min"){
     var interpolate_field_filtered = data_subform[key].filter(f => !isNaN(f.interpolate_field))
 	   var interpolate_field_result = Math.min.apply(null, interpolate_field_filtered.map((v) => v.interpolate_field));
-   }   								
+   }
    new_obj = {
     id: key,
     interpolate_field: interpolate_field_result

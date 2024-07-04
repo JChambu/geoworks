@@ -1,5 +1,4 @@
 <%= content_for :head do %>
-
   <script type="text/javascript">
     Navarra.dashboards.config.current_tenement = '<%= current_tenement_helper %>';
     Navarra.dashboards.config.user_name = '<%= current_user.name %>';
@@ -88,11 +87,11 @@
       if(container == "charts-container"){
         if(!$('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded')){
           // el charts-container estaba oculto, necesita recalcular gráficos
-            need_recalculate = true;
+          need_recalculate = true;
         }
         if(!$('#sidebar_all').hasClass('charts-container') && $('#sidebar_all').hasClass('charts-container_expanded')){
-            // el charts-container estaba expandido, necesita redibujar graficos
-            need_draw_charts = true;
+          // el charts-container estaba expandido, necesita redibujar graficos
+          need_draw_charts = true;
         }
       }
       $('#sidebar_all').removeClass(container+"_expanded");
@@ -142,7 +141,7 @@
       if(container == "charts-container"){
         if($('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded')){
           // el charts-container estaba expandido, necesita redibujar graficos
-            need_draw_charts = true;
+          need_draw_charts = true;
         }
       }
       $('#sidebar_all').addClass(container+"_expanded");
@@ -155,95 +154,112 @@
       }
     }
 
-//Funciones para modal de capas
-function set_layer_modal() {
-    $(".custom_dropdown_container").click(function (e) {
-      e.stopPropagation();
-    });
-    var leaflet_layer_position = $('.leaflet-control-layers-toggle').offset();
-    var top_position = (leaflet_layer_position.top-10)+"px";
-    var left_position = (leaflet_layer_position.left-10)+"px";
-    $('#custom_layer_control').css("top",top_position);
-    $('#custom_layer_control').css("left",left_position);
+    //Funciones para modal de capas
+    function set_layer_modal() {
+      $(".custom_dropdown_container").click(function (e) {
+        e.stopPropagation();
+      });
+      var leaflet_layer_position = $('.leaflet-control-layers-toggle').offset();
+      var top_position = (leaflet_layer_position.top-10)+"px";
+      var left_position = (leaflet_layer_position.left-10)+"px";
+      $('#custom_layer_control').css("top",top_position);
+      $('#custom_layer_control').css("left",left_position);
 
-    $('#custom_layer_control').on('shown.bs.dropdown', function () {
-      $('.custom_dropdown_map').addClass('d-none');
-      $('.status_panel').addClass('d-none');
-    });
-    $('#custom_layer_control').on('hidden.bs.dropdown', function () {
-      if(!$('#status-view').hasClass('status-view-expanded')){
-        $('.status_panel').removeClass('d-none');
+      $('#custom_layer_control').on('shown.bs.dropdown', function () {
+        $('.custom_dropdown_map').addClass('d-none');
+        $('.status_panel').addClass('d-none');
+      });
+      $('#custom_layer_control').on('hidden.bs.dropdown', function () {
+        if(!$('#status-view').hasClass('status-view-expanded')){
+          $('.status_panel').removeClass('d-none');
+        }
+      });
+    };
+
+    function select_layer(layer){
+      if(layer!=undefined){
+        layer_selected = layer;
+      } else{
+        layer_selected = event.target.id.substring(9);
       }
-    });
-  };
 
-function select_layer(layer){
-  if(layer!=undefined){
-    layer_selected = layer;
-  } else{
-    layer_selected = event.target.id.substring(9);
-  }
-
-  check_layers = document.querySelectorAll('input.leaflet-control-layers-selector');
-  for (l = 0; l < check_layers.length; l++) {
-      var name_layer_project = $(check_layers[l]).next().html().substring(1);
-      if(layer_selected == name_layer_project){
-        $(check_layers[l]).click();
-        $("#layersDropdown").click();
+      check_layers = document.querySelectorAll('input.leaflet-control-layers-selector');
+      for (l = 0; l < check_layers.length; l++) {
+        var name_layer_project = $(check_layers[l]).next().html().substring(1);
+        if(layer_selected == name_layer_project){
+          $(check_layers[l]).click();
+          $("#layersDropdown").click();
+        }
       }
-  }
-}
+    }
 
-function open_layer_container(){
-  $('.layer_div').removeClass('d-none');
-  $('.div_filter').addClass('d-none');
-  var id_title = event.target.id.split('-')[0];
-  $('.custom_dropdown_map').not('#'+id_title).addClass('d-none')
-  if($('#'+id_title).hasClass('d-none')){
-    $('#'+id_title).removeClass('d-none');
-  } else{
-    $('#'+id_title).addClass('d-none');
-  }
-}
+    function open_layer_container(){
+      $('.layer_div').removeClass('d-none');
+      $('.div_filter').addClass('d-none');
+      var id_title = event.target.id.split('-')[0];
+      $('.custom_dropdown_map').not('#'+id_title).addClass('d-none')
+      if($('#'+id_title).hasClass('d-none')){
+        $('#'+id_title).removeClass('d-none');
+      } else{
+        $('#'+id_title).addClass('d-none');
+      }
+    }
 
-function switch_filtered_layer(){
-  var id_switch = event.target.id.substring(7);
-  var texto = $('#checkbox_'+id_switch).attr('id');
-  if(texto.indexOf("-filtrados") > -1){
-    texto = texto.replace("-filtrados","");
-  } else{
-    texto+= "-filtrados";
-  }
-  $('#checkbox_'+id_switch).prop("id",texto);
-  $('#switch_'+id_switch).prop("id",texto.replace("checkbox_","switch_"));
-  $('#checkboxlabel_'+id_switch).prop("for",texto);
-  $('#switchlabel_'+id_switch).prop("for",texto.replace("checkbox_","switch_"));
-  $('#checkboxlabel_'+id_switch).prop("id",texto.replace("checkbox_","checkboxlabel_"));
-  $('#switchlabel_'+id_switch).prop("id",texto.replace("checkbox_","switchlabel_"));
-  if($('#'+texto).prop("checked")){
-    select_layer(id_switch);
-    select_layer(texto.substring(9));
-  }
-}
-// terminan funciones para modal de capas
+    function switch_filtered_layer(){
+      var id_switch = event.target.id.substring(7);
+      var texto = $('#checkbox_'+id_switch).attr('id');
+      if(texto.indexOf("-filtrados") > -1){
+        texto = texto.replace("-filtrados","");
+      } else{
+        texto+= "-filtrados";
+      }
+      $('#checkbox_'+id_switch).prop("id",texto);
+      $('#switch_'+id_switch).prop("id",texto.replace("checkbox_","switch_"));
+      $('#checkboxlabel_'+id_switch).prop("for",texto);
+      $('#switchlabel_'+id_switch).prop("for",texto.replace("checkbox_","switch_"));
+      $('#checkboxlabel_'+id_switch).prop("id",texto.replace("checkbox_","checkboxlabel_"));
+      $('#switchlabel_'+id_switch).prop("id",texto.replace("checkbox_","switchlabel_"));
+      if($('#'+texto).prop("checked")){
+        select_layer(id_switch);
+        select_layer(texto.substring(9));
+      }
+    }
+    // terminan funciones para modal de capas
 
-//funciones para modal de fotos
-function max_photo(){
-  $('.photo').addClass('photo_max');
-  $('.custom_modal_photos').addClass('custom_modal_photos_max');
-}
-function min_photo(){
-  $('.photo').removeClass('photo_max');
-  $('.custom_modal_photos').removeClass('custom_modal_photos_max');
-}
+    //funciones para modal de fotos
+    function max_photo(){
+      $('.photo').addClass('photo_max');
+      $('.custom_modal_photos').addClass('custom_modal_photos_max');
+    }
 
-//funciones para crear pdf_chart
-function pdf_chart(){
-  Navarra.pdf.init_pdf_charts();
-}
+    function min_photo(){
+      $('.photo').removeClass('photo_max');
+      $('.custom_modal_photos').removeClass('custom_modal_photos_max');
+    }
 
-</script>
+    //funciones para crear pdf_chart
+    function pdf_chart(){
+      Navarra.pdf.init_pdf_charts();
+    }
 
+    $(document).ready(function() {
+      $('#filter-body').on('click', '#close_point_color', function() {
+        if ($('#filter-body div').length == 1) {
+          hidde_sidebar('filter-container');
+          setTimeout(function(){
+            var height = height_filters;
+            $('#filter-container').css('height','0px');
+            $('#filter-container').css('width',"100%");
+            $('#filter-container').css('left',"0%");
+            $('#sidebar_all').removeClass("filter-container");
+            $(".leaflet-right").css("margin-right", "0%");
+            $(".table_data_container").css("transition-delay", "0.2s");
+            $(".table_data_container").css("width", "100%");
+          }, 400);
+        }
+      });
+    });
+  </script>
 <% end %>
 
 <div class="fakeLoader"></div>
@@ -324,13 +340,13 @@ function pdf_chart(){
       <div class="card text-light chart-bg-transparent pb-0 pt-0">
         <div class="card-header chart-header-bg-transparent py-1 px-2">
           <div class="view-data-container status-view-middle" id="status-view-sidebar" >
-          <i class="fas fa-window-maximize view-data" id="view-filters" onclick="show_sidebar('filter-container')"></i>
-          <i class="fas fa-square view-data" onclick="expand_sidebar('filter-container')"></i>
-          <i class="fas fa-times view-data" onclick="hidde_sidebar('filter-container')"></i>
-        </div>
+            <i class="fas fa-window-maximize view-data d-none" id="view-filters" onclick="show_sidebar('filter-container')"></i>
+            <i class="fas fa-square view-data d-none" onclick="expand_sidebar('filter-container')"></i>
+            <i class="fas fa-times view-data d-none" onclick="hidde_sidebar('filter-container')"></i>
+          </div>
           Filtros Activos
         </div>
-        <div  style="overflow-x: hidden;">
+        <div style="overflow-x: hidden;">
           <div class="card-body py-1 px-2" id="filter-body">
           </div>
         </div>

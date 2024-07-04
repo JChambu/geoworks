@@ -1,8 +1,10 @@
+$('#gis_dropdown').dropdown('toggle')
 $('<%= j render "color_by_attribute", title: "Color by attribute" %>').on('hidden.bs.modal', function (e) {
   // Cuando se termina de ocultar el modal lo elimina para evitar que se quede pegado el tab
   $(this).remove();
   $('.modal-backdrop').remove();
 }).on('shown.bs.modal', function (e) {
+  $('#gis_dropdown').dropdown('toggle')
 	create_palette();
 	let is_value = false;
 	$("#invert_palettes").click(function (e) {
@@ -134,7 +136,7 @@ $('<%= j render "color_by_attribute", title: "Color by attribute" %>').on('hidde
     							set_subform_values(data_subform);
     						}
       			});
-      			
+
       		}
       		}
       	});
@@ -186,7 +188,7 @@ $('<%= j render "color_by_attribute", title: "Color by attribute" %>').on('hidde
       			data.data.forEach((a) => {
       				let data_index = data_ordered.findIndex((b) => b.interpolate_field == a.interpolate_field);
       				if (data_index >= 0) {
-      					data_ordered[data_index].count ++; 
+      					data_ordered[data_index].count ++;
       				} else {
       					let new_data = {'count':1, 'interpolate_field': a.interpolate_field }
       					data_ordered.push(new_data);
@@ -194,7 +196,7 @@ $('<%= j render "color_by_attribute", title: "Color by attribute" %>').on('hidde
       			});
       			data_orderd = data_ordered.sort((a, b) => {
       				return (b.count - a.count);
-      			})  
+      			})
       			data_to_set_value = data_ordered;
      				set_value_interpolation(data_to_set_value);
       		}
@@ -213,7 +215,7 @@ $('<%= j render "color_by_attribute", title: "Color by attribute" %>').on('hidde
 			if(data_to_set_interval!=undefined){
 				if($('#radio_rango').prop('checked')){
 	  			set_interval_interpolation(data_to_set_interval);
-  			} 
+  			}
   		}
   		if(data_to_set_value!=undefined){
 				if($('#radio_valor').prop('checked')){
@@ -232,9 +234,6 @@ $('<%= j render "color_by_attribute", title: "Color by attribute" %>').on('hidde
 //		Navarra.geomaps.interpolate(null,null,null,null,null,true,null,null,null,null,null)
 	}).modal();
 
-// Cierra dropdown
-$('#gis_dropdown').dropdown('toggle');
-
 var palettes = [];
 	palettes.push(['#ff0000', '#ff4500', '#ff6400', '#ff7d00', '#ff9200', '#ffa600', '#ffb900', '#ffcb00', '#ffdd00', '#ffee00', '#a8f2a8', '#15eb15', '#00d400', '#00be00', '#00a700', '#009100', '#007c00', '#006700', '#005300', '#004000']);
 	palettes.push(['#ff6e85', '#ff807f', '#ff9179', '#ffa072', '#ffaf6b', '#ffbd62', '#ffcb59', '#ffd84e', '#ffe540', '#fff22c', '#ade8a1', '#abd2ae', '#a7bcba', '#a1a6c5', '#988fd0', '#8d79da', '#7e62e4', '#6a4aed', '#4d2ff6', '#0000ff']);
@@ -244,12 +243,11 @@ var palettes = [];
 	palettes.push(['#141414', '#1d1d1d', '#272727', '#313131', '#3c3c3c', '#464646', '#515151', '#5d5d5d', '#686868', '#747474', '#808080', '#8c8c8c', '#999999', '#a5a5a5', '#b2b2b2', '#bfbfbf', '#cccccc', '#d9d9d9', '#e7e7e7', '#f4f4f4']);
 	palettes.push(['#ff0000', '#ff4729', '#ff6644', '#ff7e5d', '#ff9475', '#ffa78c', '#ffbaa3', '#ffccba', '#ffddd1', '#ffeee8', '#dfdfdf', '#c9c9c9', '#b4b4b4', '#9f9f9f', '#8b8b8b', '#777777', '#646464', '#515151', '#404040', '#2e2e2e']);
 
-var data_to_set_interval; 
-var data_to_set_value; 
+var data_to_set_interval;
+var data_to_set_value;
 var data_subform;
 
 function set_interpolation_ranges(is_value){
-	console.log("Is value? "+is_value);
 	$('#interpolation_range').empty();
 	var num_ranges = $('#range_number').val();
 	for(var i=0;i<num_ranges;i++){
@@ -270,7 +268,7 @@ function set_interpolation_ranges(is_value){
 		} else {
 			html_ranges+= '<input type="number" '+range_disabled+' name="" id="intermin_'+i+'" step="any" class = "intermin mt-3 form-control form-control-sm w-50 mr-3" style="background:white" >';
 			html_ranges+= '<input type="number" '+ onchange_range +' name="" id="intermax_'+i+'" step="any" class = "intermax mt-3 form-control form-control-sm w-50 mr-3" >';
-		} 
+		}
     	html_ranges+= '<input value="'+palettes[select_palette_option][color_index]+'"  type="color" name="" id="intercolor_'+i+'" class = "intercolor mt-3 mr-2 form-control form-control-sm" style="width:30px; padding:1px" ';
     	html_ranges+='</div>'
     $('#interpolation_range').append(html_ranges);
@@ -291,7 +289,7 @@ function create_palette(){
 		}
 		pal.forEach(function(col,index){
 			pallete_new += '<div style="width:10px;height:20px;margin:0px;display:inline-block;background:'+col+'"></div>'
-			
+
 		});
 		pallete_new += '</div>';
 		$('#palette_selector_dropdown').append(pallete_new);
@@ -299,23 +297,19 @@ function create_palette(){
 }
 
 function select_palette(e){
-	console.log("inside select palet option")
 	$('.palette_option').removeClass('palette_selected');
 	var id_palette = e.target.parentNode.id;
 	$('#'+id_palette).addClass('palette_selected');
-	console.log($('#radio_valor'))
 	if($('#radio_valor').prop('checked')){
-		console.log("Is VALUE !!!!")
   	set_interpolation_ranges(true);
   } else {
-  	console.log("Is NOT VALUE !!!!")
   	set_interpolation_ranges(false);
   }
-	
+
 	if(data_to_set_interval!=undefined){
 		if($('#radio_rango').prop('checked')){
 	  	set_interval_interpolation(data_to_set_interval);
-  	} 
+  	}
   }
   if(data_to_set_value!=undefined){
 		if($('#radio_valor').prop('checked')){
@@ -335,7 +329,7 @@ function set_interval_interpolation(data){
   value_range = intermin;
   var extra_position = 0;
   if(intermax>10){round=1}else{round=100}
-  for(var i=0;i<num_ranges;i++){  	
+  for(var i=0;i<num_ranges;i++){
 		if(i==0){
 			value_range = data_ordered[0];
 			val = Math.floor(value_range*round)/round;
@@ -378,7 +372,7 @@ function set_value_interpolation(data){
 			$('#intermin_'+i).val("Otros");
 		} else {
 			$('#intermin_'+i).val(data[i].interpolate_field);
-		} 	
+		}
 	}
 }
 
@@ -400,7 +394,7 @@ function set_subform_values(data_subform){
    if($('#sub_interpolation_operator').val() == "min"){
     var interpolate_field_filtered = data_subform[key].filter(f => !isNaN(f.interpolate_field))
 	   var interpolate_field_result = Math.min.apply(null, interpolate_field_filtered.map((v) => v.interpolate_field));
-   }   								
+   }
    new_obj = {
     id: key,
     interpolate_field: interpolate_field_result
