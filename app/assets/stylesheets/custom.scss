@@ -1118,3 +1118,44 @@ div.custom-menu.show {
   left: -19px;
   visibility: hidden;
 }
+
+.custom_layer_modal {
+  position: fixed;
+  top: 58px;
+  left: -2px;
+  height: calc(100% - 58px);
+  background-color: rgba(39, 43, 48, 0.2);
+  z-index: 3000;
+  display: none;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+  transition: all 1s ease 0s;
+  overflow-y: auto;
+}
+
+.custom_layer_modal.show {
+  display: block;
+}
+
+.layer-section {
+  margin-bottom: 1px;
+}
+
+.layer-section h5 {
+  margin: 7px 0 2px 2px;
+  padding: 0 10px;
+}
+
+#custom_layer_control_button {
+  position: absolute;
+  z-index: 3001;
+  top: 20px;
+  left: 10px;
+}
+
+.modal-header {
+  position: sticky;
+  top: 0;
+  background-color: rgba(39, 43, 48, 0.9);
+  z-index: 10;
+  padding: 10px;
+}

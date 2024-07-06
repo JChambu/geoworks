@@ -44,6 +44,27 @@ es:
   pdf_from_popup: 'Exportar PDF desde popup'
   multitenant_user: 'Usuario Multicorporación'
   regexp: 'Expresiones Regulares'
+  qr_generated: 'QR Generado'
+  intercept_with_other_layers: 'Interceptar con Otras Capas'
+  common:
+    form: 'Formulario'
+    subform: 'Subformulario'
+    forms: 'Formularios'
+    subforms: 'Subformularios'
+  layers_manager:
+    layers_manager: 'Administrador de Capas'
+    basemaps: 'Mapas Base'
+    active_layer: 'Herramientas de la Capa Activa'
+    other_layers: 'Superponer Otras Capas'
+    external_layers: 'Activar Capas Externas'
+  temporal_range:
+    temporal_range: 'Rango Temporal'
+  active_filter:
+    active_filter: 'Filtro Activo'
+    active_filters: 'Filtros Activos'
+  graphic_indicator:
+    graphic_indicator: 'Indicador Gráfico'
+    graphics_indicators: 'Indicadores Gráficos'
   exception_handler:
     not_found: "Página no encontrada"
     unauthorized: "No autorizado"
@@ -203,8 +224,9 @@ es:
       day: Día
       hour: Hora
       minute: Minutos
-      month: Mes
       second: Segundos
+      month: Mes
+      week: Semana
       year: Año
   errors: &errors
     format: ! '%{attribute} %{message}'

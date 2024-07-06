@@ -70,6 +70,20 @@ $(document).ready(function(){
     $('.custom_dropdown_panels_sync').hide();
     $('.custom_dropdown_panels_tenants').hide();
   });
+
+  $('#projects_dropdown').on('click', function(e) {
+    $('#customLayerModal').removeClass('show');
+    $('#custom_layer_control_button').show();
+    $('.status_panel').css('left', '10px');
+    $('.status_panel').css('top', '16vh');
+  });
+
+  $('#gis_dropdown').on('click', function(e) {
+    if ($('#customLayerModal').hasClass('show')) {
+      $('#customLayerModal').css('z-index', 1000);
+      $('#gis_dropdown_menu').css('z-index', 2000);
+    }
+  });
 });
 function open_panel(id_panel,id_table){
   if(id_panel=='view-data-middle' && id_table!=0){
@@ -82,6 +96,7 @@ function open_panel(id_panel,id_table){
       },
       success: function(data) {
         $(".fakeLoader").css("display", "block");
+        $('#customLayerModal').css('height', 'calc(100% - 537px)');
         $('#table_name').val(data.data[0].name);
         $('#table_name_visible').html(data.data[0].name);
         $('#table_id').val(data.data[0].id);
@@ -166,6 +181,7 @@ function open_panel(id_panel,id_table){
     });
   } else{
     if(id_panel=="view-data-middle"){
+      $('#customLayerModal').css('height', 'calc(100% - 537px)');
       $(".fakeLoader").css("display", "block");
       $("#choose").val("");
       $(".filter_by_column").val("");

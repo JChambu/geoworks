@@ -75,6 +75,9 @@ Navarra.layer_filters = function() {
 		if($('#div_filter_'+namelayer).hasClass('d-none')){
 			$('.layer_div').not('.layer_div_'+namelayer).addClass('d-none');
 			$('#div_filter_'+namelayer).removeClass('d-none');
+			var modalWidth = $('#customLayerModal').outerWidth();
+      $('.status_panel').css('left', modalWidth);
+      $('.status_panel').css('top', '61.3px');
 			if(!$('#div_filter_'+namelayer).hasClass('already_open')){
 				//Busca campos de la capa
 				$.ajax({
@@ -110,6 +113,9 @@ Navarra.layer_filters = function() {
 		} else {
 			$('#div_filter_'+namelayer).addClass('d-none');
 			$('.layer_div').removeClass('d-none');
+			var modalWidth = $('#customLayerModal').outerWidth();
+      $('.status_panel').css('left', modalWidth);
+      $('.status_panel').css('top', '61.3px');
 		}
 	}
 
