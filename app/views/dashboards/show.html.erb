@@ -1,5 +1,4 @@
 <%= content_for :head do %>
-
   <script type="text/javascript">
     Navarra.dashboards.config.current_tenement = '<%= current_tenement_helper %>';
     Navarra.dashboards.config.user_name = '<%= current_user.name %>';
@@ -88,11 +87,11 @@
       if(container == "charts-container"){
         if(!$('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded')){
           // el charts-container estaba oculto, necesita recalcular gráficos
-            need_recalculate = true;
+          need_recalculate = true;
         }
         if(!$('#sidebar_all').hasClass('charts-container') && $('#sidebar_all').hasClass('charts-container_expanded')){
-            // el charts-container estaba expandido, necesita redibujar graficos
-            need_draw_charts = true;
+          // el charts-container estaba expandido, necesita redibujar graficos
+          need_draw_charts = true;
         }
       }
       $('#sidebar_all').removeClass(container+"_expanded");
@@ -142,7 +141,7 @@
       if(container == "charts-container"){
         if($('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded')){
           // el charts-container estaba expandido, necesita redibujar graficos
-            need_draw_charts = true;
+          need_draw_charts = true;
         }
       }
       $('#sidebar_all').addClass(container+"_expanded");
@@ -259,6 +258,24 @@
     function pdf_chart(){
       Navarra.pdf.init_pdf_charts();
     }
+
+    $(document).ready(function() {
+      $('#filter-body').on('click', '#close_point_color', function() {
+        if ($('#filter-body div').length == 1) {
+          hidde_sidebar('filter-container');
+          setTimeout(function(){
+            var height = height_filters;
+            $('#filter-container').css('height','0px');
+            $('#filter-container').css('width',"100%");
+            $('#filter-container').css('left',"0%");
+            $('#sidebar_all').removeClass("filter-container");
+            $(".leaflet-right").css("margin-right", "0%");
+            $(".table_data_container").css("transition-delay", "0.2s");
+            $(".table_data_container").css("width", "100%");
+          }, 400);
+        }
+      });
+    });
   </script>
 <% end %>
 
@@ -338,10 +355,10 @@
       <div class="card text-light chart-bg-transparent pb-0 pt-0">
         <div class="card-header chart-header-bg-transparent py-1 px-2">
           <div class="view-data-container status-view-middle" id="status-view-sidebar" >
-          <i class="fas fa-window-maximize view-data" id="view-filters" onclick="show_sidebar('filter-container')"></i>
-          <i class="fas fa-square view-data" onclick="expand_sidebar('filter-container')"></i>
-          <i class="fas fa-times view-data" onclick="hidde_sidebar('filter-container')"></i>
-        </div>
+            <i class="fas fa-window-maximize view-data" id="view-filters" onclick="show_sidebar('filter-container')"></i>
+            <i class="fas fa-square view-data" onclick="expand_sidebar('filter-container')"></i>
+            <i class="fas fa-times view-data" onclick="hidde_sidebar('filter-container')"></i>
+          </div>
           <%= t('active_filter.active_filters') %>
         </div>
         <div style="overflow-x: hidden;">
