@@ -155,26 +155,44 @@
     }
 
     //Funciones para modal de capas
+    function open_layer_container(event) {
+      var id_title = event.target.id.split('-')[0];
+      $('.custom_dropdown_map').not('#' + id_title).addClass('d-none');
+      $('#' + id_title).toggleClass('d-none');
+    }
+
+    function toggleLayersModal() {
+      $('#customLayerModal').toggleClass('show');
+      $('#custom_layer_control_button').hide();
+      var modalWidth = $('#customLayerModal').outerWidth();
+      $('.status_panel').css('left', modalWidth);
+      $('.status_panel').css('top', '61.3px');
+    }
+
     function set_layer_modal() {
+      var leaflet_layer_position = $('.leaflet-control-layers-toggle').offset();
+      var top_position = 57.0312 + "px";
+      var left_position = (leaflet_layer_position.left - 10) + "px";
+      $('#custom_layer_control_button').css("top", top_position);
+      $('#custom_layer_control_button').css("left", left_position);
+      Navarra.geomaps.show_prefilters_subform_labels()
+      // Configura eventos de apertura y cierre del modal
+      $('#layersDropdown').on('click', function (e) {
+        e.preventDefault();
+        toggleLayersModal();
+      });
+
+      $('#closeLayerModal').on('click', function () {
+        $('#customLayerModal').removeClass('show');
+        $('#custom_layer_control_button').show();
+        $('.status_panel').css('left', '10px');
+        $('.status_panel').css('top', '16vh');
+      });
+
       $(".custom_dropdown_container").click(function (e) {
         e.stopPropagation();
       });
-      var leaflet_layer_position = $('.leaflet-control-layers-toggle').offset();
-      var top_position = (leaflet_layer_position.top-10)+"px";
-      var left_position = (leaflet_layer_position.left-10)+"px";
-      $('#custom_layer_control').css("top",top_position);
-      $('#custom_layer_control').css("left",left_position);
-
-      $('#custom_layer_control').on('shown.bs.dropdown', function () {
-        $('.custom_dropdown_map').addClass('d-none');
-        $('.status_panel').addClass('d-none');
-      });
-      $('#custom_layer_control').on('hidden.bs.dropdown', function () {
-        if(!$('#status-view').hasClass('status-view-expanded')){
-          $('.status_panel').removeClass('d-none');
-        }
-      });
-    };
+    }
 
     function select_layer(layer){
       if(layer!=undefined){
@@ -188,7 +206,7 @@
         var name_layer_project = $(check_layers[l]).next().html().substring(1);
         if(layer_selected == name_layer_project){
           $(check_layers[l]).click();
-          $("#layersDropdown").click();
+          // $("#layersDropdown").click();
         }
       }
     }
@@ -231,7 +249,6 @@
       $('.photo').addClass('photo_max');
       $('.custom_modal_photos').addClass('custom_modal_photos_max');
     }
-
     function min_photo(){
       $('.photo').removeClass('photo_max');
       $('.custom_modal_photos').removeClass('custom_modal_photos_max');
@@ -291,9 +308,7 @@
 </div>
 
 <%= form_for :q, :html => {:class => 'd-flex justify-content-end', :method => :get} do |f| %>
-
-  <div id="map" ondragover="Navarra.photos.allowDrop(event)" ondrop="Navarra.photos.drop(event)">
-  </div>
+  <div id="map" ondragover="Navarra.photos.allowDrop(event)" ondrop="Navarra.photos.drop(event)"></div>
 
   <div style="position: absolute;width: 30%; left: 70%" id="sidebar_all">
     <div class="sidebar pt-1 px-1 d-none" id="timeslider-container" style="position: relative; z-index: 500">
@@ -304,33 +319,33 @@
           <i class="fas fa-square view-data" onclick="expand_sidebar('timeslider-container')" ></i>
           <i class="fas fa-times view-data" onclick="hidde_sidebar('timeslider-container')"></i>
         </div>
-          Rango Temporal
+          <%= t('temporal_range.temporal_range') %>
         </div>
         <div>
           <div class="card-body p-1" id="filter-time-body">
             <i id="time_slider_item-save" class="fas fa-calendar-check" style="font-size: 1.5em ; position: absolute; left: 80%; color: rgba(250,250,250,0.8); cursor:pointer; " onclick="set_time_slider_filter()"></i>
             <i id="time_slider_item-clear" class="fas fa-calendar-times " style="font-size: 1.5em; color: rgba(250,250,250,0.8); position: absolute; left: 90%; cursor:pointer;" onclick="clear_time_slider_filter()"></i>
-          <div>
-            <p class="m-0 mt-2">Formularios</p>
-              <select class="form-control form-control-sm" id="time_slider_step_forms" onchange="     change_step_time_slider('forms')" style="cursor:pointer; display: inline-block; width: 31%; padding: 1px!important;">
-                  <option value="day" label="Día"></option>
-                  <option value="week" label="Semana"></option>
-                  <option value="month" label="Mes"></option>
-                  <option value="year" label="Año"></option>
-                </select>
+            <div>
+              <p class="m-0 mt-2"><%= t('common.forms') %></p>
+              <select class="form-control form-control-sm" id="time_slider_step_forms" onchange="change_step_time_slider('forms')" style="cursor:pointer; display: inline-block; width: 31%; padding: 1px!important;">
+                <option value="day"   label=<%= t('datetime.prompts.day') %>></option>
+                <option value="week"  label=<%= t('datetime.prompts.week') %>></option>
+                <option value="month" label=<%= t('datetime.prompts.month') %>></option>
+                <option value="year"  label=<%= t('datetime.prompts.year') %>></option>
+              </select>
               <input class="string optional form-control form-control-sm" type="text" id="time_slider_from_forms" style="cursor:pointer; display: inline-block; width: 31%;">
-                <input class="string optional form-control form-control-sm" type="text" id="time_slider_to_forms" style="cursor: pointer;display: inline-block; width: 31%;">
+              <input class="string optional form-control form-control-sm" type="text" id="time_slider_to_forms" style="cursor: pointer;display: inline-block; width: 31%;">
             </div>
             <div>
-              <p class="m-0">Sub Formularios</p>
-              <select class="form-control form-control-sm" id="time_slider_step_subforms" onchange="     change_step_time_slider('subforms')" style="cursor:pointer; display: inline-block; width: 31%; padding: 1px!important;">
-                  <option value="day" label="Día"></option>
-                  <option value="week" label="Semana"></option>
-                  <option value="month" label="Mes"></option>
-                  <option value="year" label="Año"></option>
-                </select>
+              <p class="m-0"><%= t('common.subforms') %></p>
+              <select class="form-control form-control-sm" id="time_slider_step_subforms" onchange="change_step_time_slider('subforms')" style="cursor:pointer; display: inline-block; width: 31%; padding: 1px!important;">
+                <option value="day"   label=<%= t('datetime.prompts.day') %>></option>
+                <option value="week"  label=<%= t('datetime.prompts.week') %>></option>
+                <option value="month" label=<%= t('datetime.prompts.month') %>></option>
+                <option value="year"  label=<%= t('datetime.prompts.year') %>></option>
+              </select>
               <input class="string optional form-control form-control-sm" type="text" id="time_slider_from_subforms" style="cursor:pointer; display: inline-block; width: 31%;">
-                <input class="string optional form-control form-control-sm" type="text" id="time_slider_to_subforms" style="cursor: pointer;display: inline-block; width: 31%;">
+              <input class="string optional form-control form-control-sm" type="text" id="time_slider_to_subforms" style="cursor: pointer;display: inline-block; width: 31%;">
             </div>
           </div>
         </div>
@@ -340,11 +355,11 @@
       <div class="card text-light chart-bg-transparent pb-0 pt-0">
         <div class="card-header chart-header-bg-transparent py-1 px-2">
           <div class="view-data-container status-view-middle" id="status-view-sidebar" >
-            <i class="fas fa-window-maximize view-data d-none" id="view-filters" onclick="show_sidebar('filter-container')"></i>
-            <i class="fas fa-square view-data d-none" onclick="expand_sidebar('filter-container')"></i>
-            <i class="fas fa-times view-data d-none" onclick="hidde_sidebar('filter-container')"></i>
+            <i class="fas fa-window-maximize view-data" id="view-filters" onclick="show_sidebar('filter-container')"></i>
+            <i class="fas fa-square view-data" onclick="expand_sidebar('filter-container')"></i>
+            <i class="fas fa-times view-data" onclick="hidde_sidebar('filter-container')"></i>
           </div>
-          Filtros Activos
+          <%= t('active_filter.active_filters') %>
         </div>
         <div style="overflow-x: hidden;">
           <div class="card-body py-1 px-2" id="filter-body">
@@ -364,7 +379,7 @@
             </div>
             <div style="display: flex;">
               <div style="margin-right: 6px;">
-                Indicadores Gráficos
+                <%= t('graphic_indicator.graphics_indicators') %>
               </div>
               <div>
                 <i class='fas fa-pencil-square-o view-data' id='user_title_pdf' title='Agregar Título a PDF' onclick='openTitleInput()'></i>
@@ -387,27 +402,42 @@
 <% end %>
 
 <%= render :partial =>'project_data_report' %>
-
 <%= render :partial =>'project_data_info' %>
-
 <%= render :partial =>'points_number_modal' %>
-
 <%= render :partial =>'save_multipoints_modal' %>
 
-<div class="nav-item dropdown" id="custom_layer_control" style="position: absolute;z-index: 3000;">
-  <a class="nav-link dropdown-toggle nocaret" href="#" id="layersDropdown" title= "Administrador de Capas" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 30px; height: 30px; margin: 10px"></a>
-  <div class="dropdown-menu custom_dropdown_container" aria-labelledby="layersDropdown" style="z-index: 2000; width: max-content">
-    <a class="dropdown-item" href="#" id="basemaps_container-title" onclick="open_layer_container()">Mapas Base</a>
-    <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="basemaps_container"></div>
+<div class="nav-item" id="custom_layer_control_button">
+  <a class="nav-link nocaret" href="#" id="layersDropdown" title="<%= t('layers_manager.layers_manager') %>" role="button" style="width: 30px; height: 30px; margin: 10px"></a>
+</div>
 
-    <a class="dropdown-item" href="#" id="activeproject_container-title" onclick="open_layer_container()">Capa Activa</a>
-    <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="activeproject_container"></div>
-
-    <a class="dropdown-item" href="#" id="projects_container-title" onclick="open_layer_container()">Otras Capas</a>
-    <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="projects_container"></div>
-
-    <a class="dropdown-item" href="#" id="externallayers_container-title" onclick="open_layer_container()">Capas Externas</a>
-    <div class="modal-content custom_dropdown custom_dropdown_map d-none" id="externallayers_container"></div>
+<!-- Modal layers manage -->
+<div id="customLayerModal" class="custom_layer_modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title"><%= t('layers_manager.layers_manager') %></h5>
+      <button type="button" class="close" id="closeLayerModal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="layer-section">
+      <h5><%= t('layers_manager.basemaps') %>:</h5>
+      <div id="basemaps_container"></div>
+      <hr style="background-color: white">
+    </div>
+    <div class="layer-section">
+      <h5><%= t('layers_manager.active_layer') %>:</h5>
+      <div id="activeproject_container"></div>
+      <hr style="background-color: white">
+    </div>
+    <div class="layer-section">
+      <h5><%= t('layers_manager.other_layers') %>:</h5>
+      <div id="projects_container"></div>
+      <hr style="background-color: white">
+    </div>
+    <div class="layer-section">
+      <h5><%= t('layers_manager.external_layers') %>:</h5>
+      <div id="externallayers_container"></div>
+    </div>
   </div>
 </div>
 <% if can? :data, :edit_geom %>
@@ -438,10 +468,10 @@
       <div class="card-header chart-header-bg-transparent py-1 px-2">
         <p id="photo_title" class="m-1 d-inline"></p>
         <div class="view-data-container" >
-            <i class="fas fa-window-maximize view-data" onclick="min_photo()"></i>
-            <i class="fas fa-square view-data" onclick="max_photo()"></i>
-            <i class="fas fa-times view-data" type="button" class="close" data-dismiss="modal" aria-label="Close"></i>
-          </div>
+          <i class="fas fa-window-maximize view-data" onclick="min_photo()"></i>
+          <i class="fas fa-square view-data" onclick="max_photo()"></i>
+          <i class="fas fa-times view-data" type="button" class="close" data-dismiss="modal" aria-label="Close"></i>
+        </div>
       </div>
       <div class="modal-body p-1">
         <div class="slider_photos_container">
@@ -458,9 +488,9 @@
   <div class="modal-dialog m-0 mw-100">
     <div class="modal-content">
       <div class="card-header chart-header-bg-transparent py-1 px-2">
-        <p class="m-1 d-inline">QR Generado</p>
+        <p class="m-1 d-inline"><%= t('qr_generated') %></p>
         <div class="view-data-container" >
-            <i class="fas fa-times view-data" type="button" class="close" data-dismiss="modal" aria-label="Close"></i>
+          <i class="fas fa-times view-data" type="button" class="close" data-dismiss="modal" aria-label="Close"></i>
         </div>
       </div>
       <div class="modal-body p-4 text-center" style="background:white" id="qr_modal_body">

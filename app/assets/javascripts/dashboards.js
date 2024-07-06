@@ -241,7 +241,7 @@ Navarra.dashboards.action_show = function(){
             return;
           }
         })
-        
+
         Navarra.project_types.config.attribute_filters_subforms = current_filters;
         search_filtered_form_ids();
       }
@@ -252,7 +252,7 @@ Navarra.dashboards.action_show = function(){
         remove_layer_filter();
       } else{
         $(".fa-search-location").css("color", "#d3d800");
-      }      
+      }
       resize_filters();
       resize_graphics();
     });
@@ -309,6 +309,7 @@ Navarra.dashboards.action_show = function(){
       $(".status_panel").removeClass("d-none");
       $(".leaflet-control-scale-line").css("display", "block");
       $(".status_panel").css("max-height", "none");
+      $('#customLayerModal').css('height', 'calc(100% - 58px)');
     });
 
     //Abrir a mitad de pantalla
@@ -355,7 +356,7 @@ open_table_middle = function(only_open){
     $(".table_data_container").css("transition-delay", "0s");
     $(".table_data_container").css("top", "50vh");
     adjust_table_height();
-    verify_height_table();        
+    verify_height_table();
     $(".leaflet-right").css("display", "inline-flex");
     $(".leaflet-left").css("display", "block");
     $(".status_panel").removeClass("d-none");
@@ -375,8 +376,8 @@ open_table_middle = function(only_open){
     }
     if(!$('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded') ){
       $(".table_data_container").css("width", "100%");
-    } 
-}  
+    }
+}
 
   return {
     init: init,
