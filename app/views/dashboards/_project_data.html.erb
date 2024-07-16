@@ -1164,13 +1164,17 @@ function generate_alerts(){
     </a>
     <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; overflow-y: auto;">
       <% if !@fields.nil? %>
-        <% @fields.each do |field|  %>
-          <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+        <% @fields.each do |field| %>
+          <% if field.field_type_id != 7 %>
             <!-- Verifica que tenga autorización para ver el campo -->
             <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
             <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
               <% if !field.popup %>
-                <a class="dropdown-item column_data"  onclick="show_column(<%="'"+field.key+"'"%>)" id=<%="addcolumn_"+field.key %>><%= field.name %></a>
+                <% if field.field_type_id == 11 %>
+                  <a class="dropdown-item column_data is_subtitle" onclick="show_column(<%="'"+field.key+"'"%>)" id=<%="addcolumn_"+field.key %>><%= field.name %> (Subtítulo)</a>
+                <% else %>
+                  <a class="dropdown-item column_data" onclick="show_column(<%="'"+field.key+"'"%>)" id=<%="addcolumn_"+field.key %>><%= field.name %></a>
+                <% end %>
               <% else %>
                 <a class="dropdown-item column_data d-none is_popup" onclick="show_column(<%="'"+field.key+"'"%>)" id=<%="addcolumn_"+field.key %>><%= field.name %></a>
               <% end %>
@@ -1186,8 +1190,8 @@ function generate_alerts(){
     </a>
     <div class="dropdown-menu addsubfields scroll" aria-labelledby="dropdown-subfields" style="max-height: 40vh; overflow-y: auto;">
       <% if !@fields.nil? %>
-        <% @fields.each do |field|  %>
-          <% if field.field_type_id == 7  %>
+        <% @fields.each do |field| %>
+          <% if field.field_type_id == 7 %>
             <!-- Verifica que tenga autorización para ver el campo -->
             <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
             <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
@@ -1217,7 +1221,7 @@ function generate_alerts(){
               </ul>
               <% name_layer = field.project_type.name_layer %>
             <% end %>
-            <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+            <% if field.field_type_id != 7 %>
               <a class="dropdown-item column_data_layer" onclick="show_column_layer(<%="'"+field.key+"','"+field.project_type.id.to_s+"'"%>)" id_field_layer = <%="id"+field.id.to_s %> id=<%="addcolumn_layer|"+field.key+"|"+field.project_type.id.to_s %>><%= field.name %></a>
             <% end %>
           <% end %>
@@ -1276,7 +1280,6 @@ function generate_alerts(){
             <label class="string optional control-label custom-control-label" for="table_select_all"> </label>
           </div>
           <i class="fas fa-image icons invisible"></i>
-
         </th>
         <th class="border-0" style="padding-top: 0px; vertical-align: top; cursor: pointer;">#
           <input type="text" class="d-none field_key" value="#">
@@ -1286,7 +1289,7 @@ function generate_alerts(){
                 <!-- Verifica que tenga autorización para ver el campo -->
                 <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
                 <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
-                  <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+                  <% if field.field_type_id != 7 %>
                     <th class="header_column border-0 header_column_layer d-none " id=<%="columnfake_layer_"+field.key+"_"+field.project_type.id.to_s %> key_layer=<%="key"+field.key%> id_project_layer=<%=field.project_type_id%>>
                       <div class="th-hover custom_header">
                         <p class="custom_p_header" ><%= field.name %></p>
@@ -1299,7 +1302,7 @@ function generate_alerts(){
                             <i class="<%="fa fa-greater-than icons custom_function_icon text-dark footer_maxlayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="cal_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer' , 'max'"%>)" title="Máximo"></i>
                             <i class="<%="fa fa-less-than icons custom_function_icon text-dark footer_minlayer_key"+field.project_type.id.to_s+"|"+field.key%>"onclick="cal_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer' , 'min'"%>)" title="Mínimo"></i>
                             <i class="<%="fa fa-divide icons custom_function_icon text-dark footer_avglayer_key"+field.project_type.id.to_s+"|"+field.key%>" onclick="cal_column(<%="'"+field.key+"','"+field.project_type.id.to_s+"','layer' , 'avg'"%>)" title="Promedio"></i>
-                      <% end %>
+                          <% end %>
                         </div>
                       </div>
                     </th>
@@ -1314,7 +1317,7 @@ function generate_alerts(){
             <!-- Verifica que tenga autorización para ver el campo -->
             <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
             <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
-              <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+              <% if field.field_type_id != 7 %>
                 <% if !field.popup %>
                   <th class="d-none header_column border-0" id=<%="columnfake_"+field.key %>>
                 <% else %>
@@ -1352,7 +1355,7 @@ function generate_alerts(){
             <!-- Verifica que tenga autorización para ver el campo -->
             <% roles_read = (JSON.parse(field.roles_read)).reject(&:blank?) %>
             <% if roles_read.include?(@user_rol.to_s) || roles_read.blank? %>
-              <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+              <% if field.field_type_id != 7 %>
                 <th class="header_column border-0 d-none" id=<%="subcolumnfake_layer_"+field.key+"_"+field.project_type.id.to_s %>>
                   <p class="custom_p_header"></p>
                 </th>
@@ -1368,7 +1371,7 @@ function generate_alerts(){
               <%if field.heatmap_field %>
                 <input class="d-none field_label" value=<%=field.key%>>
               <% end %>
-              <% if field.field_type_id != 11 && field.field_type_id != 7  %>
+              <% if field.field_type_id != 7 %>
                 <% if !field.popup %>
                   <th class="d-none header_column border-0" id=<%="subcolumnfake_"+field.key %>>
                 <% else %>
