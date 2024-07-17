@@ -893,11 +893,8 @@ class ProjectTypesController < ApplicationController
     data = ProjectTypesController.set_intersect_width_layers data, intersect_width_layers, active_layers, filters_layers, timeslider_layers
 
     if is_interpolate
-
       render json: {"data": data}
-
     else
-
       # Aplica búsqueda del usuario desde la tabla
       if !filter_by_column.blank? && !filter_value.blank?
         data = data.where("TRANSLATE(main.properties ->> '#{filter_by_column}','ÁÉÍÓÚáéíóú','AEIOUaeiou') ilike translate('%#{filter_value}%','ÁÉÍÓÚáéíóú','AEIOUaeiou')")
@@ -925,11 +922,23 @@ class ProjectTypesController < ApplicationController
         data = data.order("main.id")
       end
 
+      add_subs = ProjectField.where(project_type_id: project_type_id.to_i, field_type_id: 11).pluck(:key)
+
+      projects_with_new_data = data.map do |project|
+        project_hash = project.attributes.symbolize_keys
+        add_subs.each do |key|
+          project_hash[:properties][key.to_sym] = " "
+        end
+        project_hash
+      end
+
+      data = projects_with_new_data
+
       # Aplica limit y offset para paginar desde la tabla
       if !offset_rows.blank? && !per_page_value.blank?
-        data = data
-          .offset(offset_rows.to_i)
-          .limit(per_page_value.to_i)
+        offset = offset_rows.to_i
+        limit = per_page_value.to_i
+        data = projects_with_new_data.slice(offset, limit)
       end
 
       render json: {"data": data}
@@ -1152,7 +1161,6 @@ class ProjectTypesController < ApplicationController
         end
       end
     end
-
   data
   end
 

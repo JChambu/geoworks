@@ -41,7 +41,13 @@ function init_report_api(){
               });
               pdf_values['properties'][column_key.value]['value'] = multi_celd;
             } else {
-              pdf_values['properties'][column_key.value]['value'] = this.innerHTML;
+              if (this.innerHTML == 'false') {
+                pdf_values['properties'][column_key.value]['value'] = 'No'
+              } else if (this.innerHTML == 'true') {
+                pdf_values['properties'][column_key.value]['value'] = 'Si'
+              } else {
+                pdf_values['properties'][column_key.value]['value'] = this.innerHTML;
+              }
             }
             pdf_values['properties'][column_key.value]['name'] = column_name.innerHTML;
             pdf_values['properties'][column_key.value]['order'] = index_column;
