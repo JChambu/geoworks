@@ -729,6 +729,7 @@ function save_pdf(pdf_values_all, is_grouped){
     template_type = $('#pdf_type').val();
     data_report ={}
     data_report["data"] = pdf_values_all;
+    data_report["current_tenant"] = Navarra.dashboards.config.current_tenant;
     data_report["name"] = Navarra.dashboards.config.name_project;
     data_report["user"] = user_name;
     data_report["map"] = imgData_pdf;
