@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   get 'table_configurations/search_table'
   delete 'table_configurations/destroy_table'
   patch 'table_configurations/edit_table'
+  get 'table_configurations/share_table_between_users'
+  post 'table_configurations/save_shared_tables'
   get 'project_types/maps' => 'project_types#maps'
   get 'project_types/search_name_layer' => 'project_types#search_name_layer'
   post 'project_types/kpi' => 'project_types#kpi'

@@ -910,7 +910,7 @@
           $('#table_name').val($('#table_new_name').val());
           $('#table_name_visible').html($('#table_new_name').val());
           // agrega nueva tabla al modal de tablas
-          var new_a = '<a class="dropdown-item d-flex" onclick="open_panel(\'view-data-middle\','+table_new_id+')" href="#" id="dropdown_table'+table_new_id+'"><h7 class="mr-auto">'+table_name+'</h7><i class="fas fa-trash-alt ml-3 invisible icon_delete_table" title="' + t('common.delete') + '" onclick="remove_table(event ,'+table_new_id+')"></i></a>'
+          var new_a = '<a class="dropdown-item d-flex" onclick="open_panel(\'view-data-middle\','+table_new_id+')" href="#" id="dropdown_table'+table_new_id+'"><h7 class="mr-auto">'+table_name+'</h7><i class="fas fa-trash-alt ml-3 invisible icon_delete_table" title="Compartir" onclick="share_table_between_users(event ,'+table_new_id+')"></i><i class="fas fa-trash-alt ml-3 invisible icon_delete_table" title="' + t('common.delete') + '" onclick="remove_table(event ,'+table_new_id+')"></i></a>'
           $('#tables_container').prepend(new_a);
         }
         $('#table_new_name').val("");
@@ -947,6 +947,24 @@
       },
       error: function( jqXHR, textStatus, errorThrown ) {
        }
+    });
+  }
+
+  function share_table_between_users(event, table_id) {
+    event.stopPropagation();
+    project_type_id = Navarra.dashboards.config.project_type_id
+    $.ajax({
+      type: 'GET',
+      url: '/table_configurations/share_table_between_users',
+      datatype: 'JSON',
+      data: {
+        project_type_id: project_type_id,
+        table_id: table_id
+      },
+      success: function(response) {
+        $('body').append(response);
+        $('#shareTablesModal').modal('show');
+      },
     });
   }
 

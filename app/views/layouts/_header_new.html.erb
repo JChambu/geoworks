@@ -416,13 +416,14 @@
             <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels" aria-labelledby="panelAdmin">
               <% if can? :data, :visualizer %>
                 <a class="dropdown-item" href="#" onclick="open_panel('view-data-middle',0)"><%= t('navbar_elements.data_table') %>
-                  <i class="fas fa-edit ml-4" style="font-size: 0.8em;" id="show_trash_tables" title="Eliminar Tablas" onclick="show_trash_tables(event)"></i>
+                  <i class="fas fa-edit ml-4" style="font-size: 0.8em;" id="show_trash_tables" title="Editar Tablas Guardadas" onclick="show_trash_tables(event)"></i>
                 </a>
                 <div class="ml-3" id="tables_container" style="font-size:0.8em; max-height: 40vh; overflow-y:auto;">
                   <% if !@table_configuration.nil? %>
                     <% @table_configuration.sort_by(&:name).each do |table| %>
                       <a class="dropdown-item d-flex" onclick="open_panel(<%= "'view-data-middle',"+table.id.to_s%>)" href="#" id=<%= "dropdown_table"+table.id.to_s%>>
                         <h7 class="mr-auto" ><%=table.name %></h7>
+                        <i class="fas fa-share-alt ml-3 invisible icon_delete_table" title="Compartir" onclick="share_table_between_users(<%= 'event ,'+table.id.to_s%>)" ></i>
                         <i class="fas fa-trash-alt ml-3 invisible icon_delete_table" title="Eliminar" onclick="remove_table(<%= 'event ,'+table.id.to_s%>)"></i>
                       </a>
                     <% end %>

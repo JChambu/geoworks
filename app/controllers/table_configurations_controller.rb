@@ -1,7 +1,6 @@
 class TableConfigurationsController < ApplicationController
 
   def create_table
-
     @table_configuration = TableConfiguration.new()
     @table_configuration.name = params[:name]
     @table_configuration.config = params[:config]
@@ -18,7 +17,6 @@ class TableConfigurationsController < ApplicationController
         'status': 'No se pudo guardar la configuración.'
       }
     end
-
   end
 
 
@@ -51,6 +49,34 @@ class TableConfigurationsController < ApplicationController
   def search_table
     @table = TableConfiguration.where(id: params[:table_configuration_id])
     render json: {data: @table}
+  end
+
+  def share_table_between_users
+    table_id = params[:table_id].to_i
+    project_type_id = params[:project_type_id].to_i
+
+    respond_to do |format|
+      format.html { render partial: 'share_tables', locals: { table_id: table_id } }
+    end
+  end
+
+  def save_shared_tables
+    table_id = params[:table_id].to_i
+    project_type_id = params[:project_type_id].to_i
+    users_ids = params[:user_ids]
+    table_to_share = TableConfiguration.find(table_id)
+
+    if !users_ids.nil?
+      users_ids.each do |user_id|
+        new_table_config = table_to_share.dup
+        new_table_config.user_id = user_id
+        new_table_config.save!
+      end
+    end
+
+    respond_to do |format|
+      format.js { render 'save_shared_tables' }
+    end
   end
 
 end
