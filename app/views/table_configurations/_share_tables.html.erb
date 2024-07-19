@@ -1,0 +1,26 @@
+<div class="modal fade" id="shareTablesModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="shareModalLabel"> Compartir Tabla </h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <%= form_tag table_configurations_save_shared_tables_path(project_type_id: @project_type), :remote => true, :method => :post do |f| %>
+        <div class="modal-body">
+          <div class="form-row col-md-12">
+            <div class="form-group col-md-12">
+              Compartir tabla con:
+              <%= select_tag :user_ids, options_for_select(users_to_share), include_blank: true, multiple: true, class: 'form-control', :style => 'width: 100%; min-height: 200px;' %>
+            </div>
+          </div>
+        </div>
+        <%= hidden_field_tag :project_type_id, params[:project_type_id] %>
+        <%= hidden_field_tag :table_id, params[:table_id]%>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <%= submit_tag :share_table, class:"btn btn-primary", value: "Guardar" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
