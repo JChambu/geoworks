@@ -416,7 +416,7 @@
             <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels" aria-labelledby="panelAdmin">
               <% if can? :data, :visualizer %>
                 <a class="dropdown-item" href="#" onclick="open_panel('view-data-middle',0)"><%= t('navbar_elements.data_table') %>
-                  <i class="fas fa-edit ml-4" style="font-size: 0.8em;" id="show_trash_tables" title="Editar Tablas Guardadas" onclick="show_trash_tables(event)"></i>
+                  <i class="fas fa-edit ml-2" style="font-size: 0.8em;" id="show_trash_tables" title="Editar Tablas Guardadas" onclick="show_trash_tables(event)"></i>
                 </a>
                 <div class="ml-3" id="tables_container" style="font-size:0.8em; max-height: 40vh; overflow-y:auto;">
                   <% if !@table_configuration.nil? %>

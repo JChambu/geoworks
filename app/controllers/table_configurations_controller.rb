@@ -54,9 +54,23 @@ class TableConfigurationsController < ApplicationController
   def share_table_between_users
     table_id = params[:table_id].to_i
     project_type_id = params[:project_type_id].to_i
+    current_tenant = Apartment::Tenant.current
+    customer_id = Customer.find_by(subdomain: current_tenant)
+
+    table_to_share = TableConfiguration.find(table_id)
+    config_to_share = table_to_share.config
+
+    existing_user_ids = TableConfiguration.where(config: config_to_share, project_type_id: project_type_id).pluck(:user_id)
+
+    users_to_share = User.joins(:user_customers)
+                     .where(user_customers: {customer_id: customer_id})
+                     .where.not(id: HasProjectType.select(:user_id).where(project_type_id: project_type_id))
+                     .where.not(id: existing_user_ids)
+                     .sorted_by_name
+                     .map { |user| [user.some_identifier, user.id] }
 
     respond_to do |format|
-      format.html { render partial: 'share_tables', locals: { table_id: table_id } }
+      format.html { render partial: 'share_tables', locals: { table_id: table_id, users_to_share: users_to_share } }
     end
   end
 

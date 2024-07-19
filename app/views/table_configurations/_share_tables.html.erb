@@ -10,7 +10,7 @@
           <div class="form-row col-md-12">
             <div class="form-group col-md-12">
               Compartir tabla con:
-              <%= select_tag :user_ids, options_for_select(users_for_select_share_projects), include_blank: true, multiple: true, class: 'form-control', :style => 'width: 100%; min-height: 200px;' %>
+              <%= select_tag :user_ids, options_for_select(users_to_share), include_blank: true, multiple: true, class: 'form-control', :style => 'width: 100%; min-height: 200px;' %>
             </div>
           </div>
         </div>
