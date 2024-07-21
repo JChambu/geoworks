@@ -1384,6 +1384,12 @@ function getCQLFilter_layer(dat){
       url: '/layers/find.json',
       datatype: 'json',
       success: function(data) {
+        data.sort(function(a, b) {
+          return a.name.localeCompare(b.name);
+        });
+
+        $('#externallayers_container').empty();
+
         $.each(data, function(c, v) {
           let sub_layer = v.layer
           layerSubProjects = new MySource(v.url, {
