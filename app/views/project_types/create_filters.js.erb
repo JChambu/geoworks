@@ -17,9 +17,7 @@ if((field_type == "2" || field_type == 10) && operator!='ilike' && value_view!='
   value = "[\""+value+"\"]";
 }
 
-// agrega % para ilike
 if(operator == "ilike"){
-  console.log("ca");
   value = "%"+value+"%"
 }
 var filter = field_key + '|' + operator + '|' + value + '|' + field_type;
@@ -67,5 +65,4 @@ resize_graphics();
 set_layer_filter();
 
 $("#filters-modal").modal('hide');
-//$("#filters-modal").remove();
 $(".fa-search-location").css("color", "#d3d800");
