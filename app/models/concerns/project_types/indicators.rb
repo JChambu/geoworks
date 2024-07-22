@@ -1,7 +1,6 @@
 module ProjectTypes::Indicators
   extend ActiveSupport::Concern
   module ClassMethods
-
     def validate_type_field(field, method = nil)
       if field.field_type.name == 'Numerico'
         return "(main.properties->>'#{field.key}')::numeric"
@@ -154,19 +153,15 @@ module ProjectTypes::Indicators
           data = data.gsub('where_layer_clause', "where_layer_clause sec.row_enabled = true AND ")
         end
       end
-
       data_query = data
-
       data_query
     end
 
     # Aplica filtros owner, atributo e intercapa
     def conditions_for_attributes_and_owner data, user_id, project_type_id
-
       project_filter = ProjectFilter.where(user_id: user_id).where(project_type_id: project_type_id).first
 
       if !project_filter.nil?
-
         # Aplica filtro owner
         if project_filter.owner == true
           data = data.gsub('where_clause', "where_clause (main.user_id = #{user_id}) AND ")
@@ -181,7 +176,6 @@ module ProjectTypes::Indicators
 
         # Aplica filtro intercapa
         if !project_filter.cross_layer_filter_id.nil?
-
           cross_layer_filter = ProjectFilter.where(user_id: user_id).where(id: project_filter.cross_layer_filter_id).first
 
           # Cruza la capa del principal que contiene los hijos con la capa secunadaria
@@ -202,16 +196,13 @@ module ProjectTypes::Indicators
               data = data.gsub('where_clause', "where_clause (sec_filter.properties->>'#{prop[0]}' = '#{prop[1]}') AND ")
             end
           end
-
         end
-
       end
       data_query = data
       data_query
     end
 
     def filters_on_the_fly data, data_conditions, filtered_form_ids, filter_children, filter_user_children, filters_layers, intersect_width_layers, active_layers, timeslider_layers
-
       # Aplica filtros row_active y current_season
       data = data.gsub('where_clause', "where_clause main.row_active = true AND ")
       data = data.gsub('where_clause', "where_clause main.current_season = true AND ")
@@ -223,21 +214,32 @@ module ProjectTypes::Indicators
       # Aplica filtros de padres
       if !data_conditions.blank?
         data_conditions.each do |key|
-
           s = key.split('|')
           field = s[0]
           filter = s[1]
           value = s[2]
           type = s[3]
 
+          if filter == "-->"
+            filter = 'ilike'
+          end
+
           # Aplica filtro por campo usuario
           if field == 'app_usuario'
-            data = data.gsub('where_clause', "where_clause users.name #{filter} '#{value}' AND ")
+            if filter == 'ilike'
+              data = data.gsub('where_clause', "where_clause users.name #{filter} '%#{value}%' AND ")
+            else
+              data = data.gsub('where_clause', "where_clause users.name #{filter} '#{value}' AND ")
+            end
           end
 
           # Aplica filtro por campo estado
           if field == 'app_estado'
-            data = data.gsub('where_clause', "where_clause project_statuses.name #{filter} '#{value}' AND ")
+            if filter == 'ilike'
+              data = data.gsub('where_clause', "where_clause project_statuses.name #{filter} '%#{value}%' AND ")
+            else
+              data = data.gsub('where_clause', "where_clause project_statuses.name #{filter} '#{value}' AND ")
+            end
           end
 
           # Aplica filtro por otro campo
@@ -247,11 +249,15 @@ module ProjectTypes::Indicators
             elsif (type =='3' and value!='null')
               text = "to_date(main.properties->>'#{field}','DD/MM/YYYY') #{filter} to_date('#{value}','DD/MM/YYYY') AND main.properties->>'#{field}' IS NOT NULL"
             else
-              text = "main.properties->>'#{field}'#{filter}'#{value}'"
+              if filter == 'ilike'
+                text = "main.properties->>'#{field}' #{filter} '%#{value}%'"
+              else
+                text = "main.properties->>'#{field}' #{filter} '#{value}'"
+              end
             end
             text = text.gsub("!='null'"," IS NOT NULL ")
             text = text.gsub("='null'"," IS NULL ")
-              data = data.gsub('where_clause', "where_clause (#{text}) AND ")
+            data = data.gsub('where_clause', "where_clause (#{text}) AND ")
           end
         end
       end
@@ -414,7 +420,6 @@ module ProjectTypes::Indicators
     end
 
     def kpi_new(graph_id,project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform , timeslider_layers, filters_layers,intersect_width_layers, active_layers)
-
       querys=[]
 
       @ct = Apartment::Tenant.current
@@ -461,7 +466,6 @@ module ProjectTypes::Indicators
             chart_type = graph.chart.name
             ch["it#{i}"] = { "description": data_query, "chart_type": chart_type, "group_field": @field_group, "chart_properties": option_graph, "data": items, "graphics_options": g }
           end
-
         end
         querys << ch
       end
@@ -470,7 +474,6 @@ module ProjectTypes::Indicators
 
 
     def kpi_without_graph_one_by_one(kpi_default,project_type_id, option_graph, size_box, type_box, dashboard_id, data_conditions, filtered_form_ids, filter_children, filter_user_children, user_id, from_date, to_date, from_date_subform, to_date_subform, indicator_id, timeslider_layers, filters_layers,intersect_width_layers, active_layers)
-
       querys = []
       query_full = ''
       @ct = Apartment::Tenant.current
@@ -490,7 +493,6 @@ module ProjectTypes::Indicators
         query_full = initial_query "count", "main.id","","",project_type_id , false
       end
 
-
       if type_box == 'extent'
         query_full = query_extent size_box, project_type_id, false, query_full
       else
@@ -506,25 +508,19 @@ module ProjectTypes::Indicators
 
         # Aplica filtros owner, atributo e intercapa (para total también)
         total = conditions_for_attributes_and_owner total, user_id, project_type_id
-
         # Aplica filtro time_slider para total
         total = apply_time_slider_filter total, from_date, to_date, from_date_subform, to_date_subform , timeslider_layers
-
         total = total.gsub('where_clause', "")
         total = total.gsub('from_clause', "")
-
         total = ActiveRecord::Base.connection.execute(total)
       end
 
       # Aplica filtros owner, atributo e intercapa (para total también)
       query_full = conditions_for_attributes_and_owner query_full, user_id, project_type_id
-
       # Aplica filtro time_slider
       query_full = apply_time_slider_filter query_full, from_date, to_date, from_date_subform, to_date_subform , timeslider_layers
-
       # Aplica filtros generados por el usuario y condición row_active y current_season (momentáneamente)
       query_full =  filters_on_the_fly query_full, data_conditions, filtered_form_ids, filter_children, filter_user_children, filters_layers, intersect_width_layers, active_layers, timeslider_layers
-
       #Limpia el query
       query_full = query_full.gsub('where_clause', "")
       query_full = query_full.gsub('where_layer_clause', "")
@@ -546,7 +542,6 @@ module ProjectTypes::Indicators
         querys << { "title": "#{chart.title}", "description": "kpi_sin grafico", "data": query_full, "id": chart.id }
         querys
       end
-
     end
 
 

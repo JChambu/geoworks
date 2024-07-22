@@ -190,6 +190,11 @@ Navarra.layer_filters = function() {
 		if(Navarra.project_types.config.filters_layers[namelayer]==undefined){
 			Navarra.project_types.config.filters_layers[namelayer] = [];
 		}
+
+		if (filter_operator_layer == '-->') {
+			filter_operator_layer = 'ilike'
+		}
+
 		if((field_type_layer == "2" || field_type_layer == 10) && filter_operator_layer!='ilike'){
   		filter_value_layer = filter_value_layer.replace(/ \| /g, "\", \"");
   		filter_value_layer = "[\""+filter_value_layer+"\"]";

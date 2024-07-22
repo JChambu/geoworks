@@ -311,7 +311,6 @@ class ProjectTypesController < ApplicationController
   end
 
   def create_filters
-
     # TODO: Acá debe llegar el grupo que contiene al campo, por ahora se está
     # diferenciando según si el project_field que llega tiene números o letras
     # ya que en hijos se usa key numérico y en padres key con letras
@@ -321,7 +320,6 @@ class ProjectTypesController < ApplicationController
     @table = ''
 
     if /^[0-9]+$/.match(params[:q][:project_field])
-
       @field_name = helpers.get_name_from_id(params[:q][:project_field]).name
       subform_key = params[:q][:project_field]
       subform_operator = params[:q][:filters]
@@ -1128,7 +1126,6 @@ class ProjectTypesController < ApplicationController
   def self.set_filters_on_the_fly data, data_conditions
     # Aplica filtros generados por el usuario
     if !data_conditions.blank?
-
       data_conditions.each do |key|
         s = key.split('|')
         field = s[0]
@@ -1136,14 +1133,25 @@ class ProjectTypesController < ApplicationController
         value = s[2]
         type = s[3]
 
+        if filter == "-->"
+          filter = 'ilike'
+        end
         # Aplica filtro por campo usuario
         if field == 'app_usuario'
-          data =  data.where("users.name " + filter + " '#{value}'")
+          if filter == 'ilike'
+            data = data.where("users.name #{filter} ?", "%#{value}%")
+          else
+            data = data.where("users.name #{filter} ?", "#{value}")
+          end
         end
 
         # Aplica filtro por campo estado
         if field == 'app_estado'
-          data =  data.where("project_statuses.name " + filter + " '#{value}' ")
+          if filter == 'ilike'
+            data = data.where("project_statuses.name #{filter} '%#{value}%'")
+          else
+            data = data.where("project_statuses.name #{filter} '#{value}'")
+          end
         end
 
         # Aplica filtro por otro campo
@@ -1153,7 +1161,11 @@ class ProjectTypesController < ApplicationController
           elsif (type == "3" and value!='null')
             text = "to_date(main.properties->>'" + field + "' , 'DD/MM/YYYY')" + filter + "to_date('#{value}', 'DD/MM/YYYY') AND main.properties->>'#{field}' IS NOT NULL"
           else
-            text = "main.properties->>'" + field + "'" + filter + "'#{value}'"
+            if filter == 'ilike'
+              text = "main.properties->>'#{field}' #{filter} '%#{value}%'"
+            else
+              text = "main.properties->>'#{field}' #{filter} '#{value}'"
+            end
           end
           text = text.gsub("!='null'"," IS NOT NULL ")
           text = text.gsub("='null'"," IS NULL ")
@@ -1161,7 +1173,7 @@ class ProjectTypesController < ApplicationController
         end
       end
     end
-  data
+    data
   end
 
   def self.set_filtered_form_ids data, filtered_form_ids
@@ -1181,8 +1193,7 @@ class ProjectTypesController < ApplicationController
       final_array = final_array.to_s.gsub(/\[/, '(').gsub(/\]/, ')').gsub(/\"/, '')
       data = data.where("main.id IN #{final_array}")
     end
-
-  data
+    data
   end
 
   def self.set_intersect_width_layers data, intersect_width_layers, active_layers, filters_layers, timeslider_layers
