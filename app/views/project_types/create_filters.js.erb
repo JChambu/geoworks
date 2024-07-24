@@ -11,6 +11,9 @@ if (operator == '-->') {
   operator = 'ilike'
 }
 
+if (field_type == '5' && operator == 'ilike') {
+  operator = '='
+}
 //Agrega corchetes y comillas a listados
 if((field_type == "2" || field_type == 10) && operator!='ilike' && value_view!='null'){
   value = value.replace(/ \| /g, "\", \"");

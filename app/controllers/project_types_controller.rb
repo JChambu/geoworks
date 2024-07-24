@@ -1157,7 +1157,11 @@ class ProjectTypesController < ApplicationController
         # Aplica filtro por otro campo
         if field != 'app_usuario' && field != 'app_estado'
           if(type == "5" and value!='null')
-            text = "(main.properties->>'" + field + "')::numeric" + filter + "'#{value}' AND main.properties->>'#{field}' IS NOT NULL"
+            if filter == 'ilike'
+              filter = '='
+            end
+
+            text = "(main.properties->>'" + field + "')::numeric " + filter + " '#{value}' AND main.properties->>'#{field}' IS NOT NULL"
           elsif (type == "3" and value!='null')
             text = "to_date(main.properties->>'" + field + "' , 'DD/MM/YYYY')" + filter + "to_date('#{value}', 'DD/MM/YYYY') AND main.properties->>'#{field}' IS NOT NULL"
           else
