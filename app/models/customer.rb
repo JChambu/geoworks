@@ -20,7 +20,6 @@ class Customer < ApplicationRecord
   end
 
   def create_workspace_geoserver
-
     require 'net/http'
     require 'uri'
     uri = URI.parse("http://#{ENV['GEOSERVER_HOST']}:8080/geoserver/rest/workspaces")
@@ -35,11 +34,9 @@ class Customer < ApplicationRecord
       http.request(request)
     end
     return [response.body, response.code]
-
   end
 
   def create_datastore_geoserver
-
     require 'net/http'
     require 'uri'
     uri = URI.parse("http://#{ENV['GEOSERVER_HOST']}:8080/geoserver/rest/workspaces/#{subdomain}/datastores")
@@ -54,30 +51,23 @@ class Customer < ApplicationRecord
       http.request(request)
     end
     return [response.body, response.code]
-
   end
 
   def add_url
-
     self.url = "https://#{subdomain}.api.geoworks.com.ar/api/v1"
     save!
-
   end
 
   def create_user_customer
-
     @user_customer = UserCustomer.new(user_id: 1, customer_id: self.id, role_id: 1)
     @user_customer.save
-
   end
 
   def create_role
-
     Apartment::Tenant.switch subdomain do
       @role = Role.new(name: 'superadmin')
       @role.save
     end
-
   end
 
   def drop_tenant
@@ -86,7 +76,6 @@ class Customer < ApplicationRecord
   end
 
   def destroy_workspace_geoserver
-
     require 'net/http'
     require 'uri'
     uri = URI.parse("http://#{ENV['GEOSERVER_HOST']}:8080/geoserver/rest/workspaces/#{subdomain}?recurse=true")
@@ -99,11 +88,10 @@ class Customer < ApplicationRecord
       http.request(request)
     end
     return response.code
-
   end
 
   def destroy_user_customer
-    UserCustomer.where(customer_id: self.id).destroy_all
+    UserCustomer.where(customer_id: self.id).delete_all
   end
 
 end
