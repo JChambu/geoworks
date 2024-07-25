@@ -122,7 +122,11 @@ Rails.application.routes.draw do
       get 'users/projects'
       get 'users/search_filters'
       post 'users/create_filters'
-      resources :users
+      resources :users do
+        member do
+          post :send_confirmation_email
+        end
+      end
       resources :roles
       resources :customers
       get 'dashboards/index'

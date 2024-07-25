@@ -37,7 +37,12 @@
               <td><%= user.name %></td>
               <td><%= user.email %></td>
               <td><%= user.country_code%> <%= user.area_code %>-<%= user.phone %></td>
-              <td class="text-center"><%= link_to edit_admin_user_path(user) do %> <i class="fas fa-edit"></i><% end %></td>
+              <td class="text-center">
+                <%= link_to edit_admin_user_path(user) do %> <i class="fas fa-edit" style="margin-right:5px"></i><% end %>
+                <% if user.confirmed_at.nil? %>
+                  <%= link_to send_confirmation_email_admin_user_path(user), method: :post do %> <i class="fas fa-envelope" title="Enviar mail de confirmación"></i><% end %>
+                <% end %>
+              </td>
             </tr>
           <% end %>
         </tbody>
