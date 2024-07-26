@@ -1,5 +1,4 @@
 <%= form_tag admin_users_path, method: :get do |f| %>
-
   <div class="form-row">
     <div class="col-md-2">
       <%= text_field_tag :name, '', class: 'form-control', placeholder: 'Nombre' %>
@@ -7,12 +6,17 @@
     <div class="col-md-2">
       <%= text_field_tag :email, '', class: 'form-control', placeholder: 'E-mail' %>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2" >
       <%= text_field_tag :phone, '', class: 'form-control', placeholder: 'Teléfono' %>
     </div>
-    <div class="col-md-2">
-      <%= submit_tag 'Filtrar' , :class => "btn btn-primary" %>
+    <div class="col-md-3" style="justify-content: flex-start;display: flex;gap: 5px;">
+      <%= submit_tag 'Filtrar', :class => "btn btn-primary" %>
+      <%= link_to admin_users_path(email_sended: 'false', confirmed_at: 'nil'), class: "btn btn-primary" do %>
+        <i class="fas fa-envelope" title="Usuarios sin mail de confirmación enviado"></i>
+      <% end %>
+      <%= link_to admin_users_path, class: "btn btn-primary" do %>
+        <i class="fas fa-times" title="Limpiar filtros"></i>
+      <% end %>
     </div>
   </div>
-
 <% end %>

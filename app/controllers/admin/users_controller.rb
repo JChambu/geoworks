@@ -154,17 +154,23 @@ class Admin::UsersController < ApplicationController
     Apartment::Tenant.switch! 'public'
     @users = User.where(id: users_in_corporation).order(:name)
 
-    if params[:email].present? || params[:name].present? || params[:phone]
+    if params[:email].present? || params[:name].present? || params[:phone].present?
       @users = @users.where(" email ilike ?", "%#{params[:email]}%") unless params[:email].blank?
       @users = @users.where("name ilike ?",  "%#{params[:name]}%") unless params[:name].blank?
       @users = @users.where("phone ilike ?",  "%#{params[:phone]}%") unless params[:phone].blank?
     end
+
+    if params[:email_sended] == 'false' && params[:confirmed_at] == 'nil'
+      @users = @users.where(email_sended: false, confirmed_at: nil).order(:name)
+    end
+
     @users = @users.paginate(:page => params[:page])
   end
 
   def send_confirmation_email
     DeviseCustomMailer.confirmation_instructions(@user, @user.confirmation_token).deliver_now
-    redirect_to admin_users_path(), notice: 'Correo de confirmación enviado.'
+    @user.update(email_sended: true);
+    redirect_to admin_users_path(email_sended: 'false', confirmed_at: 'nil'), notice: 'Correo de confirmación enviado.'
   end
 
   # GET /users/1
@@ -238,7 +244,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :email, :country_code, :area_code, :phone, :confirmed_at, :password, :password_confirmation, :active,
+    params.require(:user).permit(:name, :email, :country_code, :area_code, :phone, :confirmed_at, :email_sended, :password, :password_confirmation, :active,
       user_customers_attributes: [:id, :user_id, :customer_id, :role_id, :_destroy,
       project_filters_attributes: [:id, :user_id, :project_type_id, :owner, :_destroy]],
       has_project_types_attributes: [:id, :project_type_id, :user_id, :owner, :properties, :_destroy],
