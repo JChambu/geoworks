@@ -292,7 +292,7 @@
 <% if !@project_type.nil? %>
   <div class="status_panel" style="display: flex; flex-direction: column;">
     <div class="status_panel_default">
-      <% @status_project.each do |status|  %>
+      <% @status_project.order(:priority).each do |status| %>
         <div class="d-flex mt-1 mb-1">
           <div class="status_panel_color" style = <%= "background:"+status.color %> ></div>
           <h6 class="status_panel_text d-inline"><%= status.name %></h6>
