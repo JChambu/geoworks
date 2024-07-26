@@ -10,7 +10,7 @@ class LayersController < ApplicationController
   # GET /layers.json
   def index
     authorize! :layers, :visualizer
-    @layers = Layer.all
+    @layers = Layer.all.sort_by(&:name)
   end
 
   # GET /layers/1

@@ -5,16 +5,21 @@ operator = '<%= raw params[:q][:filters] %>';
 value = '<%= raw params[:q][:input_value] %>';
 field_type = '<%= raw params[:q][:field_type] %>';
 project_field_id = '<%= @project_field_id %>';
-
 value_view = value;
 
+if (operator == '-->') {
+  operator = 'ilike'
+}
+
+if (field_type == '5' && operator == 'ilike') {
+  operator = '='
+}
 //Agrega corchetes y comillas a listados
 if((field_type == "2" || field_type == 10) && operator!='ilike' && value_view!='null'){
   value = value.replace(/ \| /g, "\", \"");
   value = "[\""+value+"\"]";
 }
 
-// agrega % para ilike
 if(operator == "ilike"){
   value = "%"+value+"%"
 }
@@ -31,6 +36,10 @@ if (table == 'form_filter') {
   //busca filtered_forms_ids
   Navarra.project_types.config.attribute_filters_subforms.push(filtered_form_ids_text);
   search_filtered_form_ids();
+}
+
+if (operator == 'ilike') {
+  operator = '-->'
 }
 
 var filter_view = field_name + " " + operator + " " + value_view;
@@ -59,5 +68,4 @@ resize_graphics();
 set_layer_filter();
 
 $("#filters-modal").modal('hide');
-//$("#filters-modal").remove();
 $(".fa-search-location").css("color", "#d3d800");

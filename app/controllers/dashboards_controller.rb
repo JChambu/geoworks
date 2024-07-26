@@ -53,7 +53,6 @@ class DashboardsController < ApplicationController
     @extent = []
 
     if !@project_type.nil?
-
       @fields = ProjectField.where(project_type_id: @project_type.id).order(:sort)
       # Busca el rol del usuario
       customer_name = Apartment::Tenant.current
@@ -76,22 +75,18 @@ class DashboardsController < ApplicationController
         .where.not(project_type_id: @project_type.id)
         .where(project_type_id: @projects_shared)
         .order('project_types.level DESC','project_types.id', :sort)
-
       @table_configuration = TableConfiguration
         .where(project_type_id: @project_type.id)
         .where(user_id: current_user.id)
-
       @user_tenants = UserCustomer.joins(:customer)
         .where(user_id: current_user.id)
         .select('customers.name AS corporation_name, customers.logo AS corporation_logo')
         .map { |uc| { name: uc.corporation_name, logo: uc.corporation_logo } }
 
       @current_tenant = Apartment::Tenant.current
-
       @project_filters = ProjectFilter.where(project_type_id: @project_type.id).where(user_id: current_user.id).first
 
       if !@project_filters.nil?
-
         # Arma el filtro por atributo
         if !@project_filters.properties.nil?
           @project_filters.properties.to_a.each do |prop|
@@ -109,8 +104,8 @@ class DashboardsController < ApplicationController
           end
           @cross_layer = ProjectType.where(id: @cross_layer_filter.project_type_id).pluck(:name_layer).first
         end
-
       end
+
       @extent = Project.geometry_bounds(@project_type.id, current_user.id, attribute_filters = '', filtered_form_ids = '', from_date = '', to_date = '', intersect_width_layers = 'false', active_layers = '', filters_layers = {} ,timeslider_layers = {})
       @status_project  = ProjectStatus.where(project_type_id: @project_type.id)
     end
@@ -171,14 +166,18 @@ class DashboardsController < ApplicationController
   def set_project_type
     if !params[:project_type_id].nil?
       @project_type = ProjectType.joins(:has_project_types).where(id: params[:project_type_id]).where(has_project_types: {user_id: current_user.id}).first
-        session[:project_type_id] = @project_type.id if !@project_type.nil?
+      session[:project_type_id] = @project_type.id if !@project_type.nil?
     else
-        if session.has_key? :project_type_id
-          @project_type = ProjectType.joins(:has_project_types).where(id: session[:project_type_id]).where(has_project_types: { user_id: current_user.id}).first
-          @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).last if @project_type.nil?
+      if session.has_key? :project_type_id
+        @project_type = ProjectType.joins(:has_project_types).where(id: session[:project_type_id]).where(has_project_types: { user_id: current_user.id}).first
+        @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).last if @project_type.nil?
+      else
+        if Apartment::Tenant.current == "impulsa" && current_user.email == 'public@geoworks.com'
+          @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).where(name_layer: 'distritos_mineros').first
         else
           @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).last
         end
+      end
     end
   end
 

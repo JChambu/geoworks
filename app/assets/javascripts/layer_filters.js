@@ -19,12 +19,10 @@ Navarra.layer_filters = function() {
             		'<label id="switchlabel_'+layer+'" class="custom-control-label custom-role-colour" for="switch_'+layer+'">Interceptar a la Capa Activa</label>'+
             	'</div>'+
 
-							'<a class="dropdown-item" href="#" ">'+
-							'<div class="custom-control custom-checkbox" >'+
-	              '<input class="custom-control-input" onchange="Navarra.geomaps.show_labels_in_others_layers(true, event)" id="checkbox_etiquetas_'+layer+'" type="checkbox" name="radio_mapabase">'+
-	              '<label class="string optional control-label custom-control-label" for="checkbox_etiquetas_'+layer+'"> </label>'+
+							'<div class="custom-control custom-switch" >'+
+	              '<input type="checkbox" id="checkbox_etiquetas_'+layer+'" class="custom-control-input" onchange="Navarra.geomaps.show_labels_in_others_layers(true, event)">'+
+	              '<label class="custom-control-label custom-role-colour" for="checkbox_etiquetas_'+layer+'">Etiquetas</label>'+
               '</div>'+
-              '<label for=mapa_base1>Etiquetas</label></a>'+
 
             	'<div class="pt-2">'+
             		'<p class="m-0">Filtros</p>'+
@@ -73,7 +71,6 @@ Navarra.layer_filters = function() {
 	function openlayer(event){
 		var namelayer = $(event.target).attr("namelayer");
 		if($('#div_filter_'+namelayer).hasClass('d-none')){
-			$('.layer_div').not('.layer_div_'+namelayer).addClass('d-none');
 			$('#div_filter_'+namelayer).removeClass('d-none');
 			var modalWidth = $('#customLayerModal').outerWidth();
       $('.status_panel').css('left', modalWidth);
@@ -190,6 +187,11 @@ Navarra.layer_filters = function() {
 		if(Navarra.project_types.config.filters_layers[namelayer]==undefined){
 			Navarra.project_types.config.filters_layers[namelayer] = [];
 		}
+
+		if (filter_operator_layer == '-->') {
+			filter_operator_layer = 'ilike'
+		}
+
 		if((field_type_layer == "2" || field_type_layer == 10) && filter_operator_layer!='ilike'){
   		filter_value_layer = filter_value_layer.replace(/ \| /g, "\", \"");
   		filter_value_layer = "[\""+filter_value_layer+"\"]";

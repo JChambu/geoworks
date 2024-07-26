@@ -40,6 +40,7 @@ if(value!="Sin Filtro"){
       $('<button>', {
         'type': 'button',
         'class': 'close',
+        'id': 'quick_filters_close_button',
         'text': '×'
       })
     )
@@ -76,7 +77,7 @@ if(value_child!="Sin Filtro"){
   document.getElementById(filter).setAttribute("value", filter);
   Navarra.project_types.config.attribute_filters_subforms.push(filtered_form_ids_text);
   search_filtered_form_ids()
-   
+
 } else{
   init_filters();
 }
@@ -110,12 +111,12 @@ function remove_user_filters(){
       return;
     }
   })
-        
+
   Navarra.project_types.config.attribute_filters_subforms = current_filters;
   search_filtered_form_ids();
-  
+
   var ar= Navarra.project_types.config.filtered_form_ids;
-  
+
    $(".message[id*="+'app_usuario '+"]").remove();
    $(".message[id*="+'gw_usario_subform '+"]").remove();
 }

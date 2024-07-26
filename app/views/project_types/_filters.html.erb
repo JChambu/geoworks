@@ -1,21 +1,21 @@
 <div class="modal-header">
   <h4 class="modal-title"> Filtro </h4>
-  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+  <span aria-hidden="true">&times;</span></button>
 </div>
 
 <%= form_tag project_type_create_filters_path, :remote => true, :method => :get do |f| %>
-
   <div class="modal-body">
     <div class="form-row">
       <div class="col-md-4">
-      <%=select_tag 'q[project_field]', grouped_options_for_select(filter_field_for_select), include_blank: true, class:'proj_field form-control' %>
+        <%= select_tag 'q[project_field]', grouped_options_for_select(filter_field_for_select), include_blank: true, style: 'width: 153px', class:'proj_field form-control' %>
       </div>
       <%=text_field_tag'q[field_type]','',class:'d-none' %>
       <div class="col-md-2">
-        <%=select_tag 'q[filters]', options_for_select(ProjectType::FILTERS), class: 'form-control' %>
+        <%= select_tag 'q[filters]', options_for_select(ProjectType::FILTERS), style: 'width: 73px', class: 'form-control' %>
       </div>
       <div class="col-md-5">
-        <%=text_field_tag'q[input_value]','',class:'form-control' , autocomplete: 'off' %>
+        <%= text_field_tag'q[input_value]','',class:'form-control' , autocomplete: 'off' %>
         <select id="filter_value_options" class="form-control d-none"></select>
       </div>
       <div class="col-md-1 d-flex m-auto">
@@ -51,13 +51,13 @@
         project_type_id: <%= params[:project_type_id] %>
       },
       success: function(data) {
-          $('#q_field_type').val(data);
-          if((data == 2 || data == 10) && $('#filter_value_options').hasClass('d-none')){
-            $('#change_value_options_filter').click();
-          }
-          if(data != 2 && data != 10 && !$('#filter_value_options').hasClass('d-none')){
-            $('#change_value_options_filter').click();
-          }
+        $('#q_field_type').val(data);
+        if((data == 2 || data == 10) && $('#filter_value_options').hasClass('d-none')){
+          $('#change_value_options_filter').click();
+        }
+        if(data != 2 && data != 10 && !$('#filter_value_options').hasClass('d-none')){
+          $('#change_value_options_filter').click();
+        }
       }
     });
     $('#q_input_value').val('');
@@ -70,15 +70,14 @@
         project_type_id: <%= params[:project_type_id] %>
       },
       success: function(data) {
-          $('#filter_value_options').empty();
-          $('#filter_value_options').append('<option></option>');
-          $.each(data['data'][0]['values'], function(value, a) {
-            let opt = document.createElement("option");
-            opt.value = `${a.p_name}`.replace(/[\[\]]/g, "").replace(/\", \"/g, " | ").replace(/\"/g, "");
-            opt.text = `${a.p_name}`.replace(/[\[\]]/g, "").replace(/\", \"/g, " | ").replace(/\"/g, "");
-
-            $('#filter_value_options').append(opt);
-          });
+        $('#filter_value_options').empty();
+        $('#filter_value_options').append('<option></option>');
+        $.each(data['data'][0]['values'], function(value, a) {
+          let opt = document.createElement("option");
+          opt.value = `${a.p_name}`.replace(/[\[\]]/g, "").replace(/\", \"/g, " | ").replace(/\"/g, "");
+          opt.text = `${a.p_name}`.replace(/[\[\]]/g, "").replace(/\", \"/g, " | ").replace(/\"/g, "");
+          $('#filter_value_options').append(opt);
+        });
       }
     });
   });
