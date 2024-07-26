@@ -108,4 +108,9 @@ class User < ApplicationRecord
   def self.sorted_by_name
     self.order(:name)
   end
+
+  protected
+
+  def send_confirmation_instructions
+  end
 end

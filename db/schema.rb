@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20240513153118) do
+ActiveRecord::Schema.define(version: 20240726024312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -482,6 +482,7 @@ ActiveRecord::Schema.define(version: 20240513153118) do
     t.string "phone"
     t.string "area_code"
     t.string "country_code"
+    t.boolean "email_sended", default: false
     t.index ["authentication_token"], name: "index_users_on_authentication_token_2", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["role_id"], name: "index_users_on_role_id"

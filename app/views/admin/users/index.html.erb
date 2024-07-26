@@ -7,10 +7,10 @@
         <h1 class="m-0"><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
         <p class="m-0 pt-2" id="notice"><%= notice %></p>
       </div>
-      <div class="col-md-6 text-center">
+      <div class="col-md-7 text-center">
         <%= render :partial=> 'search'%>
       </div>
-      <div class="col-md-2 text-right">
+      <div class="col-md-1 text-right">
         <%= link_to t('.new', :default => t("helpers.links.new")), new_admin_user_path,:class => 'btn btn-primary' %>
       </div>
     </div>
@@ -37,7 +37,14 @@
               <td><%= user.name %></td>
               <td><%= user.email %></td>
               <td><%= user.country_code%> <%= user.area_code %>-<%= user.phone %></td>
-              <td class="text-center"><%= link_to edit_admin_user_path(user) do %> <i class="fas fa-edit"></i><% end %></td>
+              <td class="text-center">
+                <%= link_to edit_admin_user_path(user) do %> <i class="fas fa-edit" style="margin-right:5px"></i><% end %>
+                <% if user.confirmed_at.nil? && user.email_sended == false %>
+                  <%= link_to send_confirmation_email_admin_user_path(user), method: :post, data: { confirm: "¿Estás seguro que deseas enviar el correo de confirmación a #{user.name}?" } do %>
+                    <i class="fas fa-envelope" title="Enviar correo de confirmación"></i>
+                  <% end %>
+                <% end %>
+              </td>
             </tr>
           <% end %>
         </tbody>

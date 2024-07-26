@@ -1,7 +1,7 @@
 class Admin::UsersController < ApplicationController
   #before_filter :new_user, :only => [:create]
   load_and_authorize_resource except: [:search_projects]
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :send_confirmation_email]
   layout 'admin'
   # GET /users
   # GET /users.json
@@ -150,15 +150,27 @@ class Admin::UsersController < ApplicationController
   end
 
   def index
+    users_in_corporation = UserCustomer.where(customer_id: current_tenant.id).pluck(:user_id)
     Apartment::Tenant.switch! 'public'
+    @users = User.where(id: users_in_corporation).order(:name)
 
-    @users = User.all
-    if params[:email].present? || params[:name].present? || params[:phone]
+    if params[:email].present? || params[:name].present? || params[:phone].present?
       @users = @users.where(" email ilike ?", "%#{params[:email]}%") unless params[:email].blank?
       @users = @users.where("name ilike ?",  "%#{params[:name]}%") unless params[:name].blank?
       @users = @users.where("phone ilike ?",  "%#{params[:phone]}%") unless params[:phone].blank?
     end
+
+    if params[:email_sended] == 'false' && params[:confirmed_at] == 'nil'
+      @users = @users.where(email_sended: false, confirmed_at: nil).order(:name)
+    end
+
     @users = @users.paginate(:page => params[:page])
+  end
+
+  def send_confirmation_email
+    DeviseCustomMailer.confirmation_instructions(@user, @user.confirmation_token).deliver_now
+    @user.update(email_sended: true);
+    redirect_to admin_users_path(email_sended: 'false', confirmed_at: 'nil'), notice: 'Correo de confirmación enviado.'
   end
 
   # GET /users/1
@@ -232,7 +244,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :email, :country_code, :area_code, :phone, :password, :password_confirmation, :active,
+    params.require(:user).permit(:name, :email, :country_code, :area_code, :phone, :confirmed_at, :email_sended, :password, :password_confirmation, :active,
       user_customers_attributes: [:id, :user_id, :customer_id, :role_id, :_destroy,
       project_filters_attributes: [:id, :user_id, :project_type_id, :owner, :_destroy]],
       has_project_types_attributes: [:id, :project_type_id, :user_id, :owner, :properties, :_destroy],
