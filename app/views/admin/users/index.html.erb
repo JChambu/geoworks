@@ -41,7 +41,7 @@
                 <%= link_to edit_admin_user_path(user) do %> <i class="fas fa-edit" style="margin-right:5px"></i><% end %>
                 <% if user.confirmed_at.nil? && user.email_sended == false %>
                   <%= link_to send_confirmation_email_admin_user_path(user), method: :post, data: { confirm: "¿Estás seguro que deseas enviar el correo de confirmación a #{user.name}?" } do %>
-                    <i class="fas fa-envelope" title="Enviar mail de confirmación"></i>
+                    <i class="fas fa-envelope" title="Enviar correo de confirmación"></i>
                   <% end %>
                 <% end %>
               </td>

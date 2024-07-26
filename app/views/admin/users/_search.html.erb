@@ -12,7 +12,7 @@
     <div class="col-md-3" style="justify-content: flex-start;display: flex;gap: 5px;">
       <%= submit_tag 'Filtrar', :class => "btn btn-primary" %>
       <%= link_to admin_users_path(email_sended: 'false', confirmed_at: 'nil'), class: "btn btn-primary" do %>
-        <i class="fas fa-envelope" title="Usuarios sin mail de confirmación enviado"></i>
+        <i class="fas fa-envelope" title="Usuarios sin correo de confirmación enviado"></i>
       <% end %>
       <%= link_to admin_users_path, class: "btn btn-primary" do %>
         <i class="fas fa-times" title="Limpiar filtros"></i>
