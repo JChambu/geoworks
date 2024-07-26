@@ -2,70 +2,70 @@ Navarra.namespace("layer_filters");
 Navarra.layer_filters = function() {
 	function init(layer, label_layer){
 		var new_item =
+		'<div>' +
+			'<a class="dropdown-item layer_div layer_div_' + layer + '" href="#">' +
+				'<div class="d-inline mr-3 pr-4">' +
+					'<div class="custom-control custom-checkbox">' +
+						'<input class="custom-control-input" onchange="select_layer()" id="checkbox_' + layer + '" type="checkbox" name="radio_mapabase">' +
+						'<label id="checkboxlabel_' + layer + '" class="string optional control-label custom-control-label" for="checkbox_' + layer + '"> </label>' +
+					'</div>' +
+					'<label for=mapa_base1>' + label_layer + '</label>' +
+				'</div>' +
+				'<i class="fas fa-chevron-down float-right" style="margin-left:-20px" onclick="Navarra.layer_filters.openlayer(event)" namelayer="' + layer + '"></i>' +
+				'<div class="pl-4 d-none div_filter" style="width:30vw" id="div_filter_' + layer + '">' +
+					'<div class="d-flex align-items-center">' +
+						'<div class="custom-control custom-switch mr-3">' +
+							'<input type="checkbox" id="switch_' + layer + '" class="custom-control-input layer_filter_switch" onchange="switch_filtered_layer()">' +
+							'<label id="switchlabel_' + layer + '" class="custom-control-label custom-role-colour" for="switch_' + layer + '">Interceptar a la Capa Activa</label>' +
+						'</div>' +
+						'<div class="custom-control custom-switch">' +
+							'<input type="checkbox" id="checkbox_etiquetas_' + layer + '" class="custom-control-input" onchange="Navarra.geomaps.show_labels_in_others_layers(true, event)">' +
+							'<label class="custom-control-label custom-role-colour" for="checkbox_etiquetas_' + layer + '">Etiquetas</label>' +
+						'</div>' +
+					'</div>'+
 
-        '<div>'+
-          '<a class="dropdown-item layer_div layer_div_'+layer+'" href="#">'+
-            '<div class="d-inline mr-3 pr-4">'+
-            	'<div class="custom-control custom-checkbox" >'+
-            		'<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+layer+'" type="checkbox" name="radio_mapabase">'+
-            		'<label id="checkboxlabel_'+layer+'" class="string optional control-label custom-control-label" for="checkbox_'+layer+'"> </label>'+
-            	'</div>'+
-            	'<label for=mapa_base1>'+label_layer+'</label>'+
-            '</div>'+
-            '<i class="fas fa-chevron-down float-right" style="margin-left:-20px" onclick="Navarra.layer_filters.openlayer(event)" namelayer="'+layer+'"></i>'+
-            '<div class="pl-4 d-none div_filter" style="width:33vw" id="div_filter_'+layer+'">'+
-            	'<div class="custom-control custom-switch">'+
-            		'<input type="checkbox" id="switch_'+layer+'" class="custom-control-input layer_filter_switch" onchange="switch_filtered_layer()">'+
-            		'<label id="switchlabel_'+layer+'" class="custom-control-label custom-role-colour" for="switch_'+layer+'">Interceptar a la Capa Activa</label>'+
-            	'</div>'+
-
-							'<div class="custom-control custom-switch" >'+
-	              '<input type="checkbox" id="checkbox_etiquetas_'+layer+'" class="custom-control-input" onchange="Navarra.geomaps.show_labels_in_others_layers(true, event)">'+
-	              '<label class="custom-control-label custom-role-colour" for="checkbox_etiquetas_'+layer+'">Etiquetas</label>'+
-              '</div>'+
-
-            	'<div class="pt-2">'+
-            		'<p class="m-0">Filtros</p>'+
-            		'<div style="max-width:500px; white-space:normal" id="active_filter_container_'+layer+'"></div>'+
-	            	'<div class="form-row">'+
-				    	'<div class="col-md-4">'+
-      						'<select namelayer="'+layer+'" id="filter_field_layer_'+layer+'" class="form-control form-control-sm" onchange="Navarra.layer_filters.change_filter_field(event)">'+
-      						'</select>'+
-						'</div>'+
-      					'<div class="col-md-2">'+
-        					'<select name="" id="filter_operator_layer_'+layer+'" class="form-control form-control-sm">'+
-							'</select>'+
-      					'</div>'+
-      					'<div class="col-md-4">'+
-      						'<input type="text" autocomplete="off" class="form-control form-control-sm" id="filter_value_layer_'+layer+'">'+
-        					'<select namelayer="'+layer+'" class="d-none form-control form-control-sm" id="filter_value_layer_select_'+layer+'" onchange="Navarra.layer_filters.change_filter_value(event)">'+
-        					'</select>'+
-      					'</div>'+
-      					'<div class="col-md-2">'+
-      						'<i namelayer="'+layer+'" id="set_values_layer_icon'+layer+'" class="fas fa-list mr-2" style="font-size: 1.2em ; cursor:pointer; " onclick="Navarra.layer_filters.set_values_layer(event)"></i>'+
-      						'<i namelayer="'+layer+'" class="fas fa-check-circle" style="font-size: 1.5em ; cursor:pointer; " onclick="Navarra.layer_filters.set_filter_layer(event)"></i>'+
-      					'</div>'+
-      				'</div>'+
-	            '</div>'+
-            	'<div class="pt-2">'+
-            		'<p class="m-0">Rango Temporal</p>'+
-            		'<div class="form-row mb-2">'+
-            			'<div class="col-md-4 static_datetimepicker" >'+
-		            		'<input class="form-control form-control-sm layer_time_slider" type="text" id="fromdate_layer_'+layer+'" style="cursor:pointer">'+
-		            	'</div>'+
-		            	'<div class="col-md-4 static_datetimepicker" >'+
-		            		'<input class="form-control form-control-sm layer_time_slider" type="text" id="todate_layer_'+layer+'" style="cursor:pointer">'+
-		            	'</div>'+
-		            	'<div class="col-md-3">'+
-		            		'<i namelayer="'+layer+'" class="fas fa-calendar-check" style="font-size: 1.5em ; cursor:pointer; " onclick="Navarra.layer_filters.set_timeslider_layer(event)"></i>'+
-		            		'<i namelayer="'+layer+'" class="fas fa-calendar-times ml-2" style="font-size: 1.5em ; cursor:pointer; " onclick="Navarra.layer_filters.remove_timeslider_layer(event)"></i>'+
-      					'</div>'+
-		            '</div>'+
-    			'</div>'+
-            '</div>'+
-            '</a>'+
-            '</div>';
-        return new_item;
+					'<div class="pt-2" style="margin-bottom:6px;">' +
+						'<p class="m-0" style="font-weight: bold;">Filtros</p>' +
+						'<div style="max-width:500px; white-space:normal" id="active_filter_container_' + layer + '"></div>' +
+						'<div class="form-row">' +
+							'<div class="col-md-4">' +
+								'<select namelayer="' + layer + '" id="filter_field_layer_' + layer + '" class="form-control form-control-sm" onchange="Navarra.layer_filters.change_filter_field(event)">' +
+								'</select>' +
+							'</div>' +
+							'<div class="col-md-2">' +
+								'<select name="" id="filter_operator_layer_' + layer + '" class="form-control form-control-sm">' +
+								'</select>' +
+							'</div>' +
+							'<div class="col-md-4">' +
+								'<input type="text" autocomplete="off" class="form-control form-control-sm" id="filter_value_layer_' + layer + '">' +
+								'<select namelayer="' + layer + '" class="d-none form-control form-control-sm" id="filter_value_layer_select_' + layer + '" onchange="Navarra.layer_filters.change_filter_value(event)">' +
+								'</select>' +
+							'</div>' +
+							'<div class="col-md-2">' +
+								'<i namelayer="' + layer + '" id="set_values_layer_icon' + layer + '" class="fas fa-list mr-2" style="font-size: 1.2em ; cursor:pointer;" onclick="Navarra.layer_filters.set_values_layer(event)"></i>' +
+								'<i namelayer="' + layer + '" class="fas fa-check-circle" style="font-size: 1.5em ; cursor:pointer;" onclick="Navarra.layer_filters.set_filter_layer(event)"></i>' +
+							'</div>' +
+						'</div>' +
+					'</div>' +
+					'<div class="pt-2" style="margin-bottom:15px;">' +
+						'<div class="form-row mb-2" style="margin-left:0px;">' +
+							'<p class="m-0" style="font-weight: bold;">Rango Temporal: </p>' +
+							'<div class="col-md-2 static_datetimepicker" style="margin-right:15px">' +
+								'<input class="form-control form-control-sm layer_time_slider" style="width:98px;" type="text" id="fromdate_layer_' + layer + '" style="cursor:pointer">' +
+							'</div>' +
+							'<div class="col-md-2 static_datetimepicker" style="margin-right:15px">' +
+								'<input class="form-control form-control-sm layer_time_slider" style="width:98px;" type="text" id="todate_layer_' + layer + '" style="cursor:pointer">' +
+							'</div>' +
+							'<div class="col-md-3">' +
+								'<i namelayer="' + layer + '" class="fas fa-calendar-check" style="font-size: 1.5em ; cursor:pointer;" onclick="Navarra.layer_filters.set_timeslider_layer(event)"></i>' +
+								'<i namelayer="' + layer + '" class="fas fa-calendar-times ml-2" style="font-size: 1.5em ; cursor:pointer;" onclick="Navarra.layer_filters.remove_timeslider_layer(event)"></i>' +
+							'</div>' +
+						'</div>' +
+					'</div>' +
+				'</div>' +
+			'</a>' +
+		'</div>';
+    return new_item;
 	}
 
 	function openlayer(event){

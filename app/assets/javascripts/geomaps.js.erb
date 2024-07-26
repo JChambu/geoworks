@@ -1388,38 +1388,44 @@ function getCQLFilter_layer(dat){
       url: '/layers/find.json',
       datatype: 'json',
       success: function(data) {
-        data.sort(function(a, b) {
-          return a.name.localeCompare(b.name);
-        });
-
-        $('#externallayers_container').empty();
-
-        $.each(data, function(c, v) {
-          let sub_layer = v.layer
-          layerSubProjects = new MySource(v.url, {
-            layers: v.layer, //nombre de la capa (ver get capabilities)
-            format: 'image/png',
-            transparent: 'true',
-            maxZoom: 20,
-            opacity: 1,
-            version: '1.1.1', //wms version (ver get capabilities)
-            tiled: true,
-            INFO_FORMAT: 'application/json',
-            format_options: 'callback:getJson'
-          })
-
-          layer_outer = layerSubProjects.getLayer(sub_layer);
-          layerControl.addOverlay(layer_outer, v.name, null, {
-            sortLayers: true
+        if (data != 0) {
+          data.sort(function(a, b) {
+            return a.name.localeCompare(b.name);
           });
-          //genera Modal de capas externas
-          var new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" >'+
-                    '<input class="custom-control-input" onchange="select_layer()" id="checkbox_'+v.name+'" type="checkbox" name="radio_mapabase">'+
-                    '<label class="string optional control-label custom-control-label" for="checkbox_'+v.name+'"> </label>'+
-                    '</div>'+
-                    '<label for=mapa_base1>'+v.name+'</label></a>';
+
+          $('#externallayers_container').empty();
+
+          $.each(data, function(c, v) {
+            let sub_layer = v.layer
+            layerSubProjects = new MySource(v.url, {
+              layers: v.layer, //nombre de la capa (ver get capabilities)
+              format: 'image/png',
+              transparent: 'true',
+              maxZoom: 20,
+              opacity: 1,
+              version: '1.1.1', //wms version (ver get capabilities)
+              tiled: true,
+              INFO_FORMAT: 'application/json',
+              format_options: 'callback:getJson'
+            })
+
+            layer_outer = layerSubProjects.getLayer(sub_layer);
+            layerControl.addOverlay(layer_outer, v.name, null, {
+              sortLayers: true
+            });
+
+            //genera Modal de capas externas
+            new_item = '<a class="dropdown-item" href="#"><div class="custom-control custom-checkbox" >' +
+                          '<input class="custom-control-input" onchange="select_layer()" id="checkbox_' + v.name + '" type="checkbox" name="radio_mapabase">' +
+                          '<label class="string optional control-label custom-control-label" for="checkbox_' + v.name + '"> </label>' +
+                       '</div>' +
+                       '<label for="mapa_base1">' + v.name + '</label></a>';
+            $('#externallayers_container').append(new_item);
+          })
+        } else {
+          new_item = '<a class="dropdown-item">No hay capas externas creadas</a>';
           $('#externallayers_container').append(new_item);
-        })
+        }
       }
     })
   }
