@@ -196,39 +196,38 @@ function set_kpi_navbar(element,is_default, indicator_id){
     data_cont = '';
   }
 
+  if(element['title'].split(' ').length>=2 && element['title'] != '% del Total'){
+    var split_element = Math.ceil(element['title'].split(' ').length/2);
+    var title_up = "";
+    var title_down = "";
+    element['title'].split(' ').forEach(function(element, index){
+      if(index<split_element){
+        title_up += element+" ";
+      } else{
+        title_down += element+" ";
+      }
+    })
+    var element_title_two_lines = "<p class='m-0 text-left'>"+title_up+"</p><p class='m-0 mb-1 text-left'>"+title_down+"</p>";
+  } else {
+    var element_title_two_lines = "<p class='m-0 position-relative text-left' style='top:5px'>"+element['title']+"</p><p class='m-0 mb-1 invisible'>"+element['title']+"</p>";
+  }
 
-
-    if(element['title'].split(' ').length>=2){
-      var split_element = Math.ceil(element['title'].split(' ').length/2);
-      var title_up = "";
-      var title_down = "";
-      element['title'].split(' ').forEach(function(element, index){
-        if(index<split_element){
-          title_up += element+" ";
-        } else{
-          title_down += element+" ";
-        }
-      })
-      var element_title_two_lines = "<p class='m-0 text-left'>"+title_up+"</p><p class='m-0 mb-1 text-left'>"+title_down+"</p>";
-    } else {
-      var element_title_two_lines = "<p class='m-0 position-relative text-left' style='top:5px'>"+element['title']+"</p><p class='m-0 mb-1 invisible'>"+element['title']+"</p>";
-    }
-    html = '<span class="count_top align-top">' + element_title_two_lines + '</span>' +
-      '<div class="count align-middle kpi_' + element['id'] + '"> ' + data_cont + '</div>' +
-      '</div>'
-    if(is_default == true){
-      $('#indicator_container_default'+indicator_id).append(html);
-      $('#indicator_container_default'+indicator_id).removeClass('invisible');
-    } else {
-      $('#indicator_container'+indicator_id).append(html);
-      $('#indicator_container'+indicator_id).removeClass('invisible')
-    }
-    var width_element = $('.custom_indicator_container').outerWidth();
-    var width_parent = $('.custom_indicator_container').parent().parent().outerWidth();
-    if(width_element>width_parent){
-      $('#move_indicators_left').removeClass('d-none');
-      $('#move_indicators_right').removeClass('d-none');
-    }
+  html = '<span class="count_top align-top">' + element_title_two_lines + '</span>' +
+    '<div class="count align-middle kpi_' + element['id'] + '"> ' + data_cont + '</div>' +
+    '</div>'
+  if(is_default == true){
+    $('#indicator_container_default'+indicator_id).append(html);
+    $('#indicator_container_default'+indicator_id).removeClass('invisible');
+  } else {
+    $('#indicator_container'+indicator_id).append(html);
+    $('#indicator_container'+indicator_id).removeClass('invisible')
+  }
+  var width_element = $('.custom_indicator_container').outerWidth();
+  var width_parent = $('.custom_indicator_container').parent().parent().outerWidth();
+  if(width_element>width_parent){
+    $('#move_indicators_left').removeClass('d-none');
+    $('#move_indicators_right').removeClass('d-none');
+  }
 }
 
 function capitalize(s) {
