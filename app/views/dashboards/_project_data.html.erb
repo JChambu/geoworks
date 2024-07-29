@@ -616,7 +616,7 @@
         datatype: 'JSON',
         data: data,
         success: function(data) {
-          $('.celdlayer').empty();
+          // $('.celdlayer').empty();
           data.forEach(function(data_project){
           data_project.forEach(function(row_layer,index_row){
               properties_layer= row_layer['properties'];
@@ -627,8 +627,11 @@
                 var prop = $(this).attr('key_layer').substring(3);
                 var row_text = row_layer['properties'][prop];
                 if (row_text == undefined ){ row_text = ""}
-                html_div = "<div id_layer_row="+row_layer.id+">"+row_text+"</div>"
-                $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).append(html_div);
+                html_div = "<div id_layer_row=\"" + row_layer.id + "\">" + row_text + "</div>";
+                current_html = $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).html();
+                if(html_div != current_html){
+                  $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).append(html_div);
+                }
               }
             })
           });//end forEach
