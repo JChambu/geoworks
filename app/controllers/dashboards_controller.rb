@@ -173,7 +173,7 @@ class DashboardsController < ApplicationController
         @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).last if @project_type.nil?
       else
         if Apartment::Tenant.current == "impulsa" && current_user.email == 'public@geoworks.com'
-          @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).where(name_layer: 'distritos_mineros').first
+          @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).where(name_layer: 'minas').first
         else
           @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).last
         end
