@@ -600,26 +600,26 @@
       $('#text_toast').html("Buscando datos intercapas, por favor espere");
       $('#toast').toast('show');
     }
-      data = {
-        top_level_project_type_ids: top_level_project_type_ids,
-        project_ids: app_ids_table,
-        filters_layers: Navarra.project_types.config.filters_layers,
-        timeslider_layers: Navarra.project_types.config.timeslider_layers
-      }
+    data = {
+      top_level_project_type_ids: top_level_project_type_ids,
+      project_ids: app_ids_table,
+      filters_layers: Navarra.project_types.config.filters_layers,
+      timeslider_layers: Navarra.project_types.config.timeslider_layers
+    }
 
-      if (xhr_data_layer && xhr_data_layer.readyState != 4) {
-        xhr_data_layer.abort();
-      }
-      xhr_data_layer = $.ajax({
-        type: 'POST',
-        url: '/projects/search_data_for_pdf',
-        datatype: 'JSON',
-        data: data,
-        success: function(data) {
-          $('.celdlayer').empty();
-          data.forEach(function(data_project){
+    if (xhr_data_layer && xhr_data_layer.readyState != 4) {
+      xhr_data_layer.abort();
+    }
+    xhr_data_layer = $.ajax({
+      type: 'POST',
+      url: '/projects/search_data_for_pdf',
+      datatype: 'JSON',
+      data: data,
+      success: function(data) {
+        // $('.celdlayer').empty();
+        data.forEach(function(data_project){
           data_project.forEach(function(row_layer,index_row){
-              properties_layer= row_layer['properties'];
+            properties_layer = row_layer['properties'];
             $('.header_column_layer').not('.d-none').each(function(){
               // verifica id del proyecto para keys iguales
               id_project_layer = $(this).attr("id_project_layer");
@@ -627,14 +627,60 @@
                 var prop = $(this).attr('key_layer').substring(3);
                 var row_text = row_layer['properties'][prop];
                 if (row_text == undefined ){ row_text = ""}
-                html_div = "<div id_layer_row="+row_layer.id+">"+row_text+"</div>"
-                $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).append(html_div);
+                html_div = "<div id_layer_row=\"" + row_layer.id + "\">" + row_text + "</div>";
+                current_html = $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).html();
+                if(html_div != current_html){
+                  $('.celdlayer_id'+row_layer.cross_layer_record+'.celdlayer_key'+row_layer.project_type_id+'\\|'+prop).append(html_div);
+                }
               }
             })
           });//end forEach
         });
-        },
-      });
+
+        // data.forEach(function(data_project) {
+        //   data_project.forEach(function(row_layer, index_row) {
+        //     var properties_layer = row_layer['properties'];
+        //     var updates = []; // Array para almacenar las actualizaciones necesarias
+        //
+        //     $('.header_column_layer').not('.d-none').each(function() {
+        //       var id_project_layer = $(this).attr("id_project_layer");
+        //       if (id_project_layer == row_layer.project_type_id) {
+        //         var prop = $(this).attr('key_layer').substring(3);
+        //         var row_text = row_layer['properties'][prop];
+        //         if (row_text == undefined) {
+        //           row_text = "";
+        //         }
+        //         var html_div = "<div id_layer_row=\"" + row_layer.id + "\">" + row_text + "</div>";
+        //         var cellSelector = '.celdlayer_id' + row_layer.cross_layer_record + '.celdlayer_key' + row_layer.project_type_id + '\\|' + prop;
+        //         var current_html = $(cellSelector).html();
+        //
+        //         if (html_div != current_html) {
+        //           updates.push({selector: cellSelector, html: html_div});
+        //         }
+        //       }
+        //     });
+        //
+        //     // Realizar todas las actualizaciones de una vez
+        //     updates.forEach(function(update) {
+        //       $(update.selector).append(update.html);
+        //     });
+        //   });
+        // });
+
+
+
+
+
+
+
+
+
+
+
+
+
+      },
+    });
   }
 
   function show_column_layer(key_layer,id_layer){

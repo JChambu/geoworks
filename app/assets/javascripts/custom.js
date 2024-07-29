@@ -1447,19 +1447,20 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
       });
       // termina llenado de la tabla
 
-      if (subfield_ids_saved != undefined) {
-        $('#text_toast').html("Cargando subformularios a la tabla");
+      if (subfield_ids_saved === undefined || subfield_ids_saved === 0) {
+        $('#text_toast').html("Cargando datos de la tabla");
         $('#toast').toast('show');
-        create_subforms_table(subfield_ids_saved);
         hideToast();
       } else {
-        $('#text_toast').html("Cargando datos de la tabla");
+        $('#text_toast').html("Cargando subformularios a la tabla");
         $('#toast').toast('show');
         create_subforms_table(subfield_ids_saved);
         hideToast();
       }
       // Verifica si tiene que crear tabla de capas
-      create_layers_table();
+      if ($('.addcolumns_layers a.d-none').length != 0) {
+        create_layers_table();
+      }
     }
   });
 

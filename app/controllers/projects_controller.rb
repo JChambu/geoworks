@@ -14,17 +14,28 @@ class ProjectsController < ApplicationController
     timeslider_layers = params[:timeslider_layers]
     projects = []
     top_level_project_type_ids.each do |project_type_id|
-      data = Project
-        .select('main.id AS cross_layer_record, sec.id, sec.properties, sec.project_type_id, sec.gwm_created_at, project_statuses.name AS status_name, project_statuses.color AS status_color')
-        .from('projects main')
-        .joins('INNER JOIN projects sec ON ST_Intersects(main.the_geom, sec.the_geom)')
-        .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
-        .where('main.id IN (?)', project_ids)
-        .where('sec.project_type_id = ?', project_type_id)
-        .where('main.row_active = ?', true)
-        .where('main.current_season = ?', true)
-        .where('sec.row_active = ?', true)
-        .where('sec.current_season = ?', true)
+      # data = Project
+      #   .select('main.id AS cross_layer_record, sec.id, sec.properties, sec.project_type_id, sec.gwm_created_at, project_statuses.name AS status_name, project_statuses.color AS status_color')
+      #   .from('projects main')
+      #   .joins('INNER JOIN projects sec ON ST_Intersects(main.the_geom, sec.the_geom)')
+      #   .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
+      #   .where('main.id IN (?)', project_ids)
+      #   .where('sec.project_type_id = ?', project_type_id)
+      #   .where('main.row_active = ?', true)
+      #   .where('main.current_season = ?', true)
+      #   .where('sec.row_active = ?', true)
+      #   .where('sec.current_season = ?', true)
+
+      main_projects = Project.select('projects.id, projects.the_geom, projects.project_status_id')
+                       .where(id: project_ids, row_active: true, current_season: true)
+
+# Consulta principal usando la subconsulta
+data = Project.select('main.id AS cross_layer_record, sec.id, sec.properties, sec.project_type_id, sec.gwm_created_at, project_statuses.name AS status_name, project_statuses.color AS status_color')
+              .from(main_projects, :main)
+              .joins('INNER JOIN projects sec ON ST_Intersects(main.the_geom, sec.the_geom)')
+              .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
+              .where('sec.project_type_id = ? AND sec.row_active = ? AND sec.current_season = ?', project_type_id, true, true)
+              .includes(:project_status) # Eager loading
 
       # Aplica filtros de la capa
           if !filters_layers.nil?
@@ -694,6 +705,6 @@ class ProjectsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_params
     @properties_keys = params[:project][:properties].keys
-    params.require(:project).permit(:geom, :project_type_id, :properties => [@properties_keys]).merge(user_id: current_user.id)
+    params.require(:project).permit(:geom, :project_type_id, :project_status_id, :properties => [@properties_keys]).merge(user_id: current_user.id)
   end
 end
