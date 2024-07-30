@@ -14,70 +14,59 @@ class ProjectsController < ApplicationController
     timeslider_layers = params[:timeslider_layers]
     projects = []
     top_level_project_type_ids.each do |project_type_id|
-      # data = Project
-      #   .select('main.id AS cross_layer_record, sec.id, sec.properties, sec.project_type_id, sec.gwm_created_at, project_statuses.name AS status_name, project_statuses.color AS status_color')
-      #   .from('projects main')
-      #   .joins('INNER JOIN projects sec ON ST_Intersects(main.the_geom, sec.the_geom)')
-      #   .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
-      #   .where('main.id IN (?)', project_ids)
-      #   .where('sec.project_type_id = ?', project_type_id)
-      #   .where('main.row_active = ?', true)
-      #   .where('main.current_season = ?', true)
-      #   .where('sec.row_active = ?', true)
-      #   .where('sec.current_season = ?', true)
-
-      main_projects = Project.select('projects.id, projects.the_geom, projects.project_status_id')
-                       .where(id: project_ids, row_active: true, current_season: true)
-
-# Consulta principal usando la subconsulta
-data = Project.select('main.id AS cross_layer_record, sec.id, sec.properties, sec.project_type_id, sec.gwm_created_at, project_statuses.name AS status_name, project_statuses.color AS status_color')
-              .from(main_projects, :main)
-              .joins('INNER JOIN projects sec ON ST_Intersects(main.the_geom, sec.the_geom)')
-              .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
-              .where('sec.project_type_id = ? AND sec.row_active = ? AND sec.current_season = ?', project_type_id, true, true)
-              .includes(:project_status) # Eager loading
+      data = Project
+        .select('main.id AS cross_layer_record, sec.id, sec.properties, sec.project_type_id, sec.gwm_created_at, project_statuses.name AS status_name, project_statuses.color AS status_color')
+        .from('projects main')
+        .joins('INNER JOIN projects sec ON ST_Intersects(main.the_geom, sec.the_geom)')
+        .joins('INNER JOIN project_statuses ON project_statuses.id = main.project_status_id')
+        .where('main.id IN (?)', project_ids)
+        .where('sec.project_type_id = ?', project_type_id)
+        .where('main.row_active = ?', true)
+        .where('main.current_season = ?', true)
+        .where('sec.row_active = ?', true)
+        .where('sec.current_season = ?', true)
 
       # Aplica filtros de la capa
-          if !filters_layers.nil?
-            active_layer = ProjectType.where(id: project_type_id).pluck(:name_layer).first
-            filters_layer = filters_layers[active_layer]
-            if !filters_layer.nil?
-              filters_layer.each do |i,filter|
-                field = filter["filter_field"]
-                operator = filter["filter_operator"]
-                value = filter["filter_value"]
-                type = filter["field_type"]
-                if(type == '5' and value!='null')
-                  text = "(sec.properties->>'#{field}')::numeric #{operator}'#{value}' AND sec.properties->>'#{field}' IS NOT NULL"
-                elsif (type == '3' and value!='null')
-                  text = "to_date(sec.properties ->> '#{field}', 'DD/MM/YYYY') #{operator} to_date('#{value}','DD/MM/YYYY') AND sec.properties->>'#{field}' IS NOT NULL"
-                else
-                  text = "sec.properties ->> '#{field}' #{operator}'#{value}'"
-                end
-                text = text.gsub("!='null'"," IS NOT NULL ")
-                text = text.gsub("='null'"," IS NULL ")
-                data = data.where(text)
-              end
-            end
-          end
-          # Aplica filtros de time-slider de la capa
-          if !timeslider_layers.nil?
-            active_layer = ProjectType.where(id: project_type_id).pluck(:name_layer).first
-            timeslider_layer = timeslider_layers[active_layer]
-            if timeslider_layer.nil?
-              data = data.where("sec.row_enabled = true")
+      if !filters_layers.nil?
+        active_layer = ProjectType.where(id: project_type_id).pluck(:name_layer).first
+        filters_layer = filters_layers[active_layer]
+        if !filters_layer.nil?
+          filters_layer.each do |i,filter|
+            field = filter["filter_field"]
+            operator = filter["filter_operator"]
+            value = filter["filter_value"]
+            type = filter["field_type"]
+            if(type == '5' and value!='null')
+              text = "(sec.properties->>'#{field}')::numeric #{operator}'#{value}' AND sec.properties->>'#{field}' IS NOT NULL"
+            elsif (type == '3' and value!='null')
+              text = "to_date(sec.properties ->> '#{field}', 'DD/MM/YYYY') #{operator} to_date('#{value}','DD/MM/YYYY') AND sec.properties->>'#{field}' IS NOT NULL"
             else
-              from_date_layer = timeslider_layer["from_date"]
-              to_date_layer = timeslider_layer["to_date"]
-              if !from_date_layer.blank? && !to_date_layer.blank?
-                data = data.where("sec.gwm_created_at BETWEEN '#{from_date_layer}' AND '#{to_date_layer}'")
-              else
-                data = data.where("sec.row_enabled = true")
-              end
+              text = "sec.properties ->> '#{field}' #{operator}'#{value}'"
             end
+            text = text.gsub("!='null'"," IS NOT NULL ")
+            text = text.gsub("='null'"," IS NULL ")
+            data = data.where(text)
+          end
+        end
+      end
+      # Aplica filtros de time-slider de la capa
+      if !timeslider_layers.nil?
+        active_layer = ProjectType.where(id: project_type_id).pluck(:name_layer).first
+        timeslider_layer = timeslider_layers[active_layer]
+        if timeslider_layer.nil?
+          data = data.where("sec.row_enabled = true")
+        else
+          from_date_layer = timeslider_layer["from_date"]
+          to_date_layer = timeslider_layer["to_date"]
+          if !from_date_layer.blank? && !to_date_layer.blank?
+            data = data.where("sec.gwm_created_at BETWEEN '#{from_date_layer}' AND '#{to_date_layer}'")
           else
             data = data.where("sec.row_enabled = true")
           end
+        end
+      else
+        data = data.where("sec.row_enabled = true")
+      end
 
       projects << data
     end
