@@ -104,137 +104,149 @@
     });
   });
   function open_panel(id_panel,id_table){
-  if(id_panel=='view-data-middle' && id_table!=0){
-    $.ajax({
-      type: 'GET',
-      url: '/table_configurations/search_table.json',
-      datatype: 'json',
-      data:{
-        table_configuration_id: id_table,
-      },
-      success: function(data) {
-        $(".fakeLoader").css("display", "block");
-        $('#customLayerModal').css('height', 'calc(100% - 537px)');
-        $('#table_name').val(data.data[0].name);
-        $('#table_name_visible').html(data.data[0].name);
-        $('#table_id').val(data.data[0].id);
-        var config = data.data[0].config;
-        $("#choose").val(config.filter_by.value);
-        $(".filter_by_column").val(config.filter_by.key);
-        $(".order_by_column").val(config.order_by);
-        var per_page_value = config.per_page;
-        if(per_page_value == ""){
-          per_page_value = "mostrar todo"
-        } else {
-          per_page_value = per_page_value+'/pág';
-        }
-        $(".select_perpage").html(per_page_value)
-        //current_project_fields
-        var current_layer_fields = config.current_layer.p_field_keys;
+    if(id_panel=='view-data-middle' && id_table!=0){
+      $.ajax({
+        type: 'GET',
+        url: '/table_configurations/search_table.json',
+        datatype: 'json',
+        data:{
+          table_configuration_id: id_table,
+        },
+        success: function(data) {
+          var config = data.data[0].config;
+          var per_page_value = config.per_page;
+          var total_selected = parseInt($('.kpi_1001').html().replace(".",""));
+
+          if (total_selected >= 500 && per_page_value == "") {
+            $('#text_toast').html("Cargando datos de la tabla, este proceso puede tardar unos minutos");
+            $('#toast').toast('show');
+          } else {
+            $('#text_toast').html("Cargando datos de la tabla");
+            $('#toast').toast('show');
+          }
+
+          $(".fakeLoader").css("display", "block");
+          $('#customLayerModal').css('height', 'calc(100% - 537px)');
+          $('#table_name').val(data.data[0].name);
+          $('#table_name_visible').html(data.data[0].name);
+          $('#table_id').val(data.data[0].id);
+          $("#choose").val(config.filter_by.value);
+          $(".filter_by_column").val(config.filter_by.key);
+          $(".order_by_column").val(config.order_by);
+
+          if(per_page_value == ""){
+            per_page_value = "mostrar todo"
+          } else {
+            per_page_value = per_page_value+'/pág';
+          }
+
+          $(".select_perpage").html(per_page_value)
+          //current_project_fields
+          var current_layer_fields = config.current_layer.p_field_keys;
           //cierra los campos abiertos que no pertenecen a la configuración
-        $('.column_data.d-none').each(function(){
-          var field_key = $(this).attr('id').substring(10);
-          if(current_layer_fields.indexOf(field_key)<0){
-            hide_column(field_key);
-          }
-        });
-        // abre los que pertenecen a la configuración de la tabla
-        current_layer_fields.forEach(function(key){
-          if(!$('#addcolumn_'+key).hasClass('d-none')){
-            $('#addcolumn_'+key).click();
-          }
-        });
-         //project_subfields
-         var subfields_ids = [];
-         var subheader_open_saved = [];
-        if(config.current_layer.project_subfields!=undefined){
-          Object.keys(config.current_layer.project_subfields).forEach(function(key){
-            var id_field_f = config.current_layer.project_subfields[key].p_field_id;
-            subfields_ids.push(id_field_f);
-          // $('.'+id_field_f+'subfield').addClass('d-none');
-            var subfields_ids_children = config.current_layer.project_subfields[key].p_subfields_ids;
-            if(subfields_ids_children!=undefined){
-              subfields_ids_children.forEach(function(id_subfield_child){
-                subheader_object = {
-                  id_field: id_field_f,
-                  id_subfield: id_subfield_child
-                }
-              subheader_open_saved.push(subheader_object);
-              });
+          $('.column_data.d-none').each(function(){
+            var field_key = $(this).attr('id').substring(10);
+            if(current_layer_fields.indexOf(field_key)<0){
+              hide_column(field_key);
             }
           });
+          // abre los que pertenecen a la configuración de la tabla
+          current_layer_fields.forEach(function(key){
+            if(!$('#addcolumn_'+key).hasClass('d-none')){
+              $('#addcolumn_'+key).click();
+            }
+          });
+
+          //project_subfields
+          var subfields_ids = [];
+          var subheader_open_saved = [];
+          if(config.current_layer.project_subfields!=undefined){
+            Object.keys(config.current_layer.project_subfields).forEach(function(key){
+              var id_field_f = config.current_layer.project_subfields[key].p_field_id;
+              subfields_ids.push(id_field_f);
+              // $('.'+id_field_f+'subfield').addClass('d-none');
+              var subfields_ids_children = config.current_layer.project_subfields[key].p_subfields_ids;
+              if(subfields_ids_children!=undefined){
+                subfields_ids_children.forEach(function(id_subfield_child){
+                  subheader_object = {
+                    id_field: id_field_f,
+                    id_subfield: id_subfield_child
+                  }
+                  subheader_open_saved.push(subheader_object);
+                });
+              }
+            });
+          }
+          $('.subfields_data.d-none').each(function(){
+            var subfield_id = $(this).attr('id').substring(12);
+            remove_column(subfield_id);
+          });
+          $('.subfields_data').removeClass('d-none')
+          subfields_ids.forEach(function(subfield_id){
+            $('#open_subform'+subfield_id).addClass('d-none')
+          });
+
+          //cross_layers_fields
+          //cierra las columnas de capas que están abiertas
+          $('.column_data_layer.d-none').each(function(){
+            var field_key = $(this).attr('id').split('|')[1];
+            var cross_layer_id_project = $(this).attr('id').split('|')[2];
+            hide_column_layer(field_key,cross_layer_id_project);
+          });
+
+          $('.column_data_layer').removeClass('d-none');
+          if(config.cross_layers!=undefined){
+            Object.keys(config.cross_layers).forEach(function(key){
+              var cross_layer_field_keys = config.cross_layers[key].p_field_keys;
+              var p_layer_id = config.cross_layers[key].project_type_id;
+              cross_layer_field_keys.forEach(function(sub_key){
+                $('#addcolumn_layer\\|'+sub_key+'\\|'+p_layer_id).addClass('d-none')
+              });
+            });
+          }
+          open_table_middle(true);
+          init_data_dashboard(true,true,subheader_open_saved,true);
         }
+      });
+    } else {
+      if(id_panel=="view-data-middle"){
+        $('#customLayerModal').css('height', 'calc(100% - 537px)');
+        $('#text_toast').html("Cargando datos de la tabla, este proceso puede tardar unos minutos");
+        $('#toast').toast('show');
+        $(".fakeLoader").css("display", "block");
+        $("#choose").val("");
+        $(".filter_by_column").val("");
+        $(".order_by_column").val("");
+        $(".select_perpage").html("20/pág")
+        $('#table_name_visible').html("Datos");
+        $('#table_id').val("");
+        $('#table_name').val("");
+        //cierra columnas que están abiertas y no son pop_up
+        $('.column_data.d-none').not('.is_popup').each(function(){
+          var field_key = $(this).attr('id').substring(10);
+          hide_column(field_key);
+        });
+        //abre columnas popup que están cerradas
+        $('.column_data.is_popup').not('.d-none').each(function(){
+          var field_key = $(this).attr('id').substring(10);
+          show_column(field_key);
+        });
+        // cierra columnas layers que están abiertas
+        $('.column_data_layer.d-none').each(function(){
+          var field_key = $(this).attr('id').split('|')[1];
+          var cross_layer_id_project = $(this).attr('id').split('|')[2];
+          hide_column_layer(field_key,cross_layer_id_project)
+        });
+        //cierra subformularios que están abiertos
         $('.subfields_data.d-none').each(function(){
           var subfield_id = $(this).attr('id').substring(12);
           remove_column(subfield_id);
         });
-        $('.subfields_data').removeClass('d-none')
-        subfields_ids.forEach(function(subfield_id){
-          $('#open_subform'+subfield_id).addClass('d-none')
-        });
-
-        //cross_layers_fields
-        //cierra las columnas de capas que están abiertas
-        $('.column_data_layer.d-none').each(function(){
-          var field_key = $(this).attr('id').split('|')[1];
-          var cross_layer_id_project = $(this).attr('id').split('|')[2];
-          hide_column_layer(field_key,cross_layer_id_project);
-        });
-
-        $('.column_data_layer').removeClass('d-none');
-        if(config.cross_layers!=undefined){
-          Object.keys(config.cross_layers).forEach(function(key){
-            var cross_layer_field_keys = config.cross_layers[key].p_field_keys;
-            var p_layer_id = config.cross_layers[key].project_type_id;
-            cross_layer_field_keys.forEach(function(sub_key){
-              $('#addcolumn_layer\\|'+sub_key+'\\|'+p_layer_id).addClass('d-none')
-            });
-          });
-        }
-
-      open_table_middle(true);
-      init_data_dashboard(true,true,subheader_open_saved,true);
-
+        init_data_dashboard(true,true,undefined,true);
       }
-    });
-  } else{
-    if(id_panel=="view-data-middle"){
-      $('#customLayerModal').css('height', 'calc(100% - 537px)');
-      $(".fakeLoader").css("display", "block");
-      $("#choose").val("");
-      $(".filter_by_column").val("");
-      $(".order_by_column").val("");
-      $(".select_perpage").html("20/pág")
-      $('#table_name_visible').html("Datos");
-      $('#table_id').val("");
-      $('#table_name').val("");
-      //cierra columnas que están abiertas y no son pop_up
-      $('.column_data.d-none').not('.is_popup').each(function(){
-        var field_key = $(this).attr('id').substring(10);
-        hide_column(field_key);
-      });
-      //abre columnas popup que están cerradas
-      $('.column_data.is_popup').not('.d-none').each(function(){
-        var field_key = $(this).attr('id').substring(10);
-        show_column(field_key);
-      });
-      // cierra columnas layers que están abiertas
-      $('.column_data_layer.d-none').each(function(){
-        var field_key = $(this).attr('id').split('|')[1];
-        var cross_layer_id_project = $(this).attr('id').split('|')[2];
-        hide_column_layer(field_key,cross_layer_id_project)
-      });
-      //cierra subformularios que están abiertos
-      $('.subfields_data.d-none').each(function(){
-        var subfield_id = $(this).attr('id').substring(12);
-        remove_column(subfield_id);
-      });
-      init_data_dashboard(true,true,undefined,true);
+      $('#'+id_panel).click();
     }
-    $('#'+id_panel).click();
   }
-
-}
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="nav_bar">

@@ -600,12 +600,12 @@
       $('#text_toast').html("Buscando datos intercapas, por favor espere");
       $('#toast').toast('show');
     }
-      data = {
-        top_level_project_type_ids: top_level_project_type_ids,
-        project_ids: app_ids_table,
-        filters_layers: Navarra.project_types.config.filters_layers,
-        timeslider_layers: Navarra.project_types.config.timeslider_layers
-      }
+    data = {
+      top_level_project_type_ids: top_level_project_type_ids,
+      project_ids: app_ids_table,
+      filters_layers: Navarra.project_types.config.filters_layers,
+      timeslider_layers: Navarra.project_types.config.timeslider_layers
+    }
 
       if (xhr_data_layer && xhr_data_layer.readyState != 4) {
         xhr_data_layer.abort();
@@ -619,7 +619,7 @@
           // $('.celdlayer').empty();
           data.forEach(function(data_project){
           data_project.forEach(function(row_layer,index_row){
-              properties_layer= row_layer['properties'];
+            properties_layer = row_layer['properties'];
             $('.header_column_layer').not('.d-none').each(function(){
               // verifica id del proyecto para keys iguales
               id_project_layer = $(this).attr("id_project_layer");
@@ -636,8 +636,8 @@
             })
           });//end forEach
         });
-        },
-      });
+      },
+    });
   }
 
   function show_column_layer(key_layer,id_layer){
