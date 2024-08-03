@@ -52,6 +52,16 @@ Navarra.geomaps = function() {
           $('#checkbox_distritito_minero_occidental_malargue').click();
           $('#checkbox_cateos').click();
         }
+        $('div[id^="div_layer_"]').each(function() {
+      		var divId = $(this).attr('id');
+          var prefix = "div_layer_";
+          var layerId = divId.replace(prefix, "");
+      		var savedState = localStorage.getItem(layerId);
+
+          if (savedState === 'hidden') {
+            $(this).addClass('d-none');
+          }
+      	});
       } // Cierra success
     }) // Cierra ajax
 

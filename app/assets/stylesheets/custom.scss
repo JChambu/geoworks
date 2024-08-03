@@ -1141,8 +1141,8 @@ div.custom-menu.show {
 }
 
 .layer-section h5 {
-  margin: 7px 0 2px 2px;
-  padding: 0 10px;
+  margin: 7px 0 9px 2px;
+  padding: 0 2px;
 }
 
 #custom_layer_control_button {
@@ -1158,4 +1158,79 @@ div.custom-menu.show {
   background-color: rgba(39, 43, 48, 0.9);
   z-index: 10;
   padding: 10px;
+}
+
+.dropdown-admin-layer {
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdown-admin-layer-layers {
+  margin: 0;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+}
+
+.chevron-icon {
+  cursor: pointer;
+}
+
+.toggle-visibility-icon {
+  margin-right: 6px;
+}
+
+.chevron-icon {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.drag_and_drop_icon {
+  font-size: 11px;
+  cursor: grab;
+  margin-left: 2px;
+}
+
+#dropdown-pr-menu {
+  position: fixed;
+  background-color: rgba(39, 43, 48, 0.8);
+  border: 1px solid #ccc;
+  left: 48%;
+  top: 20%;
+  transform: translate(-53%, 0);
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  width: 300px;
+  z-index: 3000;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.dropdown-pr-menu .label_hidden_layers {
+  padding: 10px;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+}
+
+.remove-project {
+  border: none;
+  color: white;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.remove-project:hover {
+  text-decoration: underline;
+}
+
+.project-item {
+  padding: 6px;
 }
