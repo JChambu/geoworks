@@ -1329,16 +1329,13 @@ class ProjectTypesController < ApplicationController
   # GET /project_types
   # GET /project_types.json
   def index
-
     @has_project_types = HasProjectType.where(user_id: current_user.id).select(:project_type_id)
     @p =[]
     @has_project_types.each do |s| @p.push(s.project_type_id) end
-    @project_types = ProjectType.order(id: :desc).where(id: @p)
+    @project_types = ProjectType.order(name: :asc).where(id: @p)
     if !params[:search_project].nil? || !params[:search_project].blank?
       @project_types = @project_types.where("name ILIKE :name", name: "%#{params[:search_project]}%")
     end
-    @project_types = @project_types.paginate(:page => params[:page])
-
   end
 
   # GET /project_types/1
