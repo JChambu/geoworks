@@ -107,9 +107,9 @@ es:
   layers_manager:
     layers_manager: 'Administrador de Capas'
     basemaps: 'Mapas Base'
-    active_layer: 'Herramientas de la Capa Activa'
-    other_layers: 'Superponer Otras Capas'
-    external_layers: 'Activar Capas Externas'
+    active_layer: 'Capa Activa'
+    other_layers: 'Capas Adicionales'
+    external_layers: 'Capas Externas'
   temporal_range:
     temporal_range: 'Rango Temporal'
   active_filter:

@@ -1137,7 +1137,7 @@ div.custom-menu.show {
 }
 
 .layer-section {
-  margin-bottom: 1px;
+  margin-bottom: 4px;
 }
 
 .layer-section h5 {
@@ -1231,6 +1231,41 @@ div.custom-menu.show {
   text-decoration: underline;
 }
 
-.project-item {
+.layer-item {
+  padding: 6px;
+}
+
+#dropdown-exlayer-menu {
+  position: fixed;
+  background-color: rgba(39, 43, 48, 0.8);
+  border: 1px solid #ccc;
+  left: 48%;
+  top: 20%;
+  transform: translate(-53%, 0);
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  width: 370px;
+  z-index: 3000;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.dropdown-exlayer-menu .label_hidden_external_layers {
+  padding: 10px;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+}
+
+.remove-external-layer {
+  border: none;
+  color: white;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.remove-external-layer:hover {
+  text-decoration: underline;
+}
+
+.ext-layer-item {
   padding: 6px;
 }
