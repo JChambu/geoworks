@@ -109,6 +109,7 @@ Rails.application.routes.draw do
     resources :regexp_types
     resources :events
     resources :model_types
+    resources :folders
 
 
     namespace :admin do
@@ -134,6 +135,9 @@ Rails.application.routes.draw do
     end
 
     resources :project_types do
+      member do
+        post :save_folder_association
+      end
       resources :dashboards do
         get 'create_graph'
         resources :graphics

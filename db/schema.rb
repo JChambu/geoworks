@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20240726024312) do
+ActiveRecord::Schema.define(version: 20240808002058) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -153,6 +153,12 @@ ActiveRecord::Schema.define(version: 20240726024312) do
   end
 
   create_table "field_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "folders", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -379,6 +385,8 @@ ActiveRecord::Schema.define(version: 20240726024312) do
     t.string "notification_email"
     t.boolean "iot", default: false
     t.boolean "multipoints", default: false
+    t.bigint "folder_id"
+    t.index ["folder_id"], name: "index_project_types_on_folder_id"
     t.index ["user_id"], name: "index_project_types_on_user_id"
   end
 
@@ -508,6 +516,7 @@ ActiveRecord::Schema.define(version: 20240726024312) do
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_filters", "project_types"
   add_foreign_key "project_statuses", "project_types"
+  add_foreign_key "project_types", "folders"
   add_foreign_key "projects", "project_statuses"
   add_foreign_key "projects", "project_types"
 end

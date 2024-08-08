@@ -17,6 +17,7 @@
         <% end %>
       </div>
       <div class="col-md-4 text-right">
+        <%= link_to 'Nueva Carpeta', folders_path, class: "btn btn-primary" %>
         <% if can? :project_types, :new %>
           <%= link_to 'Nuevo', new_project_type_path, class: "btn btn-primary" %>
         <% else %>
@@ -36,6 +37,7 @@
           <th>Nombre</th>
           <th>Registros</th>
           <th colspan="2">Detalle</th>
+          <th>Carpeta</th>
           <th class="text-center" colspan="3">Acciones</th>
         </thead>
         <tbody>
@@ -53,6 +55,19 @@
               <% else %>
                 <td><a class="unselectable" href="#">Estados</a></td>
               <% end %>
+              <td style="width: 587px;">
+                <%= form_with url: save_folder_association_project_type_path(project_type), method: :post, local: true do |form| %>
+                  <%= form.collection_select :folder_id, Folder.all, :id, :name, { prompt: "Seleccionar una carpeta" }, { class: 'select-folder', style: 'width: 219px' } %>
+                  <%= form.submit 'Guardar', class: 'btn btn-primary btn-sm', style: 'margin-left: 10px;' %>
+                  <% if project_type.folder %>
+                    <span class="current-folder" style="margin-left: 10px;">
+                      Asociado a: <%= project_type.folder.name %>
+                    </span>
+                  <% else %>
+                    <span class="current-folder" style="margin-left: 10px;">No asociado</span>
+                  <% end %>
+                <% end %>
+              </td>
               <% if can? :project_types, :share %>
                 <td class="text-center"><%= link_to project_type_share_path(project_type.id) , id: "share", :remote=> true  do  %> <i class="fas fa-share-alt" title="Compartir"></i> <%end %></td>
               <% else %>
