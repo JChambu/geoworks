@@ -1172,6 +1172,12 @@ div.custom-menu.show {
   align-items: center;
 }
 
+.header-container-other {
+  display: grid;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .dropdown-admin-layer-layers {
   margin: 0;
 }
