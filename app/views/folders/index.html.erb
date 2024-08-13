@@ -22,6 +22,7 @@
         <thead>
           <tr>
             <th>Nombre</th>
+            <th>Proyectos Asociados</th>
             <th class="text-center">Acciones</th>
           </tr>
         </thead>
@@ -29,6 +30,11 @@
           <% @folders.each do |folder| %>
             <tr>
               <td><%= folder.name %></td>
+              <td>
+                <% folder.project_types.each do |project_type| %>
+                  <div><%= project_type.name %></div>
+                <% end %>
+              </td>
               <td class="text-center">
                 <%= link_to edit_folder_path(folder) do %> <i class="fas fa-edit" title="Editar" style="margin-right:7px;"></i><% end %>
                 <%= link_to folder, method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt" title="Eliminar"></i> <%end%>

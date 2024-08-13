@@ -144,13 +144,13 @@ div.custom-menu.show {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-#projects_menu {
-  max-width: 20vw;
-  max-height: 80vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  text-overflow: ellipsis;
-}
+// #projects_menu {
+//   max-width: 20vw;
+//   max-height: 80vh;
+//   overflow-y: auto;
+//   overflow-x: hidden;
+//   text-overflow: ellipsis;
+// }
 #current_project_menu {
   min-width: auto;
 }
@@ -1279,4 +1279,24 @@ div.custom-menu.show {
   background-color: #fff;
   font-size: 0.8203125rem;
   color: #52575C;
+}
+
+.dropdown-folder-submenu {
+  position: relative;
+}
+
+.dropdown-folder-submenu .dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: 0;
+}
+
+.dropdown-folder-submenu:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-folder-submenu a.dropdown-toggle::after {
+  display: none;
 }
