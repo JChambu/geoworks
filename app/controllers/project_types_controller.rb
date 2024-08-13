@@ -22,6 +22,12 @@ class ProjectTypesController < ApplicationController
     end
   end
 
+  def remove_folder
+    @project_type = ProjectType.find(params[:id])
+    @project_type.update(folder_id: nil)
+    redirect_to project_types_path, notice: 'La asociación con la carpeta ha sido eliminada.'
+  end
+
   def get_added_layer_data
     name_added_layer = params[:layer_label_new]
 

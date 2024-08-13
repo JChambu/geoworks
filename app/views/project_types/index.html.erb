@@ -63,6 +63,9 @@
                     <span class="current-folder" style="margin-left: 10px;">
                       Asociado a: <%= project_type.folder.name %>
                     </span>
+                    <%= link_to remove_folder_project_type_path(project_type), method: :delete, data: { confirm: '¿Estás seguro de que quieres eliminar esta asociación?' }, style: "margin-left: 5px;" do %>
+                      <i class="fas fa-times" style="font-size: 14px;" title="Eliminar asociación"></i>
+                    <% end %>
                   <% else %>
                     <span class="current-folder" style="margin-left: 10px;">No asociado</span>
                   <% end %>

@@ -137,6 +137,7 @@ Rails.application.routes.draw do
     resources :project_types do
       member do
         post :save_folder_association
+        delete :remove_folder
       end
       resources :dashboards do
         get 'create_graph'
