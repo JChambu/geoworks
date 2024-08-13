@@ -43,19 +43,19 @@
         <tbody>
           <% @project_types.each do |project_type| %>
             <tr>
-              <td><%= project_type.name %></td>
-              <td><%= project_type.projects.count %></td>
+              <td style="width: 420px;"><%= project_type.name %></td>
+              <td style="width: 120px;"><%= project_type.projects.count %></td>
               <% if can? :projects, :visualizer %>
-                <td><%= link_to 'Datos', project_type_projects_path(project_type) %></td>
+                <td style="width: 140px;"><%= link_to 'Datos', project_type_projects_path(project_type) %></td>
               <% else %>
-                <td><a class="unselectable" href="#">Datos</a></td>
+                <td style="width: 140px;"><a class="unselectable" href="#">Datos</a></td>
               <% end %>
               <% if can? :statuses, :visualizer %>
-                <td><%= link_to 'Estados', project_type_project_statuses_path(project_type) %></td>
+                <td style="width: 140px;"><%= link_to 'Estados', project_type_project_statuses_path(project_type) %></td>
               <% else %>
                 <td><a class="unselectable" href="#">Estados</a></td>
               <% end %>
-              <td style="width: 587px;">
+              <td style="width: 650px;">
                 <%= form_with url: save_folder_association_project_type_path(project_type), method: :post, local: true do |form| %>
                   <%= form.collection_select :folder_id, Folder.all, :id, :name, { prompt: "Seleccionar una carpeta" }, { class: 'select-folder', style: 'width: 219px' } %>
                   <%= form.submit 'Guardar', class: 'btn btn-primary btn-sm', style: 'margin-left: 10px;' %>
@@ -72,19 +72,19 @@
                 <% end %>
               </td>
               <% if can? :project_types, :share %>
-                <td class="text-center"><%= link_to project_type_share_path(project_type.id) , id: "share", :remote=> true  do  %> <i class="fas fa-share-alt" title="Compartir"></i> <%end %></td>
+                <td class="text-center" style="width: 80px;"><%= link_to project_type_share_path(project_type.id) , id: "share", :remote=> true  do  %> <i class="fas fa-share-alt" title="Compartir"></i> <%end %></td>
               <% else %>
-                <td class="text-center"><i class="fas fa-share-alt unselectable" title="Compartir"></i></td>
+                <td class="text-center" style="width: 80px;"><i class="fas fa-share-alt unselectable" title="Compartir"></i></td>
               <% end %>
               <% if can? :project_types, :edit %>
-                <td class="text-center"><%= link_to edit_project_type_path(project_type) do  %> <i class="fas fa-edit" title="Editar"></i> <%end %></td>
+                <td class="text-center" style="width: 80px;"><%= link_to edit_project_type_path(project_type) do  %> <i class="fas fa-edit" title="Editar"></i> <%end %></td>
               <% else %>
-                <td class="text-center"><i class="fas fa-edit unselectable" title="Editar"></i></td>
+                <td class="text-center" style="width: 80px;"><i class="fas fa-edit unselectable" title="Editar"></i></td>
               <% end %>
               <% if can? :project_types, :destroy %>
-                <td class="text-center"><%= link_to project_type_path(project_type), method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt" title="Eliminar"></i> <%end%></td>
+                <td class="text-center" style="width: 80px;"><%= link_to project_type_path(project_type), method: :delete, data: { confirm: '¿Está seguro?' } do %> <i class="fas fa-trash-alt" title="Eliminar"></i> <%end%></td>
               <% else %>
-                <td class="text-center"><i class="fas fa-trash-alt unselectable" title="Eliminar"></i></td>
+                <td class="text-center" style="width: 80px;"><i class="fas fa-trash-alt unselectable" title="Eliminar"></i></td>
               <% end %>
             </tr>
             <%= render "share" %>

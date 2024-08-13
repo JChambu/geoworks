@@ -64,7 +64,7 @@ class TableConfigurationsController < ApplicationController
 
     users_to_share = User.joins(:user_customers)
                      .where(user_customers: {customer_id: customer_id})
-                     .where.not(id: HasProjectType.select(:user_id).where(project_type_id: project_type_id))
+                     .where(id: HasProjectType.select(:user_id).where(project_type_id: project_type_id))
                      .where.not(id: existing_user_ids)
                      .sorted_by_name
                      .map { |user| [user.some_identifier, user.id] }

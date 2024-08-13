@@ -325,7 +325,7 @@
             <%= t('navbar_elements.project') %>
           <% end %>
         </a>
-        <div class="dropdown-menu" id="projects_menu" aria-labelledby="projects_dropdown">
+        <div class="dropdown-menu" id="projects_menu" aria-labelledby="projects_dropdown" style="width:320px;">
           <% if can? :project_types, :new %>
             <%= link_to t('navbar_elements.new_layer'), new_project_type_path, class: "dropdown-item" %>
           <% end %>
@@ -337,7 +337,7 @@
                 <i class="fas fa-chevron-right" style="float: right;"></i>
               </a>
               <ul class="dropdown-menu">
-                <% folder.project_types.each do |project_type| %>
+                <% (folder.project_types & project_types_for_layout.to_a).each do |project_type| %>
                   <% if @project_type.nil? || @project_type.name != project_type.name %>
                     <li>
                       <%= link_to project_type.name, dashboards_show_path(project_type_id: project_type.id), class: "dropdown-item" %>
@@ -348,8 +348,8 @@
             </div>
           <% end %>
           <div class="dropdown-folder-submenu">
-            <% ProjectType.left_joins(:folder).where(folders: { id: nil }).each do |project_type| %>
-              <% if @project_type.nil? || @project_type.name != project_type.name %>
+            <% project_types_for_layout.left_joins(:folder).where(folders: { id: nil }).each do |project_type| %>
+              <% if project_types_for_layout.include?(project_type) && (@project_type.nil? || @project_type.name != project_type.name) %>
                 <a>
                   <%= link_to project_type.name, dashboards_show_path(project_type_id: project_type.id), class: "dropdown-item" %>
                 </a>
