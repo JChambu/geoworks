@@ -26,6 +26,7 @@ class ProjectType < ApplicationRecord
   has_many :project_filters, dependent: :destroy
   has_many :analytics_dashboard, dependent: :destroy
   has_many :api_connection
+  belongs_to :folder, optional: true
   accepts_nested_attributes_for :project_fields, allow_destroy: true
   accepts_nested_attributes_for :projects, allow_destroy: true
 

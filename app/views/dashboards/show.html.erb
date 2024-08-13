@@ -283,6 +283,118 @@
       $('#filter-body').on('click', '#close_point_color', handleCloseSidebar);
       $('#filter-body').on('click', '#quick_filters_close_button', handleCloseSidebar);
       $('#filter-body').on('click', '#close_point_color_quick_filters', handleCloseSidebar);
+
+      $('.chevron-icon').click(function(event) {
+        var content = $(this).closest('.layer-section').find('.dropdown-content');
+        content.toggle();
+        $(this).toggleClass('rotated');
+        event.stopPropagation();
+      });
+
+      $('#layer-sections-container').sortable({
+        handle: '.drag_and_drop_icon',
+        update: function(event, ui) {
+          var order = $(this).sortable('toArray');
+          localStorage.setItem('layerSectionsOrder', JSON.stringify(order));
+        }
+      });
+
+      var savedOrder = localStorage.getItem('layerSectionsOrder');
+      if (savedOrder) {
+        savedOrder = JSON.parse(savedOrder);
+        $.each(savedOrder, function(index, sectionId) {
+          $('#' + sectionId).appendTo('#layer-sections-container');
+        });
+      }
+
+      $('#enable_layers').click(function() {
+        $('#dropdown-pr-menu').empty();
+        $('#dropdown-pr-menu').append('<div class="label_hidden_layers">Capas ocultas:</div>');
+        let hiddenCount = 0;
+        $('div[id^="div_layer_"]').each(function() {
+          if ($(this).hasClass('d-none')) {
+            hiddenCount++;
+            var layerid = $(this).attr('id').replace('div_layer_', '');
+            var layerName = $(this).find('label').eq(1).text()
+            $('#dropdown-pr-menu').append(
+            '<div class="layer-item" data-layer-id="' + layerid + '">' +
+              '<i class="fas fa-eye remove-layer" style="cursor: pointer; padding: 5px 9px;color:#9b9b9b;" title="Habilitar Capa" data-layer-id="' + layerid + '"></i> ' + layerName +
+            '</div>'
+            );
+          }
+        });
+        if (hiddenCount === 0) {
+          $('#dropdown-pr-menu').append('<div class="layer-item" style="margin:6px;">No hay capas ocultas</div>');
+        }
+        $('#dropdown-pr-menu').toggleClass('d-none');
+      });
+
+      $(document).on('click', '.remove-layer', function() {
+        var layerId = $(this).data('layer-id');
+        $('#div_layer_' + layerId).removeClass('d-none');
+        $(this).closest('.layer-item').remove();
+        localStorage.removeItem(layerId);
+        $('#enable_layers').click();
+        $('#enable_layers').click();
+      });
+
+      $(document).click(function(event) {
+        if (!$(event.target).closest('#enable_layers, #dropdown-pr-menu').length) {
+          $('#dropdown-pr-menu').addClass('d-none');
+        }
+      });
+
+      $('#enable_external_layers').click(function() {
+        $('#dropdown-exlayer-menu').empty();
+        $('#dropdown-exlayer-menu').append('<div class="label_hidden_external_layers">Capas Externas ocultas:</div>');
+        let hiddenCount = 0;
+        $('a[id^="external_layer_"]').each(function() {
+          if ($(this).hasClass('d-none')) {
+            hiddenCount++;
+            var extLayerId = $(this).attr('id').replace('external_layer_', '');
+            var extLayerName = $(this).find('label').eq(1).text()
+            $('#dropdown-exlayer-menu').append(
+            '<div class="ext-layer-item" data-ext-layer-id="' + extLayerId + '">' +
+              '<i class="fas fa-eye remove-external-layer" style="cursor: pointer; padding: 5px 9px;color:#9b9b9b;" title="Habilitar Capa" data-ext-layer-id="' + extLayerId + '"></i> ' + extLayerName +
+            '</div>'
+            );
+          }
+        });
+        if (hiddenCount === 0) {
+          $('#dropdown-exlayer-menu').append('<div class="ext-layer-item" style="margin:6px;">No hay capas externas ocultas</div>');
+        }
+        $('#dropdown-exlayer-menu').toggleClass('d-none');
+      });
+
+      $(document).on('click', '.remove-external-layer', function() {
+        var extLayerId = $(this).data('ext-layer-id');
+        var escapedElementId = extLayerId.replace(/:/g, '\\:');
+        $('#external_layer_' + escapedElementId).removeClass('d-none');
+        $(this).closest('.ext-layer-item').remove();
+        localStorage.removeItem(extLayerId);
+        $('#dropdown-exlayer-menu').toggleClass('d-none');
+      });
+
+      $(document).click(function(event) {
+        if (!$(event.target).closest('#enable_external_layers, #dropdown-pr-menu').length) {
+          $('#dropdown-exlayer-menu').addClass('d-none');
+        }
+      });
+    });
+
+    $(document).on('click', '.toggle-visibility-icon', function() {
+      var elementClass = $(this).attr('id');
+      var targetDiv = $('#div_layer_' + elementClass);
+      targetDiv.addClass('d-none');
+      localStorage.setItem(elementClass, 'hidden');
+    });
+
+    $(document).on('click', '.hidde-external-layers', function() {
+      var elementClass = $(this).attr('id').trim();
+      var escapedElementId = elementClass.replace(/:/g, '\\:');
+      var targetDiv = $('#external_layer_' + escapedElementId);
+      targetDiv.addClass('d-none');
+      localStorage.setItem(elementClass, 'hidden');
     });
   </script>
 <% end %>
@@ -427,25 +539,57 @@
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <div class="layer-section">
-      <h5><%= t('layers_manager.basemaps') %>:</h5>
-      <div id="basemaps_container"></div>
-      <hr style="background-color: white">
+
+    <div id="layer-sections-container">
+      <div class="layer-section" id="basemaps_section">
+        <h5 class="dropdown-admin-layer">
+          <i class="fas fa-arrows-alt drag_and_drop_icon"></i>
+          <%= t('layers_manager.basemaps') %>
+          <i class="fas fa-chevron-down chevron-icon"></i>
+        </h5>
+        <div id="basemaps_container" class="dropdown-content"></div>
+      </div>
+
+      <div class="layer-section" id="active_layer_section">
+        <h5 class="dropdown-admin-layer">
+          <i class="fas fa-arrows-alt drag_and_drop_icon"></i>
+          <%= t('layers_manager.active_layer') %>
+          <i class="fas fa-chevron-down chevron-icon"></i>
+        </h5>
+        <div id="activeproject_container" class="dropdown-content"></div>
+      </div>
+
+      <div class="layer-section" id="other_layers_section">
+        <div class="header-container">
+          <h5 class="dropdown-admin-layer-layers">
+            <i class="fas fa-arrows-alt drag_and_drop_icon"></i>
+            <%= t('layers_manager.other_layers') %>
+            <i class="fas fa-chevron-down chevron-icon"></i>
+          </h5>
+          <div class="icon-container">
+            <i id="enable_layers" class="fas fa-eye" title="Capas Ocultas" style="cursor: pointer;margin-right:4px;"></i>
+            <div id="dropdown-pr-menu" class="dropdown-pr-menu d-none"></div>
+          </div>
+        </div>
+        <div id="projects_container" class="dropdown-content"></div>
+      </div>
+
+      <div class="layer-section" id="external_layers_section">
+        <div class="header-container">
+          <h5 class="dropdown-admin-layer">
+            <i class="fas fa-arrows-alt drag_and_drop_icon"></i>
+            <%= t('layers_manager.external_layers') %>
+            <i class="fas fa-chevron-down chevron-icon"></i>
+          </h5>
+          <div class="icon-container">
+            <i id="enable_external_layers" class="fas fa-eye" title="Capas Ocultas" style="cursor: pointer;margin-right:4px;"></i>
+            <div id="dropdown-exlayer-menu" class="dropdown-exlayer-menu d-none"></div>
+          </div>
+        </div>
+        <div id="externallayers_container" class="dropdown-content"></div>
+      </div>
     </div>
-    <div class="layer-section">
-      <h5><%= t('layers_manager.active_layer') %>:</h5>
-      <div id="activeproject_container"></div>
-      <hr style="background-color: white">
-    </div>
-    <div class="layer-section">
-      <h5><%= t('layers_manager.other_layers') %>:</h5>
-      <div id="projects_container"></div>
-      <hr style="background-color: white">
-    </div>
-    <div class="layer-section">
-      <h5><%= t('layers_manager.external_layers') %>:</h5>
-      <div id="externallayers_container"></div>
-    </div>
+
   </div>
 </div>
 <% if can? :data, :edit_geom %>

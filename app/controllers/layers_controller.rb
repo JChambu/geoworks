@@ -33,7 +33,7 @@ class LayersController < ApplicationController
   # POST /layers.json
   def create
     @layer = Layer.new(layer_params)
-
+    @layer.layer = @layer.layer.strip
     respond_to do |format|
       if @layer.save
         format.html { redirect_to layers_path, notice: 'Layer was successfully created.' }

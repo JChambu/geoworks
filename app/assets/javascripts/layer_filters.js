@@ -2,9 +2,10 @@ Navarra.namespace("layer_filters");
 Navarra.layer_filters = function() {
 	function init(layer, label_layer){
 		var new_item =
-		'<div>' +
+		'<div id="div_layer_' + layer + '">' +
 			'<a class="dropdown-item layer_div layer_div_' + layer + '" href="#">' +
 				'<div class="d-inline mr-3 pr-4">' +
+					'<i id="' + layer + '" class="fas fa-eye-slash toggle-visibility-icon" title="Ocultar Capa" style="margin-right:7px"></i>' +
 					'<div class="custom-control custom-checkbox">' +
 						'<input class="custom-control-input" onchange="select_layer()" id="checkbox_' + layer + '" type="checkbox" name="radio_mapabase">' +
 						'<label id="checkboxlabel_' + layer + '" class="string optional control-label custom-control-label" for="checkbox_' + layer + '"> </label>' +

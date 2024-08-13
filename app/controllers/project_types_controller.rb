@@ -13,6 +13,21 @@ class ProjectTypesController < ApplicationController
     render json: {"data": @project_name}
   end
 
+  def save_folder_association
+    @project_type = ProjectType.find(params[:id])
+    if @project_type.update(folder_id: params[:folder_id])
+      redirect_to project_types_path, notice: 'La carpeta se asoció correctamente.'
+    else
+      redirect_to project_types_path, alert: 'Falló la asociación con la carpeta.'
+    end
+  end
+
+  def remove_folder
+    @project_type = ProjectType.find(params[:id])
+    @project_type.update(folder_id: nil)
+    redirect_to project_types_path, notice: 'La asociación con la carpeta ha sido eliminada.'
+  end
+
   def get_added_layer_data
     name_added_layer = params[:layer_label_new]
 
@@ -1329,16 +1344,13 @@ class ProjectTypesController < ApplicationController
   # GET /project_types
   # GET /project_types.json
   def index
-
     @has_project_types = HasProjectType.where(user_id: current_user.id).select(:project_type_id)
     @p =[]
     @has_project_types.each do |s| @p.push(s.project_type_id) end
-    @project_types = ProjectType.order(id: :desc).where(id: @p)
+    @project_types = ProjectType.order(name: :asc).where(id: @p)
     if !params[:search_project].nil? || !params[:search_project].blank?
       @project_types = @project_types.where("name ILIKE :name", name: "%#{params[:search_project]}%")
     end
-    @project_types = @project_types.paginate(:page => params[:page])
-
   end
 
   # GET /project_types/1
@@ -1515,7 +1527,7 @@ class ProjectTypesController < ApplicationController
   def project_type_params
     params.require(:project_type).permit(
       :name, :type_file, :latitude, :longitude, :name_layer, :address, :department, :province, :country, :enabled_as_layer, :layer_color, :notification_email,
-      :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition, :enable_period, :level, :iot, :multipoints,
+      :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition, :enable_period, :level, :iot, :multipoints, :folder_id,
       project_fields_attributes: [
         :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
         :choice_list_id, :hidden, :read_only, :popup, :data_table, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,

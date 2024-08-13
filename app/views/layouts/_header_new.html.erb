@@ -102,6 +102,12 @@
         $('#gis_dropdown_menu').css('z-index', 2000);
       }
     });
+
+    $('.dropdown-folder-submenu a.dropdown-toggle').on("click", function(e){
+      $(this).next('ul').toggle();
+      e.stopPropagation();
+      e.preventDefault();
+    });
   });
   function open_panel(id_panel,id_table){
     if(id_panel=='view-data-middle' && id_table!=0){
@@ -324,13 +330,32 @@
             <%= link_to t('navbar_elements.new_layer'), new_project_type_path, class: "dropdown-item" %>
           <% end %>
           <div class="dropdown-divider"></div>
-          <% if !@project_type.nil? %>
-            <% project_types_for_layout.each do |project| %>
-              <% if @project_type.name != project.name %>
-                <%= link_to "#{project.name}", dashboards_show_path(project_type_id: project.id), class: "dropdown-item" %>
+          <% Folder.includes(:project_types).each do |folder| %>
+            <div class="dropdown-folder-submenu">
+              <a class="dropdown-item dropdown-toggle" style="font-weight: bold" href="#">
+                <%= folder.name %>
+                <i class="fas fa-chevron-right" style="float: right;"></i>
+              </a>
+              <ul class="dropdown-menu">
+                <% folder.project_types.each do |project_type| %>
+                  <% if @project_type.nil? || @project_type.name != project_type.name %>
+                    <li>
+                      <%= link_to project_type.name, dashboards_show_path(project_type_id: project_type.id), class: "dropdown-item" %>
+                    </li>
+                  <% end %>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+          <div class="dropdown-folder-submenu">
+            <% ProjectType.left_joins(:folder).where(folders: { id: nil }).each do |project_type| %>
+              <% if @project_type.nil? || @project_type.name != project_type.name %>
+                <a>
+                  <%= link_to project_type.name, dashboards_show_path(project_type_id: project_type.id), class: "dropdown-item" %>
+                </a>
               <% end %>
             <% end %>
-          <% end %>
+          </div>
         </div>
       </li>
       <% end %>
