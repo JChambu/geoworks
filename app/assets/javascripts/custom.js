@@ -171,6 +171,7 @@ function init_kpi(size_box = null) {
 }; // Cierra init_kpi
 
 function set_kpi_navbar(element,is_default, indicator_id){
+  console.log('Test');
   var count_element = element['data'][0]['count'];
   if (element['title'] == 'Seleccionado') {
     if ($("#choose").val() == "") {
