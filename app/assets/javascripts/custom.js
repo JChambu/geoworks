@@ -41,7 +41,7 @@ Number.prototype.format = function(n, x, s, c) {
   return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
 };
 
-function init_kpi(size_box = null) {
+function init_kpi(size_box = null, default_kpis = false) {
   $('#div_pagination').css("visibility","hidden");
   $('.tile_count').empty();
   var type_box = 'polygon';
@@ -131,39 +131,41 @@ function init_kpi(size_box = null) {
             }); // Cierra forEach
             $('#div_pagination').css("visibility","visible");
             // indicadores generados por el usuario
-            indicators_id.forEach(function(indicator_id,index_kpi){
-              xhr_kpi[index_kpi+1] = $.ajax({
-                type: 'POST',
-                url: '/project_types/kpi.json',
-                datatype: 'json',
-                data: {
-                  is_default: false,
-                  data_id: data_id,
-                  size_box: size_box,
-                  graph: false,
-                  type_box: type_box,
-                  data_conditions: attribute_filters,
-                  filtered_form_ids: filtered_form_ids,
-                  from_date: from_date,
-                  to_date: to_date,
-                  from_date_subform: from_date_subforms,
-                  to_date_subform: to_date_subforms,
-                  filter_children:filter_children,
-                  filter_user_children:filter_user_children,
-                  indicator_id: indicator_id,
-                  timeslider_layers: Navarra.project_types.config.timeslider_layers,
-                  filters_layers: Navarra.project_types.config.filters_layers,
-                  intersect_width_layers: intersect_width_layers,
-                  active_layers: active_layers
-                },
-                dashboard_id: dashboard_id,
-                success: function(data) {
-                  data.forEach(function(element) {
-                    set_kpi_navbar(element, false , indicator_id)
-                  }); // Cierra forEach
-                } // Cierra success
-              }); // Cierra ajax
-            }); // Cierra forEach
+            if (default_kpis == false) {
+              indicators_id.forEach(function(indicator_id,index_kpi){
+                xhr_kpi[index_kpi+1] = $.ajax({
+                  type: 'POST',
+                  url: '/project_types/kpi.json',
+                  datatype: 'json',
+                  data: {
+                    is_default: false,
+                    data_id: data_id,
+                    size_box: size_box,
+                    graph: false,
+                    type_box: type_box,
+                    data_conditions: attribute_filters,
+                    filtered_form_ids: filtered_form_ids,
+                    from_date: from_date,
+                    to_date: to_date,
+                    from_date_subform: from_date_subforms,
+                    to_date_subform: to_date_subforms,
+                    filter_children:filter_children,
+                    filter_user_children:filter_user_children,
+                    indicator_id: indicator_id,
+                    timeslider_layers: Navarra.project_types.config.timeslider_layers,
+                    filters_layers: Navarra.project_types.config.filters_layers,
+                    intersect_width_layers: intersect_width_layers,
+                    active_layers: active_layers
+                  },
+                  dashboard_id: dashboard_id,
+                  success: function(data) {
+                    data.forEach(function(element) {
+                      set_kpi_navbar(element, false , indicator_id)
+                    }); // Cierra forEach
+                  } // Cierra success
+                }); // Cierra ajax
+              }); // Cierra forEach
+            }
           } // Cierra success de indicadores por default
         }); // Cierra ajax de indicadores por default
     }// Cierra success ids de indicadores

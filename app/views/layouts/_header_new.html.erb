@@ -250,7 +250,12 @@
         });
         init_data_dashboard(true,true,undefined,true);
       }
-      $('#'+id_panel).click();
+      if (id_panel == 'view-charts') {
+        Navarra.geomaps.show_kpis();
+        setTimeout(function(){
+          $('#'+id_panel).click();
+        }, 1000);
+      }
     }
   }
 </script>
