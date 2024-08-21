@@ -554,7 +554,8 @@ Navarra.geomaps = function() {
     current_tenant = Navarra.dashboards.config.current_tenant;
     current_layer();
     layers_external();
-    show_kpis();
+    // show_kpis();
+    show_default_kpis();
     init_time_slider();
 
     mymap.on('moveend', onMapZoomedMoved);
@@ -653,6 +654,12 @@ Navarra.geomaps = function() {
     }
   }
 
+  function show_default_kpis() {
+    Navarra.dashboards.config.size_box = mymap.getBounds();
+    default_kpis = true
+    init_kpi(null, default_kpis);
+    init_chart_doughnut();
+  }
 
   function show_data_dashboard() {
       Navarra.dashboards.config.size_box = mymap.getBounds();
@@ -687,7 +694,8 @@ Navarra.geomaps = function() {
     checked = Navarra.dashboards.config.draw_disabled;
     if (checked) {
       show_data_dashboard();
-      show_kpis();
+      hidde_sidebar('charts-container');
+      show_default_kpis();
     }
   }
 
@@ -3439,6 +3447,7 @@ function open_iot_monitoring(app_id_popup){
     point_colors_data: point_colors_data,
     current_layer: current_layer,
     show_kpis: show_kpis,
+    show_default_kpis: show_default_kpis,
     layers_internal: layers_internal,
     layers_external: layers_external,
     popup: popup,
