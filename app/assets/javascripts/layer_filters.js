@@ -1,6 +1,24 @@
 Navarra.namespace("layer_filters");
 Navarra.layer_filters = function() {
-	function init(layer, label_layer){
+
+	function init(layer, label_layer, folder_id, folder_name){
+		var folderContainerId = 'folder_' + folder_id;
+	  var folderContainer = document.getElementById(folderContainerId);
+
+		if (!folderContainer) {
+      var folder_item =
+      '<div id="' + folderContainerId + '" class="folder-container">' +
+        '<h5 class="dropdown-admin-layer-layers">' +
+            '<i class="fas fa-folder"></i> ' + folder_name +
+            '<i class="fas fa-chevron-down chevron-icon" onclick="toggleFolder(\'' + folderContainerId + '\')" style="margin-left:4px"></i>' +
+        '</h5>' +
+        '<div class="folder-layers" id="layers_' + folderContainerId + '" style="display:none;">' +
+        '</div>' +
+      '</div>';
+
+      document.getElementById('projects_container').innerHTML += folder_item;
+    }
+
 		var new_item =
 		'<div id="div_layer_' + layer + '">' +
 			'<a class="dropdown-item layer_div layer_div_' + layer + '" href="#">' +
@@ -66,7 +84,7 @@ Navarra.layer_filters = function() {
 				'</div>' +
 			'</a>' +
 		'</div>';
-    return new_item;
+		document.getElementById('layers_' + folderContainerId).innerHTML += new_item;
 	}
 
 	function openlayer(event){

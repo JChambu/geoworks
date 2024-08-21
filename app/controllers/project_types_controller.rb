@@ -103,28 +103,22 @@ class ProjectTypesController < ApplicationController
   end
 
   def project_type_layers
-
     # Busca todas las capas
     @projects = ProjectType
-      .joins(:has_project_types)
-      .where.not(name_layer: params[:current_layer])
-      .where(enabled_as_layer: true)
-      .where(has_project_types: {user_id: current_user.id})
-      .ordered
+                .joins(:has_project_types)
+                .where.not(name_layer: params[:current_layer])
+                .where(enabled_as_layer: true)
+                .where(has_project_types: {user_id: current_user.id})
+                .ordered
 
     layers = {}
 
     # Cicla las capas y levanta los filtros
     @projects.each do |project|
-
       layer_filters = {}
-      project_filters = ProjectFilter
-        .where(project_type_id: project.id)
-        .where(user_id: current_user.id)
-        .first
+      project_filters = ProjectFilter.where(project_type_id: project.id).where(user_id: current_user.id).first
 
       if !project_filters.nil?
-
         if !project_filters.properties.nil?
           project_filters.properties.each do |f|
             layer_filters[:attribute_filter] = "#{f[0]}|=|'#{f[1]}'"
@@ -136,7 +130,6 @@ class ProjectTypesController < ApplicationController
         end
 
         if !project_filters.cross_layer_filter_id.nil?
-
           cl_filter = {}
 
           cross_layer_filter = ProjectFilter
@@ -158,19 +151,21 @@ class ProjectTypesController < ApplicationController
           end
 
           layer_filters[:cl_filter] = cl_filter
-
         end
-
       end
+
+      folder_id = project.folder_id.to_i
+      folder_name = Folder.where(id: folder_id).pluck(:name).first
 
       layers["layer_#{project.name_layer}"] = {
         "name": project.name,
         "layer": project.name_layer,
         "type_geometry": project.type_geometry,
         "color": project.layer_color,
+        "folder_id": project.folder_id,
+        "folder_name": folder_name,
         "layer_filters": layer_filters
       }
-
     end
 
     render json: layers

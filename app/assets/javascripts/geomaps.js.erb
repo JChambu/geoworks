@@ -1228,10 +1228,12 @@ Navarra.geomaps = function() {
 
     data = project_type_layers;
     $.each(data, function(lay, dat) {
-      let layer = dat.layer
+      let layer = dat.layer;
       let label_layer = dat.name;
       let color_layer = dat.color;
-      let type_geometry = dat.type_geometry
+      let type_geometry = dat.type_geometry;
+      let folder_id = dat.folder_id;
+      let folder_name = dat.folder_name;
       let workspace = Navarra.dashboards.config.current_tenement;
       // Aplica estilo según tipo de geometría
       let style = Navarra.geomap_tools.get_style_geoserver(type_geometry);
@@ -1262,7 +1264,7 @@ Navarra.geomaps = function() {
       });
       //genera Modal de capas internas
       if(first_time_internal_layers){
-        var new_item = Navarra.layer_filters.init(layer, label_layer);
+        var new_item = Navarra.layer_filters.init(layer, label_layer, folder_id, folder_name);
         $('#projects_container').append(new_item);
         Navarra.layer_filters.setdate_time_picker();
       }
