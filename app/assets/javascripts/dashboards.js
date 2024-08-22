@@ -5,10 +5,10 @@ var open_table_middle;
 var xhr_filter = null;
 
 $(document).ready(function () {
-    $.fakeLoader({
-        bgColor: 'rgba(0, 0, 0, 0.5)',
-        spinner:"spinner2",
-    });
+  $.fakeLoader({
+    bgColor: 'rgba(0, 0, 0, 0.5)',
+    spinner:"spinner2",
+  });
 });
 
 // Establece alto de mapa y sidebar al redimensionar
@@ -168,23 +168,21 @@ var init_filters = function(){
     Navarra.geomaps.point_colors_data();
   }
   var heatmap_actived = Navarra.project_types.config.heatmap_field;
-    if (heatmap_actived != '') {
-      Navarra.geomaps.heatmap_data();
+  if (heatmap_actived != '') {
+    Navarra.geomaps.heatmap_data();
   }
 }
 
 
 Navarra.dashboards.action_show = function(){
-
   var init = function(){
     $(".chart-modal").on('click', function(){
-     var   graph_id =  $(this).attr('id');
-     Navarra.dashboards.config.graph_id= graph_id;
+      var graph_id =  $(this).attr('id');
+      Navarra.dashboards.config.graph_id= graph_id;
     });
 
     // Desactiva Puntos Coloreados
     $("#filter-body").on("click", "#close_colored_points", function() {
-
       $(".fa-spinner").css("color", "#9b9b9b");
       Navarra.project_types.config.field_point_colors = '';
       $('#colored_points').remove();
@@ -205,20 +203,17 @@ Navarra.dashboards.action_show = function(){
 
     // Desactiva Mapa de Calor
     $("#filter-body").on("click", '#close_heatmap_filter', function() {
-
       $(".fa-fire").css("color", "#9b9b9b");
       Navarra.project_types.config.field_point_colors = '';
       Navarra.project_types.config.heatmap_field = '';
       $('#heatmap_filter').remove();
       Navarra.geomaps.remove_heatmap();
-
       resize_filters();
       resize_graphics();
     });
 
     // Desactiva filtro creado por el usuario
     $("#filter-body").on("click", ".message", function() {
-
       var current_filters;
       var filter_to_remove;
 
@@ -258,11 +253,9 @@ Navarra.dashboards.action_show = function(){
     });
 
     $("#hide_side").on("click", function(){
-
-          $(".side_left").slideToggle("slow");
-      })
-    var  project_id = $("#data_id").val();
-
+      $(".side_left").slideToggle("slow");
+    })
+    var project_id = $("#data_id").val();
 
     //Ventana inferior datos
     //Expandir toda la pantalla
@@ -270,30 +263,31 @@ Navarra.dashboards.action_show = function(){
       $('#status-view').addClass('status-view-expanded');
       $(".table_data_container").css("background", "rgba(39, 43, 48, 0.8)");
       var status_view_condensed = $('#status-view').hasClass('status-view-condensed');
-        $('#status-view').removeClass('status-view-condensed');
-        $(".table_data_container").css("transition-delay", "0s");
-        $(".table_data_container").css("top", $("#nav_bar").innerHeight());
-        $(".leaflet-right").css("display", "none");
-        $(".leaflet-left").css("display", "none");
-        $(".status_panel").addClass("d-none");
-        adjust_table_height();
-        verify_height_table();
-        if($('#sidebar_all').hasClass('charts-container') || $('#sidebar_all').hasClass('timeslider-container') || $('#sidebar_all').hasClass('filter-container') ){
-          $(".table_data_container").css("width", "70%");
-        }
-        if($('#sidebar_all').hasClass('charts-container_expanded') || $('#sidebar_all').hasClass('timeslider-container_expanded') || $('#sidebar_all').hasClass('filter-container_expanded')){
-          $(".table_data_container").css("width", "40%");
-        }
-        if(status_view_condensed){
-          $("#collapse_data").css("max-height", "100vh");
-          $("#collapse_data").css("transition", "2s");
-          $("#collapse_data").css("transition-delay", "0.6s");
-          $("#collapse_data").css("border", "1px solid rgba(0,0,0,0.6)");
-          $(".leaflet-control-scale-line").css("display", "none");
-          $(".status_panel").css("max-height", "32vh");
-          init_data_dashboard(false);
-        }
+      $('#status-view').removeClass('status-view-condensed');
+      $(".table_data_container").css("transition-delay", "0s");
+      $(".table_data_container").css("top", $("#nav_bar").innerHeight());
+      $(".leaflet-right").css("display", "none");
+      $(".leaflet-left").css("display", "none");
+      $(".status_panel").addClass("d-none");
+      adjust_table_height();
+      verify_height_table();
+      if($('#sidebar_all').hasClass('charts-container') || $('#sidebar_all').hasClass('timeslider-container') || $('#sidebar_all').hasClass('filter-container') ){
+        $(".table_data_container").css("width", "70%");
+      }
+      if($('#sidebar_all').hasClass('charts-container_expanded') || $('#sidebar_all').hasClass('timeslider-container_expanded') || $('#sidebar_all').hasClass('filter-container_expanded')){
+        $(".table_data_container").css("width", "40%");
+      }
+      if(status_view_condensed){
+        $("#collapse_data").css("max-height", "100vh");
+        $("#collapse_data").css("transition", "2s");
+        $("#collapse_data").css("transition-delay", "0.6s");
+        $("#collapse_data").css("border", "1px solid rgba(0,0,0,0.6)");
+        $(".leaflet-control-scale-line").css("display", "none");
+        $(".status_panel").css("max-height", "32vh");
+        init_data_dashboard(false);
+      }
     });
+
     //Minimizar la pantalla
     $("#view-data-hidden").on("click", function() {
       $('#status-view').addClass('status-view-condensed');
@@ -318,13 +312,13 @@ Navarra.dashboards.action_show = function(){
     });
 
     $(".graphics").on('click','canvas',function(){
-          value_graph = $(this).attr("id");
-          canvas_edit = this;
-          project_type_id = Navarra.dashboards.config.project_type_id;
-          dashboard_id = Navarra.dashboards.config.dashboard_id;
-          graphic_id = value_graph.split('canvas');
-          $.getScript("/project_types/"+ project_type_id+"/dashboards/"+dashboard_id+"/graphics/"+graphic_id[1]+"/edit");
-        });
+      value_graph = $(this).attr("id");
+      canvas_edit = this;
+      project_type_id = Navarra.dashboards.config.project_type_id;
+      dashboard_id = Navarra.dashboards.config.dashboard_id;
+      graphic_id = value_graph.split('canvas');
+      $.getScript("/project_types/"+ project_type_id+"/dashboards/"+dashboard_id+"/graphics/"+graphic_id[1]+"/edit");
+    });
     $.ajax({
       type: 'GET',
       url: '/project_types/get_geo_key',
@@ -337,19 +331,18 @@ Navarra.dashboards.action_show = function(){
     });
   }
 
+  function verify_height_table(){
+    setTimeout(function(){
+      var height_browser = window.innerHeight;
+      if($(".table_data_container").innerHeight() + $(".table_data_container").offset().top>height_browser){
+        var new_height = (parseInt($('#div_table_data').css('height')) - 30 ) + 'px';
+        $('#div_table_data').css('height',new_height);
+      }
+    },2000);
+  }
 
-function verify_height_table(){
-  setTimeout(function(){
-    var height_browser = window.innerHeight;
-    if($(".table_data_container").innerHeight() + $(".table_data_container").offset().top>height_browser){
-      var new_height = (parseInt($('#div_table_data').css('height')) - 30 ) + 'px';
-      $('#div_table_data').css('height',new_height);
-    }
-  },2000);
-}
-
-open_table_middle = function(only_open){
-  $(".table_data_container").css("background", "rgba(39, 43, 48, 0.8)");
+  open_table_middle = function(only_open){
+    $(".table_data_container").css("background", "rgba(39, 43, 48, 0.8)");
     var status_view_condensed = $('#status-view').hasClass('status-view-condensed');
     $('#status-view').removeClass('status-view-condensed');
     $('#status-view').removeClass('status-view-expanded');
@@ -377,7 +370,7 @@ open_table_middle = function(only_open){
     if(!$('#sidebar_all').hasClass('charts-container') && !$('#sidebar_all').hasClass('charts-container_expanded') ){
       $(".table_data_container").css("width", "100%");
     }
-}
+  }
 
   return {
     init: init,

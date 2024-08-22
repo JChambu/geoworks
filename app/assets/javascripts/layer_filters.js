@@ -1,6 +1,24 @@
 Navarra.namespace("layer_filters");
 Navarra.layer_filters = function() {
-	function init(layer, label_layer){
+
+	function init(layer, label_layer, folder_id, folder_name){
+		var folderContainerId = 'folder_' + folder_id;
+	  var folderContainer = document.getElementById(folderContainerId);
+
+		if (!folderContainer && folderContainerId != 'folder_null') {
+      var folder_item =
+      '<div id="' + folderContainerId + '" class="folder-container">' +
+				'<div class="dropdown-folder-layers" style="font-size: 16px; height: 30px; display: flex; align-items: center; margin-left:7px;">' +
+					'<i class="fas fa-folder" style="margin-right:6px;"></i> ' + folder_name +
+					'<i class="fas fa-chevron-down chevron-icon" onclick="toggleFolder(\'' + folderContainerId + '\')" style="margin-left:4px; cursor: pointer;"></i>' +
+				'</div>' +
+        '<div class="folder-layers" id="layers_' + folderContainerId + '" style="display:none;">' +
+        '</div>' +
+      '</div>';
+
+      document.getElementById('projects_container').innerHTML += folder_item;
+    }
+
 		var new_item =
 		'<div id="div_layer_' + layer + '">' +
 			'<a class="dropdown-item layer_div layer_div_' + layer + '" href="#">' +
@@ -66,7 +84,35 @@ Navarra.layer_filters = function() {
 				'</div>' +
 			'</a>' +
 		'</div>';
-    return new_item;
+
+		if (folderContainerId == 'folder_null') {
+			return new_item;
+		} else {
+			document.getElementById('layers_' + folderContainerId).innerHTML += new_item;
+		}
+
+		var container = document.getElementById('projects_container');
+		var elements = Array.from(container.children);
+		var folders = [];
+		var layers = [];
+
+		elements.forEach(function(element) {
+	    if (element.id.startsWith('folder_')) {
+	        folders.push(element);
+	    } else if (element.id.startsWith('div_layer_')) {
+	        layers.push(element);
+	    }
+		});
+
+		container.innerHTML = '';
+
+		folders.forEach(function(folder) {
+		  container.appendChild(folder);
+		});
+
+		layers.forEach(function(layer) {
+		  container.appendChild(layer);
+		});
 	}
 
 	function openlayer(event){
@@ -76,36 +122,38 @@ Navarra.layer_filters = function() {
 			var modalWidth = $('#customLayerModal').outerWidth();
       $('.status_panel').css('left', modalWidth);
       $('.status_panel').css('top', '61.3px');
+
 			if(!$('#div_filter_'+namelayer).hasClass('already_open')){
 				//Busca campos de la capa
 				$.ajax({
-    				type: 'GET',
-    				url: '/project_fields/get_project_field_layer.json',
-	                datatype: 'json',
-    				data: {
-      					name_layer:namelayer
-    			},
-    				success: function(data) {
-    					$('#filter_field_layer_'+namelayer).append('<option></option>');
-    					data.forEach(function(field){
-    						$('#filter_field_layer_'+namelayer).append('<option field_type = "'+field.field_type_id+'" value="'+field.key+'">'+field.name+'</option>')
-    					})
-    				}
-    			});
-    			//Busca operadores
+  				type: 'GET',
+  				url: '/project_fields/get_project_field_layer.json',
+            datatype: 'json',
+  				data: {
+  					name_layer:namelayer
+  				},
+  				success: function(data) {
+  					$('#filter_field_layer_'+namelayer).append('<option></option>');
+  					data.forEach(function(field){
+  						$('#filter_field_layer_'+namelayer).append('<option field_type = "'+field.field_type_id+'" value="'+field.key+'">'+field.name+'</option>')
+  					})
+  				}
+  			});
+
+  			//Busca operadores
 				$.ajax({
-    				type: 'GET',
-    				url: '/project_fields/get_filter_operator.json',
-	                datatype: 'json',
-    				data: {
-      					name_layer:namelayer
+  				type: 'GET',
+  				url: '/project_fields/get_filter_operator.json',
+          datatype: 'json',
+  				data: {
+  					name_layer:namelayer
     			},
-    				success: function(data) {
-    					data.forEach(function(operator){
-    						$('#filter_operator_layer_'+namelayer).append('<option value="'+operator+'">'+operator+'</option>')
-    					})
-    				}
-    			});
+  				success: function(data) {
+  					data.forEach(function(operator){
+  						$('#filter_operator_layer_'+namelayer).append('<option value="'+operator+'">'+operator+'</option>')
+  					})
+  				}
+  			});
 			}
 			$('#div_filter_'+namelayer).addClass('already_open');
 		} else {
@@ -119,15 +167,15 @@ Navarra.layer_filters = function() {
 
 	function setdate_time_picker(){
 		$('.layer_time_slider').datetimepicker({
-        format: "DD/MM/YYYY",
-        viewMode: "days",
-        locale: moment.locale('en', {
-          week: {
-            dow: 1,
-            doy: 4
-          }
-        }),
-      });
+      format: "DD/MM/YYYY",
+      viewMode: "days",
+      locale: moment.locale('en', {
+        week: {
+          dow: 1,
+          doy: 4
+        }
+      }),
+    });
 		$('.layer_time_slider').on('dp.show', function() {
 			$('#projects_container').addClass("custom_overflow");
 		});
@@ -140,11 +188,11 @@ Navarra.layer_filters = function() {
 		var namelayer = $(event.target).attr("namelayer");
 		var fromdate_layer = $('#fromdate_layer_'+namelayer).val();
 		var todate_layer = $('#todate_layer_'+namelayer).val();
+
 		if(fromdate_layer=='' || todate_layer == ''){
 			$('#text_toast').html("Las fechas no son válidas");
-		    $('#toast').toast('show');
-		}
-		else{
+	    $('#toast').toast('show');
+		} else{
 			Navarra.project_types.config.timeslider_layers[namelayer] = {
 				from_date: fromdate_layer.split('/')[2] + '-' + fromdate_layer.split('/')[1] + '-' + fromdate_layer.split('/')[0],
 				to_date: todate_layer.split('/')[2] + '-' + todate_layer.split('/')[1] + '-' + todate_layer.split('/')[0]
@@ -248,23 +296,23 @@ Navarra.layer_filters = function() {
 			if (xhr_fil_layer && xhr_fil_layer.readyState != 4) {
       	xhr_fil_layer.abort();
     	}
-				xhr_fil_layer = $.ajax({
-    				type: 'GET',
-    				url: "/projects/search_data.json",
-      				data: {
-        			table: "Formularios",
-        			project_field_key: filter_field_layer,
-        			name_layer: namelayer
-      			},
-    			success: function(data) {
-    				$.each(data['data'][0]['values'], function(value, a) {
-    					if(a.p_name!=null){
-    						a.p_name = a.p_name.replace(/[\[\]]/g, "").replace(/\", \"/g, " | ").replace(/\"/g, "")
-    					}
-    					$('#filter_value_layer_select_'+namelayer).append('<option value="'+a.p_name+'">'+a.p_name+'</option>')
-    				});
-    			}
-    			});
+			xhr_fil_layer = $.ajax({
+				type: 'GET',
+				url: "/projects/search_data.json",
+				data: {
+    			table: "Formularios",
+    			project_field_key: filter_field_layer,
+    			name_layer: namelayer
+  			},
+				success: function(data) {
+  				$.each(data['data'][0]['values'], function(value, a) {
+  					if(a.p_name!=null){
+  						a.p_name = a.p_name.replace(/[\[\]]/g, "").replace(/\", \"/g, " | ").replace(/\"/g, "")
+  					}
+  					$('#filter_value_layer_select_'+namelayer).append('<option value="'+a.p_name+'">'+a.p_name+'</option>')
+  				});
+				}
+  		});
 		} else {
 			$('#filter_value_layer_select_'+namelayer).addClass('d-none');
 			$('#filter_value_layer_'+namelayer).removeClass('d-none');

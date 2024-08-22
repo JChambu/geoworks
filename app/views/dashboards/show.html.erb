@@ -396,6 +396,11 @@
       targetDiv.addClass('d-none');
       localStorage.setItem(elementClass, 'hidden');
     });
+
+    function toggleFolder(folderContainerId) {
+      var folderLayers = document.getElementById('layers_' + folderContainerId);
+      folderLayers.style.display = (folderLayers.style.display === 'none') ? 'block' : 'none';
+  	}
   </script>
 <% end %>
 
