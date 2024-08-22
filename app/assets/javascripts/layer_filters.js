@@ -5,13 +5,13 @@ Navarra.layer_filters = function() {
 		var folderContainerId = 'folder_' + folder_id;
 	  var folderContainer = document.getElementById(folderContainerId);
 
-		if (!folderContainer) {
+		if (!folderContainer && folderContainerId != 'folder_null') {
       var folder_item =
       '<div id="' + folderContainerId + '" class="folder-container">' +
-        '<h5 class="dropdown-admin-layer-layers">' +
-            '<i class="fas fa-folder"></i> ' + folder_name +
-            '<i class="fas fa-chevron-down chevron-icon" onclick="toggleFolder(\'' + folderContainerId + '\')" style="margin-left:4px"></i>' +
-        '</h5>' +
+				'<div class="dropdown-folder-layers" style="font-size: 16px; height: 30px; display: flex; align-items: center; margin-left:7px;">' +
+					'<i class="fas fa-folder" style="margin-right:6px;"></i> ' + folder_name +
+					'<i class="fas fa-chevron-down chevron-icon" onclick="toggleFolder(\'' + folderContainerId + '\')" style="margin-left:4px; cursor: pointer;"></i>' +
+				'</div>' +
         '<div class="folder-layers" id="layers_' + folderContainerId + '" style="display:none;">' +
         '</div>' +
       '</div>';
@@ -84,7 +84,35 @@ Navarra.layer_filters = function() {
 				'</div>' +
 			'</a>' +
 		'</div>';
-		document.getElementById('layers_' + folderContainerId).innerHTML += new_item;
+
+		if (folderContainerId == 'folder_null') {
+			return new_item;
+		} else {
+			document.getElementById('layers_' + folderContainerId).innerHTML += new_item;
+		}
+
+		var container = document.getElementById('projects_container');
+		var elements = Array.from(container.children);
+		var folders = [];
+		var layers = [];
+
+		elements.forEach(function(element) {
+	    if (element.id.startsWith('folder_')) {
+	        folders.push(element);
+	    } else if (element.id.startsWith('div_layer_')) {
+	        layers.push(element);
+	    }
+		});
+
+		container.innerHTML = '';
+
+		folders.forEach(function(folder) {
+		  container.appendChild(folder);
+		});
+
+		layers.forEach(function(layer) {
+		  container.appendChild(layer);
+		});
 	}
 
 	function openlayer(event){
