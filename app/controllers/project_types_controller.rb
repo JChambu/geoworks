@@ -1376,8 +1376,7 @@ class ProjectTypesController < ApplicationController
   # POST /project_types
   # POST /project_types.json
   def create
-
-    params[:project_type][:name_layer] = params[:project_type][:name].gsub(/\s+/, '_').downcase
+    params[:project_type][:name_layer] = params[:project_type][:name].gsub(/[()]/, '').gsub(/\s+/, '_').downcase
 
     if params[:project_type][:cover].present?
       encode_image
