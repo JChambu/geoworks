@@ -1,7 +1,7 @@
 class Project < ApplicationRecord
 
-  if Apartment::Tenant.current != 'fepedi'
-    has_paper_trail
+  if Apartment::Tenant.current == 'fepedi'
+    has_paper_trail on: [:destroy]
   end
 
   include Projects::Scopes
