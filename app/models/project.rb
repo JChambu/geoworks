@@ -1,5 +1,9 @@
 class Project < ApplicationRecord
-  has_paper_trail
+
+  if Apartment::Tenant.current != 'fepedi'
+    has_paper_trail
+  end
+
   include Projects::Scopes
 
   require "json"
