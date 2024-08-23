@@ -47,11 +47,11 @@ Navarra.geomaps = function() {
       success: function(data) {
         project_type_layers = data;
         layers_internal();
-        if (Navarra.dashboards.config.current_tenant == 'impulsa' && Navarra.dashboards.config.name_layer == 'minas' && Navarra.dashboards.config.user_name == 'Usuario publico') {
+
+        if (Navarra.dashboards.config.current_tenant == 'impulsa' && Navarra.dashboards.config.name_layer == 'distritito_minero_occidental_malargue' && Navarra.dashboards.config.user_name == 'Usuario publico') {
           $('#layersDropdown').click();
-          $('#checkbox_distritito_minero_occidental_malargue').click();
-          $('#checkbox_cateos').click();
         }
+
         $('div[id^="div_layer_"]').each(function() {
       		var divId = $(this).attr('id');
           var prefix = "div_layer_";
