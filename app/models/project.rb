@@ -1,8 +1,5 @@
 class Project < ApplicationRecord
-
-  if Apartment::Tenant.current != 'fepedi'
-    has_paper_trail
-  end
+  has_paper_trail
 
   include Projects::Scopes
 

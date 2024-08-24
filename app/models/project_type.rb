@@ -6,9 +6,7 @@ class ProjectType < ApplicationRecord
   include ProjectTypes::Validations
   include ProjectTypes::GeoJson
 
-  if Apartment::Tenant.current != 'fepedi'
-    has_paper_trail
-  end
+  has_paper_trail
 
   require 'rgeo/shapefile'
   require 'rgeo/geo_json'
