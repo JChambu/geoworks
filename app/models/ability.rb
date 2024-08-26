@@ -10,12 +10,14 @@ class Ability
       current_tenant = Apartment::Tenant.current
       @customer = Customer.where(subdomain: current_tenant).first
       @user_c =  UserCustomer.where(user_id: user.id).where(customer_id: @customer.id).first
-      @user_c&.role&.permissions&.each do |permission|
-        can permission.model_type.name.to_sym, permission.event.name.to_sym
-      end
+      permissions = @user_c&.role&.permissions&.includes(:model_type, :event)
 
       if @user_c&.role&.name == "superadmin"
         can :manage, :all
+      else
+        permissions&.each do |permission|
+          can permission.model_type.name.to_sym, permission.event.name.to_sym
+        end
       end
     end
 

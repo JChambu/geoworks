@@ -1511,7 +1511,7 @@ class ProjectTypesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_project_type
     @project_type = ProjectType.find(params[:id])
-    @project_fields = @project_type.project_fields.order(:sort)
+    @project_fields = @project_type.project_fields.includes(:project_subfields).order(:sort)
   end
 
   def encode_image

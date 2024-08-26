@@ -71,7 +71,7 @@ class DashboardsController < ApplicationController
         .where(has_project_types: {user_id: current_user.id})
         .pluck(:id)
       @top_level_fields = ProjectField
-        .joins(:project_type)
+        .includes(:project_type)
         .where.not(project_type_id: @project_type.id)
         .where(project_type_id: @projects_shared)
         .order('project_types.level DESC','project_types.id', :sort)
