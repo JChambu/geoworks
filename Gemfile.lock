@@ -65,6 +65,9 @@ GEM
     bcrypt (3.1.13)
     bindex (0.8.1)
     builder (3.2.3)
+    bullet (7.2.0)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11)
     byebug (11.0.1)
     cancancan (3.0.1)
     capistrano (3.11.0)
@@ -308,6 +311,7 @@ GEM
     unicorn (5.5.1)
       kgio (~> 2.6)
       raindrops (~> 0.7)
+    uniform_notifier (1.16.0)
     validates_email_format_of (1.6.3)
       i18n
     warden (1.2.8)
@@ -333,6 +337,7 @@ DEPENDENCIES
   activerecord-postgis-adapter
   apartment
   apartment-activejob
+  bullet
   byebug
   cancancan
   capistrano (~> 3.6)
@@ -386,4 +391,4 @@ DEPENDENCIES
   will_paginate-bootstrap
 
 BUNDLED WITH
-   1.16.2
+   1.17.3
