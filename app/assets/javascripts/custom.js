@@ -1452,6 +1452,7 @@ function init_data_dashboard(haschange,close_info,subfield_ids_saved,is_saved) {
       if (subfield_ids_saved === undefined || subfield_ids_saved === 0) {
         $('#text_toast').html("Cargando datos de la tabla");
         $('#toast').toast('show');
+        create_subforms_table(subfield_ids_saved);
         hideToast();
       } else {
         $('#text_toast').html("Cargando subformularios a la tabla");
