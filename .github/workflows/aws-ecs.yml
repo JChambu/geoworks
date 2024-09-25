@@ -31,12 +31,12 @@ on:
     branches: [ "dev" ]
 
 env:
-  AWS_REGION: "us-east-2"
-  ECR_REPOSITORY: "geoworks"
-  ECS_SERVICE: "geoworks-service"
-  ECS_CLUSTER: "staging"
-  ECS_TASK_DEFINITION: "aws/geoworks-task-definition.json"
-  CONTAINER_NAME: "geoworks"
+  AWS_REGION: "us-east-2"                   # Cambia esto a tu región preferida, ej. us-west-1
+  ECR_REPOSITORY: "geoworks"                # Nombre de tu repositorio en Amazon ECR
+  ECS_SERVICE: "geoworks-service"           # Nombre de tu servicio en Amazon ECS
+  ECS_CLUSTER: "staging"                    # Nombre de tu clúster en Amazon ECS
+  ECS_TASK_DEFINITION: "aws/geoworks-task-definition.json" # Ruta al archivo de definición de tareas de Amazon ECS
+  CONTAINER_NAME: "geoworks"                # Nombre del contenedor en containerDefinitions de la tarea
 
 permissions:
   contents: read
@@ -72,7 +72,10 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        # Build the Docker image from Docker Hub and tag it
+        # Login to Docker Hub to pull base image (ruby:2.5)
+        echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+        
+        # Build the Docker image using a base image from Docker Hub
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         
         # Push the image to Amazon ECR
