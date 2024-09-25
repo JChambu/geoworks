@@ -31,14 +31,12 @@ on:
     branches: [ "dev" ]
 
 env:
-  AWS_REGION: "us-east-2"                   # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: "geoworks"           # set this to your Amazon ECR repository name
-  ECS_SERVICE: "geoworks-service"                 # set this to your Amazon ECS service name
-  ECS_CLUSTER: "staging"                 # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: "aws/geoworks-task-definition.json" # set this to the path to your Amazon ECS task definition
-                                               # file, e.g. .aws/task-definition.json
-  CONTAINER_NAME: "geoworks"           # set this to the name of the container in the
-                                               # containerDefinitions section of your task definition
+  AWS_REGION: "us-east-2"
+  ECR_REPOSITORY: "geoworks"
+  ECS_SERVICE: "geoworks-service"
+  ECS_CLUSTER: "staging"
+  ECS_TASK_DEFINITION: "aws/geoworks-task-definition.json"
+  CONTAINER_NAME: "geoworks"
 
 permissions:
   contents: read
@@ -60,6 +58,10 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
+    - name: Login to Docker Hub
+      run: |
+        echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
@@ -70,12 +72,12 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        # Build a docker container and
-        # push it to ECR so that it can
-        # be deployed to ECS.
-        echo "el registry es $ECR_REGISTRY"
+        # Build the Docker image from Docker Hub and tag it
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        
+        # Push the image to Amazon ECR
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
     - name: Fill in the new image ID in the Amazon ECS task definition
