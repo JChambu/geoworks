@@ -18,7 +18,9 @@ class User < ApplicationRecord
 
   # Include devise modules. Others available are:
   # :confirmable, :validatable :registerable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :rememberable, :trackable, :lockable, :confirmable, :recoverable, :registerable
+  devise :database_authenticatable, :rememberable, :trackable,
+         :lockable, :confirmable, :recoverable, :registerable,
+         :omniauthable, omniauth_providers: [:google_oauth2]
 
   before_create :generate_password, on: :create
 
@@ -39,6 +41,25 @@ class User < ApplicationRecord
   attr_accessor :customer_id, :project
 
   ROLES = %w[User Admin Moderator]
+
+  def self.from_omniauth(access_token)
+    byebug
+    user = User.where(email: access_token.info.email).first
+    unless user
+      byebug
+      user = User.create(
+        email: access_token.info.email,
+        password: Devise.friendly_token[0,20]
+      )
+    end
+    byebug
+    user.name = access_token.info.name
+    user.uid = access_token.uid
+    user.provider = access_token.provider
+    user.save
+
+    user
+  end
 
   def generate_password
     if self.email != 'super@admin.com'

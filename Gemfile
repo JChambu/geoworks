@@ -13,6 +13,13 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.2'
 gem 'pg_search'
 gem 'inline_svg'
+gem 'devise', '~> 4.8.1'
+gem 'omniauth-rails_csrf_protection'
+gem 'omniauth-google-oauth2'
+gem 'jwt', '~> 2.3.0'
+gem 'omniauth', '~> 2.0', '>= 2.0.4'
+gem 'rack', '~> 2.0', '>= 2.0.7'
+gem 'bcrypt', '~> 3.1.7'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'therubyracer', platforms: :ruby
 # Use jquery as the JavaScript library
@@ -30,7 +37,6 @@ gem "font-awesome-rails", github: "bokmann/font-awesome-rails", branch: "master"
 gem 'jbuilder', '~> 2.5'
 gem 'webpack-rails'
 gem 'foreman'
-gem 'devise'
 gem 'apartment'
 gem 'apartment-activejob'
 gem 'cancancan'

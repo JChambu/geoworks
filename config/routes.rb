@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
 
-
   get 'customers/search_customer'
   post 'table_configurations/create_table'
   get 'table_configurations/search_table'
@@ -182,33 +181,32 @@ Rails.application.routes.draw do
         get 'import/download_errors', controller: :project_data_children, action: :download_errors
       end
 
-    get 'project_types/share' => 'project_types#share', as: :share
-    get 'project_types/filters' => 'project_types#filters', as: :filters
-    get 'project_types/quick_filters' => 'project_types#quick_filters', as: :quick_filters
-    get 'project_types/quick_filters_users' => 'project_types#quick_filters_users', as: :quick_filters_users
-    get 'project_types/create_filters' => 'project_types#create_filters', as: :create_filters
-    get 'project_types/create_quick_filters' => 'project_types#create_quick_filters', as: :create_quick_filters
-    get 'project_types/create_quick_filters_users' => 'project_types#create_quick_filters_users', as: :create_quick_filters_users
-    get 'project_types/heatmap' => 'project_types#heatmap', as: :heatmap
-    get 'project_types/interpolation' => 'project_types#interpolation', as: :interpolation
-    get 'project_types/color_by_attribute' => 'project_types#color_by_attribute', as: :color_by_attribute
-    get 'project_types/create_heatmap' => 'project_types#create_heatmap', as: :create_heatmap
-    get 'project_types/create_interpolation' => 'project_types#create_interpolation', as: :create_interpolation
-    get 'project_types/create_color_by_attribute' => 'project_types#create_color_by_attribute', as: :create_color_by_attribute
-    get 'project_types/point_colors' => 'project_types#point_colors', as: :point_colors
-    get 'project_types/create_point_colors' => 'project_types#create_point_colors', as: :create_point_colors
-  end
-
-
-    devise_for :users, controllers: {
-      registrations: 'registrations',
-      passwords: 'passwords'
-    }
-    resources :users
-
+      get 'project_types/share' => 'project_types#share', as: :share
+      get 'project_types/filters' => 'project_types#filters', as: :filters
+      get 'project_types/quick_filters' => 'project_types#quick_filters', as: :quick_filters
+      get 'project_types/quick_filters_users' => 'project_types#quick_filters_users', as: :quick_filters_users
+      get 'project_types/create_filters' => 'project_types#create_filters', as: :create_filters
+      get 'project_types/create_quick_filters' => 'project_types#create_quick_filters', as: :create_quick_filters
+      get 'project_types/create_quick_filters_users' => 'project_types#create_quick_filters_users', as: :create_quick_filters_users
+      get 'project_types/heatmap' => 'project_types#heatmap', as: :heatmap
+      get 'project_types/interpolation' => 'project_types#interpolation', as: :interpolation
+      get 'project_types/color_by_attribute' => 'project_types#color_by_attribute', as: :color_by_attribute
+      get 'project_types/create_heatmap' => 'project_types#create_heatmap', as: :create_heatmap
+      get 'project_types/create_interpolation' => 'project_types#create_interpolation', as: :create_interpolation
+      get 'project_types/create_color_by_attribute' => 'project_types#create_color_by_attribute', as: :create_color_by_attribute
+      get 'project_types/point_colors' => 'project_types#point_colors', as: :point_colors
+      get 'project_types/create_point_colors' => 'project_types#create_point_colors', as: :create_point_colors
+    end
 
     root 'dashboards#show'
   end
+
+  devise_for :users, controllers: {
+    registrations: 'registrations',
+    passwords: 'passwords',
+    omniauth_callbacks: 'users/omniauth_callbacks'
+  }
+  resources :users
 
   match '*path', to: redirect("/#{I18n.default_locale}/%{path}"), via: :all
   match '', to: redirect("/#{I18n.default_locale}"), via: :all
