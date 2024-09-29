@@ -26,13 +26,18 @@ services:
     container_name: gw-app
     ports:
       - "$APP_PORT:3000"
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
      - .:/opt/geoworks
     env_file:
       - .env
     depends_on:
       - db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/healthcheck"]
+      interval: 45s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
 networks:
   default:
     name: geoworks_network
