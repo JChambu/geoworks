@@ -9,10 +9,11 @@ services:
     env_file:
       - .env
   geoserver:
-    image: kartoza/geoserver:2.18.0
+    image: oscarfonts/geoserver:2.18.2
     container_name: gw-geoserver
     volumes:
-      - ./geoserver/data_dir/:/opt/geoserver/data_dir/
+      - ./geoserver/data_dir:/var/local/geoserver
+      - ./geoserver/data_dir/geoserver-exts:/var/local/geoserver-exts
     ports:
       - "$GEOSERVER_PORT:8080"
     env_file:
