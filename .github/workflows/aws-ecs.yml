@@ -28,7 +28,7 @@ name: Deploy to Amazon ECS
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "refactor/upgrade_docker" ]
 
 env:
   AWS_REGION: "us-east-2"                   # Cambia esto a tu región preferida, ej. us-west-1
