@@ -5,12 +5,12 @@ on:
     branches: [ "refactor/upgrade_docker" ]
 
 env:
-  AWS_REGION: "us-east-2"                   # Región de AWS
-  ECR_REPOSITORY: "geoworks"                # Repositorio ECR
-  ECS_SERVICE: "geoworks-service"           # Servicio ECS
-  ECS_CLUSTER: "staging"                    # Cluster ECS
-  ECS_TASK_DEFINITION: "aws/geoworks-task-definition.json" # Definición de tareas
-  CONTAINER_NAME: "geoworks"                # Contenedor
+  AWS_REGION: "us-east-2"                   # Cambia esto a tu región preferida
+  ECR_REPOSITORY: "geoworks"                # Nombre de tu repositorio en Amazon ECR
+  ECS_SERVICE: "geoworks-service"           # Nombre de tu servicio en Amazon ECS
+  ECS_CLUSTER: "staging"                    # Nombre de tu clúster en Amazon ECS
+  ECS_TASK_DEFINITION: "aws/geoworks-task-definition.json" # Ruta al archivo de definición de tareas de Amazon ECS
+  CONTAINER_NAME: "geoworks"                # Nombre del contenedor en containerDefinitions de la tarea
 
 permissions:
   contents: read
@@ -19,7 +19,7 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    environment: staging  # Apunta al entorno de staging en GitHub
+    environment: production
 
     steps:
     - name: Checkout
@@ -28,13 +28,9 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}  # Credenciales de AWS si están en Secrets
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
-
-    - name: Capture all environment variables
-      run: |
-        echo "ENV_VARIABLES=$(env)" >> $GITHUB_ENV
 
     - name: Login to Docker Hub
       run: |
@@ -50,9 +46,25 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
+        # Login to Docker Hub to pull base image (ruby:2.5)
+        echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+        
+        # Build the Docker image using a base image from Docker Hub
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        
+        # Push the image to Amazon ECR
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    - name: Get environment variables
+      run: |
+        echo "environment=" > env_file
+        for var in $(printenv | grep -E 'STAGING_'); do
+          echo "  - name: $(echo $var | cut -d'=' -f1)" >> env_file
+          echo "    value: $(echo $var | cut -d'=' -f2-)" >> env_file
+        done
+        cat env_file
 
     - name: Fill in the new image ID and environment variables in the Amazon ECS task definition
       id: task-def
@@ -61,8 +73,7 @@ jobs:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME }}
         image: ${{ steps.build-image.outputs.image }}
-        environment-variables: |
-          ENV_VARIABLES: ${{ env.ENV_VARIABLES }}
+        environment-variables: env_file
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
