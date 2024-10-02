@@ -21,6 +21,7 @@
         { "name": "POSTGRES_USER", "value": "${POSTGRES_USER}" },
         { "name": "POSTGRES_PASSWORD", "value": "${POSTGRES_PASSWORD}" },
         { "name": "GEOSERVER_PORT", "value": "${GEOSERVER_PORT}" },
+        { "name": "GEOSERVER_HOST", "value": "${GEOSERVER_HOST}" },
         { "name": "GEOSERVER_AUTH_KEY", "value": "${GEOSERVER_AUTH_KEY}" },
         { "name": "ENABLE_JSONP", "value": "${ENABLE_JSONP}" },
         { "name": "MAX_FILTER_RULES", "value": "${MAX_FILTER_RULES}" },
