@@ -69,9 +69,9 @@ jobs:
         sed -i 's/\${GEOSERVER_PORT}/'${{ vars.GEOSERVER_PORT }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${GEOSERVER_CSRF_WHITELIST}/'${{ vars.GEOSERVER_CSRF_WHITELIST }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${PRIMARY_COLOR_TRANSPARENT}/'${{ vars.PRIMARY_COLOR_TRANSPARENT }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${TITLE}/'${{ env.TITLE }}'/' ${{ vars.ECS_TASK_DEFINITION }}
+        sed -i 's/\${TITLE}/'${{ vars.TITLE }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${ENABLE_JSONP}/'${{ vars.ENABLE_JSONP }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${APP_PORT}/'${{ env.APP_PORT }}'/' ${{ vars.ECS_TASK_DEFINITION }}
+        sed -i 's/\${APP_PORT}/'${{ vars.APP_PORT }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${MAILER_PASSWORD}/'${{ vars.MAILER_PASSWORD }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${HORIZONTAL_LOGO}/'${{ vars.HORIZONTAL_LOGO }}'/' ${{ env.ECS_TASK_DEFINITION }}
 
