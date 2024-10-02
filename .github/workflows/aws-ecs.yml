@@ -48,7 +48,7 @@ jobs:
 
     - name: Reemplazar variables de entorno en la definición de tarea
       run: |
-        sed -i 's/\${POSTGRES_HOST}/'${{ secrets.POSTGRES_HOST }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${POSTGRES_HOST}/'${{ vars.POSTGRES_HOST }}'/' ${{ env.ECS_TASK_DEFINITION }}
         echo "el valor de la variable es ${{ vars.POSTGRES_HOST }} y del secreto ${{ secrets.POSTGRES_HOST }}"
         sed -i 's/\${PRIMARY_COLOR}/'${{ env.PRIMARY_COLOR }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${USER_EMAIL}/'${{ env.USER_EMAIL }}'/' ${{ env.ECS_TASK_DEFINITION }}
