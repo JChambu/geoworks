@@ -41,29 +41,24 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-    - name: Get environment variables
-      id: get-env-vars
+    - name: Update task definition
       run: |
-        env_vars=""
-        for var in $(printenv | grep -E '^STAGING_'); do
-          name=$(echo $var | cut -d'=' -f1)
-          value=$(echo $var | cut -d'=' -f2-)
-          env_vars+="${name}=${value},"
-        done
-        env_vars=${env_vars%,}  # Remove trailing comma
-        echo "env_vars=${env_vars}" >> $GITHUB_OUTPUT
-    - name: Fill in the new image ID and environment variables in the Amazon ECS task definition
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
-        container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
-        environment-variables: ${{ steps.get-env-vars.outputs.env_vars }}
+        # Read the task definition file
+        task_def=$(cat ${{ env.ECS_TASK_DEFINITION }})
+        
+        # Update the image
+        task_def=$(echo "$task_def" | jq --arg IMAGE "${{ steps.build-image.outputs.image }}" '.containerDefinitions[0].image = $IMAGE')
+        
+        # Update environment variables
+        env_vars=$(echo '${{ toJson(secrets) }}' | jq 'to_entries | map({name: .key, value: .value}) | {environment: .}')
+        task_def=$(echo "$task_def" | jq --argjson ENV "$env_vars" '.containerDefinitions[0] += $ENV')
+        
+        # Write the updated task definition back to the file
+        echo "$task_def" > ${{ env.ECS_TASK_DEFINITION }}
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        task-definition: ${{ env.ECS_TASK_DEFINITION }}
         service: ${{ env.ECS_SERVICE }}
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
