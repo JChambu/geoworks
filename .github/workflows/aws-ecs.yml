@@ -67,6 +67,7 @@ jobs:
         sed -i 's/\${OPTIMIZE_LINE_WIDTH}/'${{ vars.OPTIMIZE_LINE_WIDTH }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${MAILER_DOMAIN}/'${{ vars.MAILER_DOMAIN }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${GEOSERVER_PORT}/'${{ vars.GEOSERVER_PORT }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${GEOSERVER_HOST}/'${{ vars.GEOSERVER_HOST }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${GEOSERVER_CSRF_WHITELIST}/'${{ vars.GEOSERVER_CSRF_WHITELIST }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${PRIMARY_COLOR_TRANSPARENT}/'${{ vars.PRIMARY_COLOR_TRANSPARENT }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${TITLE}/'${{ vars.TITLE }}'/' ${{ env.ECS_TASK_DEFINITION }}
