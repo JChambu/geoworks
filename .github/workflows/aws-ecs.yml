@@ -62,7 +62,8 @@ jobs:
         sed -i 's/\${POSTGRES_DATABASE}/'${{ vars.POSTGRES_DATABASE }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${POSTGRES_PASSWORD}/'${{ vars.POSTGRES_PASSWORD }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${GEOSERVER_AUTH_KEY}/'${{ vars.GEOSERVER_AUTH_KEY }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${CATALINA_OPTS}/'${{ vars.CATALINA_OPTS }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        ESCAPED_CATALINA_OPTS=$(printf '%s\n' "${{ env.CATALINA_OPTS }}" | sed 's/[&/\]/\\&/g')
+        sed -i 's|${CATALINA_OPTS}|'$ESCAPED_CATALINA_OPTS'|' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${USER_NAME}/'${{ vars.USER_NAME }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${OPTIMIZE_LINE_WIDTH}/'${{ vars.OPTIMIZE_LINE_WIDTH }}'/' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's/\${MAILER_DOMAIN}/'${{ vars.MAILER_DOMAIN }}'/' ${{ env.ECS_TASK_DEFINITION }}
