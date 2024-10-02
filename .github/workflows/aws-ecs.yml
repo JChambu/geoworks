@@ -41,24 +41,41 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-    - name: Update task definition
+    - name: Get Environment Variables
+      uses: actions/github-script@v6
+      id: get-env-vars
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          const environment = await github.rest.repos.getEnvironment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            environment_name: 'staging'
+          });
+          const envVars = environment.data.environment_variables;
+          return Object.keys(envVars).map(key => ({name: key, value: envVars[key]}));
+    - name: Create dynamic task definition
+      id: create-task-def
       run: |
-        # Read the task definition file
+        # Read the base task definition file
         task_def=$(cat ${{ env.ECS_TASK_DEFINITION }})
         
         # Update the image
         task_def=$(echo "$task_def" | jq --arg IMAGE "${{ steps.build-image.outputs.image }}" '.containerDefinitions[0].image = $IMAGE')
         
-        # Update environment variables
-        env_vars=$(echo '${{ toJson(secrets) }}' | jq 'to_entries | map({name: .key, value: .value}) | {environment: .}')
-        task_def=$(echo "$task_def" | jq --argjson ENV "$env_vars" '.containerDefinitions[0] += $ENV')
+        # Get environment variables from previous step
+        env_vars='${{ steps.get-env-vars.outputs.result }}'
         
-        # Write the updated task definition back to the file
-        echo "$task_def" > ${{ env.ECS_TASK_DEFINITION }}
+        # Update environment variables in task definition
+        task_def=$(echo "$task_def" | jq --argjson ENV "$env_vars" '.containerDefinitions[0].environment = $ENV')
+        
+        # Save the updated task definition to a new file
+        echo "$task_def" > task-definition-updated.json
+        echo "task-definition-file=task-definition-updated.json" >> $GITHUB_OUTPUT
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
+        task-definition: ${{ steps.create-task-def.outputs.task-definition-file }}
         service: ${{ env.ECS_SERVICE }}
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
