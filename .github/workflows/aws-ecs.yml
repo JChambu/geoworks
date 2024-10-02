@@ -49,32 +49,31 @@ jobs:
     - name: Reemplazar variables de entorno en la definición de tarea
       run: |
         sed -i 's/\${POSTGRES_HOST}/'${{ vars.POSTGRES_HOST }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        echo "el valor de la variable es ${{ vars.POSTGRES_HOST }} y del secreto ${{ secrets.POSTGRES_HOST }}"
-        sed -i 's/\${PRIMARY_COLOR}/'${{ env.PRIMARY_COLOR }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${USER_EMAIL}/'${{ env.USER_EMAIL }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${FAVICON}/'${{ env.FAVICON }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${USER_PASSWORD}/'${{ env.USER_PASSWORD }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${MAILER_USERNAME}/'${{ env.MAILER_USERNAME }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${MAX_FILTER_RULES}/'${{ env.MAX_FILTER_RULES }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${POSTGRES_USER}/'${{ env.POSTGRES_USER }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${RAILS_ENV}/'${{ env.RAILS_ENV }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${VERTICAL_LOGO}/'${{ env.VERTICAL_LOGO }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${POSTGRES_PORT}/'${{ env.POSTGRES_PORT }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${POSTGRES_DATABASE}/'${{ env.POSTGRES_DATABASE }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${POSTGRES_PASSWORD}/'${{ env.POSTGRES_PASSWORD }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${GEOSERVER_AUTH_KEY}/'${{ env.GEOSERVER_AUTH_KEY }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${CATALINA_OPTS}/'${{ env.CATALINA_OPTS }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${USER_NAME}/'${{ env.USER_NAME }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${OPTIMIZE_LINE_WIDTH}/'${{ env.OPTIMIZE_LINE_WIDTH }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${MAILER_DOMAIN}/'${{ env.MAILER_DOMAIN }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${GEOSERVER_PORT}/'${{ env.GEOSERVER_PORT }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${GEOSERVER_CSRF_WHITELIST}/'${{ env.GEOSERVER_CSRF_WHITELIST }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${PRIMARY_COLOR_TRANSPARENT}/'${{ env.PRIMARY_COLOR_TRANSPARENT }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${TITLE}/'${{ env.TITLE }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${ENABLE_JSONP}/'${{ env.ENABLE_JSONP }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${APP_PORT}/'${{ env.APP_PORT }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${MAILER_PASSWORD}/'${{ env.MAILER_PASSWORD }}'/' ${{ env.ECS_TASK_DEFINITION }}
-        sed -i 's/\${HORIZONTAL_LOGO}/'${{ env.HORIZONTAL_LOGO }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${PRIMARY_COLOR}/'${{ vars.PRIMARY_COLOR }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${USER_EMAIL}/'${{ vars.USER_EMAIL }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${FAVICON}/'${{ vars.FAVICON }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${USER_PASSWORD}/'${{ vars.USER_PASSWORD }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${MAILER_USERNAME}/'${{ vars.MAILER_USERNAME }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${MAX_FILTER_RULES}/'${{ vars.MAX_FILTER_RULES }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${POSTGRES_USER}/'${{ vars.POSTGRES_USER }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${RAILS_ENV}/'${{ vars.RAILS_ENV }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${VERTICAL_LOGO}/'${{ vars.VERTICAL_LOGO }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${POSTGRES_PORT}/'${{ vars.POSTGRES_PORT }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${POSTGRES_DATABASE}/'${{ vars.POSTGRES_DATABASE }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${POSTGRES_PASSWORD}/'${{ vars.POSTGRES_PASSWORD }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${GEOSERVER_AUTH_KEY}/'${{ vars.GEOSERVER_AUTH_KEY }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${CATALINA_OPTS}/'${{ vars.CATALINA_OPTS }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${USER_NAME}/'${{ vars.USER_NAME }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${OPTIMIZE_LINE_WIDTH}/'${{ vars.OPTIMIZE_LINE_WIDTH }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${MAILER_DOMAIN}/'${{ vars.MAILER_DOMAIN }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${GEOSERVER_PORT}/'${{ vars.GEOSERVER_PORT }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${GEOSERVER_CSRF_WHITELIST}/'${{ vars.GEOSERVER_CSRF_WHITELIST }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${PRIMARY_COLOR_TRANSPARENT}/'${{ vars.PRIMARY_COLOR_TRANSPARENT }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${TITLE}/'${{ env.TITLE }}'/' ${{ vars.ECS_TASK_DEFINITION }}
+        sed -i 's/\${ENABLE_JSONP}/'${{ vars.ENABLE_JSONP }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${APP_PORT}/'${{ env.APP_PORT }}'/' ${{ vars.ECS_TASK_DEFINITION }}
+        sed -i 's/\${MAILER_PASSWORD}/'${{ vars.MAILER_PASSWORD }}'/' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's/\${HORIZONTAL_LOGO}/'${{ vars.HORIZONTAL_LOGO }}'/' ${{ env.ECS_TASK_DEFINITION }}
 
     - name: Create dynamic task definition
       id: create-task-def
