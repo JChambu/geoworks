@@ -1183,7 +1183,7 @@
     <a data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="dropdown-columns">
       <i class="fas fa-plus ml-2" style="font-size: 0.8em; cursor: pointer;" title="<%= t('table_elements.add_column') %>"></i>
     </a>
-    <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; max-width: 120vh; overflow: auto; white-space: nowrap;">
+    <div class="dropdown-menu addcolumns scroll" aria-labelledby="dropdown-columns" style="max-height: 40vh; max-width: 120vh; overflow: auto;">
       <% if !@fields.nil? %>
         <% @fields.each do |field| %>
           <% if field.field_type_id != 7 %>
