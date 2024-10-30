@@ -26,8 +26,6 @@ services:
     container_name: gw-app
     ports:
       - "$APP_PORT:3000"
-    volumes:
-     - .:/opt/geoworks
     env_file:
       - .env
     depends_on:
