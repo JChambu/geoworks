@@ -445,7 +445,6 @@ var dragAndDrop = {
 
 // función para graficar los charts
 function draw_charts(data) {
-
   // Ordenamos las series por chart
   if (data != undefined){
     for (var i = 0; i < data.length; i++) {
@@ -793,7 +792,7 @@ function draw_charts(data) {
             data_gx = {
               labels: lab_acumulado,
               datasets: datasets
-            }
+            }                               
             data_gx_all.push({
               id_graph: graphic_id,
               data_gx: data_gx
@@ -1089,6 +1088,12 @@ function draw_charts(data) {
 
       // DOUGHNUT options
       if (type_chart == 'doughnut') {
+        var total = data_gx.datasets[0].data.reduce((sum, value) => sum + parseFloat(value), 0);
+        var percentageData = data_gx.datasets[0].data.map(value => {
+          let percentage = ((value / total) * 100).toFixed(2);
+          return isNaN(percentage) ? "0" : percentage;
+        });
+
         var option_legend = {
           responsive: true,
           aspectRatio: aspectR,
@@ -1108,20 +1113,13 @@ function draw_charts(data) {
                 return data.labels[tooltipItem[0].index];
               },
               label: function(tooltipItem, data) {
-                // Obtenemos los datos
                 var dataset = data.datasets[tooltipItem.datasetIndex];
-                // Calcula el total
-                var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
-                  // Convierte string a float
-                  previousValue = parseFloat(previousValue)
-                  currentValue = parseFloat(currentValue)
-                  return previousValue + currentValue;
+                var total = dataset.data.reduce(function(previousValue, currentValue) {
+                  return parseFloat(previousValue) + parseFloat(currentValue);
                 });
-                // Obtenemos el valor de los elementos actuales
                 var currentValue = dataset.data[tooltipItem.index];
-                // Calculamos el porcentaje
-                var precentage = ((currentValue / total) * 100).toFixed(2)
-                return precentage + "%";
+                var percentage = ((currentValue / total) * 100).toFixed(2);
+                return percentage + "%";
               }
             }
           },
@@ -1137,12 +1135,20 @@ function draw_charts(data) {
               textShadowColor: '#000000',
               textShadowBlur: 2,
               align: 'center',
+              formatter: (value) => `${value}%`
             }
           },
         }
         var chart_settings = {
           type: type_chart,
-          data: data_gx,
+          // data: data_gx,
+          data: {
+            ...data_gx,
+            datasets: data_gx.datasets.map((dataset, index) => ({
+              ...dataset,
+              data: percentageData
+            }))
+          },
           options: option_legend
         }
       }
