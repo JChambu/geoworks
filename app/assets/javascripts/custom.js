@@ -3151,6 +3151,10 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
         } else{
           new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
         }
+
+        new_p.addEventListener('input', function() {
+          textarea_adjust_height();
+        });
       }
       var found_nested = false;
       if (element_child_field.field_type_id == 2 || element_child_field.field_type_id == 10) {
