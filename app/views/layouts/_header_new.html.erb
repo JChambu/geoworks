@@ -337,14 +337,14 @@
             <%= link_to t('navbar_elements.new_layer'), new_project_type_path, class: "dropdown-item" %>
           <% end %>
           <div class="dropdown-divider"></div>
-          <% Folder.includes(:project_types).each do |folder| %>
+          <% Folder.includes(:project_types).order(:name).each do |folder| %>
             <div class="dropdown-folder-submenu">
               <a class="dropdown-item dropdown-toggle" style="font-weight: bold" href="#">
                 <%= folder.name %>
                 <i class="fas fa-chevron-right" style="float: right;"></i>
               </a>
               <ul class="dropdown-menu">
-                <% (folder.project_types & project_types_for_layout.to_a).each do |project_type| %>
+                <% (folder.project_types & project_types_for_layout.to_a).sort_by(&:name).each do |project_type| %>
                   <% if @project_type.nil? || @project_type.name != project_type.name %>
                     <li>
                       <%= link_to project_type.name, dashboards_show_path(project_type_id: project_type.id), class: "dropdown-item" %>
@@ -355,7 +355,7 @@
             </div>
           <% end %>
           <div class="dropdown-folder-submenu">
-            <% project_types_for_layout.left_joins(:folder).where(folders: { id: nil }).each do |project_type| %>
+            <% project_types_for_layout.left_joins(:folder).where(folders: { id: nil }).order(:name).each do |project_type| %>
               <% if project_types_for_layout.include?(project_type) && (@project_type.nil? || @project_type.name != project_type.name) %>
                 <a>
                   <%= link_to project_type.name, dashboards_show_path(project_type_id: project_type.id), class: "dropdown-item" %>
@@ -513,7 +513,7 @@
             <%= link_to t('statuses'), project_type_project_statuses_path(@project_type.id), class: "dropdown-item" %>
           <% end %>
           <% if can? :project_types, :share%>
-            <%= link_to t('navbar_elements.share_layer'), project_type_share_path(@project_type.id), remote:true,remote:true, class: "dropdown-item" %>
+            <%= link_to t('navbar_elements.share_layer'), project_type_share_path(@project_type.id), remote: true, class: "dropdown-item" %>
           <% end %>
           <% if can? :project_types, :edit%>
             <%= link_to t('navbar_elements.modelator'), edit_project_type_path(@project_type.id), class: "dropdown-item" %>
