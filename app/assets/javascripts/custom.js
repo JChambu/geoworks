@@ -2449,7 +2449,39 @@ function export_to_excel(table, name, filename) {
 
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
-function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
+function edit_registers(app_id_popup, showModal) {
+  if (showModal) {
+    var modal = document.getElementById('createEditGeometries');
+    modal.style.display = 'block';
+  }
+}
+
+function close_register_modal() {
+  var modal = document.getElementById('createEditGeometries');
+  modal.style.display = 'none';
+}
+
+function handleCreate(app_id_popup, from_map){
+  var modal = document.getElementById('createEditGeometries');
+  modal.style.display = 'none';
+  show_item_info(app_id_popup, from_map, false, false, true);
+  setTimeout(function() {
+    document.getElementById('show_confirmation_button').click();
+  }, 1100);
+}
+
+function handleEdit(app_id_popup, from_map){
+  var modal = document.getElementById('createEditGeometries');
+  modal.style.display = 'none';
+  $('#text_toast').html("Abriendo datos, este proceso puede tardar unos minutos");
+  $('#toast').toast('show');
+  $(".fakeLoader").css("display", "block");
+  show_item_info(app_id_popup, true, false, false, false);
+}
+
+
+
+function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_create) {
   children_fields_all = new Object;
   if(!is_new_file){
     $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
@@ -2484,6 +2516,11 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
   } else{
     var from_date_subforms = Navarra.project_types.config.from_date_subforms;
     var to_date_subforms = Navarra.project_types.config.to_date_subforms;
+    if(handle_create == true){
+      var new_field = "true";
+    } else {
+      var new_field = "false";
+    }
     var url_get = '/project_types/search_father_children_and_photos_data';
     var filter_children = [];
     var filter_user_children = [];
@@ -2500,7 +2537,8 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       from_date_subforms: from_date_subforms,
       to_date_subforms: to_date_subforms,
       filter_children: filter_children,
-      filter_user_children: filter_user_children
+      filter_user_children: filter_user_children,
+      new_field: new_field
     }
   }
 
@@ -2609,27 +2647,29 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
         }
       });
       if(!is_new_file && !is_multiple){
-        //fotos del registro
-        var verify_count_elements_photos = 0
-        var father_photos = data.father_photos;
-        father_photos.forEach(function(photo) {
-          var new_div = document.createElement('DIV');
-          new_div.className = "photo_div_info";
-          new_div.style.position = "static";
-          var new_photo = document.createElement('IMG');
-          new_photo.className = "photo_info";
-          new_photo.setAttribute('onClick', "open_photo(event)");
-          new_photo.src = "data:image/png;base64," + photo.image;
-          new_div.appendChild(new_photo);
-          var new_photo = document.createElement('P');
-          new_photo.innerHTML = photo.name;
-          new_photo.className = "photo_description";
-          new_div.appendChild(new_photo);
-          document.getElementById('info_body').appendChild(new_div);
-          verify_count_elements_photos++;
-        });
-        if(verify_count_elements_photos!= father_photos.length){
-          set_error_message("Error: no se pudieron traer todas las fotos del registro");
+        if(handle_create != true){
+          //fotos del registro
+          var verify_count_elements_photos = 0
+          var father_photos = data.father_photos;
+          father_photos.forEach(function(photo) {
+            var new_div = document.createElement('DIV');
+            new_div.className = "photo_div_info";
+            new_div.style.position = "static";
+            var new_photo = document.createElement('IMG');
+            new_photo.className = "photo_info";
+            new_photo.setAttribute('onClick', "open_photo(event)");
+            new_photo.src = "data:image/png;base64," + photo.image;
+            new_div.appendChild(new_photo);
+            var new_photo = document.createElement('P');
+            new_photo.innerHTML = photo.name;
+            new_photo.className = "photo_description";
+            new_div.appendChild(new_photo);
+            document.getElementById('info_body').appendChild(new_div);
+            verify_count_elements_photos++;
+          });
+          if(verify_count_elements_photos!= father_photos.length){
+            set_error_message("Error: no se pudieron traer todas las fotos del registro");
+          }
         }
       }
       // Si es nuevo puede guardar sin hacer cambios en los campos
@@ -2902,30 +2942,30 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
           }
           document.getElementById('info_body').appendChild(new_row);
           if(document.getElementById('field_id_'+id_field)!=null){
-              if(document.getElementById('field_id_'+id_field).classList.contains("multiselect_field")){
-                if(document.getElementById('field_id_'+id_field).classList.contains("readonly_field")){
-                  var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled readonly_field';
-                } else{
-                  var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled';
-                }
-                $('#field_id_'+id_field).multiselect({
-                  maxHeight: 450,
-                  buttonClass: buttonClass,
-                  buttonWidth: '100%',
-                  nonSelectedText: 'Seleccionar',
-                  selectedClass: 'selected_multiple_item',
-                  delimiterText: '\n',
-                  numberDisplayed: 0,
-                  allSelectedText: false,
-                  enableFiltering: true,
-                  enableCaseInsensitiveFiltering: true,
-                  filterPlaceholder: 'Buscar',
-                  includeFilterClearBtn: false,
-                  includeSelectAllOption: false,
-                  dropRight: true,
-                });
+            if(document.getElementById('field_id_'+id_field).classList.contains("multiselect_field")){
+              if(document.getElementById('field_id_'+id_field).classList.contains("readonly_field")){
+                var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled readonly_field';
+              } else{
+                var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled';
               }
+              $('#field_id_'+id_field).multiselect({
+                maxHeight: 450,
+                buttonClass: buttonClass,
+                buttonWidth: '100%',
+                nonSelectedText: 'Seleccionar',
+                selectedClass: 'selected_multiple_item',
+                delimiterText: '\n',
+                numberDisplayed: 0,
+                allSelectedText: false,
+                enableFiltering: true,
+                enableCaseInsensitiveFiltering: true,
+                filterPlaceholder: 'Buscar',
+                includeFilterClearBtn: false,
+                includeSelectAllOption: false,
+                dropRight: true,
+              });
             }
+          }
         } //termina campo padre
         else {
           // Dibuja campos hijos
@@ -2938,40 +2978,45 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             new_row.classList.add("d-none");
             new_row.classList.add("subtile_hidden" + element.field_id);
           }
-          var new_celd = document.createElement('DIV');
-          new_celd.className = 'div_subforms';
-          if(!is_new_file && !is_multiple){
-            if (element.field_type_id == 7 && element.value.length == 0) {
-              new_celd.classList.add('d-none');
+          if(handle_create == true){
+            var new_celd = document.createElement('DIV');
+            new_celd.className = 'div_subforms';
+            if(!is_new_file && !is_multiple){
+              if (element.field_type_id == 7 && element.value == null) {
+                new_celd.classList.add('d-none');
+              }
             }
-          }
-          new_celd.id = "child_container_"+element.key;
-          // si tiene autorización para nuevos hijos
-          if($('#new_subform_control').val()=="true"){
-            var new_p = document.createElement('I');
-            new_p.className = "fas fa-plus icon_add d-none add_subforms btn btn-primary custom_button p-1";
-            new_p.setAttribute('onclick','open_new_child('+element.field_id+',"'+element.name+'","'+element.key+'",'+is_multiple+')');
+            new_celd.id = "child_container_"+element.key;
+            // si tiene autorización para nuevos hijos
+            if($('#new_subform_control').val()=="true"){
+              var new_p = document.createElement('I');
+              new_p.className = "fas fa-plus icon_add d-none add_subforms btn btn-primary custom_button p-1";
+              new_p.setAttribute('onclick','open_new_child('+element.field_id+',"'+element.name+'","'+element.key+'",'+is_multiple+')');
+              new_celd.appendChild(new_p);
+            }
+            var new_p = document.createElement('H7');
+            new_p.innerHTML = element.name + ":";
+            new_p.style.borderBottom = "solid 1px";
+            new_p.style.display = "inline-block";
             new_celd.appendChild(new_p);
+            new_row.appendChild(new_celd);
           }
-          var new_p = document.createElement('H7');
-          new_p.innerHTML = element.name + ":";
-          new_p.style.borderBottom = "solid 1px";
-          new_p.style.display = "inline-block";
-          new_celd.appendChild(new_p);
-          new_row.appendChild(new_celd);
-          child_elements = element.value;
-          verify_count_elements_childs = 0;
-          if(!is_new_file && !is_multiple){
-            child_elements.forEach(function(element_child) {
-              var new_row1 = create_new_row_child_date(element_child);
-              new_row.appendChild(new_row1);
-              var new_row1 = create_new_row_child(element_child, element.field_id, element.name, is_multiple,false);
-              new_row.appendChild(new_row1);
-            }); //termina for Each childs
-            if(verify_count_elements_childs!= child_elements.length){
-              set_error_message("Error: no se pudieron traer todos los subformularios del campo "+element.name);
+          if(handle_create != true){
+            child_elements = element.value;
+            verify_count_elements_childs = 0;
+            if(!is_new_file && !is_multiple){
+              child_elements.forEach(function(element_child) {
+                var new_row1 = create_new_row_child_date(element_child);
+                new_row.appendChild(new_row1);
+                var new_row1 = create_new_row_child(element_child, element.field_id, element.name, is_multiple,false);
+                new_row.appendChild(new_row1);
+              }); //termina for Each childs
+              if(verify_count_elements_childs!= child_elements.length){
+                set_error_message("Error: no se pudieron traer todos los subformularios del campo "+element.name);
+              }
             }
           }
+          
           document.getElementById('info_body').appendChild(new_row);
         }
         verify_count_elements ++;
@@ -2999,11 +3044,12 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
         calculate_all(true,true);
         calculate_all(true,false);
       }
-
+      
       //si viene de nuevo registro abre edición
       if($("#confirmation_geometry_button").hasClass('confirmation_geometry_button_new')){
         show_confirmation('edit_confirmation');
       }
+      $(".fakeLoader").css("display", "none");
     }//end Success
   }); //end ajax
 }

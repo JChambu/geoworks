@@ -255,7 +255,7 @@ var can_edit_status_yes;
               <% else %>
                 <input class="d-none" id="can_edit_status_yes" value="0">
               <% end %>
-              <i class="fas fa-edit" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation')"></i>
+              <i class="fas fa-edit" id="show_confirmation_button" style="cursor: pointer;" title="Editar" onclick="show_confirmation('edit_confirmation')"></i>
             <% end %>
             <% if can? :data, :edit_owner %>
               <i class="fas fa-user-edit" style="cursor: pointer;" title="Cambiar Propietario" onclick="show_confirmation('owner_confirmation')"></i>
