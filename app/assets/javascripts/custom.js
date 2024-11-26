@@ -3823,6 +3823,9 @@ function edit_file(edit_parent, edit_child, edit_status){
       if (data['type'] == 'create_form') {
         id_created = data['id'][0];
         show_item_info(id_created,true)
+      } else if (data['type'] == 'update_form') {
+        id_updated = data["app_ids"][0];
+        show_item_info(id_updated,true)
       } else {
         id_updated = properties_to_save["app_id"];
         show_item_info(id_updated,true)
