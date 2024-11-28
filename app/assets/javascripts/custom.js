@@ -3827,25 +3827,43 @@ function edit_file(edit_parent, edit_child, edit_status){
         create_layers_table();
       }
       update_all();
+
+      // if(Navarra.dashboards.config.current_tenant == 'scm'){
+      //   if (data['type'] == 'create_form') {
+      //     id_created = data['id'][0];
+      //     // show_item_info(id_created,true, false, false, false)
+      //   } else if (data['type'] == 'update_form') {
+      //     id_updated = data["app_ids"][0];
+      //     // show_item_info(id_updated,true, false, false, false)
+      //   } else {
+      //     id_updated = properties_to_save["app_id"];
+      //     show_item_info(id_updated,true, false, false, false)
+      //   }
+      // } else {
+      //   if (data['type'] == 'create_form') {
+      //     id_created = data['id'][0];
+      //     show_item_info(id_created,true, false, false, false, true)
+      //   } else if (data['type'] == 'update_form') {
+      //     id_updated = data["app_ids"][0];
+      //     show_item_info(id_updated,true, false, false, false, true)
+      //   } else {
+      //     id_updated = properties_to_save["app_id"];
+      //     show_item_info(id_updated,true, false, false, false, true)
+      //   }
+      // }
       
-      var id = null;
-      var isScm = Navarra.dashboards.config.current_tenant == 'scm';
-      
-      if (data['type'] == 'create_form') {
-        id = data['id'][0];
-      } else if (data['type'] == 'update_form') {
-        id = data['app_ids'][0];
-      } else {
-        id = properties_to_save["app_id"];
+      if(Navarra.dashboards.config.current_tenant != 'scm'){
+        if (data['type'] == 'create_form') {
+          id_created = data['id'][0];
+          show_item_info(id_created,true, false, false, false, true)
+        } else if (data['type'] == 'update_form') {
+          id_updated = data["app_ids"][0];
+          show_item_info(id_updated,true, false, false, false, true)
+        } else {
+          id_updated = properties_to_save["app_id"];
+          show_item_info(id_updated,true, false, false, false, true)
+        }
       }
-      
-      var true_false = isScm ? false : true;
-      show_item_info(id, true, false, false, false, true_false);
-      
-      setTimeout(function() {
-        show_confirmation('edit_confirmation');
-        open_subtitle(data.subtitles_ids_array, '');
-      }, 1200);
 
     }
   });
