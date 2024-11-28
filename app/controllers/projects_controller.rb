@@ -377,7 +377,7 @@ class ProjectsController < ApplicationController
           end
         end
       end
-      render json: {status: 'Actualización completada.', subforms_created: @subforms_created, subtitles_ids_array: subtitles_ids_array, type: 'update_form'}
+      render json: {status: 'Actualización completada.', subforms_created: @subforms_created, subtitles_ids_array: subtitles_ids_array, type: 'update_form', app_ids: app_ids}
     else
       render json: {status: 'Faltan parámetros para completar la acción.'}
     end

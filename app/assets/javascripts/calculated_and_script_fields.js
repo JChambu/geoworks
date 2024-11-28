@@ -353,6 +353,10 @@ Navarra.calculated_and_script_fields = function() {
               date_to_change = $(texto_campo_id).val();
               form_id = Navarra.project_types.config.item_selected
 
+              if(form_id == ''){
+                form_id = Navarra.project_types.config.id_item_displayed
+              }
+
               if (date_to_change != '') {
                 $.ajax({
                   type: 'POST',

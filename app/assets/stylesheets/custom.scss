@@ -1311,3 +1311,43 @@ div.custom-menu.show {
   margin-bottom: 4px;
   margin-left: 18px;
 }
+
+.edit_create_modal {
+  background-color: rgba(39, 43, 48, 0.8);
+  margin-left: -10px;
+  font-size: 1.1em;
+  color: white;
+  margin-top: 10px;
+  margin: 15% auto;
+  border: 1px solid #888;
+  width: 270px;
+  padding-top: 7px;
+  padding-bottom: 15px;
+  padding-right: 10px;
+  padding-left: 13px;
+}
+
+.handleRegister {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 15px;
+  margin: 5px;
+  background-color: rgba(39, 43, 48, 0.8);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.handleRegister i {
+  margin-right: 8px;
+}
+
+.handleRegister:hover {
+  background-color: #0056b3;
+}
+
+.handleRegister:focus {
+  outline: none;
+}
