@@ -1543,7 +1543,7 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   appid_info = data_properties["app_id"];
   appid_selected = data_properties["app_id"];
   if (column.value == "#_action") {
-    var new_dom = "<i id='info_icon_table"+appid_info+"' class='fas fa-info-circle' style='margin-right:10px; border-radius: 5px; padding:5px; color:white; background:"+status_color+"' title='Más Información' onclick='show_item_info(" + appid_info + ",false)'></i>"
+    var new_dom = "<i id='info_icon_table"+appid_info+"' class='fas fa-info-circle' style='margin-right:10px; border-radius: 5px; padding:5px; color:white; background:"+status_color+"' title='Más Información' onclick='edit_registers(" + appid_info + ",true)'></i>"
     array_datos.push(new_dom);
   }
   if (column.value == "#_select") {
@@ -2479,9 +2479,12 @@ function handleEdit(app_id_popup, from_map){
   show_item_info(app_id_popup, true, false, false, false);
 }
 
+function normalBehavior(app_id_popup, from_map){
+  show_item_info(app_id_popup, from_map, false, false, false, true);
+}
 
 
-function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_create) {
+function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_create, normal_bh) {
   children_fields_all = new Object;
   if(!is_new_file){
     $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
@@ -2518,6 +2521,8 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
     var to_date_subforms = Navarra.project_types.config.to_date_subforms;
     if(handle_create == true){
       var new_field = "true";
+    } else if (normal_bh == true){
+      var new_field = "false";
     } else {
       var new_field = "false";
     }
@@ -2647,7 +2652,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
         }
       });
       if(!is_new_file && !is_multiple){
-        if(handle_create != true){
+        if(handle_create != true || normal_bh == true){
           //fotos del registro
           var verify_count_elements_photos = 0
           var father_photos = data.father_photos;
@@ -2978,30 +2983,33 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
             new_row.classList.add("d-none");
             new_row.classList.add("subtile_hidden" + element.field_id);
           }
-          if(handle_create == true){
-            var new_celd = document.createElement('DIV');
-            new_celd.className = 'div_subforms';
-            if(!is_new_file && !is_multiple){
-              if (element.field_type_id == 7 && element.value == null) {
-                new_celd.classList.add('d-none');
-              }
+          // if(handle_create == true || normal_bh == true){
+            
+          // }
+
+          var new_celd = document.createElement('DIV');
+          new_celd.className = 'div_subforms';
+          if(!is_new_file && !is_multiple){
+            if (element.field_type_id == 7 && element.value == null) {
+              new_celd.classList.add('d-none');
             }
-            new_celd.id = "child_container_"+element.key;
-            // si tiene autorización para nuevos hijos
-            if($('#new_subform_control').val()=="true"){
-              var new_p = document.createElement('I');
-              new_p.className = "fas fa-plus icon_add d-none add_subforms btn btn-primary custom_button p-1";
-              new_p.setAttribute('onclick','open_new_child('+element.field_id+',"'+element.name+'","'+element.key+'",'+is_multiple+')');
-              new_celd.appendChild(new_p);
-            }
-            var new_p = document.createElement('H7');
-            new_p.innerHTML = element.name + ":";
-            new_p.style.borderBottom = "solid 1px";
-            new_p.style.display = "inline-block";
-            new_celd.appendChild(new_p);
-            new_row.appendChild(new_celd);
           }
-          if(handle_create != true){
+          new_celd.id = "child_container_"+element.key;
+          // si tiene autorización para nuevos hijos
+          if($('#new_subform_control').val()=="true"){
+            var new_p = document.createElement('I');
+            new_p.className = "fas fa-plus icon_add d-none add_subforms btn btn-primary custom_button p-1";
+            new_p.setAttribute('onclick','open_new_child('+element.field_id+',"'+element.name+'","'+element.key+'",'+is_multiple+')');
+            new_celd.appendChild(new_p);
+          }
+          var new_p = document.createElement('H7');
+          new_p.innerHTML = element.name + ":";
+          new_p.style.borderBottom = "solid 1px";
+          new_p.style.display = "inline-block";
+          new_celd.appendChild(new_p);
+          new_row.appendChild(new_celd);
+
+          if(handle_create != true || normal_bh == true){
             child_elements = element.value;
             verify_count_elements_childs = 0;
             if(!is_new_file && !is_multiple){
@@ -3591,6 +3599,7 @@ function edit_file(edit_parent, edit_child, edit_status){
       }
     });
     if(required_field_number>0){
+      $(".fakeLoader").css("display", "none");
       $('#info_messages').html("Complete los campos requeridos");
       $('#info_messages').addClass("text-danger");
       $('#info_messages').removeClass("d-none");
@@ -3599,6 +3608,7 @@ function edit_file(edit_parent, edit_child, edit_status){
   }
   if(is_new_file){
     if($("#input_status").val()==null){
+      $(".fakeLoader").css("display", "none");
       $('#info_messages').html("Agregue un Estado válido");
       $('#info_messages').addClass("text-danger");
       $('#info_messages').removeClass("d-none");
@@ -3607,6 +3617,7 @@ function edit_file(edit_parent, edit_child, edit_status){
   }
 
   if(!filechange && array_child_edited.length==0 && !statuschange){
+    $(".fakeLoader").css("display", "none");
     $('#info_messages').html("No hay cambios a guardar");
     $('#info_messages').addClass("text-danger");
     $('#info_messages').removeClass("d-none");
@@ -3820,15 +3831,28 @@ function edit_file(edit_parent, edit_child, edit_status){
       }
       update_all();
       
-      if (data['type'] == 'create_form') {
-        id_created = data['id'][0];
-        show_item_info(id_created,true)
-      } else if (data['type'] == 'update_form') {
-        id_updated = data["app_ids"][0];
-        show_item_info(id_updated,true)
+      if(Navarra.dashboards.config.current_tenant == 'scm'){
+        if (data['type'] == 'create_form') {
+          id_created = data['id'][0];
+          show_item_info(id_created,true, false, false, false)
+        } else if (data['type'] == 'update_form') {
+          id_updated = data["app_ids"][0];
+          show_item_info(id_updated,true, false, false, false)
+        } else {
+          id_updated = properties_to_save["app_id"];
+          show_item_info(id_updated,true, false, false, false)
+        }
       } else {
-        id_updated = properties_to_save["app_id"];
-        show_item_info(id_updated,true)
+        if (data['type'] == 'create_form') {
+          id_created = data['id'][0];
+          show_item_info(id_created,true, false, false, false, true)
+        } else if (data['type'] == 'update_form') {
+          id_updated = data["app_ids"][0];
+          show_item_info(id_updated,true, false, false, false, true)
+        } else {
+          id_updated = properties_to_save["app_id"];
+          show_item_info(id_updated,true, false, false, false, true)
+        }
       }
       
       setTimeout(function() {

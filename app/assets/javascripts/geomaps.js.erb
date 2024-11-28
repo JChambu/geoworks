@@ -1713,7 +1713,12 @@ function getCQLFilter_layer(dat){
                     div_popup_icon.appendChild(new_p);
 
                     var new_p = document.createElement('I');
-                    new_p.setAttribute("onclick",'edit_registers('+app_id_popup+',true)');
+                    if(Navarra.dashboards.config.current_tenant == 'scm'){
+                      new_p.setAttribute("onclick",'edit_registers('+app_id_popup+',true)');
+                    } else {
+                      new_p.setAttribute("onclick",'normalBehavior('+app_id_popup+',true)');
+                    }
+                    
                     new_p.className="fas fa-info-circle info_icon";
                     div_popup_icon.appendChild(new_p);
 
@@ -2626,7 +2631,7 @@ function new_geometry(event){
 }
 
 function open_new_fields(){
-  show_item_info(0,true,false,true);
+  show_item_info(0, true, false, true, false, true);
   set_onclick_map(true);
 }
 

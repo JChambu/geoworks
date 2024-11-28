@@ -154,6 +154,11 @@ var can_edit_status_yes;
   }
 
   function save_info(option_save){
+    if(Navarra.dashboards.config.current_tenant == 'scm'){
+      $('#text_toast').html("Este proceso puede tardar unos minutos.<br> ESPERE A QUE SE ABRAN LOS DATOS");
+      $('#toast').toast('show');
+      $(".fakeLoader").css("display", "block");
+    }
     disabled_fields();
     $('.div_confirmation').addClass("d-none");
     $('.div_confirmation').removeClass("d-inline");
