@@ -2983,9 +2983,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
             new_row.classList.add("d-none");
             new_row.classList.add("subtile_hidden" + element.field_id);
           }
-          // if(handle_create == true || normal_bh == true){
-            
-          // }
 
           var new_celd = document.createElement('DIV');
           new_celd.className = 'div_subforms';
@@ -3831,29 +3828,19 @@ function edit_file(edit_parent, edit_child, edit_status){
       }
       update_all();
       
-      if(Navarra.dashboards.config.current_tenant == 'scm'){
-        if (data['type'] == 'create_form') {
-          id_created = data['id'][0];
-          show_item_info(id_created,true, false, false, false)
-        } else if (data['type'] == 'update_form') {
-          id_updated = data["app_ids"][0];
-          show_item_info(id_updated,true, false, false, false)
-        } else {
-          id_updated = properties_to_save["app_id"];
-          show_item_info(id_updated,true, false, false, false)
-        }
+      var id = null;
+      var isScm = Navarra.dashboards.config.current_tenant == 'scm';
+      
+      if (data['type'] == 'create_form') {
+        id = data['id'][0];
+      } else if (data['type'] == 'update_form') {
+        id = data['app_ids'][0];
       } else {
-        if (data['type'] == 'create_form') {
-          id_created = data['id'][0];
-          show_item_info(id_created,true, false, false, false, true)
-        } else if (data['type'] == 'update_form') {
-          id_updated = data["app_ids"][0];
-          show_item_info(id_updated,true, false, false, false, true)
-        } else {
-          id_updated = properties_to_save["app_id"];
-          show_item_info(id_updated,true, false, false, false, true)
-        }
+        id = properties_to_save["app_id"];
       }
+      
+      var true_false = isScm ? false : true;
+      show_item_info(id, true, false, false, false, true_false);
       
       setTimeout(function() {
         show_confirmation('edit_confirmation');
