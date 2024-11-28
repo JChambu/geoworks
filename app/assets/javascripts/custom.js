@@ -1543,7 +1543,7 @@ function create_celd_table(column, indexColumn, data_properties, per_page_value,
   appid_info = data_properties["app_id"];
   appid_selected = data_properties["app_id"];
   if (column.value == "#_action") {
-    var new_dom = "<i id='info_icon_table"+appid_info+"' class='fas fa-info-circle' style='margin-right:10px; border-radius: 5px; padding:5px; color:white; background:"+status_color+"' title='Más Información' onclick='edit_registers(" + appid_info + ",true)'></i>"
+    var new_dom = "<i id='info_icon_table"+appid_info+"' class='fas fa-info-circle' style='margin-right:10px; border-radius: 5px; padding:5px; color:white; background:"+status_color+"' title='Más Información' onclick='show_item_info(" + appid_info + ",false)'></i>"
     array_datos.push(new_dom);
   }
   if (column.value == "#_select") {
