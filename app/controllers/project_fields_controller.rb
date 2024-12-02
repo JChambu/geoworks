@@ -199,10 +199,8 @@ class ProjectFieldsController < ApplicationController
   end
 
   def get_other_layer_data
-    project_id = params[:project_id]
-    field_id = params[:field_id]
-    subfield_id = params[:subfield_ids]
-    campos_asociar = params[:campos_asociar]
+    project_id = params[:project_id].to_i
+    field_id = params[:field_id].to_i
     current_field_type_id = params[:current_field_type_id].to_i
     project_selected = params[:project_selected].to_i
 
