@@ -1773,7 +1773,11 @@ function getCQLFilter_layer(dat){
                   }
                   // si es polígono dibuja el polígono de otro color
                   if(type_geometry=="Polygon"){
-                    create_polygon_selected(cc['features'][0]['geometry']['coordinates']);
+                    if(Navarra.dashboards.config.current_tenant == 'impulsa'){
+                      create_polygon_selected_impulsa(cc['features'][0]['geometry']['coordinates']);
+                    } else {
+                      create_polygon_selected(cc['features'][0]['geometry']['coordinates']);
+                    }
                   }
                 } // Cierra success
               }); // Cierra ajax
@@ -2543,6 +2547,31 @@ function create_polygon_selected(coordinates_newpol_selected){
     coordinates_newpol_selected_latlng.push(new L.latLng(latlng[1],latlng[0]));
   });
   var poligon_new = new L.Polygon(coordinates_newpol_selected_latlng, polygon_options);
+  polygon_selected.addLayer(poligon_new);
+  mymap.addLayer(polygon_selected);
+}
+
+function create_polygon_selected_impulsa(coordinates_newpol_selected) {
+  var polygon_options = {
+    fill: true,
+    color: "#000000",
+    fillColor: "#d3d800",
+    fillOpacity: 0.5
+  };
+
+  if (polygon_selected != undefined) {
+    mymap.removeLayer(polygon_selected);
+  }
+
+  polygon_selected = new L.LayerGroup();
+
+  var coordinates_newpol_selected_latlng = [];
+  coordinates_newpol_selected[0].forEach(function (latlng) {
+    coordinates_newpol_selected_latlng.push(new L.latLng(latlng[1], latlng[0]));
+  });
+
+  var poligon_new = new L.Polygon(coordinates_newpol_selected_latlng, polygon_options);
+
   polygon_selected.addLayer(poligon_new);
   mymap.addLayer(polygon_selected);
 }
