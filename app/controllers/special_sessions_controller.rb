@@ -1,6 +1,6 @@
 class SpecialSessionsController < ApplicationController
-  skip_authorize_resource :only => [:special_user_session, :switch_multitenant]
-  skip_before_action :authenticate_user!, :only => [:special_user_session, :switch_multitenant]
+  skip_authorize_resource :only => [:special_user_session, :switch_multitenant, :geometry_shared]
+  skip_before_action :authenticate_user!, :only => [:special_user_session, :switch_multitenant, :geometry_shared]
 
   def special_user_session
     special_user = User.find_by(email: 'public@geoworks.com')
@@ -10,6 +10,20 @@ class SpecialSessionsController < ApplicationController
     else
       redirect_to new_user_session_path, alert: "Usuario Especial no encontrado."
     end
+  end
+
+  def geometry_shared
+    special_user = User.find_by(email: 'super@admin.com')
+    project_id = params[:project_id].to_i
+    project_type_id = params[:project_type_id].to_i
+
+    if !session[:project_type_id_shared].present?
+      session[:project_type_id_shared] = project_type_id
+      session[:project_id_shared] = project_id
+    end
+
+    sign_in(special_user)
+    redirect_to root_path
   end
 
   def switch_multitenant

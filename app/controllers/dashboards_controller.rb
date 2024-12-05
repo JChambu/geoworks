@@ -106,8 +106,17 @@ class DashboardsController < ApplicationController
         end
       end
 
-      @extent = Project.geometry_bounds(@project_type.id, current_user.id, attribute_filters = '', filtered_form_ids = '', from_date = '', to_date = '', intersect_width_layers = 'false', active_layers = '', filters_layers = {} ,timeslider_layers = {})
+      if !session[:project_type_id_shared].nil?
+        attr_filters = ["app_id|=|#{session[:project_id_shared]}|#{session[:project_type_id_shared]}"]
+        @extent = Project.geometry_bounds(@project_type.id, current_user.id, attribute_filters = "#{attr_filters}", filtered_form_ids = '', from_date = '', to_date = '', intersect_width_layers = 'false', active_layers = '', filters_layers = {}, timeslider_layers = {})
+      else
+        @extent = Project.geometry_bounds(@project_type.id, current_user.id, attribute_filters = '', filtered_form_ids = '', from_date = '', to_date = '', intersect_width_layers = 'false', active_layers = '', filters_layers = {} ,timeslider_layers = {})
+      end
       @status_project  = ProjectStatus.where(project_type_id: @project_type.id)
+      if session[:project_type_id_shared].present? && session[:project_id_shared].present?
+        session.delete(:project_type_id_shared)
+        session.delete(:project_id_shared)
+      end
     end
   end
 
@@ -164,18 +173,24 @@ class DashboardsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
 
   def set_project_type
-    if !params[:project_type_id].nil?
-      @project_type = ProjectType.joins(:has_project_types).where(id: params[:project_type_id]).where(has_project_types: {user_id: current_user.id}).first
-      session[:project_type_id] = @project_type.id if !@project_type.nil?
+    if !session[:project_type_id_shared].nil?
+      project_type_id_shared = session[:project_type_id_shared]
+      project_id_shared = session[:project_id_shared]
+      @project_type = ProjectType.joins(:has_project_types).where(id: project_type_id_shared).where(has_project_types: {user_id: current_user.id}).first
     else
-      if session.has_key? :project_type_id
-        @project_type = ProjectType.joins(:has_project_types).where(id: session[:project_type_id]).where(has_project_types: { user_id: current_user.id}).first
-        @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).last if @project_type.nil?
+      if !params[:project_type_id].nil?
+        @project_type = ProjectType.joins(:has_project_types).where(id: params[:project_type_id]).where(has_project_types: {user_id: current_user.id}).first
+        session[:project_type_id] = @project_type.id if !@project_type.nil?
       else
-        if Apartment::Tenant.current == "impulsa" && current_user.email == 'public@geoworks.com'
-          @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).where(name_layer: 'distritito_minero_occidental_malargue').first
+        if session.has_key? :project_type_id
+          @project_type = ProjectType.joins(:has_project_types).where(id: session[:project_type_id]).where(has_project_types: { user_id: current_user.id}).first
+          @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).last if @project_type.nil?
         else
-          @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).last
+          if Apartment::Tenant.current == "impulsa" && current_user.email == 'public@geoworks.com'
+            @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).where(name_layer: 'distritito_minero_occidental_malargue').first
+          else
+            @project_type = ProjectType.joins(:has_project_types).where(has_project_types: {user_id: current_user.id}).last
+          end
         end
       end
     end

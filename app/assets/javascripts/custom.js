@@ -3909,6 +3909,27 @@ function change_owner(){
   });
 }
 
+function share_geometries(project_id){
+  project_type_id = Navarra.dashboards.config.project_type_id;
+  var link = `http://impulsa.lvh.me:3000/special_sessions/geometry_shared/${project_type_id}/${project_id}`;
+
+  var textarea = document.createElement('textarea');
+  textarea.value = link;
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  try {
+    document.execCommand('copy');
+    $('#text_toast').html("Enlace copiado al portapapeles");
+    $('#toast').toast('show');
+  } catch (err) {
+    console.error('Error al copiar al portapapeles:', err);
+    alert('No se pudo copiar el enlace al portapapeles.');
+  }
+
+  document.body.removeChild(textarea);
+}
+
 function create_pdf_from_popup(id_selected) {
   Navarra.geomaps.close_all_popups();
   open_panel('view-data-middle', 0);

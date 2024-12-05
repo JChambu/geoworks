@@ -1677,10 +1677,17 @@ function getCQLFilter_layer(dat){
                     div_popup_icon.style.textAlign = 'right';
                     div_popup_icon.setAttribute('id', 'icons_popup');
 
+                    var new_p = document.createElement('I');
+                    new_p.setAttribute("onclick",'share_geometries('+app_id_popup+')');
+                    new_p.className="fas fa-share-alt info_icon";
+                    new_p.title="Compartir geometría";
+                    div_popup_icon.appendChild(new_p);
+
                     if (pdf_event.length !== 0) {
                       var new_p = document.createElement('I');
                       new_p.setAttribute("onclick",'create_pdf_from_popup('+app_id_popup+')');
                       new_p.className="fas fa-file-pdf info_icon";
+                      new_p.title="Crear PDF";
                       div_popup_icon.appendChild(new_p);
                     }
 
@@ -1692,6 +1699,7 @@ function getCQLFilter_layer(dat){
                         var new_p = document.createElement('I');
                         new_p.setAttribute("onclick",'Navarra.geomaps.modal_save_multipoints('+app_id_popup+')');
                         new_p.className="fas fa-check info_icon";
+                        new_p.title="Crear Multipuntos";
                         new_p.style.textAlign = 'left';
                         div_popup_icon.appendChild(new_p);
                       }
@@ -1709,6 +1717,7 @@ function getCQLFilter_layer(dat){
 
                     var new_p = document.createElement('I');
                     new_p.setAttribute("onclick",'Navarra.photos.open_photos('+app_id_popup+',false)');
+                    new_p.title="Abrir fotos de geometría";
                     new_p.className="fas fa-image info_icon";
                     div_popup_icon.appendChild(new_p);
 
@@ -1718,7 +1727,7 @@ function getCQLFilter_layer(dat){
                     } else {
                       new_p.setAttribute("onclick",'normalBehavior('+app_id_popup+',true)');
                     }
-                    
+                    new_p.title="Formulario de geometría";
                     new_p.className="fas fa-info-circle info_icon";
                     div_popup_icon.appendChild(new_p);
 
@@ -1728,6 +1737,7 @@ function getCQLFilter_layer(dat){
                           var new_p = document.createElement('I');
                           new_p.setAttribute("id", "display_ndvi");
                           new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +', event)');
+                          new_p.title="NDVI";
                           new_p.className="fas fa-layer-group info_icon";
                           div_popup_icon.appendChild(new_p);
                         } else {
