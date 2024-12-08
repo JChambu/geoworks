@@ -1676,12 +1676,14 @@ function getCQLFilter_layer(dat){
                     div_popup_icon = document.createElement('DIV');
                     div_popup_icon.style.textAlign = 'right';
                     div_popup_icon.setAttribute('id', 'icons_popup');
-
-                    var new_p = document.createElement('I');
-                    new_p.setAttribute("onclick",'share_geometries('+app_id_popup+')');
-                    new_p.className="fas fa-share-alt info_icon";
-                    new_p.title="Compartir geometría";
-                    div_popup_icon.appendChild(new_p);
+                      
+                    if (Navarra.dashboards.config.current_tenant == 'impulsa') {
+                      var new_p = document.createElement('I');
+                      new_p.setAttribute("onclick",'share_geometries('+app_id_popup+')');
+                      new_p.className="fas fa-share-alt info_icon";
+                      new_p.title="Compartir geometría";
+                      div_popup_icon.appendChild(new_p);
+                    } 
 
                     if (pdf_event.length !== 0) {
                       var new_p = document.createElement('I');
