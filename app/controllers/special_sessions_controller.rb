@@ -13,7 +13,7 @@ class SpecialSessionsController < ApplicationController
   end
 
   def geometry_shared
-    special_user = User.find_by(email: 'super@admin.com')
+    special_user = User.find_by(email: 'public@geoworks.com')
     project_id = params[:project_id].to_i
     project_type_id = params[:project_type_id].to_i
 
@@ -22,8 +22,10 @@ class SpecialSessionsController < ApplicationController
       session[:project_id_shared] = project_id
     end
 
-    sign_in(special_user)
-    redirect_to root_path
+    if special_user
+      sign_in(special_user)
+      redirect_to root_path
+    end
   end
 
   def switch_multitenant
