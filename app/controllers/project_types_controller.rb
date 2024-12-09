@@ -1140,6 +1140,7 @@ class ProjectTypesController < ApplicationController
   def self.set_filters_on_the_fly data, data_conditions
     # Aplica filtros generados por el usuario
     if !data_conditions.blank?
+      data_conditions = JSON.parse(data_conditions)
       data_conditions.each do |key|
         s = key.split('|')
         field = s[0]
