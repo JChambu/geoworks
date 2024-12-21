@@ -2471,6 +2471,7 @@ function handleCreate(app_id_popup, from_map){
   setTimeout(function() {
     document.getElementById('show_confirmation_button').click();
   }, 1100);
+  Navarra.geomaps.close_all_popups();
   localStorage.removeItem('app_id_popup');
 }
 
