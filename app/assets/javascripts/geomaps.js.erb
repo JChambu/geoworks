@@ -1671,8 +1671,10 @@ function getCQLFilter_layer(dat){
                       }
                     }
                   });
-                  app_id_popup=prop["app_id"];
                   if(Navarra.dashboards.config.name_project==data["project_name"]){
+                    app_id_popup=prop["app_id"];
+                    localStorage.setItem('app_id_popup', app_id_popup);
+
                     div_popup_icon = document.createElement('DIV');
                     div_popup_icon.style.textAlign = 'right';
                     div_popup_icon.setAttribute('id', 'icons_popup');
