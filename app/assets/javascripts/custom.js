@@ -2464,10 +2464,14 @@ function close_register_modal() {
 function handleCreate(app_id_popup, from_map){
   var modal = document.getElementById('createEditGeometries');
   modal.style.display = 'none';
+  if(app_id_popup == ''){
+    app_id_popup = localStorage.getItem('app_id_popup');
+  }
   show_item_info(app_id_popup, from_map, false, false, true);
   setTimeout(function() {
     document.getElementById('show_confirmation_button').click();
   }, 1100);
+  localStorage.removeItem('app_id_popup');
 }
 
 function handleEdit(app_id_popup, from_map){
@@ -2476,7 +2480,12 @@ function handleEdit(app_id_popup, from_map){
   $('#text_toast').html("Abriendo datos, este proceso puede tardar unos minutos");
   $('#toast').toast('show');
   $(".fakeLoader").css("display", "block");
+  if(app_id_popup == ''){
+    app_id_popup = localStorage.getItem('app_id_popup');
+  }
   show_item_info(app_id_popup, true, false, false, false);
+  Navarra.geomaps.close_all_popups();
+  localStorage.removeItem('app_id_popup');
 }
 
 function normalBehavior(app_id_popup, from_map){
