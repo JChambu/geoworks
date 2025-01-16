@@ -1,11 +1,21 @@
-<% if Apartment::Tenant.current == 'agricultura' || Apartment::Tenant.current == 'aws' %>
+<% if Apartment::Tenant.current == 'agricultura' || Apartment::Tenant.current == 'aws' || Apartment::Tenant.current == 'scm' %>
   <div class="row w-100 align-items-center m-0" >
-    <div class="<%= Apartment::Tenant.current == 'aws' ? 'col-md-6 align-middle form-singnin-aws-img vh-100' : 'col-md-6 align-middle form-sinin-img vh-100' %>" style="overflow:hidden;"></div>
+    <div class="<%= case Apartment::Tenant.current
+                when 'aws'
+                  'col-md-6 align-middle form-singnin-aws-img vh-100'
+                when 'scm'
+                  'col-md-6 align-middle form-singnin-scm-img vh-100'
+                else
+                  'col-md-6 align-middle form-sinin-img vh-100'
+                end %>" style="overflow:hidden;">
+    </div>
     <div class="col-md-6 align-middle text-center p-0">
       <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: {class: 'form-signin pl-6 pr-6'}) do |f| %>
         <div class="form-group">
           <% if Apartment::Tenant.current == 'aws' %>
             <center><%=image_tag('logo-aws.png', class:'mb-2', width:"252")%></center>
+          <% elsif Apartment::Tenant.current == 'scm' %>
+            <center><%=image_tag('logo-netzefy.png', class:'mb-2', width:"252")%></center>
           <% else %>
             <center><%=image_tag ENV['VERTICAL_LOGO'], class:'mb-2', width:"252"%></center>
           <% end %>
@@ -47,12 +57,10 @@
           <%= render "devise/shared/success_messages", resource: resource %>
         </div>
       <% end %>
-      <% if Apartment::Tenant.current == 'aws' %>
-        <div style="margin-top: 60px;">
-          <p style="margin-bottom: 2px;">Powered by</p>
-          <center><%=image_tag('logo_gw_hor_2.png', class:'mb-2', width:"140")%></center>
-        </div>
-      <% end %>
+      <div style="margin-top: 60px;">
+        <p style="margin-bottom: 2px;">Powered by</p>
+        <center><%=image_tag('logo_gw_hor_2.png', class:'mb-2', width:"140")%></center>
+      </div>
     </div>
   </div>
 <% end %>
