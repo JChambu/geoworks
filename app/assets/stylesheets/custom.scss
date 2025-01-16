@@ -56,6 +56,11 @@ body {
   background-position: 50% 50%;
   background-repeat: no-repeat;
 }
+.form-singnin-scm-img {
+  background-image: url(asset_path("login-netzefy-2.jpg"));
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 .form-signin {
   width: 100%;
   max-width: 350px;
