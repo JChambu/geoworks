@@ -12,7 +12,7 @@ class RegistrationsController < Devise::RegistrationsController
         respond_with resource, location: after_sign_up_path_for(resource)
       else
         expire_data_after_sign_in!
-        redirect_to new_user_session_path, notice: "¡Registro exitoso! Ve a tu email para confirmar tu cuenta."
+        redirect_to new_user_session_path, notice: "Su cuenta fue creada correctamente. Le llegará un mail de confirmación cuando sea aprobada"
       end
     else
       clean_up_passwords resource
