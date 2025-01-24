@@ -76,7 +76,7 @@ Navarra.geomaps = function() {
     if (protocol == 'https:') {
       port = 443
     } else {
-      port = 8600
+      port = <%= ENV['GEOSERVER_PORT'] %>
     }
 
     var streetsGmaps = L.tileLayer('https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}', {

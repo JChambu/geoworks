@@ -20,6 +20,7 @@ default: &default
   schema_search_path: public, shared_extensions
   encoding: unicode
   host: <%= ENV.fetch("POSTGRES_HOST") { "localhost" } %>
+  port: <%= ENV.fetch("POSTGRES_PORT") { 5432 } %>
   username: <%= ENV.fetch("POSTGRES_USER") { "postgres" } %>
   password: <%= ENV.fetch("POSTGRES_PASSWORD") { "postgres" } %>
   # For details on connection pooling, see rails configuration guide
@@ -28,11 +29,11 @@ default: &default
 
 development:
   <<: *default
-  database: geoworks_development
+  database: <%= ENV.fetch("POSTGRES_DATABASE") { "geoworks_development" } %>
 
 staging:
   <<: *default
-  database: geoworks
+  database: <%= ENV.fetch("POSTGRES_DATABASE") { "geoworks_staging" } %>
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
   # When left blank, postgres will use the default role. This is
@@ -88,4 +89,4 @@ test:
 #
 production:
   <<: *default
-  database: geoworks
+  database: <%= ENV.fetch("POSTGRES_DATABASE") { "geoworks_production" } %>

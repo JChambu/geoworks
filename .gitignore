@@ -34,7 +34,11 @@ yarn-debug.log*
 # Variables de entorno
 config/application.yml
 .env
-/db/schema
 
-# Volúmen de geoserver
+# Volúmenes de docker
 /geoserver/data_dir
+/postgres/data_dir
+
+# Ignore
+*.sql
+*.log

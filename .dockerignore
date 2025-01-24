@@ -1,0 +1,26 @@
+# Configuraciones de Docker
+docker-compose.yml
+Dockerfile
+
+# Directorios específicos no necesarios en producción
+aws
+postgres
+geoserver
+
+# Directorio de control de versiones
+.git
+.github
+
+# Archivos de configuración sensibles
+.env
+
+# Archivos y directorios de logs y temporales
+log/
+tmp/
+
+# Directorios de prueba
+test/
+
+# Backups y archivos temporales
+*.bak
+*.tmp
