@@ -445,7 +445,6 @@ var dragAndDrop = {
 
 // función para graficar los charts
 function draw_charts(data) {
-
   // Ordenamos las series por chart
   if (data != undefined){
     for (var i = 0; i < data.length; i++) {
@@ -793,7 +792,7 @@ function draw_charts(data) {
             data_gx = {
               labels: lab_acumulado,
               datasets: datasets
-            }
+            }                               
             data_gx_all.push({
               id_graph: graphic_id,
               data_gx: data_gx
@@ -1089,6 +1088,12 @@ function draw_charts(data) {
 
       // DOUGHNUT options
       if (type_chart == 'doughnut') {
+        var total = data_gx.datasets[0].data.reduce((sum, value) => sum + parseFloat(value), 0);
+        var percentageData = data_gx.datasets[0].data.map(value => {
+          let percentage = ((value / total) * 100).toFixed(2);
+          return isNaN(percentage) ? "0" : percentage;
+        });
+
         var option_legend = {
           responsive: true,
           aspectRatio: aspectR,
@@ -1108,20 +1113,13 @@ function draw_charts(data) {
                 return data.labels[tooltipItem[0].index];
               },
               label: function(tooltipItem, data) {
-                // Obtenemos los datos
                 var dataset = data.datasets[tooltipItem.datasetIndex];
-                // Calcula el total
-                var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
-                  // Convierte string a float
-                  previousValue = parseFloat(previousValue)
-                  currentValue = parseFloat(currentValue)
-                  return previousValue + currentValue;
+                var total = dataset.data.reduce(function(previousValue, currentValue) {
+                  return parseFloat(previousValue) + parseFloat(currentValue);
                 });
-                // Obtenemos el valor de los elementos actuales
                 var currentValue = dataset.data[tooltipItem.index];
-                // Calculamos el porcentaje
-                var precentage = ((currentValue / total) * 100).toFixed(2)
-                return precentage + "%";
+                var percentage = ((currentValue / total) * 100).toFixed(2);
+                return percentage + "%";
               }
             }
           },
@@ -1137,12 +1135,20 @@ function draw_charts(data) {
               textShadowColor: '#000000',
               textShadowBlur: 2,
               align: 'center',
+              formatter: (value) => `${value}%`
             }
           },
         }
         var chart_settings = {
           type: type_chart,
-          data: data_gx,
+          // data: data_gx,
+          data: {
+            ...data_gx,
+            datasets: data_gx.datasets.map((dataset, index) => ({
+              ...dataset,
+              data: percentageData
+            }))
+          },
           options: option_legend
         }
       }
@@ -2443,7 +2449,52 @@ function export_to_excel(table, name, filename) {
 
 //****** FUNCIONES PARA ARMAR MODAL INFORMACION DE CADA REGISTRO*****
 
-function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
+function edit_registers(app_id_popup, showModal) {
+  if (showModal) {
+    var modal = document.getElementById('createEditGeometries');
+    modal.style.display = 'block';
+  }
+}
+
+function close_register_modal() {
+  var modal = document.getElementById('createEditGeometries');
+  modal.style.display = 'none';
+}
+
+function handleCreate(app_id_popup, from_map){
+  var modal = document.getElementById('createEditGeometries');
+  modal.style.display = 'none';
+  if(app_id_popup == ''){
+    app_id_popup = localStorage.getItem('app_id_popup');
+  }
+  show_item_info(app_id_popup, from_map, false, false, true);
+  setTimeout(function() {
+    document.getElementById('show_confirmation_button').click();
+  }, 1100);
+  Navarra.geomaps.close_all_popups();
+  localStorage.removeItem('app_id_popup');
+}
+
+function handleEdit(app_id_popup, from_map){
+  var modal = document.getElementById('createEditGeometries');
+  modal.style.display = 'none';
+  $('#text_toast').html("Abriendo datos, este proceso puede tardar unos minutos");
+  $('#toast').toast('show');
+  $(".fakeLoader").css("display", "block");
+  if(app_id_popup == ''){
+    app_id_popup = localStorage.getItem('app_id_popup');
+  }
+  show_item_info(app_id_popup, true, false, false, false);
+  Navarra.geomaps.close_all_popups();
+  localStorage.removeItem('app_id_popup');
+}
+
+function normalBehavior(app_id_popup, from_map){
+  show_item_info(app_id_popup, from_map, false, false, false, true);
+}
+
+
+function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_create, normal_bh) {
   children_fields_all = new Object;
   if(!is_new_file){
     $('#confirmation_geometry_button').removeClass('confirmation_geometry_button_new');
@@ -2478,6 +2529,13 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
   } else{
     var from_date_subforms = Navarra.project_types.config.from_date_subforms;
     var to_date_subforms = Navarra.project_types.config.to_date_subforms;
+    if(handle_create == true){
+      var new_field = "true";
+    } else if (normal_bh == true){
+      var new_field = "false";
+    } else {
+      var new_field = "false";
+    }
     var url_get = '/project_types/search_father_children_and_photos_data';
     var filter_children = [];
     var filter_user_children = [];
@@ -2494,7 +2552,8 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
       from_date_subforms: from_date_subforms,
       to_date_subforms: to_date_subforms,
       filter_children: filter_children,
-      filter_user_children: filter_user_children
+      filter_user_children: filter_user_children,
+      new_field: new_field
     }
   }
 
@@ -2603,27 +2662,29 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
         }
       });
       if(!is_new_file && !is_multiple){
-        //fotos del registro
-        var verify_count_elements_photos = 0
-        var father_photos = data.father_photos;
-        father_photos.forEach(function(photo) {
-          var new_div = document.createElement('DIV');
-          new_div.className = "photo_div_info";
-          new_div.style.position = "static";
-          var new_photo = document.createElement('IMG');
-          new_photo.className = "photo_info";
-          new_photo.setAttribute('onClick', "open_photo(event)");
-          new_photo.src = "data:image/png;base64," + photo.image;
-          new_div.appendChild(new_photo);
-          var new_photo = document.createElement('P');
-          new_photo.innerHTML = photo.name;
-          new_photo.className = "photo_description";
-          new_div.appendChild(new_photo);
-          document.getElementById('info_body').appendChild(new_div);
-          verify_count_elements_photos++;
-        });
-        if(verify_count_elements_photos!= father_photos.length){
-          set_error_message("Error: no se pudieron traer todas las fotos del registro");
+        if(handle_create != true || normal_bh == true){
+          //fotos del registro
+          var verify_count_elements_photos = 0
+          var father_photos = data.father_photos;
+          father_photos.forEach(function(photo) {
+            var new_div = document.createElement('DIV');
+            new_div.className = "photo_div_info";
+            new_div.style.position = "static";
+            var new_photo = document.createElement('IMG');
+            new_photo.className = "photo_info";
+            new_photo.setAttribute('onClick', "open_photo(event)");
+            new_photo.src = "data:image/png;base64," + photo.image;
+            new_div.appendChild(new_photo);
+            var new_photo = document.createElement('P');
+            new_photo.innerHTML = photo.name;
+            new_photo.className = "photo_description";
+            new_div.appendChild(new_photo);
+            document.getElementById('info_body').appendChild(new_div);
+            verify_count_elements_photos++;
+          });
+          if(verify_count_elements_photos!= father_photos.length){
+            set_error_message("Error: no se pudieron traer todas las fotos del registro");
+          }
         }
       }
       // Si es nuevo puede guardar sin hacer cambios en los campos
@@ -2896,30 +2957,30 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
           }
           document.getElementById('info_body').appendChild(new_row);
           if(document.getElementById('field_id_'+id_field)!=null){
-              if(document.getElementById('field_id_'+id_field).classList.contains("multiselect_field")){
-                if(document.getElementById('field_id_'+id_field).classList.contains("readonly_field")){
-                  var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled readonly_field';
-                } else{
-                  var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled';
-                }
-                $('#field_id_'+id_field).multiselect({
-                  maxHeight: 450,
-                  buttonClass: buttonClass,
-                  buttonWidth: '100%',
-                  nonSelectedText: 'Seleccionar',
-                  selectedClass: 'selected_multiple_item',
-                  delimiterText: '\n',
-                  numberDisplayed: 0,
-                  allSelectedText: false,
-                  enableFiltering: true,
-                  enableCaseInsensitiveFiltering: true,
-                  filterPlaceholder: 'Buscar',
-                  includeFilterClearBtn: false,
-                  includeSelectAllOption: false,
-                  dropRight: true,
-                });
+            if(document.getElementById('field_id_'+id_field).classList.contains("multiselect_field")){
+              if(document.getElementById('field_id_'+id_field).classList.contains("readonly_field")){
+                var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled readonly_field';
+              } else{
+                var buttonClass = 'text-left mb-1 form-control form-control-sm info_input_disabled';
               }
+              $('#field_id_'+id_field).multiselect({
+                maxHeight: 450,
+                buttonClass: buttonClass,
+                buttonWidth: '100%',
+                nonSelectedText: 'Seleccionar',
+                selectedClass: 'selected_multiple_item',
+                delimiterText: '\n',
+                numberDisplayed: 0,
+                allSelectedText: false,
+                enableFiltering: true,
+                enableCaseInsensitiveFiltering: true,
+                filterPlaceholder: 'Buscar',
+                includeFilterClearBtn: false,
+                includeSelectAllOption: false,
+                dropRight: true,
+              });
             }
+          }
         } //termina campo padre
         else {
           // Dibuja campos hijos
@@ -2932,10 +2993,11 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
             new_row.classList.add("d-none");
             new_row.classList.add("subtile_hidden" + element.field_id);
           }
+
           var new_celd = document.createElement('DIV');
           new_celd.className = 'div_subforms';
           if(!is_new_file && !is_multiple){
-            if (element.field_type_id == 7 && element.value.length == 0) {
+            if (element.field_type_id == 7 && element.value == null) {
               new_celd.classList.add('d-none');
             }
           }
@@ -2953,19 +3015,23 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
           new_p.style.display = "inline-block";
           new_celd.appendChild(new_p);
           new_row.appendChild(new_celd);
-          child_elements = element.value;
-          verify_count_elements_childs = 0;
-          if(!is_new_file && !is_multiple){
-            child_elements.forEach(function(element_child) {
-              var new_row1 = create_new_row_child_date(element_child);
-              new_row.appendChild(new_row1);
-              var new_row1 = create_new_row_child(element_child, element.field_id, element.name, is_multiple,false);
-              new_row.appendChild(new_row1);
-            }); //termina for Each childs
-            if(verify_count_elements_childs!= child_elements.length){
-              set_error_message("Error: no se pudieron traer todos los subformularios del campo "+element.name);
+
+          if(handle_create != true || normal_bh == true){
+            child_elements = element.value;
+            verify_count_elements_childs = 0;
+            if(!is_new_file && !is_multiple){
+              child_elements.forEach(function(element_child) {
+                var new_row1 = create_new_row_child_date(element_child);
+                new_row.appendChild(new_row1);
+                var new_row1 = create_new_row_child(element_child, element.field_id, element.name, is_multiple,false);
+                new_row.appendChild(new_row1);
+              }); //termina for Each childs
+              if(verify_count_elements_childs!= child_elements.length){
+                set_error_message("Error: no se pudieron traer todos los subformularios del campo "+element.name);
+              }
             }
           }
+          
           document.getElementById('info_body').appendChild(new_row);
         }
         verify_count_elements ++;
@@ -2993,11 +3059,12 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file) {
         calculate_all(true,true);
         calculate_all(true,false);
       }
-
+      
       //si viene de nuevo registro abre edición
       if($("#confirmation_geometry_button").hasClass('confirmation_geometry_button_new')){
         show_confirmation('edit_confirmation');
       }
+      $(".fakeLoader").css("display", "none");
     }//end Success
   }); //end ajax
 }
@@ -3145,6 +3212,10 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
         } else{
           new_p.setAttribute('onChange','changeChild('+element_child.children_id+')')
         }
+
+        new_p.addEventListener('input', function() {
+          textarea_adjust_height();
+        });
       }
       var found_nested = false;
       if (element_child_field.field_type_id == 2 || element_child_field.field_type_id == 10) {
@@ -3477,22 +3548,24 @@ function show_hidden_fields() {
 function open_subtitle(fields, ischild) {
   var is_new_file = $('#confirmation_geometry_button').hasClass('confirmation_geometry_button_new');
   if (fields != "") {
-    fields.forEach(function(field_id) {
-      if ($(".subtile_hidden" + ischild + field_id).length > 0) {
-        if(is_new_file){
-          $(".subtile_hidden" + ischild + field_id).not('.hidden_field').removeClass("d-none");
-        } else{
-          $(".subtile_hidden" + ischild + field_id).not('.empty_field').not('.hidden_field').removeClass("d-none");
+    if (fields != undefined) {
+      fields.forEach(function(field_id) {
+        if ($(".subtile_hidden" + ischild + field_id).length > 0) {
+          if(is_new_file){
+            $(".subtile_hidden" + ischild + field_id).not('.hidden_field').removeClass("d-none");
+          } else{
+            $(".subtile_hidden" + ischild + field_id).not('.empty_field').not('.hidden_field').removeClass("d-none");
+          }
+          $(".subtile_hidden" + ischild + field_id).addClass("subtile_visible" + ischild + field_id);
+          $(".subtile_hidden" + ischild + field_id).removeClass("subtile_hidden" + ischild + field_id);
+        } else {
+          $(".subtile_visible" + ischild + field_id).addClass("d-none");
+          $(".subtile_visible" + ischild + field_id).addClass("subtile_hidden" + ischild + field_id);
+          $(".subtile_visible" + ischild + field_id).removeClass("subtile_visible" + ischild + field_id);
         }
-        $(".subtile_hidden" + ischild + field_id).addClass("subtile_visible" + ischild + field_id);
-        $(".subtile_hidden" + ischild + field_id).removeClass("subtile_hidden" + ischild + field_id);
-      } else {
-        $(".subtile_visible" + ischild + field_id).addClass("d-none");
-        $(".subtile_visible" + ischild + field_id).addClass("subtile_hidden" + ischild + field_id);
-        $(".subtile_visible" + ischild + field_id).removeClass("subtile_visible" + ischild + field_id);
-      }
-
-    })
+  
+      })
+    }
     textarea_adjust_height();
   }
 }
@@ -3533,6 +3606,7 @@ function edit_file(edit_parent, edit_child, edit_status){
       }
     });
     if(required_field_number>0){
+      $(".fakeLoader").css("display", "none");
       $('#info_messages').html("Complete los campos requeridos");
       $('#info_messages').addClass("text-danger");
       $('#info_messages').removeClass("d-none");
@@ -3541,6 +3615,7 @@ function edit_file(edit_parent, edit_child, edit_status){
   }
   if(is_new_file){
     if($("#input_status").val()==null){
+      $(".fakeLoader").css("display", "none");
       $('#info_messages').html("Agregue un Estado válido");
       $('#info_messages').addClass("text-danger");
       $('#info_messages').removeClass("d-none");
@@ -3549,6 +3624,7 @@ function edit_file(edit_parent, edit_child, edit_status){
   }
 
   if(!filechange && array_child_edited.length==0 && !statuschange){
+    $(".fakeLoader").css("display", "none");
     $('#info_messages').html("No hay cambios a guardar");
     $('#info_messages').addClass("text-danger");
     $('#info_messages').removeClass("d-none");
@@ -3761,14 +3837,44 @@ function edit_file(edit_parent, edit_child, edit_status){
         create_layers_table();
       }
       update_all();
-      if (app_ids.length == 1) {
-        app_id_int = parseInt(app_ids[0], 10);
-        show_item_info(app_id_int,true)
-        setTimeout(function() {
-          show_confirmation('edit_confirmation');
-          open_subtitle(data.subtitles_ids_array, '');
-        }, 1100);
+
+      // if(Navarra.dashboards.config.current_tenant == 'scm'){
+      //   if (data['type'] == 'create_form') {
+      //     id_created = data['id'][0];
+      //     // show_item_info(id_created,true, false, false, false)
+      //   } else if (data['type'] == 'update_form') {
+      //     id_updated = data["app_ids"][0];
+      //     // show_item_info(id_updated,true, false, false, false)
+      //   } else {
+      //     id_updated = properties_to_save["app_id"];
+      //     show_item_info(id_updated,true, false, false, false)
+      //   }
+      // } else {
+      //   if (data['type'] == 'create_form') {
+      //     id_created = data['id'][0];
+      //     show_item_info(id_created,true, false, false, false, true)
+      //   } else if (data['type'] == 'update_form') {
+      //     id_updated = data["app_ids"][0];
+      //     show_item_info(id_updated,true, false, false, false, true)
+      //   } else {
+      //     id_updated = properties_to_save["app_id"];
+      //     show_item_info(id_updated,true, false, false, false, true)
+      //   }
+      // }
+      
+      if(Navarra.dashboards.config.current_tenant != 'scm'){
+        if (data['type'] == 'create_form') {
+          id_created = data['id'][0];
+          show_item_info(id_created,true, false, false, false, true)
+        } else if (data['type'] == 'update_form') {
+          id_updated = data["app_ids"][0];
+          show_item_info(id_updated,true, false, false, false, true)
+        } else {
+          id_updated = properties_to_save["app_id"];
+          show_item_info(id_updated,true, false, false, false, true)
+        }
       }
+
     }
   });
 }
@@ -3811,6 +3917,35 @@ function change_owner(){
       update_all();
     }
   });
+}
+
+function share_geometries(project_id){
+  project_type_id = Navarra.dashboards.config.project_type_id;
+  var link = `https://impulsa.geoworks.com.ar/special_sessions/geometry_shared/${project_type_id}/${project_id}`;
+
+  if(!navigator.clipboard == undefined){
+    navigator.clipboard.writeText(link).then(() => {
+      $('#text_toast').html("Enlace copiado al portapapeles");
+      $('#toast').toast('show');
+    }).catch(err => {
+      alert('No se pudo copiar el enlace al portapapeles.');
+    });
+  } else {  
+    var textarea = document.createElement('textarea');
+    textarea.value = link;
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+      document.execCommand('copy');
+      $('#text_toast').html("Enlace copiado al portapapeles");
+      $('#toast').toast('show');
+    } catch (err) {
+      alert('No se pudo copiar el enlace al portapapeles.');
+    }
+
+    document.body.removeChild(textarea);
+  }
 }
 
 function create_pdf_from_popup(id_selected) {

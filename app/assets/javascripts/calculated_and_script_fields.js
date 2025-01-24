@@ -224,8 +224,15 @@ Navarra.calculated_and_script_fields = function() {
         for(k=0;k<CalculateObj_keys.length;k++){
 
           if(CalculateObj_keys[k]=="datos_capa_hijo"){
-            var field_id_calculated = field_id
             var project_selected = Navarra.project_types.config.item_selected
+
+            if(project_selected == ''){
+              project_selected = Navarra.project_types.config.id_item_displayed
+            } else {
+              project_selected = Navarra.project_types.config.item_selected
+            }
+
+            var field_id_calculated = field_id
             var project_id = CalculateObj.datos_capa_hijo.project_id
             var field_id =  CalculateObj.datos_capa_hijo.field_id
             var subfield_ids = JSON.parse(CalculateObj.datos_capa_hijo.subfield_id)
@@ -352,6 +359,10 @@ Navarra.calculated_and_script_fields = function() {
             if (isparent) {
               date_to_change = $(texto_campo_id).val();
               form_id = Navarra.project_types.config.item_selected
+
+              if(form_id == ''){
+                form_id = Navarra.project_types.config.id_item_displayed
+              }
 
               if (date_to_change != '') {
                 $.ajax({

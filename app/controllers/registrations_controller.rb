@@ -12,7 +12,7 @@ class RegistrationsController < Devise::RegistrationsController
         respond_with resource, location: after_sign_up_path_for(resource)
       else
         expire_data_after_sign_in!
-        redirect_to new_user_session_path, notice: "¡Registro exitoso! Ve a tu email para confirmar tu cuenta."
+        redirect_to new_user_session_path, notice: "Su cuenta fue creada correctamente. Le llegará un mail de confirmación cuando sea aprobada"
       end
     else
       clean_up_passwords resource
@@ -24,47 +24,72 @@ class RegistrationsController < Devise::RegistrationsController
   private
 
   def sign_up_params
-    if Apartment::Tenant.current == 'agricultura'
-      rol_id            = Role.find_by(name: 'Público')&.id
-      project_types_ids = ProjectType.pluck(:id)
-      project_type_id   = ProjectType.find_by(name: 'Demo Público')&.id
-      current_tenant    = Apartment::Tenant.current
-      customer_id       = Customer.find_by(subdomain: current_tenant)&.id
-
-      params.require(:user)
-      .permit(:email, :name, :password, :password_confirmation, :country_code, :area_code, :phone)
-      .merge(
-        active: true,
-        user_customers_attributes: [customer_id: customer_id, role_id: rol_id],
-        has_project_types_attributes: project_types_ids.map { |id| { project_type_id: id } },
-        project_filters_attributes:[project_type_id: project_type_id, owner: true]
-      )
+    case Apartment::Tenant.current
+    when 'agricultura'
+      sign_up_params_for_agricultura
+    when 'scm'
+      sign_up_params_for_scm
     else
-      role_selected    = params[:user][:role]
-      role_id          = Role.where(name: role_selected).pluck(:id).first
-      current_tenant   = Apartment::Tenant.current
-      customer_id      = Customer.find_by(subdomain: current_tenant)&.id
-      project_type_ids = [12, 16, 17]
-
-      if role_selected == 'Comprador'
-        params.require(:user)
-        .permit(:email, :name, :password, :password_confirmation, :country_code, :area_code, :phone)
-        .merge(
-          active: true,
-          user_customers_attributes: [customer_id: customer_id, role_id: role_id],
-          has_project_types_attributes: [project_type_id: 16]
-        )
-      else
-        params.require(:user)
-        .permit(:email, :name, :password, :password_confirmation, :country_code, :area_code, :phone)
-        .merge(
-          active: true,
-          user_customers_attributes: [customer_id: customer_id, role_id: role_id],
-          has_project_types_attributes: project_type_ids.map { |id| { project_type_id: id } },
-          project_filters_attributes:[project_type_id: 17, owner: true]
-        )
-      end
+      sign_up_params_for_others
     end
   end
 
+  def sign_up_params_for_agricultura
+    rol_id            = Role.find_by(name: 'Público')&.id
+    project_types_ids = ProjectType.pluck(:id)
+    project_type_id   = ProjectType.find_by(name: 'Demo Público')&.id
+    current_tenant    = Apartment::Tenant.current
+    customer_id       = Customer.find_by(subdomain: current_tenant)&.id
+
+    params.require(:user)
+          .permit(:email, :name, :password, :password_confirmation, :country_code, :area_code, :phone)
+          .merge(
+            active: true,
+            user_customers_attributes: [customer_id: customer_id, role_id: rol_id],
+            has_project_types_attributes: project_types_ids.map { |id| { project_type_id: id } },
+            project_filters_attributes: [project_type_id: project_type_id, owner: true]
+          )
+  end
+
+  def sign_up_params_for_scm
+    current_tenant    = Apartment::Tenant.current
+    customer_id       = Customer.find_by(subdomain: current_tenant)&.id
+    project_types_ids = [1, 49]
+
+    params.require(:user)
+          .permit(:name, :email, :password, :password_confirmation, :country_code, :area_code, :phone)
+          .merge(
+            active: true,
+            user_customers_attributes: [customer_id: customer_id, role_id: 39],
+            has_project_types_attributes: project_types_ids.map { |id| { project_type_id: id } },
+            project_filters_attributes: project_types_ids.map { |id| { project_type_id: id, owner: true } }
+          )
+  end
+
+  def sign_up_params_for_others
+    role_selected    = params[:user][:role]
+    role_id          = Role.where(name: role_selected).pluck(:id).first
+    current_tenant   = Apartment::Tenant.current
+    customer_id      = Customer.find_by(subdomain: current_tenant)&.id
+    project_type_ids = [12, 16, 17]
+
+    if role_selected == 'Comprador'
+      params.require(:user)
+            .permit(:email, :name, :password, :password_confirmation, :country_code, :area_code, :phone)
+            .merge(
+              active: true,
+              user_customers_attributes: [customer_id: customer_id, role_id: role_id],
+              has_project_types_attributes: [project_type_id: 16]
+            )
+    else
+      params.require(:user)
+            .permit(:email, :name, :password, :password_confirmation, :country_code, :area_code, :phone)
+            .merge(
+              active: true,
+              user_customers_attributes: [customer_id: customer_id, role_id: role_id],
+              has_project_types_attributes: project_type_ids.map { |id| { project_type_id: id } },
+              project_filters_attributes: [project_type_id: 17, owner: true]
+            )
+    end
+  end
 end

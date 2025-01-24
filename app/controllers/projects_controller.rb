@@ -321,7 +321,7 @@ class ProjectsController < ApplicationController
       if count_errors >0
         render json: {status: 'Nuevos registros:'+count_sucess.to_s+'. Errores:'+count_errors.to_s, id: created_ids}
       else
-        render json: {status: 'Nuevos registros:'+count_sucess.to_s, id: created_ids}
+        render json: {status: 'Nuevos registros:'+count_sucess.to_s, id: created_ids, type: 'create_form'}
       end
     end
 
@@ -377,7 +377,7 @@ class ProjectsController < ApplicationController
           end
         end
       end
-      render json: {status: 'Actualización completada.', subforms_created: @subforms_created, subtitles_ids_array: subtitles_ids_array}
+      render json: {status: 'Actualización completada.', subforms_created: @subforms_created, subtitles_ids_array: subtitles_ids_array, type: 'update_form', app_ids: app_ids}
     else
       render json: {status: 'Faltan parámetros para completar la acción.'}
     end

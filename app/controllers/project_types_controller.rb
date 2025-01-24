@@ -548,6 +548,7 @@ class ProjectTypesController < ApplicationController
     to_date_subforms = params[:to_date_subforms]
     filter_children = params[:filter_children]
     filter_user_children = params[:filter_user_children]
+    new_field = params[:new_field]
 
     # Busca el rol del usuario
     customer_name = Apartment::Tenant.current
@@ -621,7 +622,7 @@ class ProjectTypesController < ApplicationController
       end
 
       # Si el tipo de campo es subformulario, busca todos los hijos con sus fotos
-      if f_field.field_type_id == 7
+      if f_field.field_type_id == 7 && new_field != 'true'
 
         # Busca los datos del los hijos
         children_data = ProjectDataChild
@@ -773,7 +774,6 @@ class ProjectTypesController < ApplicationController
         father_data = children_data_array
 
       else
-
         # Si el project_id es 0, se están editando múltiples registros por lo que se devuelven los values vacíos
         unless project_id == 0
           father_data = father_properties[f_field.key]
@@ -806,18 +806,22 @@ class ProjectTypesController < ApplicationController
     end
 
     # Busca las fotos del padre
-    father_photos = Photo
-      .where(project_id: project_id)
-      .where(row_active: true)
+    if new_field != 'true'
+      father_photos = Photo
+        .where(project_id: project_id)
+        .where(row_active: true)
 
-    father_photos_array = []
+      father_photos_array = []
 
-    father_photos.each do |f_photo|
-      f_photo_hash = {}
-      f_photo_hash['id'] = f_photo.id
-      f_photo_hash['name'] = f_photo.name
-      f_photo_hash['image'] = f_photo.image
-      father_photos_array.push(f_photo_hash)
+      father_photos.each do |f_photo|
+        f_photo_hash = {}
+        f_photo_hash['id'] = f_photo.id
+        f_photo_hash['name'] = f_photo.name
+        f_photo_hash['image'] = f_photo.image
+        father_photos_array.push(f_photo_hash)
+      end
+    else
+      father_photos_array = []
     end
 
     unless project_id == 0
@@ -1136,6 +1140,11 @@ class ProjectTypesController < ApplicationController
   def self.set_filters_on_the_fly data, data_conditions
     # Aplica filtros generados por el usuario
     if !data_conditions.blank?
+
+      if data_conditions.is_a?(String)
+        data_conditions = JSON.parse(data_conditions)
+      end
+
       data_conditions.each do |key|
         s = key.split('|')
         field = s[0]

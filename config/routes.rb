@@ -90,6 +90,7 @@ Rails.application.routes.draw do
     get 'dashboards/show' => 'dashboards#show'
     get 'special_sessions/special_user_session' => 'special_sessions#special_user_session', as: :special_user_session
     get 'special_sessions/switch_multitenant' => 'special_sessions#switch_multitenant', as: :switch_multitenant
+    get 'special_sessions/geometry_shared/:project_type_id/:project_id' => 'special_sessions#geometry_shared', as: :geometry_shared
     get 'project_types/:id/api_connection', to: 'api_connections#api_connection', as: :api_connection
     post 'project_types/:id/api_connection', to: 'api_connections#create', as: :create_api_connection
     get 'project_types/:id/api_connection_mapping', to: 'api_connections#api_connection_mapping', as: :api_connection_mapping

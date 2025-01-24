@@ -1,10 +1,20 @@
 <div class="row w-100 align-items-center m-0" >
-  <div class="<%= Apartment::Tenant.current == 'aws' ? 'col-md-6 align-middle form-singnin-aws-img vh-100' : 'col-md-6 align-middle form-sinin-img vh-100' %>" style="overflow:hidden;"></div>
+  <div class="<%= case Apartment::Tenant.current
+                when 'aws'
+                  'col-md-6 align-middle form-singnin-aws-img vh-100'
+                when 'scm'
+                  'col-md-6 align-middle form-singnin-scm-img vh-100'
+                else
+                  'col-md-6 align-middle form-sinin-img vh-100'
+                end %>" style="overflow:hidden;">
+  </div>
   <div class="col-md-6 align-middle text-center p-0">
 	   <div class="simple_form form-signin pl-6 pr-6">
 			<center>
         <% if Apartment::Tenant.current == 'aws' %>
           <center><%=image_tag('logo-aws.png', class:'mb-2', width:"252")%></center>
+		<% elsif Apartment::Tenant.current == 'scm' %>
+          <center><%=image_tag('logo-netzefy.png', class:'mb-2', width:"252")%></center>
         <% else %>
           <center><%=image_tag ENV['VERTICAL_LOGO'], class:'mb-2', width:"252"%></center>
         <% end %>

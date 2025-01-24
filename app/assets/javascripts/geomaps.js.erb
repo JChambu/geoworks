@@ -1671,16 +1671,27 @@ function getCQLFilter_layer(dat){
                       }
                     }
                   });
-                  app_id_popup=prop["app_id"];
                   if(Navarra.dashboards.config.name_project==data["project_name"]){
+                    app_id_popup=prop["app_id"];
+                    localStorage.setItem('app_id_popup', app_id_popup);
+
                     div_popup_icon = document.createElement('DIV');
                     div_popup_icon.style.textAlign = 'right';
                     div_popup_icon.setAttribute('id', 'icons_popup');
+                      
+                    if (Navarra.dashboards.config.current_tenant == 'impulsa') {
+                      var new_p = document.createElement('I');
+                      new_p.setAttribute("onclick",'share_geometries('+app_id_popup+')');
+                      new_p.className="fas fa-share-alt info_icon";
+                      new_p.title="Compartir geometría";
+                      div_popup_icon.appendChild(new_p);
+                    } 
 
                     if (pdf_event.length !== 0) {
                       var new_p = document.createElement('I');
                       new_p.setAttribute("onclick",'create_pdf_from_popup('+app_id_popup+')');
                       new_p.className="fas fa-file-pdf info_icon";
+                      new_p.title="Crear PDF";
                       div_popup_icon.appendChild(new_p);
                     }
 
@@ -1692,6 +1703,7 @@ function getCQLFilter_layer(dat){
                         var new_p = document.createElement('I');
                         new_p.setAttribute("onclick",'Navarra.geomaps.modal_save_multipoints('+app_id_popup+')');
                         new_p.className="fas fa-check info_icon";
+                        new_p.title="Crear Multipuntos";
                         new_p.style.textAlign = 'left';
                         div_popup_icon.appendChild(new_p);
                       }
@@ -1709,11 +1721,17 @@ function getCQLFilter_layer(dat){
 
                     var new_p = document.createElement('I');
                     new_p.setAttribute("onclick",'Navarra.photos.open_photos('+app_id_popup+',false)');
+                    new_p.title="Abrir fotos de geometría";
                     new_p.className="fas fa-image info_icon";
                     div_popup_icon.appendChild(new_p);
 
                     var new_p = document.createElement('I');
-                    new_p.setAttribute("onclick",'show_item_info('+app_id_popup+',true)');
+                    if(Navarra.dashboards.config.current_tenant == 'scm'){
+                      new_p.setAttribute("onclick",'edit_registers('+app_id_popup+',true)');
+                    } else {
+                      new_p.setAttribute("onclick",'normalBehavior('+app_id_popup+',true)');
+                    }
+                    new_p.title="Formulario de geometría";
                     new_p.className="fas fa-info-circle info_icon";
                     div_popup_icon.appendChild(new_p);
 
@@ -1723,6 +1741,7 @@ function getCQLFilter_layer(dat){
                           var new_p = document.createElement('I');
                           new_p.setAttribute("id", "display_ndvi");
                           new_p.setAttribute("onclick",'Navarra.geomaps.show_ndvi('+ app_id_popup +', event)');
+                          new_p.title="NDVI";
                           new_p.className="fas fa-layer-group info_icon";
                           div_popup_icon.appendChild(new_p);
                         } else {
@@ -1768,7 +1787,11 @@ function getCQLFilter_layer(dat){
                   }
                   // si es polígono dibuja el polígono de otro color
                   if(type_geometry=="Polygon"){
-                    create_polygon_selected(cc['features'][0]['geometry']['coordinates']);
+                    if(Navarra.dashboards.config.current_tenant == 'impulsa'){
+                      create_polygon_selected_impulsa(cc['features'][0]['geometry']['coordinates']);
+                    } else {
+                      create_polygon_selected(cc['features'][0]['geometry']['coordinates']);
+                    }
                   }
                 } // Cierra success
               }); // Cierra ajax
@@ -2542,6 +2565,31 @@ function create_polygon_selected(coordinates_newpol_selected){
   mymap.addLayer(polygon_selected);
 }
 
+function create_polygon_selected_impulsa(coordinates_newpol_selected) {
+  var polygon_options = {
+    fill: true,
+    color: "#000000",
+    fillColor: "#d3d800",
+    fillOpacity: 0.5
+  };
+
+  if (polygon_selected != undefined) {
+    mymap.removeLayer(polygon_selected);
+  }
+
+  polygon_selected = new L.LayerGroup();
+
+  var coordinates_newpol_selected_latlng = [];
+  coordinates_newpol_selected[0].forEach(function (latlng) {
+    coordinates_newpol_selected_latlng.push(new L.latLng(latlng[1], latlng[0]));
+  });
+
+  var poligon_new = new L.Polygon(coordinates_newpol_selected_latlng, polygon_options);
+
+  polygon_selected.addLayer(poligon_new);
+  mymap.addLayer(polygon_selected);
+}
+
 // función para traer los campos padres y verificar si tienen algún calculo geométrico
 function search_geometric_calculation_fields(){
   $.ajax({
@@ -2626,7 +2674,7 @@ function new_geometry(event){
 }
 
 function open_new_fields(){
-  show_item_info(0,true,false,true);
+  show_item_info(0, true, false, true, false, true);
   set_onclick_map(true);
 }
 
