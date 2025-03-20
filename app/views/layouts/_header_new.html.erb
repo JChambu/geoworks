@@ -511,6 +511,7 @@
 
           <% if can? :statuses, :visualizer %>
             <%= link_to t('statuses'), project_type_project_statuses_path(@project_type.id), class: "dropdown-item" %>
+            <%= link_to t('statuses_rules'), project_status_rules_project_status_rules_path(project_type_id: @project_type.id), class: "dropdown-item" %>
           <% end %>
           <% if can? :project_types, :share%>
             <%= link_to t('navbar_elements.share_layer'), project_type_share_path(@project_type.id), remote: true, class: "dropdown-item" %>

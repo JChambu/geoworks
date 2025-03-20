@@ -8,7 +8,10 @@ class Project < ApplicationRecord
   belongs_to :project_type
   belongs_to :user
   has_many :project_data_child
+  has_many :project_status_rules
+
   before_update :update_sequence_projects
+  after_save :check_status_rules
 
   #validate :validate_properties
 
@@ -202,4 +205,53 @@ class Project < ApplicationRecord
 
   end # Cierra update_inheritable_statuses
 
+  def check_status_rules
+    rules = ProjectStatusRule.where(project_type_id: self.project_type_id)
+
+    rules.each do |rule|
+      key_value = self.properties[rule.json_key]
+
+      next unless key_value.present?
+  
+      if rule.trigger_value.match?(/^(\d+(\.\d+)?)-(\d+(\.\d+)?)$/)
+        if match_range?(key_value, rule.trigger_value) #rangos
+          self.update_column(:project_status_id, rule.project_status_id)
+          break
+        end
+      elsif rule.trigger_value.match?(/^([<>]=?)(\d+(\.\d+)?)$/) #>,<
+        if match_operator?(key_value, rule.trigger_value)
+          self.update_column(:project_status_id, rule.project_status_id)
+          break
+        end
+      else
+        if key_value.to_s == rule.trigger_value
+          self.update_column(:project_status_id, rule.project_status_id)
+          break
+        end
+      end
+    end
+  end
+  
+  private
+  
+  def match_operator?(key_value, trigger_value)
+    operator, number = trigger_value.match(/^([<>]=?)(\d+(\.\d+)?)$/).captures
+    number = number.to_f
+    key_value = key_value.to_f
+  
+    case operator
+    when ">"  then key_value > number
+    when "<"  then key_value < number
+    when ">=" then key_value >= number
+    when "<=" then key_value <= number
+    else false
+    end
+  end
+  
+  def match_range?(key_value, trigger_value)
+    return false unless trigger_value.match(/^(\d+(\.\d+)?)-(\d+(\.\d+)?)$/)
+  
+    min, max = $1.to_f, $3.to_f
+    key_value.to_f.between?(min, max)
+  end
 end
