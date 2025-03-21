@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-
-
   get 'customers/search_customer'
   post 'table_configurations/create_table'
   get 'table_configurations/search_table'
@@ -99,6 +97,7 @@ Rails.application.routes.draw do
     post 'project_types/:id/api_connection_subform', to: 'api_connections#create_subform', as: :create_api_connection_subform
     get 'project_types/:id/api_connections/sync_subform', to: 'api_connections#sync_subform'
     get 'project_types/:id/api_connections/sync_subform_confirm', to: 'api_connections#sync_subform_confirm'
+    get "project_status_rules/:id/jsonb_keys", to: "project_status_rules#jsonb_keys", as: :jsonb_keys_project_status_rule
 
     resources :field_types
     resources :layers
@@ -111,7 +110,11 @@ Rails.application.routes.draw do
     resources :events
     resources :model_types
     resources :folders
-
+    resources :project_status_rules, only: [:index, :create] do
+      collection do
+        get ':project_type_id', to: 'project_status_rules#index', as: :project_status_rules
+      end
+    end
 
     namespace :admin do
       post 'users/search_projects'

@@ -8,7 +8,10 @@ class Project < ApplicationRecord
   belongs_to :project_type
   belongs_to :user
   has_many :project_data_child
+  has_many :project_status_rules
+
   before_update :update_sequence_projects
+  after_save :check_status_rules
 
   #validate :validate_properties
 
@@ -202,4 +205,88 @@ class Project < ApplicationRecord
 
   end # Cierra update_inheritable_statuses
 
+  def check_status_rules
+    rules = ProjectStatusRule.where(project_type_id: self.project_type_id)
+
+    rules.each do |rule|
+      key_value = self.properties[rule.json_key]
+
+      next unless key_value.present?
+  
+      if rule.trigger_value.match?(/^(\d+(\.\d+)?)-(\d+(\.\d+)?)$/)
+        if match_range?(key_value, rule.trigger_value) #rangos
+          self.update_column(:project_status_id, rule.project_status_id)
+          break
+        end
+      elsif rule.trigger_value.match?(/^([<>]=?)(\d+(\.\d+)?)$/) #>,<
+        if match_operator?(key_value, rule.trigger_value)
+          self.update_column(:project_status_id, rule.project_status_id)
+          break
+        end
+      else
+        if match_text?(key_value, rule.trigger_value) #Comparación de palabras o arrays
+          self.update_column(:project_status_id, rule.project_status_id)
+          break
+        end
+      end
+    end
+  end
+  
+  private
+  
+  def match_operator?(key_value, trigger_value)
+    operator, number = trigger_value.match(/^([<>]=?)(\d+(\.\d+)?)$/).captures
+    number = number.to_f
+    key_value = key_value.to_f
+  
+    case operator
+    when ">"  then key_value > number
+    when "<"  then key_value < number
+    when ">=" then key_value >= number
+    when "<=" then key_value <= number
+    else false
+    end
+  end
+  
+  def match_range?(key_value, trigger_value)
+    return false unless trigger_value.match(/^(\d+(\.\d+)?)-(\d+(\.\d+)?)$/)
+  
+    min, max = $1.to_f, $3.to_f
+    key_value.to_f.between?(min, max)
+  end
+
+  def match_text?(key_value, trigger_value)
+    return false if key_value.blank? || trigger_value.blank?
+  
+    key_value = normalize_value(key_value)
+    trigger_value = normalize_value(trigger_value)
+
+    begin
+      trigger_value = JSON.parse(trigger_value) if trigger_value.is_a?(String) && trigger_value.strip.start_with?("[")
+    rescue JSON::ParserError
+      trigger_value = [trigger_value]
+    end
+
+    if key_value.is_a?(String)
+      key_value = key_value.split(',').map(&:strip)
+    end
+
+    if key_value.is_a?(Array)
+      return (trigger_value & key_value).any?
+    elsif key_value.is_a?(String)
+      return key_value.include?(trigger_value.join(', '))
+    end
+  
+    false
+  end
+
+  def normalize_value(value)
+    if value.is_a?(String)
+      value.strip.downcase
+    elsif value.is_a?(Array)
+      value.map { |v| v.strip.downcase }
+    else
+      value
+    end
+  end  
 end
