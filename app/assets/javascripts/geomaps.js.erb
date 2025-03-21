@@ -242,6 +242,40 @@ Navarra.geomaps = function() {
       collapsed: true
     }).addTo(mymap);
 
+    const searchControl = new GeoSearch.GeoSearchControl({
+      provider: new GeoSearch.OpenStreetMapProvider(),
+      style: 'button',
+      showMarker: true,
+      autoClose: false,
+      searchLabel: 'Buscar dirección...',
+      keepResult: true,
+      notFoundMessage: "Dirección no encontrada",
+      showPopup: false,
+      popupFormat: ({ result }) => {
+        console.log(result)
+        return `${result.label}`;
+      },
+      updateMap: true
+    });
+
+    <%# function formatAddress(label) {
+      const addressParts = label.split(',').map(part => part.trim());
+      console.log(addressParts)
+      if (addressParts.length < 3) {
+        return label;
+      }
+
+      let numero = addressParts[0].match(/\d+/)?.[0] || '';  // Extrae el número si existe
+      let calle = addressParts[0].replace(/\d+/, '').trim(); // Extrae la calle eliminando el número
+      let ciudad = addressParts[2];                          // Ciudad
+      let provincia = addressParts[6] || addressParts[5];    // Provincia (varía en algunos casos)
+
+      return `${calle} ${numero}, ${ciudad}, ${provincia}`.trim();
+    } %>
+
+
+    mymap.addControl(searchControl);
+
     // Agrega el zoom al mapa
     L.control.zoom({
       position: 'topright'
