@@ -1,5 +1,5 @@
 class ProjectStatusRulesController < ApplicationController
-    def index
+  def index
     @project_type_id = params[:project_type_id] || session[:project_type_id]
     @project_statuses = ProjectStatus.where(project_type_id: @project_type_id)
     @project_fields = ProjectField.where(project_type_id: @project_type_id).where.not(field_type_id: 11).order(:sort)
@@ -46,6 +46,11 @@ class ProjectStatusRulesController < ApplicationController
       rule.save!
     end
 
-    redirect_to project_status_rules_project_status_rules_path(project_type_id: project_type_id), notice: "Reglas guardadas correctamente."
+    respond_to do |format|
+      format.html do
+        redirect_to project_status_rules_project_status_rules_path(locale: I18n.locale, project_type_id: project_type_id), notice: "Reglas guardadas correctamente."
+      end
+    end
+
   end
 end

@@ -1,11 +1,10 @@
 <div class="card m-2 shadow">
   <div class="card-body">
     <div class="row align-items-center"> 
-      <div class="col-md-9 d-flex align-items-center">
+      <div class="col-md-10 d-flex align-items-center">
         <h3 class="m-0">Configuración de Campos</h3>
-        <p class="m-0 pt-2" id="notice"><%= notice %></p>
       </div>
-      <div class="col-md-3 text-right text-end">
+      <div class="col-md-2 text-right text-end">
         <button type="button" id="helpButton" class="btn btn-primary btn-sm">
           ❔ Como usar la configuración de Campos
         </button>
@@ -15,7 +14,8 @@
 </div>
 
 <div style="margin-left:8px; margin-right:8px">
-  <%= form_with url: project_status_rules_path, method: :post, id: "status-rules-form" do %>
+  <p id="notice" style="font-size: 18px;"><%= notice %></p>
+  <%= form_with url: project_status_rules_path, method: :post, id: "status-rules-form", local: true do %>
     <%= hidden_field_tag :project_type_id, @project_type_id %>
 
     <div class="table-responsive">
@@ -82,7 +82,7 @@
           <li><strong>Palabras en listas de opción:</strong></li>
           -Para buscar más de una opción dentro de una lista, escribir el array: <code>["Mate", "Auto"]</code>. Activará si al menos una palabra coincide.
           <br>
-          -Para buscar una palabra dentro de un listado, escribir el array: <code>["Mate"]</code>. Activará si la palabra coincide.
+          -Para buscar una palabra dentro de una lista, escribir por ejemplo: <code>["Mate"]</code>. Activará si la palabra se encuentra dentro del listado.
         </ul>
 
         <p>Si el campo es una lista de opciones, asegúrate de escribir las palabras exactamente como aparecen en el sistema.</p>
