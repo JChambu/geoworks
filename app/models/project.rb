@@ -224,7 +224,7 @@ class Project < ApplicationRecord
           break
         end
       else
-        if key_value.to_s == rule.trigger_value
+        if match_text?(key_value, rule.trigger_value) #Comparación de palabras o arrays
           self.update_column(:project_status_id, rule.project_status_id)
           break
         end
@@ -254,4 +254,39 @@ class Project < ApplicationRecord
     min, max = $1.to_f, $3.to_f
     key_value.to_f.between?(min, max)
   end
+
+  def match_text?(key_value, trigger_value)
+    return false if key_value.blank? || trigger_value.blank?
+  
+    key_value = normalize_value(key_value)
+    trigger_value = normalize_value(trigger_value)
+
+    begin
+      trigger_value = JSON.parse(trigger_value) if trigger_value.is_a?(String) && trigger_value.strip.start_with?("[")
+    rescue JSON::ParserError
+      trigger_value = [trigger_value]
+    end
+
+    if key_value.is_a?(String)
+      key_value = key_value.split(',').map(&:strip)
+    end
+
+    if key_value.is_a?(Array)
+      return (trigger_value & key_value).any?
+    elsif key_value.is_a?(String)
+      return key_value.include?(trigger_value.join(', '))
+    end
+  
+    false
+  end
+
+  def normalize_value(value)
+    if value.is_a?(String)
+      value.strip.downcase
+    elsif value.is_a?(Array)
+      value.map { |v| v.strip.downcase }
+    else
+      value
+    end
+  end  
 end

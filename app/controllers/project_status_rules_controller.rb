@@ -2,7 +2,7 @@ class ProjectStatusRulesController < ApplicationController
     def index
     @project_type_id = params[:project_type_id] || session[:project_type_id]
     @project_statuses = ProjectStatus.where(project_type_id: @project_type_id)
-    @project_fields = ProjectField.where(project_type_id: @project_type_id).order(:sort)
+    @project_fields = ProjectField.where(project_type_id: @project_type_id).where.not(field_type_id: 11).order(:sort)
     @existing_rules = ProjectStatusRule.where(project_type_id: @project_type_id).index_by(&:project_status_id)
     render 'project_status_rules/index'
   end
@@ -34,17 +34,18 @@ class ProjectStatusRulesController < ApplicationController
     rules.each do |status_id, values|
       next if values[:trigger_value].blank?
 
-      rule = ProjectStatusRule.find_or_initialize_by(
+      ProjectStatusRule.where(project_type_id: project_type_id, project_status_id: status_id).delete_all
+
+      rule = ProjectStatusRule.new(
         project_type_id: project_type_id,
         project_status_id: status_id,
-        json_key: values[:field_key]
+        json_key: values[:field_key],
+        trigger_value: values[:trigger_value]
       )
 
-      rule.trigger_value = values[:trigger_value]
-      rule.is_range = values[:is_range].present?
       rule.save!
     end
 
-    redirect_to project_status_rules_path(project_type_id: project_type_id), notice: "Reglas guardadas correctamente."
+    redirect_to project_status_rules_project_status_rules_path(project_type_id: project_type_id), notice: "Reglas guardadas correctamente."
   end
 end

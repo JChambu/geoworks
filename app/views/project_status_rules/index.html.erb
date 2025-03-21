@@ -58,21 +58,34 @@
 </div>
 
 <div class="modal fade" id="rangeHelpModal" tabindex="-1" aria-labelledby="rangeHelpModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="rangeHelpModalLabel">¿Cómo usar la configuración de Campos?</h5>
       </div>
       <div class="modal-body">
         <p><strong>Ejemplos de valores activadores:</strong></p>
+
+        <p><strong>Con números:</strong></p>
         <ul>
-          <li><code>45</code>: Activa si el valor es 45</li>
+          <li><code>45</code>: Activa si el valor es exactamente 45.</li>
           <li><code>5-15</code>: Activa si el valor está entre 5 y 15.</li>
           <li><code>>23</code>: Activa si el valor es mayor que 23.</li>
           <li><code>>=23</code>: Activa si el valor es mayor o igual que 23.</li>
           <li><code><10</code>: Activa si el valor es menor que 10.</li>
           <li><code><=10</code>: Activa si el valor es menor o igual que 10.</li>
         </ul>
+
+        <p><strong>Con palabras:</strong></p>
+        <ul>
+          <li><strong>Coincidencia exacta:</strong> Si el campo contiene <code>"Rojo"</code>, activar con <code>Rojo</code>.</li>
+          <li><strong>Palabras en listas de opción:</strong></li>
+          -Para buscar más de una opción dentro de una lista, escribir el array: <code>["Mate", "Auto"]</code>. Activará si al menos una palabra coincide.
+          <br>
+          -Para buscar una palabra dentro de un listado, escribir el array: <code>["Mate"]</code>. Activará si la palabra coincide.
+        </ul>
+
+        <p>Si el campo es una lista de opciones, asegúrate de escribir las palabras exactamente como aparecen en el sistema.</p>
       </div>
     </div>
   </div>
