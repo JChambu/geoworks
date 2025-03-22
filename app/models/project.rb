@@ -260,21 +260,24 @@ class Project < ApplicationRecord
   
     key_value = normalize_value(key_value)
     trigger_value = normalize_value(trigger_value)
-
-    begin
-      trigger_value = JSON.parse(trigger_value) if trigger_value.is_a?(String) && trigger_value.strip.start_with?("[")
+  
+    trigger_value = begin
+      JSON.parse(trigger_value) if trigger_value.is_a?(String) && trigger_value.strip.start_with?("[")
     rescue JSON::ParserError
-      trigger_value = [trigger_value]
-    end
-
-    if key_value.is_a?(String)
-      key_value = key_value.split(',').map(&:strip)
-    end
-
-    if key_value.is_a?(Array)
+      nil
+    end || trigger_value
+  
+    trigger_array = Array(trigger_value)
+    key_array = Array(key_value)
+  
+    if key_value.is_a?(Array) && trigger_value.is_a?(Array)
       return (trigger_value & key_value).any?
-    elsif key_value.is_a?(String)
-      return key_value.include?(trigger_value.join(', '))
+    elsif key_value.is_a?(Array) && trigger_value.is_a?(String)
+      return key_value.include?(trigger_value)
+    elsif key_value.is_a?(String) && trigger_value.is_a?(Array)
+      return trigger_value.include?(key_value)
+    elsif key_value.is_a?(String) && trigger_value.is_a?(String)
+      return key_value == trigger_value
     end
   
     false
@@ -282,11 +285,11 @@ class Project < ApplicationRecord
 
   def normalize_value(value)
     if value.is_a?(String)
-      value.strip.downcase
+      return value.strip.downcase
     elsif value.is_a?(Array)
-      value.map { |v| v.strip.downcase }
+      return value.map { |v| v.strip.downcase }
     else
-      value
+      return value
     end
   end  
 end
