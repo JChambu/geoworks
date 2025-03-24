@@ -242,39 +242,211 @@ Navarra.geomaps = function() {
       collapsed: true
     }).addTo(mymap);
 
+
+
+
+    //---------------------------------------//
+    //---------EMPIEZA GEOCODING-------------//
+    //---------------------------------------//
+    let currentMarker = null;
+
     const searchControl = new GeoSearch.GeoSearchControl({
       provider: new GeoSearch.OpenStreetMapProvider(),
       style: 'button',
-      showMarker: true,
-      autoClose: false,
-      searchLabel: 'Buscar dirección...',
+      showMarker: false,
+      autoClose: true,
+      searchLabel: 'Buscar dirección o coordenadas',
       keepResult: true,
       notFoundMessage: "Dirección no encontrada",
       showPopup: false,
-      popupFormat: ({ result }) => {
-        console.log(result)
-        return `${result.label}`;
-      },
-      updateMap: true
+      updateMap: false
+    });
+    mymap.addControl(searchControl);
+
+    document.querySelector('.leaflet-control-geosearch input').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+
+        const value = e.target.value.trim();
+        const coordRegex = /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/;
+
+        if (coordRegex.test(value)) {
+          const [lat, lng] = value.split(',').map(Number);
+          const latlng = L.latLng(lat, lng);
+
+          if (currentMarker) mymap.removeLayer(currentMarker);
+
+          currentMarker = L.marker(latlng).addTo(mymap).bindPopup(`📍 Coordenadas: ${lat}, ${lng}`)
+
+          mymap.setView(latlng, 15);
+        }
+      }
     });
 
-    <%# function formatAddress(label) {
-      const addressParts = label.split(',').map(part => part.trim());
-      console.log(addressParts)
-      if (addressParts.length < 3) {
-        return label;
+    mymap.on('geosearch/showlocation', function (result) {
+      const { x: lng, y: lat, label } = result.location;
+      console.log("Dirección normal")
+      if (currentMarker) mymap.removeLayer(currentMarker);
+
+      currentMarker = L.marker([lat, lng]).addTo(mymap).bindPopup(`📍 ${label}`)
+
+      mymap.setView([lat, lng], 15);
+    });
+
+    //---------------------------------------//
+    //---------TERMINA GEOCODING-------------//
+    //---------------------------------------//
+
+
+
+
+    //---------------------------------------//
+    //---EMPIEZA BUSQUEDA ENTRE DOS PUNTOS---//
+    //---------------------------------------//
+
+    // ⛔ Evita duplicados
+    if (!document.getElementById('route-form-container')) {
+      // Crear contenedor del formulario
+      const routeFormContainer = document.createElement('div');
+      routeFormContainer.id = 'route-form-container';
+      routeFormContainer.style = `
+        display: none;
+        position: absolute;
+        top: 100px;
+        left: 10px;
+        z-index: 9999;
+        background: white;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+        width: 250px;
+      `;
+
+      // Contenido del formulario
+      routeFormContainer.innerHTML = `
+        <h5 style="font-size: 16px;">Ruta entre direcciones</h5>
+        <input type="text" id="from-input" class="form-control mb-2" placeholder="Desde (ej. Córdoba)" style="margin-bottom: 5px;">
+        <input type="text" id="to-input" class="form-control mb-2" placeholder="Hasta (ej. Buenos Aires)" style="margin-bottom: 5px;">
+        <button id="trace-route" class="btn btn-primary btn-sm" style="margin-right: 5px;">Trazar Ruta</button>
+        <button id="close-route-form" class="btn btn-secondary btn-sm">Cerrar</button>
+      `;
+
+      document.body.appendChild(routeFormContainer);
+    }
+
+    // 🧠 Funciones para abrir/cerrar
+    function abrirFormularioRuta() {
+      document.getElementById('route-form-container').style.display = 'block';
+    }
+    function cerrarFormularioRuta() {
+      document.getElementById('route-form-container').style.display = 'none';
+    }
+
+    let routeControl = null;
+
+    // 📍 Botón personalizado para abrir el formulario
+    L.Control.CustomRouteButton = L.Control.extend({
+      onAdd: function(map) {
+        const container = L.DomUtil.create('div');
+        container.className = "leaflet-control-zoom leaflet-bar leaflet-control";
+
+        const button = L.DomUtil.create('a', '', container);
+        button.title = "Trazar ruta";
+        button.href = "#";
+        const icon = L.DomUtil.create('span', '', button);
+        icon.innerHTML = '📍';
+        icon.style.fontSize = "20px";
+        icon.style.padding = "6px";
+        icon.style.cursor = "pointer";
+
+        L.DomEvent.on(button, 'click', function(e) {
+          L.DomEvent.stopPropagation(e);
+          L.DomEvent.preventDefault(e);
+          abrirFormularioRuta();
+        });
+
+        return container;
+      }
+    });
+
+    L.control.customRouteButton = function(opts) {
+      return new L.Control.CustomRouteButton(opts);
+    };
+
+    L.control.customRouteButton({ position: 'topleft' }).addTo(mymap);
+
+    // 🚀 Buscar coordenadas con Nominatim
+    async function getCoordinates(address) {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
+      const data = await response.json();
+      if (data && data.length > 0) {
+        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+      } else {
+        throw new Error("Dirección no encontrada");
+      }
+    }
+
+    // 🛣️ Trazar la ruta
+    document.getElementById("trace-route").addEventListener("click", async function () {
+      const from = document.getElementById("from-input").value.trim();
+      const to = document.getElementById("to-input").value.trim();
+
+      if (!from || !to) {
+        alert("Debes completar ambos campos.");
+        return;
       }
 
-      let numero = addressParts[0].match(/\d+/)?.[0] || '';  // Extrae el número si existe
-      let calle = addressParts[0].replace(/\d+/, '').trim(); // Extrae la calle eliminando el número
-      let ciudad = addressParts[2];                          // Ciudad
-      let provincia = addressParts[6] || addressParts[5];    // Provincia (varía en algunos casos)
+      try {
+        const fromCoords = await getCoordinates(from);
+        const toCoords = await getCoordinates(to);
 
-      return `${calle} ${numero}, ${ciudad}, ${provincia}`.trim();
-    } %>
+        if (routeControl) {
+          mymap.removeControl(routeControl);
+        }
+
+        routeControl = L.Routing.control({
+          waypoints: [
+            L.latLng(fromCoords[0], fromCoords[1]),
+            L.latLng(toCoords[0], toCoords[1])
+          ],
+          routeWhileDragging: true,
+          show: false
+        }).addTo(mymap);
+
+        cerrarFormularioRuta();
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    });
+
+    // ❌ Cerrar
+    document.getElementById("close-route-form").addEventListener("click", cerrarFormularioRuta);
 
 
-    mymap.addControl(searchControl);
+    //---------------------------------------//
+    //---TERMINA BUSQUEDA ENTRE DOS PUNTOS---//
+    //---------------------------------------//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Agrega el zoom al mapa
     L.control.zoom({
