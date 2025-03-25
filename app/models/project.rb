@@ -212,66 +212,19 @@ class Project < ApplicationRecord
       key_value = self.properties[rule.json_key]
 
       next unless key_value.present?
-      trigger = rule.trigger_value.to_s.strip
-      trigger = trigger.gsub(/\A["']+|["']+\Z/, '')
 
-      puts ''
-      puts ' ********* KEY VALUE ********* '
-      p key_value
-      puts ' ********* ' 
-      puts ''
-
-      puts ''
-      puts ' ********* RULE TRIGGER VALUE ********* '
-      p rule.trigger_value
-      puts ' ********* ' 
-      puts ''
-
-      puts ''
-      puts ' ********* if trigger.match?(/^(\d+(\.\d+)?)-(\d+(\.\d+)?)$/) ********* '
-      p trigger.match?(/^(\d+(\.\d+)?)-(\d+(\.\d+)?)$/)
-      puts ' ********* ' 
-      puts ''
-
-      puts ''
-      puts ' ********* elsif trigger.match?(/^([<>]=?)(\d+(\.\d+)?)$/) #>,< ********* '
-      p trigger.match?(/^(\d+(\.\d+)?)-(\d+(\.\d+)?)$/)
-      puts ' ********* ' 
-      puts ''
-
-      puts ''
-      puts ' ********* TRIGGER ********* '
-      p trigger
-      puts ' ********* ' 
-      puts ''
-
-      if trigger.match?(/^(\d+(\.\d+)?)-(\d+(\.\d+)?)$/)
-        puts ''
-        puts ' ********* DENTRO DE IF ********* '
-        p "dentro de if"
-        puts ' ********* ' 
-        puts ''
-        if match_range?(key_value, trigger) #rangos
+      if rule.trigger_value.match(/^(\d+(\.\d+)?)-(\d+(\.\d+)?)$/)
+        if match_range?(key_value, rule.trigger_value) #rangos
           self.update_column(:project_status_id, rule.project_status_id)
           break
         end
-      elsif trigger.match?(/^([<>]=?)(\d+(\.\d+)?)$/) #>,<
-        puts ''
-        puts ' ********* DENTRO DE ELSIF ********* '
-        p "dentro de ELSIif"
-        puts ' ********* ' 
-        puts ''
-        if match_operator?(key_value, trigger)
+      elsif rule.trigger_value.match(/^([<>]=?)(\d+(\.\d+)?)$/) #>,<
+        if match_operator?(key_value, rule.trigger_value)
           self.update_column(:project_status_id, rule.project_status_id)
           break
         end
       else
-        puts ''
-        puts ' ********* DENTRO DE ELSE A MATCH TEXT ********* '
-        p "dentro de else a match text"
-        puts ' ********* ' 
-        puts ''
-        if match_text?(key_value, trigger) #Comparación de palabras o arrays
+        if match_text?(key_value, rule.trigger_value) #Comparación de palabras o arrays
           self.update_column(:project_status_id, rule.project_status_id)
           break
         end
