@@ -78,7 +78,7 @@ Rails.application.routes.draw do
   post 'projects/change_gwm_created_at'
   get 'project_fields/get_other_layer_data' => 'project_fields#get_other_layer_data'
   get 'project_subfields/get_calculated_data_from_script' => 'project_subfields#get_calculated_data_from_script'
-
+  post 'directions/calculate', to: 'directions#calculate'
 
   scope ":locale", locale: /#{I18n.available_locales.join("|")}/  do
     post 'project_fields/create'
