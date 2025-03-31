@@ -11,7 +11,7 @@ class DirectionsController < ApplicationController
     uri.query = URI.encode_www_form({
       origin: "place_id:#{origin}",
       destination: "place_id:#{destination}",
-      key: "AIzaSyDSL6HQU_1zGVSINHHYLQ7pthPErHKqVDc",
+      key: ENV['GOOGLE_MAPS_API_KEY'],
       language: 'es',
       overview: "full"
     })
