@@ -1892,9 +1892,9 @@ function getCQLFilter_layer(dat){
                       if (field_type_id == 12) {
                         var hyperlink;
                         if (val.indexOf("http://") === 0 || val.indexOf("https://") === 0) {
-                          hyperlink = "<a href='" + val + "' target='_blank' onclick='return confirm(\"¿Estás seguro de que deseas salir de Geoworks?\");'>" + val + "</a>";
+                          hyperlink = "<a href='" + val + "' target='_blank' class='hyperlink_link' onclick='return confirm(\"¿Estás seguro de que deseas salir de Geoworks?\");'>" + val + "</a>";
                         } else {
-                          hyperlink = "<a href='https://" + val + "' target='_blank' onclick='return confirm(\"¿Estás seguro de que deseas salir de Geoworks?\");'>" + val + "</a>";
+                          hyperlink = "<a href='https://" + val + "' target='_blank' class='hyperlink_link' onclick='return confirm(\"¿Estás seguro de que deseas salir de Geoworks?\");'>" + val + "</a>";
                         }
                         new_p.innerHTML=label + ': ' + hyperlink;
                       }

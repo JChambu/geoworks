@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20240808002058) do
+ActiveRecord::Schema.define(version: 20250320022616) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -323,6 +323,16 @@ ActiveRecord::Schema.define(version: 20240808002058) do
     t.index ["user_id"], name: "index_project_filters_on_user_id"
   end
 
+  create_table "project_status_rules", force: :cascade do |t|
+    t.string "json_key"
+    t.string "trigger_value"
+    t.bigint "project_status_id"
+    t.integer "project_type_id"
+    t.boolean "is_range"
+    t.index ["project_status_id"], name: "index_project_status_rules_on_project_status_id"
+    t.index ["project_type_id"], name: "index_project_status_rules_on_project_type_id"
+  end
+
   create_table "project_statuses", force: :cascade do |t|
     t.string "name"
     t.bigint "project_type_id"
@@ -515,6 +525,7 @@ ActiveRecord::Schema.define(version: 20240808002058) do
   add_foreign_key "photo_children", "project_data_children"
   add_foreign_key "project_fields", "project_types"
   add_foreign_key "project_filters", "project_types"
+  add_foreign_key "project_status_rules", "project_statuses"
   add_foreign_key "project_statuses", "project_types"
   add_foreign_key "project_types", "folders"
   add_foreign_key "projects", "project_statuses"
