@@ -13,8 +13,7 @@ class DirectionsController < ApplicationController
       destination: "place_id:#{destination}",
       key: "AIzaSyDSL6HQU_1zGVSINHHYLQ7pthPErHKqVDc",
       language: 'es',
-      overview: "full",
-      alternatives: true
+      overview: "full"
     })
 
     response = Net::HTTP.get_response(uri)
