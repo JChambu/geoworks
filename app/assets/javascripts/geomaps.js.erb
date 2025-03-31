@@ -242,6 +242,235 @@ Navarra.geomaps = function() {
       collapsed: true
     }).addTo(mymap);
 
+    // ---- GEOCODING ----- //
+    if (typeof google !== 'undefined' && google.maps) {
+      // Crear botón de lupa
+      var searchContainer = document.createElement('div');
+      searchContainer.className = 'search-container';
+
+      var button = document.createElement('button');
+      button.innerHTML = '<i class="fas fa-search" style="color: black;"></i>';
+      button.className = 'geocoding-button';
+
+      var geocodingInput = document.createElement('input');
+      geocodingInput.type = 'text';
+      geocodingInput.id = 'autocomplete';
+      geocodingInput.placeholder = 'Buscar dirección...';
+      geocodingInput.className = 'geocoding-input';
+
+      var clearButton = document.createElement('span');
+      clearButton.innerHTML = '<i class="fas fa-times" style="color: black;"></i>';
+      clearButton.className = 'geocoding-clear-button';
+
+      searchContainer.appendChild(button);
+      searchContainer.appendChild(geocodingInput);
+      searchContainer.appendChild(clearButton);
+      document.body.appendChild(searchContainer);
+
+      // Mostrar/ocultar input al apretar lupa
+      button.addEventListener('click', function () {
+        const isVisible = geocodingInput.style.display === 'block' || geocodingInput.style.display === 'inline-block';
+
+        if (!isVisible) {
+          geocodingInput.style.display = 'inline-block';
+          geocodingInput.focus();
+          routeButton.style.transition = 'transform 0.3s ease';
+          routeButton.style.transform = 'translateX(309px)';
+          inputsContainer.style.transform = 'translateX(309px)';
+        } else {
+          geocodingInput.style.display = 'none';
+          routeButton.style.transform = 'translateX(0)';
+          inputsContainer.style.transform = 'translateX(0)';
+        }
+      });
+
+      // Inicializar Autocomplete
+      var autocomplete = new google.maps.places.Autocomplete(geocodingInput);
+      autocomplete.setFields(['geometry', 'formatted_address']);
+
+      var marker;
+
+      autocomplete.addListener('place_changed', function() {
+        const place = autocomplete.getPlace();
+        if (!place.geometry) {
+          alert("No se encontró la dirección");
+          return;
+        }
+        const lat = place.geometry.location.lat();
+        const lng = place.geometry.location.lng();
+
+        if (marker) {
+          mymap.removeLayer(marker);
+        }
+        marker = L.marker([lat, lng]).addTo(mymap)
+          .bindPopup(place.formatted_address)
+          .openPopup();
+        mymap.setView([lat, lng], 19);
+        clearButton.style.display = 'block';
+        clearButton.style.position = 'absolute';
+        clearButton.style.left = '318px';
+        clearButton.style.top = '7px';
+
+      });
+    } else {
+      console.error('❌ Google Maps no está cargado.');
+    }
+
+    clearButton.addEventListener('click', function() {
+      geocodingInput.value = '';
+      clearButton.style.display = 'none';
+      if (marker) {
+        mymap.removeLayer(marker);
+        marker = null;
+      }
+    });
+    // ---- FINISH GEOCODING ----//
+
+    // ---- ROUTES ---- //
+    var controlContainer = document.createElement('div');
+    controlContainer.className = 'routes-control-container';
+
+    var buttonsContainer = document.createElement('div');
+    buttonsContainer.style.display = 'flex';
+    buttonsContainer.style.gap = '5px';
+
+    // Botón 📍
+    var routeButton = document.createElement('button');
+    routeButton.innerHTML = '<i class="fas fa-map-pin" style="color: black;"></i>';
+    routeButton.className = 'route-button';
+
+    // Contenedor de inputs
+    var inputsContainer = document.createElement('div');
+    inputsContainer.className = 'inputs-container';
+    inputsContainer.style.display = 'none';
+
+    // Input DESDE
+    var originInput = document.createElement('input');
+    originInput.type = 'text';
+    originInput.placeholder = 'Desde...';
+    originInput.id = 'origin-input';
+    originInput.className = 'route-origin-input';
+
+    // Input HASTA
+    var destinationInput = document.createElement('input');
+    destinationInput.type = 'text';
+    destinationInput.placeholder = 'Hasta...';
+    destinationInput.id = 'destination-input';
+    destinationInput.className = 'route-destination-input';
+
+    // Botón aceptar
+    var traceButton = document.createElement('button');
+    traceButton.innerHTML = 'Trazar Ruta';
+    traceButton.className = 'route-trace-button';
+
+    // Botón de cerrar API Routes
+    clearRouteButton = document.createElement('span');
+    clearRouteButton.innerHTML = '<i class="fas fa-times" style="color: black;"></i>';
+    clearRouteButton.className = 'clear-route-button';
+
+    routeButton.addEventListener('click', function () {
+      inputsContainer.style.display = inputsContainer.style.display === 'none' ? 'flex' : 'none';
+    });
+
+    let originPlaceId = null;
+    let destinationPlaceId = null;
+    let directionsLayer = null;
+
+    function initRouteAutocomplete() {
+      const originAutocomplete = new google.maps.places.Autocomplete(originInput);
+      originAutocomplete.addListener('place_changed', () => {
+        const place = originAutocomplete.getPlace();
+        originPlaceId = place.place_id;
+      });
+
+      const destAutocomplete = new google.maps.places.Autocomplete(destinationInput);
+      destAutocomplete.addListener('place_changed', () => {
+        const place = destAutocomplete.getPlace();
+        destinationPlaceId = place.place_id;
+      });
+    }
+
+    traceButton.addEventListener('click', () => {
+      if (!originPlaceId || !destinationPlaceId) {
+        alert("Seleccione ambas direcciones");
+        return;
+      }
+
+      fetch('/directions/calculate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          origin_place_id: originPlaceId,
+          destination_place_id: destinationPlaceId
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          alert("No se encontró la ruta");
+          return;
+        }
+
+        if (directionsLayer) {
+          mymap.removeLayer(directionsLayer);
+        }
+
+        let fullRoute = [];
+
+        data.steps.forEach(step => {
+          if (step.polyline && step.polyline.points) {
+            const decoded = polyline.decode(step.polyline.points);
+            fullRoute = fullRoute.concat(decoded);
+          }
+        });
+
+        directionsLayer = L.polyline(fullRoute, { color: 'blue', weight: 4 }).addTo(mymap);
+        mymap.fitBounds(directionsLayer.getBounds());
+        clearRouteButton.style.display = 'block';
+        showDistanceDuration(data.distance, data.duration, data.travel_mode);
+
+        originMarker = L.marker([data.origin.lat, data.origin.lng], { title: 'Origen', draggable: false }).addTo(mymap);
+        destinationMarker = L.marker([data.destination.lat, data.destination.lng], { title: 'Destino', draggable: false }).addTo(mymap);
+      });
+    });
+
+    inputsContainer.appendChild(originInput);
+    inputsContainer.appendChild(destinationInput);
+    inputsContainer.appendChild(traceButton);
+    inputsContainer.appendChild(clearRouteButton);
+    buttonsContainer.appendChild(routeButton);
+
+    controlContainer.appendChild(buttonsContainer);
+    controlContainer.appendChild(inputsContainer);
+
+    document.body.appendChild(controlContainer);
+
+    initRouteAutocomplete();
+
+    function showDistanceDuration(distance, duration, travel_mode) {
+      distanceDurationContainer = document.createElement('div');
+      distanceDurationContainer.className = 'distance-duration-container';
+      document.body.appendChild(distanceDurationContainer);
+      distanceDurationContainer.innerHTML = `<strong>Distancia:</strong> ${distance} <br><strong>Duración:</strong> ${duration} <br><strong>Transporte:</strong> Auto`;
+    }
+
+    clearRouteButton.addEventListener('click', function() {
+      if (directionsLayer) {
+        mymap.removeLayer(directionsLayer);
+        directionsLayer = null;
+      }
+      if (distanceDurationContainer) {
+        distanceDurationContainer.remove();
+        distanceDurationContainer = null;
+        mymap.removeLayer(originMarker);
+        mymap.removeLayer(destinationMarker);
+      }
+      clearRouteButton.style.display = 'none';
+    });
+    // ---- FINISH ROUTES ---- //
+
     // Agrega el zoom al mapa
     L.control.zoom({
       position: 'topright'
