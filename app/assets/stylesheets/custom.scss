@@ -1356,3 +1356,123 @@ div.custom-menu.show {
 .handleRegister:focus {
   outline: none;
 }
+
+.search-container {
+  position: absolute;
+  top: 69px;
+  left: 49px;
+  z-index: 9999;
+}
+
+.geocoding-button {
+  width: 35px;
+  height: 33px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #555;
+  font-size: 18px;
+  padding: 0;
+  margin: 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.geocoding-input {
+  width: 300px;
+  height: 36px;
+  padding: 6px 27px 6px 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-left: 4px;
+  transition: transform 0.3s ease;
+  display: none;
+}
+
+.geocoding-clear-button {
+  font-size: 17px;
+  cursor: pointer;
+  display: none;
+}
+
+.routes-control-container {
+  position: absolute;
+  top: 69px;
+  left: 86px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.route-button {
+  width: 35px;
+  height: 33px;
+  border-radius: 4px;
+  margin-left: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.inputs-container {
+  gap: 5px;
+  background-color: #fff;
+  padding: 3px;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+  position: relative;
+  top: -5px;
+  left: 1px;
+}
+
+.route-origin-input {
+  width: 278px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  z-index: 10000;
+}
+
+.route-destination-input {
+  width: 278px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  z-index: 10000;
+}
+
+.route-trace-button {
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.clear-route-button {
+  font-size: 17px;
+  cursor: pointer;
+  display: none;
+  position: relative;
+  left: -2px;
+  top: 7px;
+  margin-left: 6px;
+  margin-right: 6px;
+  color: black;
+}
+
+.distance-duration-container {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  padding: 10px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  color: #000;
+}

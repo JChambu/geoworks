@@ -246,43 +246,21 @@ Navarra.geomaps = function() {
     if (typeof google !== 'undefined' && google.maps) {
       // Crear botón de lupa
       var searchContainer = document.createElement('div');
-      searchContainer.style.position = 'absolute';
-      searchContainer.style.top = '69px';
-      searchContainer.style.left = '49px';
-      searchContainer.style.zIndex = '9999';
+      searchContainer.className = 'search-container';
 
       var button = document.createElement('button');
       button.innerHTML = '<i class="fas fa-search" style="color: black;"></i>';
-      button.style.width = '35px';
-      button.style.height = '33px';
-      button.style.borderRadius = '4px';
-      button.style.border = '1px solid #ccc';
-      button.style.backgroundColor = '#fff';
-      button.style.color = '#555';
-      button.style.fontSize = '18px';
-      button.style.padding = '0';
-      button.style.margin = '0';
-      button.style.boxShadow = '0 1px 4px rgba(0,0,0,0.3)';
-      button.style.cursor = 'pointer';
+      button.className = 'geocoding-button';
 
       var geocodingInput = document.createElement('input');
       geocodingInput.type = 'text';
       geocodingInput.id = 'autocomplete';
       geocodingInput.placeholder = 'Buscar dirección...';
-      geocodingInput.style.width = '300px';
-      geocodingInput.style.height = '36px';
-      geocodingInput.style.padding = '6px 27px 6px 6px';
-      geocodingInput.style.border = '1px solid #ccc';
-      geocodingInput.style.borderRadius = '4px';
-      geocodingInput.style.marginLeft = '4px';
-      geocodingInput.style.transition = 'transform 0.3s ease';
-      geocodingInput.style.display = 'none';
+      geocodingInput.className = 'geocoding-input';
 
       var clearButton = document.createElement('span');
       clearButton.innerHTML = '<i class="fas fa-times" style="color: black;"></i>';
-      clearButton.style.fontSize = '17px';
-      clearButton.style.cursor = 'pointer';
-      clearButton.style.display = 'none';
+      clearButton.className = 'geocoding-clear-button';
 
       searchContainer.appendChild(button);
       searchContainer.appendChild(geocodingInput);
@@ -350,14 +328,7 @@ Navarra.geomaps = function() {
 
     // ---- ROUTES ---- //
     var controlContainer = document.createElement('div');
-    controlContainer.style.position = 'absolute';
-    controlContainer.style.top = '69px';
-    controlContainer.style.left = '86px';
-    controlContainer.style.zIndex = '9999';
-    controlContainer.style.display = 'flex';
-    controlContainer.style.flexDirection = 'row';
-    controlContainer.style.alignItems = 'flex-start';
-    controlContainer.style.gap = '5px';
+    controlContainer.className = 'routes-control-container';
 
     var buttonsContainer = document.createElement('div');
     buttonsContainer.style.display = 'flex';
@@ -366,70 +337,36 @@ Navarra.geomaps = function() {
     // Botón 📍
     var routeButton = document.createElement('button');
     routeButton.innerHTML = '<i class="fas fa-map-pin" style="color: black;"></i>';
-    routeButton.style.width = '35px';
-    routeButton.style.height = '33px';
-    routeButton.style.borderRadius = '4px';
-    routeButton.style.marginLeft = '4px';
-    routeButton.style.boxShadow = '0 1px 4px rgba(0,0,0,0.3)';
-    routeButton.style.border = '1px solid #ccc';
-    routeButton.style.backgroundColor = '#fff';
-    routeButton.style.cursor = 'pointer';
+    routeButton.className = 'route-button';
 
     // Contenedor de inputs
     var inputsContainer = document.createElement('div');
+    inputsContainer.className = 'inputs-container';
     inputsContainer.style.display = 'none';
-    inputsContainer.style.gap = '5px';
-    inputsContainer.style.backgroundColor = '#fff';
-    inputsContainer.style.padding = '3px';
-    inputsContainer.style.borderRadius = '8px';
-    inputsContainer.style.boxShadow = '0 1px 6px rgba(0,0,0,0.3)';
-    inputsContainer.style.position = 'relative';
-    inputsContainer.style.top = '-5px';
-    inputsContainer.style.left = '1px';
 
     // Input DESDE
     var originInput = document.createElement('input');
     originInput.type = 'text';
     originInput.placeholder = 'Desde...';
     originInput.id = 'origin-input';
-    originInput.style.width = '278px';
-    originInput.style.padding = '6px';
-    originInput.style.border = '1px solid #ccc';
-    originInput.style.borderRadius = '4px';
-    originInput.style.zIndex = '10000';
+    originInput.className = 'route-origin-input';
 
     // Input HASTA
     var destinationInput = document.createElement('input');
     destinationInput.type = 'text';
     destinationInput.placeholder = 'Hasta...';
     destinationInput.id = 'destination-input';
-    destinationInput.style.width = '278px';
-    destinationInput.style.padding = '6px';
-    destinationInput.style.border = '1px solid #ccc';
-    destinationInput.style.borderRadius = '4px';
-    destinationInput.style.zIndex = '10000';
+    destinationInput.className = 'route-destination-input';
 
     // Botón aceptar
     var traceButton = document.createElement('button');
     traceButton.innerHTML = 'Trazar Ruta';
-    traceButton.style.padding = '6px 12px';
-    traceButton.style.backgroundColor = '#007bff';
-    traceButton.style.color = '#fff';
-    traceButton.style.border = 'none';
-    traceButton.style.borderRadius = '4px';
-    traceButton.style.cursor = 'pointer';
+    traceButton.className = 'route-trace-button';
 
     // Botón de cerrar API Routes
     clearRouteButton = document.createElement('span');
     clearRouteButton.innerHTML = '<i class="fas fa-times" style="color: black;"></i>';
-    clearRouteButton.style.fontSize = '17px';
-    clearRouteButton.style.cursor = 'pointer';
-    clearRouteButton.style.display = 'none';
-    clearRouteButton.style.position = 'relative';
-    clearRouteButton.style.left = '-2px';
-    clearRouteButton.style.top = '7px';
-    clearRouteButton.style.marginLeft = '6px';
-    clearRouteButton.style.marginRight = '6px';
+    clearRouteButton.className = 'clear-route-button';
 
     routeButton.addEventListener('click', function () {
       inputsContainer.style.display = inputsContainer.style.display === 'none' ? 'flex' : 'none';
@@ -514,15 +451,7 @@ Navarra.geomaps = function() {
 
     function showDistanceDuration(distance, duration, travel_mode) {
       distanceDurationContainer = document.createElement('div');
-      distanceDurationContainer.style.position = 'absolute';
-      distanceDurationContainer.style.bottom = '20px';
-      distanceDurationContainer.style.left = '20px';
-      distanceDurationContainer.style.padding = '10px';
-      distanceDurationContainer.style.background = '#fff';
-      distanceDurationContainer.style.borderRadius = '8px';
-      distanceDurationContainer.style.boxShadow = '0 2px 12px rgba(0,0,0,0.3)';
-      distanceDurationContainer.style.zIndex = '9999';
-      distanceDurationContainer.style.color = '#000';
+      distanceDurationContainer.className = 'distance-duration-container';
       document.body.appendChild(distanceDurationContainer);
       distanceDurationContainer.innerHTML = `<strong>Distancia:</strong> ${distance} <br><strong>Duración:</strong> ${duration} <br><strong>Transporte:</strong> Auto`;
     }
