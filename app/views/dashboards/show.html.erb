@@ -164,9 +164,13 @@
     function toggleLayersModal() {
       $('#customLayerModal').toggleClass('show');
       $('#custom_layer_control_button').hide();
-      var modalWidth = $('#customLayerModal').outerWidth();
-      $('.status_panel').css('left', modalWidth);
-      $('.status_panel').css('top', '61.3px');
+      $('.status_panel').css('left', '484px');
+      $('.status_panel').css('top', '115px');
+      ['.search-container', '.routes-control-container'].forEach(selector => {
+        const el = document.querySelector(selector);
+        el.style.transition = 'transform 0.3s ease';
+        el.style.transform = 'translateX(436px)';
+      });
     }
 
     function set_layer_modal() {
@@ -179,7 +183,7 @@
       // Configura eventos de apertura y cierre del modal
       $('#layersDropdown').on('click', function (e) {
         e.preventDefault();
-        toggleLayersModal();
+        toggleLayersModal();        
       });
 
       $('#closeLayerModal').on('click', function () {
@@ -187,6 +191,11 @@
         $('#custom_layer_control_button').show();
         $('.status_panel').css('left', '10px');
         $('.status_panel').css('top', '16vh');
+        ['.search-container', '.routes-control-container'].forEach(selector => {
+          const el = document.querySelector(selector);
+          el.style.transition = 'transform 0.3s ease';
+          el.style.transform = 'translateX(0)';
+        });
       });
 
       $(".custom_dropdown_container").click(function (e) {
