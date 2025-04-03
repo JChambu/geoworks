@@ -30,7 +30,7 @@ class ProjectType < ApplicationRecord
   accepts_nested_attributes_for :project_fields, allow_destroy: true
   accepts_nested_attributes_for :projects, allow_destroy: true
 
-  FILTERS = %w(--> = < > <= >= !=)
+  FILTERS = %w(--> = < > <= >= <>)
 
   attr_accessor :file, :latitude, :longitude, :address, :department, :province, :country, :data, :type_file, :kind_file
 
