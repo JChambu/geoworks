@@ -163,39 +163,54 @@
 
     function toggleLayersModal() {
       $('#customLayerModal').toggleClass('show');
-      $('#custom_layer_control_button').hide();
-      $('.status_panel').css('left', '484px');
-      $('.status_panel').css('top', '115px');
+      $('#custom_layer_control_button').toggle();
+      adjustElementsPosition();
+    }
+
+    function adjustElementsPosition() {
+      const panel = $('#customLayerModal');
+      const panelVisible = panel.hasClass('show');
+      const panelWidth = panelVisible ? panel.outerWidth() : 0;
+
+      const statusPanelLeft = panelWidth ? panelWidth + 20 : 10;
+      const statusPanelTop = panelWidth ? 115 : '16vh';
+
+      $('.status_panel').css({ left: panelVisible ? `${statusPanelLeft - 11}px` : `${statusPanelLeft}px`, top: statusPanelTop });
+
       ['.search-container', '.routes-control-container'].forEach(selector => {
         const el = document.querySelector(selector);
-        el.style.transition = 'transform 0.3s ease';
-        el.style.transform = 'translateX(436px)';
+        if(el){
+          el.style.transition = 'transform 0.3s ease';
+          if (panelVisible) {
+            el.style.transform = `translateX(${panelWidth - 41}px)`;
+          } else {
+            el.style.transform = `translateX(0px)`;
+          }
+        }
       });
     }
+
+    $(window).resize(function () {
+      adjustElementsPosition();
+    });
 
     function set_layer_modal() {
       var leaflet_layer_position = $('.leaflet-control-layers-toggle').offset();
       var top_position = 57.0312 + "px";
       var left_position = (leaflet_layer_position.left - 10) + "px";
-      $('#custom_layer_control_button').css("top", top_position);
-      $('#custom_layer_control_button').css("left", left_position);
-      Navarra.geomaps.show_prefilters_subform_labels()
-      // Configura eventos de apertura y cierre del modal
+      $('#custom_layer_control_button').css({top: top_position, left: left_position});
+
+      Navarra.geomaps.show_prefilters_subform_labels();
+
       $('#layersDropdown').on('click', function (e) {
         e.preventDefault();
-        toggleLayersModal();        
+        toggleLayersModal();
       });
 
       $('#closeLayerModal').on('click', function () {
         $('#customLayerModal').removeClass('show');
         $('#custom_layer_control_button').show();
-        $('.status_panel').css('left', '10px');
-        $('.status_panel').css('top', '16vh');
-        ['.search-container', '.routes-control-container'].forEach(selector => {
-          const el = document.querySelector(selector);
-          el.style.transition = 'transform 0.3s ease';
-          el.style.transform = 'translateX(0)';
-        });
+        adjustElementsPosition();
       });
 
       $(".custom_dropdown_container").click(function (e) {
@@ -215,7 +230,6 @@
         var name_layer_project = $(check_layers[l]).next().html().substring(1);
         if(layer_selected == name_layer_project){
           $(check_layers[l]).click();
-          // $("#layersDropdown").click();
         }
       }
     }
@@ -269,6 +283,7 @@
     }
 
     $(document).ready(function() {
+      adjustElementsPosition();
       function handleCloseSidebar() {
         if ($('#filter-body div').length == 1) {
           hidde_sidebar('filter-container');
