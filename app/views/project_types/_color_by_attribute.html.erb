@@ -1,17 +1,14 @@
 <div id="color_by_attribute-modal" class="modal fade">
   <div class="modal-dialog">
     <div class="modal-content">
-
       <div class="modal-header">
         <h4 class="modal-title"> Colorear por atributo </h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
 
       <%= form_tag project_type_create_color_by_attribute_path, :remote => true, :method => :get   do |f| %>
-
         <div class="modal-body">          
             <div id="colorear_formularios">
-
               <div class="custom-control custom-radio d-inline m-auto">
                   <input type="radio" id="radio_rango" name="radio_color_style" class="custom-control-input check_input_users_child" checked="true">
                   <label class="string optional control-label custom-control-label" for="radio_rango">Rango</label>
@@ -25,8 +22,8 @@
                 <label class="col-form-label-sm text-left mr-3 mb-0 w-75">Atributo a colorear</label>
               </div>
               <div class="d-flex">
-              <%=select_tag 'q[project_field]',  options_for_select(color_by_range_field_for_select), include_blank: true, class:'form-control form-control-sm mr-3 w-75' , id:'color_by_attributte_field'%>
-              <%=select_tag 'q[project_field_value]',  options_for_select(color_by_attribute_field_for_select), include_blank: true, class:' d-none form-control form-control-sm mr-3 w-75' , id:'color_by_attributte_field_value'%>
+                <%= select_tag 'q[project_field]', grouped_options_for_select(filter_field_for_select), include_blank: true, class:'form-control form-control-sm mr-3 w-75', id:'color_by_attributte_field' %>
+                <%= select_tag 'q[project_field_value]', options_for_select(color_by_attribute_field_for_select), include_blank: true, class:' d-none form-control form-control-sm mr-3 w-75', id:'color_by_attributte_field_value' %>
 
                 <select class="form-control form-control-sm mr-3 w-25 d-none" id="sub_interpolation_operator">
                   <option value="sum">Suma</option>
@@ -52,7 +49,7 @@
                     </a>
                   <div class="dropdown-menu text-center p-2 pt-3" aria-labelledby="palette_selector" style="z-index: 2000;width: 230px; margin-top:-20px;   margin-left:180%;max-height: 45vh; overflow-y:auto;">
                       <div class="text-right mr-3 mb-2">
-                      <i class="fas fa-sync-alt align-middle custom_cursor" id="invert_palettes " title="Invertir paletas"></i>
+                      <i class="fas fa-sync-alt align-middle custom_cursor" id="invert_palettes" title="Invertir paletas"></i>
                       </div>
                       <div id="palette_selector_dropdown"></div>
                     </div>
