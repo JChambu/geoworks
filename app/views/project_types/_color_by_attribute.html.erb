@@ -22,8 +22,8 @@
                 <label class="col-form-label-sm text-left mr-3 mb-0 w-75">Atributo a colorear</label>
               </div>
               <div class="d-flex">
-                <%= select_tag 'q[project_field]', grouped_options_for_select(filter_field_for_select), include_blank: true, class:'form-control form-control-sm mr-3 w-75', id:'color_by_attributte_field' %>
-                <%= select_tag 'q[project_field_value]', options_for_select(color_by_attribute_field_for_select), include_blank: true, class:' d-none form-control form-control-sm mr-3 w-75', id:'color_by_attributte_field_value' %>
+                <%= select_tag 'q[project_field]', grouped_options_for_select(color_by_range_field_for_select), include_blank: true, class: 'form-control form-control-sm mr-3 w-75', id: 'color_by_attributte_field' %>
+                <%= select_tag 'q[project_field_value]', grouped_options_for_select(filter_field_for_select), include_blank: true, class: 'd-none form-control form-control-sm mr-3 w-75', id: 'color_by_attributte_field_value' %>
 
                 <select class="form-control form-control-sm mr-3 w-25 d-none" id="sub_interpolation_operator">
                   <option value="sum">Suma</option>
