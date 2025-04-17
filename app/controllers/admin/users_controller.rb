@@ -16,12 +16,14 @@ class Admin::UsersController < ApplicationController
     user_selected_id = params[:user_selected_id]
     pro_id = params[:project_id]
     check_filter_owner = params[:filter_owner]
+    check_filter_ilike = params[:filter_ilike]
     attrs_filter = params[:attrs_filter]
 
     customer_name = Customer.where(id: id_corp).pluck(:subdomain).first
+
     Apartment::Tenant.switch customer_name do
-      #Filter owner
-      filter_owner = ProjectFilter.all.where(user_id: user_selected_id).where(project_type_id: pro_id).where(owner: true)
+      # Owner Filter
+      filter_owner = ProjectFilter.where(user_id: user_selected_id, project_type_id: pro_id, owner: true)
 
       if filter_owner.empty? && check_filter_owner == 'true'
         @new_filter_owner = ProjectFilter.new(user_id: user_selected_id, project_type_id: pro_id, owner: true)
@@ -32,12 +34,23 @@ class Admin::UsersController < ApplicationController
         filter_owner.update(owner: false)
       end
 
-      #Attributes filters
+      # Ilike Filter
+      id = params['attrs_filter']['0']['id'].to_i
+
+      filter_ilike = ProjectFilter.where(id: id)
+
+      if !filter_ilike.empty? && check_filter_ilike == 'true'
+        filter_ilike.update(ilike: true)
+      elsif id != 0 && check_filter_ilike == 'false'
+        filter_ilike.update(ilike: false)
+      end
+
+      # Attributes Filters
       attrs_filter_id = params['attrs_filter']['0']['id']
       attrs_filter_value = params['attrs_filter']['0']['filter']
 
       if attrs_filter_id == '0' && !attrs_filter_value.empty?
-        @new_filter_attr = ProjectFilter.new(user_id: user_selected_id, project_type_id: pro_id, properties: attrs_filter_value)
+        @new_filter_attr = ProjectFilter.new(user_id: user_selected_id, project_type_id: pro_id, properties: attrs_filter_value, ilike: check_filter_ilike == 'true')
         @new_filter_attr.save
       end
 
@@ -52,7 +65,7 @@ class Admin::UsersController < ApplicationController
         end
       end
 
-      #Cross layer filter
+      # Crosslayer Filter
       attrs_filter_value = params['attrs_filter']['0']['cross_layer']
       if !attrs_filter_value.nil?
         attrs_filter_value = attrs_filter_value.values
@@ -86,51 +99,39 @@ class Admin::UsersController < ApplicationController
   end
 
   def search_filters
-
     id_corp = params[:id_corporacion]
     user_selected_id = params[:user_selected_id]
     pro_id = params[:project_id]
-
     customer_name = Customer.where(id: id_corp).pluck(:subdomain).first
+
     Apartment::Tenant.switch customer_name do
-      filter_owner = ProjectFilter.all.where(user_id: user_selected_id).where(project_type_id: pro_id).where(owner: true).pluck(:id).last
-      attributes = ProjectFilter.all.where(user_id: user_selected_id).where(project_type_id: pro_id).where.not(properties: nil).pluck(:id, :properties)
-      filters = []
+      filters_scope = ProjectFilter.where(user_id: user_selected_id, project_type_id: pro_id)
 
-      attributes.each do |a|
-        filter = {}
+      filter_owner = filters_scope.find_by(owner: true)&.id
+      filter_ilike = filters_scope.find_by(ilike: true)&.id
+      attributes = filters_scope.where.not(properties: nil).pluck(:id, :properties)
 
-        filter["id"] = a[0]
-        filter["name"] = a[1]
-        cross_layer_filter = ProjectFilter.joins(:project_type).where(user_id: user_selected_id).where(cross_layer_filter_id: a).pluck(:id, :name, :project_type_id)
-        all_cross_layers = []
-        project_types = ProjectType.all.where.not(id: pro_id).pluck(:id, :name)
-        all_project_types = []
-        id_filters_check = []
+      project_types = ProjectType.where.not(id: pro_id).pluck(:id, :name)
 
-        cross_layer_filter.each do |cl|
-          filter_cross_layer = {}
-          filter_cross_layer['id_cross_layer'] = cl[0]
-          filter_cross_layer['name'] = cl[1]
-          all_cross_layers.push(filter_cross_layer)
-          id_filters_check.push(cl[2])
-        end
+      cross_layer_filters = ProjectFilter
+        .joins(:project_type)
+        .where(user_id: user_selected_id, cross_layer_filter_id: attributes.map(&:first))
+        .pluck(:cross_layer_filter_id, :id, :name, :project_type_id)
 
-        project_types.each do |pt|
-          if !id_filters_check.include?(pt[0])
-            project_type_for_object = {}
-            project_type_for_object['id_project_type'] = pt[0]
-            project_type_for_object['name'] = pt[1]
-            all_project_types.push(project_type_for_object)
-          end
-        end
-
-        filter["cross_layer_filter"] = all_cross_layers
-        filter["all_project_types"] = all_project_types
-
-        filters.push(filter)
+      filters = attributes.map do |attr_id, props|
+        related_cross = cross_layer_filters.select { |c| c[0] == attr_id }
+  
+        used_project_type_ids = related_cross.map { |c| c[3] }
+  
+        {
+          id: attr_id,
+          name: props,
+          cross_layer_filter: related_cross.map { |_, id, name, _| { id_cross_layer: id, name: name } },
+          all_project_types: project_types.reject { |pt_id, _| used_project_type_ids.include?(pt_id) }
+                                          .map { |pt_id, name| { id_project_type: pt_id, name: name } }
+        }
       end
-      render json: {owner: filter_owner, attributes: filters}
+      render json: {owner: filter_owner, ilike: filter_ilike, attributes: filters}
     end
   end
 
@@ -246,7 +247,7 @@ class Admin::UsersController < ApplicationController
   def user_params
     params.require(:user).permit(:name, :email, :country_code, :area_code, :phone, :confirmed_at, :email_sended, :password, :password_confirmation, :active,
       user_customers_attributes: [:id, :user_id, :customer_id, :role_id, :_destroy,
-      project_filters_attributes: [:id, :user_id, :project_type_id, :owner, :_destroy]],
+      project_filters_attributes: [:id, :user_id, :project_type_id, :owner, :ilike, :_destroy]],
       has_project_types_attributes: [:id, :project_type_id, :user_id, :owner, :properties, :_destroy],
       user_customers_attributes: [:id, :user_id, :customer_id, :role_id, :_destroy]
     )
