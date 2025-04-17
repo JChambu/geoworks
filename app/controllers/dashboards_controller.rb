@@ -90,12 +90,13 @@ class DashboardsController < ApplicationController
         # Arma el filtro por atributo
         if !@project_filters.properties.nil?
           @project_filters.properties.to_a.each do |prop|
-            if @project_filters.ilike == true
-              value = Array(prop[1]).first
-              @user_attribute_filter = "#{prop[0]}|ilike|%#{value}%"
-            else
-              @user_attribute_filter = "#{prop[0]}|=|#{prop[1]}"
-            end
+            @user_attribute_filter = "#{prop[0]}|=|#{prop[1]}"
+            # if @project_filters.ilike == true
+            #   value = Array(prop[1]).first
+            #   @user_attribute_filter = "#{prop[0]}|ilike|%#{value}%"
+            # else
+            #   @user_attribute_filter = "#{prop[0]}|=|#{prop[1]}"
+            # end
           end
         end
 
