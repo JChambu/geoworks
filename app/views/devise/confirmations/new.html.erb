@@ -15,8 +15,6 @@
 
 	<div class="col-md-6 align-middle text-center p-0">
 		<div class="simple_form form-signin pl-6 pr-6">
-			<% current_tenant = Apartment::Tenant.current %>
-			<% customer_logo = Customer.where(subdomain: current_tenant).pluck(:logo).first %>
 			<% if customer_logo.present? %>
 				<center><%= image_tag("data:image/png;base64,#{customer_logo}", class: "mb-2", width: "252") %></center>
 			<% else %>
