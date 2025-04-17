@@ -34,6 +34,14 @@
                <%= f.file_field(:logo, multiple: false, class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '') %>
              </td>
           </tr>
+          <tr>
+            <td class="w-25">
+              <%= f.label :side_image, class: "text-left col-form-label text-right" %>
+            </td>
+            <td class="w-50">
+              <%= f.file_field(:side_image, multiple: false, class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '') %>            
+            </td>
+          </tr>
         </table>
 
         <div class="col-md-14 row justify-content-center mt-4">

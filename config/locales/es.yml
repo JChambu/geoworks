@@ -680,5 +680,6 @@ es:
         name: "Nombre:"
         subdomain: "Subdominio:"
         logo: "Logo:"
+        side_image: "Imagen Lateral:"
     errors:
       <<: *errors
