@@ -78,44 +78,60 @@
 </div>
 
 <div id="modal_filter_user" class="modal fade">
-  <div class="modal-dialog">
-    <div class="modal-content">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content border-0 shadow">
       <div class="modal-header">
-        <h5 class="modal-title"> Filtros </h5>
-        <button type="button" class="close" data-dismiss="modal">x</button>
-      </div>
-      <div class="modal-body">
-        <div class="filters_select">
-          <strong><label>Proyecto:</label></strong> <select id="projects_for_filters" onchange="search_filters_for_project()" class="form-control-sm">
-            <option></option>
-          </select>
-        </div>
-        <br>
-        <div id="filters_project_container">
-          <div class="row mb-12">
-            <div class="col-md-5 col-form-label"><strong><label>Filtro Owner: </label></strong></div>
-            <div class="col-md-7 col-form-label" id="checkbox_owner"></div>
-          </div>
-          <br>
-          <div class="row mb-12">
-            <div class="col-md-5 col-form-label"><strong><label>Filtros por atributos: </label></strong></div>
-            <div class="col-md-7 col-form-label" id="attr_filter_container"></div>
-          </div>
-          <br>
-          <div class="row mb-12">
-            <div class="col-md-5 col-form-label"><strong><label>Filtros Intercapas: </label></strong></div>
-            <div class="col-md-7 col-form-label" id="attr_cross_layer_container"></div>
-          </div>
-        </div>
+        <h5 class="modal-title mb-0 font-weight-bold">Filtros</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
 
+      <div class="modal-body">
+        <!-- Selector de Proyecto -->
+        <div class="form-group form-row align-items-center">
+          <label for="projects_for_filters" class="col-md-1 font-weight-bold mb-0">Proyecto:</label>
+          <div class="col-md-9" style="margin-left:13px;">
+            <select id="projects_for_filters" onchange="search_filters_for_project()" class="form-control form-control-sm">
+              <option value=""></option>
+            </select>
+          </div>
+        </div>
+
+        <div id="filters_project_container">
+          <!-- Filtro Owner -->
+          <div class="form-group row align-items-center">
+            <label class="col-md-2 col-form-label font-weight-bold mb-0">Filtro Owner:</label>
+            <div class="col-md-1 d-flex align-items-center" id="checkbox_owner"></div>
+          </div>
+
+          <!-- Filtro Ilike -->
+          <div class="form-group row align-items-center">
+            <label class="col-md-2 col-form-label font-weight-bold mb-0">Filtro Ilike:</label>
+            <div class="col-md-1 d-flex align-items-center" id="checkbox_ilike"></div>
+          </div>
+
+          <!-- Filtros por atributos -->
+          <div class="form-group">
+            <label class="font-weight-bold d-block">Filtros por atributos:</label>
+            <div id="attr_filter_container" class="form-row align-items-end"></div>
+          </div>
+
+          <!-- Filtros Intercapas -->
+          <div class="form-group">
+            <label class="font-weight-bold">Filtros Intercapas:</label>
+            <div id="attr_cross_layer_container"></div>
+          </div>
+        </div>
+      </div>
       <div class="modal-footer">
-        <%= link_to "Cancelar", (params[:action] == 'new' ? admin_users_path : edit_admin_user_path(@user)), class: "btn btn-secondary mr-1" %>
-        <%= button_tag 'Guardar', :id => 'save_filters', :class => 'btn btn-primary', value: 'Guardar', onclick: 'save_filter()' %>
+        <%= link_to "Cancelar", (params[:action] == 'new' ? admin_users_path : edit_admin_user_path(@user)), class: "btn btn-secondary" %>
+        <%= button_tag 'Guardar', id: 'save_filters', class: 'btn btn-primary', value: 'Guardar', onclick: 'save_filter()' %>
       </div>
     </div>
   </div>
 </div>
+
 
 <script type="text/javascript">
   function change_customer(e){
@@ -151,6 +167,7 @@
     $('#attr_filter_container').empty()
     $('#attr_cross_layer_container').empty()
     $('#checkbox_owner').empty()
+    $('#checkbox_ilike').empty()
 
     var button = $(e.relatedTarget)
     id_corporacion = button.data('filter_corp_id')
@@ -178,10 +195,10 @@
 
   function save_filter() {
     var project_id = $('#projects_for_filters').val();
-    user_selected_id = $('#user_selected_id').html()
+    var user_selected_id = $('#user_selected_id').html()
     var filter_owner = $('#owner_filter').prop('checked');
+    var filter_ilike = $('#ilike_filter').prop('checked');
     var attrs_filter = [];
-
     var id_filter = $('.attribute_id_key').attr('id').split('attribute_id_key_')[1];
     var interlayer_filters = []
     var interlayer_filters_new = []
@@ -217,7 +234,7 @@
         'interlayer_filters_new': interlayer_filters_new
       }
       attrs_filter.push(filter_object)
-    }else {
+    } else {
       if ($('.attribute_id_value').val() === "" && $('.attribute_id_key').val() === "") {
 
         filter_object = {
@@ -227,7 +244,7 @@
           'interlayer_filters_new': interlayer_filters_new
         }
         attrs_filter.push(filter_object);
-      }else{
+      } else {
         alert("Objeto no válido");
         return;
       }
@@ -241,6 +258,7 @@
         'user_selected_id': user_selected_id,
         'project_id': project_id,
         'filter_owner': filter_owner,
+        'filter_ilike': filter_ilike,
         'attrs_filter': attrs_filter
       },
       success: function(data) {
@@ -268,9 +286,18 @@
         if (data.owner == null){
           var owner_check = '<input type="checkbox" filter_id="'+ data.owner +'" id="owner_filter"></input>'
           $('#checkbox_owner').append(owner_check)
-        }else {
+        } else {
           var owner_check = '<input type="checkbox" checked filter_id="'+ data.owner +'" id="owner_filter"></input>'
           $('#checkbox_owner').append(owner_check)
+        }
+
+        $('#checkbox_ilike').empty()
+        if (data.ilike == null){
+          var ilike_check = '<input type="checkbox" filter_id="'+ data.ilike +'" id="ilike_filter"></input>'
+          $('#checkbox_ilike').append(ilike_check)
+        } else {
+          var ilike_check = '<input type="checkbox" checked filter_id="'+ data.ilike +'" id="ilike_filter"></input>'
+          $('#checkbox_ilike').append(ilike_check)
         }
 
         if (data.attributes.length > 0){
@@ -301,7 +328,7 @@
               $('#attr_cross_layer_container').append(new_filter)
             })
           })
-        }else{
+        } else {
           $('#attr_filter_container').empty()
           $('#attr_cross_layer_container').empty()
 

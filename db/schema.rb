@@ -320,6 +320,7 @@ ActiveRecord::Schema.define(version: 20250417013542) do
     t.datetime "updated_at", null: false
     t.boolean "owner", default: false
     t.integer "cross_layer_filter_id"
+    t.boolean "ilike", default: false
     t.index ["project_type_id"], name: "index_project_filters_on_project_type_id"
     t.index ["user_id"], name: "index_project_filters_on_user_id"
   end
