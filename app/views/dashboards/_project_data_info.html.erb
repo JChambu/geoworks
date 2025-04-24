@@ -2,6 +2,8 @@
   $(document).ready(function () {
     Navarra.geomaps.delete_markers();
     $('#close_info').click(function(){
+      $('#routes_container').show();
+      $('#search_streets_container').show();
       $('table tbody tr').removeClass('found');
       Navarra.project_types.config.data_dashboard="";
       Navarra.project_types.config.item_selected="";
@@ -23,6 +25,9 @@
     var postop = ($('#nav_bar').innerHeight() -1)+'px';
     $('#info-modal').css('top',postop);
     $('#info-modal').on('shown.bs.modal', function (e)  {
+      $('#routes_container').hide();
+      $('#search_streets_container').hide();
+
       var height_modal = ( window.innerHeight - $('#nav_bar').innerHeight() - $('#info-modal-header').innerHeight() - $('#info-modal-footer').innerHeight() -2) +'px';
       $('#modal_info').css('height',height_modal);
       //esconde otros modales
@@ -31,9 +36,9 @@
       $(".table_data_container").addClass("width_table");
     });
   });
-var can_edit_yes;
-var can_edit_subforms_yes;
-var can_edit_status_yes;
+  var can_edit_yes;
+  var can_edit_subforms_yes;
+  var can_edit_status_yes;
 
   function close_alert(){
       $('#alert_message').removeClass('show');
@@ -198,7 +203,7 @@ var can_edit_status_yes;
 </script>
 
 <% if can? :data, :visualizer %>
-  <div id="info-modal" class="modal fade show" aria-modal="true" data-backdrop=false style="width: 30%; margin-left: 70.2% !important;">
+  <div id="info-modal" class="modal fade show" aria-modal="true" data-backdrop=false>
     <div class="modal-dialog mt-0" id="modal-info_left" style="max-width: none; margin-bottom: 0px;">
       <div class="modal-content">
         <div class="modal-header pt-2 pb-2" id="info-modal-header">

@@ -247,6 +247,7 @@ Navarra.geomaps = function() {
       // Crear botón de lupa
       var searchContainer = document.createElement('div');
       searchContainer.className = 'search-container';
+      searchContainer.id = 'search_streets_container'
 
       var button = document.createElement('button');
       button.innerHTML = '<i class="fas fa-search" style="color: black;"></i>';
@@ -329,6 +330,7 @@ Navarra.geomaps = function() {
     // ---- ROUTES ---- //
     var controlContainer = document.createElement('div');
     controlContainer.className = 'routes-control-container';
+    controlContainer.id = 'routes_container'
 
     var buttonsContainer = document.createElement('div');
     buttonsContainer.style.display = 'flex';
