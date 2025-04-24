@@ -48,16 +48,6 @@ body {
 .form-sinin-img{
   /*background-image: url(login.jpg);*/
   background-image: url(asset_path("login.jpg"));
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-}
-.form-singnin-aws-img{
-  background-image: url(asset_path("vertical-login-aws.jpg"));
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-}
-.form-singnin-scm-img {
-  background-image: url(asset_path("login-netzefy-2.jpg"));
   background-repeat: no-repeat;
   background-size: cover;
 }

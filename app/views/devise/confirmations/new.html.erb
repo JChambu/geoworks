@@ -1,41 +1,42 @@
+<% current_tenant = Apartment::Tenant.current %>
+<% customer_logo = Customer.where(subdomain: current_tenant).pluck(:logo).first %>
+<% customer_side_image = Customer.where(subdomain: current_tenant).pluck(:side_image).first %>
+
 <div class="row w-100 align-items-center m-0" >
-  <div class="<%= case Apartment::Tenant.current
-                when 'aws'
-                  'col-md-6 align-middle form-singnin-aws-img vh-100'
-                when 'scm'
-                  'col-md-6 align-middle form-singnin-scm-img vh-100'
-                else
-                  'col-md-6 align-middle form-sinin-img vh-100'
-                end %>" style="overflow:hidden;">
-  </div>
-  <div class="col-md-6 align-middle text-center p-0">
-	   <div class="simple_form form-signin pl-6 pr-6">
-			<center>
-        <% if Apartment::Tenant.current == 'aws' %>
-          <center><%=image_tag('logo-aws.png', class:'mb-2', width:"252")%></center>
-		<% elsif Apartment::Tenant.current == 'scm' %>
-          <center><%=image_tag('logo-netzefy.png', class:'mb-2', width:"252")%></center>
-        <% else %>
-          <center><%=image_tag ENV['VERTICAL_LOGO'], class:'mb-2', width:"252"%></center>
-        <% end %>
-			</center>
+	<% if customer_side_image.present? %>
+		<div class="col-md-6 align-middle vh-100" style="
+		background-image: url('data:image/jpeg;base64,<%= customer_side_image %>');
+		background-repeat: no-repeat;
+		background-size: cover;
+		"></div>
+	<% else %>
+		<div class="col-md-6 align-middle form-sinin-img vh-100"></div>
+	<% end %>
+
+	<div class="col-md-6 align-middle text-center p-0">
+		<div class="simple_form form-signin pl-6 pr-6">
+			<% if customer_logo.present? %>
+				<center><%= image_tag("data:image/png;base64,#{customer_logo}", class: "mb-2", width: "252") %></center>
+			<% else %>
+				<center><%= image_tag('default-logo.png', class: 'mb-2', width: "252") %></center>
+			<% end %>
 			<br/>
 			<%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
 				<div style="color: red">
-	  			<%= devise_error_messages! %>
+					<%= devise_error_messages! %>
 				</div>
 				<div class="field">
-  				<%= f.email_field :email, autofocus: true, value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email), class: "form-control", placeholder: "Ingrese su correo registrado" %>
+					<%= f.email_field :email, autofocus: true, value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email), class: "form-control", placeholder: "Ingrese su correo registrado" %>
 				</div>
 				<br/>
 				<div>
-  				<%= f.submit "Reenviar e-mail de confirmación" , class: 'btn btn-lg btn-primary btn-block mb-2'%>
+					<%= f.submit "Reenviar e-mail de confirmación" , class: 'btn btn-lg btn-primary btn-block mb-2'%>
 				</div>
 			<% end %>
 			<br/>
 			<div class="text-center">
 				<%= render "devise/shared/links" %>
 			</div>
-    </div>
-  </div>
+		</div>
+  	</div>
 </div>

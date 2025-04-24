@@ -1,21 +1,24 @@
+<% current_tenant = Apartment::Tenant.current %>
+<% customer_logo = Customer.where(subdomain: current_tenant).pluck(:logo).first %>
+<% customer_side_image = Customer.where(subdomain: current_tenant).pluck(:side_image).first %>
+
 <div class="row w-100 align-items-center m-0" >
-  <div class="<%= case Apartment::Tenant.current
-                when 'aws'
-                  'col-md-6 align-middle form-singnin-aws-img vh-100'
-                when 'scm'
-                  'col-md-6 align-middle form-singnin-scm-img vh-100'
-                else
-                  'col-md-6 align-middle form-sinin-img vh-100'
-                end %>" style="overflow:hidden;">
-  </div>
+  <% if customer_side_image.present? %>
+    <div class="col-md-6 align-middle vh-100" style="
+      background-image: url('data:image/jpeg;base64,<%= customer_side_image %>');
+      background-repeat: no-repeat;
+      background-size: cover;
+    "></div>
+  <% else %>
+    <div class="col-md-6 align-middle form-sinin-img vh-100"></div>
+  <% end %>
+
   <div class="col-md-6 align-middle text-center p-0">
     <div class="simple_form form-signin pl-5 pr-5">
-      <% if Apartment::Tenant.current == 'aws' %>
-        <center><%=image_tag('logo-aws.png', class:'mb-2', width:"252")%></center>
-      <% elsif Apartment::Tenant.current == 'scm' %>
-        <center><%=image_tag('logo-netzefy.png', class:'mb-2', width:"252")%></center>
+      <% if customer_logo.present? %>
+        <center><%= image_tag("data:image/png;base64,#{customer_logo}", class: "mb-2", width: "252") %></center>
       <% else %>
-        <center><%=image_tag ENV['VERTICAL_LOGO'], class:'mb-2', width:"252"%></center>
+        <center><%= image_tag('default-logo.png', class: 'mb-2', width: "252") %></center>
       <% end %>
       <br/>
       <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post}) do |f| %>

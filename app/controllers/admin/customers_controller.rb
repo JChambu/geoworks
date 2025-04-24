@@ -8,7 +8,7 @@ class Admin::CustomersController < ApplicationController
   # GET /customers
   # GET /customers.json
   def index
-    @customers = Customer.all
+    @customers = Customer.all.order(:name)
   end
 
   # GET /customers/1
@@ -33,6 +33,10 @@ class Admin::CustomersController < ApplicationController
       encode_image
     end
 
+    if params[:customer][:side_image].present?
+      encode_side_image
+    end
+
     @customer = Customer.new(customer_params)
 
     respond_to do |format|
@@ -51,6 +55,10 @@ class Admin::CustomersController < ApplicationController
 
     if params[:customer][:logo].present?
       encode_image
+    end
+
+    if params[:customer][:side_image].present?
+      encode_side_image
     end
 
     respond_to do |format|
@@ -84,8 +92,12 @@ class Admin::CustomersController < ApplicationController
       params[:customer][:logo] = Base64.strict_encode64(File.read(params[:customer][:logo].path))
     end
 
+    def encode_side_image
+      params[:customer][:side_image] = Base64.strict_encode64(File.read(params[:customer][:side_image].path))
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def customer_params
-      params.require(:customer).permit(:name, :subdomain, :logo)
+      params.require(:customer).permit(:name, :subdomain, :logo, :side_image)
     end
 end
