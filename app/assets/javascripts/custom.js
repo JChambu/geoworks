@@ -2761,7 +2761,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
             new_celd.id = "subtitleid_" + element.field_id;
           } else {
             if (Navarra.dashboards.config.current_tenant == 'tomate2000') {
-              new_celd.className = "col-md-3";
+              new_celd.className = "col-md-2";
             } else {
               new_celd.className = "col-md-5";
             }
@@ -3184,7 +3184,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
       new_celd.className = "col-md-12";
     } else {
       if (Navarra.dashboards.config.current_tenant === 'tomate2000') {
-        new_celd.className = "col-md-3 ml-3";
+        new_celd.className = "col-md-2 ml-3";
       } else {
         new_celd.className = "col-md-5 ml-3";
       }
