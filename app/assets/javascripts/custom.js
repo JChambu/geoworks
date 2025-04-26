@@ -2566,7 +2566,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
 
-      if (Navarra.dashboards.config.current_tenant === 'tomate2000') {
+      if (Navarra.dashboards.config.current_tenant === 'scm') {
         $('#info-modal').removeClass('tenant-default-style').addClass('tenant-netzefy-style');
       } else {
         $('#info-modal').removeClass('tenant-netzefy-style').addClass('tenant-default-style');
@@ -2760,7 +2760,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
             new_celd.className = "col-md-12 info_subtitle";
             new_celd.id = "subtitleid_" + element.field_id;
           } else {
-            if (Navarra.dashboards.config.current_tenant == 'tomate2000') {
+            if (Navarra.dashboards.config.current_tenant == 'scm') {
               new_celd.className = "col-md-2";
             } else {
               new_celd.className = "col-md-5";
@@ -3183,8 +3183,8 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
     if (element_child_field.field_type_id == 11) {
       new_celd.className = "col-md-12";
     } else {
-      if (Navarra.dashboards.config.current_tenant === 'tomate2000') {
-        new_celd.className = "col-md-2 ml-3";
+      if (Navarra.dashboards.config.current_tenant === 'scm') {
+        new_celd.className = "col-md-2 ml-5";
       } else {
         new_celd.className = "col-md-5 ml-3";
       }
