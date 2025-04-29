@@ -6,7 +6,7 @@ env:
   DO_REGISTRY: "registry.digitalocean.com/geoworks"
   DO_REPOSITORY: "geoworks"
   KUBERNETES_NAMESPACE: "default"
-  KUBERNETES_STS_NAME: "geoworks"
+  KUBERNETES_DEPLOYMENY_NAME: "geoworks"
   MANIFEST_PATH: "k8s/geoworks.yaml"
 
 jobs:
@@ -80,7 +80,7 @@ jobs:
         kubectl apply -f geoworks-updated.yaml
         
         # Esperar a que el StatefulSet se despliegue
-        kubectl rollout status statefulset/${{ env.KUBERNETES_STS_NAME }} -n ${{ env.KUBERNETES_NAMESPACE }} --timeout=5m
+        kubectl rollout status deployment/${{ env.KUBERNETES_DEPLOYMENT_NAME }} -n ${{ env.KUBERNETES_NAMESPACE }} --timeout=5m
 
     - name: Verificar despliegue
       run: |
