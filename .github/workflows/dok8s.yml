@@ -1,7 +1,7 @@
 name: Deploy to DigitalOcean Kubernetes
 on:
   push:
-    branches: [ "main", "upgrade_docker" ]
+    branches: [ "main", "refactor/upgrade_docker" ]
 env:
   DO_REGISTRY: "registry.digitalocean.com/geoworks"
   DO_REPOSITORY: "geoworks"
