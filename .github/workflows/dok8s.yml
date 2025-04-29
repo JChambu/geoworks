@@ -1,0 +1,89 @@
+name: Deploy to DigitalOcean Kubernetes
+on:
+  push:
+    branches: [ "main", "upgrade_docker" ]
+env:
+  DO_REGISTRY: "registry.digitalocean.com/geoworks"
+  DO_REPOSITORY: "geoworks"
+  KUBERNETES_NAMESPACE: "default"
+  KUBERNETES_STS_NAME: "geoworks"
+  MANIFEST_PATH: "k8s/geoworks.yaml"
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'refactor/upgrade_docker' || 'staging' }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set branch name
+      run: |
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          echo "BRANCH=main" >> $GITHUB_ENV
+        else
+          echo "BRANCH=upgrade_docker" >> $GITHUB_ENV
+        fi
+        echo "COMMIT=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DO_TOKEN }}
+
+    - name: Log in to DigitalOcean Container Registry
+      run: doctl registry login --expiry-seconds 1200
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build and push image to DigitalOcean Registry
+      id: build-image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: ${{ env.DO_REGISTRY }}/${{ env.DO_REPOSITORY }}:${{ env.BRANCH }}-${{ env.COMMIT }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Save DigitalOcean kubeconfig
+      run: doctl kubernetes cluster kubeconfig save geoworks-staging
+
+    - name: Crear namespace si no existe
+      run: kubectl create namespace ${{ env.KUBERNETES_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+
+    - name: Crear secreto para el registro de Docker
+      run: |
+           kubectl create secret docker-registry regcred \
+           --docker-server=registry.digitalocean.com \
+           --docker-username=doctl \
+           --docker-password="${{ secrets.DO_TOKEN }}" \
+            --namespace=${{ env.KUBERNETES_NAMESPACE }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+    - name: Desplegar a Kubernetes
+      run: |
+        # Copiar el manifiesto al directorio de trabajo
+        cp ${{ env.MANIFEST_PATH }} geoworks-updated.yaml
+        
+        # Actualizar la imagen en el manifiesto
+        sed -i "s|image:.*|image: ${{ env.DO_REGISTRY }}/${{ env.DO_REPOSITORY }}:${{ env.BRANCH }}-${{ env.COMMIT }}|g" geoworks-updated.yaml
+        
+        # Mostrar información sobre la imagen siendo desplegada
+        echo "Desplegando imagen: ${{ env.DO_REGISTRY }}/${{ env.DO_REPOSITORY }}:${{ env.BRANCH }}-${{ env.COMMIT }}"
+        echo "Rama: ${{ env.BRANCH }}"
+        echo "Commit: ${{ env.COMMIT }}"
+        
+        # Aplicar el manifiesto actualizado
+        kubectl apply -f geoworks-updated.yaml
+        
+        # Esperar a que el StatefulSet se despliegue
+        kubectl rollout status statefulset/${{ env.KUBERNETES_STS_NAME }} -n ${{ env.KUBERNETES_NAMESPACE }} --timeout=5m
+
+    - name: Verificar despliegue
+      run: |
+        kubectl get pods -n ${{ env.KUBERNETES_NAMESPACE }}
+        echo "¡Despliegue completado exitosamente!"
+        echo "Imagen desplegada: ${{ env.DO_REGISTRY }}/${{ env.DO_REPOSITORY }}:${{ env.BRANCH }}-${{ env.COMMIT }}"
