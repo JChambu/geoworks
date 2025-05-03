@@ -28,8 +28,40 @@
       $('#routes_container').hide();
       $('#search_streets_container').hide();
 
-      var height_modal = ( window.innerHeight - $('#nav_bar').innerHeight() - $('#info-modal-header').innerHeight() - $('#info-modal-footer').innerHeight() -2) +'px';
-      $('#modal_info').css('height',height_modal);
+      const isModalVisible = $('#customLayerModal').hasClass('show');
+      const isTenantSCM = Navarra.dashboards.config.current_tenant === 'scm';
+
+      const navBarHeight = $('#nav_bar').innerHeight()
+      const infoModalHeaderHeight = $('#info-modal-header').innerHeight()
+      const infoModalFooterHeight = $('#info-modal-footer').innerHeight()
+      const customLayerWidth = $('#customLayerModal').outerWidth(); 
+
+      if (isModalVisible && isTenantSCM) {
+        const left_modal = customLayerWidth + 2 + 'px';
+        const width_modal = (window.innerWidth - customLayerWidth - 2) + 'px';
+
+        $('#info-modal').css({
+          left: left_modal,
+          width: width_modal,
+          backgroundColor: 'rgba(39, 43, 48, 0.9)',
+          position: 'absolute'
+        });
+      } else if (isTenantSCM) {
+        $('#info-modal').css({
+          width: '77%',
+          marginLeft: '23.2%',
+          backgroundColor: 'rgba(39, 43, 48, 0.9)'
+        });
+      } else {
+        $('#info-modal').css({
+          width: '35%',
+          marginLeft: '65%',
+        });
+      }
+
+      var height_modal = ( window.innerHeight - navBarHeight - infoModalHeaderHeight - infoModalFooterHeight -2) +'px';
+      $('#modal_info').css('height', height_modal);
+
       //esconde otros modales
       $('.leaflet-top.leaflet-right').addClass('side_hidden');
       $('.sidebar').addClass('side_hidden');

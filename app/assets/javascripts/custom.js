@@ -2565,13 +2565,6 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
     success: function(data) {
       $('.div_confirmation').addClass("d-none");
       $('.div_confirmation').removeClass("d-inline");
-
-      if (Navarra.dashboards.config.current_tenant === 'scm') {
-        $('#info-modal').removeClass('tenant-default-style').addClass('tenant-netzefy-style');
-      } else {
-        $('#info-modal').removeClass('tenant-netzefy-style').addClass('tenant-default-style');
-      }
-
       $("#info-modal").modal('show');
       $(".fa-eye-slash").css("color", "#9b9b9b");
 
