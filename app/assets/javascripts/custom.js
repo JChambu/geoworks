@@ -2753,7 +2753,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
             new_celd.className = "col-md-12 info_subtitle";
             new_celd.id = "subtitleid_" + element.field_id;
           } else {
-            if (Navarra.dashboards.config.current_tenant == 'scm') {
+            if (Navarra.dashboards.config.current_tenant == 'netzefy') {
               new_celd.className = "col-md-2";
             } else {
               new_celd.className = "col-md-5";
@@ -3176,7 +3176,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
     if (element_child_field.field_type_id == 11) {
       new_celd.className = "col-md-12";
     } else {
-      if (Navarra.dashboards.config.current_tenant === 'scm') {
+      if (Navarra.dashboards.config.current_tenant === 'netzefy') {
         new_celd.className = "col-md-2 ml-5";
       } else {
         new_celd.className = "col-md-5 ml-3";

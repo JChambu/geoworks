@@ -169,9 +169,9 @@
 
     function adjustElementsPosition() {
       const isInfoModalVisible = $('#info-modal').hasClass('show');
-      const isTenantSCM = Navarra.dashboards.config.current_tenant === 'scm';
+      const isTenantNetzefy = Navarra.dashboards.config.current_tenant === 'netzefy';
 
-      if (isInfoModalVisible && isTenantSCM) {
+      if (isInfoModalVisible && isTenantNetzefy) {
         const infoModalLeft = $('#info-modal').offset().left;
         const customLayerWidth = infoModalLeft - 1 + 'px';
 
@@ -222,7 +222,6 @@
 
       $('#closeLayerModal').on('click', function () {
         $('#customLayerModal').removeClass('show');
-        console.log("acá 2")
         $('#custom_layer_control_button').show();
         adjustElementsPosition();
       });

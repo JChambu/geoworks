@@ -28,44 +28,38 @@
       $('#routes_container').hide();
       $('#search_streets_container').hide();
 
-      const isModalVisible = $('#customLayerModal').hasClass('show');
-      const isTenantSCM = Navarra.dashboards.config.current_tenant === 'scm';
+      const isTenantNetzefy = Navarra.dashboards.config.current_tenant === 'netzefy';
 
       const navBarHeight = $('#nav_bar').innerHeight()
       const infoModalHeaderHeight = $('#info-modal-header').innerHeight()
       const infoModalFooterHeight = $('#info-modal-footer').innerHeight()
       const customLayerWidth = $('#customLayerModal').outerWidth(); 
 
-      if (isModalVisible && isTenantSCM) {
-        const left_modal = customLayerWidth + 2 + 'px';
-        const width_modal = (window.innerWidth - customLayerWidth - 2) + 'px';
-
-        $('#info-modal').css({
-          left: left_modal,
-          width: width_modal,
-          backgroundColor: 'rgba(39, 43, 48, 0.9)',
-          position: 'absolute'
-        });
-      } else if (isTenantSCM) {
+      if (isTenantNetzefy) {
         $('#info-modal').css({
           width: '77%',
           marginLeft: '23.2%',
           backgroundColor: 'rgba(39, 43, 48, 0.9)'
         });
+        $("#view-data-hidden").click();
       } else {
         $('#info-modal').css({
-          width: '35%',
-          marginLeft: '65%',
+          width: '30%',
+          marginLeft: '70.2%',
         });
+        $(".table_data_container").addClass("width_table");
       }
 
       var height_modal = ( window.innerHeight - navBarHeight - infoModalHeaderHeight - infoModalFooterHeight -2) +'px';
       $('#modal_info').css('height', height_modal);
 
+      if (isTenantNetzefy) {
+        adjustElementsPosition();
+      }
+
       //esconde otros modales
       $('.leaflet-top.leaflet-right').addClass('side_hidden');
       $('.sidebar').addClass('side_hidden');
-      $(".table_data_container").addClass("width_table");
     });
   });
   var can_edit_yes;
@@ -243,7 +237,7 @@
           <% if can? :funcionalities, :hide_items %>
             <i class="fas fa-eye-slash" style="margin-top: 0.25rem; position: absolute;right: 2.8rem;cursor:pointer" title="Mostrar/Esconder Campos Ocultos" onclick="show_hidden_fields()"></i>
           <% end %>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close_info"><span aria-hidden="true">&times;</span>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close_info"><span aria-hidden="true" style="color: white;">&times;</span>
           </button>
         </div>
         <div class="modal-body" id="modal_info" style="overflow-y: auto;">
