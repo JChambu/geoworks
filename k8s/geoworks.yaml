@@ -40,27 +40,27 @@ spec:
             secretKeyRef:
               name: geoworks-secret
               key: admin-password
-        - name: DB_HOST
+        - name: POSTGRES_HOST
           valueFrom:
             secretKeyRef:
               name: geoworks-secret
               key: db-host
-        - name: DB_PORT
+        - name: POSTGRES_PORT
           valueFrom:
             secretKeyRef:
               name: geoworks-secret
               key: db-port
-        - name: DB_NAME
+        - name: POSTGRES_DATABASE
           valueFrom:
             secretKeyRef:
               name: geoworks-secret
               key: db-name
-        - name: DB_USER
+        - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
               name: geoworks-secret
               key: db-user
-        - name: DB_PASSWORD
+        - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               name: geoworks-secret
