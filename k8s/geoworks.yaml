@@ -138,6 +138,20 @@ spec:
             secretKeyRef:
               name: geoworks-secret
               key: TITLE
+        
+        # Variables adicionales solicitadas
+        - name: GEOSERVER_PORT
+          value: "8080"
+        - name: GEOSERVER_AUTH_KEY
+          value: "ce3d1005-073f-4b0f-a1f7-0f9587aa6da4"
+        - name: ENABLE_JSONP
+          value: "true"
+        - name: MAX_FILTER_RULES
+          value: "20"
+        - name: OPTIMIZE_LINE_WIDTH
+          value: "false"
+        - name: GEOSERVER_CSRF_WHITELIST
+          value: "geoworks.com.ar"
 ---
 apiVersion: v1
 kind: Service
@@ -153,4 +167,3 @@ spec:
       targetPort: 3000
       protocol: TCP
       name: http
-  type: ClusterIP
