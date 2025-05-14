@@ -168,6 +168,18 @@
     }
 
     function adjustElementsPosition() {
+      const isInfoModalVisible = $('#info-modal').hasClass('show');
+      const isTenantNetzefy = Navarra.dashboards.config.current_tenant === 'netzefy';
+
+      if (isInfoModalVisible && isTenantNetzefy) {
+        const infoModalLeft = $('#info-modal').offset().left;
+        const customLayerWidth = infoModalLeft - 1 + 'px';
+
+        $('#customLayerModal').css({
+          width: customLayerWidth,
+        });
+      }
+
       const panel = $('#customLayerModal');
       const panelVisible = panel.hasClass('show');
       const panelWidth = panelVisible ? panel.outerWidth() : 0;
@@ -198,6 +210,7 @@
       var leaflet_layer_position = $('.leaflet-control-layers-toggle').offset();
       var top_position = 57.0312 + "px";
       var left_position = (leaflet_layer_position.left - 10) + "px";
+
       $('#custom_layer_control_button').css({top: top_position, left: left_position});
 
       Navarra.geomaps.show_prefilters_subform_labels();

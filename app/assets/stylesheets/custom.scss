@@ -314,10 +314,11 @@ div.custom-menu.show {
   border: none !important;
 }
 
-.leaflet-bar a:first-child , .leaflet-bar a:last-child , .leaflet-bar a,  {
-  border-radius:5px!important;
-    margin: 1px!important;
+.leaflet-bar a:first-child , .leaflet-bar a:last-child , .leaflet-bar a {
+  border-radius: 5px!important;
+  margin: 1px!important;
 }
+
 .leaflet-draw-toolbar{
   margin: 0px!important;
 }
@@ -720,7 +721,7 @@ div.custom-menu.show {
   filter: none;
   border-color: rgba(0,0,0,0.6);
   color:white;
-  margint-top:20px;
+  margin-top:20px;
 }
 
 /* estilo multiselector de campos listados multiples */

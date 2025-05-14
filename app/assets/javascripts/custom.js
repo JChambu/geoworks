@@ -2753,7 +2753,11 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
             new_celd.className = "col-md-12 info_subtitle";
             new_celd.id = "subtitleid_" + element.field_id;
           } else {
-            new_celd.className = "col-md-5";
+            if (Navarra.dashboards.config.current_tenant == 'netzefy') {
+              new_celd.className = "col-md-2";
+            } else {
+              new_celd.className = "col-md-5";
+            }
           }
           var new_p = document.createElement('H7');
           if (element.field_type_id == 11) {
@@ -3172,7 +3176,11 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
     if (element_child_field.field_type_id == 11) {
       new_celd.className = "col-md-12";
     } else {
-      new_celd.className = "col-md-5 ml-3";
+      if (Navarra.dashboards.config.current_tenant === 'netzefy') {
+        new_celd.className = "col-md-2 ml-5";
+      } else {
+        new_celd.className = "col-md-5 ml-3";
+      }
     }
 
     var new_p = document.createElement('H7');

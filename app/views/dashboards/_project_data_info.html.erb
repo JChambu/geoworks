@@ -2,6 +2,8 @@
   $(document).ready(function () {
     Navarra.geomaps.delete_markers();
     $('#close_info').click(function(){
+      $('#routes_container').show();
+      $('#search_streets_container').show();
       $('table tbody tr').removeClass('found');
       Navarra.project_types.config.data_dashboard="";
       Navarra.project_types.config.item_selected="";
@@ -23,17 +25,46 @@
     var postop = ($('#nav_bar').innerHeight() -1)+'px';
     $('#info-modal').css('top',postop);
     $('#info-modal').on('shown.bs.modal', function (e)  {
-      var height_modal = ( window.innerHeight - $('#nav_bar').innerHeight() - $('#info-modal-header').innerHeight() - $('#info-modal-footer').innerHeight() -2) +'px';
-      $('#modal_info').css('height',height_modal);
+      $('#routes_container').hide();
+      $('#search_streets_container').hide();
+
+      const isTenantNetzefy = Navarra.dashboards.config.current_tenant === 'netzefy';
+
+      const navBarHeight = $('#nav_bar').innerHeight()
+      const infoModalHeaderHeight = $('#info-modal-header').innerHeight()
+      const infoModalFooterHeight = $('#info-modal-footer').innerHeight()
+      const customLayerWidth = $('#customLayerModal').outerWidth(); 
+
+      if (isTenantNetzefy) {
+        $('#info-modal').css({
+          width: '77%',
+          marginLeft: '23.2%',
+          backgroundColor: 'rgba(39, 43, 48, 0.9)'
+        });
+        $("#view-data-hidden").click();
+      } else {
+        $('#info-modal').css({
+          width: '30%',
+          marginLeft: '70.2%',
+        });
+        $(".table_data_container").addClass("width_table");
+      }
+
+      var height_modal = ( window.innerHeight - navBarHeight - infoModalHeaderHeight - infoModalFooterHeight -2) +'px';
+      $('#modal_info').css('height', height_modal);
+
+      if (isTenantNetzefy) {
+        adjustElementsPosition();
+      }
+
       //esconde otros modales
       $('.leaflet-top.leaflet-right').addClass('side_hidden');
       $('.sidebar').addClass('side_hidden');
-      $(".table_data_container").addClass("width_table");
     });
   });
-var can_edit_yes;
-var can_edit_subforms_yes;
-var can_edit_status_yes;
+  var can_edit_yes;
+  var can_edit_subforms_yes;
+  var can_edit_status_yes;
 
   function close_alert(){
       $('#alert_message').removeClass('show');
@@ -198,7 +229,7 @@ var can_edit_status_yes;
 </script>
 
 <% if can? :data, :visualizer %>
-  <div id="info-modal" class="modal fade show" aria-modal="true" data-backdrop=false style="width: 30%; margin-left: 70.2% !important;">
+  <div id="info-modal" class="modal fade" aria-modal="true" data-backdrop=false>
     <div class="modal-dialog mt-0" id="modal-info_left" style="max-width: none; margin-bottom: 0px;">
       <div class="modal-content">
         <div class="modal-header pt-2 pb-2" id="info-modal-header">
@@ -206,7 +237,7 @@ var can_edit_status_yes;
           <% if can? :funcionalities, :hide_items %>
             <i class="fas fa-eye-slash" style="margin-top: 0.25rem; position: absolute;right: 2.8rem;cursor:pointer" title="Mostrar/Esconder Campos Ocultos" onclick="show_hidden_fields()"></i>
           <% end %>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close_info"><span aria-hidden="true">&times;</span>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close_info"><span aria-hidden="true" style="color: white;">&times;</span>
           </button>
         </div>
         <div class="modal-body" id="modal_info" style="overflow-y: auto;">
