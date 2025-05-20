@@ -2740,9 +2740,11 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
           } else {
             var element_value_string = element.value;
           }
-          if ((element.value == null && element.field_type_id != 11) || (element_value_string == "" && element.field_type_id != 11) || (element_value_string == " " && element.field_type_id != 11)) {
-            new_row.classList.add("d-none");
-            new_row.classList.add("empty_field");
+          if (element.field_type_id != 13){
+            if ((element.value == null && element.field_type_id != 11) || (element_value_string == "" && element.field_type_id != 11) || (element_value_string == " " && element.field_type_id != 11)) {
+              new_row.classList.add("d-none");
+              new_row.classList.add("empty_field");
+            }
           }
           if (subtitles_all.indexOf(element.field_id) >= 0) {
             new_row.classList.add("d-none");
@@ -2754,9 +2756,13 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
             new_celd.id = "subtitleid_" + element.field_id;
           } else {
             if (Navarra.dashboards.config.current_tenant == 'netzefy') {
-              new_celd.className = "col-md-2";
+              if (element.field_type_id != 13){
+                new_celd.className = "col-md-2";
+              }
             } else {
-              new_celd.className = "col-md-5";
+              if (element.field_type_id != 13){
+                new_celd.className = "col-md-5";
+              }
             }
           }
           var new_p = document.createElement('H7');
@@ -2773,16 +2779,27 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
             }
             new_p.innerHTML = element.name;
           } else {
-            new_p.innerHTML = element.name + ":";
-            new_p.classList.add("field_key_json");
-            new_p.id=element.field_id+"|key|"+element.key+"|"+element.field_type_id;
+            if (element.field_type_id == 13){
+              new_p.classList.add("field_key_json");
+              new_p.id=element.field_id+"|key|"+element.key+"|"+element.field_type_id;
+            } else {
+              new_p.innerHTML = element.name + ":";
+              new_p.classList.add("field_key_json");
+              new_p.id=element.field_id+"|key|"+element.key+"|"+element.field_type_id;
+            }
           }
           new_celd.appendChild(new_p);
           new_row.appendChild(new_celd);
 
           if (element.field_type_id != 11) {
             var new_celd = document.createElement('DIV');
-            new_celd.className = "col-md-7 field_div static_datetimepicker";
+            if (element.field_type_id != 13){
+              if (Navarra.dashboards.config.current_tenant === 'netzefy') {
+                new_celd.className = "col-md-10 field_div static_datetimepicker";
+              } else {
+                new_celd.className = "col-md-7 field_div static_datetimepicker";
+              }
+            }
             if(element.field_type_id == 10){new_celd.classList.add("ok_button")}
 
             // Adapta el código a los diferentes tipos de campos
@@ -2938,6 +2955,9 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
               } else{
                 new_p.setAttribute('onChange', 'changeFile()');
               }
+            }
+            if (element.field_type_id == 13){
+              new_p.innerHTML = element.html;
             }
             new_p.disabled = true;
             if (element.value != null && element.field_type_id != 10 && element.field_type_id != 2) {

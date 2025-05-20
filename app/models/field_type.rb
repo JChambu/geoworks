@@ -7,5 +7,6 @@ class FieldType < ApplicationRecord
   SUBFORM = 7
   MULT_LIST = 10
   SUBTITLE = 11
+  HTML = 13
   has_many :project_fields
 end

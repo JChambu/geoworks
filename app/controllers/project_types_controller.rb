@@ -800,6 +800,7 @@ class ProjectTypesController < ApplicationController
       father_field_hash['hidden'] = f_field.hidden
       father_field_hash['data_script'] = f_field.data_script
       father_field_hash['calculated_field'] = f_field.calculated_field
+      father_field_hash['html'] = f_field.html
       father_field_hash['key'] = f_field.key
       father_fields_array.push(father_field_hash)
 
@@ -1533,7 +1534,7 @@ class ProjectTypesController < ApplicationController
       :type_geometry, { file: [] }, :tracking, :kind_file, :cover, :geo_restriction, :multiple_edition, :enable_period, :level, :iot, :multipoints, :folder_id,
       project_fields_attributes: [
         :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
-        :choice_list_id, :hidden, :read_only, :popup, :data_table, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field,
+        :choice_list_id, :hidden, :read_only, :popup, :data_table, :calculated_field, :data_script, :filter_field, :heatmap_field, :colored_points_field, :html,
         project_subfields_attributes: [
           :id, :field_type_id, :name, :required, :key, :cleasing_data, :georeferenced, :regexp_type_id, { roles_read: [] }, { roles_edit: [] }, :sort, :_destroy,
           :choice_list_id, :hidden, :read_only, :popup, :filter_field, :calculated_field, :data_script, :heatmap_field, :prefilter_labels_subforms

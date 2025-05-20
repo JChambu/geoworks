@@ -1888,7 +1888,7 @@ function getCQLFilter_layer(dat){
                       val = val.toString().replace(/\[|\]|\"/g, '');
                       var new_p = document.createElement('P');
                       new_p.className="p_popup"
-                      new_p.innerHTML=label + ': ' + val;
+                      new_p.innerHTML = "<strong><span style='color: #d9d9d9; text-decoration: underline;'>" + label + "</span>:</strong> " + val;
                       div_popup.appendChild(new_p);
 
                       if (field_type_id == 12) {
