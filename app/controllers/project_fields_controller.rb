@@ -2,9 +2,8 @@ class ProjectFieldsController < ApplicationController
 
   before_action :set_project_field, only: [:show, :edit, :update, :destroy, :geocoding]
   def index
-      @project_type_id = params[:project_type_id]
-      @project_fields = ProjectField.where(project_type_id: @project_type_id).order(:sort)
-
+    @project_type_id = params[:project_type_id]
+    @project_fields = ProjectField.where(project_type_id: @project_type_id).order(:sort)
   end
 
   def new
@@ -95,8 +94,8 @@ class ProjectFieldsController < ApplicationController
       father_field_hash['data_script'] = f_field.data_script
       father_field_hash['calculated_field'] = f_field.calculated_field
       father_field_hash['key'] = f_field.key
+      father_field_hash['html'] = f_field.html
       father_fields_array.push(father_field_hash)
-
     end
 
     data = {
@@ -108,27 +107,28 @@ class ProjectFieldsController < ApplicationController
   end
 
   def create
-  		@analytics_dashboard = AnalyticsDashboard.new
+    @analytics_dashboard = AnalyticsDashboard.new
 
-  		@analytics_dashboard['title'] = params['title']
-  		@analytics_dashboard.save
+    @analytics_dashboard['title'] = params['title']
+    @analytics_dashboard.save
   end
 
   def edit
-      @project_fields = ProjectField.where(project_type_id: @project_type_id).order(:sort)
+    @project_fields = ProjectField.where(project_type_id: @project_type_id).order(:sort)
   end
+
   def show
-      @projectFields = ProjectField.where(project_type_id: params[:id])
+    @projectFields = ProjectField.where(project_type_id: params[:id])
   end
 
 
   def  edit_multiple
-      @project_type_id = params[:project_type_id]
-      @projectFields = ProjectField.where(project_type_id: @project_type_id).order(:sort)
+    @project_type_id = params[:project_type_id]
+    @projectFields = ProjectField.where(project_type_id: @project_type_id).order(:sort)
   end
 
   def update_multiple
-  @project_type_id = params[:project_type_id]
+    @project_type_id = params[:project_type_id]
     ProjectField.update(params[:Fields].keys, params[:Fields].values)
     redirect_to project_type_project_fields_path(@project_type_id)
   end

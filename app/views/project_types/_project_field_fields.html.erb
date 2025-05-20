@@ -17,6 +17,9 @@
       <%= link_to_add_fields "<i class='fas fa-plus sub_form_added sub_form style='display: none' title='Agregar sub-atributo'></i>".html_safe, f, :project_subfields, class: 'table_children' %>
     <% elsif f.object.field_type_id == 13 %>
       <%= f.text_field :html, class: "form-control form-control-sm html_field" %>    
+      <%= link_to_add_fields "<i class='fas fa-plus sub_form_added sub_form style='display: none'' title='Agregar sub-atributo'></i>".html_safe, f, :project_subfields, class: 'table_children' %>
+    <% elsif f.object.field_type_id == 13 %>
+      <%= f.text_field :html, class: "form-control form-control-sm html_field" %>
     <% else %>
       <%= f.collection_select :choice_list_id, @choice_lists, :id, :name, {include_blank: ''}, {class: 'form-control form-control-sm choice_list', :style => 'display: none'} %>
       <% if can? :attributes, :new %>
