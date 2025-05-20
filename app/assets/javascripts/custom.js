@@ -2794,7 +2794,11 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
           if (element.field_type_id != 11) {
             var new_celd = document.createElement('DIV');
             if (element.field_type_id != 13){
-              new_celd.className = "col-md-7 field_div static_datetimepicker";
+              if (Navarra.dashboards.config.current_tenant === 'netzefy') {
+                new_celd.className = "col-md-10 field_div static_datetimepicker";
+              } else {
+                new_celd.className = "col-md-7 field_div static_datetimepicker";
+              }
             }
             if(element.field_type_id == 10){new_celd.classList.add("ok_button")}
 
