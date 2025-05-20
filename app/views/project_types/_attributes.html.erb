@@ -75,129 +75,108 @@
   <div class="d-flex justify-content-end mb-1" style="float: right; margin-top: -12px">
     <i class="fas fa-minus"  id="toggler_header"></i>
   </div>
-  <div class="d-block container-fluid justify-content-around header_project_fields" >
-    <div class="row mb-0 p-0 text-left">
-      <div class="col mx-2">
-        <div class="row">
-          <%= f.label :name, 'Nombre:', class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
+
+  <div class="container-fluid py-2 bg-dark rounded shadow-sm">
+    <div class="d-flex align-items-end flex-wrap gap-3">
+      <div class="d-flex gap-2 flex-wrap align-items-end mr-4">
+        <div class="col-auto">
+          <%= f.label :name, 'Nombre:', class:'form-label text-light mb-1' %>
           <%= f.text_field :name, class: 'form-control form-control-sm' %>
         </div>
-      </div>
-      <div class="col mx-2">
-        <div class="row">
-          <%= f.label :type_geometry, 'Tipo:', class:'col-form-label-sm mb-0 p-0' %>
+        <div class="col-auto">
+          <%= f.label :type_geometry, 'Tipo:', class:'form-label text-light mb-1' %>
+          <%= f.select :type_geometry, options_for_select(['Point', 'Polygon', 'LineString'], selected: @project_type.type_geometry), { include_blank: true }, class: 'form-control form-control-sm' %>
         </div>
-        <div class="row">
-          <%= f.select :type_geometry, options_for_select(['Point', 'Polygon' ,'LineString'], selected: @project_type.type_geometry), {:include_blank => true}, {class: 'form-control form-control-sm'} %>
+        <div class="col-auto">
+          <%= f.label :geo_restriction, 'Restricción (m):', class:'form-label text-light mb-1' %>
+          <%= f.text_field :geo_restriction, class: 'form-control form-control-sm', style: "width:105px;" %>
         </div>
-      </div>
-      <div class="col mx-2">
-        <div class="row">
-          <%= f.label :tracking, "Recorido", class:'col-form-label-sm mb-0 p-0' %>
+        <div class="col-auto">
+          <%= f.label :level, 'Nivel:', class:'form-label text-light mb-1' %>
+          <%= f.text_field :level, class: 'form-control form-control-sm', style: "width:40px;" %>
         </div>
-        <div class="row">
-          <div class="custom-control custom-checkbox mb-1">
-            <%= f.check_box :tracking, class:'custom-control-input', id:'customCheck1' %>
-            <label class="custom-control-label" for="customCheck1"></label>
-          </div>
+        <div class="col-auto">
+          <%= f.label :enable_period, 'Deshabilitar:', class:'form-label text-light mb-1' %>
+          <%= f.select :enable_period, options_for_select(['Nunca', 'Semana', 'Mes', 'Año'], selected: @project_type.enable_period), { include_blank: false }, class: 'form-control form-control-sm' %>
         </div>
-      </div>
-      <div class="col mx-2">
-        <div class="row">
-          <%= f.label :enabled_as_layer, "Capa", class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <div class="custom-control custom-checkbox mb-2">
-            <%= f.check_box :enabled_as_layer , class:'custom-control-input', id:'customCheck2'%>
-            <label class="custom-control-label mr-1" for="customCheck2"></label>
-          </div>
-          <%= f.color_field :layer_color, class: 'form-control form-control-sm mb-2', style:'width:30px; padding:1px' %>
-        </div>
-      </div>
-      <div class="col-md-2 ">
-        <div class="row">
-          <%= f.label :cover, "Imagen", class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <div class="col-3">
-            <%= f.file_field(:cover, multiple: false,id:"file-input", :onchange=>"loadFile(event)" , class: 'filestyle', 'data-buttonBefore': 'true', 'data-iconName': 'fas fa-folder-open', 'data-buttonText': '' , 'data-size':'sm' , 'data-input':false , 'data-badge':'false') %>
-          </div>
-          <div class="col-9">
-            <div class="h6 text-nowrap me-2"><small id="error_text"></small></div>
-          </div>
-        </div>
-      </div>
-      <div class="col me-2">
-        <div class="row">
-          <%= f.label :geo_restriction, 'Restricción (m):', class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <%= f.text_field :geo_restriction, class: 'form-control form-control-sm d-flex', style:'width: 50px' %>
-        </div>
-      </div>
-      <div class="col mx-2">
-        <div class="row">
-          <%= f.label :level, 'Nivel:', class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <%= f.text_field :level, class: 'form-control form-control-sm d-flex', style:'width: 50px' %>
-        </div>
-      </div>
-      <div class="col mx-2">
-        <div class="row">
-          <%= f.label :iot, "IoT?", class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <div class="custom-control custom-checkbox mb-2">
-            <%= f.check_box :iot , class:'custom-control-input', id:'customCheck4'%>
-            <label class="custom-control-label" for="customCheck4"></label>
-          </div>
-        </div>
-      </div>
-      <% if @project_type.type_geometry == 'Point' %>
-        <div class="col mx-2">
-          <div class="row">
-            <%= f.label :multipoints, "Multipuntos", class:'col-form-label-sm mb-0 p-0' %>
-          </div>
-          <div class="row">
-            <div class="custom-control custom-checkbox mb-2">
-              <%= f.check_box :multipoints , class:'custom-control-input', id:'customCheck5'%>
-              <label class="custom-control-label" for="customCheck5"></label>
-            </div>
-          </div>
-        </div>
-      <% end %>
-      <div class="col mx-2">
-        <div class="row">
-          <%= f.label :multiple_edition, "Edición Multiple", class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <div class="custom-control custom-checkbox mb-2">
-            <%= f.check_box :multiple_edition , class:'custom-control-input', id:'customCheck3'%>
-            <label class="custom-control-label" for="customCheck3"></label>
-          </div>
-        </div>
-      </div>
-      <div class="col mx-2">
-        <div class="row">
-          <%= f.label :enable_period, 'Deshabilitar:', class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
-          <%= f.select :enable_period, options_for_select(['Nunca', 'Semana', 'Mes' , 'Año'], selected: @project_type.enable_period), {:include_blank => false}, {class: 'form-control form-control-sm'} %>
-        </div>
-      </div>
-      <div class="col mx-2">
-        <div class="row">
-          <%= f.label :notification_email, 'Mail notif. :', class:'col-form-label-sm mb-0 p-0' %>
-        </div>
-        <div class="row">
+        <div class="col-auto">
+          <%= f.label :notification_email, 'Mail notif. :', class:'form-label text-light mb-1' %>
           <%= f.text_field :notification_email, class: 'form-control form-control-sm' %>
+        </div>
+        <div class="col-auto text-center">
+          <%= f.label :cover, "Imagen:", class: 'form-label text-light mb-1', style: "font-size: 0.95rem; display: block;" %>
+          <label for="file-input" style="cursor: pointer; display: block;">
+            <i class="fas fa-folder-open fa-lg"></i>
+          </label>
+          <%= f.file_field(:cover, multiple: false, id: "file-input", onchange: "loadFile(event)", class: "d-none") %>
+        </div>
+      </div>
+      
+      <div class="d-flex align-items-center gap-3 ms-3 flex-wrap">
+        <div class="form-check form-switch mr-4">
+          <%= f.check_box :enabled_as_layer, class: 'form-check-input', id: 'customCheck2' %>
+          <%= f.label :enabled_as_layer, "Capa", class: 'form-check-label text-light', for: 'customCheck2' %>
+        </div>
+        <div class="form-check form-switch mr-4">
+          <%= f.check_box :tracking, class: 'form-check-input', id: 'customCheck1' %>
+          <%= f.label :tracking, "Recorrido", class: 'form-check-label text-light', for: 'customCheck1' %>
+        </div>
+        <div class="form-check form-switch mr-4">
+          <%= f.check_box :iot, class: 'form-check-input', id: 'customCheck4' %>
+          <%= f.label :iot, "IoT?", class: 'form-check-label text-light', for: 'customCheck4' %>
+        </div>
+        <% if @project_type.type_geometry == 'Point' %>
+          <div class="form-check form-switch mr-4">
+            <%= f.check_box :multipoints, class: 'form-check-input', id: 'customCheck5' %>
+            <%= f.label :multipoints, "Multipuntos", class: 'form-check-label text-light', for: 'customCheck5' %>
+          </div>
+        <% end %>
+        <div class="form-check form-switch mr-4">
+          <%= f.check_box :multiple_edition, class: 'form-check-input', id: 'customCheck3' %>
+          <%= f.label :multiple_edition, "Edición Multiple", class: 'form-check-label text-light', for: 'customCheck3' %>
         </div>
       </div>
     </div>
   </div>
+
+
+
+ 
+
+
+  <% if @project_fields.size < @total_fields %>
+    <div class="d-flex justify-content-end align-items-center flex-wrap gap-2 pt-3">
+      <%= link_to "Mostrar más atributos", edit_project_type_path(@project_type, per_page: @per_page + 20), class: "btn btn-sm btn-primary mr-2" %>
+
+      <div class="dropdown mr-2">
+        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownPerPage" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Mostrar cantidad
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownPerPage">
+          <% [20, 50, 70, 100, 200].each do |option| %>
+            <%= link_to "Mostrar #{option}", edit_project_type_path(@project_type, per_page: option), class: "dropdown-item" %>
+          <% end %>
+          <div class="dropdown-divider"></div>
+          <%= link_to "Mostrar todos", edit_project_type_path(@project_type, per_page: @total_fields), class: "dropdown-item text-white font-weight-bold" %>
+        </div>
+      </div>
+
+      <% total_pages = (@total_fields.to_f / @per_page).ceil %>
+      <% if total_pages > 1 %>
+        <div class="dropdown d-flex justify-content-end">
+          <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownPage" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Página <%= @page %> de <%= total_pages %>
+          </button>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownPage">
+            <% (1..total_pages).each do |page_num| %>
+              <%= link_to "Pág #{page_num}", edit_project_type_path(@project_type, page: page_num, per_page: @per_page),
+                    class: "dropdown-item#{' active' if page_num == @page}" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 
   <% if can? :attributes, :edit %>
     <div class="tab-pane fade show active" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
@@ -205,7 +184,7 @@
         <table class="table table-hover table-tbody-scroll table-striped m-0" id="user_assignments">
           <thead style="padding-right: 10px" id="thead_edit_table">
             <tr>
-              <th class="text-left px-0" style="width: 6vw">ID</th>
+              <th class="text-left" style="width: 6vw">ID</th>
               <th class="text-center px-0 d-none" style="width: 3vw">
                 <% if can? :attributes, :new %>
                   <%= link_to_add_fields "<i class='fas fa-plus button_add_attributes_project_types' title='Agregar atributo'></i>".html_safe, f, :project_fields, class: 'table_father' %>
