@@ -11,12 +11,12 @@
       <%= f.text_field :name, class: "form-control form-control-sm", style:"width: 86%; display: inline-block" %>
   </td>
   <%# Tipo de campo %>
-  <td style="width: 13vw"><%= f.collection_select :field_type_id, FieldType.order(:name), :id, :name, {}, {class: 'typef form-control form-control-sm' } %></td>
+  <td style="width: 13vw"><%= f.collection_select :field_type_id, @field_types, :id, :name, {}, {class: 'typef form-control form-control-sm' } %></td>
   <td style="width: 13vw">
     <% if f.object.field_type_id == 2 || f.object.field_type_id == 10 %>
-      <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control form-control-sm choice_list', id:'add_sub_choice_list'} %>
+      <%= f.collection_select :choice_list_id, @choice_lists, :id, :name, {include_blank: ''}, {class: 'form-control form-control-sm choice_list', id:'add_sub_choice_list'} %>
     <% else %>
-      <%= f.collection_select :choice_list_id, ChoiceList.order(:name), :id, :name, {include_blank: ''}, {class: 'form-control form-control-sm choice_list', id:'add_sub_choice_list', :style => 'display: none'} %>
+      <%= f.collection_select :choice_list_id, @choice_lists, :id, :name, {include_blank: ''}, {class: 'form-control form-control-sm choice_list', id:'add_sub_choice_list', :style => 'display: none'} %>
     <% end %>
   </td>
   <%# atributos %>
@@ -66,9 +66,9 @@
   <%= f.hidden_field :_destroy%>
   <th style="width: 50vw" class="d-none permissions_cell_group">
     <%# visualizar %>
-    <div style="width: 45%; display:inline-block;text-align:left"><%= f.collection_select :roles_read, Role.order(:name), :id, :name, {selected: role_selected(f.object.roles_read)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></div>
+    <div style="width: 45%; display:inline-block;text-align:left"><%= f.collection_select :roles_read, @roles, :id, :name, {selected: role_selected(f.object.roles_read)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></div>
     <%# editar %>
-    <div style="width: 45%; display:inline-block;text-align:left"><%= f.collection_select :roles_edit, Role.order(:name), :id, :name, {selected: role_selected(f.object.roles_edit)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></div>
+    <div style="width: 45%; display:inline-block;text-align:left"><%= f.collection_select :roles_edit, @roles, :id, :name, {selected: role_selected(f.object.roles_edit)}, {multiple: true, size: 1, class: 'form-control form-control-sm rol_select'} %></div>
   </th>
   <%# eliminar %>
   <td style="width: 4vw">

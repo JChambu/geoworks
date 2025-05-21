@@ -1377,9 +1377,26 @@ class ProjectTypesController < ApplicationController
 
   # GET /project_types/1/edit
   def edit
-
     authorize! :project_types, :edit
     @dashboard = @project_type.dashboards.first if @dashboard.nil?
+    
+    @per_page = (params[:per_page] || 60).to_i
+    @page = (params[:page] || 1).to_i
+
+    @total_fields = @project_type.project_fields.count
+
+    @project_fields = @project_type.project_fields
+                      .includes(:project_subfields)
+                      .order(:sort)
+                      .offset((@page - 1) * @per_page)
+                      .limit(@per_page)
+
+    @field_types = FieldType.order(:name)
+    @choice_lists = ChoiceList.order(:name)
+    @roles = Role.order(:name)
+
+    @roles_read_selected = @project_fields.map { |pf| [pf.id, pf.roles_read] }.to_h
+    @roles_edit_selected = @project_fields.map { |pf| [pf.id, pf.roles_edit] }.to_h
 
   end
 
