@@ -1,39 +1,69 @@
 {
-    "family": "geoworks-task-def",
-    "containerDefinitions": [
+  "family": "geoworks-task-def",
+  "containerDefinitions": [
+    {
+      "name": "geoworks",
+      "image": "381492065114.dkr.ecr.us-east-2.amazonaws.com/geoworks:${IMAGE_TAG}",
+      "cpu": 256,
+      "memory": 512,
+      "portMappings": [
         {
-            "name": "geoworks",
-            "image": "nginx:latest",
-            "cpu": 256,
-            "memory": 512,
-            "portMappings": [
-                {
-                    "containerPort": 3000,
-                    "hostPort": 3000,
-                    "protocol": "tcp"
-                }
-            ],
-            "essential": true,
-            "environment": [],
-            "mountPoints": [],
-            "volumesFrom": [],
-            "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                    "awslogs-group": "/ecs/geoworks",
-                    "awslogs-region": "us-east-2",
-                    "awslogs-stream-prefix": "geoworks"
-                }
-            },
-            "systemControls": []
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp"
         }
-    ],
-    "taskRoleArn": "arn:aws:iam::381492065114:role/ecsExecutionRole",
-    "executionRoleArn": "arn:aws:iam::381492065114:role/ecsExecutionRole",
-    "networkMode": "awsvpc",
-    "requiresCompatibilities": [
-        "FARGATE"
-    ],
-    "cpu": "256",
-    "memory": "512"
+      ],
+      "essential": true,
+      "environment": [
+        { "name": "POSTGRES_HOST", "value": "${POSTGRES_HOST}" },
+        { "name": "POSTGRES_PORT", "value": "${POSTGRES_PORT}" },
+        { "name": "POSTGRES_DATABASE", "value": "${POSTGRES_DATABASE}" },
+        { "name": "POSTGRES_USER", "value": "${POSTGRES_USER}" },
+        { "name": "POSTGRES_PASSWORD", "value": "${POSTGRES_PASSWORD}" },
+        { "name": "GEOSERVER_PORT", "value": "${GEOSERVER_PORT}" },
+        { "name": "GEOSERVER_HOST", "value": "${GEOSERVER_HOST}" },
+        { "name": "GEOSERVER_USER", "value": "${GEOSERVER_USER}" },
+        { "name": "GEOSERVER_PASSWORD", "value": "${GEOSERVER_PASSWORD}" },
+        { "name": "GEOSERVER_AUTH_KEY", "value": "${GEOSERVER_AUTH_KEY}" },
+        { "name": "ENABLE_JSONP", "value": "${ENABLE_JSONP}" },
+        { "name": "MAX_FILTER_RULES", "value": "${MAX_FILTER_RULES}" },
+        { "name": "OPTIMIZE_LINE_WIDTH", "value": "${OPTIMIZE_LINE_WIDTH}" },
+        { "name": "CATALINA_OPTS", "value": "${CATALINA_OPTS}" },
+        { "name": "GEOSERVER_CSRF_WHITELIST", "value": "${GEOSERVER_CSRF_WHITELIST}" },
+        { "name": "APP_PORT", "value": "${APP_PORT}" },
+        { "name": "RAILS_ENV", "value": "${RAILS_ENV}" },
+        { "name": "MAILER_DOMAIN", "value": "${MAILER_DOMAIN}" },
+        { "name": "MAILER_USERNAME", "value": "${MAILER_USERNAME}" },
+        { "name": "MAILER_PASSWORD", "value": "${MAILER_PASSWORD}" },
+        { "name": "USER_NAME", "value": "${USER_NAME}" },
+        { "name": "USER_EMAIL", "value": "${USER_EMAIL}" },
+        { "name": "USER_PASSWORD", "value": "${USER_PASSWORD}" },
+        { "name": "PRIMARY_COLOR", "value": "${PRIMARY_COLOR}" },
+        { "name": "PRIMARY_COLOR_TRANSPARENT", "value": "${PRIMARY_COLOR_TRANSPARENT}" },
+        { "name": "HORIZONTAL_LOGO", "value": "${HORIZONTAL_LOGO}" },
+        { "name": "FAVICON", "value": "${FAVICON}" },
+        { "name": "VERTICAL_LOGO", "value": "${VERTICAL_LOGO}" },
+        { "name": "TITLE", "value": "${TITLE}" }
+      ],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/geoworks",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "geoworks"
+        }
+      },
+      "systemControls": []
+    }
+  ],
+  "taskRoleArn": "arn:aws:iam::381492065114:role/ecsExecutionRole",
+  "executionRoleArn": "arn:aws:iam::381492065114:role/ecsExecutionRole",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "256",
+  "memory": "512"
 }

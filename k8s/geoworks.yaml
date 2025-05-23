@@ -1,0 +1,169 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: geoworks
+  labels:
+    app: geoworks
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: geoworks
+  template:
+    metadata:
+      labels:
+        app: geoworks
+    spec:
+      imagePullSecrets:
+      - name: regcred   # Nombre del secreto creado anteriormente
+      containers:
+      - name: geoworks
+        image: registry.digitalocean.com/geoworks/geoworks:latest
+        ports:
+        - containerPort: 3000
+          name: http
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2Gi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        env:
+        # Variables existentes
+        - name: GEOSERVER_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: admin-user
+        - name: GEOSERVER_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: admin-password
+        - name: POSTGRES_HOST
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: db-host
+        - name: POSTGRES_PORT
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: db-port
+        - name: POSTGRES_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: db-name
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: db-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: db-password
+        
+        # Variables nuevas
+        - name: APP_PORT
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: APP_PORT
+        - name: RAILS_ENV
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: RAILS_ENV
+        - name: MAILER_DOMAIN
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: MAILER_DOMAIN
+        - name: MAILER_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: MAILER_USERNAME
+        - name: MAILER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: MAILER_PASSWORD
+        - name: USER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: USER_NAME
+        - name: USER_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: USER_EMAIL
+        - name: USER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: USER_PASSWORD
+        - name: PRIMARY_COLOR
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: PRIMARY_COLOR
+        - name: PRIMARY_COLOR_TRANSPARENT
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: PRIMARY_COLOR_TRANSPARENT
+        - name: HORIZONTAL_LOGO
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: HORIZONTAL_LOGO
+        - name: FAVICON
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: FAVICON
+        - name: VERTICAL_LOGO
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: VERTICAL_LOGO
+        - name: TITLE
+          valueFrom:
+            secretKeyRef:
+              name: geoworks-secret
+              key: TITLE
+        
+        # Variables adicionales solicitadas
+        - name: GEOSERVER_PORT
+          value: "8080"
+        - name: GEOSERVER_AUTH_KEY
+          value: "ce3d1005-073f-4b0f-a1f7-0f9587aa6da4"
+        - name: ENABLE_JSONP
+          value: "true"
+        - name: MAX_FILTER_RULES
+          value: "20"
+        - name: OPTIMIZE_LINE_WIDTH
+          value: "false"
+        - name: GEOSERVER_CSRF_WHITELIST
+          value: "geoworks.com.ar"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: geoworks-service
+  labels:
+    app: geoworks
+spec:
+  selector:
+    app: geoworks
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+      name: http
