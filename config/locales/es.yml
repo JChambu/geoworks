@@ -483,6 +483,7 @@ es:
         role: "Rol"
         password: "Contraseña"
         remember_me: "Recuérdame"
+        company: "Empresa"
       chain:
         id: "ID"
         name: "Nombre"

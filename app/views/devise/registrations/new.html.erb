@@ -1,19 +1,22 @@
-<% if Apartment::Tenant.current == 'agricultura' || Apartment::Tenant.current == 'aws' %>
+<% current_tenant = Apartment::Tenant.current %>
+<% customer_logo = Customer.where(subdomain: current_tenant).pluck(:logo).first %>
+<% customer_side_image = Customer.where(subdomain: current_tenant).pluck(:side_image).first %>
+
+<% if current_tenant == 'agricultura' || current_tenant == 'aws' || current_tenant == 'netzefy' %>
   <div class="row w-100 align-items-center m-0" >
-    <div class="<%= case Apartment::Tenant.current
-                when 'aws'
-                  'col-md-6 align-middle form-singnin-aws-img vh-100'
-                when 'scm'
-                  'col-md-6 align-middle form-singnin-scm-img vh-100'
-                else
-                  'col-md-6 align-middle form-sinin-img vh-100'
-                end %>" style="overflow:hidden;">
-    </div>
+    <% if customer_side_image.present? %>
+      <div class="col-md-6 align-middle vh-100" style="
+        background-image: url('data:image/jpeg;base64,<%= customer_side_image %>');
+        background-repeat: no-repeat;
+        background-size: cover;
+      "></div>
+    <% else %>
+      <div class="col-md-6 align-middle form-sinin-img vh-100"></div>
+    <% end %>
+
     <div class="col-md-6 align-middle text-center p-0">
       <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: {class: 'form-signin pl-6 pr-6'}) do |f| %>
         <div class="form-group">
-          <% current_tenant = Apartment::Tenant.current %>
-          <% customer_logo = Customer.where(subdomain: current_tenant).pluck(:logo).first %>
           <% if customer_logo.present? %>
             <center><%= image_tag("data:image/png;base64,#{customer_logo}", class: "mb-2", width: "252") %></center>
           <% else %>
@@ -45,6 +48,13 @@
               <div class="col-md-12">
                 <%= f.label "Rol" %>
                 <%= f.select :role, options_for_select(['Comprador', 'Vendedor']), {:include_blank => false}, {class: 'form-control form-control-sm'} %>
+              </div>
+            </div>
+          <% end %>
+          <% if Apartment::Tenant.current == 'netzefy' %>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <%= f.input :company, label: "Empresa", input_html: {class: "form-control"} %>
               </div>
             </div>
           <% end %>
