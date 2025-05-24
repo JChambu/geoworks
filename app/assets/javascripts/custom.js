@@ -2750,7 +2750,9 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
             new_row.classList.add("d-none");
             new_row.classList.add("subtile_hidden" + element.field_id);
           }
-          var new_celd = document.createElement('DIV');
+          if (element.field_type_id != 13){
+            var new_celd = document.createElement('DIV');
+          }
           if (element.field_type_id == 11) {
             new_celd.className = "col-md-12 info_subtitle";
             new_celd.id = "subtitleid_" + element.field_id;
@@ -2765,7 +2767,9 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
               }
             }
           }
-          var new_p = document.createElement('H7');
+          if (element.field_type_id != 13){
+            var new_p = document.createElement('H7');
+          }
           if (element.field_type_id == 11) {
             new_p.className = "btn btn-primary p-0 pl-1 pr-1 text-left custom_button";
             new_p.setAttribute("onClick", "open_subtitle(" + element.calculated_field + ",'')");
@@ -2779,21 +2783,21 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
             }
             new_p.innerHTML = element.name;
           } else {
-            if (element.field_type_id == 13){
-              new_p.classList.add("field_key_json");
-              new_p.id=element.field_id+"|key|"+element.key+"|"+element.field_type_id;
-            } else {
+            if (element.field_type_id != 13){
               new_p.innerHTML = element.name + ":";
               new_p.classList.add("field_key_json");
               new_p.id=element.field_id+"|key|"+element.key+"|"+element.field_type_id;
             }
           }
-          new_celd.appendChild(new_p);
-          new_row.appendChild(new_celd);
+          if (element.field_type_id != 13){
+            new_celd.appendChild(new_p);
+            new_row.appendChild(new_celd);
+          }
 
           if (element.field_type_id != 11) {
-            var new_celd = document.createElement('DIV');
             if (element.field_type_id != 13){
+              var new_celd = document.createElement('DIV');
+            
               if (Navarra.dashboards.config.current_tenant === 'netzefy') {
                 new_celd.className = "col-md-10 field_div static_datetimepicker";
               } else {
@@ -2957,7 +2961,7 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
               }
             }
             if (element.field_type_id == 13){
-              new_p.innerHTML = element.html;
+              new_p = element.html;
             }
             new_p.disabled = true;
             if (element.value != null && element.field_type_id != 10 && element.field_type_id != 2) {
@@ -2971,13 +2975,18 @@ function show_item_info(appid_info, from_map, is_multiple, is_new_file, handle_c
             if((element.read_only==true && !is_new_file) || (element.read_only==true && is_new_file && element.calculated_field!="") || element.can_edit==false || (is_multiple && element.calculated_field!="") || (is_multiple && element.data_script!="")){
               new_p.classList.add('readonly_field');
             }
-
-            var id_field = element.field_id;
-            new_p.id = "field_id_"+id_field;
-            new_celd.appendChild(new_p);
+            if (element.field_type_id == 13){
+              new_row.insertAdjacentHTML('beforeend', element.html);
+            } else {
+              var id_field = element.field_id;
+              new_p.id = "field_id_"+id_field;
+              new_celd.appendChild(new_p);
+              new_row.appendChild(new_celd);
+            }
+            
             //agrega selector anidado si existe
             if(found_nested){new_celd.appendChild(new_p_nested)}
-            new_row.appendChild(new_celd);
+            
           }
           document.getElementById('info_body').appendChild(new_row);
           if(document.getElementById('field_id_'+id_field)!=null){
