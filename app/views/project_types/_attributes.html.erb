@@ -2,14 +2,13 @@
   $(function () {
     $('.sortable').sortable({
       update: function(event, ui) {
-        const $tbody = $(this);
-        const currentPage = parseInt($tbody.data('page'));
-        const perPage = parseInt($tbody.data('per-page'));
-        const baseSort = ((currentPage - 1) * perPage);
+        var $tbody = $(this);
+        var currentPage = parseInt($tbody.data("page") || 1);
+        var perPage = parseInt($tbody.data("per-page") || 60);
+        var baseSort = (currentPage - 1) * perPage;
 
         $tbody.find('tr').each(function(index) {
-          const globalSort = baseSort + index + 1;
-          $(this).find('.project_fields_current_position').val(globalSort);
+          $(this).find('.project_fields_current_position').val(baseSort + index + 1);
         });
       }
     });
@@ -161,21 +160,6 @@
           <%= link_to "Mostrar todos", edit_project_type_path(@project_type, per_page: @total_fields), class: "dropdown-item text-white font-weight-bold" %>
         </div>
       </div>
-
-      <% total_pages = (@total_fields.to_f / @per_page).ceil %>
-      <% if total_pages > 1 %>
-        <div class="dropdown d-flex justify-content-end">
-          <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownPage" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Página <%= @page %> de <%= total_pages %>
-          </button>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownPage">
-            <% (1..total_pages).each do |page_num| %>
-              <%= link_to "Pág #{page_num}", edit_project_type_path(@project_type, page: page_num, per_page: @per_page),
-                    class: "dropdown-item#{' active' if page_num == @page}" %>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
     </div>
   <% end %>
 
