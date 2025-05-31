@@ -60,7 +60,7 @@
 
             <div class="form-group form-check">
               <%= f.check_box :accept_terms, class: "form-check-input", id: "accept_terms", required: true %>
-              <%= f.label :accept_terms, raw("Acepto los <a href='/terms' target='_blank' style='color:#000066'>términos y condiciones</a>"), class: "form-check-label", for: "accept_terms" %>
+              <%= f.label :accept_terms, raw("Acepto los <a href='/terms' target='_blank' style='color:#000066; text-decoration: underline;'>términos y condiciones</a>"), class: "form-check-label", for: "accept_terms" %>
             </div>
           <% end %>
         </div>
