@@ -27,8 +27,8 @@ class RegistrationsController < Devise::RegistrationsController
     case Apartment::Tenant.current
     when 'agricultura'
       sign_up_params_for_agricultura
-    when 'scm'
-      sign_up_params_for_scm
+    when 'netzefy'
+      sign_up_params_for_netzefy
     else
       sign_up_params_for_others
     end
@@ -51,18 +51,18 @@ class RegistrationsController < Devise::RegistrationsController
           )
   end
 
-  def sign_up_params_for_scm
+  def sign_up_params_for_netzefy
     current_tenant    = Apartment::Tenant.current
+    rol_id            = Role.find_by(name: 'Público')&.id
     customer_id       = Customer.find_by(subdomain: current_tenant)&.id
-    project_types_ids = [1, 49]
+    project_type_id   = 1
 
     params.require(:user)
-          .permit(:name, :email, :password, :password_confirmation, :country_code, :area_code, :phone)
+          .permit(:name, :email, :password, :password_confirmation, :country_code, :area_code, :phone, :company, :accept_terms)
           .merge(
             active: true,
-            user_customers_attributes: [customer_id: customer_id, role_id: 39],
-            has_project_types_attributes: project_types_ids.map { |id| { project_type_id: id } },
-            project_filters_attributes: project_types_ids.map { |id| { project_type_id: id, owner: true } }
+            user_customers_attributes: [customer_id: customer_id, role_id: rol_id],
+            has_project_types_attributes: [project_type_id: project_type_id]
           )
   end
 

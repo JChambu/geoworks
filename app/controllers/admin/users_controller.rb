@@ -245,7 +245,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :email, :country_code, :area_code, :phone, :confirmed_at, :email_sended, :password, :password_confirmation, :active,
+    params.require(:user).permit(:name, :email, :country_code, :area_code, :phone, :confirmed_at, :email_sended, :password, :password_confirmation, :company, :accept_terms, :active,
       user_customers_attributes: [:id, :user_id, :customer_id, :role_id, :_destroy,
       project_filters_attributes: [:id, :user_id, :project_type_id, :owner, :ilike, :_destroy]],
       has_project_types_attributes: [:id, :project_type_id, :user_id, :owner, :properties, :_destroy],

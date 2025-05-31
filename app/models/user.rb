@@ -31,12 +31,15 @@ class User < ApplicationRecord
   validates :country_code, length: { maximum: 4 }, presence: true, :numericality => true
   validates :area_code, length: { maximum: 4 }, presence: true, :numericality => true
   validates :phone, length: { maximum: 7 }, presence: true, :numericality => true
+  validates :accept_terms, acceptance: true
 
   # validate :is_role_valid?
   # before_destroy :has_related_pois?
   before_create :generate_token, on: :create
+  before_create :set_terms_acceptance
 
   attr_accessor :customer_id, :project
+  attr_accessor :accept_terms
 
   ROLES = %w[User Admin Moderator]
 
@@ -107,6 +110,14 @@ class User < ApplicationRecord
 
   def self.sorted_by_name
     self.order(:name)
+  end
+
+  private
+
+  def set_terms_acceptance
+    if accept_terms == "1"
+      self.terms_accepted_at = Time.current
+    end
   end
 
   protected
