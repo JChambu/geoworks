@@ -58,7 +58,7 @@ class RegistrationsController < Devise::RegistrationsController
     project_type_id   = 1
 
     params.require(:user)
-          .permit(:name, :email, :password, :password_confirmation, :country_code, :area_code, :phone, :company)
+          .permit(:name, :email, :password, :password_confirmation, :country_code, :area_code, :phone, :company, :accept_terms)
           .merge(
             active: true,
             user_customers_attributes: [customer_id: customer_id, role_id: rol_id],

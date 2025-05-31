@@ -57,9 +57,14 @@
                 <%= f.input :company, label: "Empresa", input_html: {class: "form-control"} %>
               </div>
             </div>
+
+            <div class="form-group form-check">
+              <%= f.check_box :accept_terms, class: "form-check-input", id: "accept_terms", required: true %>
+              <%= f.label :accept_terms, raw("Acepto los <a href='/terms' target='_blank' style='color:#000066'>términos y condiciones</a>"), class: "form-check-label", for: "accept_terms" %>
+            </div>
           <% end %>
         </div>
-        <%= f.submit 'Registrarse', class: 'btn btn-lg btn-primary btn-block mb-2' %>
+        <%= f.submit 'Registrarse', class: 'btn btn-lg btn-primary btn-block mb-2', id: 'register_btn', disabled: Apartment::Tenant.current == 'netzefy' %>
         <div class="text-center">
           <%= render "devise/shared/links" %>
         </div>
@@ -74,3 +79,16 @@
     </div>
   </div>
 <% end %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const checkbox = document.getElementById('accept_terms');
+    const submitBtn = document.getElementById('register_btn');
+
+    if (checkbox && submitBtn) {
+      checkbox.addEventListener('change', function() {
+        submitBtn.disabled = !checkbox.checked;
+      });
+    }
+  });
+</script>
