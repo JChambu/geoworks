@@ -1365,14 +1365,20 @@ class ProjectTypesController < ApplicationController
 
   # GET /project_types/new
   def new
-
     authorize! :project_types, :new
     @project_type = ProjectType.new
-    @project_field=[]
-    @project_field.push(@project_type.project_fields.build({name: 'app_id', field_type_id: '5', hidden: true, read_only: true}))
-    @project_field.push(@project_type.project_fields.build({name: 'app_estado', field_type_id: '5', hidden: true, read_only: true}))
-    @project_field.push(@project_type.project_fields.build({name: 'app_usuario', field_type_id: '5', hidden: true, read_only: true}))
+    @project_fields=[]
+    @project_fields.push(@project_type.project_fields.build({name: 'app_id', field_type_id: '5', hidden: true, read_only: true}))
+    @project_fields.push(@project_type.project_fields.build({name: 'app_estado', field_type_id: '5', hidden: true, read_only: true}))
+    @project_fields.push(@project_type.project_fields.build({name: 'app_usuario', field_type_id: '5', hidden: true, read_only: true}))
 
+    @field_types = FieldType.all.order(:name)
+    @choice_lists = ChoiceList.order(:name)
+    @roles = Role.order(:name)
+    @total_fields = @project_fields.size
+
+    @roles_read_selected = @project_fields.map { |pf| [pf.id, pf.roles_read] }.to_h
+    @roles_edit_selected = @project_fields.map { |pf| [pf.id, pf.roles_edit] }.to_h
   end
 
   # GET /project_types/1/edit
@@ -1397,7 +1403,6 @@ class ProjectTypesController < ApplicationController
 
     @roles_read_selected = @project_fields.map { |pf| [pf.id, pf.roles_read] }.to_h
     @roles_edit_selected = @project_fields.map { |pf| [pf.id, pf.roles_edit] }.to_h
-
   end
 
   # POST /project_types
