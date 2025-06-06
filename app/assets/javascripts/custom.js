@@ -3651,12 +3651,14 @@ function edit_file(edit_parent, edit_child, edit_status){
     }
   }
   if(is_new_file){
-    if($("#input_status").val()==null){
-      $(".fakeLoader").css("display", "none");
-      $('#info_messages').html("Agregue un Estado válido");
-      $('#info_messages').addClass("text-danger");
-      $('#info_messages').removeClass("d-none");
-      return;
+    if (Navarra.dashboards.config.current_tenant != 'netzefy') {
+      if($("#input_status").val()==null){
+        $(".fakeLoader").css("display", "none");
+        $('#info_messages').html("Agregue un Estado válido");
+        $('#info_messages').addClass("text-danger");
+        $('#info_messages').removeClass("d-none");
+        return;
+      }
     }
   }
 
