@@ -266,6 +266,10 @@ class ProjectsController < ApplicationController
 
       datetime = Time.zone.now
 
+      if project_status_id == "" && current_tenant.subdomain == 'netzefy'
+        project_status_id = ProjectStatus.where( project_type_id: project_type_id.to_i, priority: 1).pluck(:id).first
+      end
+
       properties['app_id'] = 0
       properties['app_usuario'] = current_user.id
       properties['app_estado'] = project_status_id.to_i
