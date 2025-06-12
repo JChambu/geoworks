@@ -1,7 +1,5 @@
 class User < ApplicationRecord
-
   include Users::Scopes
-
   require 'json'
 
   has_many :has_project_types
@@ -20,8 +18,6 @@ class User < ApplicationRecord
   # :confirmable, :validatable :registerable, :timeoutable and :omniauthable
   devise :database_authenticatable, :rememberable, :trackable, :lockable, :confirmable, :recoverable, :registerable
 
-  before_create :generate_password, on: :create
-
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
   validates :email, :email_format => {:message => "Formato de mail inválido. Formato válido: some@mail.com"}
@@ -33,10 +29,11 @@ class User < ApplicationRecord
   validates :phone, length: { maximum: 7 }, presence: true, :numericality => true
   validates :accept_terms, acceptance: true
 
-  # validate :is_role_valid?
-  # before_destroy :has_related_pois?
+  before_create :generate_password, on: :create
   before_create :generate_token, on: :create
   before_create :set_terms_acceptance
+
+  after_create :send_confirmation_instructions_netzefy
 
   attr_accessor :customer_id, :project
   attr_accessor :accept_terms
@@ -83,16 +80,6 @@ class User < ApplicationRecord
     return false
   end
 
-  # def self.user_role
-  #   index = ROLES.find_index "User"
-  #   return nil unless index
-  #   ROLES[index]
-  # end
-
-  # def is? role
-  #   role == self.role
-  # end
-
   def human_role
     #I18n.t("roles.#{self.role.downcase}")
   end
@@ -110,6 +97,14 @@ class User < ApplicationRecord
 
   def self.sorted_by_name
     self.order(:name)
+  end
+
+  def send_confirmation_instructions_netzefy
+    current_tenant = Apartment::Tenant.current
+    if current_tenant == 'netzefy'
+      DeviseCustomMailer.confirmation_instructions(self, self.confirmation_token).deliver_now
+      self.update(email_sended: true)
+    end
   end
 
   private
