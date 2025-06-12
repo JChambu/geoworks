@@ -3325,7 +3325,7 @@ function create_new_row_child(element_child, element_field_id, element_name, is_
                   }
                   }
                 } else{
-                  set_error_message("Error en subformulario, listados: "+element_child_field.name);
+                  set_subform_error_message("Error en subformulario, listados: "+element_child_field.name, values);
                 }
               }
             }
@@ -4248,14 +4248,25 @@ Array.prototype.unique=function(a){
 });
 
 function set_error_message(message){
-  Navarra.dashboards.config.has_field_errors = true;
-    $('#info_messages').html(message);
-    $('#info_messages').addClass("text-danger");
-    $('#info_messages').removeClass("d-none");
-    $('#edit_confirmation').addClass("d-none");
-    $('#edit_confirmation_child').addClass("d-none");
-    $('#edit_confirmation').removeClass("d-inline");
-    $('#edit_confirmation_child').removeClass("d-inline");
+  $('#info_messages').html(message);
+  $('#info_messages').addClass("text-danger");
+  $('#info_messages').addClass("bg-dark");
+  $('#info_messages').removeClass("d-none");
+  $('#edit_confirmation').addClass("d-none");
+  $('#edit_confirmation_child').addClass("d-none");
+  $('#edit_confirmation').removeClass("d-inline");
+  $('#edit_confirmation_child').removeClass("d-inline");
+}
+
+function set_subform_error_message(message, values){
+  $('#info_messages').html(message +": "+ values);
+  $('#info_messages').addClass("text-danger");
+  $('#info_messages').addClass("bg-dark");
+  $('#info_messages').removeClass("d-none");
+  $('#edit_confirmation').addClass("d-none");
+  $('#edit_confirmation_child').addClass("d-none");
+  $('#edit_confirmation').removeClass("d-inline");
+  $('#edit_confirmation_child').removeClass("d-inline");
 }
 
 function changeSelected(){
