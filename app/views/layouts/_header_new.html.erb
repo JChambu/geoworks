@@ -324,7 +324,7 @@
       <!-- Proyectos -->
       <% if params[:controller] != 'project_types' && params[:action] != 'new' %>
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle d-flex flex-column align-items-center" href="#" id="projects_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 250px;padding-top: 2px;padding-bottom: 8px;">
+        <a class="nav-link dropdown-toggle d-flex flex-column align-items-center" href="#" id="projects_dropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;max-width: 250px;padding-top: 2px;padding-bottom: 8px;">
           <span class="count_top align-top" style="font-size: 11px; margin-bottom: 4px;margin-top:1px;color:#b0b0b0;">Capa Activa</span>
           <% if !@project_type.nil? %>
             <%= @project_type.name %>
@@ -371,54 +371,86 @@
         <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
           <!-- Herramientas geográficas -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle nocaret nav-link-width" href="#" id="gis_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 3px;padding-bottom: 8px; min-width: 72px;"">
+            <a class="nav-link dropdown-toggle nocaret nav-link-width" href="#" id="gis_dropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 3px;padding-bottom: 8px; min-width: 72px;"">
               <div class="d-flex flex-column align-items-center">
                 <span class="count_top align-top" style="font-size: 11px; margin-bottom: 4px; color: #aaa;">Filtros</span>
                 <i class="fas fa-search-location align-middle" style="font-size: 24px"></i>
               </div>
             </a>
-            <div class="dropdown-menu custom-menu all_filters" aria-labelledby="gis_dropdown" style="min-width: auto">
-              <%= link_to project_type_quick_filters_path(@project_type.id), class: 'dropdown-item custom-item', id: "filter_status",:remote => true do %>
-                <i class="fas fa-bell" title="Filtrar por Estado" style="font-size: 20px"></i>
+            <div class="dropdown-menu p-3 shadow border-0 rounded-3" style="min-width: 250px;" aria-labelledby="gis_dropdown">
+              <%= link_to project_type_quick_filters_path(@project_type.id),
+                          class: 'dropdown-item d-flex align-items-center gap-2 text-dark fw-semibold',
+                          id: "filter_status", remote: true do %>
+                <i class="fas fa-bell" style="font-size: 20px; color: #0d6efd;"></i>
+                <span>Estado</span>
               <% end %>
+
               <% if can? :funcionalities, :user_filter %>
-                <%= link_to project_type_quick_filters_users_path(@project_type.id), class: 'dropdown-item custom-item', id: "filter",:remote => true do %>
-                  <i class="fas fa-user-alt" title="Filtrar por Usuario" style="font-size: 20px"></i>
+                <%= link_to project_type_quick_filters_users_path(@project_type.id),
+                            class: 'dropdown-item d-flex align-items-center gap-2 text-dark fw-semibold',
+                            id: "filter_user", remote: true do %>
+                  <i class="fas fa-user-alt" style="font-size: 20px; color: #198754;"></i>
+                  <span>Usuario</span>
                 <% end %>
               <% end %>
-              <div class="modal-content quick_filters_container " style="top: 0px; left:105%; width:max-content; position: absolute;"></div>
-              <%= link_to project_type_filters_path(@project_type.id), class: 'dropdown-item custom-item', id: "filter",:remote => true do %>
-                <i class="fas fa-filter align-middle" title="Filtrar" style="font-size: 20px"></i>
+
+              <%= link_to project_type_filters_path(@project_type.id),
+                          class: 'dropdown-item d-flex align-items-center gap-2 text-dark fw-semibold',
+                          id: "filter_main", remote: true do %>
+                <i class="fas fa-filter" style="font-size: 20px; color: #6c757d;"></i>
+                <span>Filtros avanzados</span>
               <% end %>
-              <a class="dropdown-item custom-item" href="#" role="button" title="Rango Temporal" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="open_panel('view-timeslider')">
-                <i class="fas fa-clock-o align-middle" style="font-size: 24px"></i>
+
+              <a class="dropdown-item d-flex align-items-center gap-2 text-dark fw-semibold"
+                href="#"
+                title="Rango Temporal"
+                onclick="open_panel('view-timeslider')">
+                <i class="fas fa-clock" style="font-size: 20px; color: #fd7e14;"></i>
+                <span>Rango Temporal</span>
               </a>
             </div>
           </li>
 
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle nocaret nav-link-width" href="#" id="tools_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 3px;padding-bottom: 8px; min-width: 72px;">
+            <a class="nav-link dropdown-toggle nocaret nav-link-width" href="#" id="tools_dropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top: 3px;padding-bottom: 8px; min-width: 72px;">
               <div class="d-flex flex-column align-items-center">
                 <span class="count_top align-top" style="font-size: 11px; margin-bottom: 4px; color: #aaa;">Herramientas</span>
                 <i class="fas fa-wrench align-middle" style="font-size: 24px"></i>
               </div>
             </a>
-            <div class="dropdown-menu custom-menu tools_menu" aria-labelledby="tools_dropdown" style="min-width: auto">
+            <div class="dropdown-menu p-3 shadow border-0 rounded-3" aria-labelledby="tools_dropdown" style="min-width: 220px;">
               <% if can? :funcionalities, :heatmap %>
-                <%= link_to project_type_heatmap_path(@project_type.id), class: 'dropdown-item custom-item', id: "heatmap", :remote=> true do %> <i class="fas fa-fire align-middle" title="Mapa de Calor" style="font-size: 20px"></i> <% end %>
+                <%= link_to project_type_heatmap_path(@project_type.id),
+                            class: 'dropdown-item d-flex align-items-center gap-2 text-dark fw-semibold',
+                            id: "heatmap", remote: true do %>
+                  <i class="fas fa-fire" style="font-size: 20px; color: #dc3545;"></i>
+                  <span>Mapa de Calor</span>
+                <% end %>
               <% end %>
+
               <% if can? :funcionalities, :interpolation %>
-                <%= link_to project_type_interpolation_path(@project_type.id), class: 'dropdown-item custom-item', id: "interpolation", :remote=> true do %> <i class="fas fa-grip-horizontal align-middle" title="Interpolar" style="font-size: 20px"></i> <% end %>
+                <%= link_to project_type_interpolation_path(@project_type.id),
+                            class: 'dropdown-item d-flex align-items-center gap-2 text-dark fw-semibold',
+                            id: "interpolation", remote: true do %>
+                  <i class="fas fa-grip-horizontal" style="font-size: 20px; color: #0d6efd;"></i>
+                  <span>Interpolar</span>
+                <% end %>
               <% end %>
+
               <% if can? :funcionalities, :color_attribute %>
-                <%= link_to project_type_color_by_attribute_path(@project_type.id), class: 'dropdown-item custom-item', id: "color_attribute", :remote=> true do %> <i class="fas fa-paint-brush align-middle" title="Pintar por atributo" style="font-size: 20px"></i> <% end %>
+                <%= link_to project_type_color_by_attribute_path(@project_type.id),
+                            class: 'dropdown-item d-flex align-items-center gap-2 text-dark fw-semibold',
+                            id: "color_attribute", remote: true do %>
+                  <i class="fas fa-paint-brush" style="font-size: 20px; color: #20c997;"></i>
+                  <span>Pintar por atributo</span>
+                <% end %>
               <% end %>
             </div>
           </li>
 
           <% if can? :graphics, :visualizer %>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle nocaret nav-link-width" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="open_panel('view-charts')" style="padding-top: 3px;padding-bottom: 8px; min-width: 72px;">
+              <a class="nav-link dropdown-toggle nocaret nav-link-width" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="open_panel('view-charts')" style="padding-top: 3px;padding-bottom: 8px; min-width: 72px;">
                 <div class="d-flex flex-column align-items-center">
                   <span class="count_top align-top" style="font-size: 11px; margin-bottom: 4px; color: #aaa;">Analítica</span>
                   <i class="fas fa-area-chart align-middle" style="font-size: 24px"></i>
@@ -440,24 +472,32 @@
     </ul>
 
     <div class="nav-item dropdown" id="multitenant_container">
-      <% if can? :funcionalities, :multitenant_user%>
-        <a class="nav-link dropdown-toggle nocaret" href="#" id="panelAdminCorporations" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-globe-americas align-middle" title="Ecosistema" style="font-size: 20px"></i>
+      <% if can? :funcionalities, :multitenant_user %>
+        <a class="nav-link dropdown-toggle nocaret" href="#" id="panelAdminCorporations"
+          role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-globe-americas align-middle" title="Ecosistema" style="font-size: 20px;"></i>
         </a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="panelAdminCorporations">
+
+        <div class="dropdown-menu p-3 shadow border-0 rounded-3 dropdown-menu-end"
+            aria-labelledby="panelAdminCorporations" style="min-width: 240px;">
           <% if @user_tenants.present? %>
             <% @user_tenants.each do |tenant| %>
-              <div class="dropdown-item d-flex align-items-center">
+              <%= link_to switch_multitenant_url(tenant: tenant[:name]),
+                          target: "_blank",
+                          class: "dropdown-item d-flex align-items-center gap-2 text-dark fw-semibold" do %>
                 <% if tenant[:logo].present? %>
-                  <img src="data:image/png;base64,<%= tenant[:logo] %>" alt="<%= tenant[:name] %> logo" style="width: 20px; height: 20px; margin-right: 10px;">
+                  <img src="data:image/png;base64,<%= tenant[:logo] %>" alt="<%= tenant[:name] %> logo"
+                      style="width: 20px; height: 20px; object-fit: contain;">
                 <% else %>
-                  <div style="width: 20px; height: 20px; margin-right: 10px;"></div>
+                  <div style="width: 20px; height: 20px; background: #e9ecef;"></div>
                 <% end %>
-                <a href="<%= switch_multitenant_url(tenant: tenant[:name]) %>" target="_blank"><%= tenant[:name] %></a>
-              </div>
+                <span><%= tenant[:name] %></span>
+              <% end %>
             <% end %>
           <% else %>
-            <p class="dropdown-item"><%= t('navbar_elements.user_without_corp') %></p>
+            <p class="dropdown-item text-muted mb-0">
+              <%= t('navbar_elements.user_without_corp') %>
+            </p>
           <% end %>
         </div>
       <% end %>
@@ -465,109 +505,167 @@
 
     <!-- Menú  -->
     <div class="nav-item dropdown" id="navbarDropdown_container">
-      <a class="nav-link dropdown-toggle nocaret" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fas fa-bars align-middle" title="Menú" style="font-size: 22px"></i>
-      </a>
-      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" style="z-index: 2000; right: 6px;">
-        <!-- Proyecto Actual -->
-        <% if !@project_type.nil? && !@project_type.new_record?%>
-          <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
-            <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelAdmin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= t('navbar_elements.data_table') %></a>
-            <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels" aria-labelledby="panelAdmin">
-              <% if can? :data, :visualizer %>
-                <a class="dropdown-item" href="#" onclick="open_panel('view-data-middle',0)"><%= t('navbar_elements.data_table') %>
-                  <i class="fas fa-edit ml-2" style="font-size: 0.8em;" id="show_trash_tables" title="Editar Tablas Guardadas" onclick="show_trash_tables(event)"></i>
-                </a>
-                <div class="ml-3" id="tables_container" style="font-size:0.8em; max-height: 40vh; overflow-y:auto;">
-                  <% if !@table_configuration.nil? %>
-                    <% @table_configuration.sort_by(&:name).each do |table| %>
-                      <a class="dropdown-item d-flex" onclick="open_panel(<%= "'view-data-middle',"+table.id.to_s%>)" href="#" id=<%= "dropdown_table"+table.id.to_s%>>
-                        <h7 class="mr-auto" ><%=table.name %></h7>
-                        <i class="fas fa-share-alt ml-3 invisible icon_delete_table" title="Compartir" onclick="share_table_between_users(<%= 'event ,'+table.id.to_s%>)" ></i>
-                        <i class="fas fa-trash-alt ml-3 invisible icon_delete_table" title="Eliminar" onclick="remove_table(<%= 'event ,'+table.id.to_s%>)"></i>
-                      </a>
-                    <% end %>
+  <a class="nav-link dropdown-toggle nocaret" href="#" id="navbarDropdown"
+     role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fas fa-bars align-middle" title="Menú" style="font-size: 22px;"></i>
+  </a>
+
+  <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0 rounded-3"
+       aria-labelledby="navbarDropdown" style="z-index: 2000; right: 6px; min-width: 250px;">
+    
+    <% if @project_type.present? && !@project_type.new_record? %>
+      <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
+        <% if can? :data, :visualizer %>
+          <div class="dropdown-submenu mb-2">
+            <a class="dropdown-item dropdown-toggle" href="#" id="panelAdmin"
+               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <%= t('navbar_elements.data_table') %>
+            </a>
+            <div class="dropdown-menu p-2 shadow border-0 rounded-3 custom_dropdown_panels" aria-labelledby="panelAdmin">
+              <a class="dropdown-item d-flex justify-content-between" href="#"
+                 onclick="open_panel('view-data-middle',0)">
+                <%= t('navbar_elements.data_table') %>
+                <i class="fas fa-edit icon ms-2" title="Editar Tablas Guardadas"
+                   onclick="show_trash_tables(event)"></i>
+              </a>
+              <div class="ps-3" id="tables_container" style="font-size:0.9em; max-height: 40vh; overflow-y:auto;">
+                <% if @table_configuration.present? %>
+                  <% @table_configuration.sort_by(&:name).each do |table| %>
+                    <a class="dropdown-item d-flex justify-content-between align-items-center"
+                       href="#" id="dropdown_table<%= table.id %>"
+                       onclick="open_panel('view-data-middle',<%= table.id %>)">
+                      <span><%= table.name %></span>
+                      <span>
+                        <i class="fas fa-share-alt icon_delete_table invisible ms-2"
+                           onclick="share_table_between_users(event, <%= table.id %>)"></i>
+                        <i class="fas fa-trash-alt icon_delete_table invisible ms-2"
+                           onclick="remove_table(event, <%= table.id %>)"></i>
+                      </span>
+                    </a>
                   <% end %>
-                </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+
+      <% if @dashboard.present? && params[:controller] == 'dashboards' && params[:action] == 'show' %>
+        <% if can?(:graphics, :new) || can?(:indicators, :visualizer) %>
+          <div class="dropdown-submenu mb-2">
+            <a class="dropdown-item dropdown-toggle" href="#" id="analitycsDesign"
+               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <%= t('navbar_elements.analitycs_design') %>
+            </a>
+            <div class="dropdown-menu p-2 shadow border-0 rounded-3 custom_dropdown_analytics_panels"
+                 aria-labelledby="analitycsDesign">
+              <% if can? :indicators, :visualizer %>
+                <%= link_to t('navbar_elements.create_indicator'),
+                            project_type_dashboard_analytics_dashboards_path(@project_type.id, @dashboard.id),
+                            class: 'dropdown-item' %>
+              <% end %>
+              <% if can? :graphics, :new %>
+                <%= link_to t('navbar_elements.create_graphic'),
+                            new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id),
+                            class: 'dropdown-item',
+                            remote: true,
+                            data: { bs_toggle: 'modal', bs_target: '#modal-window' } %>
               <% end %>
             </div>
-          <% end %>
+          </div>
+        <% end %>
+      <% end %>
 
-          <% if !@dashboard.nil? %>
-            <% if params[:controller] == 'dashboards' && params[:action] == 'show' %>
-              <% if can? :graphics, :new or can? :indicators, :visualizer %>
-                <a class="dropdown-item dropdown-toggle nocaret" href="#" id="analitycsDesign" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= t('navbar_elements.analitycs_design') %></a>
-                <div class="dropdown-menu dropdown-menu-right custom_dropdown_analytics_panels" aria-labelledby="analitycsDesign">
-                  <% if can? :indicators, :visualizer%>
-                    <%= link_to t('navbar_elements.create_indicator'), project_type_dashboard_analytics_dashboards_path(@project_type.id, @dashboard.id), class: 'dropdown-item' %>
-                  <% end %>
-                  <% if can? :graphics, :new %>
-                    <%= link_to t('navbar_elements.create_graphic'), new_project_type_dashboard_graphic_path(@project_type.id, @dashboard.id), class: 'dropdown-item', remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window' %>
-                  <% end %>
-                </div>
-              <% end %>
+      <% if can? :statuses, :visualizer %>
+        <%= link_to t('statuses'), project_type_project_statuses_path(@project_type.id),
+                    class: "dropdown-item fw-semibold" %>
+        <%= link_to t('statuses_rules'), project_status_rules_project_status_rules_path(project_type_id: @project_type.id),
+                    class: "dropdown-item fw-semibold" %>
+      <% end %>
+
+      <% if can? :project_types, :share %>
+        <%= link_to t('navbar_elements.share_layer'),
+                    project_type_share_path(@project_type.id),
+                    remote: true,
+                    class: "dropdown-item fw-semibold" %>
+      <% end %>
+
+      <% if can? :project_types, :edit %>
+        <%= link_to t('navbar_elements.modelator'),
+                    edit_project_type_path(@project_type.id),
+                    class: "dropdown-item fw-semibold" %>
+      <% end %>
+
+      <% if can?(:data, :new_subform) || can?(:data, :new) %>
+        <div class="dropdown-submenu mb-2">
+          <a class="dropdown-item dropdown-toggle" href="#" id="panelImport"
+             role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <%= t('import') %>
+          </a>
+          <div class="dropdown-menu p-2 shadow border-0 rounded-3 custom_dropdown_panels_import"
+               aria-labelledby="panelImport">
+            <% if can? :data, :new %>
+              <%= link_to t('common.forms'),
+                          new_project_type_projects_import_path(@project_type.id),
+                          class: "dropdown-item" %>
             <% end %>
-          <% end %>
-
-          <% if can? :statuses, :visualizer %>
-            <%= link_to t('statuses'), project_type_project_statuses_path(@project_type.id), class: "dropdown-item" %>
-            <%= link_to t('statuses_rules'), project_status_rules_project_status_rules_path(project_type_id: @project_type.id), class: "dropdown-item" %>
-          <% end %>
-          <% if can? :project_types, :share%>
-            <%= link_to t('navbar_elements.share_layer'), project_type_share_path(@project_type.id), remote: true, class: "dropdown-item" %>
-          <% end %>
-          <% if can? :project_types, :edit%>
-            <%= link_to t('navbar_elements.modelator'), edit_project_type_path(@project_type.id), class: "dropdown-item" %>
-          <% end %>
-          <div>
-            <% if can? :data, :new_subform || :data, :new %>
-              <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelImport" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= t('import') %></a>
-              <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels_import" aria-labelledby="panelImport">
-                <% if can? :data, :new %>
-                  <%= link_to t('common.forms'), new_project_type_projects_import_path(@project_type.id), class: "dropdown-item" %>
-                <% end %>
-                <% if can? :data, :new_subform %>
-                  <%= link_to t('common.subforms'), new_project_type_data_children_path(@project_type.id), class: "dropdown-item" %>
-                <% end %>
-              </div>
+            <% if can? :data, :new_subform %>
+              <%= link_to t('common.subforms'),
+                          new_project_type_data_children_path(@project_type.id),
+                          class: "dropdown-item" %>
             <% end %>
           </div>
-          <div>
-            <% if can? :data, :new_subform || :data, :new %>
-              <a class="dropdown-item dropdown-toggle nocaret" href="#" id="panelSync" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%= t('navbar_elements.sync') %></a>
-              <div class="dropdown-menu dropdown-menu-right custom_dropdown_panels_sync" aria-labelledby="panelSync">
-                <% if can? :data, :new %>
-                  <!-- here the link to sync forms -->
-                <% end %>
-                <% if can? :data, :new_subform %>
-                  <%= link_to t('common.subforms'), api_connection_path(@project_type.id), class: "dropdown-item" %>
-                <% end %>
-              </div>
+        </div>
+      <% end %>
+
+      <% if can?(:data, :new_subform) || can?(:data, :new) %>
+        <div class="dropdown-submenu mb-2">
+          <a class="dropdown-item dropdown-toggle" href="#" id="panelSync"
+             role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <%= t('navbar_elements.sync') %>
+          </a>
+          <div class="dropdown-menu p-2 shadow border-0 rounded-3 custom_dropdown_panels_sync"
+               aria-labelledby="panelSync">
+            <% if can? :data, :new_subform %>
+              <%= link_to t('common.subforms'),
+                          api_connection_path(@project_type.id),
+                          class: "dropdown-item" %>
             <% end %>
           </div>
-          <% if can? :project_types, :destroy%>
-            <%= link_to 'Eliminar', project_type_path(@project_type.id), method: :delete, data: { confirm: '¿Está seguro?' }, id: 'project_del_button', class: "dropdown-item" %>
-          <% end %>
-        <% end %>
+        </div>
+      <% end %>
 
-        <% if can? :choice_lists, :visualizer %>
-          <%= link_to t('choice_lists'), choice_lists_path, class: "dropdown-item" %>
-        <% end %>
-        <% if can? :layers, :visualizer %>
-          <%= link_to t('layers'), layers_path, class: "dropdown-item" %>
-        <% end %>
-        <%- if user_signed_in? %>
-          <% if current_user.name == 'superadmin' %>
-            <%= link_to t('management'), admin_root_path, class: "dropdown-item" %>
-          <% end %>
-          <% if can? :project_types, :admin_projects%>
-            <%= link_to t('admin_projects'), project_types_path, class: "dropdown-item" %>
-          <% end %>
-          <%= link_to "Editar Usuario", edit_user_path(current_user.id), class: "dropdown-item" %>
-          <%= link_to 'Cerrar Sesión', destroy_user_session_path, class: "dropdown-item", method: :delete %>
-        <% end %>
-      </div>
-    </div>
+      <% if can? :project_types, :destroy %>
+        <%= link_to 'Eliminar',
+                    project_type_path(@project_type.id),
+                    method: :delete,
+                    data: { confirm: '¿Está seguro?' },
+                    id: 'project_del_button',
+                    class: "dropdown-item text-danger fw-semibold" %>
+      <% end %>
+    <% end %>
+
+    <% if can? :choice_lists, :visualizer %>
+      <%= link_to t('choice_lists'), choice_lists_path, class: "dropdown-item fw-semibold" %>
+    <% end %>
+
+    <% if can? :layers, :visualizer %>
+      <%= link_to t('layers'), layers_path, class: "dropdown-item fw-semibold" %>
+    <% end %>
+
+    <% if user_signed_in? %>
+      <% if current_user.name == 'superadmin' %>
+        <%= link_to t('management'), admin_root_path, class: "dropdown-item fw-semibold" %>
+      <% end %>
+      <% if can? :project_types, :admin_projects %>
+        <%= link_to t('admin_projects'), project_types_path, class: "dropdown-item fw-semibold" %>
+      <% end %>
+      <%= link_to "Editar Usuario", edit_user_path(current_user.id), class: "dropdown-item fw-semibold" %>
+      <%= link_to 'Cerrar Sesión', destroy_user_session_path, method: :delete, class: "dropdown-item fw-semibold" %>
+    <% end %>
+  </div>
+</div>
+
   </div>
 </nav>
 
